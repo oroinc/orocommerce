@@ -33,7 +33,8 @@
             <div class="form-row {{ class_prefix }}">
                 {{ form_widget(form.quantity, {attr: {
                     'class': 'product-item__qty-input',
-                    'aria-label': 'oro.product.quantity.aria_label'|trans
+                    'aria-label': 'oro.product.quantity.aria_label'|trans,
+                    'data-floating-error': ''
                 }}) }}
             </div>
             <div class="form-row {{ class_prefix }}">

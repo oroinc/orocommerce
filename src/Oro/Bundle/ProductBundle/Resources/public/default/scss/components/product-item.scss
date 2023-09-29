@@ -303,11 +303,6 @@
         &--list-view,
         &--no-image-view {
             @include clearfix();
-
-            .validation-failed {
-                position: absolute;
-                z-index: z('base') + 1;
-            }
         }
 
         &--list-view {
