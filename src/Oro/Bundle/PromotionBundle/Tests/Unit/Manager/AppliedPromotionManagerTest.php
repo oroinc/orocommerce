@@ -25,39 +25,35 @@ use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub\DiscountStub;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Component\DependencyInjection\ServiceLink;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    private const CURRENCY = 'USD';
 
-    const CURRENCY = 'USD';
+    /** @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject */
+    private $promotionExecutor;
 
-    /**
-     * @var ServiceLink|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $promotionExecutorServiceLink;
-
-    /**
-     * @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * @var AppliedPromotionMapper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AppliedPromotionMapper|\PHPUnit\Framework\MockObject\MockObject */
     private $promotionMapper;
 
-    /**
-     * @var AppliedPromotionManager
-     */
+    /** @var AppliedPromotionManager */
     private $manager;
 
     protected function setUp(): void
     {
-        $this->promotionExecutorServiceLink = $this->createMock(ServiceLink::class);
+        $this->promotionExecutor = $this->createMock(PromotionExecutor::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->promotionMapper = $this->createMock(AppliedPromotionMapper::class);
+
+        $this->promotionExecutorServiceLink = $this->createMock(ServiceLink::class);
+        $this->promotionExecutorServiceLink->expects(self::any())
+            ->method('getService')
+            ->willReturn($this->promotionExecutor);
+
         $this->manager = new AppliedPromotionManager(
             $this->promotionExecutorServiceLink,
             $this->doctrineHelper,
@@ -73,46 +69,41 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
         $order = (new Order())->setCurrency(self::CURRENCY);
         $discountContext = new DiscountContext();
 
-        /** @var Promotion $lineItemPromotion */
-        $lineItemPromotion = $this->getEntity(Promotion::class, ['id' => 3]);
+        $lineItemPromotion = $this->getPromotion(3);
         $lineItemAppliedPromotion = new AppliedPromotion();
 
-        /** @var OrderLineItem $sourceLineItem */
         $sourceLineItem = $this->createMock(OrderLineItem::class);
         $lineItem = new DiscountLineItem();
         $lineItem->setSourceLineItem($sourceLineItem);
         $lineItem->addDiscountInformation(new DiscountInformation(
-            $this->createDiscount($lineItemPromotion),
+            $this->getDiscount($lineItemPromotion),
             777
         ));
         $discountContext->addLineItem($lineItem);
 
-        /** @var Promotion $shippingPromotion */
-        $shippingPromotion = $this->getEntity(Promotion::class, ['id' => 2]);
+        $shippingPromotion = $this->getPromotion(2);
         $shippingAppliedPromotion = new AppliedPromotion();
         $discountContext->addShippingDiscountInformation(new DiscountInformation(
-            new DisabledDiscountDecorator($this->createDiscount($shippingPromotion)),
+            new DisabledDiscountDecorator($this->getDiscount($shippingPromotion)),
             555
         ));
 
-        /** @var Promotion $subtotalPromotion */
-        $subtotalPromotion = $this->getEntity(Promotion::class, ['id' => 1]);
+        $subtotalPromotion = $this->getPromotion(1);
         $subtotalAppliedPromotion = new AppliedPromotion();
         $discountContext->addSubtotalDiscountInformation(new DiscountInformation(
-            $this->createDiscount($subtotalPromotion),
+            $this->getDiscount($subtotalPromotion),
             333
         ));
         $discountContext->addSubtotalDiscountInformation(new DiscountInformation(
-            $this->createDiscount($subtotalPromotion),
+            $this->getDiscount($subtotalPromotion),
             444
         ));
 
-        $executor = $this->getExecutor();
-        $executor->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('supports')
             ->with($order)
             ->willReturn(true);
-        $executor->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('execute')
             ->with($order)
             ->willReturn($discountContext);
@@ -139,8 +130,7 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
             ->with(AppliedPromotion::class)
             ->willReturn($entityManager);
 
-        $entityManager
-            ->expects($this->never())
+        $entityManager->expects($this->never())
             ->method('remove');
 
         $this->manager->createAppliedPromotions($order);
@@ -180,12 +170,11 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
         $order->addAppliedCoupon($unusedCoupon);
         $discountContext = new DiscountContext();
 
-        $executor = $this->getExecutor();
-        $executor->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('supports')
             ->with($order)
             ->willReturn(true);
-        $executor->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('execute')
             ->with($order)
             ->willReturn($discountContext);
@@ -201,28 +190,25 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
         $order = (new Order())->setCurrency('USD');
         $order->addAppliedCoupon($usedCoupon);
 
-        /** @var Promotion $subtotalPromotion */
-        $subtotalPromotion = $this->getEntity(Promotion::class, ['id' => 1]);
+        $subtotalPromotion = $this->getPromotion(1);
 
         $discountContext = new DiscountContext();
         $discountContext->addSubtotalDiscountInformation(new DiscountInformation(
-            $this->createDiscount($subtotalPromotion),
+            $this->getDiscount($subtotalPromotion),
             7
         ));
 
-        $this->promotionMapper
-            ->expects($this->once())
+        $this->promotionMapper->expects($this->once())
             ->method('mapPromotionDataToAppliedPromotion')
             ->willReturnCallback(function (AppliedPromotion $appliedPromotion) use ($usedCoupon) {
                 $appliedPromotion->setAppliedCoupon($usedCoupon);
             });
 
-        $executor = $this->getExecutor();
-        $executor->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('supports')
             ->with($order)
             ->willReturn(true);
-        $executor->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('execute')
             ->with($order)
             ->willReturn($discountContext);
@@ -248,14 +234,12 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateAppliedPromotionsWhenRemoveParameterIsTrue()
     {
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
-        /** @var ClassMetadata|\PHPUnit\Framework\MockObject\MockObject $metadata */
         $metadata = $this->createMock(ClassMetadata::class);
 
         $order = new Order();
-        $firstAppliedPromotion = $this->getEntity(AppliedPromotion::class, ['id' => 1]);
-        $secondAppliedPromotion = $this->getEntity(AppliedPromotion::class, ['id' => 2]);
+        $firstAppliedPromotion = $this->getAppliedPromotion(1);
+        $secondAppliedPromotion = $this->getAppliedPromotion(2);
 
         $appliedPromotions = new PersistentCollection($em, $metadata, new ArrayCollection(
             [$firstAppliedPromotion, $secondAppliedPromotion]
@@ -263,15 +247,13 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
         $appliedPromotions->takeSnapshot();
         $order->setAppliedPromotions($appliedPromotions);
 
-        /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $em */
         $entityManager = $this->createMock(EntityManagerInterface::class);
 
-        $executor = $this->getExecutor();
-        $executor->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('supports')
             ->with($order)
             ->willReturn(true);
-        $executor->expects($this->once())
+        $this->promotionExecutor->expects($this->once())
             ->method('execute')
             ->with($order)
             ->willReturn(new DiscountContext());
@@ -282,8 +264,7 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
                 [AppliedPromotion::class, true, $entityManager]
             ]);
 
-        $entityManager
-            ->expects($this->exactly(2))
+        $entityManager->expects($this->exactly(2))
             ->method('remove')
             ->withConsecutive([$firstAppliedPromotion], [$secondAppliedPromotion]);
 
@@ -293,23 +274,35 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
     public function testCreateAppliedPromotionsWhenNoSupports()
     {
         $order = new Order();
-        $executor = $this->getExecutor();
-        $executor->expects($this->once())
+
+        $this->promotionExecutor->expects($this->once())
             ->method('supports')
             ->with($order)
             ->willReturn(false);
-        $executor->expects($this->never())
+        $this->promotionExecutor->expects($this->never())
             ->method('execute')
             ->with($order);
 
         $this->manager->createAppliedPromotions($order);
     }
 
-    /**
-     * @param PromotionDataInterface $promotion
-     * @return DiscountStub
-     */
-    private function createDiscount(PromotionDataInterface $promotion)
+    private function getPromotion(int $id): Promotion
+    {
+        $promotion = new Promotion();
+        ReflectionUtil::setId($promotion, $id);
+
+        return $promotion;
+    }
+
+    private function getAppliedPromotion(int $id): AppliedPromotion
+    {
+        $appliedPromotion = new AppliedPromotion();
+        ReflectionUtil::setId($appliedPromotion, $id);
+
+        return $appliedPromotion;
+    }
+
+    private function getDiscount(PromotionDataInterface $promotion): DiscountStub
     {
         $discount = new DiscountStub();
         $discount->configure([
@@ -320,18 +313,5 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
         $discount->setPromotion($promotion);
 
         return $discount;
-    }
-
-    /**
-     * @return PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function getExecutor()
-    {
-        $executor = $this->createMock(PromotionExecutor::class);
-        $this->promotionExecutorServiceLink->expects($this->once())
-            ->method('getService')
-            ->willReturn($executor);
-
-        return $executor;
     }
 }

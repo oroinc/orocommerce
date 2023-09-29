@@ -69,7 +69,7 @@ class ContentNodeFromWebCatalogSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'oro_web_catalog_content_node_from_web_catalog_select';
     }
@@ -77,7 +77,7 @@ class ContentNodeFromWebCatalogSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return EntityTreeSelectType::class;
     }

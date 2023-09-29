@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config;
 
 use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;

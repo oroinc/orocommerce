@@ -23,22 +23,6 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         $this->tempTableManipulator = $tempTableManipulator;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * If there is at least one price list with merge disallowed in the fallback combined price lists chain
-     * it is impossible to use this fallback combined price list because prices with `merge = false` when found
-     * at the first time are moved to combined price lists and block further product`s prices processing, but when
-     * `merge = false` price processed in the middle of the chain it is simply ignored. Cutting the chain with
-     * `merge = false` price list will lead to a situation when prices with `merge = true` that follows `merge = false`
-     * may be skipped compared to sequential price list processing.
-     */
-    protected function isFallbackMergeAllowed(array $relationsCollection): bool
-    {
-        return parent::isFallbackMergeAllowed($relationsCollection)
-            && !$this->containMergeDisallowed($relationsCollection);
-    }
-
     protected function getFallbackCombinedPriceList(CombinedPriceList $combinedPriceList): ?CombinedPriceList
     {
         return $this->getCombinedPriceListRelationsRepository()->findFallbackCplUsingMergeFlag($combinedPriceList);
@@ -48,8 +32,15 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         array $combinedPriceListRelation,
         array $fallbackCplRelations
     ): array {
-        // return only a part of price lists chain that is not included in the fallback cpl price lists chain
-        // Example CPL: 1t_3f_4t_6f, fallback CPL: 1t_3f. Return chain will consist of 4t_6f
+        /**
+         * Return only head a part of price lists chain that is not included in the fallback (tail)
+         * CPL price lists chain.
+         * Note! Order is IMPORTANT for Merge by priority strategy, so tail (fallback) must be always in the end
+         * and order must be not changed, so head chain must be in the same order with the same merge flags and
+         * fallback CPL MUST contain of relations with Merge flag set to TRUE for all.
+         *
+         * Example CPL: 1t_3f_4t_6f, fallback CPL: 4t_6t. Return chain will consist of 1t_3f
+         */
         return array_splice($combinedPriceListRelation, 0, -\count($fallbackCplRelations));
     }
 
@@ -122,10 +113,6 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         );
     }
 
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @return bool
-     */
     private function canUseTempTable(CombinedPriceList $combinedPriceList): bool
     {
         if (!$this->getInsertSelectExecutor() instanceof ShardQueryExecutorNativeSqlInterface) {
@@ -204,20 +191,5 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
             $priceListRelation->isMergeAllowed(),
             $products
         );
-    }
-
-    /**
-     * @param array|CombinedPriceListToPriceList[] $collection
-     * @return bool
-     */
-    private function containMergeDisallowed(array $collection): bool
-    {
-        foreach ($collection as $item) {
-            if (!$item->isMergeAllowed()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

@@ -51,12 +51,12 @@ HELP
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @noinspection PhpMissingParentCallCommonInspection
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->sitemapGenerationScheduler->scheduleSend();
         $output->writeln('<info>Sitemap generation scheduled</info>');
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     /**

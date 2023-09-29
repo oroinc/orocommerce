@@ -19,7 +19,7 @@ class ProductImageType extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return ProductImageTypeValidator::ALIAS;
     }
@@ -27,7 +27,7 @@ class ProductImageType extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }

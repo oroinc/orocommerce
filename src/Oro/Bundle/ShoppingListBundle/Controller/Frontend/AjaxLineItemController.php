@@ -12,7 +12,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
-use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
@@ -300,15 +299,19 @@ class AjaxLineItemController extends AbstractLineItemController
             return $this->json(['message' => implode(', ', $errors)], Response::HTTP_BAD_REQUEST);
         }
 
-        foreach ($data['fetchData'] ?? [] as $key => $value) {
-            $request->query->set($key, $value);
+        if (!empty($data['fetchData']) && is_array($data['fetchData'])) {
+            foreach ($data['fetchData'] as $key => $value) {
+                $request->query->set($key, $value);
+            }
         }
 
-        return $this->forward(
-            GridController::class . '::getAction',
-            ['gridName' => 'frontend-customer-user-shopping-list-edit-grid'],
-            $request->query->all()
-        );
+        if (!empty($data['gridName']) && is_string($data['gridName'])) {
+            $gridName = $data['gridName'];
+        } else {
+            $gridName = 'frontend-customer-user-shopping-list-edit-grid';
+        }
+
+        return $this->forward(GridController::class . '::getAction', ['gridName' => $gridName], $request->query->all());
     }
 
     private function getLineItemModels(array $rawLineItems): array
@@ -327,31 +330,6 @@ class AjaxLineItemController extends AbstractLineItemController
         );
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param Product $product
-     * @param string $message
-     * @return array
-     */
-    protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, string $message): array
-    {
-        $productShoppingLists = $this->get(ProductShoppingListsDataProvider::class)
-            ->getProductUnitsQuantity($product->getId());
-
-        return [
-            'successful' => true,
-            'message' => $this->getSuccessMessage($shoppingList, $message),
-            'product' => [
-                'id' => $product->getId(),
-                'shopping_lists' => $productShoppingLists
-            ],
-            'shoppingList' => [
-                'id' => $shoppingList->getId(),
-                'label' => $shoppingList->getLabel()
-            ]
-        ];
-    }
-
     protected function getParentProduct(Request $request): ?Product
     {
         $parentProductId = $request->get('parentProductId');
@@ -364,13 +342,12 @@ class AjaxLineItemController extends AbstractLineItemController
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(
             parent::getSubscribedServices(),
             [
                 MassActionDispatcher::class,
-                ProductShoppingListsDataProvider::class,
                 CurrentShoppingListManager::class,
                 ShoppingListManager::class,
                 ShoppingListLineItemHandler::class,

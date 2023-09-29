@@ -9,6 +9,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Product image collection type.
+ */
 class ProductImageCollectionType extends AbstractType
 {
     const NAME = 'oro_product_image_collection';
@@ -31,12 +34,13 @@ class ProductImageCollectionType extends AbstractType
         $resolver->setDefaults([
             'entry_type' => ProductImageType::class,
             'entry_options' => [
-                'image_types' => $this->imageTypeProvider->getImageTypes()
+                'image_types' => $this->imageTypeProvider->getImageTypes(),
+                'allowDelete' => true,
+                'allowUpdate' => true,
             ],
             'error_bubbling' => false,
             'show_form_when_empty' => false,
             'row_count_initial' => 0
-
         ]);
     }
 
@@ -51,7 +55,7 @@ class ProductImageCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return CollectionType::class;
     }
@@ -67,7 +71,7 @@ class ProductImageCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }

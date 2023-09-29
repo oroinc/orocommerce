@@ -17,7 +17,8 @@ define(function(require) {
          */
         options: {
             productVariantFieldsSelector: 'input[type=checkbox]',
-            datagridName: 'product-product-variants-edit'
+            datagridName: 'product-product-variants-edit',
+            datagridVariantFields: []
         },
 
         variantFieldCheckboxes: [],
@@ -36,15 +37,19 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
             this.variantFieldCheckboxes = this.options._sourceElement.find(this.options.productVariantFieldsSelector);
 
-            this.options._sourceElement
-                .on('change', this.productVariantFieldsSelector, this.onVariantFieldChange.bind(this));
+            if (this.variantFieldCheckboxes) {
+                this.options._sourceElement
+                    .on('change', this.productVariantFieldsSelector, this.onVariantFieldChange.bind(this));
+            }
 
-            this.updateVisibilityChange();
-            this.listenTo(mediator, 'grid_load:complete', function(collection) {
-                if (collection.inputName === this.options.datagridName) {
-                    this.updateVisibilityChange();
-                }
-            });
+            if (this.productVariantsGridComponent) {
+                this.updateVisibilityChange();
+                this.listenTo(mediator, 'grid_load:complete', function(collection) {
+                    if (collection.inputName === this.options.datagridName) {
+                        this.updateVisibilityChange();
+                    }
+                });
+            }
         },
 
         onVariantFieldChange: function() {
@@ -77,26 +82,30 @@ define(function(require) {
         },
 
         updateVisibilityChange: function() {
-            if (this.variantFieldCheckboxes.length > 0) {
-                const gridName = this.options.datagridName;
+            const variantFields = this.options.datagridVariantFields;
+            if (this.variantFieldCheckboxes) {
                 this.variantFieldCheckboxes.each((idx, el) => {
-                    const columnName = this.getFieldName(el);
-                    mediator.trigger(`datagrid:changeColumnParam:${gridName}`, columnName, 'renderable', el.checked);
-
-                    const {grid} = this.productVariantsGridComponent;
-                    if (grid) {
-                        const {[columnName]: column} = grid.collection.initialState.columns;
-                        if (column) {
-                            // patch initial state to make variant column renderable even after grid reset
-                            grid.collection.patchInitialState({
-                                columns: {
-                                    ...grid.collection.initialState.columns,
-                                    [columnName]: {...column, renderable: el.checked}
-                                }
-                            });
-                        }
-                    }
+                    variantFields[this.getFieldName(el)] = el.checked;
                 });
+            }
+
+            const gridName = this.options.datagridName;
+            for (const [columnName, checked] of Object.entries(variantFields)) {
+                mediator.trigger(`datagrid:changeColumnParam:${gridName}`, columnName, 'renderable', checked);
+
+                const {grid} = this.productVariantsGridComponent;
+                if (grid) {
+                    const {[columnName]: column} = grid.collection.initialState.columns;
+                    if (column) {
+                        // patch initial state to make variant column renderable even after grid reset
+                        grid.collection.patchInitialState({
+                            columns: {
+                                ...grid.collection.initialState.columns,
+                                [columnName]: {...column, renderable: checked}
+                            }
+                        });
+                    }
+                }
             }
         },
 

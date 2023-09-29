@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\FixedProductShippingBundle\Provider;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FixedProductShippingBundle\Migrations\Data\ORM\LoadPriceAttributePriceListData;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 
 /**
  * Calculate shipping cost value for 'Fixed Product Shipping' integration.
@@ -24,13 +25,13 @@ class ShippingCostProvider
     }
 
     /**
-     * @param ShippingLineItemCollectionInterface $lineItems
+     * @param Collection<ShippingLineItem> $lineItems
      * @param string $currency
      *
      * @return float
      */
     public function getCalculatedProductShippingCost(
-        ShippingLineItemCollectionInterface $lineItems,
+        Collection $lineItems,
         string $currency
     ): float {
         $shippingCost = 0.0;

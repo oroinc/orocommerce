@@ -35,9 +35,11 @@ class AjaxCheckoutController extends AbstractController
         /** @var Checkout $checkout */
         $checkout = $this->getDoctrine()->getManagerForClass(Checkout::class)
             ->getRepository(Checkout::class)->getCheckoutWithRelations($entityId);
+
         if (!$checkout) {
             return new JsonResponse('', Response::HTTP_NOT_FOUND);
         }
+        $this->denyAccessUnlessGranted('EDIT', $checkout);
 
         $this->setCorrectCheckoutShippingMethodData($checkout, $request);
 
@@ -77,7 +79,7 @@ class AjaxCheckoutController extends AbstractController
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(
             parent::getSubscribedServices(),

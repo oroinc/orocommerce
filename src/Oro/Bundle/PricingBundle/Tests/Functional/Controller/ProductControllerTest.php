@@ -384,7 +384,7 @@ class ProductControllerTest extends ProductHelperTestCase
         $this->client->followRedirects(true);
 
         $crawler = $this->client->getCrawler();
-        $button = $crawler->selectLink('Duplicate');
+        $button = $crawler->selectButton('Duplicate');
         $this->assertCount(1, $button);
 
         $this->assertExecuteOperation(

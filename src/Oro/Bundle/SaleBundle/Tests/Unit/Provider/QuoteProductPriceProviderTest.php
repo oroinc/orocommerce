@@ -9,7 +9,7 @@ use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
@@ -40,9 +40,9 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
     private AclHelper|MockObject $aclHelper;
 
-    private QuoteProductPriceProvider $quoteProductPriceProvider;
+    private ProductPriceCriteriaFactoryInterface|MockObject $productPriceCriteriaFactory;
 
-    private ProductPriceCriteriaFactory $productPriceCriteriaFactory;
+    private QuoteProductPriceProvider $quoteProductPriceProvider;
 
     protected function setUp(): void
     {
@@ -51,7 +51,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
         $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
-        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactory::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactoryInterface::class);
 
         $this->quoteProductPriceProvider = new QuoteProductPriceProvider(
             $this->productPriceProvider,
@@ -405,7 +405,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->productPriceCriteriaFactory
             ->expects($this->once())
-            ->method('build')
+            ->method('create')
             ->with(
                 $this->equalTo($product),
                 $this->equalTo($unit),

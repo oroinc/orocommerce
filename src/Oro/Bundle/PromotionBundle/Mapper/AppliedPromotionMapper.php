@@ -36,11 +36,6 @@ class AppliedPromotionMapper
         $this->promotionNormalizer = $normalizer;
     }
 
-    /**
-     * @param AppliedPromotion $appliedPromotion
-     * @param PromotionDataInterface $promotion
-     * @param Order|object $order
-     */
     public function mapPromotionDataToAppliedPromotion(
         AppliedPromotion $appliedPromotion,
         PromotionDataInterface $promotion,

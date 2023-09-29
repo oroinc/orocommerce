@@ -41,7 +41,7 @@ class ConsentSelectWithPriorityType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'oro_consent_select_with_priority';
     }

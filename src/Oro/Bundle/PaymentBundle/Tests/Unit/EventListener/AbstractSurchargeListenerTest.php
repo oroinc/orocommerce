@@ -9,21 +9,14 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 
 abstract class AbstractSurchargeListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const AMOUNT = 100;
+    private const AMOUNT = 100;
 
     /** @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $provider;
 
-    /**
-     * @param CollectSurchargeEvent $event
-     * @return float|int
-     */
-    abstract protected function getAmount(CollectSurchargeEvent $event);
+    abstract protected function getAmount(CollectSurchargeEvent $event): float|int;
 
-    /**
-     * @return AbstractSurchargeListener
-     */
-    abstract protected function getListener();
+    abstract protected function getListener(): AbstractSurchargeListener;
 
     protected function setUp(): void
     {

@@ -6,7 +6,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
@@ -25,36 +25,32 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
 
     private ProductPriceProviderInterface|MockObject $productPriceProvider;
 
-    private UserCurrencyManager|MockObject $userCurrencyManager;
-
-    private ProductPriceScopeCriteriaRequestHandler|MockObject $scopeCriteriaRequestHandler;
-
     private FrontendProductPricesDataProvider $provider;
 
     private ProductPriceScopeCriteriaInterface|MockObject $scopeCriteria;
 
-    private ProductPriceCriteriaFactory $productPriceCriteriaFactory;
+    private ProductPriceCriteriaFactoryInterface|MockObject $productPriceCriteriaFactory;
 
     protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
-        $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
-        $this->scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);
-        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactory::class);
+        $userCurrencyManager = $this->createMock(UserCurrencyManager::class);
+        $scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactoryInterface::class);
 
         $this->provider = new FrontendProductPricesDataProvider(
             $this->productPriceProvider,
-            $this->userCurrencyManager,
-            $this->scopeCriteriaRequestHandler,
+            $userCurrencyManager,
+            $scopeCriteriaRequestHandler,
             $this->productPriceCriteriaFactory
         );
 
-        $this->userCurrencyManager
+        $userCurrencyManager
             ->method('getUserCurrency')
             ->willReturn(self::TEST_CURRENCY);
 
         $this->scopeCriteria = $this->createMock(ProductPriceScopeCriteriaInterface::class);
-        $this->scopeCriteriaRequestHandler
+        $scopeCriteriaRequestHandler
             ->method('getPriceScopeCriteria')
             ->willReturn($this->scopeCriteria);
     }
@@ -159,7 +155,6 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
             ],
         ];
     }
-
 
     /**
      * @dataProvider getAllPricesForProductsProvider

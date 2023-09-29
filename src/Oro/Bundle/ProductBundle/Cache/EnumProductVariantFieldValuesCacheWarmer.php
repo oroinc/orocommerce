@@ -30,7 +30,7 @@ class EnumProductVariantFieldValuesCacheWarmer extends CacheWarmer
     /**
      * {@inheritdoc}
      */
-    public function warmUp($cacheDir): void
+    public function warmUp(string $cacheDir): array
     {
         $fields = $this->entityWithFieldsProvider->getFieldsForEntity(Product::class);
         foreach ($fields as $field) {
@@ -41,6 +41,7 @@ class EnumProductVariantFieldValuesCacheWarmer extends CacheWarmer
 
             $this->enumVariantFieldValueHandler->getPossibleValues($field['name']);
         }
+        return [];
     }
 
     /**

@@ -146,7 +146,7 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             TotalProcessorProvider::class,

@@ -22,7 +22,6 @@ class TaxJurisdictionController extends AbstractController
      * @Route("/", name="oro_tax_jurisdiction_index")
      * @Template
      * @AclAncestor("oro_tax_jurisdiction_view")     *
-     * @return
      */
     public function indexAction(): array
     {
@@ -90,7 +89,7 @@ class TaxJurisdictionController extends AbstractController
     /**
      * {@inheritDoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(
             parent::getSubscribedServices(),

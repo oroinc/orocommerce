@@ -93,7 +93,6 @@ class SearchResultHistoryManagerTest extends TestCase
         $resultsCount = 10;
         $searchSessionId = 'test search session id';
 
-
         $organization = $this->getEntity(Organization::class, ['id' => 1]);
         $businessUnit = $this->getEntity(BusinessUnit::class, ['id' => 2]);
         $customerUser = $this->getEntity(CustomerUser::class, ['id' => 3]);

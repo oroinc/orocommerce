@@ -11,26 +11,21 @@ use Oro\Bundle\PromotionBundle\Provider\DisabledPromotionDiscountProviderDecorat
 use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub\DiscountStub;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    const ENABLED_PROMOTION_ID = 7;
-    const DISABLED_PROMOTION_ID = 2;
+    private const ENABLED_PROMOTION_ID = 7;
+    private const DISABLED_PROMOTION_ID = 2;
 
-    use EntityTrait;
-
-    /**
-     * @var PromotionDiscountsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PromotionDiscountsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $promotionDiscountsProvider;
 
-    /**
-     * @var DisabledPromotionDiscountProviderDecorator
-     */
-    private $providerDecorator;
+    /** @var PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $promotionAwareHelper;
 
-    private PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject $promotionAwareHelper;
+    /** @var DisabledPromotionDiscountProviderDecorator */
+    private $providerDecorator;
 
     protected function setUp(): void
     {
@@ -46,6 +41,23 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\
         );
     }
 
+    private function getPromotion(int $id): Promotion
+    {
+        $promotion = new Promotion();
+        ReflectionUtil::setId($promotion, $id);
+
+        return $promotion;
+    }
+
+    private function getAppliedPromotion(bool $active, int $sourcePromotionId): AppliedPromotion
+    {
+        $appliedPromotion = new AppliedPromotion();
+        $appliedPromotion->setActive($active);
+        $appliedPromotion->setSourcePromotionId($sourcePromotionId);
+
+        return $appliedPromotion;
+    }
+
     public function testGetDiscountsWithNotSupportedSourceEntity()
     {
         $sourceEntity = new \stdClass();
@@ -53,8 +65,7 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\
 
         $discounts = [new DiscountStub(), new DiscountStub()];
 
-        $this->promotionDiscountsProvider
-            ->expects($this->once())
+        $this->promotionDiscountsProvider->expects($this->once())
             ->method('getDiscounts')
             ->with($sourceEntity, $context)
             ->willReturn($discounts);
@@ -66,20 +77,19 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\
     {
         $sourceEntity = new Order();
         $sourceEntity->setAppliedPromotions([
-            (new AppliedPromotion())->setActive(false)->setSourcePromotionId(self::DISABLED_PROMOTION_ID),
-            (new AppliedPromotion())->setActive(true)->setSourcePromotionId(self::ENABLED_PROMOTION_ID)
+            $this->getAppliedPromotion(false, self::DISABLED_PROMOTION_ID),
+            $this->getAppliedPromotion(true, self::ENABLED_PROMOTION_ID)
         ]);
 
         $context = new DiscountContext();
 
-        /** @var Promotion $disabledPromotion */
-        $disabledPromotion = $this->getEntity(Promotion::class, ['id' => self::DISABLED_PROMOTION_ID]);
+        $disabledPromotion = $this->getPromotion(self::DISABLED_PROMOTION_ID);
+        $enabledPromotion = $this->getPromotion(self::ENABLED_PROMOTION_ID);
 
-        /** @var Promotion $enabledPromotion */
-        $enabledPromotion = $this->getEntity(Promotion::class, ['id' => self::ENABLED_PROMOTION_ID]);
-
-        $discountWithDisabledPromotion = (new DiscountStub())->setPromotion($disabledPromotion);
-        $discountWithEnabledPromotion = (new DiscountStub())->setPromotion($enabledPromotion);
+        $discountWithDisabledPromotion = new DiscountStub();
+        $discountWithDisabledPromotion->setPromotion($disabledPromotion);
+        $discountWithEnabledPromotion = new DiscountStub();
+        $discountWithEnabledPromotion->setPromotion($enabledPromotion);
 
         $discounts = [$discountWithDisabledPromotion, $discountWithEnabledPromotion];
 
@@ -94,7 +104,10 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\
             $discountWithEnabledPromotion
         ];
 
-        $this->promotionAwareHelper->expects($this->any())->method('isPromotionAware')->willReturn(true);
+        $this->promotionAwareHelper->expects($this->any())
+            ->method('isPromotionAware')
+            ->willReturn(true);
+
         $this->assertEquals($expectedDiscounts, $this->providerDecorator->getDiscounts($sourceEntity, $context));
     }
 }

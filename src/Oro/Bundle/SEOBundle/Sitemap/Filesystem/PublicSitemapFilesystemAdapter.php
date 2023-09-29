@@ -99,9 +99,6 @@ class PublicSitemapFilesystemAdapter implements LoggerAwareInterface
         }
     }
 
-    /**
-     * @param string $fileName
-     */
     private function removeTmpFile(string $fileName): void
     {
         try {

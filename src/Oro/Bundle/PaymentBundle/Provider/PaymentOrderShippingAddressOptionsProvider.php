@@ -14,12 +14,15 @@ class PaymentOrderShippingAddressOptionsProvider
     {
         return (new AddressOptionModel())
             ->setFirstName((string) $entity->getFirstName())
+            ->setMiddleName((string) $entity->getMiddleName())
             ->setLastName((string) $entity->getLastName())
             ->setStreet((string) $entity->getStreet())
             ->setStreet2((string) $entity->getStreet2())
             ->setCity((string) $entity->getCity())
             ->setCountryIso2((string) $entity->getCountryIso2())
             ->setRegionCode((string) $entity->getRegionCode())
-            ->setPostalCode((string) $entity->getPostalCode());
+            ->setPostalCode((string) $entity->getPostalCode())
+            ->setOrganization((string) $entity->getOrganization())
+            ->setPhone((string) (method_exists('getPhone', $entity) ? $entity->getPhone() : ''));
     }
 }

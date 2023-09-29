@@ -13,10 +13,9 @@ class CurrencyResolverTest extends \PHPUnit\Framework\TestCase
 {
     use ResultComparatorTrait;
 
-    const CURRENCY = 'USD';
+    private const CURRENCY = 'USD';
 
-    /** @var CurrencyResolver */
-    protected $resolver;
+    private CurrencyResolver $resolver;
 
     protected function setUp(): void
     {

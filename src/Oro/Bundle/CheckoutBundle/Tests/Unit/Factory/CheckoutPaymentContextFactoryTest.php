@@ -16,39 +16,34 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection;
-use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Context\PaymentLineItemTrait;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
+class CheckoutPaymentContextFactoryTest extends TestCase
 {
-    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $checkoutLineItemsManager;
+    use PaymentLineItemTrait;
 
-    /** @var SubtotalProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $checkoutSubtotalProvider;
+    private CheckoutLineItemsManager|MockObject $checkoutLineItemsManager;
 
-    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $totalProcessorProvider;
+    private SubtotalProviderInterface|MockObject $checkoutSubtotalProvider;
 
-    /** @var OrderPaymentLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentLineItemConverter;
+    private TotalProcessorProvider|MockObject $totalProcessorProvider;
 
-    /** @var PaymentContextBuilderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $contextBuilder;
+    private OrderPaymentLineItemConverterInterface|MockObject $paymentLineItemConverter;
 
-    /** @var PaymentContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentContextBuilderFactory;
+    private PaymentContextBuilderInterface|MockObject $contextBuilder;
 
-    /** @var CheckoutShippingOriginProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingOriginProvider;
+    private PaymentContextBuilderFactoryInterface|MockObject $paymentContextBuilderFactory;
 
-    /** @var CheckoutPaymentContextFactory */
-    private $factory;
+    private CheckoutShippingOriginProviderInterface|MockObject $shippingOriginProvider;
+
+    private CheckoutPaymentContextFactory $factory;
 
     protected function setUp(): void
     {
@@ -82,7 +77,7 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
         ?CustomerUser $customerUser = null,
         array $checkoutLineItems = [],
         ?Website $website = null
-    ) {
+    ): void {
         $checkout = $this->getCheckout(
             $address,
             $currency,
@@ -94,27 +89,28 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
             $website
         );
 
-        $convertedLineItems = new DoctrinePaymentLineItemCollection([
-            new PaymentLineItem([])
+        $convertedLineItems = new ArrayCollection([
+            $this->getPaymentLineItem()
         ]);
 
         $shippingOrigin = new ShippingOrigin();
-        $this->shippingOriginProvider->expects($this->once())
+        $this->shippingOriginProvider->expects(self::once())
             ->method('getShippingOrigin')
             ->with(self::identicalTo($checkout))
             ->willReturn($shippingOrigin);
 
-        $this->contextBuilder->expects($this->once())
+        $this->contextBuilder->expects(self::once())
             ->method('setShippingOrigin')
             ->with($shippingOrigin);
 
-        $this->paymentLineItemConverter->expects($this->once())
+        $this->paymentLineItemConverter->expects(self::once())
             ->method('convertLineItems')
             ->willReturn($convertedLineItems);
 
-        $this->contextBuilder->expects($this->once())
+        $this->contextBuilder->expects(self::once())
             ->method('setLineItems')
-            ->with($convertedLineItems);
+            ->with($convertedLineItems)
+            ->willReturnSelf();
 
         $this->factory->create($checkout);
     }
@@ -165,16 +161,17 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testWithEmptyLineItems()
+    public function testWithEmptyLineItems(): void
     {
         $checkout = $this->getCheckout();
 
-        $this->paymentLineItemConverter->expects($this->once())
+        $this->paymentLineItemConverter->expects(self::once())
             ->method('convertLineItems')
-            ->willReturn(new DoctrinePaymentLineItemCollection([]));
+            ->willReturn(new ArrayCollection([]));
 
-        $this->contextBuilder->expects($this->never())
-            ->method('setLineItems');
+        $this->contextBuilder->expects(self::once())
+            ->method('setLineItems')
+            ->willReturnSelf();
 
         $this->factory->create($checkout);
     }
@@ -213,11 +210,11 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
         $this->contextBuilder->expects($shippingMethod ? $this->once() : $this->never())
             ->method('setShippingMethod')
             ->with($shippingMethod);
-        $this->contextBuilder->expects($this->once())
+        $this->contextBuilder->expects(self::once())
             ->method('setSubTotal')
             ->with(Price::create($subtotal->getAmount(), $subtotal->getCurrency()))
             ->willReturnSelf();
-        $this->contextBuilder->expects($this->once())
+        $this->contextBuilder->expects(self::once())
             ->method('setCurrency')
             ->with($checkout->getCurrency());
         $this->contextBuilder->expects($website ? $this->once() : $this->never())
@@ -229,14 +226,14 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
         $this->contextBuilder->expects($customerUser ? $this->once() : $this->never())
             ->method('setCustomerUser')
             ->with($customerUser);
-        $this->contextBuilder->expects($this->once())
+        $this->contextBuilder->expects(self::once())
             ->method('setTotal')
             ->with($subtotal->getAmount())
             ->willReturnSelf();
-        $this->contextBuilder->expects($this->once())
+        $this->contextBuilder->expects(self::once())
             ->method('getResult');
 
-        $this->paymentContextBuilderFactory->expects($this->once())
+        $this->paymentContextBuilderFactory->expects(self::once())
             ->method('createPaymentContextBuilder')
             ->with($checkout, (string)$checkout->getId())
             ->willReturn($this->contextBuilder);

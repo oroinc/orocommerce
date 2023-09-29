@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PaymentBundle\Context\Builder;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
-use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
+use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -18,9 +18,14 @@ interface PaymentContextBuilderInterface
 {
     public function getResult(): PaymentContextInterface;
 
-    public function setLineItems(PaymentLineItemCollectionInterface $lineItemCollection): static;
+    /**
+     * @param Collection<PaymentLineItem> $lineItemCollection
+     *
+     * @return $this
+     */
+    public function setLineItems(Collection $lineItemCollection): static;
 
-    public function addLineItem(PaymentLineItemInterface $paymentLineItem): static;
+    public function addLineItem(PaymentLineItem $paymentLineItem): static;
 
     public function setBillingAddress(?AddressInterface $billingAddress): static;
 

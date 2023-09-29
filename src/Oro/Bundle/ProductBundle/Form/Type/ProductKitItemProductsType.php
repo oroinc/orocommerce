@@ -79,14 +79,14 @@ class ProductKitItemProductsType extends AbstractType
 
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
-        $view->vars['kitItemId'] = (int)$options['kit_item']?->getId();
+        $view->vars['kitItemId'] = isset($options['kit_item']) ? (int)$options['kit_item']->getId() : 0;
         $view->vars['selectedProductsIds'] = array_map(
-            static fn (ProductKitItemProduct $kitItemProduct) => $kitItemProduct->getProduct()->getId(),
+            static fn (ProductKitItemProduct $kitItemProduct) => $kitItemProduct->getProduct()?->getId(),
             (array)$form->getData()?->toArray()
         );
         $view->vars['sortOrderConstraints'] = [
-            'Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal' => new Decimal(),
-            'Range' => new Range(['min' => 0])
+            Decimal::class => new Decimal(),
+            Range::class => new Range(['min' => 0])
         ];
         $view->vars['attr']['data-type'] = 'json-collection';
     }

@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroShippingBundle_Entity_ShippingMethodConfig;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
@@ -17,6 +18,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
  * @ORM\Table(name="oro_ship_method_config")
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository")
  * @Config
+ * @mixin OroShippingBundle_Entity_ShippingMethodConfig
  */
 class ShippingMethodConfig implements ExtendEntityInterface
 {

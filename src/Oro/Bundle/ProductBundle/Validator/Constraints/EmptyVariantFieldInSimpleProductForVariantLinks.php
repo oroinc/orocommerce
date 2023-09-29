@@ -11,7 +11,7 @@ class EmptyVariantFieldInSimpleProductForVariantLinks extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return EmptyVariantFieldInSimpleProductForVariantLinksValidator::ALIAS;
     }
@@ -19,7 +19,7 @@ class EmptyVariantFieldInSimpleProductForVariantLinks extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }

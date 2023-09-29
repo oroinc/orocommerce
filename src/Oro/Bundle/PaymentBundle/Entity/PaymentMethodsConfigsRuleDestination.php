@@ -5,6 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroPaymentBundle_Entity_PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -21,6 +22,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  * @Config(
  *     mode="hidden",
  * )
+ * @mixin OroPaymentBundle_Entity_PaymentMethodsConfigsRuleDestination
  */
 class PaymentMethodsConfigsRuleDestination implements ExtendEntityInterface
 {

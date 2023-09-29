@@ -50,7 +50,7 @@ class PromotionMatchedProductSegmentVoterTest extends \PHPUnit\Framework\TestCas
      */
     public function testAbstainOnUnsupportedClass(array $attributes)
     {
-        $object = new \stdClass;
+        $object = new \stdClass();
 
         $this->doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')

@@ -2,17 +2,18 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use PHPUnit\Framework\TestCase;
 
-class ShippingContextTest extends \PHPUnit\Framework\TestCase
+class ShippingContextTest extends TestCase
 {
-    public function testConstructionAndGetters()
+    public function testConstructionAndGetters(): void
     {
         $paymentMethod = 'paymentMethod';
         $currency = 'usd';
@@ -21,7 +22,7 @@ class ShippingContextTest extends \PHPUnit\Framework\TestCase
         $params = [
             ShippingContext::FIELD_CUSTOMER => $this->createMock(Customer::class),
             ShippingContext::FIELD_CUSTOMER_USER => $this->createMock(CustomerUser::class),
-            ShippingContext::FIELD_LINE_ITEMS => $this->createMock(ShippingLineItemCollectionInterface::class),
+            ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection([]),
             ShippingContext::FIELD_BILLING_ADDRESS => $this->createMock(AddressInterface::class),
             ShippingContext::FIELD_SHIPPING_ADDRESS => $this->createMock(AddressInterface::class),
             ShippingContext::FIELD_SHIPPING_ORIGIN => $this->createMock(AddressInterface::class),
@@ -50,6 +51,6 @@ class ShippingContextTest extends \PHPUnit\Framework\TestCase
             ShippingContext::FIELD_WEBSITE => $shippingContext->getWebsite(),
         ];
 
-        $this->assertEquals($params, $getterValues);
+        self::assertEquals($params, $getterValues);
     }
 }

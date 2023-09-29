@@ -36,6 +36,7 @@
 {% block __matrix_grid_order__header_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-popup__header',
+        'data-dialog-extra-header-content': ''
     }) %}
     <div {{ block('block_attributes') }}>
         {{ parent_block_widget(block) }}
@@ -43,29 +44,46 @@
 {% endblock %}
 
 {% block __matrix_grid_order__header_product_picture_widget %}
-    <picture {{ block('block_attributes') }}>
-        {% set productImage = product.imagesByType('listing').first.image|default(null) %}
-        {% set productImageUrl = product_filtered_image(productImage, 'product_small') %}
-        <img src="{{ productImageUrl }}" alt="{{ product.names|localized_value|e }}" class="product-popup__header-img" />
-    </picture>
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item product-popup__header-img',
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <div class="product-item__image-holder--aspect-ratio product-item__image-holder--tiny">
+            <div class="product-item__preview">
+                <picture class="product-item__preview-picture">
+                    {% set productImage = product.imagesByType('listing').first.image|default(null) %}
+                    {% set productImageUrl = product_filtered_image(productImage, 'product_small') %}
+                    <img src="{{ productImageUrl }}" alt="{{ product.names|localized_value|e }}" class="product-item__preview-image">
+                </picture>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block __matrix_grid_order__header_product_attributes_widget %}
-    <section {{ block('block_attributes') }}>
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-popup__header-attributes',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
         {{ parent_block_widget(block) }}
-    </section>
+    </div>
 {% endblock %}
 
 {% block __matrix_grid_order__header_product_name_widget %}
-    <h4 {{ block('block_attributes') }}>
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-popup__header-title h1 h-normal',
+    }) %}
+
+    <p {{ block('block_attributes') }}>
         {{ product.names|localized_value|e }}
-    </h4>
+    </p>
 {% endblock %}
 
 {% block __matrix_grid_order__header_product_sku_widget %}
     <div {{ block('block_attributes') }}>
         {{ 'oro.product.frontend.index.item'|trans }}
-        <span class="product-item__sku-value">{{ product.sku|e }}</span>
+        <span>{{ product.sku|e }}</span>
     </div>
 {% endblock %}
 
@@ -84,7 +102,8 @@
 
 {% block __matrix_grid_order__form_summary_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': class_prefix ~ '__totals '
+        '~class': class_prefix ~ '__totals ',
+        'data-role': 'totals'
     }) %}
 
     <div{{ block('block_attributes') }}>

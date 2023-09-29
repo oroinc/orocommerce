@@ -22,7 +22,7 @@ class DatesChain extends Constraint implements \JsonSerializable
     /**
      * @return string
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }

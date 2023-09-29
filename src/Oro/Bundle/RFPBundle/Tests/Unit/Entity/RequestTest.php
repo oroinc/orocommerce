@@ -16,7 +16,8 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 class RequestTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTestCaseTrait, EntityTrait;
+    use EntityTestCaseTrait;
+    use EntityTrait;
 
     public function testConstruct()
     {

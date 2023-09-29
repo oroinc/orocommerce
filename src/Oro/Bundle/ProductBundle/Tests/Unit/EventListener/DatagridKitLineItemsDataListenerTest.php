@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\DatagridKitItemLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
@@ -33,6 +34,10 @@ class DatagridKitLineItemsDataListenerTest extends TestCase
             ->method('getLineItems')
             ->willReturn([]);
 
+        $this->eventDispatcher
+            ->expects(self::never())
+            ->method('dispatch');
+
         $event
             ->expects(self::never())
             ->method('addDataForLineItem');
@@ -40,13 +45,17 @@ class DatagridKitLineItemsDataListenerTest extends TestCase
         $this->listener->onLineItemData($event);
     }
 
-    public function testOnLineItemDataWhenNotKitItemLineItem(): void
+    public function testOnLineItemDataWhenNotKitItemLineItemsAware(): void
     {
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
         $event
             ->expects(self::once())
             ->method('getLineItems')
             ->willReturn([10 => new \stdClass()]);
+
+        $this->eventDispatcher
+            ->expects(self::never())
+            ->method('dispatch');
 
         $event
             ->expects(self::never())
@@ -67,6 +76,10 @@ class DatagridKitLineItemsDataListenerTest extends TestCase
             ->method('getDataForLineItem')
             ->with(10)
             ->willReturn(['type' => Product::TYPE_SIMPLE]);
+
+        $this->eventDispatcher
+            ->expects(self::never())
+            ->method('dispatch');
 
         $event
             ->expects(self::never())
@@ -92,9 +105,20 @@ class DatagridKitLineItemsDataListenerTest extends TestCase
             ->with(10)
             ->willReturn(['type' => Product::TYPE_KIT]);
 
-        $event
+        $this->eventDispatcher
             ->expects(self::never())
-            ->method('addDataForLineItem');
+            ->method('dispatch');
+
+        $event
+            ->expects(self::once())
+            ->method('addDataForLineItem')
+            ->with(
+                10,
+                [
+                    DatagridKitLineItemsDataListener::IS_KIT => true,
+                    DatagridKitLineItemsDataListener::SUB_DATA => [],
+                ]
+            );
 
         $this->listener->onLineItemData($event);
     }
@@ -114,7 +138,7 @@ class DatagridKitLineItemsDataListenerTest extends TestCase
             []
         );
 
-        $kitItemLineItemsDataEvent = new DatagridLineItemsDataEvent(
+        $kitItemLineItemsDataEvent = new DatagridKitItemLineItemsDataEvent(
             [
                 $kitItemLineItem1->getEntityIdentifier() => $kitItemLineItem1,
                 $kitItemLineItem2->getEntityIdentifier() => $kitItemLineItem2,
@@ -128,7 +152,7 @@ class DatagridKitLineItemsDataListenerTest extends TestCase
             ->method('dispatch')
             ->with($kitItemLineItemsDataEvent, $kitItemLineItemsDataEvent->getName())
             ->willReturnCallback(
-                function (DatagridLineItemsDataEvent $event) use ($kitItemLineItem1, $kitItemLineItem2) {
+                function (DatagridKitItemLineItemsDataEvent $event) use ($kitItemLineItem1, $kitItemLineItem2) {
                     $event->addDataForLineItem(
                         $kitItemLineItem1->getEntityIdentifier(),
                         ['sample_key1' => 'sample_value1']
@@ -153,7 +177,7 @@ class DatagridKitLineItemsDataListenerTest extends TestCase
                         ['sample_key1' => 'sample_value1'],
                         ['sample_key2' => 'sample_value2'],
                     ],
-                ]
+                ],
             ],
             $event->getDataForAllLineItems()
         );

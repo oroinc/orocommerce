@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Context;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Implements PaymentContextInterface and provides the ability to save and manage parameters for payment
+ * Container of values that represents Payment Context
  */
 class PaymentContext extends ParameterBag implements PaymentContextInterface
 {

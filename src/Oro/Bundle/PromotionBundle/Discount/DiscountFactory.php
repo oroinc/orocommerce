@@ -34,11 +34,6 @@ class DiscountFactory
         $this->typeToServiceMap[$type] = $serviceName;
     }
 
-    /**
-     * @param DiscountConfiguration $configuration
-     * @param PromotionDataInterface $promotion
-     * @return DiscountInterface
-     */
     public function create(
         DiscountConfiguration $configuration,
         PromotionDataInterface $promotion = null

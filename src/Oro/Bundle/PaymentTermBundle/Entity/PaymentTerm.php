@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PaymentTermBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroPaymentTermBundle_Entity_PaymentTerm;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
@@ -34,6 +35,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  *          }
  *      }
  * )
+ * @mixin OroPaymentTermBundle_Entity_PaymentTerm
  */
 class PaymentTerm implements ExtendEntityInterface
 {

@@ -6,11 +6,11 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataListener;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Stub\CheckoutLineItemStub;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
+use PHPUnit\Framework\TestCase;
 
-class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
+class DatagridLineItemsDataListenerTest extends TestCase
 {
-    /** @var DatagridLineItemsDataListener */
-    private $listener;
+    private DatagridLineItemsDataListener $listener;
 
     protected function setUp(): void
     {
@@ -20,7 +20,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnLineItemDataWhenNoLineItems(): void
     {
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
-        $event->expects($this->never())
+        $event->expects(self::never())
             ->method('addDataForLineItem');
 
         $this->listener->onLineItemData($event);
@@ -29,10 +29,10 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnLineItemDataWhenNotLineItem(): void
     {
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getLineItems')
             ->willReturn([new \stdClass()]);
-        $event->expects($this->never())
+        $event->expects(self::never())
             ->method('addDataForLineItem');
 
         $this->expectException(\LogicException::class);
@@ -47,10 +47,10 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnLineItemData(CheckoutLineItem $lineItem, array $expectedArgs): void
     {
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('getLineItems')
             ->willReturn([$lineItem]);
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('addDataForLineItem')
             ->with(...$expectedArgs);
 
@@ -65,11 +65,13 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'lineItem' => (new CheckoutLineItemStub())->setId($lineItemId)->setComment($comment),
-                'expectedArgs' => [$lineItemId, ['notes' => $comment, 'name' => null]],
+                'expectedArgs' => [$lineItemId, ['notes' => $comment, 'name' => null, 'sku' => null]],
             ],
             [
-                'lineItem' => (new CheckoutLineItemStub())->setId($lineItemId)->setFreeFormProduct('Product 123'),
-                'expectedArgs' => [$lineItemId, ['notes' => '', 'name' => 'Product 123']],
+                'lineItem' => (new CheckoutLineItemStub())->setId($lineItemId)
+                    ->setFreeFormProduct('Product 123')
+                    ->setProductSku('sample-sku'),
+                'expectedArgs' => [$lineItemId, ['notes' => '', 'name' => 'Product 123', 'sku' => 'sample-sku']],
             ],
         ];
     }

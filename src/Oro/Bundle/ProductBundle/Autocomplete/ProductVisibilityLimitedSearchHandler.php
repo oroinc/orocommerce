@@ -22,12 +22,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
 {
+    protected array $notAllowedProductTypes = [];
     protected RequestStack $requestStack;
     protected ProductManager $productManager;
     protected FrontendHelper $frontendHelper;
     protected ProductSearchRepository $searchRepository;
     protected LocalizationHelper $localizationHelper;
-    protected bool $allowConfigurableProducts = false;
 
     public function __construct(
         string $entityName,
@@ -77,13 +77,13 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     }
 
     /**
-     * Enables configurable products selection.
-     * In most forms configurable products require additional option selection which is not implemented yet, thus they
-     * are disabled by default, but can be enabled in forms where no additional functionality for selection is needed.
+     * In most forms configurable/kit products require additional option selection which is not implemented yet,
+     * thus they are disabled, but can be enabled in forms where no additional functionality for selection
+     * is needed.
      */
-    public function enableConfigurableProducts(): void
+    public function setNotAllowedProductTypes(array $notAllowedProductTypes): void
     {
-        $this->allowConfigurableProducts = true;
+        $this->notAllowedProductTypes = $notAllowedProductTypes;
     }
 
     /**
@@ -124,9 +124,9 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         $queryBuilder = $this->getProductRepository()->getSearchQueryBuilder($search, $firstResult, $maxResults);
         $this->productManager->restrictQueryBuilder($queryBuilder, $params);
 
-        if (!$this->allowConfigurableProducts) {
-            $queryBuilder->andWhere($queryBuilder->expr()->neq('p.type', ':configurable_type'))
-                ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
+        if ($this->notAllowedProductTypes) {
+            $queryBuilder->andWhere($queryBuilder->expr()->notIn('p.type', ':notAllowedProductTypes'))
+                ->setParameter('notAllowedProductTypes', $this->notAllowedProductTypes);
         }
 
         return $queryBuilder;
@@ -142,9 +142,9 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
             $searchQuery = $this->searchRepository->getSearchQueryBySkuOrName($search, $firstResult, $maxResults);
         }
 
-        if (!$this->allowConfigurableProducts) {
+        if ($this->notAllowedProductTypes) {
             $searchQuery->addWhere(
-                Criteria::expr()->neq('type', Product::TYPE_CONFIGURABLE)
+                Criteria::expr()->notIn('type', $this->notAllowedProductTypes)
             );
         }
 

@@ -5,6 +5,7 @@ services:
             - '@request_stack'
             - '@doctrine'
             - '@translator'
+            - '@oro_security.form.field_acl_helper'
 
     oro_inventory.listener.update_entity_config_relations:
         class: Oro\Bundle\InventoryBundle\CacheWarmer\UpdateEntityConfigRelationsWarmer
@@ -181,5 +182,36 @@ services:
     Oro\Bundle\InventoryBundle\Validator\Constraints\QuantityToOrderValidator:
         arguments:
             - '@oro_inventory.validator.quantity_to_order_validator'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_inventory.validator.constraints.has_enough_inventory_level:
+        class: Oro\Bundle\InventoryBundle\Validator\Constraints\HasEnoughInventoryLevelValidator
+        arguments:
+            - '@doctrine'
+            - '@oro_inventory.manager.inventory_quantity_manager'
+            - '@oro_product.formatter.product_unit_label'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_inventory.validator.constraints.has_enough_inventory_level.checkout_aware:
+        class: Oro\Bundle\CheckoutBundle\Validator\Constraints\CheckoutAwareValidatorDecorator
+        decorates: oro_inventory.validator.constraints.has_enough_inventory_level
+        decoration_priority: -64
+        arguments:
+            - '@.inner'
+            - '@oro_checkout.helper.checkout_workflow_helper'
+
+    oro_inventory.validator.constraints.is_low_inventory_level:
+        class: Oro\Bundle\InventoryBundle\Validator\Constraints\IsLowInventoryLevelValidator
+        arguments:
+            - '@oro_inventory.validator.low_inventory_checkout_line_item_validator'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_inventory.validator.constraints.is_upcoming:
+        class: Oro\Bundle\InventoryBundle\Validator\Constraints\IsUpcomingValidator
+        arguments:
+            - '@oro_inventory.validator.upcoming_label_checkout_line_item_validator'
         tags:
             - { name: validator.constraint_validator }

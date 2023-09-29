@@ -3,11 +3,13 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Routing;
 
 use Oro\Bundle\MaintenanceBundle\Maintenance\MaintenanceModeState;
+use Oro\Bundle\MaintenanceBundle\Maintenance\MaintenanceRestrictionsChecker;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -38,18 +40,22 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
     /** @var SlugUrlMatcher */
     private $matcher;
 
+    private MaintenanceRestrictionsChecker|MockObject $maintenanceRestrictionsChecker;
+
     protected function setUp(): void
     {
         $this->router = $this->createMock(RouterInterface::class);
         $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
         $this->slugEntityFinder = $this->createMock(SlugEntityFinder::class);
         $this->maintenanceModeState = $this->createMock(MaintenanceModeState::class);
+        $this->maintenanceRestrictionsChecker = $this->createMock(MaintenanceRestrictionsChecker::class);
 
         $this->matcher = new SlugUrlMatcher(
             $this->router,
             $this->matchedUrlDecisionMaker,
             $this->slugEntityFinder,
-            $this->maintenanceModeState
+            $this->maintenanceModeState,
+            $this->maintenanceRestrictionsChecker
         );
     }
 

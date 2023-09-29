@@ -15,41 +15,26 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Storage\CombinedProductPriceORMStorage;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
 {
-    const FEATURE = 'test_feature';
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
-    use EntityTrait;
+    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $shardManager;
 
-    /**
-     * @var ShardManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $shardManager;
+    /** @var CombinedPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceListTreeHandler;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var CombinedProductPriceORMStorage */
+    private $storage;
 
-    /**
-     * @var CombinedPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $priceListTreeHandler;
-
-    /**
-     * @var CombinedProductPriceORMStorage
-     */
-    protected $storage;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
-        $this->shardManager = $this->createMock(ShardManager::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->shardManager = $this->createMock(ShardManager::class);
         $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
 
         $this->storage = new CombinedProductPriceORMStorage(
@@ -59,12 +44,53 @@ class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    private function getCustomer(int $id): Customer
+    {
+        $customer = new Customer();
+        ReflectionUtil::setId($customer, $id);
+
+        return $customer;
+    }
+
+    private function getWebsite(int $id): Website
+    {
+        $website = new Website();
+        ReflectionUtil::setId($website, $id);
+
+        return $website;
+    }
+
+    private function getCombinedPriceList(int $id): CombinedPriceList
+    {
+        $priceList = new CombinedPriceList();
+        ReflectionUtil::setId($priceList, $id);
+
+        return $priceList;
+    }
+
+    private function getProduct(int $id): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+
+        return $product;
+    }
+
+    private function getScopeCriteria(Website $website, Customer $customer): ProductPriceScopeCriteriaInterface
+    {
+        $scopeCriteria = new ProductPriceScopeCriteria();
+        $scopeCriteria->setWebsite($website);
+        $scopeCriteria->setCustomer($customer);
+
+        return $scopeCriteria;
+    }
+
     public function testGetPrices()
     {
-        $customer = $this->getEntity(Customer::class, ['id' => 1]);
-        $website = $this->getEntity(Website::class, ['id' => 2]);
-        $priceList = $this->getEntity(CombinedPriceList::class, ['id' => 3]);
-        $product = $this->getEntity(Product::class, ['id' => 4]);
+        $customer = $this->getCustomer(1);
+        $website = $this->getWebsite(2);
+        $priceList = $this->getCombinedPriceList(3);
+        $product = $this->getProduct(4);
         $scopeCriteria = $this->getScopeCriteria($website, $customer);
 
         $repository = $this->createMock(CombinedProductPriceRepository::class);
@@ -94,9 +120,9 @@ class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetPricesEmptyPriceList()
     {
-        $customer = $this->getEntity(Customer::class, ['id' => 1]);
-        $website = $this->getEntity(Website::class, ['id' => 2]);
-        $product = $this->getEntity(Product::class, ['id' => 4]);
+        $customer = $this->getCustomer(1);
+        $website = $this->getWebsite(2);
+        $product = $this->getProduct(4);
         $scopeCriteria = $this->getScopeCriteria($website, $customer);
 
         $this->registry->expects($this->never())
@@ -112,9 +138,10 @@ class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetSupportedCurrencies()
     {
-        $customer = $this->getEntity(Customer::class, ['id' => 1]);
-        $website = $this->getEntity(Website::class, ['id' => 2]);
-        $priceList = $this->getEntity(CombinedPriceList::class, ['id' => 3, 'currencies' => ['USD']]);
+        $customer = $this->getCustomer(1);
+        $website = $this->getWebsite(2);
+        $priceList = $this->getCombinedPriceList(3);
+        $priceList->setCurrencies(['USD']);
         $scopeCriteria = $this->getScopeCriteria($website, $customer);
 
         $this->priceListTreeHandler->expects($this->once())
@@ -127,8 +154,8 @@ class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
 
     public function testGetSupportedCurrenciesEmptyPriceList()
     {
-        $customer = $this->getEntity(Customer::class, ['id' => 1]);
-        $website = $this->getEntity(Website::class, ['id' => 2]);
+        $customer = $this->getCustomer(1);
+        $website = $this->getWebsite(2);
         $scopeCriteria = $this->getScopeCriteria($website, $customer);
 
         $this->priceListTreeHandler->expects($this->once())
@@ -137,14 +164,5 @@ class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
             ->willReturn(null);
 
         $this->assertSame([], $this->storage->getSupportedCurrencies($scopeCriteria));
-    }
-
-    protected function getScopeCriteria(Website $website, Customer $customer): ProductPriceScopeCriteriaInterface
-    {
-        $scopeCriteria = new ProductPriceScopeCriteria();
-        $scopeCriteria->setWebsite($website);
-        $scopeCriteria->setCustomer($customer);
-
-        return $scopeCriteria;
     }
 }

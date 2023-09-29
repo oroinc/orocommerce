@@ -4,6 +4,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
@@ -15,6 +17,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
+
 
     /**
      * @var CPLIdPlaceholder
@@ -36,13 +39,23 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
      */
     private $featureChecker;
 
+    /**
+     * @var CustomerUserRelationsProvider|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $customerUserRelationsProvider;
+
     protected function setUp(): void
     {
         $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->customerUserRelationsProvider = $this->createMock(CustomerUserRelationsProvider::class);
 
-        $this->placeholder = new CPLIdPlaceholder($this->priceListTreeHandler, $this->tokenStorage);
+        $this->placeholder = new CPLIdPlaceholder(
+            $this->priceListTreeHandler,
+            $this->tokenStorage,
+            $this->customerUserRelationsProvider
+        );
         $this->placeholder->setFeatureChecker($this->featureChecker);
         $this->placeholder->addFeature('oro_price_lists_combined');
     }
@@ -110,6 +123,31 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
             ->with(null)
+            ->willReturn($this->getEntity(CombinedPriceList::class, ['id' => 1]));
+
+        $this->assertSame("test_1", $this->placeholder->replaceDefault("test_CPL_ID"));
+    }
+
+    public function testReplaceDefaultAnonymousCustomerUser()
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('oro_price_lists_combined')
+            ->willReturn(true);
+
+        $token = $this->createMock(AnonymousCustomerUserToken::class);
+        $token->method('getUser')->willReturn('Anonymous Customer User');
+        $this->tokenStorage->method('getToken')->willReturn($token);
+
+        $customer = new Customer();
+
+        $this->customerUserRelationsProvider->expects($this->once())
+            ->method('getCustomerIncludingEmpty')
+            ->willReturn($customer);
+
+        $this->priceListTreeHandler->expects($this->once())
+            ->method('getPriceList')
+            ->with($customer)
             ->willReturn($this->getEntity(CombinedPriceList::class, ['id' => 1]));
 
         $this->assertSame("test_1", $this->placeholder->replaceDefault("test_CPL_ID"));

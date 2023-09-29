@@ -11,7 +11,7 @@ $shopping-lists-content-height: auto !default;
 $shopping-lists-content-min-height: 30px !default;
 $shopping-lists-content-color: #5c7a58 !default;
 $shopping-lists-content-background: #d9e8d0 !default;
-$shopping-lists-content-border-radius: 2px !default;
+$shopping-lists-content-border-radius: $base-ui-element-border-radius !default;
 $shopping-lists-content-color-opacity-hover: .8 !default;
 
 $shopping-lists-content-wrapper-offset: 0 34px 0 8px !default;

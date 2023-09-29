@@ -11,27 +11,49 @@ use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
  */
 class ProductQuantityToOrderFormViewListener extends AbstractFallbackFieldsFormView
 {
-    public function onProductView(BeforeListRenderEvent $event)
+    public function onProductView(BeforeListRenderEvent $event): void
     {
         $product = $this->getEntityFromRequest(Product::class);
         if (!$product) {
             return;
         }
 
-        $this->addBlockToEntityView(
-            $event,
-            '@OroInventory/Product/viewQuantityToOrder.html.twig',
-            $product,
-            'oro.product.sections.inventory'
-        );
+        if ($this->fieldAclHelper->isFieldViewGranted($product, 'minimumQuantityToOrder')) {
+            $this->addBlockToEntityView(
+                $event,
+                '@OroInventory/Product/viewMinimumQuantityToOrder.html.twig',
+                $product,
+                'oro.product.sections.inventory'
+            );
+        }
+
+        if ($this->fieldAclHelper->isFieldViewGranted($product, 'maximumQuantityToOrder')) {
+            $this->addBlockToEntityView(
+                $event,
+                '@OroInventory/Product/viewMaximumQuantityToOrder.html.twig',
+                $product,
+                'oro.product.sections.inventory'
+            );
+        }
     }
 
-    public function onProductEdit(BeforeListRenderEvent $event)
+    public function onProductEdit(BeforeListRenderEvent $event): void
     {
-        $this->addBlockToEntityEdit(
-            $event,
-            '@OroInventory/Product/editQuantityToOrder.html.twig',
-            'oro.product.sections.inventory'
-        );
+        $product = $event->getEntity();
+        if ($this->fieldAclHelper->isFieldAvailable($product, 'minimumQuantityToOrder')) {
+            $this->addBlockToEntityEdit(
+                $event,
+                '@OroInventory/Product/editMinimumQuantityToOrder.html.twig',
+                'oro.product.sections.inventory'
+            );
+        }
+
+        if ($this->fieldAclHelper->isFieldAvailable($product, 'maximumQuantityToOrder')) {
+            $this->addBlockToEntityEdit(
+                $event,
+                '@OroInventory/Product/editMaximumQuantityToOrder.html.twig',
+                'oro.product.sections.inventory'
+            );
+        }
     }
 }

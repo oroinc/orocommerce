@@ -41,7 +41,7 @@ Feature: Previously purchased products visibility
     And I operate as the Customer
     And follow "Account"
     And click "Previously Purchased"
-    Then I should not see "Product 1"
+    Then I should not see "Product 1" and continue checking the condition is met for maximum 10 seconds
 
   Scenario: Product visibility: Visibility to All: Category
     Given I proceed as the Admin
@@ -59,7 +59,7 @@ Feature: Previously purchased products visibility
     And I proceed as the Customer
     And follow "Account"
     And click "Previously Purchased"
-    Then I should not see "Product 1"
+    Then I should not see "Product 1" and continue checking the condition is met for maximum 10 seconds
 
   Scenario: Product visibility: Visibility to All: Config
     Given I proceed as the Admin
@@ -79,9 +79,8 @@ Feature: Previously purchased products visibility
     And I save setting
     And I proceed as the Customer
     And follow "Account"
-    And I wait for 3 seconds
     And click "Previously Purchased"
-    Then I should not see "Product 1"
+    Then I should not see "Product 1" and continue checking the condition is met for maximum 10 seconds
 
   Scenario: Product visibility: Visibility to Customer Groups: Hidden
     Given I proceed as the Admin
@@ -97,7 +96,7 @@ Feature: Previously purchased products visibility
     And I proceed as the Customer
     And follow "Account"
     And click "Previously Purchased"
-    Then I should not see "Product 1"
+    Then I should not see "Product 1" and continue checking the condition is met for maximum 10 seconds
 
   Scenario: Product visibility: Visibility to Customers: Hidden
     Given I proceed as the Admin
@@ -112,4 +111,4 @@ Feature: Previously purchased products visibility
     And I proceed as the Customer
     And follow "Account"
     And click "Previously Purchased"
-    Then I should not see "Product 1"
+    Then I should not see "Product 1" and continue checking the condition is met for maximum 10 seconds

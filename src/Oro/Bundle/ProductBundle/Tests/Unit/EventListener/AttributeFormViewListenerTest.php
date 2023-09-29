@@ -13,6 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Tests\Unit\Stub\AttributeGroupStub;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\AttributeFormViewListener;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestActivityTarget;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
@@ -34,6 +35,9 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var AttributeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeManager;
 
+    /** @var FieldAclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $fieldAclHelper;
+
     /** @var AttributeFormViewListener */
     private $listener;
 
@@ -41,7 +45,15 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->environment = $this->createMock(Environment::class);
         $this->attributeManager = $this->createMock(AttributeManager::class);
-
+        $this->fieldAclHelper = $this->createMock(FieldAclHelper::class);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldAvailable')
+            ->willReturn(true);
+        $this->fieldAclHelper
+            ->expects($this->any())
+            ->method('isFieldViewGranted')
+            ->willReturn(true);
         $entityConfigProvider = $this->createMock(ConfigProvider::class);
         $entityConfigProvider->expects($this->any())
             ->method('getConfig')
@@ -83,6 +95,7 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->listener = new AttributeFormViewListener(
             $this->attributeManager,
+            $this->fieldAclHelper,
             $entityConfigProvider,
             $translator
         );

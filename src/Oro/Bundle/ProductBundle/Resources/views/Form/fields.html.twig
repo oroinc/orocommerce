@@ -156,9 +156,11 @@
 {% block oro_product_unit_precision_collection_widget %}
     {% set precisions = {} %}
 
-    {% for choice in form.vars.prototype.unit.vars.choices %}
-        {% set precisions = precisions|merge({ (choice.data.code) : choice.data.defaultPrecision}) %}
-    {% endfor %}
+    {% if form.vars.prototype is defined %}
+        {% for choice in form.vars.prototype.unit.vars.choices %}
+            {% set precisions = precisions|merge({ (choice.data.code) : choice.data.defaultPrecision}) %}
+        {% endfor %}
+    {% endif %}
 
     <div data-page-component-module="oroproduct/js/app/components/product-unit-selection-limitations-component"
          data-page-component-options="{{ {'precisions': precisions}|json_encode }}" class="controls-inner unit-precisions-collection">
@@ -687,11 +689,12 @@
     {% set collapseClass = 'collapse-' ~ id %}
     {% set collapseFormId = 'collapse-form-' ~ id %}
     {% set collapseViewId = 'collapse-view-' ~ id %}
-    {% set isShow = value.id is null or form.vars.name == '0' %}
+    {% set isShow = value.id is null or form.vars.name == '0' or not form.vars.valid %}
     {% set viewOptions = {
         fieldsNamespace: form.vars.full_name,
         kitItemId: value.id,
-        fields: fieldsMap
+        fields: fieldsMap,
+        submitted: form.vars.submitted
     } %}
 
     {% if form.children.sortOrder is defined %}
@@ -706,7 +709,7 @@
         {{ isShow ? 'show' : '' }}" {{ UI.renderPageComponentAttributes({
         view: 'oroproduct/js/app/views/product-kit/product-kit-view',
         options: viewOptions
-    }) }}  data-role="content-variant-item">
+    }) }} data-role="content-variant-item">
         <div class="product-kit-item__title content-variant-item-title" data-name="sortable-handle">
             <button type="button" class="btn-toggle-variant btn btn-icon btn-square-light {{ isShow ? '' : 'collapsed' }}"
                 data-toggle="collapse"

@@ -26,8 +26,8 @@ class QuantityRoundingService extends AbstractRoundingService
 
     /**
      * @param float|int $quantity
-     * @param Product $product
-     * @param ProductUnit $unit
+     * @param Product|null $product
+     * @param ProductUnit|null $unit
      * @return float|int
      * @throws InvalidRoundingTypeException
      */

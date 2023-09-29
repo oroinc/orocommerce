@@ -153,13 +153,11 @@ services:
 
     oro_promotion.discount.line_items_to_discount_line_items_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter
-        public: false
         arguments:
-            - '@oro_pricing.provider.frontend_product_prices'
+            - '@oro_pricing.provider.product_line_item_price'
 
     oro_promotion.discount.order_line_items_to_discount_line_items_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter
-        public: false
 
     oro_promotion.promotion.context_data_converter_registry:
         class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry
@@ -329,6 +327,7 @@ services:
         class: Oro\Bundle\PromotionBundle\Layout\DataProvider\AppliedCouponsDataProvider
         arguments:
             - '@doctrine'
+            - '@oro_promotion.promotion_provider'
         tags:
             - { name: layout.data_provider, alias: oro_promotion_applied_coupons }
 
@@ -810,6 +809,7 @@ services:
             - '@oro_promotion.promotion_executor'
             - '@oro_locale.formatter.number'
             - '@oro_checkout.provider.multi_shipping.split_entities_provider'
+            - '@oro_currency.rounding.price_rounding_service'
         tags:
             # Priority should be less than "oro_pricing.event_listener.datagrid_line_items_data.pricing" and "oro_pricing.event_listener.datagrid_kit_line_items_data.pricing" have.
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData, priority: 80 }

@@ -107,8 +107,8 @@ Feature: Product redirect slug
     And I open "Products" import tab
     # Do not change or add other fields as this will break the test.
     And fill import file with data:
-      | sku  | primaryUnitPrecision.unit.code | primaryUnitPrecision.precision | slugPrototypes.default.fallback | slugPrototypes.default.value | slugPrototypes.English (United States).fallback | slugPrototypes.English (United States).value |
-      | SKU1 | each                           | 1                              |                                 | product-1                    |                                                 | acme-rp-19                                   |
+      | SKU  | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | URL Slug.default.fallback | URL Slug.default.value | URL Slug.English (United States).fallback | URL Slug.English (United States).value |
+      | SKU1 | each                       | 1                          |                           | product-1              |                                           | acme-rp-19                             |
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 0, replaced: 1" text
 

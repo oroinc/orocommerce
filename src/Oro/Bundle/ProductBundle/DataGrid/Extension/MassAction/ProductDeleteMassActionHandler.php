@@ -12,12 +12,11 @@ use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 class ProductDeleteMassActionHandler extends DeleteMassActionHandler
 {
     /**
-     * {@inheritdoc}
-     *
-     * @param Product $entity
+     * {@inheritDoc}
      */
-    protected function isDeleteAllowed($entity)
+    protected function isDeleteAllowed(object $entity): bool
     {
+        /** @var Product $entity */
         if ($this->authorizationChecker->isGranted('DELETE', $entity)) {
             return !$this->registry->getRepository(ProductKitItem::class)->findProductKitsSkuByProduct($entity, 1);
         }

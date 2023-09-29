@@ -1,0 +1,96 @@
+{% block _product_kit_line_item_update_dropdown_widget %}
+    {% import '@OroShoppingList/ShoppingList/Frontend/buttons.html.twig' as buttons %}
+    {% set buttonOptions = {
+        dataUrl: 'oro_shopping_list_frontend_product_kit_line_item_update',
+        dataAttributes: {},
+        aCss: 'btn--info ',
+        iCss: 'fa fa-shopping-cart fa--fw fa--as-line',
+        labelInIcon: false,
+        form: form.vars.id
+    } %}
+
+    {% set newOptions = buttonOptions|merge({
+        ariaLabel: 'oro.shoppinglist.actions.add_to_new_shopping_list.aria_label'|trans,
+        iCss: 'fa fa-plus fa--fw fa--as-line',
+        labelInIcon: false
+    }) %}
+
+    {% set removeOptions = buttonOptions|merge({
+        dataUrl: 'oro_api_shopping_list_frontend_delete_line_item',
+        actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list'|trans,
+        iCss: 'fa fa-remove fa--fw fa--as-line',
+        labelInIcon: false
+    }) %}
+
+    {% set buttonsOptions = {
+        new: newOptions,
+        current: buttonOptions,
+        existing: buttonOptions,
+        remove: removeOptions,
+        shoppingLists: shoppingLists,
+        shoppingListCreateEnabled: shoppingListCreateEnabled,
+        shoppingListAddToEnabled: shoppingListAddToEnabled,
+        shoppingListRemoveEnabled: shoppingListRemoveEnabled,
+        shoppingListUpdateEnabled: shoppingListUpdateEnabled,
+        componentModule: params.buttonOptions.page_component_module|default('oroshoppinglist/js/app/views/product-kit-add-to-shopping-list-view'),
+        componentOptions: {
+            modelAttr: {
+                shopping_lists: productShoppingLists
+            }
+        }|merge(params.buttonOptions.page_component_options|default({})),
+    } %}
+
+    {% import '@OroUI/macros.html.twig' as UI %}
+    <div class="product-kit-add-to-shopping-list" data-role="shopping-list-root">
+        {{ UI.pinnedDropdownButton({
+            'html': buttons.getQuickSearchHtml(quickSearchOptions|default({})) ~ buttons.getButtonsHtml(buttonsOptions),
+            'formId': form.vars.id,
+            'rootClassName': 'pinned-dropdown',
+            'mobileEnabled': true,
+            'dataAttributes': {
+                'layout': 'deferred-initialize'
+            },
+            'options': {
+                'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
+                'widgetName': 'productAddToDropdownButtonProcessor',
+                'truncateLength': 25,
+                'decoreClass': 'btn--info',
+                'groupContainer': '<div class="btn-group btn-group--flex"></div>'
+            }
+        }) }}
+    </div>
+{% endblock %}
+
+{% block _product_kit_line_item_widget_product_total_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-totals-main '
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block __product_kit_line_item_form__header_product_name_text_widget %}
+    {{ 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget_update.title'|trans({
+        '%product%': product.names|localized_value|e,
+        '%shoppinglist%': shoppingList.label
+    }) }}
+{% endblock %}
+
+{% block __product_kit_line_item_form__form_start_widget %}
+    {% set form_route_name = 'oro_shopping_list_frontend_product_kit_line_item_update' %}
+    {% set form_route_parameters = form_route_parameters|merge({
+        id: lineItem.id
+    }) %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': class_prefix ~ '__form fields-row',
+        'novalidate': 'novalidate',
+        'data-page-component-view': 'oroshoppinglist/js/app/views/product-kit-form-view',
+        'data-page-component-options': {
+            subtotalUrl: path('oro_shopping_list_frontend_product_kit_line_item_update', {id: lineItem.id, getSubtotal: true})
+        }|json_encode,
+        'data-extra-form-selector': '#' ~ extraFormId
+    }) %}
+    {{ parent_block_widget(block) }}
+    {{ form_widget(form._token) }}
+{% endblock %}

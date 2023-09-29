@@ -132,6 +132,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => false,
                             'delete' => false,
                         ],
                     ]
@@ -146,6 +147,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => false,
                             'delete' => false,
                         ],
                     ]
@@ -163,6 +165,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'add_notes' => false,
                                     'edit_notes' => false,
                                     'update_configurable' => false,
+                                    'update_product_kit_line_item' => false,
                                     'delete' => false,
                                 ],
                             ],
@@ -171,6 +174,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => false,
                             'delete' => false,
                         ],
                     ]
@@ -190,6 +194,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'add_notes' => false,
                                     'edit_notes' => false,
                                     'update_configurable' => false,
+                                    'update_product_kit_line_item' => false,
                                     'delete' => false,
                                 ],
                             ],
@@ -198,6 +203,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => false,
                             'delete' => false,
                         ],
                     ]
@@ -213,6 +219,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => false,
                             'delete' => false,
                         ],
                     ]
@@ -229,6 +236,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => false,
                             'delete' => false,
                         ],
                     ]
@@ -246,6 +254,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'add_notes' => false,
                                     'edit_notes' => false,
                                     'update_configurable' => false,
+                                    'update_product_kit_line_item' => false,
                                     'delete' => false,
                                 ],
                             ],
@@ -254,6 +263,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => false,
                             'delete' => false,
                         ],
                     ]
@@ -273,6 +283,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'add_notes' => false,
                                     'edit_notes' => false,
                                     'update_configurable' => false,
+                                    'update_product_kit_line_item' => false,
                                     'delete' => false,
                                 ],
                             ],
@@ -281,6 +292,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => false,
                             'delete' => false,
                         ],
                     ]
@@ -353,6 +365,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => false,
                             'delete' => true,
                         ],
                     ]
@@ -367,6 +380,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => true,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => false,
                             'delete' => true,
                         ],
                     ]
@@ -384,6 +398,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'add_notes' => false,
                                     'edit_notes' => false,
                                     'update_configurable' => false,
+                                    'update_product_kit_line_item' => false,
                                     'delete' => true,
                                 ],
                             ],
@@ -392,6 +407,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => false,
                             'delete' => true,
                         ],
                     ]
@@ -411,6 +427,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'add_notes' => true,
                                     'edit_notes' => false,
                                     'update_configurable' => false,
+                                    'update_product_kit_line_item' => false,
                                     'delete' => true,
                                 ],
                             ],
@@ -419,6 +436,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => false,
                             'delete' => true,
                         ],
                     ]
@@ -434,6 +452,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => false,
                             'delete' => true,
                         ],
                     ]
@@ -450,6 +469,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => true,
+                            'update_product_kit_line_item' => false,
                             'delete' => true,
                         ],
                     ]
@@ -467,6 +487,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'add_notes' => false,
                                     'edit_notes' => false,
                                     'update_configurable' => false,
+                                    'update_product_kit_line_item' => false,
                                     'delete' => false,
                                 ],
                             ],
@@ -475,6 +496,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => true,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => true,
                             'delete' => true,
                         ],
                     ]
@@ -494,6 +516,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'add_notes' => false,
                                     'edit_notes' => false,
                                     'update_configurable' => false,
+                                    'update_product_kit_line_item' => false,
                                     'delete' => false,
                                 ],
                             ],
@@ -502,6 +525,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'add_notes' => true,
                             'edit_notes' => false,
                             'update_configurable' => false,
+                            'update_product_kit_line_item' => true,
                             'delete' => true,
                         ],
                     ]

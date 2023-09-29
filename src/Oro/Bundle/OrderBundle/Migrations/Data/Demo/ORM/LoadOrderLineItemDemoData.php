@@ -185,7 +185,8 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
         BasePriceList $priceList,
         Order $order
     ) {
-        $productPriceCriteria = $this->productPriceCriteriaFactory->build($product, $productUnit, $quantity, $currency);
+        $productPriceCriteria = $this->productPriceCriteriaFactory
+            ->create($product, $productUnit, $quantity, $currency);
         $identifier = $productPriceCriteria->getIdentifier();
 
         $priceListId = $priceList->getId();

@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\AvailableLineItemShippingMethodsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\LineItemShippingPriceProviderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
@@ -97,7 +98,13 @@ class CheckoutLineItemsShippingManager
 
     public function getLineItemIdentifier(ProductLineItemInterface $lineItem): string
     {
-        return implode(':', [$lineItem->getProductSku(), $lineItem->getProductUnitCode()]);
+        $key = implode(':', [$lineItem->getProductSku(), $lineItem->getProductUnitCode()]);
+
+        if ($lineItem instanceof ProductKitItemLineItemsAwareInterface) {
+            $key .= ':' . $lineItem->getChecksum();
+        }
+
+        return $key;
     }
 
     private function getDefaultLineItemShippingMethod(CheckoutLineItem $lineItem): array

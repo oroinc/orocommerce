@@ -22,9 +22,10 @@ class ProductCustomFieldsCacheWarmer extends CacheWarmer
     /**
      * {@inheritdoc}
      */
-    public function warmUp($cacheDir): void
+    public function warmUp(string $cacheDir): array
     {
         $this->customFieldProvider->getEntityCustomFields(Product::class);
+        return [];
     }
 
     /**

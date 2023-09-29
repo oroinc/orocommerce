@@ -85,21 +85,14 @@
     }
 }
 
-.responsive-shopping-list-grid {
+.grid-side-effects {
     .grid-row {
         background-color: $shopping-list-grid-effect-background-color;
         transition: $shopping-list-grid-effect-transition;
 
         > .grid-cell:first-child {
             position: relative;
-
-            &::before {
-                content: '';
-                position: absolute;
-                left: 0;
-                top: 0;
-                bottom: 0;
-            }
+            transition: box-shadow 230ms;
         }
 
         &.loading {
@@ -123,41 +116,21 @@
         &.error {
             animation: red-pulse 1s cubic-bezier(.92, 1.07, .93, .42);
             background-color: $shopping-list-grid-effect-error;
-
-            > .grid-cell:first-child {
-                &::before {
-                    opacity: 0;
-                    animation: line-bounce 400ms 1s;
-                }
-            }
         }
 
-        &.highlight {
-            > .grid-cell:first-child {
-                &::before {
-                    background-color: $shopping-list-grid-effect-warning-dark;
-                }
-            }
-        }
-
-        &.highlight-error {
-            > .grid-cell:first-child {
-                &::before {
-                    background-color: $shopping-list-grid-effect-error-dark;
-                }
-            }
+        &.highlight,
+        &.parent-row-has-highlight {
+            box-shadow: 2px 0 0 0 $shopping-list-grid-effect-warning-dark inset;
         }
 
         &.highlight-error,
-        &.highlight {
+        &.parent-row-has-highlight-error {
+            box-shadow: 2px 0 0 0 $shopping-list-grid-effect-error-dark inset;
+        }
+
+        &.has-message-row {
             position: relative;
             z-index: z('base');
-
-            > .grid-cell:first-child {
-                &::before {
-                    width: 2px;
-                }
-            }
 
             &:not(.notification-row) {
                 border-bottom: none;
@@ -168,8 +141,6 @@
             }
 
             + .notification-row {
-                z-index: z('hidden');
-
                 .notification-container {
                     z-index: z('base') + 1;
                     position: relative;
@@ -195,30 +166,6 @@
                     &::before {
                         content: none;
                     }
-                }
-            }
-
-            &.highlight,
-            &.highlight-error {
-                &::before {
-                    content: '';
-                    width: 2px;
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    bottom: 0;
-                }
-            }
-
-            &.highlight {
-                &::before {
-                    background-color: $shopping-list-grid-effect-warning-dark;
-                }
-            }
-
-            &.highlight-error {
-                &::before {
-                    background-color: $shopping-list-grid-effect-error-dark;
                 }
             }
 

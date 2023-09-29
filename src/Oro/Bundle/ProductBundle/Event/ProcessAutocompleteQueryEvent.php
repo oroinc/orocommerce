@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Oro\Bundle\ProductBundle\Event;
 
@@ -25,9 +26,6 @@ class ProcessAutocompleteQueryEvent extends Event
         $this->query = $query;
     }
 
-    /**
-     * @return string
-     */
     public function getQueryString(): string
     {
         return $this->queryString;

@@ -12,10 +12,10 @@ use Oro\Component\Testing\ReflectionUtil;
 
 class SubOrdersPromotionsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $filtrationService;
 
-    /** @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $contextDataConverter;
 
     /** @var SubOrdersPromotionsFiltrationService  */

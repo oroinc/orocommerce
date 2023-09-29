@@ -62,7 +62,7 @@ class ContentNodeSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }
@@ -70,7 +70,7 @@ class ContentNodeSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return EntityTreeSelectType::class;
     }

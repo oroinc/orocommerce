@@ -36,7 +36,7 @@ class PriceRuleRelationExpressions extends Constraint
     /**
      * @return string
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return self::ALIAS;
     }
@@ -44,7 +44,7 @@ class PriceRuleRelationExpressions extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }

@@ -25,9 +25,7 @@ class ProductImageType extends AbstractType
         $builder->add(
             'image',
             ImageType::class,
-            [
-                'allowDelete' => false,
-            ]
+            ['allowDelete' => $options['allowDelete'], 'allowUpdate' => $options['allowUpdate']]
         );
 
         $builder->add('types', ProductImageTypesType::class, ['image_types' => $options['image_types']]);
@@ -42,7 +40,9 @@ class ProductImageType extends AbstractType
         $resolver->setDefaults([
             'data_class' => 'Oro\Bundle\ProductBundle\Entity\ProductImage',
             'error_bubbling' => false,
-            'allow_extra_fields' => true
+            'allow_extra_fields' => true,
+            'allowDelete' => true,
+            'allowUpdate' => true,
         ]);
 
         $resolver
@@ -69,7 +69,7 @@ class ProductImageType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }

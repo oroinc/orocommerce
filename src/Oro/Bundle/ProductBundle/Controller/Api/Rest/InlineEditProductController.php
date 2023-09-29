@@ -3,11 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Controller\Api\Rest;
 
 use FOS\RestBundle\Controller\AbstractFOSRestController;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
+use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -47,6 +50,7 @@ class InlineEditProductController extends AbstractFOSRestController
                 break;
         }
 
+        $productName = $this->container->get('oro_ui.html_tag_helper')->stripTags($productName);
         $slug = $this->get('oro_entity_config.slug.generator')->slugify($productName);
 
         $product->setDefaultName($productName);
@@ -55,7 +59,7 @@ class InlineEditProductController extends AbstractFOSRestController
 
         $this->getDoctrine()->getManagerForClass(Product::class)->flush();
 
-        return parent::handleView($this->view([], Response::HTTP_OK));
+        return parent::handleView($this->view(['productName' => $productName], Response::HTTP_OK));
     }
 
     /**
@@ -86,5 +90,17 @@ class InlineEditProductController extends AbstractFOSRestController
         $this->getDoctrine()->getManagerForClass(Product::class)->flush();
 
         return parent::handleView($this->view([], Response::HTTP_OK));
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                'oro_ui.html_tag_helper' => HtmlTagHelper::class,
+                'oro_entity_config.slug.generator' => SlugGenerator::class,
+                'oro_config.manager' => ConfigManager::class,
+            ]
+        );
     }
 }

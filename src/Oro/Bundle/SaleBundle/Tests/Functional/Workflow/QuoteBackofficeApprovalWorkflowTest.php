@@ -10,9 +10,9 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
 {
     use RolePermissionExtension;
 
-    const WORKFLOW_NAME = 'b2b_quote_backoffice_approvals';
-    const WORKFLOW_TITLE = 'Backoffice Quote Flow with Approvals';
-    const WORKFLOW_BUTTONS = [
+    protected const WORKFLOW_NAME = 'b2b_quote_backoffice_approvals';
+    protected const WORKFLOW_TITLE = 'Backoffice Quote Flow with Approvals';
+    protected const WORKFLOW_BUTTONS = [
         'Edit',
         'Clone',
         'Delete',
@@ -32,7 +32,7 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
         'Approve and Send to Customer',
         'Approve',
     ];
-    const TRANSITIONS = [
+    protected const TRANSITIONS = [
         'edit_transition',
         'clone_transition',
         'delete_transition',
@@ -98,17 +98,17 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
         $this->assertButtonsAvailable([]);
     }
 
-    protected function assertSubmitForReviewAndReview()
+    protected function assertSubmitForReviewAndReview(): void
     {
         $this->updateRolePermissionForAction(User::ROLE_ADMINISTRATOR, 'oro_quote_review_and_approve', false);
         $this->quote = $this->getReference(LoadQuoteData::QUOTE_PRICE_CHANGED);
 
-        $workflowItem = $this->manager->getWorkflowItem($this->quote, static::WORKFLOW_NAME);
+        $workflowItem = $this->manager->getWorkflowItem($this->quote, self::WORKFLOW_NAME);
 
         if ($workflowItem) {
             $this->manager->resetWorkflowItem($workflowItem);
         } else {
-            $this->manager->startWorkflow(static::WORKFLOW_NAME, $this->quote);
+            $this->manager->startWorkflow(self::WORKFLOW_NAME, $this->quote);
         }
         $this->assertButtonsAvailable(['Edit', 'Clone', 'Delete', 'Submit for Review', 'Send to Customer']);
         $this->transitWithForm('Submit for Review', ['oro_workflow_transition[comment]' => 'test submit comment']);
@@ -124,7 +124,7 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
         );
     }
 
-    protected function activateWorkflow()
+    protected function activateWorkflow(): void
     {
         $this->manager->deactivateWorkflow('b2b_quote_backoffice_default');
         $this->manager->resetWorkflowData('b2b_quote_backoffice_default');

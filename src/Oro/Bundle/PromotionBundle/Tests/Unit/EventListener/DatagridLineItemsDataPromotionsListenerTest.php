@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitEntitiesProviderInterface;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Stub\CheckoutStub;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -23,32 +24,36 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\TestCase
+class DatagridLineItemsDataPromotionsListenerTest extends TestCase
 {
-    /** @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject */
-    private $promotionExecutor;
+    private PromotionExecutor|MockObject $promotionExecutor;
 
-    /** @var SplitEntitiesProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $splitEntitiesProvider;
+    private SplitEntitiesProviderInterface|MockObject $splitEntitiesProvider;
 
-    /** @var DatagridLineItemsDataPromotionsListener */
-    private $listener;
+    private DatagridLineItemsDataPromotionsListener $listener;
 
     protected function setUp(): void
     {
         $this->promotionExecutor = $this->createMock(PromotionExecutor::class);
         $this->splitEntitiesProvider = $this->createMock(SplitEntitiesProviderInterface::class);
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
+        $roundingService
+            ->method('round')
+            ->willReturnCallback(static fn ($value) => round($value, 2));
 
         $numberFormatter = $this->createMock(NumberFormatter::class);
-        $numberFormatter->expects($this->any())
+        $numberFormatter
             ->method('formatCurrency')
             ->willReturnCallback(static fn (float $value, string $currency) => $currency . $value);
 
         $this->listener = new DatagridLineItemsDataPromotionsListener(
             $this->promotionExecutor,
             $numberFormatter,
-            $this->splitEntitiesProvider
+            $this->splitEntitiesProvider,
+            $roundingService
         );
     }
 
@@ -56,7 +61,8 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
         int $id,
         ?string $sku = null,
         ?string $unitCode = null,
-        ?float $quantity = null
+        ?float $quantity = null,
+        ?string $checksum = null
     ): LineItem {
         $lineItem = new LineItem();
         ReflectionUtil::setId($lineItem, $id);
@@ -72,6 +78,9 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
         }
         if (null !== $quantity) {
             $lineItem->setQuantity($quantity);
+        }
+        if (null !== $checksum) {
+            $lineItem->setChecksum($checksum);
         }
 
         return $lineItem;
@@ -225,9 +234,12 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
 
         $discountInformation1 = new DiscountInformation($discount, 30);
         $discountInformation2 = new DiscountInformation($discount, 80.3);
+        $discountInformation21 = new DiscountInformation($discount, 21);
 
         $lineItem1 = $this->getLineItem(42, 'sku1', 'item', 10);
         $lineItem2 = $this->getLineItem(50, 'sku2', 'item', 20);
+        // To ensure that discounts are calculated correctly for same sku-unit-quantity by different checksum.
+        $lineItem21 = $this->getLineItem(55, 'sku2', 'item', 20, 'sku2_checksum');
         $lineItem3 = $this->getLineItem(60, 'sku3', 'item', 30);
 
         $discountLineItem1 = new DiscountLineItem();
@@ -244,14 +256,23 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             ->setProductUnit($lineItem2->getProductUnit())
             ->setQuantity($lineItem2->getQuantity());
 
+        $discountLineItem21 = new DiscountLineItem();
+        $discountLineItem21->addDiscountInformation($discountInformation21)
+            ->setSourceLineItem($lineItem21)
+            ->setProduct($lineItem21->getProduct())
+            ->setProductUnit($lineItem21->getProductUnit())
+            ->setQuantity($lineItem21->getQuantity());
+
         $discountContext = new DiscountContext();
         $discountContext->addLineItem($discountLineItem1);
         $discountContext->addLineItem($discountLineItem2);
+        $discountContext->addLineItem($discountLineItem21);
 
         $shoppingList = new ShoppingListStub();
         $shoppingList->setId(12);
         $shoppingList->addLineItem($lineItem1);
         $shoppingList->addLineItem($lineItem2);
+        $shoppingList->addLineItem($lineItem21);
         $shoppingList->addLineItem($lineItem3);
 
         $this->splitEntitiesProvider->expects($this->once())
@@ -271,7 +292,8 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             [
                 $lineItem1->getEntityIdentifier() => $lineItem1,
                 $lineItem2->getEntityIdentifier() => $lineItem2,
-                $lineItem3->getEntityIdentifier() => $lineItem3
+                $lineItem21->getEntityIdentifier() => $lineItem21,
+                $lineItem3->getEntityIdentifier() => $lineItem3,
             ],
             [],
             $this->createMock(DatagridInterface::class),
@@ -285,6 +307,10 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
         $event->addDataForLineItem(
             $lineItem2->getId(),
             ['currency' => 'USD', 'subtotal' => 'USD1000', 'subtotalValue' => 1000]
+        );
+        $event->addDataForLineItem(
+            $lineItem21->getId(),
+            ['currency' => 'USD', 'subtotal' => 'USD300', 'subtotalValue' => 300]
         );
         $event->addDataForLineItem(
             $lineItem3->getId(),
@@ -315,6 +341,18 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
                 'currency' => 'USD',
             ],
             $event->getDataForLineItem($lineItem2->getId())
+        );
+
+        $this->assertEquals(
+            [
+                'discountValue' => $discountInformation21->getDiscountAmount(),
+                'discount' => 'USD21',
+                'subtotal' => 'USD279',
+                'subtotalValue' => 279.0,
+                'initialSubtotal' => 'USD300',
+                'currency' => 'USD',
+            ],
+            $event->getDataForLineItem($lineItem21->getId())
         );
 
         $this->assertEquals(
@@ -382,14 +420,14 @@ class DatagridLineItemsDataPromotionsListenerTest extends \PHPUnit\Framework\Tes
             ->method('execute')
             ->willReturnMap([
                 [$splitCheckout1, $discountContext],
-                [$splitCheckout2, $discountContext2]
+                [$splitCheckout2, $discountContext2],
             ]);
 
         $event = new DatagridLineItemsDataEvent(
             [
                 $lineItem1->getEntityIdentifier() => $lineItem1,
                 $lineItem2->getEntityIdentifier() => $lineItem2,
-                $lineItem3->getEntityIdentifier() => $lineItem3
+                $lineItem3->getEntityIdentifier() => $lineItem3,
             ],
             [],
             $this->createMock(DatagridInterface::class),

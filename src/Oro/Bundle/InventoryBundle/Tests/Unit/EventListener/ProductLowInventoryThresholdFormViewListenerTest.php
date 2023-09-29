@@ -18,7 +18,8 @@ class ProductLowInventoryThresholdFormViewListenerTest extends AbstractFallbackF
         $this->listener = new ProductLowInventoryThresholdFormViewListener(
             $this->requestStack,
             $this->doctrine,
-            $this->translator
+            $this->translator,
+            $this->fieldAclHelper
         );
     }
 

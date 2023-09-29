@@ -84,7 +84,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return SegmentFilterBuilderType::class;
     }
@@ -92,7 +92,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }
@@ -173,7 +173,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
     /**
      * {@inheritdoc}
      */
-    public function mapDataToForms($data, $forms)
+    public function mapDataToForms(mixed $data, \Traversable $forms)
     {
         $this->getPropertyPathMapper()->mapDataToForms($data, $forms);
         /** @var Form[]|\Traversable $forms */
@@ -202,7 +202,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
     /**
      * {@inheritdoc}
      */
-    public function mapFormsToData($forms, &$data)
+    public function mapFormsToData(\Traversable $forms, mixed &$data)
     {
         $this->getPropertyPathMapper()->mapFormsToData($forms, $data);
         /** @var Form[]|\Traversable $forms */

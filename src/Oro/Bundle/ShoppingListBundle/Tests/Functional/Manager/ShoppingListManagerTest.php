@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Manager;
 
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductKitCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -30,6 +31,7 @@ class ShoppingListManagerTest extends WebTestCase
 
         $this->loadFixtures([
             LoadShoppingListProductKitLineItems::class,
+            LoadProductKitCombinedProductPrices::class,
         ]);
     }
 
@@ -50,6 +52,8 @@ class ShoppingListManagerTest extends WebTestCase
 
     public function testAddLineItemForProductKitWhenLineItemIsDuplicate(): void
     {
+        $this->client->request('GET', '/'); // any page to set default currency
+
         /** @var LineItem $lineItem */
         $lineItem = $this->getReference(LoadShoppingListProductKitLineItems::LINE_ITEM_1);
         $sameLineItem = $this->productKitLineItemFactory->createProductKitLineItem(
@@ -97,6 +101,8 @@ class ShoppingListManagerTest extends WebTestCase
 
     public function testUpdateLineItemForProductKitWhenLineItemBecomesDuplicate(): void
     {
+        $this->client->request('GET', '/'); // any page to set default currency
+
         /** @var LineItem $lineItem */
         $lineItem = $this->getReference(LoadShoppingListProductKitLineItems::LINE_ITEM_1);
         $shoppingList = $lineItem->getShoppingList();
@@ -117,7 +123,7 @@ class ShoppingListManagerTest extends WebTestCase
         $this->shoppingListManager->updateLineItem($newLineItem, $shoppingList);
 
         self::assertCount(1, $shoppingList->getLineItems());
-        self::assertEquals(1, $lineItem->getQuantity());
+        self::assertEquals(2, $lineItem->getQuantity());
         self::assertEquals($previousChecksum, $lineItem->getChecksum());
     }
 

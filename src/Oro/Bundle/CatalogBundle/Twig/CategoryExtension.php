@@ -85,7 +85,7 @@ class CategoryExtension extends AbstractExtension implements ServiceSubscriberIn
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             CategoryTreeHandler::class,

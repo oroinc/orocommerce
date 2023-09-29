@@ -2,7 +2,11 @@
 
 namespace Oro\Bundle\OrderBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
+use Extend\Entity\Autocomplete\OroOrderBundle_Entity_OrderLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -12,7 +16,10 @@ use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 
 /**
  * Represents ordered item.
@@ -36,12 +43,15 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @mixin OroOrderBundle_Entity_OrderLineItem
  */
 class OrderLineItem implements
     ProductLineItemInterface,
+    ProductKitItemLineItemsAwareInterface,
     PriceAwareInterface,
     PriceTypeAwareInterface,
     ShippingAwareInterface,
+    ProductLineItemsHolderAwareInterface,
     ExtendEntityInterface
 {
     use ExtendEntityTrait;
@@ -203,6 +213,32 @@ class OrderLineItem implements
     protected $shippingEstimateAmount;
 
     /**
+     * @var Collection<OrderProductKitItemLineItem>
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="OrderProductKitItemLineItem",
+     *     mappedBy="lineItem",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true
+     * )
+     * @OrderBy({"sortOrder"="ASC"})
+     */
+    protected $kitItemLineItems;
+
+    /**
+     * Differentiates the unique constraint allowing to add the same product with the same unit code multiple times,
+     * moving the logic of distinguishing of such line items out of the entity class.
+     *
+     * @ORM\Column(name="checksum", type="string", length=40, options={"default"=""}, nullable=false)
+     */
+    protected string $checksum = '';
+
+    public function __construct()
+    {
+        $this->kitItemLineItems = new ArrayCollection();
+    }
+
+    /**
      * @return string
      */
     public function __toString()
@@ -223,7 +259,7 @@ class OrderLineItem implements
     /**
      * Set order
      *
-     * @param Order $order
+     * @param Order|null $order
      * @return $this
      */
     public function setOrder(Order $order = null)
@@ -246,7 +282,7 @@ class OrderLineItem implements
     /**
      * Set product
      *
-     * @param Product $product
+     * @param Product|null $product
      * @return $this
      */
     public function setProduct(Product $product = null)
@@ -390,7 +426,7 @@ class OrderLineItem implements
     /**
      * Set productUnit
      *
-     * @param ProductUnit $productUnit
+     * @param ProductUnit|null $productUnit
      * @return $this
      */
     public function setProductUnit(ProductUnit $productUnit = null)
@@ -436,7 +472,7 @@ class OrderLineItem implements
     /**
      * Set price
      *
-     * @param Price $price
+     * @param Price|null $price
      * @return $this
      */
     public function setPrice(Price $price = null)
@@ -572,7 +608,7 @@ class OrderLineItem implements
     }
 
     /**
-     * @param \DateTime $shipBy
+     * @param \DateTime|null $shipBy
      * @return $this
      */
     public function setShipBy(\DateTime $shipBy = null)
@@ -582,18 +618,11 @@ class OrderLineItem implements
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getShippingMethod(): ?string
     {
         return $this->shippingMethod;
     }
 
-    /**
-     * @param string|null $shippingMethod
-     * @return OrderLineItem
-     */
     public function setShippingMethod(?string $shippingMethod): OrderLineItem
     {
         $this->shippingMethod = $shippingMethod;
@@ -601,18 +630,11 @@ class OrderLineItem implements
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getShippingMethodType(): ?string
     {
         return $this->shippingMethodType;
     }
 
-    /**
-     * @param string|null $shippingMethodType
-     * @return OrderLineItem
-     */
     public function setShippingMethodType(?string $shippingMethodType): OrderLineItem
     {
         $this->shippingMethodType = $shippingMethodType;
@@ -620,18 +642,11 @@ class OrderLineItem implements
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
     public function getShippingEstimateAmount(): ?float
     {
         return $this->shippingEstimateAmount;
     }
 
-    /**
-     * @param float|null $shippingEstimateAmount
-     * @return OrderLineItem
-     */
     public function setShippingEstimateAmount(?float $shippingEstimateAmount): OrderLineItem
     {
         $this->shippingEstimateAmount = $shippingEstimateAmount;
@@ -720,5 +735,47 @@ class OrderLineItem implements
     public function getProductHolder()
     {
         return $this;
+    }
+
+    public function getLineItemsHolder(): ?ProductLineItemsHolderInterface
+    {
+        return $this->order;
+    }
+
+    /**
+     * @return Collection<OrderProductKitItemLineItem>
+     */
+    public function getKitItemLineItems()
+    {
+        return $this->kitItemLineItems;
+    }
+
+    public function addKitItemLineItem(OrderProductKitItemLineItem $productKitItemLineItem): self
+    {
+        if (!$this->kitItemLineItems->contains($productKitItemLineItem)) {
+            $productKitItemLineItem->setLineItem($this);
+            $this->kitItemLineItems->add($productKitItemLineItem);
+        }
+
+        return $this;
+    }
+
+    public function removeKitItemLineItem(OrderProductKitItemLineItem $productKitItemLineItem): self
+    {
+        $this->kitItemLineItems->removeElement($productKitItemLineItem);
+
+        return $this;
+    }
+
+    public function setChecksum(string $checksum): self
+    {
+        $this->checksum = $checksum;
+
+        return $this;
+    }
+
+    public function getChecksum(): string
+    {
+        return $this->checksum;
     }
 }

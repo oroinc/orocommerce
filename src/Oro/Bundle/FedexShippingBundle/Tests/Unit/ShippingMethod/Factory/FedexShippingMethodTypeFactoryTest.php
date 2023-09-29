@@ -18,32 +18,22 @@ use PHPUnit\Framework\TestCase;
 
 class FedexShippingMethodTypeFactoryTest extends TestCase
 {
-    const IDENTIFIER = 'id';
-    const LABEL = 'label';
+    private const IDENTIFIER = 'id';
+    private const LABEL = 'label';
 
-    /**
-     * @var FedexMethodTypeIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FedexMethodTypeIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $identifierGenerator;
 
-    /**
-     * @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rateServiceRequestSettingsFactory;
 
-    /**
-     * @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rateServiceRequestFactory;
 
-    /**
-     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FedexRateServiceBySettingsClientInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rateServiceClient;
 
-    /**
-     * @var FedexShippingMethodTypeFactory
-     */
+    /** @var FedexShippingMethodTypeFactory */
     private $factory;
 
     protected function setUp(): void
@@ -73,13 +63,12 @@ class FedexShippingMethodTypeFactoryTest extends TestCase
         $service = new FedexShippingService();
         $service->setDescription(self::LABEL);
 
-        $this->identifierGenerator
-            ->expects(static::once())
+        $this->identifierGenerator->expects(self::once())
             ->method('generate')
             ->with($service)
             ->willReturn(self::IDENTIFIER);
 
-        static::assertEquals(
+        self::assertEquals(
             new FedexShippingMethodType(
                 $this->rateServiceRequestSettingsFactory,
                 $this->rateServiceRequestFactory,

@@ -29,7 +29,8 @@ class PriceListValueProvider
     {
         if ($this->shardManager->isShardingEnabled()) {
             $qb = $this->doctrine->getRepository(PriceList::class)
-                ->createQueryBuilder('p.id')
+                ->createQueryBuilder('p')
+                ->select('p.id')
                 ->orderBy('p.id')
                 ->setMaxResults(1);
 

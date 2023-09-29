@@ -199,6 +199,13 @@ services:
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType }
 
+    oro_product.form.type.extension.restricted_product_fields_extension:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\RestrictedProductFieldsExtension'
+        arguments:
+            - '@oro_security.form.field_acl_helper'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType}
+
     oro_product.form.extension.attribute_config_extension:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\AttributeConfigExtension'
         arguments:
@@ -303,7 +310,7 @@ services:
             - { name: form.type }
 
     oro_product.form.data_transformer.product_kit_item_products.view:
-        class: Oro\Bundle\MultiCurrencyBundle\Form\Transformer\ArrayToJsonTransformer
+        class: Oro\Bundle\FormBundle\Form\DataTransformer\ArrayToJsonTransformer
 
     oro_product.form.data_transformer.product_kit_item_products.model:
         class: Oro\Bundle\ProductBundle\Form\DataTransformer\ProductKitItemProductsDataTransformer

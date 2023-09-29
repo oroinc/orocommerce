@@ -202,7 +202,6 @@ class ProductViewFormAvailabilityProviderTest extends \PHPUnit\Framework\TestCas
         );
     }
 
-
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */

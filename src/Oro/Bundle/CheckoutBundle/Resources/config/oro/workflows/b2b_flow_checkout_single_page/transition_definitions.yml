@@ -157,16 +157,6 @@ workflows:
                             result.orderLineItemsNotEmptyForRfp: $.orderLineItemsNotEmptyForRfp
                     - '@tree':
                         conditions:
-                            '@blank': $.result.extendableConditionCheckout
-                        actions:
-                            - '@assign_value': [$.result.extendableConditionCheckout, false]
-                            - '@assign_value':
-                                conditions:
-                                    '@extendable':
-                                        events: ['extendable_condition.checkout']
-                                parameters: [$.result.extendableConditionCheckout, true]
-                    - '@tree':
-                        conditions:
                             '@blank': $.result.extendableConditionPreOrderCreate
                         actions:
                             - '@assign_value': [$.result.extendableConditionPreOrderCreate, false]
@@ -236,7 +226,6 @@ workflows:
                                 parameters: [$.result.shippingMethodHasEnabledShippingRules, true]
                                 message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
-                        - '@equal': [$.result.extendableConditionCheckout, true]
                         - '@equal': [$.result.extendableConditionPreOrderCreate, true]
 
                 conditions:
@@ -390,16 +379,6 @@ workflows:
                                     result.orderLineItemsNotEmptyForRfp: $.orderLineItemsNotEmptyForRfp
                             - '@tree':
                                 conditions:
-                                    '@blank': $.result.extendableConditionCheckout
-                                actions:
-                                    - '@assign_value': [$.result.extendableConditionCheckout, false]
-                                    - '@assign_value':
-                                        conditions:
-                                            '@extendable':
-                                                events: ['extendable_condition.checkout']
-                                        parameters: [$.result.extendableConditionCheckout, true]
-                            - '@tree':
-                                conditions:
                                     '@blank': $.result.extendableConditionBeforeOrderCreate
                                 actions:
                                     - '@assign_value': [$.result.extendableConditionBeforeOrderCreate, false]
@@ -470,7 +449,6 @@ workflows:
                                       parameters: [$.result.paymentMethodApplicable, true]
                                       message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                                 - '@quote_acceptable': [$checkout.sourceEntity, true]
-                                - '@equal': [$.result.extendableConditionCheckout, true]
                                 - '@equal': [$.result.extendableConditionBeforeOrderCreate, true]
 
                 actions:
@@ -483,6 +461,7 @@ workflows:
                             order: $order
                             transactionOptions:
                                 additionalData: $additional_data
+                                email: $email
                         results:
                             result.responseData: $.responseData
 

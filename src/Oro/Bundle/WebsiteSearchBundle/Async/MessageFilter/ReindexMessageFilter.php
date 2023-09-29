@@ -12,9 +12,8 @@ use Oro\Component\MessageQueue\Client\Message;
  */
 class ReindexMessageFilter implements MessageFilterInterface
 {
-    private const NO_GROUPS_KEY = '_';
-
     use ContextTrait;
+    private const NO_GROUPS_KEY = '_';
 
     private string $topic;
 

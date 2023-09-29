@@ -44,7 +44,7 @@ class Expression extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'oro_product.validator_constraints.expression_validator';
     }

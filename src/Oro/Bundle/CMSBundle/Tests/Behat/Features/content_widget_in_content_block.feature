@@ -1,5 +1,4 @@
 @ticket-BB-17552
-@fixture-OroCMSBundle:copyright_content_widget_fixture.yml
 
 Feature: Content Widget in Content Block
   In order to display content widgets on store front
@@ -18,22 +17,46 @@ Feature: Content Widget in Content Block
   Scenario: Add content widget to content block
     Given I proceed as the Admin
     And I login as administrator
+
+    When go to Marketing/ Content Widgets
+    And click "Create Content Widget"
+    And fill "Content Widget Form" with:
+      | Type                          | Image Slider      |
+      | Name                          | test_image_slider |
+      | Number of Slides to Show      | 1                 |
+      | Number of Slides to Scroll    | 1                 |
+    And fill "Image Slider Form" with:
+      | Slide Order 1    | 1            |
+      | URL 1            | /product     |
+      | Target 1         | Same Window  |
+      | Title 1          | Slide 1      |
+      | Text Alignment 1 | Center       |
+      | Text 1           | Slide text 1 |
+    And I click on "Choose Main Slider Image 1"
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat1.jpg |
+      | Title | cat1.jpg |
+    And I click "Upload"
+    And click on cat1.jpg in grid
+    Then I save and close form
+    And I should see "Content widget has been saved" flash message
+
     And I go to Marketing/ Content Blocks
     And I click "edit" on row "home-page-slider" in grid
-    And I fill in WYSIWYG "Content Variant Content" with "{{ widget('copyright') }}"
+    And I fill in WYSIWYG "Content Variant Content" with "{{ widget('test_image_slider') }}"
     When I save and close form
     Then I should see "Content block has been saved" flash message
 
   Scenario: Ensure content widget cannot be deleted when used
     When I go to Marketing/ Content Widgets
-    Then I should not see following actions for copyright in grid:
+    Then I should not see following actions for test_image_slider in grid:
       | Delete |
-    When I click View "copyright" in grid
+    When I click View "test_image_slider" in grid
     Then I should not see "Delete"
 
   Scenario: Check content widget usages grid
     When I go to Marketing/ Content Widgets
-    And I click "view" on row "copyright" in grid
+    And I click "view" on row "test_image_slider" in grid
     Then number of records in "Content Blocks Content Widget Usages Grid" should be 1
     And I should see following "Content Blocks Content Widget Usages Grid" grid:
       | Alias            | Title            |
@@ -51,7 +74,7 @@ Feature: Content Widget in Content Block
   Scenario: Check content widget is rendered on store front
     Given I proceed as the Buyer
     When I am on the homepage
-    Then I should see ". All rights reserved"
+    Then I should see "Slide text 1"
 
   Scenario: Ensure content widget can be deleted when there are no usages
     Given I proceed as the Admin
@@ -62,7 +85,7 @@ Feature: Content Widget in Content Block
     Then I should see "Content block has been saved" flash message
     And I go to Marketing/ Content Widgets
     And I keep in mind number of records in list
-    When I click Delete "copyright" in grid
+    When I click Delete "test_image_slider" in grid
     And I confirm deletion
     Then the number of records decreased by 1
-    And I should not see "copyright"
+    And I should not see "test_image_slider"

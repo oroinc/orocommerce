@@ -5,6 +5,7 @@ namespace Oro\Bundle\RFPBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroRFPBundle_Entity_Request;
 use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableInterface;
 use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
@@ -56,6 +57,10 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
+ *          },
+ *          "grid"={
+ *              "default"="rfp-requests-grid",
+ *              "context"="rfp-requests-for-context-grid"
  *          }
  *      }
  * )
@@ -66,6 +71,7 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @method AbstractEnumValue getInternalStatus()
  * @method AbstractEnumValue getCustomerStatus()
+ * @mixin OroRFPBundle_Entity_Request
  */
 class Request implements
     CustomerOwnerAwareInterface,
@@ -730,7 +736,7 @@ class Request implements
     }
 
     /**
-     * @param Website $website
+     * @param Website|null $website
      * @return $this
      */
     public function setWebsite(Website $website = null)

@@ -107,7 +107,7 @@ class FrontendLineItemWidgetType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'oro_shopping_list_frontend_line_item_widget';
     }
@@ -115,7 +115,7 @@ class FrontendLineItemWidgetType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return FrontendLineItemType::class;
     }

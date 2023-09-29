@@ -17,7 +17,7 @@ class SkuRegex extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'oro_product.validator_constraints.sku_regex_validator';
     }

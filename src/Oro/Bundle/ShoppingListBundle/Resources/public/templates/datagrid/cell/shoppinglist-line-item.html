@@ -8,7 +8,7 @@
             <%- _.__('oro.shoppinglist.lineitem.empty_configurable_product') %>
         <% } %>
     </div>
-<% } else if (obj._isKitItemLineItem) { %>
+<% } else if (obj.kitHasGeneralError || obj._isKitItemLineItem) { %>
     <div class="line-item-container">
         <% var formattedQuantity = oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %>
         <%- _.__('oro.product.product_unit.' + unit + '.value.full', {count: formattedQuantity}, quantity) %>

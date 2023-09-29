@@ -22,7 +22,7 @@ Feature: Product shipping options
       | Shipping Option Dimensions Length Value 1 | 0.1234567890123 |
       | Shipping Option Dimensions Width Value 1  | 123456789012345 |
       | Shipping Option Dimensions Height Value 1 | 123456789012345 |
-    Then I should see validation errors:
+    Then I should see "ProductForm" validation errors:
       | Shipping Option Weight Value 1            | This value is too long. It should have 14 characters or less. |
       | Shipping Option Dimensions Length Value 1 | This value is too long. It should have 14 characters or less. |
       | Shipping Option Dimensions Width Value 1  | This value is too long. It should have 14 characters or less. |

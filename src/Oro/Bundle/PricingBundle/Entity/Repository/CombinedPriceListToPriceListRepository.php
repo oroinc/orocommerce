@@ -110,10 +110,19 @@ class CombinedPriceListToPriceListRepository extends EntityRepository
             return null;
         }
 
-        // Search one or null CPL that contains maximum number of included price lists used in the given CPL.
-        // Take into account merge flag and sort order to not break merge logic.
-        // Use CPLs with more than 1 PL in the chain
-        // Skip CPLs that are mentioned in oro_price_list_combined_build_activity (build in progress)
+        /**
+         * Search one or null CPL that contains maximum number of included price lists used in the given CPL.
+         * Take into account merge flag and sort order to not break merge logic.
+         * Use CPLs with more than 1 PL in the chain and ONLY with merge_allowed = true
+         * Skip CPLs that are mentioned in oro_price_list_combined_build_activity (build in progress)
+         *
+         * If there is at least one price list with merge disallowed in the fallback combined price lists chain
+         * it is impossible to use this fallback combined price list because prices with `merge = false` when found
+         * at the first time are moved to combined price lists and block further product`s prices processing, but when
+         * `merge = false` price processed in the middle of the chain it is simply ignored. Cutting the chain with
+         * `merge = false` price list will lead to a situation when prices with `merge = true`
+         * that follows `merge = false` may be skipped compared to sequential price list processing.
+         */
         $searchQuery = <<<SQL
         WITH aggregated_cpl AS (
             SELECT
@@ -123,7 +132,7 @@ class CombinedPriceListToPriceListRepository extends EntityRepository
                 combined_price_list_id
             FROM oro_cmb_pl_to_pl
             GROUP BY combined_price_list_id
-            HAVING count(id) > 1
+            HAVING count(id) > 1 AND SUM(merge_allowed::int) = count(id)
         )
         SELECT
             fallback_cpl.combined_price_list_id
@@ -138,7 +147,7 @@ class CombinedPriceListToPriceListRepository extends EntityRepository
             AND NOT(EXISTS(
                 SELECT 1 FROM oro_price_list_combined_build_activity where combined_price_list_id = cpl.id
             ))
-            AND under_search_cpl.price_lists LIKE fallback_cpl.price_lists || '%'
+            AND under_search_cpl.price_lists LIKE '%' || fallback_cpl.price_lists
         ORDER BY fallback_cpl.items_count DESC
         LIMIT 1
 SQL;
@@ -203,12 +212,6 @@ SQL;
         return null;
     }
 
-
-    /**
-     * @param PriceList $priceList
-     *
-     * @return bool
-     */
     public function hasCombinedPriceListWithPriceList(PriceList $priceList): bool
     {
         $qb = $this->getEntityManager()->createQueryBuilder();

@@ -42,6 +42,9 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision2:
         unit: '@set'
         precision: '1'
+    precision3:
+        unit: '@item'
+        precision: '0'
     product_kit1_precision1:
         unit: '@item'
         precision: '0'
@@ -51,6 +54,8 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'Product 1'
     product2_name:
         string: 'Product 2'
+    product3_name:
+        string: 'Product 3'
     product_kit1_name:
         string: 'Product Kit 1'
 
@@ -59,6 +64,8 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
         string: 'Product Kit 1 Item 1'
     product_kit1_item2_label:
         string: 'Product Kit 1 Item 2'
+    product_kit1_item3_label:
+        string: 'Product Kit 1 Item 3'
 
 Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
     product_kit1_item1_product1:
@@ -74,6 +81,11 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
     product_kit1_item2_product2:
         kitItem: '@product_kit1_item2'
         product: '@product2'
+        sortOrder: 1
+
+    product_kit1_item3_product3:
+        kitItem: '@product_kit1_item3'
+        product: '@product3'
         sortOrder: 1
 
 Oro\Bundle\ProductBundle\Entity\ProductKitItem:
@@ -100,6 +112,17 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
             - addLabel: ['@product_kit1_item2_label']
             - addKitItemProduct: ['@product_kit1_item2_product2']
 
+    product_kit1_item3:
+        optional: true
+        sortOrder: 10
+        minimumQuantity: 0
+        maximumQuantity: 5
+        productKit: '@product_kit1'
+        productUnit: '@item'
+        __calls:
+            - addLabel: ['@product_kit1_item3_label']
+            - addKitItemProduct: ['@product_kit1_item3_product3']
+
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'PSKU1'
@@ -117,6 +140,16 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@default_product_family'
         __calls:
             - setNames: [['@product2_name']]
+        inventoryStatus: '@in_stock'
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+    product3:
+        sku: 'PSKU3'
+        names: ['@product3_name']
+        primaryUnitPrecision: '@precision3'
+        unitPrecisions: ['@precision3']
+        attributeFamily: '@default_product_family'
         inventoryStatus: '@in_stock'
         status: 'enabled'
         organization: '@organization'
@@ -153,6 +186,14 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
         unit: '@item'
         sortOrder: 1
 
+    product_kit_item1_line_item3:
+        lineItem: '@kit_line_item2'
+        kitItem: '@product_kit1_item1'
+        product: '@product1'
+        quantity: 2
+        unit: '@item'
+        sortOrder: 0
+
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     line_item1:
         product: '@product1'
@@ -183,6 +224,16 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         __calls:
             - addKitItemLineItem: ['@product_kit_item1_line_item1']
             - addKitItemLineItem: ['@product_kit_item1_line_item2']
+    kit_line_item2:
+        product: '@product_kit1'
+        quantity: 2
+        unit: '@item'
+        checksum: 'kit_line_item2_checksum'
+        customerUser: '@amanda'
+        organization: '@organization'
+        owner: '@user'
+        __calls:
+            - addKitItemLineItem: ['@product_kit_item1_line_item3']
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shopping_list1:
@@ -194,7 +245,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shopping_list2:
         label: 'Shopping List 2'
         notes: 'Shopping List 2 Notes'
-        lineItems: ['@line_item2']
+        lineItems: ['@line_item2', '@kit_line_item2']
         customer: '@customer'
         customerUser: '@amanda'
         organization: '@organization'
@@ -239,6 +290,13 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         unit: '@item'
         quantity: 1
         value: 2.34
+        currency: USD
+    product3_price1_item:
+        priceList: '@default_combined_price_list'
+        product: '@product3'
+        unit: '@item'
+        quantity: 1
+        value: 3.21
         currency: USD
     product_kit1_price1_item:
         priceList: '@default_combined_price_list'

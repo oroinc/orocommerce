@@ -45,6 +45,8 @@ trusted_data:
                 rootAlias: true
             restrictBySupportedUnits:
                 rootAlias: true
+            restrictByOrganization:
+                rootAlias: true
         Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository:
             save:
                 column: true

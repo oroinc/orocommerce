@@ -68,6 +68,8 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
 
         $productPrice = $prices[0];
 
+        $this->denyAccessUnlessGranted('EDIT', $productPrice);
+
         $handler = $this->get(UpdateHandlerFacade::class);
         $priceHandler = $this->get(ProductPriceHandler::class);
         return $handler->update(
@@ -154,7 +156,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(
             parent::getSubscribedServices(),

@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\PayPalBundle\Integration;
 
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
@@ -7,6 +8,9 @@ use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * PayPal Payments Pro integration transport
+ */
 class PayPalPaymentsProTransport implements TransportInterface
 {
     /** @var ParameterBag */

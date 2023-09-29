@@ -2,23 +2,27 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context\Builder\Basic;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\Basic\BasicShippingContextBuilder;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingLineItemTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use PHPUnit\Framework\TestCase;
 
-class BasicShippingContextBuilderTest extends \PHPUnit\Framework\TestCase
+class BasicShippingContextBuilderTest extends TestCase
 {
+    use ShippingLineItemTrait;
+
     public function testFullContextBuilding(): void
     {
         $entity = $this->createMock(\stdClass::class);
         $entityId = '12';
-        $lineItemsCollection = $this->createMock(ShippingLineItemCollectionInterface::class);
+        $lineItemsCollection = new ArrayCollection([$this->getShippingLineItem()]);
         $billingAddress = $this->createMock(AddressInterface::class);
         $shippingAddress = $this->createMock(AddressInterface::class);
         $shippingOrigin = $this->createMock(ShippingOrigin::class);
@@ -42,7 +46,7 @@ class BasicShippingContextBuilderTest extends \PHPUnit\Framework\TestCase
             ->setCurrency($currency)
             ->setWebsite($website);
 
-        $this->assertEquals(
+        self::assertEquals(
             new ShippingContext([
                 ShippingContext::FIELD_SOURCE_ENTITY => $entity,
                 ShippingContext::FIELD_SOURCE_ENTITY_ID => $entityId,
@@ -68,11 +72,11 @@ class BasicShippingContextBuilderTest extends \PHPUnit\Framework\TestCase
 
         $builder = new BasicShippingContextBuilder($entity, $entityId);
 
-        $this->assertEquals(
+        self::assertEquals(
             new ShippingContext([
                 ShippingContext::FIELD_SOURCE_ENTITY => $entity,
                 ShippingContext::FIELD_SOURCE_ENTITY_ID => $entityId,
-                ShippingContext::FIELD_LINE_ITEMS => null,
+                ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection([]),
             ]),
             $builder->getResult()
         );

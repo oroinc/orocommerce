@@ -5,6 +5,7 @@ namespace Oro\Bundle\SaleBundle\Provider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
@@ -130,7 +131,7 @@ class QuoteProductPriceProvider
             $matchedPrices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria, $scopeCriteria);
         }
 
-        return array_map(function ($price) {
+        return array_map(static function ($price) {
             if ($price instanceof Price) {
                 return [
                     'value' => $price->getValue(),
@@ -144,7 +145,8 @@ class QuoteProductPriceProvider
 
     /**
      * @param Quote $quote
-     * @return array
+     *
+     * @return array<ProductPriceCriteria>
      */
     protected function getProductsPriceCriteria(Quote $quote)
     {
@@ -166,18 +168,14 @@ class QuoteProductPriceProvider
         }
 
         $results = [];
-
         foreach ($validLineItemsChunks as $currency => $validLineItemsChunk) {
-            $results = array_merge(
-                $results,
-                $this->productPriceCriteriaFactory->createListFromProductLineItems(
-                    $validLineItemsChunk,
-                    $currency
-                )
+            $results[] = $this->productPriceCriteriaFactory->createListFromProductLineItems(
+                $validLineItemsChunk,
+                $currency
             );
         }
 
-        return $results;
+        return array_merge(...$results);
     }
 
     /**
@@ -235,17 +233,15 @@ class QuoteProductPriceProvider
             return null;
         }
 
-        $productPriceCriteria = $this->productPriceCriteriaFactory->build(
-            $product,
-            $unit,
-            $quantity,
-            $currencyCode
-        );
+        $productPriceCriteria = $this->productPriceCriteriaFactory
+            ->create($product, $unit, $quantity, $currencyCode);
+        if (!$productPriceCriteria) {
+            return null;
+        }
 
         $scopeCriteria = $this->priceScopeCriteriaFactory->createByContext($quote);
-
         $matchedPrices = $this->productPriceProvider->getMatchedPrices([$productPriceCriteria], $scopeCriteria);
 
-        return $matchedPrices[$productPriceCriteria->getIdentifier()];
+        return $matchedPrices[$productPriceCriteria->getIdentifier()] ?? null;
     }
 }

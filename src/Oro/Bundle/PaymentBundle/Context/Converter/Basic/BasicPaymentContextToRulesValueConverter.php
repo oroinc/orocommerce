@@ -4,42 +4,35 @@ namespace Oro\Bundle\PaymentBundle\Context\Converter\Basic;
 
 use Oro\Bundle\PaymentBundle\Context\Converter\PaymentContextToRulesValueConverterInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
-use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
+use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 
 /**
  * Converts PaymentContext to an array
  */
 class BasicPaymentContextToRulesValueConverter implements PaymentContextToRulesValueConverterInterface
 {
-    /**
-     * @var DecoratedProductLineItemFactory
-     */
-    protected $decoratedProductLineItemFactory;
+    private DecoratedProductLineItemFactory $decoratedProductLineItemFactory;
 
     public function __construct(DecoratedProductLineItemFactory $decoratedProductLineItemFactory)
     {
         $this->decoratedProductLineItemFactory = $decoratedProductLineItemFactory;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function convert(PaymentContextInterface $paymentContext)
+    public function convert(PaymentContextInterface $paymentContext): array
     {
-        $lineItems = $paymentContext->getLineItems()->toArray();
-        $productIds = $this->getProductIds($lineItems);
+        $paymentLineItems = $paymentContext->getLineItems()->toArray();
+        $productIds = $this->getProductIds($paymentLineItems);
 
         return [
             'lineItems' => array_map(
-                function (PaymentLineItemInterface $lineItem) use ($productIds) {
+                function (PaymentLineItem $lineItem) use ($productIds) {
                     return $this->decoratedProductLineItemFactory->createPaymentLineItemWithDecoratedProduct(
                         $lineItem,
                         $productIds
                     );
                 },
-                $lineItems
+                $paymentLineItems
             ),
             'billingAddress' => $paymentContext->getBillingAddress(),
             'shippingAddress' => $paymentContext->getShippingAddress(),
@@ -53,17 +46,26 @@ class BasicPaymentContextToRulesValueConverter implements PaymentContextToRulesV
         ];
     }
 
-    private function getProductIds(array $lineItems): array
+    private function getProductIds(array $paymentLineItems): array
     {
-        $productIds = array_map(
-            static function (ProductHolderInterface $productHolder) {
-                $product = $productHolder->getProduct();
+        $productIds = [];
+        foreach ($this->getProductsFromLineItems($paymentLineItems) as $product) {
+            if ($product?->getId()) {
+                $productIds[$product->getId()] = $product->getId();
+            }
+        }
 
-                return $product ? $product->getId() : null;
-            },
-            $lineItems
-        );
+        return array_values($productIds);
+    }
 
-        return array_unique(array_filter($productIds));
+    private function getProductsFromLineItems(array $paymentLineItems): \Generator
+    {
+        foreach ($paymentLineItems as $paymentLineItem) {
+            yield $paymentLineItem->getProduct();
+
+            foreach ($paymentLineItem->getKitItemLineItems() as $paymentKitItemLineItem) {
+                yield $paymentKitItemLineItem->getProduct();
+            }
+        }
     }
 }

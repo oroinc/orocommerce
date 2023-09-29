@@ -48,4 +48,13 @@ class LineItemTest extends TestCase
 
         self::assertSame($visitor, $lineItem->getVisitor());
     }
+
+    public function testGetLineItemsHolder(): void
+    {
+        $shoppingList = new ShoppingList();
+        $lineItem = (new LineItem())
+            ->setShoppingList($shoppingList);
+
+        self::assertSame($shoppingList, $lineItem->getLineItemsHolder());
+    }
 }

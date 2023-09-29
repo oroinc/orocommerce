@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\EventListener;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Exception\UnexpectedTypeException;
@@ -16,21 +17,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class FormViewListener
 {
-    const CATEGORY_FIELD = 'category';
-    const GENERAL_BLOCK = 'general';
-
-    protected TranslatorInterface $translator;
-    protected DoctrineHelper $doctrineHelper;
-    protected AuthorizationCheckerInterface $authorizationChecker;
+    private const CATEGORY_FIELD = 'category';
+    private const GENERAL_BLOCK = 'general';
 
     public function __construct(
-        TranslatorInterface $translator,
-        DoctrineHelper $doctrineHelper,
-        AuthorizationCheckerInterface $authorizationChecker
+        private TranslatorInterface $translator,
+        private DoctrineHelper $doctrineHelper,
+        private AuthorizationCheckerInterface $authorizationChecker,
+        private FieldAclHelper $fieldAclHelper
     ) {
-        $this->translator = $translator;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function onProductView(BeforeListRenderEvent $event): void
@@ -53,6 +48,10 @@ class FormViewListener
             return;
         }
 
+        if (!$this->fieldAclHelper->isFieldViewGranted($product, 'category')) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
             '@OroCatalog/Product/category_view.html.twig',
             ['entity' => $category]
@@ -64,6 +63,11 @@ class FormViewListener
     public function onProductEdit(BeforeListRenderEvent $event): void
     {
         if (!$this->authorizationChecker->isGranted('oro_catalog_category_view')) {
+            return;
+        }
+
+        $product = $event->getEntity();
+        if ($product && !$this->fieldAclHelper->isFieldAvailable($product, 'category')) {
             return;
         }
 

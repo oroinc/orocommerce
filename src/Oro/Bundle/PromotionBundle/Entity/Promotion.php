@@ -5,6 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroPromotionBundle_Entity_Promotion;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -59,6 +60,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  * @method LocalizedFallbackValue getDefaultDescription()
  * @method setDefaultLabel($title)
  * @method setDefaultDescription($slug)
+ * @mixin OroPromotionBundle_Entity_Promotion
  */
 class Promotion implements
     DatesAwareInterface,

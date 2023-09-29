@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroCheckoutBundle_Entity_CheckoutSource;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
@@ -15,6 +16,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @ORM\Entity
  * @ORM\Table(name="oro_checkout_source")
  * @Config
+ * @mixin OroCheckoutBundle_Entity_CheckoutSource
  */
 class CheckoutSource implements ExtendEntityInterface
 {
@@ -36,9 +38,6 @@ class CheckoutSource implements ExtendEntityInterface
      */
     protected $deleted = false;
 
-    /**
-     * @return int
-     */
     public function getId(): ?int
     {
         return $this->id;

@@ -1,0 +1,31 @@
+data:
+    type: shoppinglistitems
+    id: new
+    attributes:
+        quantity: 10
+        notes: 'New Kit Line Item Notes'
+        currency: USD
+        value: '12.34'
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product_kit1->id)>'
+        parentProduct:
+            data: null
+        kitItems:
+            data:
+                -
+                    type: shoppinglistkititems
+                    id: 'kit_1'
+                -
+                    type: shoppinglistkititems
+                    id: 'kit_2'
+        shoppingList:
+            data:
+                type: shoppinglists
+                id: '<toString(@shopping_list1->id)>'
+        unit:
+            data:
+                type: productunits
+                id: '<toString(@item->code)>'

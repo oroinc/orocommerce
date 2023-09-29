@@ -115,7 +115,6 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->willReturn($data);
 
-
         $this->assertSame($data, $this->cache->getCounts($key));
     }
 

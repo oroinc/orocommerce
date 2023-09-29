@@ -14,7 +14,8 @@ $responsive-shopping-list-edit-sub-row-offset: (
 ) !default;
 $responsive-shopping-list-edit-select-row-cell-height-mobile: $product-item-image-holder-tiny-height !default;
 
-$responsive-shopping-list-edit-action-cell-width-mobile: 52px !default;
+$responsive-shopping-list-edit-action-cell-width-mobile: 26px * 2 !default;
+$responsive-shopping-list-edit-three-actions-cell-width-mobile: 26px * 3 !default;
 
 // Mobile small
 $responsive-shopping-list-edit-select-row-cell-width-mobile-s: 36px !default;

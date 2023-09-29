@@ -31,7 +31,7 @@ class PriceListVoter extends AbstractEntityVoter implements ServiceSubscriberInt
     /**
      * {@inheritDoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_pricing.price_list_reference_checker' => PriceListReferenceChecker::class
@@ -41,7 +41,7 @@ class PriceListVoter extends AbstractEntityVoter implements ServiceSubscriberInt
     /**
      * {@inheritDoc}
      */
-    public function vote(TokenInterface $token, $object, array $attributes)
+    public function vote(TokenInterface $token, $object, array $attributes): int
     {
         $this->object = $object;
         try {

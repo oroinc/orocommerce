@@ -8,6 +8,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType;
@@ -32,9 +33,13 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ProductFormExtension */
     private $extension;
 
+    /** @var FieldAclHelper */
+    private $fieldAclHelper;
+
     protected function setUp(): void
     {
         $this->repo = $this->createMock(ObjectRepository::class);
+        $this->fieldAclHelper = $this->createMock(FieldAclHelper::class);
         $this->manager = $this->createMock(ObjectManager::class);
         $this->manager->expects($this->any())
             ->method('getRepository')
@@ -47,7 +52,7 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
             ->with('OroShippingBundle:ProductShippingOptions')
             ->willReturn($this->manager);
 
-        $this->extension = new ProductFormExtension($doctrine);
+        $this->extension = new ProductFormExtension($doctrine, $this->fieldAclHelper);
     }
 
     /**
@@ -57,7 +62,8 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
     {
         /** @var FormBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
-        $builder->expects($this->once())
+        $builder
+            ->expects($this->once())
             ->method('add')
             ->with(
                 ProductFormExtension::FORM_ELEMENT_NAME,
@@ -73,15 +79,18 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $builder->expects($this->exactly(3))
+        $builder
+            ->expects($this->exactly(4))
             ->method('addEventListener')
             ->withConsecutive(
+                [FormEvents::PRE_SET_DATA, [$this->extension, 'onPreSetData']],
                 [FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']],
                 [FormEvents::PRE_SUBMIT, [$this->extension, 'onPreSubmit']],
                 [FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10]
             );
 
-        $builder->expects($this->once())
+        $builder
+            ->expects($this->once())
             ->method('getData')
             ->willReturn($product);
 
@@ -247,6 +256,10 @@ class ProductFormExtensionTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->with(ProductFormExtension::FORM_ELEMENT_NAME)
             ->willReturn($form);
+        $mainForm->expects($this->any())
+            ->method('has')
+            ->with(ProductFormExtension::FORM_ELEMENT_NAME)
+            ->willReturn(true);
 
         $event = $this->createMock(FormEvent::class);
         $event->expects($this->any())

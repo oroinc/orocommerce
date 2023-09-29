@@ -148,3 +148,9 @@ oro_entity:
         Oro\Bundle\CMSBundle\Entity\ContentWidget:
             full: [ name ]
             short: [ name ]
+        Oro\Bundle\CMSBundle\Entity\ImageSlide:
+            full: [ title ]
+            short: [ title ]
+        Oro\Bundle\CMSBundle\Entity\TabbedContentItem:
+            full: [ title ]
+            short: [ title ]

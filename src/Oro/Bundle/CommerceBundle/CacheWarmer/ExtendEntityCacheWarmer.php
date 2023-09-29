@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Oro\Bundle\CommerceBundle\CacheWarmer;
@@ -51,25 +52,28 @@ class ExtendEntityCacheWarmer implements CacheWarmerInterface
         return [
             'Oro\Bundle\InvoiceBundle\Entity\Invoice',
             'Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem',
+            'ACME\Bundle\WysiwygBundle\Entity\BlogPost',
+            'ACME\Bundle\CollectOnDeliveryBundle\Entity\CollectOnDeliverySettings',
+            'ACME\Bundle\FastShippingBundle\Entity\FastShippingSettings',
         ];
     }
 
-    public function isOptional()
+    public function isOptional(): bool
     {
         return false;
     }
 
-    public function warmUp($cacheDir)
+    public function warmUp(string $cacheDir): array
     {
         if (!$this->applicationState->isInstalled()) {
-            return;
+            return [];
         }
 
         /** @var Connection $configConnection */
         $configConnection = $this->managerRegistry->getConnection('config');
 
         if (!SafeDatabaseChecker::tablesExist($configConnection, 'oro_entity_config')) {
-            return;
+            return [];
         }
 
         foreach ($this->getClassNamesOfDeletedEntities() as $className) {
@@ -83,5 +87,6 @@ class ExtendEntityCacheWarmer implements CacheWarmerInterface
                 $query->execute($this->logger);
             }
         }
+        return [];
     }
 }

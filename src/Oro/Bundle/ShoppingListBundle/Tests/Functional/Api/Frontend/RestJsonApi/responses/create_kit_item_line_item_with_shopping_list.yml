@@ -1,0 +1,62 @@
+data:
+    type: shoppinglistkititems
+    id: new
+    attributes:
+        quantity: 5
+        sortOrder: 1
+        currency: USD
+        value: '1.23'
+    relationships:
+        kitItem:
+            data:
+                type: productkititems
+                id: '<toString(@product_kit1_item1->id)>'
+        product:
+            data:
+                type: products
+                id: '<toString(@product1->id)>'
+        unit:
+            data:
+                type: productunits
+                id: '<toString(@item->code)>'
+included:
+    -
+        type: shoppinglistitems
+        id: new
+        attributes:
+            quantity: 10
+            notes: 'New Line Item Notes'
+            currency: USD
+            value: '12.34'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product_kit1->id)>'
+            parentProduct:
+                data: null
+            shoppingList:
+                data:
+                    type: shoppinglists
+                    id: new
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: shoppinglists
+        id: new
+        meta:
+            includeId: new_shopping_list
+        attributes:
+            name: 'New Shopping List'
+            notes: null
+            currency: USD
+            total: '184.9'
+            subTotal: '184.9'
+        relationships:
+            items:
+                data:
+                    -
+                        type: shoppinglistitems
+                        id: new

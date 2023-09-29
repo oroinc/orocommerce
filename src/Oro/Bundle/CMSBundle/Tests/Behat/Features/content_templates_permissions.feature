@@ -15,9 +15,10 @@ Feature: Content Templates Permissions
     And I go to System/ User Management/ Roles
     And I filter Label as is equal to "Sales Rep"
     And click edit "Sales Rep" in grid
+    And I click "Entity" in scrollspy
     When select following permissions:
-      | Landing Page     | View:Organization | Create:Organization | Edit:Organization | Delete:Organization |
       | Content Template | View:None         | Create:None         | Edit:None         | Delete:None         |
+      | Landing Page     | View:Organization | Create:Organization | Edit:Organization | Delete:Organization |
     And I save and close form
     Then should see "Role saved" flash message
 
@@ -35,6 +36,7 @@ Feature: Content Templates Permissions
     And I go to System/ User Management/ Roles
     And I filter Label as is equal to "Sales Rep"
     And click edit "Sales Rep" in grid
+    And I click "Entity" in scrollspy
     When select following permissions:
       | Content Template | View:User | Create:User | Edit:User | Delete:User |
     And I save and close form
@@ -69,6 +71,7 @@ Feature: Content Templates Permissions
     And I go to System/ User Management/ Roles
     And I filter Label as is equal to "Sales Rep"
     And click edit "Sales Rep" in grid
+    And I click "Entity" in scrollspy
     When select following permissions:
       | Tag | View:None | Create:None | Edit:None | Delete:None |
     And I save and close form
@@ -108,6 +111,7 @@ Feature: Content Templates Permissions
     And I go to System/ User Management/ Roles
     And I filter Label as is equal to "Sales Rep"
     And click edit "Sales Rep" in grid
+    And I click "Entity" in scrollspy
     When select following permissions:
       | Tag | View:User | Create:User | Edit:User | Delete:User |
     And I check "Assign/unassign tags" entity permission

@@ -94,7 +94,7 @@ class InventoryLevelHandler implements FormHandlerInterface
         return $level;
     }
 
-    protected function findInventoryLevel(ProductUnitPrecision $precision):? InventoryLevel
+    protected function findInventoryLevel(ProductUnitPrecision $precision): ?InventoryLevel
     {
         return $this->manager->getRepository(InventoryLevel::class)->findOneBy(
             ['productUnitPrecision' => $precision]

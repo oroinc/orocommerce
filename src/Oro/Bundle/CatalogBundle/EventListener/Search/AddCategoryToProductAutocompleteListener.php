@@ -23,7 +23,7 @@ class AddCategoryToProductAutocompleteListener
     ) {
     }
 
-    public function onProcessAutocompleteQuery(ProcessAutocompleteQueryEvent $event) : void
+    public function onProcessAutocompleteQuery(ProcessAutocompleteQueryEvent $event): void
     {
         $numberOfCategories = $this->configManager
             ->get(CatalogConfiguration::getConfigKeyByName(CatalogConfiguration::SEARCH_AUTOCOMPLETE_MAX_CATEGORIES));
@@ -38,7 +38,7 @@ class AddCategoryToProductAutocompleteListener
         }
     }
 
-    public function onProcessAutocompleteData(ProcessAutocompleteDataEvent $event) : void
+    public function onProcessAutocompleteData(ProcessAutocompleteDataEvent $event): void
     {
         $categories = $this->getCategoryData($event->getResult()->getAggregatedData(), $event->getQueryString());
 
@@ -47,7 +47,7 @@ class AddCategoryToProductAutocompleteListener
         $event->setData($data);
     }
 
-    protected function getCategoryData(array $aggregations, string $queryString) : array
+    protected function getCategoryData(array $aggregations, string $queryString): array
     {
         $categoryAggregation = $aggregations['category'] ?? [];
         $categoryData = [];
@@ -76,7 +76,7 @@ class AddCategoryToProductAutocompleteListener
         return $categoryData;
     }
 
-    protected function sanitize(array $data) : array
+    protected function sanitize(array $data): array
     {
         foreach ($data as $categoryKey => $category) {
             foreach ($category['tree'] as $treeKey => $treeTitle) {

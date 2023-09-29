@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\SEOBundle\Tests\Functional\Sitemap\Provider;
 
 use Oro\Bundle\CMSBundle\Entity\Page;

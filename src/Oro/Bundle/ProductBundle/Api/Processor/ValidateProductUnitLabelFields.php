@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Form\FormUtil;
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
+use Oro\Bundle\ApiBundle\Request\ApiAction;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -20,6 +21,7 @@ class ValidateProductUnitLabelFields implements ProcessorInterface
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
+
         $this->validateField('label', $context);
         $this->validateField('pluralLabel', $context);
         $this->validateField('shortLabel', $context);
@@ -33,7 +35,7 @@ class ValidateProductUnitLabelFields implements ProcessorInterface
             return;
         }
 
-        if ($context->getParentAction() === 'create' && !$form->isSubmitted()) {
+        if ($context->getParentAction() === ApiAction::CREATE && !$form->isSubmitted()) {
             FormUtil::addFormConstraintViolation($form, new NotBlank());
         }
 

@@ -21,50 +21,38 @@ use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class WebsiteSearchCategoryIndexerListenerTest extends TestCase
+class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const NAME_DEFAULT_LOCALE = 'name default';
-    const NAME_CUSTOM_LOCALE = 'name custom';
-    const DESCRIPTION_DEFAULT_LOCALE = 'description default';
-    const DESCRIPTION_CUSTOM_LOCALE = 'description custom';
-    const SHORT_DESCRIPTION_DEFAULT_LOCALE = 'short description default';
-    const SHORT_DESCRIPTION_CUSTOM_LOCALE = 'short description custom';
+    private const NAME_DEFAULT_LOCALE = 'name default';
+    private const NAME_CUSTOM_LOCALE = 'name custom';
+    private const DESCRIPTION_DEFAULT_LOCALE = 'description default';
+    private const DESCRIPTION_CUSTOM_LOCALE = 'description custom';
+    private const SHORT_DESCRIPTION_DEFAULT_LOCALE = 'short description default';
+    private const SHORT_DESCRIPTION_CUSTOM_LOCALE = 'short description custom';
 
-    const FIRST_PARENT_NAME_DEFAULT_LOCALE = 'first parent name default';
-    const FIRST_PARENT_NAME_CUSTOM_LOCALE = 'first parent name custom';
+    private const FIRST_PARENT_NAME_DEFAULT_LOCALE = 'first parent name default';
+    private const FIRST_PARENT_NAME_CUSTOM_LOCALE = 'first parent name custom';
 
-    const SECOND_PARENT_NAME_DEFAULT_LOCALE = 'second parent name default';
-    const SECOND_PARENT_NAME_CUSTOM_LOCALE = 'second parent name custom';
+    private const SECOND_PARENT_NAME_DEFAULT_LOCALE = 'second parent name default';
+    private const SECOND_PARENT_NAME_CUSTOM_LOCALE = 'second parent name custom';
 
-    /**
-     * @var WebsiteSearchCategoryIndexerListener
-     */
-    private $listener;
-
-    /**
-     * @var DoctrineHelper|MockObject
-     */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /**
-     * @var AbstractWebsiteLocalizationProvider|MockObject
-     */
+    /** @var AbstractWebsiteLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteLocalizationProvider;
 
-    /**
-     * @var WebsiteContextManager|MockObject
-     */
+    /** @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject */
     private $websiteContextManager;
 
-    /**
-     * @var CategoryRepository|MockObject
-     */
+    /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
+
+    /** @var WebsiteSearchCategoryIndexerListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -82,9 +70,10 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
 
     /**
      * @param Localization|null $localization
-     * @param string|null $string
-     * @param string|null $text
-     * @param string $className
+     * @param string|null       $string
+     * @param string|null       $text
+     * @param string            $className
+     *
      * @return LocalizedFallbackValue|CategoryTitle|CategoryLongDescription|CategoryShortDescription
      */
     private function prepareLocalizedValue(
@@ -240,8 +229,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
         /** @var Localization $customLocale */
         $customLocale = $this->getEntity(Localization::class, ['id' => 2]);
 
-        $this->websiteLocalizationProvider
-            ->expects($this->once())
+        $this->websiteLocalizationProvider->expects($this->once())
             ->method('getLocalizationsByWebsiteId')
             ->willReturn([$customLocale]);
 
@@ -256,12 +244,10 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
         $firstParentCategory =
             $this->prepareFirstParentCategory($defaultValueLocale, $customLocale, $secondParentCategory);
         $category = $this->prepareCategory($defaultValueLocale, $customLocale, $product, $firstParentCategory);
-        $this->repository
-            ->expects($this->once())
+        $this->repository->expects($this->once())
             ->method('getCategoryMapByProducts')
             ->willReturn([$product->getId() => $category]);
-        $this->repository
-            ->expects($this->once())
+        $this->repository->expects($this->once())
             ->method('findBy')
             ->with(['id' => [1 => '33', 2 => '555']])
             ->willReturn([$category, $firstParentCategory]);
@@ -269,8 +255,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
         $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => $fieldsGroup];
         $event = new IndexEntityEvent(Product::class, [$product], $context);
 
-        $this->websiteContextManager
-            ->expects($this->once())
+        $this->websiteContextManager->expects($this->once())
             ->method('getWebsiteId')
             ->with($context)
             ->willReturn(1);
@@ -358,8 +343,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends TestCase
         $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['category_sort_order']];
         $event = new IndexEntityEvent(Product::class, [$product], $context);
 
-        $this->websiteContextManager
-            ->expects($this->once())
+        $this->websiteContextManager->expects($this->once())
             ->method('getWebsiteId')
             ->with($context)
             ->willReturn(1);

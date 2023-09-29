@@ -11,17 +11,14 @@ use PHPUnit\Framework\TestCase;
 
 class ProductPriceDataConverterTest extends TestCase
 {
-    const PRODUCT_SKU = 'sku';
-    const QUANTITY = '22';
-    const UNIT_CODE = 'unit';
-    const PRICE = '10.47';
-    const CURRENCY = 'USD';
-    const PRICE_LIST_ID = 4;
+    private const PRODUCT_SKU = 'sku';
+    private const QUANTITY = '22';
+    private const UNIT_CODE = 'unit';
+    private const PRICE = '10.47';
+    private const CURRENCY = 'USD';
+    private const PRICE_LIST_ID = 4;
 
-    /**
-     * @var ProductPriceDataConverter
-     */
-    private $converter;
+    private ProductPriceDataConverter $converter;
 
     protected function setUp(): void
     {
@@ -34,7 +31,7 @@ class ProductPriceDataConverterTest extends TestCase
 
     public function testConvertToImportFormat()
     {
-        static::assertSame(
+        self::assertSame(
             $this->getBackendFormatData(),
             $this->converter->convertToImportFormat($this->getFileFormatData())
         );
@@ -43,7 +40,7 @@ class ProductPriceDataConverterTest extends TestCase
     public function testConvertToImportFormatWithContext()
     {
         $context = $this->createMock(ContextInterface::class);
-        $context->expects(static::once())
+        $context->expects(self::once())
             ->method('getOption')
             ->willReturn(self::PRICE_LIST_ID);
 
@@ -52,7 +49,7 @@ class ProductPriceDataConverterTest extends TestCase
         $expected = $this->getBackendFormatData();
         $expected['priceList'] = ['id' => self::PRICE_LIST_ID];
 
-        static::assertSame(
+        self::assertSame(
             $expected,
             $this->converter->convertToImportFormat($this->getFileFormatData())
         );
@@ -60,7 +57,7 @@ class ProductPriceDataConverterTest extends TestCase
 
     public function testConvertToExportFormat()
     {
-        static::assertSame(
+        self::assertSame(
             $this->getFileFormatData(),
             $this->converter->convertToExportFormat($this->getBackendFormatData())
         );
@@ -77,7 +74,7 @@ class ProductPriceDataConverterTest extends TestCase
         ];
     }
 
-    private function getBackendFormatData():array
+    private function getBackendFormatData(): array
     {
         return [
             'product' => [

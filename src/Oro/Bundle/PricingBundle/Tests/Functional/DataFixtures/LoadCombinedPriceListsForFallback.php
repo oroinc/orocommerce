@@ -47,7 +47,7 @@ class LoadCombinedPriceListsForFallback extends AbstractCombinedPriceListsFixtur
             ]
         ],
         [
-            'name' => '1t_2t_3t_4t',
+            'name' => '3t_4t_5t_6t',
             'enabled' => true,
             'calculated' => false,
             'priceListsToCustomers' => [],
@@ -55,25 +55,25 @@ class LoadCombinedPriceListsForFallback extends AbstractCombinedPriceListsFixtur
             'websites' => [],
             'priceListRelations' => [
                 [
-                    'priceList' => LoadPriceLists::PRICE_LIST_1,
-                    'mergeAllowed' => true,
-                ],
-                [
-                    'priceList' => LoadPriceLists::PRICE_LIST_2,
-                    'mergeAllowed' => true,
-                ],
-                [
                     'priceList' => LoadPriceLists::PRICE_LIST_3,
                     'mergeAllowed' => true,
                 ],
                 [
                     'priceList' => LoadPriceLists::PRICE_LIST_4,
                     'mergeAllowed' => true,
+                ],
+                [
+                    'priceList' => LoadPriceLists::PRICE_LIST_5,
+                    'mergeAllowed' => true,
+                ],
+                [
+                    'priceList' => LoadPriceLists::PRICE_LIST_6,
+                    'mergeAllowed' => true,
                 ]
             ]
         ],
         [
-            'name' => '1t_2t_3t_5t',
+            'name' => '2t_3t_4t_6t',
             'enabled' => true,
             'calculated' => true,
             'blocked' => true,
@@ -82,33 +82,7 @@ class LoadCombinedPriceListsForFallback extends AbstractCombinedPriceListsFixtur
             'websites' => [],
             'priceListRelations' => [
                 [
-                    'priceList' => LoadPriceLists::PRICE_LIST_1,
-                    'mergeAllowed' => true,
-                ],
-                [
                     'priceList' => LoadPriceLists::PRICE_LIST_2,
-                    'mergeAllowed' => true,
-                ],
-                [
-                    'priceList' => LoadPriceLists::PRICE_LIST_3,
-                    'mergeAllowed' => true,
-                ],
-                [
-                    'priceList' => LoadPriceLists::PRICE_LIST_5,
-                    'mergeAllowed' => true,
-                ]
-            ]
-        ],
-        [
-            'name' => '1t_3t_4t',
-            'enabled' => true,
-            'calculated' => true,
-            'priceListsToCustomers' => [],
-            'priceListsToCustomerGroups' => [],
-            'websites' => [],
-            'priceListRelations' => [
-                [
-                    'priceList' => LoadPriceLists::PRICE_LIST_1,
                     'mergeAllowed' => true,
                 ],
                 [
@@ -118,11 +92,15 @@ class LoadCombinedPriceListsForFallback extends AbstractCombinedPriceListsFixtur
                 [
                     'priceList' => LoadPriceLists::PRICE_LIST_4,
                     'mergeAllowed' => true,
+                ],
+                [
+                    'priceList' => LoadPriceLists::PRICE_LIST_6,
+                    'mergeAllowed' => true,
                 ]
             ]
         ],
         [
-            'name' => '1t_2t',
+            'name' => '4t_5f_6t', // For Minimal prices
             'enabled' => true,
             'calculated' => true,
             'priceListsToCustomers' => [],
@@ -130,11 +108,33 @@ class LoadCombinedPriceListsForFallback extends AbstractCombinedPriceListsFixtur
             'websites' => [],
             'priceListRelations' => [
                 [
-                    'priceList' => LoadPriceLists::PRICE_LIST_1,
+                    'priceList' => LoadPriceLists::PRICE_LIST_4,
                     'mergeAllowed' => true,
                 ],
                 [
-                    'priceList' => LoadPriceLists::PRICE_LIST_2,
+                    'priceList' => LoadPriceLists::PRICE_LIST_5,
+                    'mergeAllowed' => false,
+                ],
+                [
+                    'priceList' => LoadPriceLists::PRICE_LIST_6,
+                    'mergeAllowed' => true,
+                ]
+            ]
+        ],
+        [
+            'name' => '5t_6t', // For merge by priority
+            'enabled' => true,
+            'calculated' => true,
+            'priceListsToCustomers' => [],
+            'priceListsToCustomerGroups' => [],
+            'websites' => [],
+            'priceListRelations' => [
+                [
+                    'priceList' => LoadPriceLists::PRICE_LIST_5,
+                    'mergeAllowed' => true,
+                ],
+                [
+                    'priceList' => LoadPriceLists::PRICE_LIST_6,
                     'mergeAllowed' => true,
                 ]
             ]
@@ -158,7 +158,7 @@ class LoadCombinedPriceListsForFallback extends AbstractCombinedPriceListsFixtur
             ]
         ],
         [
-            'name' => '1t',
+            'name' => '3t',
             'enabled' => true,
             'calculated' => true,
             'priceListsToCustomers' => [],
@@ -166,7 +166,7 @@ class LoadCombinedPriceListsForFallback extends AbstractCombinedPriceListsFixtur
             'websites' => [],
             'priceListRelations' => [
                 [
-                    'priceList' => LoadPriceLists::PRICE_LIST_1,
+                    'priceList' => LoadPriceLists::PRICE_LIST_3,
                     'mergeAllowed' => true,
                 ]
             ]

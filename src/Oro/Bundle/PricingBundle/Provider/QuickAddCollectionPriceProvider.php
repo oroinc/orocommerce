@@ -141,7 +141,7 @@ class QuickAddCollectionPriceProvider
         $result = [];
         /** @var QuickAddRow $row */
         foreach ($validRows as $row) {
-            $result[] = $this->productPriceCriteriaFactory->build(
+            $result[] = $this->productPriceCriteriaFactory->create(
                 $row->getProduct(),
                 $this->doctrineHelper->getEntityReference(
                     ProductUnit::class,

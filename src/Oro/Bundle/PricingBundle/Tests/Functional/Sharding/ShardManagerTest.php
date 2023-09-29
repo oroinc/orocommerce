@@ -186,7 +186,7 @@ class ShardManagerTest extends WebTestCase
     {
         /** @var Connection $connection */
         $connection = $this->getContainer()->get('doctrine')->getConnection();
-        $exists = (boolean)$connection->executeQuery(
+        $exists = (bool)$connection->executeQuery(
             'SELECT exists(SELECT 1 FROM ' . $table . ' WHERE id = :id)',
             ['id' => $id]
         )->fetchColumn(0);

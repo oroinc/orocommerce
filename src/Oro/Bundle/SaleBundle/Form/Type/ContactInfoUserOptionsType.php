@@ -79,7 +79,7 @@ class ContactInfoUserOptionsType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return static::NAME;
     }
@@ -87,7 +87,7 @@ class ContactInfoUserOptionsType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return ChoiceType::class;
     }

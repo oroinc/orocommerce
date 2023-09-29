@@ -82,7 +82,7 @@ class DigitalAssetTwigTagsEventSubscriberTest extends \PHPUnit\Framework\TestCas
             $this->createMock(EventDispatcherInterface::class),
             []
         );
-        $rootData = new class extends \stdClass {
+        $rootData = new class() extends \stdClass {
             public function getId(): int
             {
                 return 42;
@@ -100,7 +100,7 @@ class DigitalAssetTwigTagsEventSubscriberTest extends \PHPUnit\Framework\TestCas
             $this->createMock(EventDispatcherInterface::class),
             []
         );
-        $parentData = new class extends \stdClass {
+        $parentData = new class() extends \stdClass {
             public function getId(): int
             {
                 return 4242;

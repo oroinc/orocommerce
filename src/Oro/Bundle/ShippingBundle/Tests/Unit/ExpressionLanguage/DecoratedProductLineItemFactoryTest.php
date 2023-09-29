@@ -2,29 +2,29 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\ExpressionLanguage;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecorator;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
+use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
 use Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingLineItemTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class DecoratedProductLineItemFactoryTest extends \PHPUnit\Framework\TestCase
+class DecoratedProductLineItemFactoryTest extends TestCase
 {
-    /**
-     * @var DecoratedProductLineItemFactory
-     */
-    private $testedDecoratedProductLineItemFactory;
+    use ShippingLineItemTrait;
 
-    /**
-     * @var VirtualFieldsProductDecoratorFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $virtualFieldsProductDecoratorFactory;
+    private DecoratedProductLineItemFactory $testedDecoratedProductLineItemFactory;
+
+    private VirtualFieldsProductDecoratorFactory|MockObject $virtualFieldsProductDecoratorFactory;
 
     protected function setUp(): void
     {
@@ -37,46 +37,91 @@ class DecoratedProductLineItemFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateShippingLineItemWithDecoratedProduct(): void
     {
-        $shippingLineItemParams = [
-            ShippingLineItem::FIELD_PRICE => $this->createMock(Price::class),
-            ShippingLineItem::FIELD_PRODUCT_UNIT => $this->createMock(ProductUnit::class),
-            ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'each',
-            ShippingLineItem::FIELD_QUANTITY => 20,
-            ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->createMock(ProductHolderInterface::class),
-            ShippingLineItem::FIELD_PRODUCT_SKU => 'sku',
-            ShippingLineItem::FIELD_WEIGHT => $this->createMock(Weight::class),
-            ShippingLineItem::FIELD_DIMENSIONS => $this->createMock(Dimensions::class)
-        ];
-
         $product1 = new ProductStub();
         $product1->setId(1001);
+        $product1->setSku('sku1');
         $product2 = new ProductStub();
         $product2->setId(2002);
+        $product2->setSku('sku2');
         $product3 = new ProductStub();
         $product3->setId(3003);
 
         $products = [$product1, $product2, $product3];
 
-        $decoratedProductMock = $this->createMock(VirtualFieldsProductDecorator::class);
-        $productToDecorate = $this->createMock(Product::class);
+        $decoratedProduct1Mock = $this->createMock(VirtualFieldsProductDecorator::class);
+        $decoratedProduct2Mock = $this->createMock(VirtualFieldsProductDecorator::class);
 
         $this->virtualFieldsProductDecoratorFactory
-            ->expects($this->once())
+            ->expects(self::exactly(2))
             ->method('createDecoratedProduct')
-            ->with($products, $productToDecorate)
-            ->willReturn($decoratedProductMock);
+            ->willReturnMap([
+                [$products, $product1, $decoratedProduct1Mock],
+                [$products, $product2, $decoratedProduct2Mock],
+            ]);
 
-        $shippingLineItemParams[ShippingLineItem::FIELD_PRODUCT] = $productToDecorate;
-        $shippingLineItemToDecorate = new ShippingLineItem($shippingLineItemParams);
+        $productUnit = $this->createMock(ProductUnit::class);
+        $unitCode = 'unit_code';
+        $quantity = 1;
+        $productHolder = $this->createMock(ProductHolderInterface::class);
+        $price = Price::create(1, 'USD');
+        $kitItem = new ProductKitItem();
+        $sortOrder = 1;
 
-        $shippingLineItemParams[ShippingLineItem::FIELD_PRODUCT] = $decoratedProductMock;
-        $expectedShippingLineItem = new ShippingLineItem($shippingLineItemParams);
+        $shippingKitItemLineItemToDecorate = (new ShippingKitItemLineItem(
+            $productUnit,
+            $quantity,
+            $productHolder
+        ))
+            ->setProductUnitCode($unitCode)
+            ->setProduct($product2)
+            ->setProductSku($product2->getSku())
+            ->setPrice($price)
+            ->setKitItem($kitItem)
+            ->setSortOrder($sortOrder);
+
+        $shippingKitItemLineItemsToDecorate = new ArrayCollection([
+            $shippingKitItemLineItemToDecorate,
+        ]);
+
+        $shippingLineItemToDecorate = $this->getShippingLineItem(quantity: 20, unitCode: 'each')
+            ->setPrice($this->createMock(Price::class))
+            ->setProduct($product1)
+            ->setProductSku('sku')
+            ->setDimensions($this->createMock(Dimensions::class))
+            ->setWeight($this->createMock(Weight::class))
+            ->setKitItemLineItems($shippingKitItemLineItemsToDecorate)
+            ->setChecksum('checksum_1');
+
+        $shippingKitItemLineItemWithDecoratedProduct = (new ShippingKitItemLineItem(
+            $productUnit,
+            $quantity,
+            $productHolder
+        ))
+            ->setProductUnitCode($unitCode)
+            ->setProduct($decoratedProduct2Mock)
+            ->setProductSku($product2->getSku())
+            ->setPrice($price)
+            ->setKitItem($kitItem)
+            ->setSortOrder($sortOrder);
+
+        $kitItemLineItemsWithDecoratedProduct = new ArrayCollection([
+            $shippingKitItemLineItemWithDecoratedProduct,
+        ]);
+
+        $expectedShippingLineItem = $this->getShippingLineItem(quantity: 20, unitCode: 'each')
+            ->setPrice($this->createMock(Price::class))
+            ->setProduct($decoratedProduct1Mock)
+            ->setProductSku('sku')
+            ->setDimensions($this->createMock(Dimensions::class))
+            ->setWeight($this->createMock(Weight::class))
+            ->setKitItemLineItems($kitItemLineItemsWithDecoratedProduct)
+            ->setChecksum('checksum_1');
 
         $actualLineItem = $this->testedDecoratedProductLineItemFactory->createShippingLineItemWithDecoratedProduct(
             $shippingLineItemToDecorate,
             $products
         );
 
-        static::assertEquals($expectedShippingLineItem, $actualLineItem);
+        self::assertEquals($expectedShippingLineItem, $actualLineItem);
     }
 }

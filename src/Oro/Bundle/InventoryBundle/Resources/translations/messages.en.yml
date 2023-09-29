@@ -144,10 +144,6 @@ oro:
                 'true': Yes
                 'false': No
 
-        frontend:
-            messages:
-                quantity_limits_error: Cannot create order because some items' quantities don't fit allowed limits
-
     product:
         manage_inventory:
             description: Option which defines if inventory for products is managed or not

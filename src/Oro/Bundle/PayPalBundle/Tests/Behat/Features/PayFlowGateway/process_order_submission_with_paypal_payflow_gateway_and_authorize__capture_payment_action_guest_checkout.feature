@@ -71,12 +71,15 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |
+      | Middle Name     | M.              |
       | Email           | tester@test.com |
       | Street          | Fifth avenue    |
       | City            | Berlin          |
       | Country         | Germany         |
       | State           | Berlin          |
       | Zip/Postal Code | 10115           |
+      | Organization    | Acme Inc.       |
+      | Phone           | 123-456-7890    |
     And I click "Ship to This Address"
     And press "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue

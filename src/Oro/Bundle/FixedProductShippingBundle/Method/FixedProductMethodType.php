@@ -43,41 +43,26 @@ class FixedProductMethodType implements ShippingMethodTypeInterface
         $this->shippingCostProvider = $shippingCostProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getIdentifier(): string
     {
         return self::IDENTIFIER;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getLabel(): string
     {
         return $this->label;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getSortOrder(): int
     {
         return 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getOptionsConfigurationFormType(): ?string
     {
         return FixedProductOptionsType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function calculatePrice(
         ShippingContextInterface $context,
         array $methodOptions,

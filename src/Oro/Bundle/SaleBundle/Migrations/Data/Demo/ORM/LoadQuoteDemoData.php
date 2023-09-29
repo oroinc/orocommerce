@@ -321,7 +321,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @param Product $product
+     * @param Product|null $product
      * @return ProductUnit[]
      */
     protected function getProductUnits(ObjectManager $manager, Product $product = null)

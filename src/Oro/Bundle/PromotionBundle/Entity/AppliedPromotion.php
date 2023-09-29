@@ -5,6 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroPromotionBundle_Entity_AppliedPromotion;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -21,6 +22,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  *
  * @method Order getOrder()
  * @method setOrder(Order $order)
+ * @mixin OroPromotionBundle_Entity_AppliedPromotion
  */
 class AppliedPromotion implements DatesAwareInterface, ExtendEntityInterface
 {

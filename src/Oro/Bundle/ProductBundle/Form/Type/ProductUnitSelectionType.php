@@ -243,7 +243,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     }
 
     /**
-     * @param ProductUnit $productUnit
+     * @param ProductUnit|null $productUnit
      * @param ProductUnitHolderInterface $productUnitHolder
      * @param Product $product
      * @param array $choices
@@ -297,7 +297,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     /**
      * {@inheritDoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return EntityType::class;
     }
@@ -313,7 +313,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return static::NAME;
     }

@@ -1,3 +1,9 @@
+oro_entity:
+    entity_name_representation:
+        Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+            full: [ productUnitCode ]
+            short: [ productUnitCode ]
+
 oro_email:
-  public_email_owners:
-    - Oro\Bundle\RFPBundle\Entity\Request
+    public_email_owners:
+        - Oro\Bundle\RFPBundle\Entity\Request

@@ -6,6 +6,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactoryInterface;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemsGrouping\GroupedLineItemsProviderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
@@ -90,8 +91,14 @@ class GroupedCheckoutLineItemsProvider
         return $splitItems;
     }
 
-    private function getLineItemKey(ProductLineItemInterface $item): string
+    private function getLineItemKey(ProductLineItemInterface $lineItem): string
     {
-        return sprintf('%s:%s', $item->getProductSku(), $item->getProductUnitCode());
+        $key = implode(':', [$lineItem->getProductSku(), $lineItem->getProductUnitCode()]);
+
+        if ($lineItem instanceof ProductKitItemLineItemsAwareInterface) {
+            $key .= ':' . $lineItem->getChecksum();
+        }
+
+        return $key;
     }
 }

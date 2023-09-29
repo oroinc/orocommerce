@@ -4,7 +4,9 @@ namespace Oro\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroShoppingListBundle_Entity_ShoppingList;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -71,6 +73,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @method ArrayCollection|CustomerVisitor[] getVisitors()
+ * @mixin OroShoppingListBundle_Entity_ShoppingList
  */
 class ShoppingList implements
     OrganizationAwareInterface,
@@ -165,8 +168,7 @@ class ShoppingList implements
      *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal",
      *      mappedBy="shoppingList",
      *      cascade={"ALL"},
-     *      orphanRemoval=true,
-     *      indexBy="currency"
+     *      orphanRemoval=true
      * )
      **/
     protected $totals;
@@ -212,6 +214,21 @@ class ShoppingList implements
      * @var Subtotal
      */
     protected $subtotal;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", length=3)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $currency;
+
 
     /**
      * {@inheritdoc}
@@ -359,6 +376,29 @@ class ShoppingList implements
         return $this->totals;
     }
 
+    public function getTotalsForCustomerUser(array $currencies = [], ?CustomerUser $customerUser = null): Collection
+    {
+        $criteria = Criteria::create();
+        $criteria->where(
+            Criteria::expr()->andX(
+                Criteria::expr()->eq('customerUser', $customerUser),
+                Criteria::expr()->in('currency', $currencies)
+            )
+        );
+
+        return $this->totals->matching($criteria);
+    }
+
+    public function getTotalForCustomerUser(string $currency, ?CustomerUser $customerUser = null): ?ShoppingListTotal
+    {
+        $shoppingListTotal = $this->getTotalsForCustomerUser([$currency], $customerUser)->first();
+        if ($shoppingListTotal) {
+            return $shoppingListTotal;
+        }
+
+        return null;
+    }
+
     /**
      * @return bool
      */
@@ -489,5 +529,16 @@ class ShoppingList implements
             $this->totals = clone $this->totals;
             $this->cloneExtendEntityStorage();
         }
+    }
+
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+        return $this;
     }
 }

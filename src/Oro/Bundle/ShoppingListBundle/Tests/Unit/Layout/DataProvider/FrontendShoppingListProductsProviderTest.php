@@ -4,32 +4,34 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
+use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCase
+class FrontendShoppingListProductsProviderTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $lineItemRepository;
+    private LineItemRepository|MockObject $lineItemRepository;
 
-    /** @var FrontendProductPricesDataProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $frontendProductPricesDataProvider;
+    private FrontendProductPricesDataProvider|MockObject $frontendProductPricesDataProvider;
 
-    /** @var ShoppingListLineItemsDataProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $shoppingListLineItemsDataProvider;
+    private ShoppingListLineItemsDataProvider|MockObject $shoppingListLineItemsDataProvider;
 
-    /** @var ProductPriceFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    private $productPriceFormatter;
+    private ProductPriceFormatter|MockObject $productPriceFormatter;
 
-    /** @var FrontendShoppingListProductsProvider */
-    private $provider;
+    private ProductLineItemPriceProviderInterface|MockObject $productLineItemPriceProvider;
+
+    private FrontendShoppingListProductsProvider $provider;
 
     protected function setUp(): void
     {
@@ -37,16 +39,18 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
         $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
         $this->shoppingListLineItemsDataProvider = $this->createMock(ShoppingListLineItemsDataProvider::class);
         $this->productPriceFormatter = $this->createMock(ProductPriceFormatter::class);
+        $this->productLineItemPriceProvider = $this->createMock(ProductLineItemPriceProviderInterface::class);
 
         $this->provider = new FrontendShoppingListProductsProvider(
             $this->lineItemRepository,
             $this->frontendProductPricesDataProvider,
             $this->shoppingListLineItemsDataProvider,
-            $this->productPriceFormatter
+            $this->productPriceFormatter,
+            $this->productLineItemPriceProvider
         );
     }
 
-    public function testGetAllPrices()
+    public function testGetAllPrices(): void
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 2]);
@@ -58,99 +62,80 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit\Framework\TestCa
         $prices = ['price_1', 'price_2'];
         $expected = ['price_1', 'price_2'];
 
-        $this->shoppingListLineItemsDataProvider->expects($this->once())
+        $this->shoppingListLineItemsDataProvider->expects(self::once())
             ->method('getShoppingListLineItems')
             ->with($shoppingList)
             ->willReturn($lineItems);
 
-        $this->frontendProductPricesDataProvider->expects($this->once())
+        $this->frontendProductPricesDataProvider->expects(self::once())
             ->method('getAllPricesForLineItems')
             ->with($lineItems)
             ->willReturn($prices);
 
-        $this->productPriceFormatter->expects($this->once())
+        $this->productPriceFormatter->expects(self::once())
             ->method('formatProducts')
             ->with($prices)
             ->willReturn($expected);
 
         $result = $this->provider->getAllPrices($shoppingList);
-        $this->assertEquals($expected, $result);
+        self::assertEquals($expected, $result);
     }
 
-    public function testGetAllPricesWithoutShoppingList()
+    public function testGetAllPricesWithoutShoppingList(): void
     {
-        $this->shoppingListLineItemsDataProvider->expects($this->never())
+        $this->shoppingListLineItemsDataProvider->expects(self::never())
             ->method('getShoppingListLineItems');
-        $this->frontendProductPricesDataProvider->expects($this->never())
+        $this->frontendProductPricesDataProvider->expects(self::never())
             ->method('getAllPricesForLineItems');
-        $this->productPriceFormatter->expects($this->never())
+        $this->productPriceFormatter->expects(self::never())
             ->method('formatProducts');
 
         $this->provider->getAllPrices();
     }
 
-    /**
-     * @dataProvider matchedPriceDataProvider
-     */
-    public function testGetMatchedPrice(?ShoppingList $shoppingList)
+    public function testGetProductLineItemPricesForShoppingListsWhenNoShoppingLists(): void
     {
-        $expected = null;
-
-        if ($shoppingList) {
-            $lineItems = [];
-
-            $this->shoppingListLineItemsDataProvider->expects($this->once())
-                ->method('getShoppingListLineItems')
-                ->willReturn($lineItems);
-
-            $expected = 'expectedData';
-            $this->frontendProductPricesDataProvider->expects($this->once())
-                ->method('getProductsMatchedPrice')
-                ->with($lineItems)
-                ->willReturn($expected);
-        }
-
-        $result = $this->provider->getMatchedPrice($shoppingList);
-        $this->assertEquals($expected, $result);
+        self::assertEquals([], $this->provider->getProductLineItemPricesForShoppingLists([]));
     }
 
-    public function testGetMatchedPrices()
+    public function testGetProductLineItemPricesForShoppingLists(): void
     {
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 42]);
-        $lineItems = [];
+        $shoppingList1 = (new ShoppingListStub())->setId(11);
+        $lineItem1 = new LineItem();
+        $lineItem2 = new LineItem();
+        $shoppingList2 = (new ShoppingListStub())->setId(22);
+        $productLineItemPrice1 = $this->createMock(ProductLineItemPrice::class);
+        $productLineItemPrice2 = $this->createMock(ProductLineItemPrice::class);
 
-        $this->shoppingListLineItemsDataProvider->expects($this->once())
+        $this->shoppingListLineItemsDataProvider
+            ->expects(self::exactly(2))
             ->method('getShoppingListLineItems')
-            ->willReturn($lineItems);
+            ->willReturnMap([
+                [$shoppingList1, [$lineItem1, $lineItem2]],
+                [$shoppingList2, []],
+            ]);
 
-        $expected = ['expectedData'];
-        $this->frontendProductPricesDataProvider->expects($this->once())
-            ->method('getProductsMatchedPrice')
-            ->with($lineItems)
-            ->willReturn($expected);
+        $this->productLineItemPriceProvider
+            ->expects(self::once())
+            ->method('getProductLineItemsPrices')
+            ->with([$lineItem1, $lineItem2])
+            ->willReturn([$productLineItemPrice1, $productLineItemPrice2]);
 
-        $result = $this->provider->getMatchedPrices([$shoppingList]);
-        $this->assertEquals([42 => $expected], $result);
+        self::assertEquals(
+            [
+                $shoppingList1->getId() => [$productLineItemPrice1, $productLineItemPrice2],
+                $shoppingList2->getId() => [],
+            ],
+            $this->provider->getProductLineItemPricesForShoppingLists([$shoppingList1, $shoppingList2])
+        );
     }
 
-    public function matchedPriceDataProvider(): array
-    {
-        return [
-            'with shoppingList' => [
-                'entity' => new ShoppingList(),
-            ],
-            'without shoppingList' => [
-                'entity' => null,
-            ],
-        ];
-    }
-
-    public function testGetLastProductsGroupedByShoppingList()
+    public function testGetLastProductsGroupedByShoppingList(): void
     {
         $shoppingLists = [$this->getEntity(ShoppingList::class)];
         $productCount = 1;
         $localization = $this->getEntity(Localization::class);
-        $this->lineItemRepository->expects($this->once())
+        $this->lineItemRepository->expects(self::once())
             ->method('getLastProductsGroupedByShoppingList')
             ->with($shoppingLists, $productCount, $localization);
 

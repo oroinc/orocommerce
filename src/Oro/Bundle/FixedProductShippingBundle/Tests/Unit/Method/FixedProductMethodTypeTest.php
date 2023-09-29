@@ -2,36 +2,35 @@
 
 namespace Oro\Bundle\FixedProductShippingBundle\Tests\Unit\Method;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FixedProductShippingBundle\Form\Type\FixedProductOptionsType;
 use Oro\Bundle\FixedProductShippingBundle\Method\FixedProductMethodType;
 use Oro\Bundle\FixedProductShippingBundle\Provider\ShippingCostProvider;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class FixedProductMethodTypeTest extends \PHPUnit\Framework\TestCase
+class FixedProductMethodTypeTest extends TestCase
 {
     private const LABEL = 'Fixed Product';
 
-    /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $roundingService;
+    private RoundingServiceInterface|MockObject $roundingService;
 
-    /** @var ShippingCostProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingCostProvider;
+    private ShippingCostProvider|MockObject $shippingCostProvider;
 
-    /** @var FixedProductMethodType */
-    private $fixedProductType;
+    private FixedProductMethodType $fixedProductType;
 
     protected function setUp(): void
     {
         $this->roundingService = $this->createMock(RoundingServiceInterface::class);
         $this->shippingCostProvider = $this->createMock(ShippingCostProvider::class);
 
-        $this->roundingService->expects($this->any())
+        $this->roundingService->expects(self::any())
             ->method('getPrecision')
             ->willReturn(4);
-        $this->roundingService->expects($this->any())
+        $this->roundingService->expects(self::any())
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
@@ -44,17 +43,17 @@ class FixedProductMethodTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testGetIdentifier(): void
     {
-        $this->assertEquals(FixedProductMethodType::IDENTIFIER, $this->fixedProductType->getIdentifier());
+        self::assertEquals(FixedProductMethodType::IDENTIFIER, $this->fixedProductType->getIdentifier());
     }
 
     public function testGetLabel(): void
     {
-        $this->assertEquals(self::LABEL, $this->fixedProductType->getLabel());
+        self::assertEquals(self::LABEL, $this->fixedProductType->getLabel());
     }
 
     public function testGetOptionsConfigurationFormType(): void
     {
-        $this->assertEquals(
+        self::assertEquals(
             FixedProductOptionsType::class,
             $this->fixedProductType->getOptionsConfigurationFormType()
         );
@@ -62,7 +61,7 @@ class FixedProductMethodTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testGetSortOrder(): void
     {
-        $this->assertEquals(0, $this->fixedProductType->getSortOrder());
+        self::assertEquals(0, $this->fixedProductType->getSortOrder());
     }
 
     /**
@@ -72,25 +71,25 @@ class FixedProductMethodTypeTest extends \PHPUnit\Framework\TestCase
     {
         $context = new ShippingContext([
             ShippingContext::FIELD_SUBTOTAL => Price::create(100, 'USD'),
-            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection([]),
+            ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection([]),
             ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
 
-        $this->roundingService->expects($this->any())
+        $this->roundingService->expects(self::any())
             ->method('round')
             ->with($expectedPrice)
             ->willReturn($expectedPrice);
 
-        $this->shippingCostProvider->expects($this->any())
+        $this->shippingCostProvider->expects(self::any())
             ->method('getCalculatedProductShippingCost')
             ->with($context->getLineItems(), $context->getCurrency())
             ->willReturn($shippingCost);
 
         $price = $this->fixedProductType->calculatePrice($context, [], $options);
 
-        $this->assertInstanceOf(Price::class, $price);
-        $this->assertEquals($expectedPrice, $price->getValue());
-        $this->assertEquals($context->getCurrency(), $price->getCurrency());
+        self::assertInstanceOf(Price::class, $price);
+        self::assertEquals($expectedPrice, $price->getValue());
+        self::assertEquals($context->getCurrency(), $price->getCurrency());
     }
 
     public function ruleConfigProvider(): array

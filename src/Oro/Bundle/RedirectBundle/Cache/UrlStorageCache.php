@@ -21,12 +21,6 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
     private array $usedKeys = [];
     private int $splitDeep;
 
-    /**
-     * @param CacheItemPoolInterface $persistentCache
-     * @param CacheItemPoolInterface $localCache
-     * @param Filesystem $filesystem
-     * @param int $splitDeep
-     */
     public function __construct(
         CacheItemPoolInterface $persistentCache,
         CacheItemPoolInterface $localCache,
@@ -93,7 +87,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
     /**
      * Move collected changes from local cache to persistent cache and save changes.
      */
-    public function flushAll() : void
+    public function flushAll(): void
     {
         foreach (array_keys($this->usedKeys) as $cacheKey) {
             // Item isn't present in local cache. Nothing to move to persistent storage, continue.
@@ -122,7 +116,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
         $this->usedKeys = [];
     }
 
-    public function deleteAll() : void
+    public function deleteAll(): void
     {
         $this->localCache->clear();
         if ($this->persistentCache instanceof DirectoryAwareFileCacheInterface
@@ -151,10 +145,6 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
      *
      * If it is not loaded and contains in persistent cache - instance from persistent cache will be returned.
      * For already loaded storage instance stored in local cache will be returned.
-     *
-     * @param string $routeName
-     * @param array $routeParameters
-     * @return UrlDataStorage
      */
     protected function getUrlDataStorage(string $routeName, array $routeParameters): UrlDataStorage
     {

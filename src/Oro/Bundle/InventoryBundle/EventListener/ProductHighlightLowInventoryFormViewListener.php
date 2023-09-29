@@ -11,10 +11,14 @@ use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
  */
 class ProductHighlightLowInventoryFormViewListener extends AbstractFallbackFieldsFormView
 {
-    public function onProductView(BeforeListRenderEvent $event)
+    public function onProductView(BeforeListRenderEvent $event): void
     {
         $product = $this->getEntityFromRequest(Product::class);
         if (!$product) {
+            return;
+        }
+
+        if (!$this->fieldAclHelper->isFieldViewGranted($product, 'highlightLowInventory')) {
             return;
         }
 
@@ -26,8 +30,13 @@ class ProductHighlightLowInventoryFormViewListener extends AbstractFallbackField
         );
     }
 
-    public function onProductEdit(BeforeListRenderEvent $event)
+    public function onProductEdit(BeforeListRenderEvent $event): void
     {
+        $product = $event->getEntity();
+        if (!$this->fieldAclHelper->isFieldAvailable($product, 'highlightLowInventory')) {
+            return;
+        }
+
         $this->addBlockToEntityEdit(
             $event,
             '@OroInventory/Product/highlightLowInventoryFormWidget.html.twig',

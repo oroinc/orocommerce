@@ -56,7 +56,8 @@ class ProductPriceCollectionType extends AbstractType
                 'entry_type' => ProductPriceType::class,
                 'show_form_when_empty' => false,
                 'entry_options' => ['data_class' => $this->dataClass],
-                'validation_groups' => [self::VALIDATION_GROUP]
+                'validation_groups' => [self::VALIDATION_GROUP],
+                'check_field_name' => null
             ]
         );
     }
@@ -86,7 +87,7 @@ class ProductPriceCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return CollectionType::class;
     }
@@ -102,7 +103,7 @@ class ProductPriceCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }

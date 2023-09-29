@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Cache;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
@@ -126,7 +126,7 @@ class ShippingPriceCacheTest extends TestCase
             ->method('expiresAfter')
             ->with(3600)
             ->willReturn($this->cacheItem);
-        $this->cacheProvider->expects($this->once())
+        $this->cacheProvider->expects(self::once())
             ->method('save')
             ->with($this->cacheItem);
 
@@ -144,7 +144,7 @@ class ShippingPriceCacheTest extends TestCase
     private function createShippingContext(array $params): ShippingContext
     {
         $actualParams = array_merge([
-            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection([])
+            ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection([]),
         ], $params);
 
         return new ShippingContext($actualParams);

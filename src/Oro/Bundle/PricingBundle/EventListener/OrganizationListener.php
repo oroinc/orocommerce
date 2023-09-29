@@ -17,9 +17,8 @@ use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
  */
 class OrganizationListener implements OptionalListenerInterface
 {
-    private const PRICE_LIST_NAME_POSTFIX = 'Price List';
-
     use OptionalListenerTrait;
+    private const PRICE_LIST_NAME_POSTFIX = 'Price List';
 
     private DoctrineHelper $doctrineHelper;
     private DefaultCurrencyConfigProvider $currencyConfigProvider;

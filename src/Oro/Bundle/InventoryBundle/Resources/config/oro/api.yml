@@ -2,6 +2,7 @@ api:
     entities:
         Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
             documentation_resource: '@OroInventoryBundle/Resources/doc/api/inventory_level.md'
+            disable_meta_properties: [ title ]
             fields:
                 product:
                     form_options:

@@ -58,9 +58,9 @@ define(function(require) {
                 this.allowBreakpoints = options.allowBreakpoints;
             }
 
-            const {Commands, Canvas} = this.builder;
+            this._deferredInit();
 
-            this.patchDeviceModel();
+            const {Commands, Canvas} = this.builder;
 
             this.canvasEl = Canvas.getElement();
             this.$builderIframe = $(Canvas.getFrameEl());
@@ -74,11 +74,13 @@ define(function(require) {
             this.listenTo(this.builder, 'change:device', this.updateSelectedElement.bind(this));
 
             Commands.add('setDevice', {
+                updateCalcPreviewDeviceWidth: this.updateCalcPreviewDeviceWidth.bind(this),
+
                 run(editor, sender) {
                     const {Devices} = editor;
                     const device = Devices.get(sender.id);
 
-                    device.updateCalcPreviewDeviceWidth();
+                    this.updateCalcPreviewDeviceWidth(device);
 
                     editor.setDevice(sender.id);
                     const canvas = editor.Canvas.getElement();
@@ -86,6 +88,7 @@ define(function(require) {
                     canvas.classList.add(sender.id);
                     editor.Canvas.deviceDecorator.classList.add(sender.id);
                 },
+
                 stop(editor, sender) {
                     const canvas = editor.Canvas.getElement();
 
@@ -95,24 +98,60 @@ define(function(require) {
             });
         },
 
-        patchDeviceModel() {
-            const {Devices} = this.builder;
-
-            Devices.Devices.prototype.model = Devices.Device.extend({
-                editor: this.builder,
-
-                updateCalcPreviewDeviceWidth() {
-                    const {Canvas} = this.editor;
-                    const canvasEl = Canvas.getElement();
-                    const width = parseInt(this.get('width')) || 0;
-
-                    if (width >= canvasEl.offsetWidth - 100) {
-                        this.set('width', (canvasEl.offsetWidth - 100) + 'px');
-                    } else {
-                        this.set('width', this.get('widthMedia'));
-                    }
-                }
+        /**
+         * Set deferred initialize
+         *
+         * @private
+         */
+        _deferredInit() {
+            this.deferredInitPromise = new Promise((resolve, reject) => {
+                this._deferredInitResolver = resolve;
+                this._deferredInitRejecter = reject;
             });
+        },
+
+        /**
+         * Resolve deferred initialize promise
+         *
+         * @private
+         */
+        _resolveDeferredInit() {
+            if (this._deferredInitResolver) {
+                this._deferredInitResolver(this);
+            }
+        },
+
+        /**
+         * Reject deferred initialize promise
+         *
+         * @param {object} error
+         * @private
+         */
+        _rejectDeferredInit(error) {
+            if (this._deferredInitRejecter) {
+                if (error) {
+                    this._deferredInitRejecter(error);
+                } else {
+                    this._deferredInitRejecter();
+                }
+            }
+        },
+
+        /**
+         * Update preview device width according canvas width
+         *
+         * @param {Model} deviceModel
+         */
+        updateCalcPreviewDeviceWidth(deviceModel) {
+            const {Canvas} = this.builder;
+            const canvasEl = Canvas.getElement();
+            const width = parseInt(deviceModel.get('width')) || 0;
+
+            if (width >= canvasEl.offsetWidth - 100) {
+                deviceModel.set('width', (canvasEl.offsetWidth - 100) + 'px');
+            } else {
+                deviceModel.set('width', deviceModel.get('widthMedia'));
+            }
         },
 
         renderDeviceDecoration() {
@@ -132,12 +171,13 @@ define(function(require) {
             const {Devices} = this.builder;
             const currentDevice = Devices.getSelected();
 
-            currentDevice && currentDevice.updateCalcPreviewDeviceWidth();
+            currentDevice && this.updateCalcPreviewDeviceWidth(currentDevice);
         },
 
         initButtons() {
             this.getBreakpoints()
-                .then(() => this.createButtons());
+                .then(() => this.createButtons())
+                .catch(error => this._rejectDeferredInit(error));
         },
 
         /**
@@ -160,7 +200,7 @@ define(function(require) {
 
             this.breakpoints = this._collectCSSBreakpoints(breakpoints)
                 .filter(({name}) => !allowBreakpoints.length || allowBreakpoints.includes(name))
-                .map(breakpoint => {
+                .map((breakpoint, index) => {
                     breakpoint = {...breakpoint};
 
                     const width = breakpoint.max ? breakpoint.max + 'px' : '';
@@ -173,6 +213,8 @@ define(function(require) {
                     } else {
                         breakpoint['height'] = this.calculateDeviceHeight(width);
                     }
+
+                    breakpoint.isActiveByDefault = index === 0;
 
                     return breakpoint;
                 });
@@ -243,11 +285,11 @@ define(function(require) {
         * Create buttons controls via breakpoints
         */
         createButtons() {
-            const {Panels, Devices} = this.builder;
+            const {Panels, Devices, Canvas} = this.builder;
             const buttons = [];
 
             this.breakpoints.forEach(breakpoint => {
-                Devices.add({
+                const device = Devices.add({
                     id: breakpoint.name,
                     width: breakpoint.widthDevice,
                     widthMedia: breakpoint.max ? breakpoint.max + 'px' : '',
@@ -259,11 +301,17 @@ define(function(require) {
                     command: 'setDevice',
                     togglable: false,
                     className: breakpoint.name,
+                    active: breakpoint.isActiveByDefault,
                     attributes: {
                         'data-toggle': 'tooltip',
                         'title': this.concatTitle(breakpoint)
                     }
                 });
+
+                if (breakpoint.isActiveByDefault) {
+                    Canvas.getElement().classList.add(device.id);
+                    Canvas.deviceDecorator.classList.add(device.id);
+                }
             });
 
             const panel = Panels.addPanel({
@@ -272,10 +320,9 @@ define(function(require) {
                 buttons
             });
 
-            const button = Panels.getButton('devices-c', 'desktop');
-            button.set('active', true);
-
             $(panel.view.$el.find('[data-toggle="tooltip"]')).tooltip();
+
+            this._resolveDeferredInit();
         },
 
         /**

@@ -35,8 +35,8 @@ class OrderAddressManager extends AbstractAddressManager
     }
 
     /**
-     * @param AbstractAddress $address
-     * @param OrderAddress $orderAddress
+     * @param AbstractAddress|null $address
+     * @param OrderAddress|null $orderAddress
      * @return OrderAddress
      */
     public function updateFromAbstract(AbstractAddress $address = null, OrderAddress $orderAddress = null)

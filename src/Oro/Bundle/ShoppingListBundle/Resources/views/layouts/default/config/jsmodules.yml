@@ -4,20 +4,24 @@ aliases:
     oro/datagrid/action/delete-product-action$: oroshoppinglist/js/datagrid/action/delete-product-action
     oro/datagrid/action/move-products-mass-action$: oroshoppinglist/js/datagrid/action/move-products-mass-action
     oro/datagrid/action/update-configurable-product-action$: oroshoppinglist/js/datagrid/action/update-configurable-product-action
+    oro/datagrid/action/update-product-kit-line-item-action$: oroshoppinglist/js/datagrid/action/update-product-kit-line-item-action
     oro/datagrid/cell/shoppinglist-html-template-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-html-template-cell
     oro/datagrid/cell/shoppinglist-item-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-item-cell
     oro/datagrid/cell/shoppinglist-line-item-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-line-item-cell
     oro/datagrid/cell/shoppinglist-string-cell$: oroshoppinglist/js/datagrid/cell/shoppinglist-string-cell
     oro/matrix-grid-order-widget$: oroshoppinglist/js/app/widget/matrix-grid-order-widget
     oro/product-kit-line-item-widget$: oroshoppinglist/js/app/widget/product-kit-line-item-widget
+    oro/product-kit-in-shopping-lists-widget$: oroshoppinglist/js/app/widget/product-kit-in-shopping-lists-widget
     oro/product-shopping-lists-widget$: oroshoppinglist/js/app/widget/product-shopping-lists-widget
     oro/shopping-list-create-widget$: oroshoppinglist/js/app/widget/shopping-list-create-widget
+    oro/filter/composed-sku-string-filter$: orofrontend/default/js/app/views/choice-filter
 app-modules:
     - oroshoppinglist/js/app/modules/template-macros-module
 dynamic-imports:
     commons:
         - oro/matrix-grid-order-widget
         - oro/product-kit-line-item-widget
+        - oro/product-kit-in-shopping-lists-widget
         - oro/product-shopping-lists-widget
         - oro/shopping-list-create-widget
         - oroshoppinglist/js/app/components/shoppinglist-collection-component
@@ -32,6 +36,7 @@ dynamic-imports:
         - oro/datagrid/action/delete-product-action
         - oro/datagrid/action/move-products-mass-action
         - oro/datagrid/action/update-configurable-product-action
+        - oro/datagrid/action/update-product-kit-line-item-action
         - oro/datagrid/cell/shoppinglist-html-template-cell
         - oro/datagrid/cell/shoppinglist-item-cell
         - oro/datagrid/cell/shoppinglist-line-item-cell
@@ -45,15 +50,19 @@ dynamic-imports:
         - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-options-builder
         - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-representation-builder
         - oroshoppinglist/js/datagrid/builder/shoppinglist-rfp-confirmation-builder
+        - oroshoppinglist/js/datagrid/builder/shoppinglist-product-kit-builder
+        - oroshoppinglist/js/datagrid/builder/product-kit-in-shopping-list-plugins-builder
         - oroshoppinglist/js/datagrid/plugins/shopping-list-inline-editing-plugin
         - oroshoppinglist/js/datagrid/row/shopping-list-row
         - oroshoppinglist/js/inline-editing/shopping-list-editors
         - oroui/js/tools/search-api-accessor
+        - oro/filter/composed-sku-string-filter
     oroproduct:
         - oroshoppinglist/js/app/components/shopping-list-create-component
         - oroshoppinglist/js/app/components/shoppinglist-create-order-button-component
         - oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/matrix-grid-popup-button-view
+        - oroshoppinglist/js/app/views/product-kit-configure-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/product-kit-add-to-shopping-list-view
         - oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view
     oroshoppinglist:
@@ -63,6 +72,7 @@ dynamic-imports:
         - oroshoppinglist/js/app/views/shoppinglist-image-popover-view
         - oroshoppinglist/js/app/views/shoppinglist-notes-editable-view
         - oroshoppinglist/js/app/views/summary-wrapper-view
+        - oroshoppinglist/js/app/views/product-kit-form-view
         - oroshoppinglist/js/shopping-list-item-errors-handler
         - oroshoppinglist/js/shoppinglist-request-quote-confirmation
         - tpl-loader!oroshoppinglist/templates/actions/add-notes-action.html

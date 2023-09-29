@@ -3,15 +3,9 @@ Feature: WYSIWYG check RTE UI
 
   Scenario: Create landing page
     Given I login as administrator
-    And go to Marketing/ Content Widgets
-    And click "Create Content Widget"
-    And fill "Content Widget Form" with:
-      | Type | Copyright   |
-      | Name | test-inline |
-    Then I save and close form
-    And go to Marketing / Landing Pages
+    When go to Marketing / Landing Pages
     And click "Create Landing Page"
-    And I fill in Landing Page Titles field with "WYSIWYG UI page"
+    Then I fill in Landing Page Titles field with "WYSIWYG UI page"
     And I save form
 
   Scenario: Check RTE for textblock
@@ -548,31 +542,86 @@ Feature: WYSIWYG check RTE UI
     And I clear canvas in WYSIWYG
     And I save form
 
-  Scenario: Check inline content widget
+  Scenario: Check RTE Undo and Redo action
     When I add new component "Text" from panel to editor area
     And I select component in canvas by tree:
       | text | 1 |
-    And I enter "Lorem ipsum, dolor sit amet consectetur adipisicing elit." text to "SelectedComponent" component
+    And I enter "Lorem ipsum dolor sit amet, consectetur adipiscing elit" text to "SelectedComponent" component
+    And I select text "consectetur adipiscing elit" range in selected component
+    And I apply "bold" action in RTE
+    And I apply "italic" action in RTE
+    And I apply "formatBlock" action with "Heading 1" in RTE
+    And I press "ctrl+Z" key on "SelectedComponent" element in canvas
+    And I press "ctrl+Z" key on "SelectedComponent" element in canvas
+    And I press "ctrl+Z" key on "SelectedComponent" element in canvas
     And I check wysiwyg content in "CMS Page Content":
-      | 1 | <div>Lorem ipsum, dolor sit amet consectetur adipisicing elit. |
-      | 2 | </div>                                                         |
-    And I select component in canvas by tree:
-      | text | 1 |
-    And I enter to edit mode "SelectedComponent" component in canvas
-    Then I select text "ipsum," range in selected component
-    And I apply "inlineWidget" action in RTE
-    And I click on test-inline in grid
-    And I check wysiwyg content in "CMS Page Content":
-      | 1 | <div>Lorem                                                                                                                                                         |
-      | 2 | <span data-title="test-inline" data-type="copyright" class="content-widget-inline">{{ widget("test-inline") }}</span> dolor sit amet consectetur adipisicing elit. |
-      | 3 | </div>                                                                                                                                                             |
-    And I save form
-    And I select component in canvas by tree:
-      | text | 1 |
-    Then I select "InlineContentWidget" component in canvas
-    And I click "WysiwygToolbarActionDelete"
-    And I check wysiwyg content in "CMS Page Content":
-      | 1 | <div>Lorem  dolor sit amet consectetur adipisicing elit. |
-      | 2 | </div>                                                   |
+      | 1 | <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit |
+      | 2 | </div>                                                       |
     And I clear canvas in WYSIWYG
-    And I save form
+    Then I add new component "Text" from panel to editor area
+    And I select component in canvas by tree:
+      | text | 1 |
+    And I enter "Lorem ipsum dolor sit amet, consectetur adipiscing elit" text to "SelectedComponent" component
+    And I select text "consectetur adipiscing elit" range in selected component
+    And I apply "bold" action in RTE
+    And I apply "italic" action in RTE
+    And I apply "formatBlock" action with "Heading 1" in RTE
+    And I press "ctrl+Z" key on "SelectedComponent" element in canvas
+    And I press "ctrl+Z" key on "SelectedComponent" element in canvas
+    And I press "ctrl+Z" key on "SelectedComponent" element in canvas
+    And I press "ctrl+Y" key on "SelectedComponent" element in canvas
+    And I press "ctrl+Y" key on "SelectedComponent" element in canvas
+    And I check wysiwyg content in "CMS Page Content":
+      | 1 | <div>Lorem ipsum dolor sit amet, |
+      | 2 | <b>                              |
+      | 3 | <i>consectetur adipiscing elit   |
+      | 4 | </i>                             |
+      | 5 | </b>                             |
+      | 6 | </div>                           |
+    And I clear canvas in WYSIWYG
+
+  Scenario: Check RTE Undo and Redo action into global history manager
+    When I add new component "Text" from panel to editor area
+    And I select component in canvas by tree:
+      | text | 1 |
+    And I enter "Lorem ipsum dolor sit amet, consectetur adipiscing elit" text to "SelectedComponent" component
+    And I select text "consectetur adipiscing elit" range in selected component
+    And I apply "bold" action in RTE
+    And I apply "italic" action in RTE
+    And I click "GrapesJs Wysiwyg"
+    When I add new component "Text" from panel to editor area
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I check wysiwyg content in "CMS Page Content":
+      | 1 | <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit |
+      | 2 | </div>                                                       |
+    And I clear canvas in WYSIWYG
+    Then I add new component "Text" from panel to editor area
+    And I select component in canvas by tree:
+      | text | 1 |
+    And I enter "Lorem ipsum dolor sit amet, consectetur adipiscing elit" text to "SelectedComponent" component
+    And I select text "consectetur adipiscing elit" range in selected component
+    And I apply "bold" action in RTE
+    And I apply "italic" action in RTE
+    And I click "GrapesJs Wysiwyg"
+    Then I add new component "Text" from panel to editor area
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Undo Editor"
+    And I click "Redo Editor"
+    And I click "Redo Editor"
+    And I click "Redo Editor"
+    And I click "Redo Editor"
+    And I click "Redo Editor"
+    And I check wysiwyg content in "CMS Page Content":
+      | 1 | <div>Lorem ipsum dolor sit amet, |
+      | 2 | <b>                              |
+      | 3 | <i>consectetur adipiscing elit   |
+      | 4 | </i>                             |
+      | 5 | </b>                             |
+      | 6 | </div>                           |

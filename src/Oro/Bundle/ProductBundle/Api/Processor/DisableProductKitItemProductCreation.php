@@ -12,6 +12,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class DisableProductKitItemProductCreation implements ProcessorInterface
 {
+    /**
+     * {@inheritDoc}
+     */
     public function process(ContextInterface $context): void
     {
         /** @var Context $context */

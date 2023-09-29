@@ -52,9 +52,6 @@ class CombinedPriceListScheduleResolver
         $this->triggerHandler = $triggerHandler;
     }
 
-    /**
-     * @param \DateTime $time
-     */
     public function updateRelations(\DateTime $time = null)
     {
         if (!$time) {

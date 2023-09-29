@@ -134,7 +134,7 @@ class TimeInTransitProviderTest extends \PHPUnit\Framework\TestCase
         $client
             ->expects(static::once())
             ->method('post')
-            ->willThrowException(new RestException);
+            ->willThrowException(new RestException());
 
         $this->resultFactory
             ->expects(static::once())

@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\UPSBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;

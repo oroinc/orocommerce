@@ -17,18 +17,14 @@ use Psr\Log\LoggerInterface;
 
 class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
 {
-    const ENTITY_CLASS = 'TestEntityClass';
-    const SCOPE_TYPE = 'test_scope_type';
-
-    private ContentBlockDataProvider $provider;
+    private const ENTITY_CLASS = 'TestEntityClass';
+    private const SCOPE_TYPE = 'test_scope_type';
 
     protected ContentBlockResolver|MockObject $resolver;
-
     protected ManagerRegistry|MockObject $registry;
-
     protected ScopeManager|MockObject $scopeManager;
-
     protected LoggerInterface|MockObject $logger;
+    private ContentBlockDataProvider $provider;
 
     protected function setUp(): void
     {
@@ -36,6 +32,7 @@ class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+
         $this->provider = new ContentBlockDataProvider(
             $this->resolver,
             $this->registry,

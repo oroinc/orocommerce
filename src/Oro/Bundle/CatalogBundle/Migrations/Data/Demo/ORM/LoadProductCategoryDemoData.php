@@ -4,7 +4,6 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -39,21 +38,9 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
      */
     public function load(ObjectManager $manager): void
     {
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
-
-        if (is_array($filePath)) {
-            $filePath = current($filePath);
-        }
-
-        $handler = fopen($filePath, 'r');
-        $headers = fgetcsv($handler, 1000, ',');
-
         $defaultOrganization = $manager->getRepository(Organization::class)->getFirst();
 
-        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
-            $row = array_combine($headers, array_values($data));
-
+        foreach ($this->getProducts() as $row) {
             $product = $this->getProductBySku($manager, $row['sku']);
             if (!empty($row['category_sort_order'])) {
                 $product->setCategorySortOrder($row['category_sort_order']);
@@ -65,20 +52,37 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
             }
         }
 
-        fclose($handler);
-
         $manager->flush();
 
         $this->categories = [];
     }
 
-    private function getProductBySku(EntityManagerInterface $manager, string $sku): ?Product
+    protected function getProducts(): \Iterator
+    {
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            yield array_combine($headers, array_values($data));
+        }
+
+        fclose($handler);
+    }
+
+    private function getProductBySku(ObjectManager $manager, string $sku): ?Product
     {
         return $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
     }
 
     private function getCategoryByDefaultTitle(
-        EntityManagerInterface $manager,
+        ObjectManager $manager,
         string $title,
         Organization $organization
     ): ?Category {

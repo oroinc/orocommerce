@@ -181,7 +181,7 @@ class RequestProductItemTypeTest extends AbstractTest
     /**
      * @param int           $id
      * @param ProductUnit[] $productUnits
-     * @param string        $unitCode
+     * @param string|null $unitCode
      *
      * @return RequestProductItem
      */

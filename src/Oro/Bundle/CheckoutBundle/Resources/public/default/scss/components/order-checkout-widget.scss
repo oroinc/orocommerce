@@ -21,9 +21,9 @@
     &__container {
         float: right;
 
-        padding: 20px;
+        padding: $offset-x;
 
-        border-radius: 4px;
+        border-radius: $base-ui-element-border-radius;
         background: $order-checkout-widget-container-background;
 
         &--fixed-width {

@@ -113,7 +113,7 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends ConstraintValidato
     public function testValidateUnsupportedClass()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage(\sprintf(
+        $this->expectExceptionMessage(sprintf(
             'Entity must be instance of "%s", "stdClass" given',
             AttributeFamily::class
         ));

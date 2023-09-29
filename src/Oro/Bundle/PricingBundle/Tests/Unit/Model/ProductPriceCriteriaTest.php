@@ -6,8 +6,9 @@ use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\TestCase;
 
-class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
+class ProductPriceCriteriaTest extends TestCase
 {
     use EntityTrait;
 
@@ -19,7 +20,7 @@ class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider productPriceCriteriaDataProvider
      */
-    public function testProductPriceCriteria(mixed $quantity, string $currency)
+    public function testProductPriceCriteria(mixed $quantity, string $currency): void
     {
         $instance = new ProductPriceCriteria(
             $this->getProduct(42),
@@ -28,11 +29,11 @@ class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
             $currency
         );
 
-        $this->assertInstanceOf(ProductPriceCriteria::class, $instance);
-        $this->assertEquals($this->getProduct(42), $instance->getProduct());
-        $this->assertEquals((new ProductUnit())->setCode('kg'), $instance->getProductUnit());
-        $this->assertEquals($quantity, $instance->getQuantity());
-        $this->assertEquals($currency, $instance->getCurrency());
+        self::assertInstanceOf(ProductPriceCriteria::class, $instance);
+        self::assertEquals($this->getProduct(42), $instance->getProduct());
+        self::assertEquals((new ProductUnit())->setCode('kg'), $instance->getProductUnit());
+        self::assertEquals($quantity, $instance->getQuantity());
+        self::assertEquals($currency, $instance->getCurrency());
     }
 
     public function productPriceCriteriaDataProvider(): array
@@ -43,11 +44,11 @@ class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
             [1, 'USD'],
             [1.1, 'EUR'],
             ['1', 'USD'],
-            ['1.1', 'EUR']
+            ['1.1', 'EUR'],
         ];
     }
 
-    public function testConstructorProductException()
+    public function testConstructorProductException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Product must have id.');
@@ -55,7 +56,7 @@ class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
         new ProductPriceCriteria(new Product(), (new ProductUnit())->setCode('kg'), 1, 'USD');
     }
 
-    public function testConstructorProductUnitException()
+    public function testConstructorProductUnitException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('ProductUnit must have code.');
@@ -63,7 +64,10 @@ class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
         new ProductPriceCriteria($this->getProduct(42), new ProductUnit(), 1, 'USD');
     }
 
-    public function testConstructorQuantityException()
+    /**
+     * @dataProvider getConstructorQuantityExceptionDataProvider
+     */
+    public function testConstructorQuantityException(?float $quantity): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Quantity must be numeric and more than or equal zero.');
@@ -71,20 +75,39 @@ class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
         new ProductPriceCriteria(
             $this->getProduct(42),
             (new ProductUnit())->setCode('kg'),
-            -1,
+            $quantity,
             'USD'
         );
     }
 
-    public function testConstructorCurrencyException()
+    public function getConstructorQuantityExceptionDataProvider(): array
+    {
+        return [
+            [null],
+            [-1],
+        ];
+    }
+
+    /**
+     * @dataProvider getConstructorCurrencyExceptionDataProvider
+     */
+    public function testConstructorCurrencyException(?string $currency): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Currency must be non-empty string.');
 
-        new ProductPriceCriteria($this->getProduct(42), (new ProductUnit())->setCode('kg'), 1, '');
+        new ProductPriceCriteria($this->getProduct(42), (new ProductUnit())->setCode('kg'), 1, $currency);
     }
 
-    public function testGetIdentifier()
+    public function getConstructorCurrencyExceptionDataProvider(): array
+    {
+        return [
+            [null],
+            [''],
+        ];
+    }
+
+    public function testGetIdentifier(): void
     {
         $product = $this->getProduct(150);
 
@@ -93,6 +116,6 @@ class ProductPriceCriteriaTest extends \PHPUnit\Framework\TestCase
 
         $productPriceCriteria = new ProductPriceCriteria($product, $productUnit, 42, 'USD');
 
-        $this->assertEquals('150-kg-42-USD', $productPriceCriteria->getIdentifier());
+        self::assertEquals('150-kg-42-USD', $productPriceCriteria->getIdentifier());
     }
 }

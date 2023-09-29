@@ -11,7 +11,7 @@ class ImageTypeStub extends AbstractType
     /**
      * @return string
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return ImageType::NAME;
     }
@@ -24,7 +24,8 @@ class ImageTypeStub extends AbstractType
         $resolver->setDefaults(
             [
                 'checkEmptyFile' => false,
-                'allowDelete' => true
+                'allowDelete' => true,
+                'allowUpdate' => true
             ]
         );
     }

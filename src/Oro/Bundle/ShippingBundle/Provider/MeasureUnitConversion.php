@@ -8,6 +8,9 @@ use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 
+/**
+ * Converts measure units
+ */
 class MeasureUnitConversion
 {
     /** @var ConfigManager */
@@ -68,7 +71,7 @@ class MeasureUnitConversion
                     $unit->getValue()->getLength() * $conversionRates[$shippingUnitCode],
                     $unit->getValue()->getWidth() * $conversionRates[$shippingUnitCode],
                     $unit->getValue()->getHeight() * $conversionRates[$shippingUnitCode],
-                    (new LengthUnit)->setCode($shippingUnitCode)
+                    (new LengthUnit())->setCode($shippingUnitCode)
                 );
             }
         }
@@ -93,7 +96,7 @@ class MeasureUnitConversion
             if (array_key_exists($shippingUnitCode, $conversionRates)) {
                 return Weight::create(
                     $unit->getValue() * $conversionRates[$shippingUnitCode],
-                    (new WeightUnit)->setCode($shippingUnitCode)
+                    (new WeightUnit())->setCode($shippingUnitCode)
                 );
             }
         }

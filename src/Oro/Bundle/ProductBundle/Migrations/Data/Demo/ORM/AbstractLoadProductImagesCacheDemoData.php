@@ -57,20 +57,12 @@ abstract class AbstractLoadProductImagesCacheDemoData extends AbstractFixture im
     public function load(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
-        if (is_array($filePath)) {
-            $filePath = current($filePath);
-        }
-
-        $handler = fopen($filePath, 'rb');
-        $headers = fgetcsv($handler, 1000, ',');
 
         $this->container->get('oro_layout.loader.image_filter')->load();
 
         $productRepository = $manager->getRepository(Product::class);
 
-        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
-            $row = array_combine($headers, array_values($data));
+        foreach ($this->getProducts() as $row) {
             $product = $productRepository->findOneBy(['sku' => $row['sku']]);
             if (!$product) {
                 continue;
@@ -93,6 +85,23 @@ abstract class AbstractLoadProductImagesCacheDemoData extends AbstractFixture im
         }
 
         $manager->flush();
+    }
+
+    protected function getProducts(): \Iterator
+    {
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            yield array_combine($headers, array_values($data));
+        }
 
         fclose($handler);
     }

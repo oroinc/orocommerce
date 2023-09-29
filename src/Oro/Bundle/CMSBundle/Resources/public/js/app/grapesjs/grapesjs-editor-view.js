@@ -11,6 +11,8 @@ import DevicesModule from 'orocms/js/app/grapesjs/modules/devices-module';
 import mediator from 'oroui/js/mediator';
 import StateModel from 'orocms/js/app/grapesjs/modules/state-model';
 
+import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
+
 import parserPostCSS from 'grapesjs-parser-postcss';
 import RteEditorPlugin from 'orocms/js/app/grapesjs/plugins/oro-rte-editor';
 import {escapeWrapper, getWrapperAttrs} from 'orocms/js/app/grapesjs/plugins/components/content-isolation';
@@ -301,12 +303,14 @@ const GrapesjsEditorView = BaseView.extend({
         'layout:reposition mediator': 'onLayoutReposition'
     },
 
+    THROTTLE_TIMEOUT: 250,
+
     /**
      * @inheritdoc
      */
     constructor: function GrapesjsEditorView(options) {
-        this.throttleEnableEditor = _.throttle(this.enableEditor.bind(this), 250);
-        this.throttleDisableEditor = _.throttle(this.disableEditor.bind(this), 250);
+        this.throttleEnableEditor = _.throttle(this.enableEditor.bind(this), this.THROTTLE_TIMEOUT);
+        this.throttleDisableEditor = _.throttle(this.disableEditor.bind(this), this.THROTTLE_TIMEOUT);
 
         GrapesjsEditorView.__super__.constructor.call(this, options);
     },
@@ -354,6 +358,10 @@ const GrapesjsEditorView = BaseView.extend({
             entityLabels: options.entityLabels
         });
 
+        this.subview('loadingMask', new LoadingMaskView({
+            container: this.$el.parent()
+        }));
+
         GrapesjsEditorView.__super__.initialize.call(this, options);
     },
 
@@ -372,6 +380,10 @@ const GrapesjsEditorView = BaseView.extend({
      * @inheritdoc
      */
     render() {
+        this.editorRenderPromises = [];
+
+        this.subview('loadingMask').show();
+
         this._deferredRender();
         this.renderStart = true;
         this.timeoutId = null;
@@ -411,7 +423,7 @@ const GrapesjsEditorView = BaseView.extend({
         if (this.timeoutId) {
             clearTimeout(this.timeoutId);
         }
-        this.timeoutId = setTimeout(() => callback(), 250);
+        this.timeoutId = setTimeout(() => callback(), this.THROTTLE_TIMEOUT);
     },
 
     /**
@@ -425,6 +437,16 @@ const GrapesjsEditorView = BaseView.extend({
         if (!this.builder || !this.enabled) {
             return;
         }
+
+        // Found all assigment events with debounced callback
+        // Cancel debounce callback before editor will disable
+        Object.values(this.builder.em._events).forEach(values => {
+            values.forEach(value => {
+                if (value.callback.cancel) {
+                    value.callback.cancel();
+                }
+            });
+        });
 
         this.builder.trigger('destroy');
         this.builderUndelegateEvents();
@@ -856,6 +878,8 @@ const GrapesjsEditorView = BaseView.extend({
      * @private
      */
     _onLoadBuilder() {
+        const {UndoManager} = this.builder;
+
         this._panelManagerModule = new PanelManagerModule({
             builder: this.builder,
             themes: this.themes
@@ -866,6 +890,8 @@ const GrapesjsEditorView = BaseView.extend({
                 builder: this.builder,
                 allowBreakpoints: this.allowBreakpoints
             });
+
+            this.editorRenderPromises.push(this._devicesModule.deferredInitPromise);
         }
 
         this.setActiveButton('views', 'open-blocks');
@@ -876,6 +902,8 @@ const GrapesjsEditorView = BaseView.extend({
         this.$el.closest('.ui-dialog-content').dialog('option', 'minWidth', MIN_EDITOR_WIDTH);
 
         if (this.$el.valid()) {
+            // Disable UndoManager tracking changes while parse and add initial components
+            UndoManager.stop();
             this.builder.setComponents(escapeWrapper(this.$el.val()));
             this.builder.setStyle(this.builder.getPureStyleString(this.$stylesInputElement.val()));
         }
@@ -886,11 +914,14 @@ const GrapesjsEditorView = BaseView.extend({
         }
 
         this.enabled = true;
-        _.delay(() => {
+        Promise.all(this.editorRenderPromises).then(() => {
             this.renderStart = false;
             this.builder.trigger('editor:rendered');
+            this.subview('loadingMask').hide();
             this._resolveDeferredRender();
-        }, 250);
+            // Start tracking history after editor initialize have been done
+            UndoManager.start();
+        }).catch(error => console.error(error));
     },
 
     /**

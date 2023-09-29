@@ -45,14 +45,15 @@ class Letters extends Regex implements AliasAwareConstraintInterface
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOption()
+    public function getDefaultOption(): ?string
     {
+        return null;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getRequiredOptions()
+    public function getRequiredOptions(): array
     {
         return [];
     }
@@ -60,7 +61,7 @@ class Letters extends Regex implements AliasAwareConstraintInterface
     /**
      * {@inheritdoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return RegexValidator::class;
     }

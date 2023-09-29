@@ -11,30 +11,25 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\SelectedOffers\SelectedOffersQuoteToShippingLineItemConverter;
 use Oro\Bundle\SaleBundle\Tests\Unit\Quote\Shipping\LineItem\Converter\AbstractOffersQuoteToShippingLineItemConverterTest;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
+use PHPUnit\Framework\MockObject\MockObject;
 
 // @codingStandardsIgnoreEnd
 
 class SelectedOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQuoteToShippingLineItemConverterTest
 {
-    /** @var QuoteProductDemand|\PHPUnit\Framework\MockObject\MockObject */
-    private $demandProduct;
+    private QuoteProductDemand|MockObject $demandProduct;
 
-    /** @var QuoteDemand|\PHPUnit\Framework\MockObject\MockObject */
-    private $quoteDemand;
+    private QuoteDemand|MockObject $quoteDemand;
 
-    /** @var Quote|\PHPUnit\Framework\MockObject\MockObject */
-    private $quote;
+    private Quote|MockObject $quote;
 
-    /** @var SelectedOffersQuoteToShippingLineItemConverter */
-    private $selectedOffersQuoteToShippingLineItemConverter;
+    private SelectedOffersQuoteToShippingLineItemConverter $selectedOffersQuoteToShippingLineItemConverter;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->selectedOffersQuoteToShippingLineItemConverter = new SelectedOffersQuoteToShippingLineItemConverter(
-            $this->shippingLineItemCollectionFactory,
-            $this->shippingLineItemBuilderFactory
+            $this->shippingLineItemFactory
         );
 
         $this->quote = $this->createMock(Quote::class);
@@ -43,7 +38,7 @@ class SelectedOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQ
         $this->demandProduct = $this->createMock(QuoteProductDemand::class);
     }
 
-    public function testConvertItems()
+    public function testConvertItems(): void
     {
         $quantity = 12;
         $price = Price::create(12, 'USD');
@@ -54,27 +49,23 @@ class SelectedOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQ
 
         $expectedLineItemsCollection = $this->prepareConvertLineItems(
             $quantity,
-            $quoteProductOffer,
-            $this->builder
+            $price,
+            $quoteProductOffer
         );
 
-        $this->builder->expects($this->once())
-            ->method('setPrice')
-            ->with($price);
-
-        $quoteProductOffer->expects($this->exactly(2))
-            ->method('getPrice')
-            ->willReturn($price);
-
         $this->mockDemands($quoteDemands, $demandsProducts);
-        $this->mockDemandProduct($quantity, $quoteProductOffer);
+
+        $this->shippingLineItemFactory->expects(self::once())
+            ->method('createCollection')
+            ->with($demandsProducts->toArray())
+            ->willReturn($expectedLineItemsCollection);
 
         $actualLineItems = $this->selectedOffersQuoteToShippingLineItemConverter->convertLineItems($this->quote);
 
-        $this->assertEquals($expectedLineItemsCollection, $actualLineItems);
+        self::assertEquals($expectedLineItemsCollection, $actualLineItems);
     }
 
-    public function testConvertItemsWithoutPrice()
+    public function testConvertItemsWithoutPrice(): void
     {
         $quantity = 12;
 
@@ -84,59 +75,46 @@ class SelectedOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQ
 
         $expectedLineItemsCollection = $this->prepareConvertLineItems(
             $quantity,
-            $quoteProductOffer,
-            $this->builder
+            null,
+            $quoteProductOffer
         );
 
         $this->mockDemands($quoteDemands, $demandsProducts);
-        $this->mockDemandProduct($quantity, $quoteProductOffer);
 
-        $actualLineItems = $this->selectedOffersQuoteToShippingLineItemConverter->convertLineItems($this->quote);
-
-        $this->assertEquals($expectedLineItemsCollection, $actualLineItems);
-    }
-
-    public function testConvertItemsWithoutOffers()
-    {
-        $quoteDemands = new ArrayCollection([$this->quoteDemand]);
-        $demandsProducts = new ArrayCollection([]);
-        $expectedLineItemsCollection = new DoctrineShippingLineItemCollection([]);
-
-        $this->mockDemands($quoteDemands, $demandsProducts);
-
-        $this->demandProduct->expects($this->never())
-            ->method('getQuantity');
-
-        $this->demandProduct->expects($this->never())
-            ->method('getQuoteProductOffer');
-
-        $this->shippingLineItemCollectionFactory->expects($this->once())
-            ->method('createShippingLineItemCollection')
-            ->with([])
+        $this->shippingLineItemFactory->expects(self::once())
+            ->method('createCollection')
+            ->with($demandsProducts->toArray())
             ->willReturn($expectedLineItemsCollection);
 
         $actualLineItems = $this->selectedOffersQuoteToShippingLineItemConverter->convertLineItems($this->quote);
 
-        $this->assertEquals($expectedLineItemsCollection, $actualLineItems);
+        self::assertEquals($expectedLineItemsCollection, $actualLineItems);
     }
 
-    private function mockDemandProduct(int $quantity, QuoteProductOffer $quoteProductOffer): void
+    public function testConvertItemsWithoutOffers(): void
     {
-        $this->demandProduct->expects($this->once())
-            ->method('getQuantity')
-            ->willReturn($quantity);
-        $this->demandProduct->expects($this->once())
-            ->method('getQuoteProductOffer')
-            ->willReturn($quoteProductOffer);
+        $quoteDemands = new ArrayCollection([$this->quoteDemand]);
+        $demandsProducts = new ArrayCollection([]);
+
+        $this->mockDemands($quoteDemands, $demandsProducts);
+
+        $this->shippingLineItemFactory->expects(self::once())
+            ->method('createCollection')
+            ->with([])
+            ->willReturn(new ArrayCollection([]));
+
+        $actualLineItems = $this->selectedOffersQuoteToShippingLineItemConverter->convertLineItems($this->quote);
+
+        self::assertEquals(new ArrayCollection([]), $actualLineItems);
     }
 
     private function mockDemands(ArrayCollection $quoteDemands, ArrayCollection $demandsProducts): void
     {
-        $this->quote->expects($this->once())
+        $this->quote->expects(self::once())
             ->method('getDemands')
             ->willReturn($quoteDemands);
 
-        $this->quoteDemand->expects($this->once())
+        $this->quoteDemand->expects(self::once())
             ->method('getDemandProducts')
             ->willReturn($demandsProducts);
     }

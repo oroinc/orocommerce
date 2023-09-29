@@ -60,7 +60,7 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
             ->with('oro.inventory.is_upcoming.notification')
             ->willReturn($message);
 
-        $this->assertSame($message, $this->validator->getMessageIfLineItemUpcoming($lineItem));
+        $this->assertSame($message, $this->validator->getMessageIfUpcoming($lineItem));
     }
 
     public function testValidateLineItemWithUpcomingProductWithDate()
@@ -94,7 +94,7 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
 
         $this->assertSame(
             'This product will be available on 1/1/19',
-            $this->validator->getMessageIfLineItemUpcoming($lineItem)
+            $this->validator->getMessageIfUpcoming($lineItem)
         );
     }
 
@@ -111,6 +111,6 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
             ->method('isUpcoming')
             ->with($product)->willReturn(false);
 
-        $this->assertNull($this->validator->getMessageIfLineItemUpcoming($lineItem));
+        $this->assertNull($this->validator->getMessageIfUpcoming($lineItem));
     }
 }

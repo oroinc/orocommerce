@@ -124,11 +124,7 @@ class MatrixGridOrderController extends AbstractLineItemController
     }
 
     /**
-     * @see \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController::getSuccessResponse
-     * @param ShoppingList $shoppingList
-     * @param Product $product
-     * @param string $message
-     * @return array
+     * @see AjaxLineItemController::getSuccessResponse
      */
     protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, string $message): array
     {
@@ -152,7 +148,7 @@ class MatrixGridOrderController extends AbstractLineItemController
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             CurrentShoppingListManager::class,

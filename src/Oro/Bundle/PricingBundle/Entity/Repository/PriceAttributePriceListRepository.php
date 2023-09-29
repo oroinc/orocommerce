@@ -55,7 +55,7 @@ class PriceAttributePriceListRepository extends BasePriceListRepository
     /**
      * @return QueryBuilder
      */
-    public function getPriceAttributesQueryBuilder()
+    public function getPriceAttributesQueryBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder('price_attribute_price_list')
             ->select('price_attribute_price_list')

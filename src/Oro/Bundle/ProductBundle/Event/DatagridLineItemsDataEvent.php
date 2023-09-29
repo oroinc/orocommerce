@@ -17,12 +17,12 @@ class DatagridLineItemsDataEvent extends Event
     /** @var array<int,ProductLineItemInterface> */
     protected array $lineItems;
 
+    /** @var array<int,array> Arbitrary arrays of line items data indexed by ID */
+    protected array $lineItemsData = [];
+
     protected DatagridInterface $datagrid;
 
     protected array $context;
-
-    /** @var array<int,array> Arbitrary arrays of line items data indexed by ID */
-    protected array $lineItemsData = [];
 
     /**
      * @param array<int,ProductLineItemInterface> $lineItems Line items indexed by ID.
@@ -82,6 +82,6 @@ class DatagridLineItemsDataEvent extends Event
 
     public function getName(): string
     {
-        return self::NAME . '.' . $this->datagrid->getName();
+        return static::NAME . '.' . $this->datagrid->getName();
     }
 }

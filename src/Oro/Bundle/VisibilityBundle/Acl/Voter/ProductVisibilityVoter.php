@@ -35,7 +35,7 @@ class ProductVisibilityVoter extends AbstractEntityVoter implements ServiceSubsc
     /**
      * {@inheritDoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             'oro_visibility.provider.resolved_product_visibility_provider' => ResolvedProductVisibilityProvider::class

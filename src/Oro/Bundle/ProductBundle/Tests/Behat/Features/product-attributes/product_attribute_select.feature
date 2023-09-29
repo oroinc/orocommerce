@@ -32,7 +32,7 @@ Feature: Product attribute select
       | Label |
       |       |
     And I save and close form
-    Then I should see validation errors:
+    Then I should see "EntityConfigForm" validation errors:
       | Option First | This value should not be blank. |
 
     When I fill form with:
@@ -179,10 +179,8 @@ Feature: Product attribute select
     When I reload the page
     Then I should see an "Configurable Product Form" element
     And "Configurable Product Form" must contains values:
-      | SelectField    | 0.5   | 5     |
-    When I fill "Configurable Product Form" with:
-      | SelectField    | 0.5   |
-    And I click "Add to Shopping List"
+      | SelectField | 0.5 |
+    When I click "Add to Shopping List"
     Then I should see 'Product has been added to "Shopping List"' flash message
 
   Scenario: Set all product variants to use string option as new attribute

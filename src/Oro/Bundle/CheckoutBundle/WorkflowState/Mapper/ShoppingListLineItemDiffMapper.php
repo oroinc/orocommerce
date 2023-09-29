@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
@@ -64,9 +66,9 @@ class ShoppingListLineItemDiffMapper implements CheckoutStateDiffMapperInterface
         return $state1 === $state2;
     }
 
-    private function getCompareString(ShippingLineItemInterface $item): string
+    private function getCompareString(ShippingLineItem $item): string
     {
-        return sprintf(
+        $stringToCompare = sprintf(
             's%s-u%s-q%d-p%s%d-w%d%s-d%dx%dx%d%s-i%s',
             $item->getProduct()?->getSkuUppercase(),
             $item->getProductUnitCode(),
@@ -80,6 +82,34 @@ class ShoppingListLineItemDiffMapper implements CheckoutStateDiffMapperInterface
             $item->getDimensions()?->getValue()?->getWidth(),
             $item->getDimensions()?->getUnit()?->getCode(),
             $item->getProduct()?->getInventoryStatus()->getId()
+        );
+
+        if (!$item->getKitItemLineItems()->isEmpty()) {
+            $stringToCompare .= sprintf('-%s', $this->getKitItemLineItemsCompareString($item->getKitItemLineItems()));
+        }
+
+        return $stringToCompare;
+    }
+
+    private function getKitItemLineItemsCompareString(Collection $kitItemLineItems): string
+    {
+        $kitItemLineItemsKey = [];
+        foreach ($kitItemLineItems as $kitItemLineItem) {
+            $kitItemLineItemsKey[] = $this->getKitItemLineItemCompareString($kitItemLineItem);
+        }
+
+        return implode('-', $kitItemLineItemsKey);
+    }
+
+    private function getKitItemLineItemCompareString(ShippingKitItemLineItem $kitItemLineItem): string
+    {
+        return sprintf(
+            'kilis%s-kiliu%s-kiliq%d-kilip%s%d',
+            $kitItemLineItem->getProduct()?->getSkuUppercase(),
+            $kitItemLineItem->getProductUnitCode(),
+            $kitItemLineItem->getQuantity(),
+            $kitItemLineItem->getPrice()?->getCurrency(),
+            $kitItemLineItem->getPrice()?->getValue()
         );
     }
 

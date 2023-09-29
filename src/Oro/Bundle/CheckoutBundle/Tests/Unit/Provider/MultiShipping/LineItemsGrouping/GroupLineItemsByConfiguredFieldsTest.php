@@ -131,7 +131,6 @@ class GroupLineItemsByConfiguredFieldsTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper->expects($this->never())
             ->method('getSingleEntityIdentifier');
 
-
         $result = $this->groupedLineItemsProvider->getGroupedLineItems($checkout);
 
         $this->assertIsArray($result);

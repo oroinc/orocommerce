@@ -10,7 +10,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactory;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
@@ -39,7 +39,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceScopeCriteriaFactory */
     private $priceScopeCriteriaFactory;
 
-    /** @var ProductPriceCriteriaFactory|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ProductPriceCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $productPriceCriteriaFactory;
 
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
@@ -53,7 +53,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);
         $this->priceScopeCriteriaFactory = new ProductPriceScopeCriteriaFactory();
-        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactory::class);
+        $this->productPriceCriteriaFactory = $this->createMock(ProductPriceCriteriaFactoryInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->extension = new OrderDataStorageExtension(

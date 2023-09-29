@@ -79,8 +79,8 @@ class QuoteUpdateHandlerEventListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testEnsureCustomer()
     {
-        $customer = new Customer;
-        $customerUser = new CustomerUser;
+        $customer = new Customer();
+        $customerUser = new CustomerUser();
 
         $request = $this->createMock(Request::class);
         $request->expects($this->once())->method('getMethod')->willReturn('POST');

@@ -10,10 +10,12 @@ class Configuration implements ConfigurationInterface
 {
     public const ROOT_NODE = 'oro_web_catalog';
 
+    public const NAVIGATION_ROOT = 'navigation_root';
+
     /**
      * {@inheritdoc}
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);
         $rootNode = $treeBuilder->getRootNode();

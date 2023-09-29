@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\CatalogBundle\ImportExport\DataConverter;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 /**
  * Data converter for Category.
@@ -14,17 +16,24 @@ class CategoryDataConverter extends LocalizedFallbackValueAwareDataConverter
     /**
      * {@inheritdoc}
      */
-    protected function receiveHeaderConversionRules()
+    protected function receiveHeaderConversionRules(): array
     {
         $conversionRules = parent::receiveHeaderConversionRules();
 
+        $categoryHeaders = $this->getCategoryFieldHeaders();
         // Adds parentCategory title conversion rule.
-        $conversionRules[sprintf('parentCategory%stitle', $this->relationDelimiter)]
-            = sprintf('parentCategory%1$stitles%1$sdefault%1$sstring', $this->convertDelimiter);
+        $conversionRules[sprintf(
+            '%s%s%s',
+            $categoryHeaders['parentCategory'],
+            $this->relationDelimiter,
+            $categoryHeaders['titles']
+        )] = sprintf('parentCategory%1$stitles%1$sdefault%1$sstring', $this->convertDelimiter);
 
         // Removes organization conversion rule if not allowed.
         if (!$this->isOrganizationColumnAllowed()) {
-            unset($conversionRules[sprintf('organization%sname', $this->relationDelimiter)]);
+            $orgHeaders = $this->getOrganizationFieldHeaders();
+            $key = sprintf('%s%s%s', $orgHeaders['organization'], $this->relationDelimiter, $orgHeaders['name']);
+            unset($conversionRules[$key]);
         }
 
         return $conversionRules;
@@ -33,7 +42,7 @@ class CategoryDataConverter extends LocalizedFallbackValueAwareDataConverter
     /**
      * {@inheritdoc}
      */
-    protected function getBackendHeader()
+    protected function getBackendHeader(): array
     {
         $header = parent::getBackendHeader();
 
@@ -55,5 +64,25 @@ class CategoryDataConverter extends LocalizedFallbackValueAwareDataConverter
     protected function isOrganizationColumnAllowed(): bool
     {
         return false;
+    }
+
+    private function getCategoryFieldHeaders(): array
+    {
+        return [
+            'parentCategory' =>
+                $this->fieldHelper->getConfigValue(Category::class, 'parentCategory', 'header', 'parentCategory'),
+            'titles' =>
+                $this->fieldHelper->getConfigValue(Category::class, 'titles', 'header', 'titles')
+        ];
+    }
+
+    private function getOrganizationFieldHeaders(): array
+    {
+        return [
+            'organization' =>
+                $this->fieldHelper->getConfigValue(Category::class, 'organization', 'header', 'organization'),
+            'name' =>
+                $this->fieldHelper->getConfigValue(Organization::class, 'name', 'header', 'name')
+        ];
     }
 }

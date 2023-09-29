@@ -18,7 +18,8 @@ class CategoryInventoryDecrementFormViewListenerTest extends AbstractFallbackFie
         $this->listener = new CategoryInventoryDecrementFormViewListener(
             $this->requestStack,
             $this->doctrine,
-            $this->translator
+            $this->translator,
+            $this->fieldAclHelper
         );
     }
 

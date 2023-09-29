@@ -5,16 +5,26 @@
 @fixture-OroUPSBundle:ProductWithShippingOptions.yml
 @fixture-OroUPSBundle:Integration.yml
 @fixture-OroUPSBundle:ShippingMethodsConfigsRule.yml
+@ticket-BB-22743
 Feature: UPS shipping cost calculation
   In order to be able to use UPS as a shipping provider
   As a Buyer
   I need to be able to get UPS shipping cost during checkout
+  As an Admin
+  I need to be able to edit order in backoffice
+
+  Scenario: Create sessions
+    Given sessions active:
+      | Admin | first_session  |
+      | Buyer | second_session |
 
   Scenario: Check that UPS shipping cost is calculated correctly on all steps
     Given I expect the following shipping costs:
       | Method          | Cost  | Currency |
       | UPS 2nd Day Air | 99.75 | USD      |
-    When I login as AmandaRCole@example.org buyer
+  Scenario: Create order
+    Given I proceed as the Buyer
+    And I signed in as AmandaRCole@example.org on the store frontend
     And I open page with shopping list List 1
     And I scroll to top
     And I wait line items are initialized
@@ -33,3 +43,10 @@ Feature: UPS shipping cost calculation
       | Shipping | $1,199.75 |
     When I click "Submit Order"
     Then I should see "Thank You For Your Purchase!"
+
+  Scenario: Check order in backoffice
+    Given I proceed as the Admin
+    And I login as administrator
+    And I go to Sales/ Orders
+    When I click edit "Pending payment" in grid
+    Then I should see "Shipping $1,199.75"

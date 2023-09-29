@@ -4,14 +4,12 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -32,36 +30,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $selectedAddressId = $this->getSelectedAddressId($crawler, self::BILLING_ADDRESS);
         self::assertStringContainsString(self::BILLING_ADDRESS_SIGN, $crawler->html());
         self::assertEquals($selectedAddressId, $this->getReference(self::DEFAULT_BILLING_ADDRESS)->getId());
-    }
-
-    /**
-     * @depends testStartCheckout
-     */
-    public function testRestartCheckout()
-    {
-        $crawler = $this->client->request('GET', self::$checkoutUrl);
-        $form = $this->getTransitionForm($crawler);
-        $values = $this->explodeArrayPaths($form->getValues());
-        $data = $this->setFormData($values, self::BILLING_ADDRESS);
-
-        $this->client->getKernel()->shutdown();
-        $this->client->getKernel()->boot();
-        $this->client->disableReboot();
-
-        /* @var EventDispatcherInterface $dispatcher */
-        $dispatcher = self::getContainer()->get('event_dispatcher');
-        $listener = function (CheckoutValidateEvent $event) {
-            $event->setIsCheckoutRestartRequired(true);
-        };
-        $dispatcher->addListener(CheckoutValidateEvent::NAME, $listener);
-
-        $crawler = $this->client->request('POST', $form->getUri(), $data);
-        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        self::assertStringNotContainsString(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
-        self::assertStringContainsString(self::BILLING_ADDRESS_SIGN, $crawler->html());
-
-        $dispatcher->removeListener(CheckoutValidateEvent::NAME, $listener);
-        $this->client->enableReboot();
     }
 
     /**

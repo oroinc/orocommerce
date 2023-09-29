@@ -26,8 +26,7 @@ class OrderAddressType extends AbstractType
 {
     const NAME = 'oro_order_address_type';
 
-    /** @var OrderAddressSecurityProvider */
-    private $addressSecurityProvider;
+    private OrderAddressSecurityProvider $addressSecurityProvider;
 
     public function __construct(OrderAddressSecurityProvider $addressSecurityProvider)
     {
@@ -44,7 +43,7 @@ class OrderAddressType extends AbstractType
             'object' => $options['object'],
             'address_type' => $options['addressType'],
             'required' => false,
-            'mapped' => false
+            'mapped' => false,
         ]);
         $builder->add('phone', TextType::class, [
             'required' => false,
@@ -105,7 +104,7 @@ class OrderAddressType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return AddressType::class;
     }
@@ -121,7 +120,7 @@ class OrderAddressType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }

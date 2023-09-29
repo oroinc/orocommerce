@@ -1,0 +1,27 @@
+include:
+    - '@OroProductBundle/Tests/Behat/Features/Fixtures/products_grid.yml'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    # Product with Product Unit Precision that is not available for purchase
+    product21_not_available_precision:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'NA01'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@product21_not_available_precision1'
+        unitPrecisions: ['@product21_not_available_precision1', '@product21_not_available_precision2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            - setDefaultName: ['Product 21 (Unit Precision is not available for purchase)']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product21_not_available_precision1:
+        unit: '@piece'
+        precision: '0'
+    product21_not_available_precision2:
+        unit: '@each'
+        precision: '0'
+        conversionRate: 1
+        sell: false

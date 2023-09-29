@@ -46,7 +46,7 @@ class QuoteProductRequest extends BaseQuoteProductItem
     protected $requestProductItem;
 
     /**
-     * @param RequestProductItem $requestProductItem
+     * @param RequestProductItem|null $requestProductItem
      * @return QuoteProductRequest
      */
     public function setRequestProductItem(RequestProductItem $requestProductItem = null)

@@ -7,6 +7,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalCreditCardPaymentMethod;
+use Oro\Bundle\PayPalBundle\Method\Transaction\TransactionOptionProvider;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
@@ -36,13 +37,22 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
     /** @var PayPalCreditCardPaymentMethod */
     private $method;
 
+    /** @var TransactionOptionProvider */
+    private $transactionOptionProvider;
+
     protected function setUp(): void
     {
         $this->gateway = $this->createMock(Gateway::class);
         $this->router = $this->createMock(RouterInterface::class);
         $this->paymentConfig = $this->createMock(PayPalCreditCardConfigInterface::class);
+        $this->transactionOptionProvider = $this->createMock(TransactionOptionProvider::class);
 
-        $this->method = new PayPalCreditCardPaymentMethod($this->gateway, $this->paymentConfig, $this->router);
+        $this->method = new PayPalCreditCardPaymentMethod(
+            $this->gateway,
+            $this->paymentConfig,
+            $this->router,
+            $this->transactionOptionProvider
+        );
     }
 
     public function testExecute()
@@ -53,6 +63,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $transaction->setSourcePaymentTransaction($sourcePaymentTransaction);
 
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $this->gateway->expects($this->any())
             ->method('request')
@@ -63,7 +74,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
             ->method('setTestMode')
             ->with(false);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'message' => 'Approved',
                 'successful' => true,
@@ -71,8 +82,8 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
             $this->method->execute($transaction->getAction(), $transaction)
         );
 
-        $this->assertTrue($transaction->isSuccessful());
-        $this->assertFalse($transaction->isActive());
+        self::assertTrue($transaction->isSuccessful());
+        self::assertFalse($transaction->isActive());
     }
 
     public function testExecuteException()
@@ -91,7 +102,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
      */
     public function testSupports(bool $expected, string $actionName)
     {
-        $this->assertEquals($expected, $this->method->supports($actionName));
+        self::assertEquals($expected, $this->method->supports($actionName));
     }
 
     public function supportsDataProvider(): array
@@ -114,7 +125,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
             ->method('isZeroAmountAuthorizationEnabled')
             ->willReturn($configValue);
 
-        $this->assertEquals($expected, $this->method->supports(PaymentMethodInterface::VALIDATE));
+        self::assertEquals($expected, $this->method->supports(PaymentMethodInterface::VALIDATE));
     }
 
     public function validateSupportsDataProvider(): array
@@ -137,6 +148,48 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
             ]);
     }
 
+    private function configureTransactionProvider(): void
+    {
+        $this->transactionOptionProvider->expects(self::once())
+            ->method('getOrderOptions')
+            ->willReturn([
+                Gateway\Option\Comment::COMMENT1 => 'comment',
+                Gateway\Option\Purchase::PONUM => 'ponum',
+            ]);
+
+        $this->transactionOptionProvider->expects(self::once())
+            ->method('getShippingAddressOptions')
+            ->willReturn([
+                Option\ShippingAddress::SHIPTOFIRSTNAME => 'First',
+                Option\ShippingAddress::SHIPTOMIDDLENAME => 'A.',
+                Option\ShippingAddress::SHIPTOLASTNAME => 'Name',
+                Option\ShippingAddress::SHIPTOSTREET => 'Main str.',
+                Option\ShippingAddress::SHIPTOSTREET2 => 'Main2 str.',
+                Option\ShippingAddress::SHIPTOCITY => 'City',
+                Option\ShippingAddress::SHIPTOSTATE => 'CTY',
+                Option\ShippingAddress::SHIPTOZIP => '112233',
+                Option\ShippingAddress::SHIPTOCOUNTRY => 'CTR',
+                Option\ShippingAddress::SHIPTOCOMPANY => 'Oro Inc.',
+                Option\ShippingAddress::SHIPTOPHONE => '111-222-333',
+            ]);
+
+        $this->transactionOptionProvider->expects(self::once())
+            ->method('getBillingAddressOptions')
+            ->willReturn([
+                Option\BillingAddress::BILLTOCOMPANY => 'Oro Inc.',
+                Option\BillingAddress::BILLTOPHONENUM => '111-222-333',
+            ]);
+
+        $this->transactionOptionProvider->expects(self::once())
+            ->method('getCustomerUserOptions')
+            ->willReturn([
+                Option\ShippingAddress::SHIPTOEMAIL => 'email@example.com',
+                Option\BillingAddress::BILLTOEMAIL => 'email@example.com',
+                Gateway\Option\Customer::EMAIL => 'email@example.com',
+                Gateway\Option\Customer::CUSTCODE => '1',
+            ]);
+    }
+
     public function testAuthorizeDoNotPerformRequestIfAmountAuthorizationIsNotRequiredAndValidationExists()
     {
         $sourceTransaction = new PaymentTransaction();
@@ -155,17 +208,18 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->authorize($transaction);
 
-        $this->assertEquals($sourceTransaction->getReference(), $transaction->getReference());
-        $this->assertEquals($sourceTransaction->getCurrency(), $transaction->getCurrency());
-        $this->assertEquals($sourceTransaction->isSuccessful(), $transaction->isSuccessful());
-        $this->assertEquals($sourceTransaction->isActive(), $transaction->isActive());
-        $this->assertEmpty($transaction->getRequest());
-        $this->assertEmpty($transaction->getResponse());
+        self::assertEquals($sourceTransaction->getReference(), $transaction->getReference());
+        self::assertEquals($sourceTransaction->getCurrency(), $transaction->getCurrency());
+        self::assertEquals($sourceTransaction->isSuccessful(), $transaction->isSuccessful());
+        self::assertEquals($sourceTransaction->isActive(), $transaction->isActive());
+        self::assertEmpty($transaction->getRequest());
+        self::assertEmpty($transaction->getResponse());
     }
 
     public function testAuthorizePerformRequestIfAmountAuthorizationIsNotRequiredAndValidationIsMissing()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $this->paymentConfig->expects($this->never())
             ->method('isAuthorizationForRequiredAmountEnabled')
@@ -178,12 +232,13 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->authorize($transaction);
 
-        $this->assertEquals('reference', $transaction->getReference());
+        self::assertEquals('reference', $transaction->getReference());
     }
 
     public function testAuthorizePerformRequest()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $this->paymentConfig->expects($this->never())
             ->method('isAuthorizationForRequiredAmountEnabled')
@@ -196,7 +251,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->authorize($transaction);
 
-        $this->assertEquals('reference', $transaction->getReference());
+        self::assertEquals('reference', $transaction->getReference());
     }
 
     public function testChargeWithoutSourceTransaction()
@@ -204,6 +259,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $transaction = new PaymentTransaction();
 
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $this->gateway->expects($this->once())->method('request')->with('S')->willReturn(
             new Response(['PNREF' => 'reference', 'RESULT' => '0'])
@@ -211,16 +267,17 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $response = $this->method->charge($transaction);
 
-        $this->assertEquals('reference', $transaction->getReference());
-        $this->assertTrue($transaction->isSuccessful());
-        $this->assertTrue($transaction->isActive());
-        $this->assertArrayHasKey('successful', $response);
-        $this->assertTrue($response['successful']);
+        self::assertEquals('reference', $transaction->getReference());
+        self::assertTrue($transaction->isSuccessful());
+        self::assertTrue($transaction->isActive());
+        self::assertArrayHasKey('successful', $response);
+        self::assertTrue($response['successful']);
     }
 
     public function testChargeDeactivateSourceTransactionIfItsNotValidationOne()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction
@@ -240,15 +297,16 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->charge($transaction);
 
-        $this->assertTrue($transaction->isSuccessful());
-        $this->assertFalse($transaction->isActive());
-        $this->assertTrue($sourceTransaction->isSuccessful());
-        $this->assertFalse($sourceTransaction->isActive());
+        self::assertTrue($transaction->isSuccessful());
+        self::assertFalse($transaction->isActive());
+        self::assertTrue($sourceTransaction->isSuccessful());
+        self::assertFalse($sourceTransaction->isActive());
     }
 
     public function testChargeDoNotChangeValidateSourceTransactionState()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction
@@ -268,10 +326,10 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->charge($transaction);
 
-        $this->assertTrue($transaction->isSuccessful());
-        $this->assertFalse($transaction->isActive());
-        $this->assertTrue($sourceTransaction->isSuccessful());
-        $this->assertTrue($sourceTransaction->isActive());
+        self::assertTrue($transaction->isSuccessful());
+        self::assertFalse($transaction->isActive());
+        self::assertTrue($sourceTransaction->isSuccessful());
+        self::assertTrue($sourceTransaction->isActive());
     }
 
     /**
@@ -280,6 +338,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
     public function testChargeWithError(string $responseMessage, string $expectedMessage)
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $transaction = new PaymentTransaction();
         $transaction
@@ -292,16 +351,17 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->method->charge($transaction);
 
-        $this->assertSame($expectedMessage, $result['message']);
-        $this->assertFalse($result['successful']);
+        self::assertSame($expectedMessage, $result['message']);
+        self::assertFalse($result['successful']);
 
-        $this->assertFalse($transaction->isSuccessful());
-        $this->assertFalse($transaction->isActive());
+        self::assertFalse($transaction->isSuccessful());
+        self::assertFalse($transaction->isActive());
     }
 
     public function testCaptureDoChargeIfSourceAuthorizationIsValidationTransactionClone()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction
@@ -325,10 +385,10 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->capture($transaction);
 
-        $this->assertTrue($transaction->isSuccessful());
-        $this->assertFalse($transaction->isActive());
-        $this->assertTrue($sourceTransaction->isSuccessful());
-        $this->assertFalse($sourceTransaction->isActive());
+        self::assertTrue($transaction->isSuccessful());
+        self::assertFalse($transaction->isActive());
+        self::assertTrue($sourceTransaction->isSuccessful());
+        self::assertFalse($sourceTransaction->isActive());
     }
 
     public function testCaptureWithoutSourceTransaction()
@@ -342,8 +402,8 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->capture($transaction);
 
-        $this->assertFalse($transaction->isSuccessful());
-        $this->assertFalse($transaction->isActive());
+        self::assertFalse($transaction->isSuccessful());
+        self::assertFalse($transaction->isActive());
     }
 
     /**
@@ -371,15 +431,15 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->method->capture($transaction);
 
-        $this->assertSame($expectedMessage, $result['message']);
-        $this->assertFalse($result['successful']);
+        self::assertSame($expectedMessage, $result['message']);
+        self::assertFalse($result['successful']);
 
-        $this->assertFalse($transaction->isSuccessful());
-        $this->assertFalse($transaction->isActive());
-        $this->assertNotEmpty($transaction->getRequest());
+        self::assertFalse($transaction->isSuccessful());
+        self::assertFalse($transaction->isActive());
+        self::assertNotEmpty($transaction->getRequest());
 
-        $this->assertTrue($sourceTransaction->isSuccessful());
-        $this->assertTrue($sourceTransaction->isActive());
+        self::assertTrue($sourceTransaction->isSuccessful());
+        self::assertTrue($sourceTransaction->isActive());
     }
 
     public function responseWithErrorDataProvider(): array
@@ -421,22 +481,22 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->capture($transaction);
 
-        $this->assertTrue($transaction->isSuccessful());
-        $this->assertFalse($transaction->isActive());
-        $this->assertEquals('reference', $transaction->getReference());
-        $this->assertNotEmpty($transaction->getRequest());
-        $this->assertArrayNotHasKey('CURRENCY', $transaction->getRequest());
-        $this->assertArrayHasKey('AMT', $transaction->getRequest());
-        $this->assertArrayHasKey('TENDER', $transaction->getRequest());
-        $this->assertArrayHasKey('ORIGID', $transaction->getRequest());
-
-        $this->assertTrue($sourceTransaction->isSuccessful());
-        $this->assertFalse($sourceTransaction->isActive());
+        self::assertTrue($transaction->isSuccessful());
+        self::assertFalse($transaction->isActive());
+        self::assertEquals('reference', $transaction->getReference());
+        self::assertNotEmpty($transaction->getRequest());
+        self::assertArrayNotHasKey('CURRENCY', $transaction->getRequest());
+        self::assertArrayHasKey('AMT', $transaction->getRequest());
+        self::assertArrayHasKey('TENDER', $transaction->getRequest());
+        self::assertArrayHasKey('ORIGID', $transaction->getRequest());
+        self::assertTrue($sourceTransaction->isSuccessful());
+        self::assertFalse($sourceTransaction->isActive());
     }
 
     public function testPurchaseGetActionFromConfig()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $this->paymentConfig->expects($this->once())
             ->method('getPurchaseAction')
@@ -451,12 +511,13 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->purchase($transaction);
 
-        $this->assertEquals(PaymentMethodInterface::AUTHORIZE, $transaction->getAction());
+        self::assertEquals(PaymentMethodInterface::AUTHORIZE, $transaction->getAction());
     }
 
     public function testPurchaseWithoutSourceGenerateSecureToken()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $this->paymentConfig->expects($this->once())
             ->method('getPurchaseAction')
@@ -471,15 +532,16 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->purchase($transaction);
 
-        $this->assertFalse($transaction->isSuccessful());
-        $this->assertTrue($transaction->isActive());
-        $this->assertArrayHasKey('SECURETOKENID', $transaction->getRequest());
-        $this->assertArrayHasKey('CREATESECURETOKEN', $transaction->getRequest());
+        self::assertFalse($transaction->isSuccessful());
+        self::assertTrue($transaction->isActive());
+        self::assertArrayHasKey('SECURETOKENID', $transaction->getRequest());
+        self::assertArrayHasKey('CREATESECURETOKEN', $transaction->getRequest());
     }
 
     public function testPurchaseWithSourceGenerateDoRequest()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $this->paymentConfig->expects($this->once())
             ->method('getPurchaseAction')
@@ -502,15 +564,16 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->purchase($transaction);
 
-        $this->assertTrue($transaction->isSuccessful());
-        $this->assertTrue($transaction->isActive());
-        $this->assertArrayNotHasKey('SECURETOKENID', $transaction->getRequest());
-        $this->assertArrayNotHasKey('CREATESECURETOKEN', $transaction->getRequest());
+        self::assertTrue($transaction->isSuccessful());
+        self::assertTrue($transaction->isActive());
+        self::assertArrayNotHasKey('SECURETOKENID', $transaction->getRequest());
+        self::assertArrayNotHasKey('CREATESECURETOKEN', $transaction->getRequest());
     }
 
     public function testPurchaseWithSourceAndError()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $this->paymentConfig->expects($this->once())
             ->method('getPurchaseAction')
@@ -533,15 +596,16 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->purchase($transaction);
 
-        $this->assertFalse($transaction->isSuccessful());
-        $this->assertFalse($transaction->isActive());
-        $this->assertArrayNotHasKey('SECURETOKENID', $transaction->getRequest());
-        $this->assertArrayNotHasKey('CREATESECURETOKEN', $transaction->getRequest());
+        self::assertFalse($transaction->isSuccessful());
+        self::assertFalse($transaction->isActive());
+        self::assertArrayNotHasKey('SECURETOKENID', $transaction->getRequest());
+        self::assertArrayNotHasKey('CREATESECURETOKEN', $transaction->getRequest());
     }
 
     public function testValidateGenerateSecureToken()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $transaction = new PaymentTransaction();
         $transaction->setAction(PaymentMethodInterface::VALIDATE);
@@ -552,15 +616,16 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->validate($transaction);
 
-        $this->assertTrue($transaction->isActive());
-        $this->assertFalse($transaction->isSuccessful());
-        $this->assertArrayHasKey('SECURETOKENID', $transaction->getRequest());
-        $this->assertArrayHasKey('CREATESECURETOKEN', $transaction->getRequest());
+        self::assertTrue($transaction->isActive());
+        self::assertFalse($transaction->isSuccessful());
+        self::assertArrayHasKey('SECURETOKENID', $transaction->getRequest());
+        self::assertArrayHasKey('CREATESECURETOKEN', $transaction->getRequest());
     }
 
     public function testValidateForceCurrencyAndAmount()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $transaction = new PaymentTransaction();
         $transaction->setAction(PaymentMethodInterface::VALIDATE);
@@ -571,15 +636,16 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->validate($transaction);
 
-        $this->assertTrue($transaction->isActive());
-        $this->assertFalse($transaction->isSuccessful());
-        $this->assertEquals(0, $transaction->getAmount());
-        $this->assertEquals('USD', $transaction->getCurrency());
+        self::assertTrue($transaction->isActive());
+        self::assertFalse($transaction->isSuccessful());
+        self::assertEquals(0, $transaction->getAmount());
+        self::assertEquals('USD', $transaction->getCurrency());
     }
 
     public function testSecureTokenResponseLimitedWithIdToKenAndFormAction()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $transaction = new PaymentTransaction();
         $transaction->setAction(PaymentMethodInterface::VALIDATE);
@@ -603,7 +669,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $response = $this->method->validate($transaction);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'formAction' => 'url',
                 'SECURETOKEN' => $secureToken,
@@ -616,6 +682,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
     public function testSecureTokenOptions()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $transaction = new PaymentTransaction();
         $transaction
@@ -655,19 +722,20 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->validate($transaction);
 
-        $this->assertArrayHasKey('SECURETOKENID', $transaction->getRequest());
-        $this->assertArrayHasKey('AMT', $transaction->getRequest());
-        $this->assertArrayHasKey('TENDER', $transaction->getRequest());
-        $this->assertArrayHasKey('CURRENCY', $transaction->getRequest());
-        $this->assertArrayHasKey('CREATESECURETOKEN', $transaction->getRequest());
-        $this->assertArrayHasKey('SILENTTRAN', $transaction->getRequest());
-        $this->assertArrayHasKey('RETURNURL', $transaction->getRequest());
-        $this->assertArrayHasKey('ERRORURL', $transaction->getRequest());
+        self::assertArrayHasKey('SECURETOKENID', $transaction->getRequest());
+        self::assertArrayHasKey('AMT', $transaction->getRequest());
+        self::assertArrayHasKey('TENDER', $transaction->getRequest());
+        self::assertArrayHasKey('CURRENCY', $transaction->getRequest());
+        self::assertArrayHasKey('CREATESECURETOKEN', $transaction->getRequest());
+        self::assertArrayHasKey('SILENTTRAN', $transaction->getRequest());
+        self::assertArrayHasKey('RETURNURL', $transaction->getRequest());
+        self::assertArrayHasKey('ERRORURL', $transaction->getRequest());
     }
 
     public function testRequestPassButDoesNotContainsCredentials()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $this->gateway->expects($this->once())->method('request')
             ->with(
@@ -688,15 +756,16 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
 
         $this->method->validate($transaction);
 
-        $this->assertArrayNotHasKey('VENDOR', $transaction->getRequest());
-        $this->assertArrayNotHasKey('USER', $transaction->getRequest());
-        $this->assertArrayNotHasKey('PWD', $transaction->getRequest());
-        $this->assertArrayNotHasKey('PARTNER', $transaction->getRequest());
+        self::assertArrayNotHasKey('VENDOR', $transaction->getRequest());
+        self::assertArrayNotHasKey('USER', $transaction->getRequest());
+        self::assertArrayNotHasKey('PWD', $transaction->getRequest());
+        self::assertArrayNotHasKey('PARTNER', $transaction->getRequest());
     }
 
     private function configureProxyOptions(bool $useProxy): void
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $this->paymentConfig->expects($this->once())
             ->method('isUseProxyEnabled')
@@ -753,6 +822,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
     public function testVerbosityOptionWithDebug()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $this->paymentConfig->expects($this->once())
             ->method('isDebugModeEnabled')
@@ -775,6 +845,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
     public function testVerbosityOptionWithoutDebug()
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $this->paymentConfig->expects($this->once())
             ->method('isDebugModeEnabled')
@@ -808,6 +879,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
     public function testSslVerificationOptionValueIsPassedToPayFlow(bool $sslVerificationEnabled)
     {
         $this->configureCredentials();
+        $this->configureTransactionProvider();
 
         $this->paymentConfig->expects($this->once())
             ->method('isSslVerificationEnabled')
@@ -838,7 +910,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
             ->method('getTotal')
             ->willReturn($value);
 
-        $this->assertEquals($expectedResult, $this->method->isApplicable($context));
+        self::assertEquals($expectedResult, $this->method->isApplicable($context));
     }
 
     public function isApplicableProvider(): array
@@ -854,9 +926,9 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setResponse(['PNREF' => 'ref']);
 
-        $this->assertEmpty($paymentTransaction->getReference());
+        self::assertEmpty($paymentTransaction->getReference());
         $this->method->complete($paymentTransaction);
-        $this->assertEquals('ref', $paymentTransaction->getReference());
+        self::assertEquals('ref', $paymentTransaction->getReference());
     }
 
     public function testCompleteSuccessfulFromResponse()
@@ -864,9 +936,9 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setResponse(['RESULT' => ResponseStatusMap::APPROVED]);
 
-        $this->assertFalse($paymentTransaction->isSuccessful());
+        self::assertFalse($paymentTransaction->isSuccessful());
         $this->method->complete($paymentTransaction);
-        $this->assertTrue($paymentTransaction->isSuccessful());
+        self::assertTrue($paymentTransaction->isSuccessful());
     }
 
     public function testCompleteActiveFromResponse()
@@ -874,9 +946,9 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setResponse(['RESULT' => ResponseStatusMap::APPROVED]);
 
-        $this->assertFalse($paymentTransaction->isActive());
+        self::assertFalse($paymentTransaction->isActive());
         $this->method->complete($paymentTransaction);
-        $this->assertTrue($paymentTransaction->isActive());
+        self::assertTrue($paymentTransaction->isActive());
     }
 
     public function testCompleteWithCharge()
@@ -885,10 +957,10 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $paymentTransaction->setResponse(['RESULT' => ResponseStatusMap::APPROVED, 'PNREF' => 'ref']);
         $paymentTransaction->setAction(PaymentMethodInterface::CHARGE);
 
-        $this->assertEmpty($paymentTransaction->getReference());
+        self::assertEmpty($paymentTransaction->getReference());
         $this->method->complete($paymentTransaction);
-        $this->assertEquals('ref', $paymentTransaction->getReference());
-        $this->assertFalse($paymentTransaction->isActive());
+        self::assertEquals('ref', $paymentTransaction->getReference());
+        self::assertFalse($paymentTransaction->isActive());
     }
 
     public function testGetIdentifier()
@@ -896,6 +968,6 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
         $this->paymentConfig->expects(static::once())
             ->method('getPaymentMethodIdentifier')
             ->willReturn('payflow_express_checkout');
-        $this->assertSame('payflow_express_checkout', $this->method->getIdentifier());
+        self::assertSame('payflow_express_checkout', $this->method->getIdentifier());
     }
 }

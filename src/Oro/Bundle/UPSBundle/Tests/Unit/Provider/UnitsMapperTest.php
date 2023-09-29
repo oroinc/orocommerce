@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Provider;
 
 use Doctrine\Persistence\ManagerRegistry;
@@ -72,7 +73,7 @@ class UnitsMapperTest extends \PHPUnit\Framework\TestCase
 
     public function testGetOROUnitWeight()
     {
-        $kgUnit = (new WeightUnit)->setCode('kg');
+        $kgUnit = (new WeightUnit())->setCode('kg');
 
         $repository = $this->createMock(ObjectRepository::class);
         $repository->expects(self::any())
@@ -91,7 +92,7 @@ class UnitsMapperTest extends \PHPUnit\Framework\TestCase
 
     public function testGetOROUnitLength()
     {
-        $kgUnit = (new WeightUnit)->setCode('inch');
+        $kgUnit = (new WeightUnit())->setCode('inch');
 
         $repository = $this->createMock(ObjectRepository::class);
         $repository->expects(self::any())

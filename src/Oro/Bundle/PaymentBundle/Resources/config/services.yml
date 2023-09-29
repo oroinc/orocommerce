@@ -227,16 +227,8 @@ services:
         arguments:
             - !tagged_iterator oro_payment.payment_method_view_provider
 
-    oro_payment.context.doctrine_line_item_collection_factory:
-        class: 'Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\Factory\DoctrinePaymentLineItemCollectionFactory'
-
     oro_payment.context.builder_factory_basic:
         class: 'Oro\Bundle\PaymentBundle\Context\Builder\Basic\Factory\BasicPaymentContextBuilderFactory'
-        arguments:
-            - '@oro_payment.context.doctrine_line_item_collection_factory'
-
-    oro_payment.line_item.builder_factory_basic:
-        class: 'Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Basic\Factory\BasicPaymentLineItemBuilderFactory'
 
     oro_payment.context.rules_converter_basic:
         class: 'Oro\Bundle\PaymentBundle\Context\Converter\Basic\BasicPaymentContextToRulesValueConverter'
@@ -385,3 +377,11 @@ services:
             - '@oro_payment.repository.payment_transaction'
         tags:
             - { name: oro_action.condition, alias: 'payment_transaction_was_refunded' }
+
+    oro_payment.context.line_item.factory.payment_line_item_from_product_line_item_factory:
+        class: Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactory
+        arguments:
+            - '@oro_payment.context.line_item.factory.payment_kit_item_line_item_from_product_kit_item_line_item_factory'
+
+    oro_payment.context.line_item.factory.payment_kit_item_line_item_from_product_kit_item_line_item_factory:
+        class: Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentKitItemLineItemFromProductKitItemLineItemFactory

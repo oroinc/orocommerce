@@ -28,6 +28,7 @@ class ScopeTypeStub extends AbstractType
         $resolver->setDefault('data_class', ScopeStub::class);
         $resolver->setDefault('scope_type', 'test');
         $resolver->setDefault('scope_fields', []);
+        $resolver->setDefault('constraints', []);
     }
 
     /**
@@ -41,7 +42,7 @@ class ScopeTypeStub extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return $this->getName();
     }

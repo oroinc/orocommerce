@@ -7,6 +7,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
@@ -14,6 +15,19 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  */
 class DatagridLineItemsDataListener
 {
+    public const ID = 'id';
+    public const QUANTITY = 'quantity';
+    public const SKU = 'sku';
+    public const UNIT = 'unit';
+    public const NAME = 'name';
+    public const PRODUCT_ID = 'productId';
+    public const IMAGE = 'image';
+    public const UNITS = 'units';
+    public const IS_CONFIGURABLE = 'isConfigurable';
+    public const VARIANT_ID = 'variantId';
+    public const PRODUCT_CONFIGURATION = 'productConfiguration';
+    public const PRECISION = 'precision';
+
     /** @var ConfigurableProductProvider */
     private $configurableProductProvider;
 
@@ -38,33 +52,46 @@ class DatagridLineItemsDataListener
         foreach ($event->getLineItems() as $lineItem) {
             $lineItemId = $lineItem->getEntityIdentifier();
             $product = $lineItem->getProduct();
+            if ($lineItem instanceof ProductKitItemLineItemInterface
+                && !$lineItem->getKitItem()?->getProducts()->contains($product)) {
+                // The selected product is not allowed.
+                $product = null;
+            }
+
+            $lineItemData = $event->getDataForLineItem($lineItemId);
+            $isEnabled = $product?->isEnabled() ?? false;
+
+            $lineItemData[self::ID] = $lineItemId;
+            $lineItemData[self::QUANTITY] = $lineItem->getQuantity();
+            $lineItemData[self::SKU] = null;
+            $lineItemData[self::UNIT] = $lineItem->getProductUnitCode();
+            $lineItemData[self::NAME] = '';
+
+            if (!$isEnabled) {
+                $event->addDataForLineItem($lineItemId, $lineItemData);
+                continue;
+            }
+
             $unitCode = $lineItem->getProductUnitCode();
+            $lineItemData[self::SKU] = $lineItem->getProductSku();
+            $lineItemData[self::UNIT] = $unitCode;
+            $lineItemData[self::NAME] = $this->getProductName($lineItem);
 
-            $lineItemData = [
-                'id' => $lineItemId,
-                'sku' => $lineItem->getProductSku(),
-                'quantity' => $lineItem->getQuantity(),
-                'unit' => $unitCode,
-                'name' => $this->getProductName($lineItem),
-            ];
+            $lineItemData[self::PRODUCT_ID] = $product->getId();
+            $lineItemData[self::IMAGE] = $this->getImageUrl($product);
 
-            if ($product) {
-                $lineItemData['productId'] = $product->getId();
-                $lineItemData['image'] = $this->getImageUrl($product);
+            $unitPrecision = $this->getProductUnitPrecision($product, $unitCode);
+            if ($unitPrecision !== null) {
+                $lineItemData[self::UNITS][$unitCode] = [self::PRECISION => $unitPrecision];
+            }
 
-                $unitPrecision = $this->getProductUnitPrecision($product, $unitCode);
-                if ($unitPrecision !== null) {
-                    $lineItemData['units'][$unitCode] = ['precision' => $unitPrecision];
-                }
+            $lineItemData[self::IS_CONFIGURABLE] = $product->isConfigurable();
 
-                $lineItemData['isConfigurable'] = $product->isConfigurable();
-
-                $parentProduct = $lineItem->getParentProduct();
-                if ($parentProduct) {
-                    $lineItemData['variantId'] = $lineItemData['productId'];
-                    $lineItemData['productId'] = $parentProduct->getId();
-                    $lineItemData['productConfiguration'] = $this->getVariantFieldsValuesForLineItem($lineItem);
-                }
+            $parentProduct = $lineItem->getParentProduct();
+            if ($parentProduct) {
+                $lineItemData[self::VARIANT_ID] = $lineItemData[self::PRODUCT_ID];
+                $lineItemData[self::PRODUCT_ID] = $parentProduct->getId();
+                $lineItemData[self::PRODUCT_CONFIGURATION] = $this->getVariantFieldsValuesForLineItem($lineItem);
             }
 
             $event->addDataForLineItem($lineItemId, $lineItemData);
@@ -74,13 +101,9 @@ class DatagridLineItemsDataListener
     protected function getProductName(ProductLineItemInterface $lineItem): string
     {
         $product = $lineItem->getProduct();
-        if (!$product) {
-            return '';
-        }
-
         $parentProduct = $lineItem->getParentProduct();
 
-        return (string) $this->localizationHelper->getLocalizedValue(
+        return (string)$this->localizationHelper->getLocalizedValue(
             $parentProduct ? $parentProduct->getNames() : $product->getNames()
         );
     }

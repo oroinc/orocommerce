@@ -75,7 +75,7 @@ class CheckoutAddressType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'oro_checkout_address';
     }
@@ -83,7 +83,7 @@ class CheckoutAddressType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return OrderAddressType::class;
     }

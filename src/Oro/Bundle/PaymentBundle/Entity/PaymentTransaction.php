@@ -313,7 +313,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     }
 
     /**
-     * @param array $request
+     * @param array|null $request
      * @return PaymentTransaction
      */
     public function setRequest(array $request = null)
@@ -334,7 +334,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     }
 
     /**
-     * @param array $response
+     * @param array|null $response
      * @return PaymentTransaction
      */
     public function setResponse(array $response = null)
@@ -505,7 +505,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     }
 
     /**
-     * @param array $transactionOptions
+     * @param array|null $transactionOptions
      * @return PaymentTransaction
      */
     public function setTransactionOptions(array $transactionOptions = null)
@@ -562,7 +562,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     }
 
     /**
-     * @param CustomerUser $frontendOwner
+     * @param CustomerUser|null $frontendOwner
      * @return PaymentTransaction
      */
     public function setFrontendOwner(CustomerUser $frontendOwner = null)

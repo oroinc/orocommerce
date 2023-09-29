@@ -38,7 +38,6 @@ class SlugifyEntityHelperTest extends TestCase
         $this->helper = new SlugifyEntityHelper($this->slugGenerator, $this->configManager, $this->managerRegistry);
     }
 
-
     public function testFillNoSourceField(): void
     {
         $sluggableEntity = $this->createMock(SluggableInterface::class);

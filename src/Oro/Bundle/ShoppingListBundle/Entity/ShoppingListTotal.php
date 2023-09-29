@@ -3,19 +3,21 @@
 namespace Oro\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 
 /**
- * Entity for caching shopping list subtotals data by currency
+ * Entity for a caching shopping list subtotals data by currency
  * If isValid=false values should be recalculated
  *
  * @ORM\Table(
  *     name="oro_shopping_list_total",
  *     uniqueConstraints={
- *          @ORM\UniqueConstraint(name="unique_shopping_list_currency", columns={
+ *          @ORM\UniqueConstraint(name="unique_shopping_list_currency_customer_user", columns={
  *              "shopping_list_id",
- *              "currency"
+ *              "currency",
+ *              "customer_user_id"
  *          })
  *      }
  * )
@@ -62,12 +64,22 @@ class ShoppingListTotal
     protected $valid = false;
 
     /**
+     * @var CustomerUser
+
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
+     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
+     */
+    protected $customerUser;
+
+    /**
      * @param ShoppingList $shoppingList
      * @param string $currency
      */
     public function __construct(ShoppingList $shoppingList, $currency)
     {
         $this->shoppingList = $shoppingList;
+        # By default, the owner is associated with the owner of the shopping list.
+        $this->customerUser = $shoppingList->getCustomerUser();
         $this->currency = $currency;
     }
 
@@ -141,5 +153,17 @@ class ShoppingListTotal
             ->setLabel(LineItemNotPricedSubtotalProvider::LABEL);
 
         return $subtotal;
+    }
+
+    public function getCustomerUser(): ?CustomerUser
+    {
+        return $this->customerUser;
+    }
+
+    public function setCustomerUser(?CustomerUser $customerUser): self
+    {
+        $this->customerUser = $customerUser;
+
+        return $this;
     }
 }

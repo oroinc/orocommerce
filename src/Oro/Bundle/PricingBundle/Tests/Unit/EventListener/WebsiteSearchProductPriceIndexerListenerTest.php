@@ -11,30 +11,28 @@ use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceIndexerListener;
 use Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub\CombinedProductPriceRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\SearchBundle\Formatter\DecimalFlatValueFormatter;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\TestCase
+class WebsiteSearchProductPriceIndexerListenerTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var WebsiteSearchProductPriceIndexerListener */
-    private $listener;
+    private WebsiteSearchProductPriceIndexerListener $listener;
 
-    /** @var WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $websiteContextManager;
+    private WebsiteContextManager|MockObject $websiteContextManager;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    private ManagerRegistry|MockObject $doctrine;
 
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
+    private ConfigManager|MockObject $configManager;
 
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
+    private FeatureChecker|MockObject $featureChecker;
 
     protected function setUp(): void
     {
@@ -53,56 +51,56 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
         $this->listener->addFeature('feature1');
     }
 
-    public function testOnWebsiteSearchIndexFeatureDisabled()
+    public function testOnWebsiteSearchIndexFeatureDisabled(): void
     {
-        $this->featureChecker->expects($this->once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(false);
 
         $event = $this->createMock(IndexEntityEvent::class);
-        $event->expects($this->any())
+        $event->expects(self::any())
             ->method('getContext')
             ->willReturn([]);
 
-        $this->websiteContextManager->expects($this->never())
+        $this->websiteContextManager->expects(self::never())
             ->method('getWebsiteId');
 
         $this->listener->onWebsiteSearchIndex($event);
     }
 
-    public function testOnWebsiteSearchIndexUnsupportedFieldGroup()
+    public function testOnWebsiteSearchIndexUnsupportedFieldGroup(): void
     {
-        $this->featureChecker->expects($this->never())
+        $this->featureChecker->expects(self::never())
             ->method('isFeatureEnabled');
 
         $event = $this->createMock(IndexEntityEvent::class);
-        $event->expects($this->any())
+        $event->expects(self::any())
             ->method('getContext')
             ->willReturn([AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']]);
 
-        $this->websiteContextManager->expects($this->never())
+        $this->websiteContextManager->expects(self::never())
             ->method($this->anything());
 
         $this->listener->onWebsiteSearchIndex($event);
     }
 
-    public function testOnWebsiteSearchIndexWithoutWebsite()
+    public function testOnWebsiteSearchIndexWithoutWebsite(): void
     {
-        $this->featureChecker->expects($this->once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(true);
 
         $event = $this->createMock(IndexEntityEvent::class);
-        $event->expects($this->any())
+        $event->expects(self::any())
             ->method('getContext')
             ->willReturn([]);
-        $this->websiteContextManager->expects($this->once())
+        $this->websiteContextManager->expects(self::once())
             ->method('getWebsiteId')
             ->willReturn(null);
 
-        $event->expects($this->once())
+        $event->expects(self::once())
             ->method('stopPropagation');
         $this->listener->onWebsiteSearchIndex($event);
     }
@@ -111,39 +109,49 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
      * @dataProvider contextDataProvider
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testOnWebsiteSearchIndex(array $context)
+    public function testOnWebsiteSearchIndex(array $context): void
     {
+        $this->listener->setNotAllowedProductTypes([
+            Product::TYPE_KIT,
+        ]);
+
         $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->any())
+        $this->doctrine->expects(self::any())
             ->method('getManagerForClass')
             ->willReturn($em);
-        $products = [new Product()];
+        $products = [
+            (new ProductStub())->setId(1)->setType(Product::TYPE_SIMPLE),
+            (new ProductStub())->setId(2)->setType(Product::TYPE_SIMPLE),
+        ];
         $event = $this->createMock(IndexEntityEvent::class);
-        $event->expects($this->any())
+        $event->expects(self::any())
             ->method('getContext')
             ->willReturn($context);
-        $event->expects($this->any())
+        $event->expects(self::any())
             ->method('getEntities')
-            ->willReturn($products);
-        $this->websiteContextManager->expects($this->once())
+            ->willReturn(array_merge(
+                $products,
+                [(new ProductStub())->setId(3)->setType(Product::TYPE_KIT),] // Add unsupported product
+            ));
+        $this->websiteContextManager->expects(self::once())
             ->method('getWebsiteId')
             ->willReturn(1);
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->willReturn(2);
 
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('getReference')
             ->with(CombinedPriceList::class, 2)
             ->willReturn($cpl);
 
         $repo = $this->createMock(CombinedProductPriceRepository::class);
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getRepository')
             ->with(CombinedProductPrice::class)
             ->willReturn($repo);
-        $repo->expects($this->any())
+        $repo->expects(self::any())
             ->method('findMinByWebsiteForFilter')
             ->with(1, $products, $cpl)
             ->willReturn(
@@ -164,7 +172,7 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
                     ],
                 ]
             );
-        $repo->expects($this->any())
+        $repo->expects(self::any())
             ->method('findMinByWebsiteForSort')
             ->with(1, $products, $cpl)
             ->willReturn(
@@ -184,7 +192,7 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
                 ]
             );
 
-        $event->expects($this->exactly(4))
+        $event->expects(self::exactly(4))
             ->method('addPlaceholderField')
             ->withConsecutive(
                 [
@@ -213,7 +221,7 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit\Framework\Te
                 ]
             );
 
-        $this->featureChecker->expects($this->once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with('feature1', null)
             ->willReturn(true);

@@ -23,9 +23,6 @@ class LoadFrontendProductAttributesData extends AbstractFixture implements
      */
     public $container;
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;

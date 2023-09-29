@@ -92,10 +92,10 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
         $this->logger = $logger;
         $this->applicationState = $applicationState;
 
-        $this->allInsertions = new \SplObjectStorage;
-        $this->allUpdates = new \SplObjectStorage;
-        $this->allDeletions = new \SplObjectStorage;
-        $this->allTokens = new \SplObjectStorage;
+        $this->allInsertions = new \SplObjectStorage();
+        $this->allUpdates = new \SplObjectStorage();
+        $this->allDeletions = new \SplObjectStorage();
+        $this->allTokens = new \SplObjectStorage();
     }
 
     /**

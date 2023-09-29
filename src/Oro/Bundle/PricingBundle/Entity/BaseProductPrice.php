@@ -6,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -22,8 +24,11 @@ class BaseProductPrice implements
     ProductUnitHolderInterface,
     ProductHolderInterface,
     PriceAwareInterface,
-    ProductPriceInterface
+    ProductPriceInterface,
+    ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var string
      *

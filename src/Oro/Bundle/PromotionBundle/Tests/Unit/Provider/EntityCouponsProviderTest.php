@@ -79,7 +79,7 @@ class EntityCouponsProviderTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper->expects($this->any())
             ->method('createEntityInstance')
             ->willReturnCallback(function ($class) {
-                return new $class;
+                return new $class();
             });
         $this->doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifierFieldName')

@@ -3,53 +3,36 @@
 namespace Oro\Bundle\OrderBundle\Converter;
 
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Factory\PaymentLineItemBuilderFactoryInterface;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItemCollectionFactoryInterface;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
+use Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactoryInterface;
 
 /**
  * Converts order line items to a collection of payment line items.
  */
 class BasicOrderPaymentLineItemConverter implements OrderPaymentLineItemConverterInterface
 {
-    private PaymentLineItemCollectionFactoryInterface $paymentLineItemCollectionFactory;
-    private PaymentLineItemBuilderFactoryInterface $paymentLineItemBuilderFactory;
+    private PaymentLineItemFromProductLineItemFactoryInterface $paymentLineItemFactory;
 
     public function __construct(
-        PaymentLineItemCollectionFactoryInterface $paymentLineItemCollectionFactory,
-        PaymentLineItemBuilderFactoryInterface $paymentLineItemBuilderFactory
+        PaymentLineItemFromProductLineItemFactoryInterface $paymentLineItemFactory
     ) {
-        $this->paymentLineItemCollectionFactory = $paymentLineItemCollectionFactory;
-        $this->paymentLineItemBuilderFactory = $paymentLineItemBuilderFactory;
+        $this->paymentLineItemFactory = $paymentLineItemFactory;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function convertLineItems(Collection $orderLineItems): PaymentLineItemCollectionInterface
+    public function convertLineItems(Collection $orderLineItems): Collection
     {
-        $paymentLineItems = [];
+        $orderLineItemsToConvert = [];
         foreach ($orderLineItems as $orderLineItem) {
             if ($orderLineItem->getProductUnit() === null) {
-                $paymentLineItems = [];
+                $orderLineItemsToConvert = [];
                 break;
             }
 
-            $builder = $this->paymentLineItemBuilderFactory->createBuilder(
-                $orderLineItem->getProductUnit(),
-                $orderLineItem->getProductUnit()->getCode(),
-                $orderLineItem->getQuantity(),
-                $orderLineItem
-            );
-            if (null !== $orderLineItem->getProduct()) {
-                $builder->setProduct($orderLineItem->getProduct());
-            }
-            if (null !== $orderLineItem->getPrice()) {
-                $builder->setPrice($orderLineItem->getPrice());
-            }
-            $paymentLineItems[] = $builder->getResult();
+            $orderLineItemsToConvert[] = $orderLineItem;
         }
 
-        return $this->paymentLineItemCollectionFactory->createPaymentLineItemCollection($paymentLineItems);
+        return $this->paymentLineItemFactory->createCollection($orderLineItemsToConvert);
     }
 }

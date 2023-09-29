@@ -3,72 +3,38 @@
 namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Provider;
 
 use Brick\Math\BigDecimal;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
-use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Subtotal provider for line items without prices.
  *
- * Expression for regular line items:
- *  lineItems.SUM(
- *      ROUND(lineItem.price * lineItem.qty)
- *  )
- *
- * Expression for line items with kit item line items:
- *  lineItems.SUM(
- *      ROUND(
- *          (
- *              lineItem.price + lineItem.kitItemLineItems.SUM(
- *                  ROUND(kitItemLineItem.price * kitItemLineItem.qty)
- *              )
- *          ) * lineItem.qty
- *      )
- *  )
+ * Pseudo-expression of a subtotal:
+ *  lineItems.SUM(lineItem.subtotal)
  */
 class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     public const TYPE = 'subtotal';
     public const LABEL = 'oro.pricing.subtotals.not_priced_subtotal.label';
-    public const EXTRA_DATA_PRICE = 'price';
-    public const EXTRA_DATA_SUBTOTAL = 'subtotal';
 
-    protected TranslatorInterface $translator;
+    private TranslatorInterface $translator;
 
-    protected RoundingServiceInterface $rounding;
-
-    protected ProductPriceProviderInterface $productPriceProvider;
-
-    protected ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory;
-
-    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
+    private ProductLineItemPriceProviderInterface $productLineItemsPriceProvider;
 
     public function __construct(
-        TranslatorInterface $translator,
-        RoundingServiceInterface $rounding,
-        ProductPriceProviderInterface $productPriceProvider,
         SubtotalProviderConstructorArguments $arguments,
-        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
-        ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
+        TranslatorInterface $translator,
+        ProductLineItemPriceProviderInterface $productLineItemsPriceProvider
     ) {
         parent::__construct($arguments);
 
         $this->translator = $translator;
-        $this->rounding = $rounding;
-        $this->productPriceProvider = $productPriceProvider;
-        $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
-        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
+        $this->productLineItemsPriceProvider = $productLineItemsPriceProvider;
     }
 
     /**
@@ -104,42 +70,14 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         }
 
         $subtotalAmount = BigDecimal::of(0);
-        $priceCriteria = $this->prepareProductsPriceCriteria($entity, $currency);
-        $extraData = [];
-        if ($priceCriteria) {
-            $searchScope = $this->priceScopeCriteriaFactory->createByContext($entity);
-            $prices = $this->productPriceProvider->getMatchedPrices($priceCriteria, $searchScope);
-            foreach ($entity->getLineItems() as $lineItem) {
-                $initialLineItemSubtotalAmount = null;
-                if ($lineItem instanceof ProductKitItemLineItemsAwareInterface && $lineItem->getKitItemLineItems()) {
-                    foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
-                        if ($initialLineItemSubtotalAmount === null) {
-                            $initialLineItemSubtotalAmount = BigDecimal::of(0);
-                        }
-                        $kitItemLineItemSubtotalAmount = $this->getLineItemSubtotalAmount(
-                            $kitItemLineItem,
-                            $prices,
-                            $priceCriteria,
-                            $extraData
-                        );
-                        $initialLineItemSubtotalAmount = $initialLineItemSubtotalAmount
-                            ->plus($kitItemLineItemSubtotalAmount);
-                    }
-                }
+        $productLineItemsPrices = $this->productLineItemsPriceProvider
+            ->getProductLineItemsPricesForLineItemsHolder($entity, $currency);
 
-                $lineItemSubtotalAmount = $this->getLineItemSubtotalAmount(
-                    $lineItem,
-                    $prices,
-                    $priceCriteria,
-                    $extraData,
-                    $initialLineItemSubtotalAmount
-                );
-                $subtotalAmount = $subtotalAmount->plus($lineItemSubtotalAmount);
-            }
+        foreach ($productLineItemsPrices as $productLineItemPrice) {
+            $subtotalAmount = $subtotalAmount->plus($productLineItemPrice->getSubtotal());
         }
 
         $subtotal = $this->createSubtotal();
-        $subtotal->setData($extraData);
         $subtotal->setAmount($subtotalAmount->toFloat());
         $subtotal->setVisible($subtotal->getAmount() !== 0.0);
         $subtotal->setCurrency($currency);
@@ -147,89 +85,6 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         return $subtotal;
     }
 
-    /**
-     * @param object $lineItem
-     * @param array<string,Price> $prices
-     * @param array<string,ProductPriceCriteria> $priceCriteria
-     * @param array $extraData
-     * @param BigDecimal|null $initialAmount
-     *
-     * @return float|int
-     */
-    private function getLineItemSubtotalAmount(
-        object $lineItem,
-        array $prices,
-        array $priceCriteria,
-        array &$extraData,
-        ?BigDecimal $initialAmount = null
-    ): float|int {
-        $lineItemHash = spl_object_hash($lineItem);
-        $lineItemPriceCriterion = $priceCriteria[$lineItemHash] ?? null;
-        $lineItemPrice = $prices[$lineItemPriceCriterion?->getIdentifier()] ?? null;
-
-        if ($lineItemPrice !== null || $initialAmount !== null) {
-            $priceAmount = ($initialAmount ?? BigDecimal::of(0))
-                ->plus((float)$lineItemPrice?->getValue());
-
-            $subtotalAmount = $priceAmount
-                ->multipliedBy((float)$lineItemPriceCriterion?->getQuantity());
-
-            $extraData[$lineItemHash] = [
-                self::EXTRA_DATA_PRICE => $priceAmount->toFloat(),
-                self::EXTRA_DATA_SUBTOTAL => $subtotalAmount->toFloat(),
-            ];
-
-            return $this->rounding->round($subtotalAmount->toFloat());
-        }
-
-        return 0.0;
-    }
-
-    /**
-     * @param LineItemsNotPricedAwareInterface $entity
-     * @param ?string $currency
-     * @return ProductPriceCriteria[]
-     */
-    protected function prepareProductsPriceCriteria(LineItemsNotPricedAwareInterface $entity, ?string $currency): array
-    {
-        $results = [];
-
-        $validLineItems = $this->getLineItems($entity);
-
-        $productsPriceCriteria = $this->productPriceCriteriaFactory->createListFromProductLineItems(
-            $this->getLineItems($entity),
-            $currency
-        );
-
-        foreach ($validLineItems as $idx => $lineItem) {
-            if (!isset($productsPriceCriteria[$idx])) {
-                continue;
-            }
-
-            $results[spl_object_hash($lineItem)] = $productsPriceCriteria[$idx];
-        }
-
-        return $results;
-    }
-
-    private function getLineItems(LineItemsNotPricedAwareInterface $entity): \Generator
-    {
-        foreach ($entity->getLineItems() as $lineItem) {
-            if ($lineItem instanceof ProductKitItemLineItemsAwareInterface && $lineItem->getKitItemLineItems()) {
-                foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
-                    yield $kitItemLineItem;
-                }
-            }
-
-            if ($lineItem instanceof ProductLineItemInterface) {
-                yield $lineItem;
-            }
-        }
-    }
-
-    /**
-     * @return Subtotal
-     */
     protected function createSubtotal(): Subtotal
     {
         $subtotal = new Subtotal();

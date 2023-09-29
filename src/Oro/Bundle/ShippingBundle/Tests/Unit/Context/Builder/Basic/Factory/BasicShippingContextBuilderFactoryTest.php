@@ -4,12 +4,13 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context\Builder\Basic\Factory;
 
 use Oro\Bundle\ShippingBundle\Context\Builder\Basic\BasicShippingContextBuilder;
 use Oro\Bundle\ShippingBundle\Context\Builder\Basic\Factory\BasicShippingContextBuilderFactory;
+use PHPUnit\Framework\TestCase;
 
-class BasicShippingContextBuilderFactoryTest extends \PHPUnit\Framework\TestCase
+class BasicShippingContextBuilderFactoryTest extends TestCase
 {
     public function testCreateBuilder(): void
     {
-        $sourceEntity = $this->createMock(\stdClass::class);
+        $sourceEntity = new \stdClass();
         $sourceEntityId = '12';
 
         $contextBuilderFactory = new BasicShippingContextBuilderFactory();

@@ -68,7 +68,7 @@ abstract class BaseProductVisibilityResolved extends BaseVisibilityResolved
     }
 
     /**
-     * @param Category $category
+     * @param Category|null $category
      * @return $this
      */
     public function setCategory(Category $category = null)

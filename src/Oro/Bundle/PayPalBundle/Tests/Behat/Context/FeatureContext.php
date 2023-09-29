@@ -17,7 +17,8 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use PageObjectDictionary, UserUtilityTrait;
+    use PageObjectDictionary;
+    use UserUtilityTrait;
 
     /**
      * @Given /^(?:I )?create "(?P<name>(?:[^"]+))" PayPal Payflow integration$/

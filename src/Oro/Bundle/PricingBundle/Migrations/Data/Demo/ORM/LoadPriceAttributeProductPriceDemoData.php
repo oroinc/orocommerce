@@ -33,30 +33,18 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
      */
     public function load(ObjectManager $manager)
     {
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
-
-        if (is_array($filePath)) {
-            $filePath = current($filePath);
-        }
-
-        $handler = fopen($filePath, 'r');
-        $headers = fgetcsv($handler, 1000, ',');
-
         $priceAttributes = [
             'MSRP',
             'MAP',
         ];
 
-        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
-            $row = array_combine($headers, array_values($data));
-
+        foreach ($this->getProducts() as $row) {
             $product = $this->getProductBySku($manager, $row['sku']);
             $productUnit = $this->getProductUnit($manager, $row['unit']);
             foreach ($priceAttributes as $attributeName) {
                 $priceAttributePriceList = $this->getPriceAttribute($manager, $attributeName);
                 foreach ($priceAttributePriceList->getCurrencies() as $currency) {
-                    $amount = round((float)$row[$attributeName], 2);
+                    $amount = round((float) $row[$attributeName], 2);
                     $price = Price::create($amount, $currency);
 
                     $priceAttributeProductPrice = new PriceAttributeProductPrice();
@@ -72,9 +60,26 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
             }
         }
 
-        fclose($handler);
-
         $manager->flush();
+    }
+
+    protected function getProducts(): \Iterator
+    {
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            yield array_combine($headers, array_values($data));
+        }
+
+        fclose($handler);
     }
 
     protected function getPriceAttribute(EntityManagerInterface $manager, $name): ?PriceAttributePriceList

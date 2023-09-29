@@ -16,11 +16,16 @@ datagrids:
                     - cachedTotal.currency
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
+                    - shopping_list.currency as currency
                 from:
                     - { table: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', alias: shopping_list }
                 join:
                     left:
-                        - { join: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal', alias: cachedTotal, conditionType: WITH, condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = @oro_shopping_list.datagrid.total_currency_helper->getCurrencyStatement()" }
+                        -
+                            join: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal'
+                            alias: cachedTotal
+                            conditionType: WITH
+                            condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = shopping_list.currency"
         columns:
             id:
                 label:         oro.shoppinglist.id.label
@@ -199,7 +204,8 @@ datagrids:
                             join: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal'
                             alias: cachedTotal
                             conditionType: WITH
-                            condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = :current_currency"
+                            # For a datagrid, always display the subtotal of the shopping list owner.
+                            condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = :current_currency AND cachedTotal.customerUser = shopping_list.customerUser"
             bind_parameters:
                 -
                     name: current_currency
@@ -342,6 +348,7 @@ datagrids:
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-options-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-rfp-confirmation-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-representation-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-product-kit-builder
             toolbarOptions:
                 pageSize:
                     items:
@@ -361,6 +368,26 @@ datagrids:
                     - COALESCE(parentProduct.sku, product.sku) as sku
                     - GROUP_CONCAT(lineItem.id ORDER BY lineItem.id ASC) as displayedLineItemsIds
                     - MAX(lineItem.id) as sortId
+                    - >
+                        UPPER(
+                            CASE WHEN product.type = 'kit'
+                            THEN 
+                                CONCAT_WS(
+                                    '',
+                                    '',
+                                    GROUP_CONCAT(DISTINCT product.sku SEPARATOR ''),
+                                    GROUP_CONCAT(kitItemLineItemProduct.sku SEPARATOR ''),
+                                    ''
+                                )
+                            ELSE
+                                CONCAT_WS(
+                                    '',
+                                    '',
+                                    GROUP_CONCAT(product.sku SEPARATOR ''),
+                                    ''
+                                )
+                            END
+                        ) as composedSku
                 from:
                     - { table: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem', alias: lineItem }
                 join:
@@ -369,10 +396,12 @@ datagrids:
                     left:
                         - { join: lineItem.parentProduct, alias: parentProduct }
                         - { join: lineItem.unit, alias: unit}
+                        - { join: lineItem.kitItemLineItems, alias: kitItemLineItem }
+                        - { join: kitItemLineItem.product, alias: kitItemLineItemProduct }
                 where:
                     and:
                         - IDENTITY(lineItem.shoppingList) = :shopping_list_id
-                groupBy: mainProductId, unit.code
+                groupBy: mainProductId, unit.code, product.type
             bind_parameters:
                 - shopping_list_id
         columns:
@@ -421,11 +450,13 @@ datagrids:
                 id: ASC
         filters:
             columns:
-                sku:
-                    type:             string
-                    data_name:        product.skuUppercase
+                composedSku:
+                    label:            oro.frontend.shoppinglist.lineitem.sku.label
+                    type:             composed-sku-string
+                    data_name:        composedSku
                     case_insensitive: false
                     value_conversion: mb_strtoupper
+                    filter_by_having: true
                 inventoryStatus:
                     type:             choice
                     data_name:        product.inventory_status
@@ -461,6 +492,8 @@ datagrids:
             isConfigurable:
                 frontend_type: boolean
             isKit:
+                frontend_type: boolean
+            isVisible:
                 frontend_type: boolean
             isUpcoming:
                 frontend_type: boolean
@@ -597,15 +630,13 @@ datagrids:
                     enable: true
                     editor:
                         view: oroshoppinglist/js/app/views/editor/shoppinglist-line-item-editor-view
-                    validation_rules:
-                        Range:
-                            min: 0
-                            max: 100000000
                     validation_groups: [update]
             unit:
                 renderable: false
         properties:
             id: ~
+            kitHasGeneralError:
+                frontend_type: boolean
             action_configuration:
                 frontend_type: row_array
         actions:
@@ -634,6 +665,10 @@ datagrids:
             update_configurable:
                 type: update-configurable-product
                 label: oro.shoppinglist.actions.update_configurable_line_item.label
+                icon: pencil-square-o
+            update_product_kit_line_item:
+                type: update-product-kit-line-item
+                label: oro.shoppinglist.actions.update_product_kit_line_item.label
                 icon: pencil-square-o
             delete:
                 type: delete-product
@@ -773,3 +808,121 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_product_view
                 rowAction:     true
+
+    frontend-product-kit-in-shopping-lists-grid:
+        acl_resource: oro_shopping_list_frontend_update
+        options:
+            entityHint: oro.shoppinglist.lineitem.entity_plural_label
+            frontend: true
+            mass_update: false
+            toolbarOptions:
+                hide: true
+                pageSize:
+                    items: [ 1000 ]
+                    default_per_page: 1000
+            jsmodules:
+                - orodatagrid/js/datagrid/builder/html-templates-preloader
+                - oroshoppinglist/js/datagrid/builder/product-kit-in-shopping-list-plugins-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-options-builder
+                - oroshoppinglist/js/datagrid/builder/shoppinglist-editing-builder
+        inline_editing:
+            enable: true
+            mobile_enabled: true
+            entity_name: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem'
+            plugin: 'oroshoppinglist/js/datagrid/plugins/shopping-list-inline-editing-plugin'
+            cell_editor:
+                component: 'oroshoppinglist/js/app/components/shopping-list-cell-popup-editor-component'
+            save_api_accessor:
+                http_method: PUT
+                route: oro_shopping_list_frontend_line_item_batch_update
+                query_parameter_names:
+                    - _wid
+        source:
+            type: orm
+            query:
+                select:
+                    - lineItem
+                    - kitItemLineItem
+                    - kitItemLineItemProduct
+                    - kitItem
+                    - IDENTITY(lineItem.shoppingList) as shoppingListId
+                    - shoppingList.label as shoppingListLabel
+                    - unit.code as unitCode
+                from:
+                    - { table: 'Oro\Bundle\ShoppingListBundle\Entity\LineItem', alias: lineItem }
+                join:
+                    inner:
+                        - { join: lineItem.product, alias: product }
+                        - { join: lineItem.shoppingList, alias: shoppingList }
+                    left:
+                        - { join: lineItem.unit, alias: unit }
+                        - { join: lineItem.kitItemLineItems, alias: kitItemLineItem }
+                        - { join: kitItemLineItem.product, alias: kitItemLineItemProduct }
+                        - { join: kitItemLineItem.kitItem, alias: kitItem }
+                where:
+                    and:
+                        - IDENTITY(lineItem.product) = :product_id
+                        - product.type = 'kit'
+            bind_parameters:
+                - name: product_id
+                  default: 0
+        columns:
+            shoppingListLabel:
+                label: oro.frontend.shoppinglist.product_kit_line_item.in_shopping_lists_widget.datagrid.columns.shopping_list.label
+                data_name: shoppingListLabel
+                type: link
+                frontend_type: html
+                route: oro_shopping_list_frontend_view
+                params: { id: shoppingListId }
+            kitConfiguration:
+                label: oro.frontend.shoppinglist.product_kit_line_item.in_shopping_lists_widget.datagrid.columns.kit_configuration.label
+                type: twig
+                frontend_type: html
+                data_name: shoppingListLabel
+                template: '@OroShoppingList/LineItem/Frontend/Datagrid/kit_configuration.html.twig'
+            quantity:
+                label: oro.frontend.shoppinglist.product_kit_line_item.in_shopping_lists_widget.datagrid.columns.quantity.label
+                frontend_type: shoppinglist-line-item
+                frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/shoppinglist-line-item.html
+                inline_editing:
+                    enable: true
+                    editor:
+                        view: oroshoppinglist/js/app/views/editor/shoppinglist-line-item-editor-view
+                    validation_groups: [ update ]
+        properties:
+            id: ~
+            name:
+                type: localized_value
+                data_name: product.names
+            unit:
+                data_name: unitCode
+            units:
+                type: callback
+                frontend_type: row_array
+                callable: ['@oro_product.datagrid.property.product_units', 'getProductUnits']
+                params: [product]
+            minimumQuantityToOrder:
+                frontend_type: number
+            maximumQuantityToOrder:
+                frontend_type: number
+            shoppingListId: ~
+            isKit:
+                data_name: id
+                frontend_type: boolean
+        action_configuration:
+            delete:
+                showGlobalLoadingBar: false
+        actions:
+            update_product_kit_line_item:
+                type: update-product-kit-line-item
+                label: oro.shoppinglist.actions.update_product_kit_line_item.label
+                icon: pencil-square-o
+            delete:
+                type: delete-product
+                label: oro.shoppinglist.actions.delete_product_kit_line_item.label
+                link: deleteLink
+                icon: trash-o
+                defaultMessages:
+                    confirm_title: oro.shoppinglist.actions.delete_line_item.confirm_title
+                    confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content
+                    success: oro.shoppinglist.actions.delete_line_item.success

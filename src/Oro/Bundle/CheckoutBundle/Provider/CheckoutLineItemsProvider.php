@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
@@ -23,7 +24,7 @@ class CheckoutLineItemsProvider
     }
 
     /**
-     * Returns an array of product SKUs which were removed or have different quantity or unit.
+     * Returns an array of product SKUs which were removed or have different quantity, unit or checksum.
      *
      * @param Collection<ProductLineItemInterface> $lineItems
      * @param Collection<ProductLineItemInterface> $sourceLineItems
@@ -33,18 +34,10 @@ class CheckoutLineItemsProvider
     public function getProductSkusWithDifferences(Collection $lineItems, Collection $sourceLineItems): array
     {
         $changed = [];
+        $lineItemsKeys = array_map([$this, 'getLineItemKey'], $lineItems->toArray());
         foreach ($sourceLineItems as $sourceLineItem) {
-            $found = false;
-            foreach ($lineItems as $lineItem) {
-                if ($sourceLineItem->getProductSku() === $lineItem->getProductSku()
-                    && $sourceLineItem->getProductUnitCode() === $lineItem->getProductUnitCode()
-                    && $sourceLineItem->getQuantity() === $lineItem->getQuantity()
-                ) {
-                    $found = true;
-                    break;
-                }
-            }
-            if (!$found) {
+            $sourceLineItemKey = $this->getLineItemKey($sourceLineItem);
+            if (!in_array($sourceLineItemKey, $lineItemsKeys, true)) {
                 $changed[] = $sourceLineItem->getProductSku();
             }
         }
@@ -54,7 +47,7 @@ class CheckoutLineItemsProvider
 
     /**
      * Gets checkout line items which expected to be converted into OrderLineItems filtering items
-     * which could not be ordered.
+     * which could not be ordered. Array keys are preserved.
      *
      * @psalm-return ArrayCollection<int, CheckoutLineItem>
      */
@@ -70,6 +63,11 @@ class CheckoutLineItemsProvider
 
     private function getLineItemKey(ProductLineItemInterface $item): string
     {
-        return implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
+        $key = implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
+        if ($item instanceof ProductKitItemLineItemsAwareInterface) {
+            $key .= ':' . $item->getChecksum();
+        }
+
+        return $key;
     }
 }

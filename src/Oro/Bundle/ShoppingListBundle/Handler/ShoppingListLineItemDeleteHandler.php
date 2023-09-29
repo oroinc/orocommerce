@@ -28,7 +28,7 @@ class ShoppingListLineItemDeleteHandler extends AbstractEntityDeleteHandler
         $lineItem = $options[self::ENTITY];
         $shoppingList = $lineItem->getShoppingList();
         if (null !== $shoppingList) {
-            $this->totalManager->recalculateTotals($shoppingList, false);
+            $this->totalManager->invalidateAndRecalculateTotals($shoppingList, false);
         }
         parent::flush($options);
     }

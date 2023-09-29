@@ -14,7 +14,7 @@ class ProductBySku extends Constraint
     /**
      * {@inheritDoc}
      */
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return 'oro_product_product_by_sku_validator';
     }

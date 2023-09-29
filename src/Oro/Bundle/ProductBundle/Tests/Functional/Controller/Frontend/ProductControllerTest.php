@@ -164,7 +164,7 @@ class ProductControllerTest extends WebTestCase
         //Emulate subfolder request
         /** @var RequestContext $requestContext */
         $requestContext = self::getContainer()->get('router.request_context');
-        $requestContext->setBaseUrl('custom/base/url');
+        $requestContext->setBaseUrl('/custom/base/url');
 
         $this->client->request('GET', $this->getUrl('oro_product_frontend_product_index'), [], [], [
             'SCRIPT_NAME' => '/custom/base/url/index.php',

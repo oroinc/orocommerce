@@ -130,6 +130,10 @@ class ProductStepOneFormExtensionTest extends TestCase
         $mainForm = $this->createMock(FormInterface::class);
         $categoryForm = $this->createMock(FormInterface::class);
         $mainForm->expects($this->any())
+            ->method('has')
+            ->with('category')
+            ->willReturn(true);
+        $mainForm->expects($this->any())
             ->method('get')
             ->with('category')
             ->willReturn($categoryForm);

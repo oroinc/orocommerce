@@ -39,9 +39,6 @@ class SluggableUrlDumperTest extends \PHPUnit\Framework\TestCase
      */
     private $websiteProvider;
 
-    /**
-     * @var SluggableUrlDumper
-     */
     private SluggableUrlDumper $dumper;
 
     protected function setUp(): void

@@ -47,7 +47,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             Events::AFTER_ENTITY_PAGE_LOADED => 'updateEntityResults',
@@ -150,7 +150,6 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             }
         }
     }
-
 
     /**
      * There is one issue that read of EntityReader will trigger pagination before the last item be processed.

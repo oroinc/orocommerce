@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroInventoryBundle_Entity_InventoryLevel;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
@@ -31,6 +32,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
  *          }
  *      }
  * )
+ * @mixin OroInventoryBundle_Entity_InventoryLevel
  */
 class InventoryLevel implements
     OrganizationAwareInterface,

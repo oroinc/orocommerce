@@ -4,7 +4,10 @@ namespace Oro\Bundle\SaleBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
@@ -27,8 +30,10 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
  *      }
  * )
  */
-class BaseQuoteProductItem implements ProductLineItemInterface
+class BaseQuoteProductItem implements ProductLineItemInterface, PriceAwareInterface, ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var int
      *
@@ -109,7 +114,7 @@ class BaseQuoteProductItem implements ProductLineItemInterface
     public function postLoad()
     {
         if (null !== $this->value && null !==  $this->currency) {
-            $this->price = Price::create($this->value, $this->currency);
+            $this->setPrice(Price::create($this->value, $this->currency));
         }
     }
 
@@ -119,8 +124,8 @@ class BaseQuoteProductItem implements ProductLineItemInterface
      */
     public function updatePrice()
     {
-        $this->value = $this->price ? $this->price->getValue() : null;
-        $this->currency = $this->price ? $this->price->getCurrency() : null;
+        $this->value = $this->price?->getValue();
+        $this->currency = $this->price?->getCurrency();
     }
 
     /**
@@ -159,7 +164,7 @@ class BaseQuoteProductItem implements ProductLineItemInterface
     /**
      * Set quoteProduct
      *
-     * @param QuoteProduct $quoteProduct
+     * @param QuoteProduct|null $quoteProduct
      * @return $this
      */
     public function setQuoteProduct(QuoteProduct $quoteProduct = null)
@@ -182,7 +187,7 @@ class BaseQuoteProductItem implements ProductLineItemInterface
     /**
      * Set productUnit
      *
-     * @param ProductUnit $productUnit
+     * @param ProductUnit|null $productUnit
      * @return $this
      */
     public function setProductUnit(ProductUnit $productUnit = null)
@@ -256,22 +261,13 @@ class BaseQuoteProductItem implements ProductLineItemInterface
     /** {@inheritdoc} */
     public function getProduct()
     {
-        if ($this->quoteProduct) {
-            return $this->quoteProduct->getProduct();
-        }
-
-        return null;
+        return $this->quoteProduct?->getProduct();
     }
 
     /** {@inheritdoc} */
     public function getProductSku()
     {
-        $product = $this->getProduct();
-        if ($product) {
-            return $product->getSku();
-        }
-
-        return null;
+        return $this->getProduct()?->getSku();
     }
 
     /**
@@ -279,10 +275,6 @@ class BaseQuoteProductItem implements ProductLineItemInterface
      */
     public function getParentProduct()
     {
-        if ($this->quoteProduct) {
-            return $this->quoteProduct->getParentProduct();
-        }
-
-        return null;
+        return $this->quoteProduct?->getParentProduct();
     }
 }

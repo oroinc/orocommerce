@@ -95,7 +95,7 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCacheInterface
         $this->localCache->deleteItem($this->getCacheKey($routeName, $routeParameters, $localizationId));
     }
 
-    public function deleteAll() : void
+    public function deleteAll(): void
     {
         $this->localCache->clear();
     }

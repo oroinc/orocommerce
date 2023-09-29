@@ -29,7 +29,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ProductPriceCPLEntityListener implements OptionalListenerInterface, FeatureToggleableInterface
 {
-    use OptionalListenerTrait, FeatureCheckerHolderTrait;
+    use OptionalListenerTrait;
+    use FeatureCheckerHolderTrait;
 
     protected ExtraActionEntityStorageInterface $extraActionsStorage;
     protected ManagerRegistry $registry;
@@ -59,6 +60,13 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         /** @var ProductPrice $productPrice */
         $productPrice = $event->getEventArgs()->getEntity();
         $this->addPriceListToProductRelation($productPrice);
+
+        if (!$event->getEventArgs()->getEntityChangeSet()
+            && $this->combinedPriceListBuildTriggerHandler->handlePriceCreation($productPrice)
+        ) {
+            return;
+        }
+
         $this->handleChanges($productPrice);
     }
 

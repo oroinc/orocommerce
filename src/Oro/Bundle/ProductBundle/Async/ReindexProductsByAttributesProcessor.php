@@ -85,9 +85,6 @@ class ReindexProductsByAttributesProcessor implements
 
     /**
      * Trigger update search index only for products with off this attributes
-     *
-     * @param array $attributeIds
-     * @return bool
      */
     private function triggerReindex(array $attributeIds): bool
     {

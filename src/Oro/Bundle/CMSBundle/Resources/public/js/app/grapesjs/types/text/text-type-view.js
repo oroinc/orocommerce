@@ -96,7 +96,7 @@ export default (BaseTypeView, {editor} = {}) => {
          * @param tagName
          */
         wrapComponent(tagName = 'div') {
-            const {model} = this;
+            const {model, em} = this;
             const parent = model.parent();
             const collection = parent.components();
             const index = model.index();
@@ -109,13 +109,15 @@ export default (BaseTypeView, {editor} = {}) => {
 
             const newModel = collection.add({
                 type: 'text',
-                wrapping: true
+                wrapping: true,
+                stateModel: model.get('stateModel'),
+                tagName
             }, {
                 at: index
             });
 
-            model.set('draggable', false);
-            newModel.append(model);
+            em.get('UndoManager').skip(() => model.set('draggable', false));
+            model.move(newModel);
 
             newModel.view.$el.css({
                 marginTop,
@@ -124,7 +126,9 @@ export default (BaseTypeView, {editor} = {}) => {
                 paddingBottom
             });
 
-            this.editor.select(newModel);
+            this.editor.select([newModel], {
+                force: true
+            });
             newModel.view.$el.trigger('dblclick');
         },
 
@@ -137,15 +141,21 @@ export default (BaseTypeView, {editor} = {}) => {
             const parent = model.parent();
             const child = model.getChildAt(0);
             this.pathChildModel(child);
-            parent.append(child, {
+            child.move(parent, {
                 at: index
             });
 
             model.remove();
             model.getView().$el.remove();
+
+            this.editor.select([child], {
+                wrapping: true
+            });
         },
 
         pathChildModel(child) {
+            const {model} = this;
+
             child.set({
                 layerable: true,
                 selectable: true,
@@ -155,6 +165,10 @@ export default (BaseTypeView, {editor} = {}) => {
                 droppable: true,
                 highlightable: true
             });
+
+            if (model.get('stateModel')) {
+                child.set('stateModel', model.get('stateModel'));
+            }
         },
 
         /**
@@ -180,24 +194,33 @@ export default (BaseTypeView, {editor} = {}) => {
             }
 
             if (TAGS.includes(this.model.get('tagName'))) {
-                return this.wrapComponent('div');
+                return this.em.get('UndoManager').skip(() => this.wrapComponent('div'));
             }
 
             await TextTypeView.__super__.onActive.call(this, event);
             const {activeRte, $el, cid} = this;
 
+            this.propagatePropsToChildText({
+                draggable: false
+            });
+
             if (activeRte) {
                 $el.off(`keydown.${cid}`).on(`keydown.${cid}`, this.onPressEnter.bind(this));
             }
+
+            this.model.trigger('rte:enable:done');
         },
 
         /**
          * Disable element content editing
          */
         async disableEditing(opts) {
-            const {$el, cid} = this;
+            const {$el, cid, em} = this;
 
             $el.off(`keypress.${cid}`);
+            this.propagatePropsToChildText({
+                draggable: true
+            });
 
             await TextTypeView.__super__.disableEditing.call(this, opts);
 
@@ -206,8 +229,18 @@ export default (BaseTypeView, {editor} = {}) => {
             }
 
             if (this.isSingleLine()) {
-                this.removeWrapper();
+                em.get('UndoManager').skip(() => this.removeWrapper());
             }
+        },
+
+        /**
+         * Set some props to child components
+         *
+         * @param {object} props
+         * @param {string} typeName
+         */
+        propagatePropsToChildText(props = {}, typeName = 'text') {
+            this.model.findType(typeName).forEach(innerText => innerText.set(props));
         },
 
         remove(...args) {
@@ -220,17 +253,17 @@ export default (BaseTypeView, {editor} = {}) => {
          * @param opts
          */
         syncContent(opts = {}) {
-            const {model, rteEnabled, willRemoved} = this;
+            const {model, rteEnabled, willRemoved, em} = this;
             if ((!rteEnabled && !opts.force) || willRemoved) {
                 return;
             }
 
             const content = this.getContent() || __('oro.cms.wysiwyg.component.text.content');
 
-            model.components().resetFromString(
+            em.get('UndoManager').skip(() => model.components().resetFromString(
                 `<div data-type="temporary-container">${content}</div>`,
                 opts
-            );
+            ));
         }
     });
 

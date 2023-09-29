@@ -106,6 +106,13 @@ services:
             - "@oro_config.manager"
             - "@oro_scope.scope_manager"
 
+    oro_visibility.visibility.frontend_category_visibility_checker:
+        class: Oro\Bundle\VisibilityBundle\Visibility\Checker\FrontendCategoryVisibilityChecker
+        arguments:
+            - '@oro_security.token_accessor'
+            - '@oro_visibility.visibility.resolver.category_visibility_resolver'
+            - '@oro_customer.provider.customer_user_relations_provider'
+
     oro_visibility.event_listener.category_tree_handler_listener:
         class: 'Oro\Bundle\VisibilityBundle\EventListener\CategoryTreeHandlerListener'
         arguments:
@@ -501,11 +508,10 @@ services:
         class: Oro\Bundle\VisibilityBundle\EventListener\CategoryVisibleListener
         arguments:
             - '@doctrine'
-            - '@oro_visibility.visibility.resolver.category_visibility_resolver'
-            - '@oro_customer.provider.customer_user_relations_provider'
-            - '@security.token_storage'
+            - '@Psr\Container\ContainerInterface'
         tags:
             - { name: kernel.event_listener, event: kernel.controller }
+            - { name: container.service_subscriber, id: oro_visibility.visibility.frontend_category_visibility_checker, key: Oro\Bundle\VisibilityBundle\Visibility\Checker\FrontendCategoryVisibilityCheckerInterface }
 
     oro_visibility.async.message_filter.visibility.change_product_category:
         class: 'Oro\Bundle\VisibilityBundle\Async\Visibility\ProductMessageFilter'
@@ -562,3 +568,52 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.event_listener, event: postFlush }
+
+    oro_visibility.event_listener.datagrid_line_items_data.visibility_prefetch:
+        class: Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityPrefetchListener
+        arguments:
+            - '@oro_visibility.provider.resolved_product_visibility_provider'
+        tags:
+            # This listener must be called early as it prefetches visibility for the products line items which might be needed by others, but not before "oro_shopping_list.event_listener.datagrid_line_items_data.preload".
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData, priority: 1014 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData, priority: 1014 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: 1014 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: 1014 }
+
+    oro_visibility.event_listener.datagrid_line_items_data.visibility:
+        class: Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityListener
+        arguments:
+            - '@oro_visibility.provider.resolved_product_visibility_provider'
+        tags:
+            # This listener must be called early as it sets visibility for the products line items which might be needed by others, but not before "oro_shopping_list.event_listener.datagrid_line_items_data.visibility_prefetch".
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData, priority: 1004 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData, priority: 1004 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: 1004 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: 1004 }
+
+    oro_visibility.event_listener.datagrid_kit_item_line_items_data.visibility:
+        class: Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityListener
+        arguments:
+            - '@oro_visibility.provider.resolved_product_visibility_provider'
+        tags:
+            # This listener must be called early as it sets visibility for the products line items which might be needed by others, but not before "oro_shopping_list.event_listener.datagrid_line_items_data.visibility_prefetch".
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData, priority: 1004 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData, priority: 1004 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: 1004 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: 1004 }
+
+    oro_visibility.twig.visibility_extension:
+        class: Oro\Bundle\VisibilityBundle\Twig\VisibilityExtension
+        arguments:
+            - '@oro_platform.twig.service_locator'
+        tags:
+            - { name: twig.extension }
+
+    oro_visibility.strategy_processor.product_visibility_audit_strategy:
+        class: 'Oro\Bundle\DataAuditBundle\Strategy\Processor\DefaultUnidirectionalFieldAuditStrategyProcessor'
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_dataaudit.entity_strategy_processor, entityName: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility }
+            - { name: oro_dataaudit.entity_strategy_processor, entityName: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility }
+            - { name: oro_dataaudit.entity_strategy_processor, entityName: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility }

@@ -18,7 +18,8 @@ class ProductHighlightLowInventoryFormViewListenerTest extends AbstractFallbackF
         $this->listener = new ProductHighlightLowInventoryFormViewListener(
             $this->requestStack,
             $this->doctrine,
-            $this->translator
+            $this->translator,
+            $this->fieldAclHelper
         );
     }
 

@@ -161,7 +161,7 @@ class ShoppingListController extends AbstractController
 
         return ['data' => array_merge($defaultResponse, $response)];
     }
-    
+
     protected function create(Request $request, ShoppingList $shoppingList): array|Response
     {
         $handler = new ShoppingListHandler(
@@ -181,7 +181,7 @@ class ShoppingListController extends AbstractController
     /**
      * {@inheritDoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             CurrentShoppingListManager::class,

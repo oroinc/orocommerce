@@ -60,7 +60,7 @@ class OrderController extends AbstractController
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
             TotalProcessorProvider::class,
@@ -71,8 +71,6 @@ class OrderController extends AbstractController
     /**
      * @Route("/checkout/{id}", name="oro_order_frontend_to_checkout", requirements={"id"="\d+"})
      * @AclAncestor("oro_order_frontend_view")
-     * @param Checkout $checkout
-     * @return RedirectResponse
      * @throws Exception
      */
     public function checkoutAction(Checkout $checkout): RedirectResponse

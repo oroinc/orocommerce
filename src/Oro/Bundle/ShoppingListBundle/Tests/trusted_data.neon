@@ -8,7 +8,7 @@ trusted_data:
             isUserAssignable:
                 criteria: true
         Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListQueryModifier:
-            getShoppingListJoin:
+            getJoin:
                 joinDqlPart: true
         Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository:
             invalidateByBasePriceList:

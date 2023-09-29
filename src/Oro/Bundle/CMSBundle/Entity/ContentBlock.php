@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroCMSBundle_Entity_ContentBlock;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -41,6 +42,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  * )
  * @method LocalizedFallbackValue getDefaultTitle()
  * @method LocalizedFallbackValue getTitle(Localization $localization = null)
+ * @mixin OroCMSBundle_Entity_ContentBlock
  */
 class ContentBlock implements
     DatesAwareInterface,

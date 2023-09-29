@@ -45,7 +45,7 @@ abstract class AbstractLoadRelatedItemDemoData extends AbstractFixture implement
      */
     public function getDependencies()
     {
-        return [LoadProductDemoData::class];
+        return [LoadProductKitDemoData::class];
     }
 
     /**

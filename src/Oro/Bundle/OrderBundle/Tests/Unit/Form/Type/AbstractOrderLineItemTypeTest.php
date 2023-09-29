@@ -23,7 +23,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 {
-    use QuantityTypeTrait, EntityTrait;
+    use QuantityTypeTrait;
+    use EntityTrait;
 
     /** @var AbstractOrderLineItemType */
     protected $formType;

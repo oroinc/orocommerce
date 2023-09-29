@@ -5,9 +5,15 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\AbstractOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
+/**
+ * Customer options
+ */
 class Customer extends AbstractOption
 {
     const ACCT = 'ACCT';
+    const CUSTCODE = 'CUSTCODE';
+    const CUSTREF = 'CUSTREF';
+    const EMAIL = 'EMAIL';
 
     /** @var bool */
     private $customerRequired;
@@ -27,8 +33,11 @@ class Customer extends AbstractOption
             $resolver->setRequired(Customer::ACCT);
         }
 
-        $resolver
-            ->setDefined(Customer::ACCT)
-            ->addAllowedTypes(Customer::ACCT, 'string');
+        $options = [self::ACCT, self::CUSTCODE, self::CUSTREF, self::EMAIL];
+        $resolver->setDefined($options);
+
+        foreach ($options as $option) {
+            $resolver->setAllowedTypes($option, 'string');
+        }
     }
 }

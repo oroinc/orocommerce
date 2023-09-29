@@ -7,7 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
-use Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalProvider;
+use Oro\Bundle\CheckoutBundle\Provider\SubtotalProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 /**
@@ -20,7 +20,7 @@ class CheckoutSubtotalUpdater
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var CheckoutSubtotalProvider */
+    /** @var SubtotalProvider */
     protected $subtotalProvider;
 
     /** @var UserCurrencyManager */
@@ -31,7 +31,7 @@ class CheckoutSubtotalUpdater
 
     public function __construct(
         ManagerRegistry $managerRegistry,
-        CheckoutSubtotalProvider $subtotalProvider,
+        SubtotalProvider $subtotalProvider,
         UserCurrencyManager $currencyManager
     ) {
         $this->registry = $managerRegistry;
