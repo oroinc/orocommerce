@@ -8,7 +8,7 @@ define(function(require) {
     const BaseView = require('oroui/js/app/views/base/view');
     const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     const mediator = require('oroui/js/mediator');
-    const errorsTemplate = require('tpl-loader!oropromotion/templates/field-errors.html');
+    const errorsTemplate = require('tpl-loader!oropromotion/templates/frontend-field-errors.html');
 
     const FrontendCouponAddView = BaseView.extend({
         /**
