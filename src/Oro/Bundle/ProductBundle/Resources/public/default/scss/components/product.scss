@@ -42,10 +42,6 @@
         &_more-info {
             position: relative;
 
-            .validation-failed {
-                white-space: normal;
-            }
-
             &:hover {
                 .product__qty-input_more-info__popup {
                     display: block;
