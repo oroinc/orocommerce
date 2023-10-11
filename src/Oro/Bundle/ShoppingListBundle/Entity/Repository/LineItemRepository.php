@@ -31,10 +31,21 @@ class LineItemRepository extends ServiceEntityRepository
 
         $qb = $this->createQueryBuilder('li');
         $qb
-            ->where('li.product = :product')
-            ->andWhere('li.unit = :unit')
-            ->andWhere('li.checksum = :checksum')
-            ->andWhere('li.shoppingList = :shoppingList')
+            ->where($qb->expr()->orX(
+                $qb->expr()->andX(
+                    $qb->expr()->eq('li.checksum', "''"),
+                    $qb->expr()->eq('li.shoppingList', ':shoppingList'),
+                    $qb->expr()->eq('li.product', ':product'),
+                    $qb->expr()->eq('li.unit', ':unit')
+                ),
+                $qb->expr()->andX(
+                    $qb->expr()->neq('li.checksum', "''"),
+                    $qb->expr()->eq('li.checksum', ':checksum'),
+                    $qb->expr()->eq('li.shoppingList', ':shoppingList'),
+                    $qb->expr()->eq('li.product', ':product'),
+                    $qb->expr()->eq('li.unit', ':unit')
+                )
+            ))
             ->setParameter('product', $lineItem->getProduct())
             ->setParameter('unit', $lineItem->getUnit())
             ->setParameter('checksum', $lineItem->getChecksum())

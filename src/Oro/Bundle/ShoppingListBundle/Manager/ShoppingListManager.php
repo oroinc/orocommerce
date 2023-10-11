@@ -23,6 +23,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * Handles logic related to shopping list and line item manipulations (create, remove, etc.).
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ShoppingListManager
 {
@@ -128,6 +129,48 @@ class ShoppingListManager
 
         if ($flush) {
             $entityManager = $this->getEntityManager();
+            $entityManager->persist($shoppingList);
+            $entityManager->flush();
+        }
+    }
+
+    public function batchUpdateLineItems(
+        array $batchItems,
+        ShoppingList $shoppingList,
+        $flush = true,
+        $concatNotes = false,
+    ): void {
+        array_walk($batchItems, function ($lineItem) use ($shoppingList) {
+            $this->prepareLineItem($lineItem, $shoppingList); // update checksum for items at first.
+        });
+
+        $entityManager = $this->getEntityManager();
+        /** @var LineItem $lineItem */
+        foreach ($batchItems as $lineItem) {
+            $duplicate = $this->getLineItemRepository($entityManager)
+                ->findDuplicateInShoppingList($lineItem, $shoppingList);
+            if ($duplicate) {
+                if (isset($batchItems[$duplicate->getId()]) && $lineItem->getChecksum() !== $duplicate->getChecksum()) {
+                    // In case duplicated line item is also in updating batch, check it if no longer duplicated.
+                    $entityManager->remove($duplicate);
+                    $entityManager->flush($duplicate);
+                } else {
+                    $this->mergeLineItems($lineItem, $duplicate, $concatNotes);
+                    $shoppingList->removeLineItem($lineItem);
+                    $entityManager->remove($lineItem);
+                    $lineItem->setQuantity(0);
+                }
+            }
+
+            if ($lineItem->getQuantity() > 0 || !$lineItem->getProduct()->isSimple()) {
+                $shoppingList->addLineItem($lineItem);
+                $entityManager->persist($lineItem);
+            }
+        }
+
+        $this->totalManager->invalidateAndRecalculateTotals($shoppingList, false);
+
+        if ($flush) {
             $entityManager->persist($shoppingList);
             $entityManager->flush();
         }

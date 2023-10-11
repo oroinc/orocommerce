@@ -888,3 +888,17 @@ services:
             - '@request_stack'
         tags:
             - { name: oro_pricing.current_currency_provider }
+
+    oro_shopping_list.checksum.general_product_line_item:
+        class: 'Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\GeneralLineItemChecksumGenerator'
+        tags:
+            - { name: oro_shopping_list.product_kit.checksum }
+
+    oro_shopping_list.entity_listener.line_item_event:
+        class: 'Oro\Bundle\ShoppingListBundle\EventListener\LineItemEventListener'
+        arguments:
+            - '@oro_shopping_list.product_kit.checksum'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity_manager: default, entity: Oro\Bundle\ShoppingListBundle\Entity\LineItem, event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity_manager: default, entity: Oro\Bundle\ShoppingListBundle\Entity\LineItem, event: preUpdate }
+            - { name: doctrine.event_listener, event: postFlush }
