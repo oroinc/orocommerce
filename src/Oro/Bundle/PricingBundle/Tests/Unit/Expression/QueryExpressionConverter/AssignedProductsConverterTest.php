@@ -13,6 +13,7 @@ use Oro\Component\Expression\Node\NameNode;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\RelationNode;
 use Oro\Component\Expression\Node\ValueNode;
+use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
 
 class AssignedProductsConverterTest extends \PHPUnit\Framework\TestCase
 {
@@ -129,8 +130,10 @@ class AssignedProductsConverterTest extends \PHPUnit\Framework\TestCase
         $expr = new Expr();
         $params = [];
         $aliasMapping = [
-            Product::class => 'pr',
-            PriceList::class . '|4' => 'pl4'
+            QueryExpressionConverterInterface::MAPPING_TABLES => [
+                Product::class => 'pr',
+                PriceList::class . '|4' => 'pl4'
+            ]
         ];
 
         $node = new BinaryNode(
@@ -150,8 +153,10 @@ class AssignedProductsConverterTest extends \PHPUnit\Framework\TestCase
         $expr = new Expr();
         $params = [];
         $aliasMapping = [
-            Product::class => 'pr',
-            PriceList::class . '|4' => 'pl4'
+            QueryExpressionConverterInterface::MAPPING_TABLES => [
+                Product::class => 'pr',
+                PriceList::class . '|4' => 'pl4'
+            ]
         ];
 
         $node = new BinaryNode(

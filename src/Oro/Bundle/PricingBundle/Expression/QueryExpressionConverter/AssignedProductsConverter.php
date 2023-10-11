@@ -11,6 +11,9 @@ use Oro\Component\Expression\FieldsProviderInterface;
 use Oro\Component\Expression\Node;
 use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
 
+/**
+ * Convert virtual assignedProducts relation to suitable DQL limitation expression.
+ */
 class AssignedProductsConverter implements QueryExpressionConverterInterface
 {
     /**
@@ -28,6 +31,7 @@ class AssignedProductsConverter implements QueryExpressionConverterInterface
      */
     public function convert(Node\NodeInterface $node, Expr $expr, array &$params, array $aliasMapping = [])
     {
+        $tableAliasMapping = $aliasMapping[QueryExpressionConverterInterface::MAPPING_TABLES] ?? [];
         if ($node instanceof Node\BinaryNode) {
             $operation = $node->getOperation();
             if ($operation === 'in' || $operation === 'not in') {
@@ -46,8 +50,8 @@ class AssignedProductsConverter implements QueryExpressionConverterInterface
                         'SELECT 1 FROM %1$s %2$s WHERE %2$s.product = %3$s AND %2$s.priceList = %4$s',
                         PriceListToProduct::class,
                         $alias,
-                        $this->getTableAliasByNode($aliasMapping, $left),
-                        $this->getTableAliasByNode($aliasMapping, $right)
+                        $this->getTableAliasByNode($tableAliasMapping, $left),
+                        $this->getTableAliasByNode($tableAliasMapping, $right)
                     );
 
                     $expression = $expr->exists($limitationDql);
