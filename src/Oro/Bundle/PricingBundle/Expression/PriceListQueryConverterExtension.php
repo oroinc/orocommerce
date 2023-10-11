@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Expression\QueryConverterExtensionInterface;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
+use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
 
 /**
  * Adds joins for price lists and price list prices if they are requested to an ORM query
@@ -52,12 +53,13 @@ class PriceListQueryConverterExtension implements QueryConverterExtensionInterfa
      */
     protected function joinPriceLists(array $priceLists, QueryBuilder $queryBuilder)
     {
+        $tablesKey = QueryExpressionConverterInterface::MAPPING_TABLES;
         $aliases = $queryBuilder->getRootAliases();
         $rootAlias = reset($aliases);
         foreach ($priceLists as $priceListId) {
             $priceListId = (int)$priceListId;
             $columnAlias = $this->getPriceListTableKeyByPriceListId($priceListId);
-            if (empty($this->tableAliasByColumn[$columnAlias])) {
+            if (empty($this->tableAliasByColumn[$tablesKey][$columnAlias])) {
                 $priceListToProductTableAlias = $this->generateTableAlias();
 
                 $priceListParameter = ':priceList' . $priceListId;
@@ -81,7 +83,7 @@ class PriceListQueryConverterExtension implements QueryConverterExtensionInterfa
                     $queryBuilder->expr()
                         ->eq($priceListToProductTableAlias . '.priceList', $priceListTableAlias)
                 );
-                $this->tableAliasByColumn[$columnAlias] = $priceListTableAlias;
+                $this->tableAliasByColumn[$tablesKey][$columnAlias] = $priceListTableAlias;
             }
         }
     }
@@ -92,6 +94,7 @@ class PriceListQueryConverterExtension implements QueryConverterExtensionInterfa
      */
     protected function joinPriceListPrices(array $priceLists, QueryBuilder $queryBuilder)
     {
+        $tablesKey = QueryExpressionConverterInterface::MAPPING_TABLES;
         $this->joinPriceLists($priceLists, $queryBuilder);
 
         $aliases = $queryBuilder->getRootAliases();
@@ -99,10 +102,10 @@ class PriceListQueryConverterExtension implements QueryConverterExtensionInterfa
         foreach ($priceLists as $priceListId) {
             $priceListId = (int)$priceListId;
             $columnAlias = $this->getPriceTableKeyByPriceListId($priceListId);
-            if (empty($this->tableAliasByColumn[$columnAlias])) {
+            if (empty($this->tableAliasByColumn[$tablesKey][$columnAlias])) {
                 $priceListId = (int)$priceListId;
-                $priceListTableKey =  $this->getPriceListTableKeyByPriceListId($priceListId);
-                $priceListTableAlias = $this->tableAliasByColumn[$priceListTableKey];
+                $priceListTableKey = $this->getPriceListTableKeyByPriceListId($priceListId);
+                $priceListTableAlias = $this->tableAliasByColumn[$tablesKey][$priceListTableKey];
 
                 $priceTableAlias = $this->generateTableAlias();
                 $joinCondition = $queryBuilder->expr()->andX(
@@ -116,7 +119,7 @@ class PriceListQueryConverterExtension implements QueryConverterExtensionInterfa
                     Join::WITH,
                     $joinCondition
                 );
-                $this->tableAliasByColumn[$columnAlias] = $priceTableAlias;
+                $this->tableAliasByColumn[$tablesKey][$columnAlias] = $priceTableAlias;
             }
         }
     }

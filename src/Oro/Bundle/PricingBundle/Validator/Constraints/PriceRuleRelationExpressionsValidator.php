@@ -339,7 +339,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
 
         $relationNode = null;
         foreach ($nodes as $node) {
-            if (($node instanceof Node\RelationNode && $relationNode) || $node instanceof Node\NameNode) {
+            if ($node instanceof Node\RelationNode && $relationNode) {
                 $this->addError(
                     $path,
                     $constraint->messageTooManyRelations,
@@ -353,6 +353,9 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
                 $relationNode = $node;
             }
         }
-        $this->validateIsRelationInRule($rule, $relationNode, $path, $fieldName, $constraint);
+
+        if ($relationNode) {
+            $this->validateIsRelationInRule($rule, $relationNode, $path, $fieldName, $constraint);
+        }
     }
 }

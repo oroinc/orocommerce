@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Expression;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestEntityFields;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Expression\FieldsProviderInterface;
 
@@ -23,51 +23,65 @@ class FieldsProviderTest extends WebTestCase
     public function testGetFiends(string $class, bool $onlyNumerical, bool $withRelations, array $expectedFields)
     {
         $fields = $this->provider->getFields($class, $onlyNumerical, $withRelations);
-        $this->assertEquals(sort($expectedFields), sort($fields));
+        sort($expectedFields);
+        sort($fields);
+        $this->assertEquals($expectedFields, $fields);
     }
 
     public function getFieldsDataProvider(): array
     {
         return [
-            [Product::class, true, false, ['id']],
-            [
-                Product::class,
+            'numerical only' => [
+                TestEntityFields::class,
+                true,
+                false,
+                [
+                    'decimalField',
+                    'floatField',
+                    'id',
+                    'integerField'
+                ]
+            ],
+            'with relations' => [
+                TestEntityFields::class,
                 false,
                 true,
                 [
-                    'createdAt',
+                    'bigintField',
+                    'booleanField',
+                    'dateField',
+                    'datetimeField',
+                    'decimalField',
+                    'enum_field',
+                    'floatField',
+                    'htmlField',
                     'id',
-                    'sku',
-                    'status',
-                    'updatedAt',
-                    'variantFields',
-                    'category',
-                    'descriptions',
-                    'images',
-                    'inventory_status',
-                    'metaDescriptions',
-                    'metaKeywords',
-                    'metaTitles',
-                    'names',
-                    'organization',
-                    'owner',
-                    'variantLinks',
-                    'shortDescriptions',
-                    'primaryUnitPrecision',
-                    'unitPrecisions',
+                    'image_field',
+                    'integerField',
+                    'manyToOneRelation',
+                    'smallintField',
+                    'stringField',
+                    'textField'
                 ]
             ],
-            [
-                Product::class,
+            'without relations' => [
+                TestEntityFields::class,
                 false,
                 false,
                 [
-                    'createdAt',
+                    'bigintField',
+                    'booleanField',
+                    'dateField',
+                    'datetimeField',
+                    'decimalField',
+                    'enum_field',
+                    'floatField',
+                    'htmlField',
                     'id',
-                    'sku',
-                    'status',
-                    'updatedAt',
-                    'variantFields',
+                    'integerField',
+                    'smallintField',
+                    'stringField',
+                    'textField'
                 ]
             ],
         ];
