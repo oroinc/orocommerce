@@ -40,7 +40,8 @@ class TaxAmountProviderTest extends TestCase
             ->method('getEnabledProvider')
             ->willReturn($this->taxProvider);
 
-        $this->provider = new TaxAmountProvider($taxProviderRegistry, $this->taxationSettingsProvider);
+        $this->provider = new TaxAmountProvider($taxProviderRegistry);
+        $this->provider->setTaxationSettingsProvider($this->taxationSettingsProvider);
     }
 
     /**
