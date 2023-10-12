@@ -7,6 +7,7 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentOrderLineItemOptionsProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Provider\TaxAmountProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
