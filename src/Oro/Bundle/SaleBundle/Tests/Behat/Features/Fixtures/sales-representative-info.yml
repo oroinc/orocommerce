@@ -15,8 +15,7 @@ Oro\Bundle\UserBundle\Entity\User:
    businessUnits: ['@business_unit']
    email: 'Charlie1@example.com'
    phone: '+380504445566'
-   password: 'BLDLpjJ3z4KgdMqEr0+vmdobfbcX+l+paqwBiICkEP+J83w2r0Ec47fLk1ZarAWJ0IMlWd29XUwBhESv2RUZPg=='
-   salt: 'eexx2a8mtsg8o4c8k4w08wo04ccsw8'
+   password: <userPassword(@charlie->username)>
 
 Oro\Bundle\CustomerBundle\Entity\Customer:
   company_A:
@@ -33,8 +32,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
   amanda:
     email: 'AmandaRCole@example.org'
     username: 'AmandaRCole@example.org'
-    password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
-    salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+    password: <userPassword(@amanda->username)>
     firstName: 'Amanda'
     lastName: 'Cole'
     enabled: '1'

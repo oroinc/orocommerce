@@ -5,7 +5,7 @@ Oro\Bundle\CurrencyBundle\Entity\Price:
   price:
     value: '1'
     currency: 'USD'
-   
+
 Oro\Bundle\CustomerBundle\Entity\Customer:
   company_A:
     name: 'Company A'
@@ -21,8 +21,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
   amanda:
     email: 'AmandaRCole@example.org'
     username: 'AmandaRCole@example.org'
-    password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
-    salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+    password: <userPassword(@amanda->username)>
     firstName: 'Amanda'
     lastName: 'Cole'
     middleName: 'Middle Co'
