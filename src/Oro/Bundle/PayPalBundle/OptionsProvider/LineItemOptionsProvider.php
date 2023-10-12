@@ -7,7 +7,6 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentOrderLineItemOptionsProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Provider\TaxAmountProvider;
-use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -17,43 +16,13 @@ class LineItemOptionsProvider
 {
     private const DEFAULT_TAX_LINE_ITEM_QUANTITY = 1;
 
-    /**
-     * @var PaymentOrderLineItemOptionsProvider
-     */
-    private $paymentOrderLineItemOptionsProvider;
-
-    /**
-     * @var TaxAmountProvider
-     */
-    private $taxAmountProvider;
-
-    /**
-     * @var TaxationSettingsProvider
-     */
-    private $taxationSettingsProvider;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var LineItemOptionsFormatter
-     */
-    private $lineItemOptionsFormatter;
 
     public function __construct(
-        PaymentOrderLineItemOptionsProvider $paymentOrderLineItemOptionsProvider,
-        TaxAmountProvider $taxAmountProvider,
-        TaxationSettingsProvider $taxationSettingsProvider,
-        TranslatorInterface $translator,
-        LineItemOptionsFormatter $lineItemOptionsFormatter
+        private PaymentOrderLineItemOptionsProvider $paymentOrderLineItemOptionsProvider,
+        private TaxAmountProvider $taxAmountProvider,
+        private TranslatorInterface $translator,
+        private LineItemOptionsFormatter $lineItemOptionsFormatter
     ) {
-        $this->paymentOrderLineItemOptionsProvider = $paymentOrderLineItemOptionsProvider;
-        $this->taxAmountProvider = $taxAmountProvider;
-        $this->taxationSettingsProvider = $taxationSettingsProvider;
-        $this->translator = $translator;
-        $this->lineItemOptionsFormatter = $lineItemOptionsFormatter;
     }
 
     /**
@@ -76,12 +45,12 @@ class LineItemOptionsProvider
     private function addTaxLineItemOptions(LineItemsAwareInterface $entity, array $orderLineItemOptions): array
     {
         // Don't add tax line item in case taxes included into price already
-        if ($this->taxationSettingsProvider->isProductPricesIncludeTax()) {
+        if ($this->taxAmountProvider->isTotalIncludedTax()) {
             return $orderLineItemOptions;
         }
 
         try {
-            $taxAmount = $this->taxAmountProvider->getTaxAmount($entity);
+            $taxAmount = $this->taxAmountProvider->getExcludedTaxAmount($entity);
         } catch (TaxationDisabledException $exception) {
             // Can not add any tax line items because taxation disabled
             // Must not add 0 also because it is also a tax value

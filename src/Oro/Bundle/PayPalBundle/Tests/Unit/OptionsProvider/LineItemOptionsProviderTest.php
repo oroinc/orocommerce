@@ -9,43 +9,32 @@ use Oro\Bundle\PayPalBundle\OptionsProvider\LineItemOptionsFormatter;
 use Oro\Bundle\PayPalBundle\OptionsProvider\LineItemOptionsProvider;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Provider\TaxAmountProvider;
-use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LineItemOptionsProviderTest extends TestCase
 {
-    /** @var PaymentOrderLineItemOptionsProvider|MockObject */
-    private $orderLineItemOptionsProvider;
+    private PaymentOrderLineItemOptionsProvider|MockObject $orderLineItemOptionsProvider;
 
-    /** @var TaxAmountProvider|MockObject */
-    private $taxAmountProvider;
+    private TaxAmountProvider|MockObject $taxAmountProvider;
 
-    /** @var TaxationSettingsProvider|MockObject */
-    private $taxationSettingsProvider;
+    private TranslatorInterface|MockObject $translator;
 
-    /** @var TranslatorInterface|MockObject */
-    private $translator;
+    private LineItemOptionsFormatter|MockObject $lineItemOptionsFormatter;
 
-    /** @var LineItemOptionsFormatter|MockObject */
-    private $lineItemOptionsFormatter;
-
-    /** @var LineItemOptionsProvider */
-    private $provider;
+    private LineItemOptionsProvider $provider;
 
     protected function setUp(): void
     {
         $this->orderLineItemOptionsProvider = $this->createMock(PaymentOrderLineItemOptionsProvider::class);
         $this->taxAmountProvider = $this->createMock(TaxAmountProvider::class);
-        $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->lineItemOptionsFormatter = $this->createMock(LineItemOptionsFormatter::class);
 
         $this->provider = new LineItemOptionsProvider(
             $this->orderLineItemOptionsProvider,
             $this->taxAmountProvider,
-            $this->taxationSettingsProvider,
             $this->translator,
             $this->lineItemOptionsFormatter
         );
@@ -76,14 +65,14 @@ class LineItemOptionsProviderTest extends TestCase
             ->with($order)
             ->willReturn([$lineItemModel]);
 
-        $this->taxationSettingsProvider
+        $this->taxAmountProvider
             ->expects($this->once())
-            ->method('isProductPricesIncludeTax')
+            ->method('isTotalIncludedTax')
             ->willReturn(false);
 
         $this->taxAmountProvider
             ->expects($this->once())
-            ->method('getTaxAmount')
+            ->method('getExcludedTaxAmount')
             ->with($order)
             ->willReturn($taxAmount);
 
@@ -126,14 +115,14 @@ class LineItemOptionsProviderTest extends TestCase
             ->with($order)
             ->willReturn([$lineItemModel]);
 
-        $this->taxationSettingsProvider
+        $this->taxAmountProvider
             ->expects($this->once())
-            ->method('isProductPricesIncludeTax')
+            ->method('isTotalIncludedTax')
             ->willReturn(false);
 
         $this->taxAmountProvider
             ->expects($this->once())
-            ->method('getTaxAmount')
+            ->method('getExcludedTaxAmount')
             ->with($order)
             ->willThrowException(new TaxationDisabledException());
 
@@ -167,14 +156,14 @@ class LineItemOptionsProviderTest extends TestCase
             ->with($order)
             ->willReturn([$lineItemModel]);
 
-        $this->taxationSettingsProvider
+        $this->taxAmountProvider
             ->expects($this->once())
-            ->method('isProductPricesIncludeTax')
+            ->method('isTotalIncludedTax')
             ->willReturn(true);
 
         $this->taxAmountProvider
             ->expects($this->never())
-            ->method('getTaxAmount');
+            ->method('getExcludedTaxAmount');
 
         $this->lineItemOptionsFormatter
             ->expects($this->once())
