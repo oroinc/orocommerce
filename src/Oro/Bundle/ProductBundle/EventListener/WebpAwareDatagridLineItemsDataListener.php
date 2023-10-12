@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 
 /**
@@ -37,8 +39,17 @@ class WebpAwareDatagridLineItemsDataListener
 
     private function getImageUrl(Product $product): string
     {
-        $image = $product->getImagesByType('listing')->first();
+        /** @var ArrayCollection<ProductImage> $image */
+        $imageListingCollection = $product->getImagesByType('listing');
+        $isEmptyImageFile = true;
+        $image = null;
 
-        return $image ? $this->attachmentManager->getFilteredImageUrl($image->getImage(), 'product_small', 'webp') : '';
+        if (!$imageListingCollection->isEmpty()) {
+            $image = $imageListingCollection->first()?->getImage();
+            $isEmptyImageFile = (bool)$image?->isEmptyFile();
+        }
+
+        return !$isEmptyImageFile ?
+            $this->attachmentManager->getFilteredImageUrl($image, 'product_small', 'webp') : '';
     }
 }

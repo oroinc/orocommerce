@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\ProductBundle\Form\EventSubscriber\ProductImageTypesSubscriber;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImage;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -27,6 +28,7 @@ class ProductImageType extends AbstractType
             ImageType::class,
             [
                 'allowDelete' => false,
+                'constraints' => [new ProductImage()],
             ]
         );
 
