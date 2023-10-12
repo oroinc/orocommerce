@@ -46,7 +46,7 @@ class TaxAmountProviderTest extends TestCase
     /**
      * @dataProvider getTaxAmountDataProvider
      */
-    public function testGetTaxAmount(float $taxAmount, float $expected): void
+    public function testGetTaxAmount($taxAmount, $expected): void
     {
         $taxResultElement = new ResultElement([
             ResultElement::TAX_AMOUNT => $taxAmount
@@ -136,11 +136,11 @@ class TaxAmountProviderTest extends TestCase
     }
 
     /**
-     * @param mixed $exceptionClass
+     * @param string $exceptionClass
      * @throws TaxationDisabledException
      * @dataProvider getTaxAmountWithUnHandledExceptionDataProvider
      */
-    public function testGetTaxAmountWithUnHandledException(string $exceptionClass): void
+    public function testGetTaxAmountWithUnHandledException($exceptionClass): void
     {
         $this->taxProvider
             ->expects($this->once())
