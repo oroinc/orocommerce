@@ -3,8 +3,8 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPayPalBundle:PayPalExpressProductsWithTaxes.yml
 @behat-test-env
-Feature: Paypal payflow gateway express payments should not have tax line when price includes tax
-  In order to complete checkout with products which prices are already include tax
+Feature: Paypal payflow gateway express payments should have tax line with correct number
+  In order to complete checkout with products/shipping rates which prices are already include tax
   As a buyer
   I want to be able to see correct checkout total information on PayPal site
 
