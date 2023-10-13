@@ -67,6 +67,8 @@ oro_behat_extension:
       selector: '.price_rules__add_btn .add-list-item'
     Price Calculation Quantity:
       selector: 'input[name="oro_pricing_price_list[priceRules][0][quantity]"]'
+    Price Calculation Quantity Expression Editor Content:
+      selector: '.expression-editor[data-name="oro_pricing_price_list[priceRules][0][quantityExpression]"] [contenteditable="true"]'
     Price Calculation Unit Expression:
       selector: 'input[name="oro_pricing_price_list[priceRules][0][productUnitExpression]"]'
     Price Calculation Unit Expression Editor:

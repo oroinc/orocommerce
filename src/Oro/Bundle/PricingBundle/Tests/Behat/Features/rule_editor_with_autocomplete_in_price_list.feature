@@ -137,12 +137,13 @@ Feature: Rule Editor with Autocomplete in Price List
     And I type "1" in "Price Calculation Quantity"
 
     And I click "Price Calculation Unit Expression Button"
+    And I click on empty space
     And I click "Price Calculation Currency Expression Button"
     And I fill form with:
-      | Product Unit | pricelist[1].         |
-      | Currency     | pricelist[12].        |
       | Calculate As | pricelist[1].prices.  |
       | Condition    | pricelist[12].prices. |
+    And I type "pricelist[12]." in "Price Calculation Currency Expression Editor Content"
+    And I type "pricelist[1]." in "Price Calculation Unit Expression Editor Content"
     And I save form
     Then I should see "Unexpected end of expression around position 14 for expression `pricelist[1].`."
     And I should not see "Unexpected end of expression around position 14 for expression `pricelist[1].`.; Unexpected end of expression around position 14 for expression `pricelist[1].`."
