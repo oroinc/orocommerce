@@ -26,9 +26,10 @@ class TaxAmountProvider
     /**
      * Gets tax amount for entity.
      *
+     * @param object $entity
      * @throws TaxationDisabledException
      */
-    public function getTaxAmount(object $entity): float
+    public function getTaxAmount($entity): float
     {
         $provider = $this->taxProviderRegistry->getEnabledProvider();
         $result = $provider->loadTax($entity);
