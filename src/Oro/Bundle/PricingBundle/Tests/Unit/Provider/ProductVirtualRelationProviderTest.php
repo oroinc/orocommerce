@@ -76,10 +76,18 @@ class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
                     'join' => [
                         'left' => [
                             [
+                                'join' => PriceAttributePriceList::class,
+                                'alias' => 'msrpPriceList',
+                                'conditionType' => 'WITH',
+                                'condition' => "(msrpPriceList.fieldName = 'msrp' " .
+                                    "and msrpPriceList.organization = entity.organization)",
+                            ],
+                            [
                                 'join' => PriceAttributeProductPrice::class,
                                 'alias' => 'msrpPrice',
                                 'conditionType' => 'WITH',
-                                'condition' => '(msrpPrice.product = entity and msrpPrice.priceList = 1)',
+                                'condition' => '(msrpPrice.product = entity ' .
+                                    'and msrpPrice.priceList = msrpPriceList.id)',
                             ]
                         ],
                     ],
@@ -112,12 +120,20 @@ class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
                             'join' => [
                                 'left' => [
                                     [
+                                        'join' => PriceAttributePriceList::class,
+                                        'alias' => 'msrpPriceList',
+                                        'conditionType' => 'WITH',
+                                        'condition' => "(msrpPriceList.fieldName = 'msrp' " .
+                                            "and msrpPriceList.organization = entity.organization)",
+                                    ],
+                                    [
                                         'join' => PriceAttributeProductPrice::class,
                                         'alias' => 'msrpPrice',
                                         'conditionType' => 'WITH',
-                                        'condition' => '(msrpPrice.product = entity and msrpPrice.priceList = 1)',
+                                        'condition' => '(msrpPrice.product = entity ' .
+                                            'and msrpPrice.priceList = msrpPriceList.id)',
                                     ]
-                                ],
+                                ]
                             ],
                         ],
                     ],
@@ -130,10 +146,18 @@ class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
                             'join' => [
                                 'left' => [
                                     [
+                                        'join' => PriceAttributePriceList::class,
+                                        'alias' => 'mapPriceList',
+                                        'conditionType' => 'WITH',
+                                        'condition' => "(mapPriceList.fieldName = 'map' " .
+                                            "and mapPriceList.organization = entity.organization)",
+                                    ],
+                                    [
                                         'join' => PriceAttributeProductPrice::class,
                                         'alias' => 'mapPrice',
                                         'conditionType' => 'WITH',
-                                        'condition' => '(mapPrice.product = entity and mapPrice.priceList = 2)',
+                                        'condition' => '(mapPrice.product = entity ' .
+                                            'and mapPrice.priceList = mapPriceList.id)',
                                     ]
                                 ],
                             ],
