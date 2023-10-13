@@ -69,6 +69,20 @@ class PriceRuleLexemeHandler
             $conditionRules = $this->parser->getUsedLexemes($rule->getRuleCondition(), true);
             $priceRules = $this->parser->getUsedLexemes($rule->getRule(), true);
             $uniqueLexemes = $this->mergeLexemes($conditionRules, $priceRules);
+
+            $uniqueLexemes = $this->mergeLexemes(
+                $uniqueLexemes,
+                $this->parser->getUsedLexemes($rule->getQuantityExpression(), true)
+            );
+            $uniqueLexemes = $this->mergeLexemes(
+                $uniqueLexemes,
+                $this->parser->getUsedLexemes($rule->getProductUnitExpression(), true)
+            );
+            $uniqueLexemes = $this->mergeLexemes(
+                $uniqueLexemes,
+                $this->parser->getUsedLexemes($rule->getCurrencyExpression(), true)
+            );
+
             $lexemes[] = $this->prepareLexemes($uniqueLexemes, $priceList, $rule);
         }
 

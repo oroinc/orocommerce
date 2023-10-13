@@ -45,6 +45,9 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testUpdateLexemes(): void
     {
         $organization = new Organization();
@@ -54,9 +57,16 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
         $rule = 'product.msrp.value + 10';
         $ruleCondition = 'product.sku == test';
 
+        $qtyExpr = 'product.sell_qty';
+        $unitExpr = 'product.sell_unit';
+        $currencyExpr = 'product.sell_currency';
+
         $priceRule = $this->getEntity(PriceRule::class, ['id' => 1]);
         $priceRule->setRule($rule);
         $priceRule->setRuleCondition($ruleCondition);
+        $priceRule->setQuantityExpression($qtyExpr);
+        $priceRule->setProductUnitExpression($unitExpr);
+        $priceRule->setCurrencyExpression($currencyExpr);
 
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         $priceList->setProductAssignmentRule($assignmentRule);
@@ -75,7 +85,10 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
                     ]
                 ],
                 [$rule, true, ['Oro\Bundle\ProductBundle\Entity\Product::msrp' => ['value']]],
-                [$ruleCondition, true, ['Oro\Bundle\ProductBundle\Entity\Product' => ['sku']]]
+                [$ruleCondition, true, ['Oro\Bundle\ProductBundle\Entity\Product' => ['sku']]],
+                [$qtyExpr, true, ['Oro\Bundle\ProductBundle\Entity\Product' => ['sell_qty']]],
+                [$unitExpr, true, ['Oro\Bundle\ProductBundle\Entity\Product' => ['sell_unit']]],
+                [$currencyExpr, true, ['Oro\Bundle\ProductBundle\Entity\Product' => ['sell_currency']]]
             ]);
 
         $this->fieldsProvider->expects($this->any())
@@ -129,7 +142,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getSingleEntityIdentifierFieldName')
             ->willReturn('id');
 
-        $lexemeEntityManager->expects($this->exactly(7))
+        $lexemeEntityManager->expects($this->exactly(10))
             ->method('persist');
         $lexemeEntityManager->expects($this->once())
             ->method('flush');

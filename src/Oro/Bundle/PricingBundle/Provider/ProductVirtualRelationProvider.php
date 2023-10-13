@@ -92,7 +92,7 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
             function ($item) {
                 return $item['fieldName'];
             },
-            $productAttributeFieldNames = $this->getProductAttributes()
+            $this->getProductAttributes()
         );
         return in_array($fieldName, $priceAttributeFieldNames, true);
     }
@@ -119,6 +119,7 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
     protected function getRelationDefinition(array $attribute)
     {
         $priceAlias = $attribute['fieldName'] . 'Price';
+        $priceListAlias = $attribute['fieldName'] . 'PriceList';
 
         return [
             'label' => $attribute['name'],
@@ -129,14 +130,23 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
                 'join' => [
                     'left' => [
                         [
+                            'join' => PriceAttributePriceList::class,
+                            'alias' => $priceListAlias,
+                            'conditionType' => Join::WITH,
+                            'condition' => sprintf(
+                                '(%1$s.fieldName = \'%2$s\' and %1$s.organization = entity.organization)',
+                                $priceListAlias,
+                                $attribute['fieldName']
+                            )
+                        ],
+                        [
                             'join' => PriceAttributeProductPrice::class,
                             'alias' => $priceAlias,
                             'conditionType' => Join::WITH,
                             'condition' => sprintf(
-                                '(%s.product = entity and %s.priceList = %d)',
+                                '(%1$s.product = entity and %1$s.priceList = %2$s.id)',
                                 $priceAlias,
-                                $priceAlias,
-                                $attribute['id']
+                                $priceListAlias
                             )
                         ]
                     ],

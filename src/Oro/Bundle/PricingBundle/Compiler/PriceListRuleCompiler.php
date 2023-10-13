@@ -131,11 +131,12 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     protected function createQueryBuilder(PriceRule $rule)
     {
+        // Add dummy expression conditions to process all required joins. Real restrictions will be applied later.
         $ruleCondition = $this->getProcessedRuleCondition($rule);
         if ($ruleCondition) {
-            $expression = sprintf('%s and (%s) > 0', $ruleCondition, $rule->getRule());
+            $expression = sprintf('%s and (%s) >= 0', $ruleCondition, $rule->getRule());
         } else {
-            $expression = $rule->getRule();
+            $expression = sprintf('(%s) >= 0', $rule->getRule());
         }
         if ($rule->getCurrencyExpression()) {
             $expression .= sprintf(' and %s != null', $rule->getCurrencyExpression());
@@ -562,7 +563,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             }
         }
 
-        return '';
+        return $rule->getQuantityExpression();
     }
 
     /**
