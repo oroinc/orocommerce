@@ -53,11 +53,7 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnUpdateNotChanged(): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects(self::once())
-            ->method('isChanged')
-            ->with($this->configParameter)
-            ->willReturn(false);
+        $event = new ConfigUpdateEvent([], 'global', 0);
 
         $this->messageProducer->expects(self::never())
             ->method(self::anything());
@@ -70,11 +66,7 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnUpdatePrefixChange(): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects(self::once())
-            ->method('isChanged')
-            ->with($this->configParameter)
-            ->willReturn(true);
+        $event = new ConfigUpdateEvent([$this->configParameter => ['old' => 1, 'new' => 2]], 'global', 0);
 
         $prefixWithRedirect = new PrefixWithRedirect();
         $prefixWithRedirect->setPrefix('prefix');
@@ -113,11 +105,7 @@ class ConfigRegenerateDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function testOnUpdateUseDefault(string $strategy, bool $createRedirect): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects(self::once())
-            ->method('isChanged')
-            ->with($this->configParameter)
-            ->willReturn(true);
+        $event = new ConfigUpdateEvent([$this->configParameter => ['old' => 1, 'new' => 2]], 'global', 0);
 
         $prefixWithRedirect = new PrefixWithRedirect();
         $prefixWithRedirect->setPrefix('prefix');

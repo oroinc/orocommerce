@@ -29,15 +29,12 @@ class FrontendConsentProviderTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
-
-        $this->loadFixtures([
-            LoadConsentConfigData::class
-        ]);
+        $this->loadFixtures([LoadConsentConfigData::class]);
 
         $this->initFrontendRequest();
         $this->enableConsentFeature();
 
-        $this->provider = $this->getContainer()->get('oro_consent.layout.data_provider.consent');
+        $this->provider = self::getContainer()->get('oro_consent.layout.data_provider.consent');
     }
 
     /**
@@ -48,7 +45,7 @@ class FrontendConsentProviderTest extends WebTestCase
         /** @var CustomerUser $customerUserData */
         $customerUserData = $this->getReference($customerUserReference);
 
-        $this->getContainer()->get('security.token_storage')
+        self::getContainer()->get('security.token_storage')
             ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
 
         $consentData = $this->provider->getAllConsentData();
@@ -93,7 +90,7 @@ class FrontendConsentProviderTest extends WebTestCase
         /** @var CustomerUser $customerUserData */
         $customerUserData = $this->getReference($customerUserReference);
 
-        $this->getContainer()->get('security.token_storage')
+        self::getContainer()->get('security.token_storage')
             ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
 
         $consentData = $this->provider->getNotAcceptedRequiredConsentData();
@@ -128,7 +125,7 @@ class FrontendConsentProviderTest extends WebTestCase
         /** @var CustomerUser $customerUserData */
         $customerUserData = $this->getReference($customerUserReference);
 
-        $this->getContainer()->get('security.token_storage')
+        self::getContainer()->get('security.token_storage')
             ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
 
         $consentAcceptance = new ConsentAcceptance();
@@ -177,7 +174,7 @@ class FrontendConsentProviderTest extends WebTestCase
         /** @var CustomerUser $customerUserData */
         $customerUserData = $this->getReference($customerUserReference);
 
-        $this->getContainer()->get('security.token_storage')
+        self::getContainer()->get('security.token_storage')
             ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
 
         $consentAcceptance = new ConsentAcceptance();
@@ -235,6 +232,6 @@ class FrontendConsentProviderTest extends WebTestCase
                 '_web_content_scope' => $this->getReference(LoadScopeData::CATALOG_1_SCOPE)
             ]
         );
-        $this->getContainer()->get('request_stack')->push($request);
+        self::getContainer()->get('request_stack')->push($request);
     }
 }

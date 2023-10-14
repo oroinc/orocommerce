@@ -13,43 +13,33 @@ class WebCatalogConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
     private $dispatcher;
 
     /** @var WebCatalogConfigChangeListener */
-    private $webCatalogConfigChangeListener;
+    private $listener;
 
     protected function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
-        $this->webCatalogConfigChangeListener = new WebCatalogConfigChangeListener($this->dispatcher);
+        $this->listener = new WebCatalogConfigChangeListener($this->dispatcher);
     }
 
-    public function testOnConfigurationUpdate()
+    public function testOnConfigurationUpdate(): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-
-        $event->expects($this->any())
-            ->method('isChanged')
-            ->with(WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME)
-            ->willReturn(true);
-
-        $this->dispatcher->expects($this->once())
+        $this->dispatcher->expects(self::once())
             ->method('dispatch')
             ->with(new ReindexationRequestEvent([], [], [], true, ['main']), ReindexationRequestEvent::EVENT_NAME);
 
-        $this->webCatalogConfigChangeListener->onConfigurationUpdate($event);
+        $this->listener->onConfigurationUpdate(
+            new ConfigUpdateEvent(['oro_web_catalog.web_catalog' => ['old' => 1, 'new' => 2]], 'website', 1)
+        );
     }
 
-    public function testOnOtherConfigurationUpdate()
+    public function testOnOtherConfigurationUpdate(): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
+        $event = new ConfigUpdateEvent([], 'website', 1);
 
-        $event->expects($this->any())
-            ->method('isChanged')
-            ->with(WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME)
-            ->willReturn(false);
-
-        $this->dispatcher->expects($this->never())
+        $this->dispatcher->expects(self::never())
             ->method('dispatch');
 
-        $this->webCatalogConfigChangeListener->onConfigurationUpdate($event);
+        $this->listener->onConfigurationUpdate($event);
     }
 }

@@ -12,8 +12,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
 {
-    private const SCOPE_APP = 'app';
-
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
@@ -112,7 +110,7 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function prepareEvent(array $settings): ConfigUpdateEvent
     {
-        return new ConfigUpdateEvent($settings, self::SCOPE_APP, null);
+        return new ConfigUpdateEvent($settings, 'global', 0);
     }
 
     protected function prepareFlashBag(): FlashBag

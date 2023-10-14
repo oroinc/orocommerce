@@ -42,18 +42,7 @@ class UpdateFlatPriceListSystemConfigListenerTest extends \PHPUnit\Framework\Tes
 
     public function testOnUpdateAfterWebsiteScope(): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects(self::once())
-            ->method('isChanged')
-            ->with('oro_pricing.default_price_list')
-            ->willReturn(true);
-
-        $event->expects(self::once())
-            ->method('getScope')
-            ->willReturn('website');
-        $event->expects(self::atLeastOnce())
-            ->method('getScopeId')
-            ->willReturn(1);
+        $event = new ConfigUpdateEvent(['oro_pricing.default_price_list' => ['old' => 1, 'new' => 2]], 'website', 1);
 
         $website = $this->getWebsite(1);
         $em = $this->createMock(EntityManagerInterface::class);
@@ -75,17 +64,7 @@ class UpdateFlatPriceListSystemConfigListenerTest extends \PHPUnit\Framework\Tes
 
     public function testOnUpdateAfterAppScope(): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects(self::once())
-            ->method('isChanged')
-            ->with('oro_pricing.default_price_list')
-            ->willReturn(true);
-
-        $event->expects(self::once())
-            ->method('getScope')
-            ->willReturn('app');
-        $event->expects(self::never())
-            ->method('getScopeId');
+        $event = new ConfigUpdateEvent(['oro_pricing.default_price_list' => ['old' => 1, 'new' => 2]], 'global', 0);
 
         $this->triggerHandler->expects(self::once())
             ->method('handleConfigChange');
@@ -95,11 +74,7 @@ class UpdateFlatPriceListSystemConfigListenerTest extends \PHPUnit\Framework\Tes
 
     public function testOnUpdateAfterNoChanges(): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects(self::once())
-            ->method('isChanged')
-            ->with('oro_pricing.default_price_list')
-            ->willReturn(false);
+        $event = new ConfigUpdateEvent([], 'website', 1);
 
         $this->triggerHandler->expects(self::never())
             ->method(self::anything());
