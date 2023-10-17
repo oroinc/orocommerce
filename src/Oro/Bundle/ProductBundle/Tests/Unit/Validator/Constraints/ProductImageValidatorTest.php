@@ -19,11 +19,11 @@ class ProductImageValidatorTest extends ConstraintValidatorTestCase
     public function testValidateValidImage()
     {
         $productImage = new StubProductImage();
-        $productImage->setImage((new File())->setFilename('test.jpg'));
+        $productImage->setImage((new File())->setEmptyFile('0')->setFilename('test.jpg'));
         $productImage->setProduct(new Product());
 
         $constraint = new ProductImage();
-        $this->validator->validate($productImage, $constraint);
+        $this->validator->validate($productImage->getImage(), $constraint);
 
         $this->assertNoViolation();
     }

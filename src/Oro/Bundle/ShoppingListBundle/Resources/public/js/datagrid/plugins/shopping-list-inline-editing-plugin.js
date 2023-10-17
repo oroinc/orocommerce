@@ -140,6 +140,7 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
         let componentsToSend = [];
         if (component instanceof BaseComponent && component.isChanged()) {
             componentsToSend = [component];
+            this.cancelEditModeIfMerging(component);
         } else {
             componentsToSend = this.activeEditorComponents.filter(component => component.isChanged());
         }
@@ -180,7 +181,7 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
             uniqueOnly: true,
             parse: true,
             toggleLoading: false,
-            alreadySynced: true
+            alreadySynced: this.allNewDataSynced(response)
         });
 
         models
@@ -265,6 +266,36 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
 
         editorComponent.view.scrollIntoView();
         editorComponent.view.focus(event);
+    },
+
+    /**
+     * While a line item is going to save and there might be another line item in edit mode might merge by it,
+     * Cancel its edit mode.
+     */
+    cancelEditModeIfMerging(saveComponent) {
+        this.activeEditorComponents.map(component => {
+            const itemModel = component.view.model;
+            if (saveComponent.cid !== component.cid &&
+                saveComponent.view.model.attributes.sku === itemModel.attributes.sku &&
+                saveComponent.view.$el.find('select[name="unitCode"]').val() === itemModel.attributes.unit) {
+                component.exitEditMode(true);
+            }
+        });
+    },
+
+    allNewDataSynced(response) {
+        if (!response.data) {
+            return true;
+        }
+
+        const intersectCollection = [];
+        response.data.forEach(lineItem => {
+            if (this.main.collection.get(lineItem.id)) {
+                intersectCollection.push(lineItem.id);
+            }
+        });
+
+        return intersectCollection.length > 0;
     },
 
     onDisposeEditor(instance) {

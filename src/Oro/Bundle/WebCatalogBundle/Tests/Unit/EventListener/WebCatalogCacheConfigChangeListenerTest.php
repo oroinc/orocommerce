@@ -5,14 +5,15 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogCacheConfigChangeListener;
-use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class WebCatalogCacheConfigChangeListenerTest extends \PHPUnit\Framework\TestCase
 {
-    private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $messageProducer;
+    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $messageProducer;
 
-    private WebCatalogCacheConfigChangeListener $webCatalogConfigChangeListener;
+    /** @var WebCatalogCacheConfigChangeListener */
+    private $webCatalogConfigChangeListener;
 
     protected function setUp(): void
     {
@@ -23,21 +24,14 @@ class WebCatalogCacheConfigChangeListenerTest extends \PHPUnit\Framework\TestCas
 
     public function testOnConfigurationUpdate(): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-
-        $event->expects(self::any())
-            ->method('isChanged')
-            ->with(WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME)
-            ->willReturn(true);
-
         $webCatalogId = 42;
-        $event->expects(self::any())
-            ->method('getNewValue')
-            ->with(WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME)
-            ->willReturn($webCatalogId);
+        $event = new ConfigUpdateEvent(
+            ['oro_web_catalog.web_catalog' => ['old' => 1, 'new' => $webCatalogId]],
+            'website',
+            1
+        );
 
-        $this->messageProducer
-            ->expects(self::once())
+        $this->messageProducer->expects(self::once())
             ->method('send')
             ->with(
                 WebCatalogCalculateCacheTopic::getName(),
@@ -49,15 +43,9 @@ class WebCatalogCacheConfigChangeListenerTest extends \PHPUnit\Framework\TestCas
 
     public function testOnOtherConfigurationUpdate(): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
+        $event = new ConfigUpdateEvent([], 'website', 1);
 
-        $event->expects(self::any())
-            ->method('isChanged')
-            ->with(WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME)
-            ->willReturn(false);
-
-        $this->messageProducer
-            ->expects(self::never())
+        $this->messageProducer->expects(self::never())
             ->method(self::anything());
 
         $this->webCatalogConfigChangeListener->onConfigurationUpdate($event);
@@ -65,20 +53,13 @@ class WebCatalogCacheConfigChangeListenerTest extends \PHPUnit\Framework\TestCas
 
     public function testWhenNotEnabled(): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
+        $event = new ConfigUpdateEvent(
+            ['oro_web_catalog.web_catalog' => ['old' => 1, 'new' => 42]],
+            'website',
+            1
+        );
 
-        $event->expects(self::any())
-            ->method('isChanged')
-            ->with(WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME)
-            ->willReturn(true);
-
-        $event->expects(self::any())
-            ->method('getNewValue')
-            ->with(WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME)
-            ->willReturn(42);
-
-        $this->messageProducer
-            ->expects(self::never())
+        $this->messageProducer->expects(self::never())
             ->method(self::anything());
 
         $this->webCatalogConfigChangeListener->setEnabled(false);

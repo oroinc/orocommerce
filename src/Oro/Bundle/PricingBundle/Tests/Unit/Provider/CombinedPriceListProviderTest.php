@@ -7,12 +7,15 @@ use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListActualizeScheduleEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
 use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyInterface;
@@ -25,6 +28,10 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class CombinedPriceListProviderTest extends TestCase
 {
     use EntityTrait;
@@ -413,6 +420,135 @@ class CombinedPriceListProviderTest extends TestCase
                 $this->getEntity(PriceList::class, ['id' => 1]),
                 $this->getEntity(PriceList::class, ['id' => 2])
             ]);
+
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->any())
+            ->method('getReference')
+            ->willReturnCallback(function ($className, $id) {
+                return $this->getEntity($className, ['id' => $id]);
+            });
+
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatch');
+
+        $this->assertEquals($cpl, $this->provider->getCombinedPriceListByCollectionInformation($collectionInfo));
+    }
+
+    public function testGetCombinedPriceListByCollectionInformationWithRequiredScheduleUpdate()
+    {
+        $collectionInfo = [
+            ['p' => 1, 'm' => true],
+            ['p' => 2, 'm' => false]
+        ];
+
+        $cpl = new CombinedPriceList();
+        $this->strategyRegister->expects(self::atLeastOnce())
+            ->method('getCurrentStrategy')
+            ->willReturn($this->createMock(PriceCombiningStrategyInterface::class));
+
+        $combinedPriceListRepository = $this->createMock(CombinedPriceListRepository::class);
+        $productPriceRepository = $this->createMock(ProductPriceRepository::class);
+        $priceListRepository = $this->createMock(PriceListRepository::class);
+        $activationRuleRepository = $this->createMock(CombinedPriceListActivationRuleRepository::class);
+
+        $this->registry
+            ->expects(self::any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [CombinedPriceList::class, null, $combinedPriceListRepository],
+                [ProductPrice::class, null, $productPriceRepository],
+                [PriceList::class, null, $priceListRepository],
+                [CombinedPriceListActivationRule::class, null, $activationRuleRepository]
+            ]);
+
+        $combinedPriceListRepository->expects(self::once())
+            ->method('findOneBy')
+            ->with(['name' => '35850c5607d24a9f0a9df0a106837868'])
+            ->willReturn($cpl);
+        $productPriceRepository
+            ->expects(self::any())
+            ->method('hasPrices')
+            ->willReturn(true);
+        $priceListRepository
+            ->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [1, 2]])
+            ->willReturn([
+                $this->getEntity(PriceList::class, ['id' => 1, 'containSchedule' => true]),
+                $this->getEntity(PriceList::class, ['id' => 2])
+            ]);
+
+        $activationRuleRepository->expects($this->once())
+            ->method('hasActivationRules')
+            ->with($cpl)
+            ->willReturn(false);
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                new CombinedPriceListActualizeScheduleEvent($cpl),
+                CombinedPriceListActualizeScheduleEvent::NAME
+            );
+
+        $manager = $this->createMock(EntityManagerInterface::class);
+        $manager->expects($this->any())
+            ->method('getReference')
+            ->willReturnCallback(function ($className, $id) {
+                return $this->getEntity($className, ['id' => $id]);
+            });
+
+        $this->assertEquals($cpl, $this->provider->getCombinedPriceListByCollectionInformation($collectionInfo));
+    }
+
+    public function testGetCombinedPriceListByCollectionInformationWithNotRequiredScheduleUpdate()
+    {
+        $collectionInfo = [
+            ['p' => 1, 'm' => true],
+            ['p' => 2, 'm' => false]
+        ];
+
+        $cpl = new CombinedPriceList();
+        $this->strategyRegister->expects(self::atLeastOnce())
+            ->method('getCurrentStrategy')
+            ->willReturn($this->createMock(PriceCombiningStrategyInterface::class));
+
+        $combinedPriceListRepository = $this->createMock(CombinedPriceListRepository::class);
+        $productPriceRepository = $this->createMock(ProductPriceRepository::class);
+        $priceListRepository = $this->createMock(PriceListRepository::class);
+        $activationRuleRepository = $this->createMock(CombinedPriceListActivationRuleRepository::class);
+
+        $this->registry
+            ->expects(self::any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [CombinedPriceList::class, null, $combinedPriceListRepository],
+                [ProductPrice::class, null, $productPriceRepository],
+                [PriceList::class, null, $priceListRepository],
+                [CombinedPriceListActivationRule::class, null, $activationRuleRepository]
+            ]);
+
+        $combinedPriceListRepository->expects(self::once())
+            ->method('findOneBy')
+            ->with(['name' => '35850c5607d24a9f0a9df0a106837868'])
+            ->willReturn($cpl);
+        $productPriceRepository
+            ->expects(self::any())
+            ->method('hasPrices')
+            ->willReturn(true);
+        $priceListRepository
+            ->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => [1, 2]])
+            ->willReturn([
+                $this->getEntity(PriceList::class, ['id' => 1, 'containSchedule' => true]),
+                $this->getEntity(PriceList::class, ['id' => 2])
+            ]);
+
+        $activationRuleRepository->expects($this->once())
+            ->method('hasActivationRules')
+            ->with($cpl)
+            ->willReturn(true);
+        $this->eventDispatcher->expects($this->never())
+            ->method('dispatch');
 
         $manager = $this->createMock(EntityManagerInterface::class);
         $manager->expects($this->any())

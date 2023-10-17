@@ -5,17 +5,18 @@ namespace Oro\Bundle\ProductBundle\Expression;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryBuilderGroupingOrmQueryConverter;
+use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
+use Oro\Component\PhpUtils\ArrayUtil;
 
 /**
  * Converts a price list query definition created by the query designer to an ORM query.
  */
 class QueryConverter extends QueryBuilderGroupingOrmQueryConverter
 {
-    /** @var array */
-    private $tableAliasByColumn = [];
+    private array $tableAliasByColumn = [];
 
     /** @var QueryConverterExtensionInterface[] */
-    private $converterExtensions = [];
+    private array $converterExtensions = [];
 
     public function addExtension(QueryConverterExtensionInterface $extension): void
     {
@@ -37,7 +38,7 @@ class QueryConverter extends QueryBuilderGroupingOrmQueryConverter
         $this->doConvert($source);
 
         foreach ($this->converterExtensions as $extension) {
-            $this->tableAliasByColumn = array_merge(
+            $this->tableAliasByColumn = ArrayUtil::arrayMergeRecursiveDistinct(
                 $this->tableAliasByColumn,
                 $extension->convert($source, $qb)
             );
@@ -81,10 +82,23 @@ class QueryConverter extends QueryBuilderGroupingOrmQueryConverter
                 $tableIdentifier = $column['table_identifier'];
 
                 if ($context->hasVirtualColumnExpression($columnName)) {
-                    $exprColumn = explode('.', $context->getVirtualColumnExpression($columnName));
-                    $this->tableAliasByColumn[$tableIdentifier] = $exprColumn[0];
+                    $virtualColumnExpression = $context->getVirtualColumnExpression($columnName);
+                    $exprColumn = explode('.', $virtualColumnExpression);
+                    if (count($exprColumn) > 2) {
+                        throw new \InvalidArgumentException('Unsupported virtual column');
+                    }
+
+                    $colsKey = QueryExpressionConverterInterface::MAPPING_COLUMNS;
+                    $fieldName = $this->getFieldName($columnName);
+                    $this->tableAliasByColumn[$colsKey][$tableIdentifier][$fieldName] = $virtualColumnExpression;
+
+                    // Extract single table alias if virtual column contains function
+                    preg_match('/\w+$/', $exprColumn[0], $matches);
+                    $this->tableAliasByColumn[QueryExpressionConverterInterface::MAPPING_TABLES][$tableIdentifier]
+                        = $matches[0];
                 } else {
-                    $this->tableAliasByColumn[$tableIdentifier] = $this->getTableAliasForColumn($columnName);
+                    $this->tableAliasByColumn[QueryExpressionConverterInterface::MAPPING_TABLES][$tableIdentifier]
+                        = $this->getTableAliasForColumn($columnName);
                 }
             }
         }

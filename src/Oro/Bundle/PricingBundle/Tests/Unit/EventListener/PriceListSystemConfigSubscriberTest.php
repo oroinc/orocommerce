@@ -15,7 +15,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     use ConfigsGeneratorTrait;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|PriceListConfigConverter */
+    /** @var PriceListConfigConverter|\PHPUnit\Framework\MockObject\MockObject */
     private $converterMock;
 
     /** @var PriceListRelationTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
@@ -47,7 +47,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
         $event = new ConfigSettingsUpdateEvent($configManager, $settings);
         $convertedConfigs = $this->createConfigs(2);
 
-        $this->converterMock->expects($this->once())
+        $this->converterMock->expects(self::once())
             ->method('convertFromSaved')
             ->with($settings['oro_pricing___default_price_lists']['value'])
             ->willReturn($convertedConfigs);
@@ -59,7 +59,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
                 'value' => $convertedConfigs,
             ],
         ];
-        $this->assertEquals($expected, $event->getSettings());
+        self::assertEquals($expected, $event->getSettings());
     }
 
     public function testBeforeSave()
@@ -80,14 +80,14 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
 
         $event = new ConfigSettingsUpdateEvent($configManager, $settings);
 
-        $this->converterMock->expects($this->once())
+        $this->converterMock->expects(self::once())
             ->method('convertBeforeSave')
             ->with($values)
             ->willReturn($converted);
 
         $this->subscriber->beforeSave($event);
 
-        $this->assertEquals($expected, $event->getSettings());
+        self::assertEquals($expected, $event->getSettings());
     }
 
     /**
@@ -107,20 +107,20 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
         ];
         $event = new ConfigSettingsUpdateEvent($configManager, $settings);
 
-        $this->converterMock->expects($this->any())
+        $this->converterMock->expects(self::any())
             ->method('convertBeforeSave')
             ->with($values)
             ->willReturn($converted);
 
         $this->subscriber->beforeSave($event);
         if ($dispatch) {
-            $this->changeTriggerHandler->expects($this->once())
+            $this->changeTriggerHandler->expects(self::once())
                 ->method('handleConfigChange');
         } else {
-            $this->changeTriggerHandler->expects($this->never())
+            $this->changeTriggerHandler->expects(self::never())
                 ->method('handleConfigChange');
         }
-        $this->subscriber->updateAfter(new ConfigUpdateEvent($changeSet));
+        $this->subscriber->updateAfter(new ConfigUpdateEvent($changeSet, 'global', 0));
     }
 
     public function updateAfterDataProvider(): array
@@ -171,9 +171,9 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
 
     public function testUpdateAfterWithNotApplicable()
     {
-        $this->changeTriggerHandler->expects($this->never())
+        $this->changeTriggerHandler->expects(self::never())
             ->method('handleConfigChange');
 
-        $this->subscriber->updateAfter(new ConfigUpdateEvent([]));
+        $this->subscriber->updateAfter(new ConfigUpdateEvent([], 'global', 0));
     }
 }

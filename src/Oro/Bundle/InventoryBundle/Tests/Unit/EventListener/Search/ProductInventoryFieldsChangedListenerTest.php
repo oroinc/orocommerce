@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Bundle\ConfigBundle\Config\ConfigChangeSet;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValueRepository;
@@ -188,7 +187,7 @@ class ProductInventoryFieldsChangedListenerTest extends \PHPUnit\Framework\TestC
             ->method('reindexAllProducts');
 
         $args = new ConfigUpdateEvent(
-            new ConfigChangeSet(['option1' => ['new' => true, 'old' => false]]),
+            ['option1' => ['new' => true, 'old' => false]],
             'organization',
             1
         );
@@ -205,7 +204,7 @@ class ProductInventoryFieldsChangedListenerTest extends \PHPUnit\Framework\TestC
             ->with(self::isNull());
 
         $args = new ConfigUpdateEvent(
-            new ConfigChangeSet([$optionName => ['new' => true, 'old' => false]]),
+            [$optionName => ['new' => true, 'old' => false]],
             'organization',
             1
         );
@@ -224,7 +223,7 @@ class ProductInventoryFieldsChangedListenerTest extends \PHPUnit\Framework\TestC
             ->with(self::identicalTo($websiteId), true, ['inventory']);
 
         $args = new ConfigUpdateEvent(
-            new ConfigChangeSet([$optionName => ['new' => true, 'old' => false]]),
+            [$optionName => ['new' => true, 'old' => false]],
             'website',
             $websiteId
         );

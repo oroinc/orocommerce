@@ -10,20 +10,39 @@ Feature: Shopping List Line Items
       | Admin | first_session  |
       | Buyer | second_session |
 
-  Scenario: Merge Line items
+  Scenario: Exchange units of Line items
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And Buyer is on "Shopping List 5" shopping list
-    And I click "Shopping List Actions"
+    When I click "Shopping List Actions"
     And I click "Edit"
-    And I should see following grid:
+    Then I should see following grid:
       | SKU | Qty Update All |
       | AA1 | 1 set          |
       | AA1 | 2 item         |
+    When I click on "Shopping List Line Item 2 Quantity"
+    And I fill "Shopping List Line Item Form" with:
+      | Quantity | 1   |
+      | Unit     | set |
+# Here is a little tricky "Shopping List Line Item Form" can only be the first form and will not work if you are
+# going to set values for the 2nd form when there are two more of forms.
     And I click on "Shopping List Line Item 1 Quantity"
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 3    |
       | Unit     | item |
+    And I click "Update All"
+    Then I should see following grid:
+      | SKU | Qty Update All |
+      | AA1 | 1 set          |
+      | AA1 | 3 item         |
+
+  Scenario: Merge Line items
+    When I click on "Shopping List Line Item 1 Quantity"
+    And I fill "Shopping List Line Item Form" with:
+      | Quantity | 2    |
+      | Unit     | item |
+    And I click on "Shopping List Line Item 2 Quantity"
+    And I type "4" in "Shopping List Line Item 2 Quantity Input"
     When I save changes for "Shopping List Line Item 1" row
     Then I should see following grid:
       | SKU | Qty Update All |
@@ -38,7 +57,6 @@ Feature: Shopping List Line Items
       | Shopping List Line Item | Edit:None |
     And I save form
     Then I should see "Customer User Role has been saved" flash message
-
     When I proceed as the Buyer
     And I reload the page
     And I click on "Shopping List Line Item 1 Quantity"
@@ -51,7 +69,6 @@ Feature: Shopping List Line Items
       | Shopping List Line Item | Edit:User (Own) | Delete:None |
     And I save form
     Then I should see "Customer User Role has been saved" flash message
-
     When I proceed as the Buyer
     And I reload the page
     Then I should see only following actions for row #1 on grid:

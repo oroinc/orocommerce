@@ -142,13 +142,17 @@ class FieldsProvider implements FieldsProviderInterface
     {
         $cacheKey = $this->getCacheKey($className, $numericOnly, $withRelations);
         if (!array_key_exists($cacheKey, $this->entityFields)) {
-            $options = EntityFieldProvider::OPTION_APPLY_EXCLUSIONS | EntityFieldProvider::OPTION_TRANSLATE;
-            $options |= $withRelations
-                ? EntityFieldProvider::OPTION_WITH_RELATIONS | EntityFieldProvider::OPTION_WITH_VIRTUAL_FIELDS
-                : 0;
+            $options = EntityFieldProvider::OPTION_APPLY_EXCLUSIONS
+                | EntityFieldProvider::OPTION_TRANSLATE
+                | EntityFieldProvider::OPTION_WITH_RELATIONS
+                | EntityFieldProvider::OPTION_WITH_VIRTUAL_FIELDS;
             $fields = $this->entityFieldProvider->getEntityFields($className, $options);
             $this->entityFields[$cacheKey] = [];
             foreach ($fields as $field) {
+                if (!$withRelations && !empty($field['relation_type'])) {
+                    continue;
+                }
+
                 $fieldName = $field['name'];
                 if ($this->isBlacklistedField($className, $fieldName)
                     || (
@@ -177,8 +181,9 @@ class FieldsProvider implements FieldsProviderInterface
             && empty($field['relation_type'])
             && empty(self::$supportedNumericTypes[$field['type']]);
         $isDisallowedRelation = $withRelations && $this->isUnsupportedRelation($field);
+        $isMultiEnum = $field['type'] === 'multiEnum';
 
-        return $isDisallowedNumeric || $isDisallowedRelation;
+        return $isDisallowedNumeric || $isDisallowedRelation || $isMultiEnum;
     }
 
     /**
