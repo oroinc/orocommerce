@@ -44,7 +44,14 @@ abstract class AbstractRuleEntityListener
     protected function recalculateByEntityFieldsUpdate(array $changeSet, Product $product = null, $relationId = null)
     {
         $fields = $this->getEntityFields();
-        $updatedFields = array_intersect($fields, array_keys($changeSet));
+        $updatedFields = array_intersect(
+            $fields,
+            array_merge(
+                array_keys($changeSet),
+                array_keys($changeSet['serialized_data'][0] ?? []),
+                array_keys($changeSet['serialized_data'][1] ?? [])
+            )
+        );
 
         if ($updatedFields) {
             $lexemes = $this->priceRuleLexemeTriggerHandler->findEntityLexemes(

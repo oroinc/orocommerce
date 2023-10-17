@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Expression\PriceListQueryConverterExtension;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\QueryDefinitionUtil;
+use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
 
 class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -60,7 +61,9 @@ class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
 
         $tableAliasByColumn = $this->extension->convert($source, $qb);
         $expectedAliases = [
-            'Oro\Bundle\PricingBundle\Entity\PriceList|42' => '_plt1'
+            QueryExpressionConverterInterface::MAPPING_TABLES => [
+                'Oro\Bundle\PricingBundle\Entity\PriceList|42' => '_plt1'
+            ]
         ];
         $this->assertEquals($expectedAliases, $tableAliasByColumn);
     }
@@ -109,8 +112,10 @@ class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
 
         $tableAliasByColumn = $this->extension->convert($source, $qb);
         $expectedAliases = [
-            'Oro\Bundle\PricingBundle\Entity\PriceList|42' => '_plt1',
-            'Oro\Bundle\PricingBundle\Entity\PriceList::prices|42' => '_plt2'
+            QueryExpressionConverterInterface::MAPPING_TABLES => [
+                'Oro\Bundle\PricingBundle\Entity\PriceList|42' => '_plt1',
+                'Oro\Bundle\PricingBundle\Entity\PriceList::prices|42' => '_plt2'
+            ]
         ];
         $this->assertEquals($expectedAliases, $tableAliasByColumn);
     }

@@ -4,8 +4,7 @@ Oro\Bundle\UserBundle\Entity\User:
         email: catalog.manager@example.com
         firstName: Catalog
         lastName: Manager
-        password: 'YID+K+gEO10zCop96ZgrncmC1W6dXg/8oPgS8aXivof8OVqccs3oJko7f5HsAbD2/rhcclzWgV7u2B1dAN8+nw=='
-        salt: s7wzde9c3lwgsw8448gg0ccss8swg4c
+        password: <userPassword(@CatalogManager->username)>
         organization: '@organization'
         organizations: ['@organization']
         owner: '@business_unit'

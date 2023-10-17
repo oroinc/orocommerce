@@ -11,21 +11,16 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class WebCatalogConfigChangeListener
 {
-    const WEB_CATALOG_CONFIGURATION_NAME = 'oro_web_catalog.web_catalog';
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
     public function __construct(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
     }
 
-    public function onConfigurationUpdate(ConfigUpdateEvent $event)
+    public function onConfigurationUpdate(ConfigUpdateEvent $event): void
     {
-        if (!$event->isChanged(self::WEB_CATALOG_CONFIGURATION_NAME)) {
+        if (!$event->isChanged('oro_web_catalog.web_catalog')) {
             return;
         }
 
@@ -33,12 +28,7 @@ class WebCatalogConfigChangeListener
         $this->dispatcher->dispatch($reindexationEvent, ReindexationRequestEvent::EVENT_NAME);
     }
 
-    /**
-     * @param ConfigUpdateEvent $event
-     *
-     * @return ReindexationRequestEvent
-     */
-    protected function getReindexationRequestEvent(ConfigUpdateEvent $event)
+    protected function getReindexationRequestEvent(ConfigUpdateEvent $event): ReindexationRequestEvent
     {
         return new ReindexationRequestEvent([], [], [], true, ['main']);
     }

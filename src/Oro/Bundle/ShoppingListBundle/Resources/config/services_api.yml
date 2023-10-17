@@ -250,3 +250,10 @@ services:
             - 'shoppingList'
         tags:
             - { name: oro.api.processor, action: get_config, extra: '!descriptions', requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: -250 }
+
+    oro_shopping_list.api.reset_line_item_checksum:
+        class: 'Oro\Bundle\ShoppingListBundle\Api\Processor\ResetLineItemChecksum'
+        arguments:
+            - '@oro_shopping_list.product_kit.checksum'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: update, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem }

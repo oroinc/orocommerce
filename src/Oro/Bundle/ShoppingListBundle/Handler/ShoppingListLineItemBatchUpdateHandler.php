@@ -73,10 +73,10 @@ class ShoppingListLineItemBatchUpdateHandler
                 $lineItem = $lineItems[$lineItemModel->getId()];
                 $lineItem->setQuantity($lineItemModel->getQuantity());
                 $lineItem->setUnit($productUnits[$lineItemModel->getUnitCode()]);
-
-                $this->shoppingListManager->addLineItem($lineItem, $shoppingList, false, true);
             }
         }
+
+        $this->shoppingListManager->batchUpdateLineItems($lineItems, $shoppingList, false, true);
 
         $errors = $this->getShoppingListErrors($shoppingList);
         if (!$errors) {

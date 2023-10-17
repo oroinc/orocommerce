@@ -8,8 +8,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     amanda:
         email: 'AmandaRCole@example.org'
         username: 'AmandaRCole@example.org'
-        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
-        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        password: <userPassword(@amanda->username)>
         firstName: 'Amanda'
         lastName: 'Cole'
         enabled: '1'
@@ -22,8 +21,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     nancy:
         email: 'NancyJSallee@example.org'
         username: 'NancyJSallee@example.org'
-        password: 'RQ0+FN3TZyBpB4W6FenR4kTugMt0LW6Gcq9hsMkC5hwkA+C9UQBvt2th0RXEbVMG3DcV7LXi+26CjK8L2EkLVQ=='
-        salt: '687ji8ylggkck4wg8gggkooo44gks8g'
+        password: <userPassword(@nancy->username)>
         firstName: 'Nancy'
         lastName: 'Sallee'
         enabled: '1'

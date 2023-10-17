@@ -40,11 +40,7 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnUpdateAfterIsNotChanged(): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects(self::once())
-            ->method('isChanged')
-            ->with('oro_redirect.enable_direct_url')
-            ->willReturn(false);
+        $event = new ConfigUpdateEvent([], 'global', 0);
 
         $this->provider->expects(self::never())
             ->method(self::anything());
@@ -56,15 +52,11 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnUpdateAfterTurnedOff(): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects(self::once())
-            ->method('isChanged')
-            ->with('oro_redirect.enable_direct_url')
-            ->willReturn(true);
-        $event->expects(self::once())
-            ->method('getNewValue')
-            ->with('oro_redirect.enable_direct_url')
-            ->willReturn(false);
+        $event = new ConfigUpdateEvent(
+            ['oro_redirect.enable_direct_url' => ['old' => true, 'new' => false]],
+            'global',
+            0
+        );
 
         $this->provider->expects(self::once())
             ->method('getEntityClasses')
@@ -79,15 +71,11 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnUpdateAfterTurnedOn(): void
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects(self::once())
-            ->method('isChanged')
-            ->with('oro_redirect.enable_direct_url')
-            ->willReturn(true);
-        $event->expects(self::once())
-            ->method('getNewValue')
-            ->with('oro_redirect.enable_direct_url')
-            ->willReturn(true);
+        $event = new ConfigUpdateEvent(
+            ['oro_redirect.enable_direct_url' => ['old' => false, 'new' => true]],
+            'global',
+            0
+        );
 
         $this->provider->expects(self::once())
             ->method('getEntityClasses')
