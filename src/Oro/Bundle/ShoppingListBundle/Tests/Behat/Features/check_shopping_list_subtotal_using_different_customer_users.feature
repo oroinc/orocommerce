@@ -75,9 +75,11 @@ Feature: Check shopping list subtotal using different customer users
     And I am on homepage
     And click "Add to Shopping List" for "Simple product 1" product
     And click "Add to Shopping List" for "Simple product 2" product
+    And I scroll to top
+    And I should see "Product has been added to" flash message and I close it
 
     When I open shopping list widget
-    Then I should see "2 Items | $90.00"
+    And I should see "2 Items | $90.00"
 
     When I click "Shopping List" on shopping list widget
     Then should see "Subtotal $90.00"

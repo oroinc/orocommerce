@@ -118,7 +118,7 @@
     }
 }
 
-@include breakpoint('desktop') {
+@include breakpoint('desktop-small') {
     .responsive-shopping-list-grid-edit {
         .sub-row {
             .grid-body-cell-quantity {

@@ -109,7 +109,7 @@
     }
 }
 
-@include breakpoint('desktop') {
+@include breakpoint('desktop-small') {
     .responsive-shopping-list-grid {
         .grid-body-cell-inventoryStatus {
             white-space: nowrap;

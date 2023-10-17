@@ -1,7 +1,7 @@
 /* @theme: default; */
 // @productTheme: list-theme;
 
-@include breakpoint('desktop') {
+@include breakpoint('desktop-small') {
     .list-theme.product-view {
         .line-item-form {
             form {

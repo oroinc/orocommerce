@@ -83,7 +83,7 @@
     }
 }
 
-@include breakpoint('desktop') {
+@include breakpoint('desktop-small') {
     .product-view__specification {
         &--colored {
             position: $product-view-specification-colored-position;

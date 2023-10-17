@@ -3,7 +3,7 @@
 
 @use 'sass:math';
 
-@include breakpoint('desktop') {
+@include breakpoint('desktop-small') {
     .two-columns-theme.product-view {
         .product-price {
             &__hint {
