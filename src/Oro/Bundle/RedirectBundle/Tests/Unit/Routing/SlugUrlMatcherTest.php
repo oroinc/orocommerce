@@ -9,7 +9,6 @@ use Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -37,10 +36,11 @@ class SlugUrlMatcherTest extends \PHPUnit\Framework\TestCase
     /** @var MaintenanceModeState|\PHPUnit\Framework\MockObject\MockObject */
     private $maintenanceModeState;
 
+    /** @var MaintenanceRestrictionsChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $maintenanceRestrictionsChecker;
+
     /** @var SlugUrlMatcher */
     private $matcher;
-
-    private MaintenanceRestrictionsChecker|MockObject $maintenanceRestrictionsChecker;
 
     protected function setUp(): void
     {

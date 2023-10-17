@@ -31,7 +31,6 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     private SlugEntityFinder $slugEntityFinder;
     private MaintenanceModeState $maintenanceModeState;
     private MaintenanceRestrictionsChecker $maintenanceRestrictionsChecker;
-
     private RequestMatcherInterface|UrlMatcherInterface $baseMatcher;
     private array $matchSlugsFirst = [];
     private ?RequestContext $context = null;
@@ -65,7 +64,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     /**
      * {@inheritDoc}
      */
-    public function getContext()
+    public function getContext(): RequestContext
     {
         return $this->context ?? $this->baseMatcher->getContext();
     }
@@ -73,7 +72,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     /**
      * {@inheritDoc}
      */
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
         $this->context = $context;
         if ($this->baseMatcher instanceof RequestContextAwareInterface) {
@@ -84,7 +83,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     /**
      * {@inheritDoc}
      */
-    public function matchRequest(Request $request)
+    public function matchRequest(Request $request): array
     {
         $requestContext = new RequestContext();
         $requestContext->fromRequest($request);
@@ -109,7 +108,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     /**
      * {@inheritDoc}
      */
-    public function match(string $pathinfo)
+    public function match(string $pathinfo): array
     {
         $matchers = [
             self::MATCH_SYSTEM => function () use ($pathinfo) {
@@ -126,11 +125,10 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
         return $this->resolveAttributes($matchers, $pathinfo);
     }
 
-    private function getMaintenanceMatcher($pathinfo): callable
+    private function getMaintenanceMatcher(string $pathinfo): callable
     {
-        $isAllowed = $this->maintenanceRestrictionsChecker->isAllowed();
-        return function () use ($isAllowed, $pathinfo) {
-            if ($isAllowed) {
+        return function () use ($pathinfo) {
+            if ($this->maintenanceRestrictionsChecker->isAllowed()) {
                 try {
                     return $this->baseMatcher->match($pathinfo);
                 } catch (ResourceNotFoundException $e) {
