@@ -8,6 +8,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    public const ROOT_NODE = 'oro_web_catalog';
+
+    public const NAVIGATION_ROOT = 'navigation_root';
+
     /**
      * {@inheritdoc}
      */

@@ -7,10 +7,12 @@ use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListActualizeScheduleEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListCreateEvent;
 use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -141,9 +143,13 @@ class CombinedPriceListProvider
         $repo = $this->registry->getRepository(PriceList::class);
         $sequenceMembers = [];
 
+        $containsSchedules = false;
         if (count($collectionInfo)) {
             $priceLists = [];
             foreach ($repo->findBy(['id' => array_column($collectionInfo, 'p')]) as $priceList) {
+                if ($priceList->isContainSchedule()) {
+                    $containsSchedules = true;
+                }
                 $priceLists[$priceList->getId()] = $priceList;
             }
 
@@ -160,7 +166,21 @@ class CombinedPriceListProvider
             }, $collectionInfo);
         }
 
-        return $this->getCombinedPriceList($sequenceMembers);
+        $cpl = $this->getCombinedPriceList($sequenceMembers);
+
+        // Actualize schedule for CPL which contains PLs with schedule and still has no activation rules.
+        // This method is called for Full chain CPLs only so it's safe to actualize activation rules here.
+        // Activation rules should be present before assignment, so entities will be associated with correct active CPL.
+        if ($containsSchedules) {
+            if (!$this->registry->getRepository(CombinedPriceListActivationRule::class)->hasActivationRules($cpl)) {
+                $this->eventDispatcher->dispatch(
+                    new CombinedPriceListActualizeScheduleEvent($cpl),
+                    CombinedPriceListActualizeScheduleEvent::NAME
+                );
+            }
+        }
+
+        return $cpl;
     }
 
     /**

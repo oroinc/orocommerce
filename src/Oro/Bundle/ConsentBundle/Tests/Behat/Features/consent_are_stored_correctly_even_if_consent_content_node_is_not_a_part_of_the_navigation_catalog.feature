@@ -109,7 +109,7 @@ Feature: Consent are stored correctly even if consent content node is not a part
     And go to Marketing/ Web Catalogs
     Then I click on Store and Process in grid
     And I click "Edit Content Tree"
-    Then I click "Foo Node"
+    Then I click on "Foo Node"
     And I click on "First Content Variant Expand Button"
     And I fill "Content Node Form" with:
       | Landing Page | Consent Landing |

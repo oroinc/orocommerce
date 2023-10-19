@@ -1,0 +1,28 @@
+include:
+    - web_catalog.yml
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    consent_name_1:
+        string: 'Consent 1'
+    menu_item:
+        string: 'Menu item'
+
+Oro\Bundle\ConsentBundle\Entity\Consent:
+    consent_entity_mandatory_1:
+        __calls:
+            - addName: ['@consent_name_1']
+            - setContentNode: ['@nodeDefaultWebCatalog']
+        mandatory: true
+        declinedNotification: true
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate:
+    menuUpdate1:
+        __calls:
+            - addTitle: ['@menu_item']
+            - setContentNode: ['@nodeProducts']
+        uri: 'test-cms-page'
+        menu: 'commerce_main_menu'
+        scope: '@default_scope'
+        custom: true

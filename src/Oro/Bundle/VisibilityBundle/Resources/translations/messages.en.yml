@@ -4,7 +4,7 @@ oro.visibility:
         label: Visibility to All
 
     customercategoryvisibility:
-        entity_label: Visibility to Customers
+        entity_label: Visibility to Customer Categories
         entity_plural_label: Customer Category Visibilities
         entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
@@ -19,7 +19,7 @@ oro.visibility:
             visible: Visible
 
     customergroupcategoryvisibility:
-        entity_label: Visibility to Customer Groups
+        entity_label: Visibility to Customer Group Categories
         entity_plural_label: Customer Group Category Visibilities
         entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
@@ -33,7 +33,7 @@ oro.visibility:
             visible: Visible
 
     categoryvisibility:
-        entity_label: Visibility to All
+        entity_label: Category Visibility to All
         entity_plural_label: Category Visibilities
         entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
@@ -47,7 +47,7 @@ oro.visibility:
             hidden: Hidden
 
     customerproductvisibility:
-        entity_label: Visibility to Customers
+        entity_label: Visibility to Customer Products
         entity_plural_label: Customer Product Visibilities
         entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
@@ -62,7 +62,7 @@ oro.visibility:
             visible: Visible
 
     customergroupproductvisibility:
-        entity_label: Visibility to Customer Groups
+        entity_label: Visibility to Customer Group Products
         entity_plural_label: Customer Group Product Visibilities
         entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
@@ -76,7 +76,7 @@ oro.visibility:
             visible: Visible
 
     productvisibility:
-        entity_label: Visibility to All
+        entity_label: Product Visibility to All
         entity_plural_label: Product Visibilities
         entity_grid_all_view_label: All %entity_plural_label%
         id.label: ID
