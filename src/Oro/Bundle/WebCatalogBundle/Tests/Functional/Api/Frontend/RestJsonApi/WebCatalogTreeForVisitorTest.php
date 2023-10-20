@@ -9,7 +9,7 @@ class WebCatalogTreeForVisitorTest extends WebCatalogTreeTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->enableVisitor();
+        $this->initializeVisitor();
         $this->loadFixtures([
             LoadCustomerData::class,
             '@OroWebCatalogBundle/Tests/Functional/Api/Frontend/DataFixtures/content_node.yml'

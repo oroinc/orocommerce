@@ -10,7 +10,7 @@ use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-class ProductKitItemsTest extends FrontendRestJsonApiTestCase
+class ProductKitItemTest extends FrontendRestJsonApiTestCase
 {
     protected function setUp(): void
     {
@@ -29,7 +29,7 @@ class ProductKitItemsTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
-    public function testGetProductKitItems(): void
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'productkititems'],
