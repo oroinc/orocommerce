@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadPaymentTermData;
@@ -35,7 +33,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $this->getEntityManager()->flush();
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $shipUntil = (new \DateTime('now + 10 day'))->format('Y-m-d');
         $data = $this->getRequestData('create_order.yml');
@@ -52,7 +50,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
     }
 
-    public function testCreateWithRequiredDataOnly()
+    public function testCreateWithRequiredDataOnly(): void
     {
         $response = $this->post(
             ['entity' => 'orders'],
@@ -63,7 +61,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
     }
 
-    public function testCreateWithCurrency()
+    public function testCreateWithCurrency(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         $data['data']['attributes']['currency'] = 'EUR';
@@ -77,11 +75,13 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
     }
 
-    public function testCreateWithoutProductRelationshipButWithProductSku()
+    public function testCreateWithoutProductRelationshipButWithProductSku(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         $data['included'][0]['attributes']['productSku'] = '@product1->sku';
+        $data['included'][3]['attributes']['productSku'] = '@product-kit-1->sku';
         unset($data['included'][0]['relationships']['product']);
+        unset($data['included'][3]['relationships']['product']);
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -92,7 +92,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
     }
 
-    public function testCreateWithCustomerUserAddresesAsOrderAddresses()
+    public function testCreateWithCustomerUserAddressesAsOrderAddresses(): void
     {
         $response = $this->post(
             ['entity' => 'orders'],
@@ -103,7 +103,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
     }
 
-    public function testCreateWithFilledBillingAddressData()
+    public function testCreateWithFilledBillingAddressData(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         $data['included'][1] = $this->getRequestData('order_address_data.yml');
@@ -119,7 +119,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
     }
 
-    public function testTryToCreateEmpty()
+    public function testTryToCreateEmpty(): void
     {
         $data = [
             'data' => [
@@ -139,12 +139,12 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
                 [
                     'title'  => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/relationships/billingAddress/data']
+                    'source' => ['pointer' => '/data/relationships/billingAddress/data'],
                 ],
                 [
                     'title'  => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/relationships/shippingAddress/data']
+                    'source' => ['pointer' => '/data/relationships/shippingAddress/data'],
                 ],
                 [
                     'title'  => 'count constraint',
@@ -156,10 +156,11 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWithoutProduct()
+    public function testTryToCreateWithoutProduct(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         unset($data['included'][0]['relationships']['product']);
+        unset($data['included'][3]['relationships']['product']);
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -168,17 +169,24 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title'  => 'line item product constraint',
-                'detail' => 'Please choose Product.',
-                'source' => ['pointer' => '/included/0/relationships/product/data']
+                [
+                    'title'  => 'line item product constraint',
+                    'detail' => 'Please choose Product.',
+                    'source' => ['pointer' => '/included/0/relationships/product/data']
+                ],
+                [
+                    'title'  => 'line item product constraint',
+                    'detail' => 'Please choose Product.',
+                    'source' => ['pointer' => '/included/3/relationships/product/data']
+                ],
             ],
             $response
         );
     }
 
-    public function testTryToCreateWithFreeFormProduct()
+    public function testTryToCreateWithFreeFormProduct(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         $data['included'][0]['attributes']['freeFormProduct'] = 'test';
@@ -201,10 +209,11 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWithoutProductUnit()
+    public function testTryToCreateWithoutProductUnit(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         unset($data['included'][0]['relationships']['productUnit']);
+        unset($data['included'][3]['relationships']['productUnit']);
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -213,21 +222,29 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title'  => 'not blank constraint',
-                'detail' => 'The product unit does not exist for the product.',
-                'source' => ['pointer' => '/included/0/relationships/productUnit/data']
+                [
+                    'title'  => 'not blank constraint',
+                    'detail' => 'The product unit does not exist for the product.',
+                    'source' => ['pointer' => '/included/0/relationships/productUnit/data']
+                ],
+                [
+                    'title'  => 'not blank constraint',
+                    'detail' => 'The product unit does not exist for the product.',
+                    'source' => ['pointer' => '/included/3/relationships/productUnit/data']
+                ],
             ],
             $response
         );
     }
 
-    public function testTryToCreateWithWrongProductUnit()
+    public function testTryToCreateWithWrongProductUnit(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         $data['included'][0]['relationships']['product']['data']['id'] = '<toString(@product2->id)>';
         $data['included'][0]['relationships']['productUnit']['data']['id'] = '<toString(@set->code)>';
+        $data['included'][3]['relationships']['productUnit']['data']['id'] = '<toString(@set->code)>';
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -236,17 +253,24 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title'  => 'product unit exists constraint',
-                'detail' => 'The product unit does not exist for the product.',
-                'source' => ['pointer' => '/included/0/relationships/productUnit/data']
+                [
+                    'title'  => 'product unit exists constraint',
+                    'detail' => 'The product unit does not exist for the product.',
+                    'source' => ['pointer' => '/included/0/relationships/productUnit/data'],
+                ],
+                [
+                    'title'  => 'product unit exists constraint',
+                    'detail' => 'The product unit does not exist for the product.',
+                    'source' => ['pointer' => '/included/3/relationships/productUnit/data'],
+                ],
             ],
             $response
         );
     }
 
-    public function testTryToCreateWithNotSellProductProductUnit()
+    public function testTryToCreateWithNotSellProductProductUnit(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         $data['included'][0]['relationships']['product']['data']['id'] = '<toString(@product3->id)>';
@@ -269,11 +293,12 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWithFloatQuantityWhenPrecisionIsZero()
+    public function testTryToCreateWithFloatQuantityWhenPrecisionIsZero(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         $data['included'][0]['attributes']['quantity'] = 123.45;
         $data['included'][0]['relationships']['product']['data']['id'] = '<toString(@product2->id)>';
+        $data['included'][3]['attributes']['quantity'] = 123.45;
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -282,22 +307,31 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title'  => 'quantity unit precision constraint',
-                'detail' => 'The precision for the unit "item" is not valid.',
-                'source' => ['pointer' => '/included/0/attributes/quantity']
+                [
+                    'title'  => 'quantity unit precision constraint',
+                    'detail' => 'The precision for the unit "item" is not valid.',
+                    'source' => ['pointer' => '/included/0/attributes/quantity'],
+                ],
+                [
+                    'title'  => 'quantity unit precision constraint',
+                    'detail' => 'The precision for the unit "milliliter" is not valid.',
+                    'source' => ['pointer' => '/included/3/attributes/quantity'],
+                ],
             ],
             $response
         );
     }
 
-    public function testTryToCreateWithoutQuantity()
+    public function testTryToCreateWithoutQuantity(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
-        unset($data['included'][0]['attributes']['quantity']);
-        if (!$data['included'][0]['attributes']) {
-            unset($data['included'][0]['attributes']);
+        foreach ([0, 3] as $key) {
+            unset($data['included'][$key]['attributes']['quantity']);
+            if (!$data['included'][$key]['attributes']) {
+                unset($data['included'][$key]['attributes']);
+            }
         }
 
         $response = $this->post(
@@ -307,20 +341,29 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title'  => 'not blank constraint',
-                'detail' => 'This value should not be blank.',
-                'source' => ['pointer' => '/included/0/attributes/quantity']
+                [
+                    'title'  => 'not blank constraint',
+                    'detail' => 'This value should not be blank.',
+                    'source' => ['pointer' => '/included/0/attributes/quantity'],
+                ],
+                [
+                    'title'  => 'not blank constraint',
+                    'detail' => 'This value should not be blank.',
+                    'source' => ['pointer' => '/included/3/attributes/quantity'],
+                ],
             ],
             $response
         );
     }
 
-    public function testTryToCreateWithNegativeQuantity()
+    public function testTryToCreateWithNegativeQuantity(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         $data['included'][0]['attributes']['quantity'] = -1;
+        $data['included'][3]['attributes']['quantity'] = -1;
+        $data['included'][4]['attributes']['quantity'] = -1;
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -329,17 +372,29 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title'  => 'greater than constraint',
-                'detail' => 'This value should be greater than 0.',
-                'source' => ['pointer' => '/included/0/attributes/quantity']
+                [
+                    'title'  => 'greater than constraint',
+                    'detail' => 'This value should be greater than 0.',
+                    'source' => ['pointer' => '/included/0/attributes/quantity'],
+                ],
+                [
+                    'title'  => 'greater than constraint',
+                    'detail' => 'This value should be greater than 0.',
+                    'source' => ['pointer' => '/included/3/attributes/quantity'],
+                ],
+                [
+                    'title'  => 'greater than constraint',
+                    'detail' => 'The quantity should be greater than 0',
+                    'source' => ['pointer' => '/included/4/attributes/quantity'],
+                ],
             ],
             $response
         );
     }
 
-    public function testTryToCreateWhenPaymentMethodWasNotFound()
+    public function testTryToCreateWhenPaymentMethodWasNotFound(): void
     {
         $this->getReference('payment_term_rule')->setEnabled(false);
         $this->getEntityManager()->flush();
@@ -360,10 +415,11 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWithSubmittedPriceThatNotEqualsToCalculatedPrice()
+    public function testTryToCreateWithSubmittedPriceThatNotEqualsToCalculatedPrice(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         $data['included'][0]['attributes']['price'] = 9999;
+        $data['included'][3]['attributes']['price'] = 9999;
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -372,20 +428,28 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title'  => 'price match constraint',
-                'detail' => 'The specified price must be equal to 1.01.',
-                'source' => ['pointer' => '/included/0/attributes/price']
+                [
+                    'title'  => 'price match constraint',
+                    'detail' => 'The specified price must be equal to 1.01.',
+                    'source' => ['pointer' => '/included/0/attributes/price'],
+                ],
+                [
+                    'title'  => 'price match constraint',
+                    'detail' => 'The specified price must be equal to 11.59.',
+                    'source' => ['pointer' => '/included/3/attributes/price'],
+                ],
             ],
             $response
         );
     }
 
-    public function testCreateWithSubmittedNullPrice()
+    public function testCreateWithSubmittedNullPrice(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         $data['included'][0]['attributes']['price'] = null;
+        $data['included'][3]['attributes']['price'] = null;
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -395,20 +459,26 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $expectedData = $data;
         $expectedData['data']['id'] = 'new';
         $expectedData['data']['relationships']['lineItems']['data'][0]['id'] = 'new';
+        $expectedData['data']['relationships']['lineItems']['data'][1]['id'] = 'new';
         $expectedData['data']['relationships']['billingAddress']['data']['id'] = 'new';
         $expectedData['data']['relationships']['shippingAddress']['data']['id'] = 'new';
         $expectedData['included'][0]['id'] = 'new';
         $expectedData['included'][0]['attributes']['price'] = '1.0100';
+        $expectedData['included'][3]['attributes']['price'] = '11.5900';
         $expectedData['included'][1]['id'] = 'new';
         $expectedData['included'][2]['id'] = 'new';
+        $expectedData['included'][3]['id'] = 'new';
+        $expectedData['included'][3]['relationships']['kitItemLineItems']['data'][0]['id'] = 'new';
+        $expectedData['included'][4]['id'] = 'new';
         $expectedData = $this->updateResponseContent($expectedData, $response);
         $this->assertResponseContains($expectedData, $response);
     }
 
-    public function testTryToCreateWithSubmittedCurrencyThatNotEqualsToCalculatedCurrency()
+    public function testTryToCreateWithSubmittedCurrencyThatNotEqualsToCalculatedCurrency(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         $data['included'][0]['attributes']['currency'] = 'EUR';
+        $data['included'][3]['attributes']['currency'] = 'EUR';
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -417,20 +487,28 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationError(
+        $this->assertResponseValidationErrors(
             [
-                'title'  => 'currency match constraint',
-                'detail' => 'The specified currency must be equal to "USD".',
-                'source' => ['pointer' => '/included/0/attributes/currency']
+                [
+                    'title'  => 'currency match constraint',
+                    'detail' => 'The specified currency must be equal to "USD".',
+                    'source' => ['pointer' => '/included/0/attributes/currency'],
+                ],
+                [
+                    'title'  => 'currency match constraint',
+                    'detail' => 'The specified currency must be equal to "USD".',
+                    'source' => ['pointer' => '/included/3/attributes/currency'],
+                ],
             ],
             $response
         );
     }
 
-    public function testCreateWithSubmittedNullCurrency()
+    public function testCreateWithSubmittedNullCurrency(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         $data['included'][0]['attributes']['currency'] = null;
+        $data['included'][3]['attributes']['currency'] = null;
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -440,17 +518,22 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $expectedData = $data;
         $expectedData['data']['id'] = 'new';
         $expectedData['data']['relationships']['lineItems']['data'][0]['id'] = 'new';
+        $expectedData['data']['relationships']['lineItems']['data'][1]['id'] = 'new';
         $expectedData['data']['relationships']['billingAddress']['data']['id'] = 'new';
         $expectedData['data']['relationships']['shippingAddress']['data']['id'] = 'new';
         $expectedData['included'][0]['id'] = 'new';
         $expectedData['included'][0]['attributes']['currency'] = 'USD';
+        $expectedData['included'][3]['attributes']['currency'] = 'USD';
         $expectedData['included'][1]['id'] = 'new';
         $expectedData['included'][2]['id'] = 'new';
+        $expectedData['included'][3]['id'] = 'new';
+        $expectedData['included'][3]['relationships']['kitItemLineItems']['data'][0]['id'] = 'new';
+        $expectedData['included'][4]['id'] = 'new';
         $expectedData = $this->updateResponseContent($expectedData, $response);
         $this->assertResponseContains($expectedData, $response);
     }
 
-    public function testTryToCreateWithProductWithoutPrice()
+    public function testTryToCreateWithProductWithoutPrice(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
         $data['included'][0]['relationships']['product']['data']['id'] = '<toString(@product3->id)>';
@@ -467,419 +550,6 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
                 'title'  => 'price not found constraint',
                 'detail' => 'No matching price found.',
                 'source' => ['pointer' => '/included/0/attributes/price']
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWithExistingBillingAddress()
-    {
-        $data = $this->getRequestData('create_order_min.yml');
-        $data['data']['relationships']['billingAddress']['data']['id'] = '<toString(@order1_billing_address->id)>';
-        unset($data['included'][1]);
-        $data['included'] = array_values($data['included']);
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'new address constraint',
-                'detail' => 'An existing address cannot be used.',
-                'source' => ['pointer' => '/data/relationships/billingAddress/data']
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWithExistingShippingAddress()
-    {
-        $data = $this->getRequestData('create_order_min.yml');
-        $data['data']['relationships']['shippingAddress']['data']['id'] = '<toString(@order1_shipping_address->id)>';
-        unset($data['included'][2]);
-        $data['included'] = array_values($data['included']);
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'new address constraint',
-                'detail' => 'An existing address cannot be used.',
-                'source' => ['pointer' => '/data/relationships/shippingAddress/data']
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWhenBillingAddressHasBothCustomerAndCustomerUserAddress()
-    {
-        $data = $this->getRequestData('create_order_min.yml');
-        $data['included'][1]['relationships']['customerUserAddress']['data'] = [
-            'type' => 'customeruseraddresses',
-            'id'   => '<toString(@customer_user_address->id)>'
-        ];
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseContainsValidationError(
-            [
-                'title'  => 'order address constraint',
-                'detail' => 'Only order address fields, a customer user address or a customer address can be set.',
-                'source' => ['pointer' => '/included/1']
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWhenShippingAddressHasBothCustomerAndCustomerUserAddress()
-    {
-        $data = $this->getRequestData('create_order_min.yml');
-        $data['included'][2]['relationships']['customerUserAddress']['data'] = [
-            'type' => 'customeruseraddresses',
-            'id'   => '<toString(@customer_user_address->id)>'
-        ];
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseContainsValidationError(
-            [
-                'title'  => 'order address constraint',
-                'detail' => 'Only order address fields, a customer user address or a customer address can be set.',
-                'source' => ['pointer' => '/included/2']
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWhenBillingAddressHasCustomerAddressAndOtherAddressFields()
-    {
-        $data = $this->getRequestData('create_order_min.yml');
-        $data['included'][1]['attributes']['label'] = 'Address 1';
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseContainsValidationError(
-            [
-                'title'  => 'order address constraint',
-                'detail' => 'Only order address fields, a customer user address or a customer address can be set.',
-                'source' => ['pointer' => '/included/1']
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWhenShippingAddressHasCustomerAddressAndOtherAddressFields()
-    {
-        $data = $this->getRequestData('create_order_min.yml');
-        $data['included'][2]['attributes']['label'] = 'Address 1';
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseContainsValidationError(
-            [
-                'title'  => 'order address constraint',
-                'detail' => 'Only order address fields, a customer user address or a customer address can be set.',
-                'source' => ['pointer' => '/included/2']
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWhenBillingAddressHasCustomerUserAddressAndOtherAddressFields()
-    {
-        $data = $this->getRequestData('create_order_min.yml');
-        $data['included'][1]['attributes']['label'] = 'Address 1';
-        unset($data['included'][1]['relationships']['customerAddress']);
-        $data['included'][1]['relationships']['customerUserAddress']['data'] = [
-            'type' => 'customeruseraddresses',
-            'id'   => '<toString(@customer_user_address->id)>'
-        ];
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseContainsValidationError(
-            [
-                'title'  => 'order address constraint',
-                'detail' => 'Only order address fields, a customer user address or a customer address can be set.',
-                'source' => ['pointer' => '/included/1']
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWhenShippingAddressHasCustomerUserAddressAndOtherAddressFields()
-    {
-        $data = $this->getRequestData('create_order_min.yml');
-        $data['included'][2]['attributes']['label'] = 'Address 1';
-        unset($data['included'][2]['relationships']['customerAddress']);
-        $data['included'][2]['relationships']['customerUserAddress']['data'] = [
-            'type' => 'customeruseraddresses',
-            'id'   => '<toString(@customer_user_address->id)>'
-        ];
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseContainsValidationError(
-            [
-                'title'  => 'order address constraint',
-                'detail' => 'Only order address fields, a customer user address or a customer address can be set.',
-                'source' => ['pointer' => '/included/2']
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWithEmptyAddresses()
-    {
-        $data = $this->getRequestData('create_order_min.yml');
-        $data['data']['relationships']['billingAddress']['data'] = null;
-        $data['data']['relationships']['shippingAddress']['data'] = null;
-        unset($data['included'][1], $data['included'][2]);
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseValidationErrors(
-            [
-                [
-                    'title'  => 'not blank constraint',
-                    'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/relationships/billingAddress/data']
-                ],
-                [
-                    'title'  => 'not blank constraint',
-                    'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/relationships/shippingAddress/data']
-                ]
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWithEmptyAddressesData()
-    {
-        $data = $this->getRequestData('create_order_min.yml');
-        unset($data['included'][1]['relationships'], $data['included'][2]['relationships']);
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseValidationErrors(
-            $this->getResponseData('empty_addresses_errors.yml'),
-            $response
-        );
-    }
-
-    public function testTryToCreateWithNotAccessibleCustomerAddressAsOrderAddresses()
-    {
-        $data = $this->getRequestData('create_order_min.yml');
-        $data['included'][1]['relationships']['customerAddress']['data']['id'] =
-            (string)$this->getReference('another_customer_address')->getId();
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseValidationErrors(
-            [
-                [
-                    'title'  => 'customer or user address granted constraint',
-                    'detail' => 'It is not allowed to use this address for the order.',
-                    'source' => ['pointer' => '/included/1/relationships/customerAddress/data']
-                ],
-                [
-                    'title'  => 'access granted constraint',
-                    'detail' => 'The "VIEW" permission is denied for the related resource.',
-                    'source' => ['pointer' => '/included/1/relationships/customerAddress/data']
-                ]
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWithNotAccessibleCustomerUserAddressAsOrderAddresses()
-    {
-        $data = $this->getRequestData('create_order_customer_user_addresses.yml');
-        $data['included'][1]['relationships']['customerUserAddress']['data']['id'] =
-            (string)$this->getReference('another_customer_user_address')->getId();
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseValidationErrors(
-            [
-                [
-                    'title'  => 'customer or user address granted constraint',
-                    'detail' => 'It is not allowed to use this address for the order.',
-                    'source' => ['pointer' => '/included/1/relationships/customerUserAddress/data']
-                ],
-                [
-                    'title'  => 'access granted constraint',
-                    'detail' => 'The "VIEW" permission is denied for the related resource.',
-                    'source' => ['pointer' => '/included/1/relationships/customerUserAddress/data']
-                ]
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWithNotExistingCustomerAddressAsOrderAddresses()
-    {
-        $data = $this->getRequestData('create_order_min.yml');
-        $data['included'][1]['relationships']['customerAddress']['data']['id'] = '10000000';
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseContainsValidationError(
-            [
-                'title'  => 'form constraint',
-                'detail' => 'The entity does not exist.',
-                'source' => ['pointer' => '/included/1/relationships/customerAddress/data']
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWithNotExistingCustomerUserAddressAsOrderAddresses()
-    {
-        $data = $this->getRequestData('create_order_customer_user_addresses.yml');
-        $data['included'][1]['relationships']['customerUserAddress']['data']['id'] = '1000000';
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseContainsValidationError(
-            [
-                'title'  => 'form constraint',
-                'detail' => 'The entity does not exist.',
-                'source' => ['pointer' => '/included/1/relationships/customerUserAddress/data']
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWithCountryIncompatibleWithExistingRegionInBillingAddress()
-    {
-        $countryId = $this->getEntityManager()->find(Country::class, 'MX')->getIso2Code();
-        $data = $this->getRequestData('create_order_min.yml');
-        $addressData = $this->getRequestData('order_address_data.yml');
-        $addressData['relationships']['country']['data']['id'] = $countryId;
-        $data['included'][1] = $addressData;
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseValidationErrors(
-            [
-                [
-                    'title'  => 'valid region constraint',
-                    'detail' => 'Region California does not belong to country Mexico',
-                    'source' => ['pointer' => '/data/relationships/billingAddress/data']
-                ],
-                [
-                    'title'  => 'valid region constraint',
-                    'detail' => 'Region California does not belong to country Mexico',
-                    'source' => ['pointer' => '/included/1']
-                ],
-            ],
-            $response
-        );
-    }
-
-    public function testTryToCreateWithRegionIncompatibleWithExistingCountryInBillingAddress()
-    {
-        $regionId = $this->getEntityManager()->find(Region::class, 'MX-GUA')->getCombinedCode();
-        $data = $this->getRequestData('create_order_min.yml');
-        $addressData = $this->getRequestData('order_address_data.yml');
-        $addressData['relationships']['region']['data']['id'] = $regionId;
-        $data['included'][1] = $addressData;
-
-        $response = $this->post(
-            ['entity' => 'orders'],
-            $data,
-            [],
-            false
-        );
-
-        $this->assertResponseValidationErrors(
-            [
-                [
-                    'title'  => 'valid region constraint',
-                    'detail' => 'Region Guanajuato does not belong to country United States',
-                    'source' => ['pointer' => '/data/relationships/billingAddress/data']
-                ],
-                [
-                    'title'  => 'valid region constraint',
-                    'detail' => 'Region Guanajuato does not belong to country United States',
-                    'source' => ['pointer' => '/included/1']
-                ],
             ],
             $response
         );

@@ -52,6 +52,31 @@ data:
                 data:
                     type: customers
                     id: '<toString(@simple_order->customer->id)>'
+    -
+        type: orders
+        attributes:
+            identifier: 'new_order 3'
+            poNumber: '2345677'
+            shipUntil: '2017-04-12'
+            currency: 'USD'
+        relationships:
+            lineItems:
+                data:
+                    -
+                        type: orderlineitems
+                        id: product_kit_line_item_1
+            organization:
+                data:
+                    type: organizations
+                    id: '<toString(@simple_order->organization->id)>'
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@simple_order->customerUser->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@simple_order->customer->id)>'
 included:
     -
         type: orderlineitems
@@ -101,3 +126,54 @@ included:
                 data:
                     type: productunits
                     id: '<toString(@product_unit.bottle->code)>'
+    -
+        type: orderlineitems
+        id: product_kit_line_item_1
+        attributes:
+            quantity: 6
+            value: 200
+            currency: 'USD'
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: '<toString(@simple_order3->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-kit-1->id)>'
+            kitItemLineItems:
+                data:
+                    -
+                        type: orderproductkititemlineitems
+                        id: kititemlineitem1
+    -
+        type: orderproductkititemlineitems
+        id: kititemlineitem1
+        attributes:
+            productSku: product-1
+            productName: product-1.names.default
+            quantity: 1
+            sortOrder: 1
+            productUnitCode: milliliter
+            value: '10.5900'
+            currency: USD
+            kitItemLabel: 'PKSKU1 - Unit of Quantity Taken from Product Kit'
+            optional: false
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-1-kit-item-0->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'

@@ -16,7 +16,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     use ProductPriceReference;
 
     protected string $pricesByCustomerActionUrl = 'oro_pricing_price_by_customer';
-    protected string $matchingPriceActionUrl = 'oro_pricing_matching_price';
 
     protected function setUp(): void
     {

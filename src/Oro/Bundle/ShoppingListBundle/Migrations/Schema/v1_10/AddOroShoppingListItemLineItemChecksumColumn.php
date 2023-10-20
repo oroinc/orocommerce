@@ -8,10 +8,9 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 
 /**
- * Adds "checksum" column for {@see ProductKitItemLineItem::$checksum} field.
+ * Adds "checksum" column for {@see LineItem::$checksum} field.
  * Adds "checksum" column to unique index "oro_shopping_list_line_item_uidx".
  */
 class AddOroShoppingListItemLineItemChecksumColumn implements Migration

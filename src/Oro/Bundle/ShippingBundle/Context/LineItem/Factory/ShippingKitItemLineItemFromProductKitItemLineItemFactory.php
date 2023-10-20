@@ -17,13 +17,12 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactory implements
 {
     public function create(ProductKitItemLineItemPriceAwareInterface $productKitItemLineItem): ShippingKitItemLineItem
     {
-        return (new ShippingKitItemLineItem(
-            $productKitItemLineItem->getProductUnit(),
-            $productKitItemLineItem->getQuantity(),
-            $productKitItemLineItem
-        ))
+        return (new ShippingKitItemLineItem($productKitItemLineItem))
             ->setProduct($productKitItemLineItem->getProduct())
             ->setProductSku($productKitItemLineItem->getProductSku())
+            ->setProductUnit($productKitItemLineItem->getProductUnit())
+            ->setProductUnitCode($productKitItemLineItem->getProductUnitCode())
+            ->setQuantity($productKitItemLineItem->getQuantity())
             ->setPrice($productKitItemLineItem->getPrice())
             ->setKitItem($productKitItemLineItem->getKitItem())
             ->setSortOrder($productKitItemLineItem->getSortOrder());

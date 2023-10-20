@@ -136,7 +136,7 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
                             'dimensionsUnit' => 'in',
                             'weightUnit' => 'kilo',
                             'weightValue' => 42.0,
-                        ]
+                        ],
                     ],
                 ]
             );
@@ -262,7 +262,7 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
                             'dimensionsUnit' => 'in',
                             'weightUnit' => 'kilo',
                             'weightValue' => 42.0,
-                        ]
+                        ],
                     ],
                     $product2->getId() => [
                         'item' => [
@@ -272,8 +272,8 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
                             'dimensionsUnit' => 'meter',
                             'weightUnit' => 'lbs',
                             'weightValue' => 142.0,
-                        ]
-                    ]
+                        ],
+                    ],
                 ]
             );
 
@@ -361,7 +361,7 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
     ): OrderProductKitItemLineItem {
         return (new OrderProductKitItemLineItem())
             ->setProduct($product)
-            ->setUnit($productUnit)
+            ->setProductUnit($productUnit)
             ->setQuantity($quantity)
             ->setPrice($price)
             ->setSortOrder(1);
@@ -411,13 +411,12 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
         int $sortOrder,
         ?ProductKitItem $kitItem
     ): ShippingKitItemLineItem {
-        return (new ShippingKitItemLineItem(
-            $productUnit,
-            $quantity,
-            $productHolder
-        ))
+        return (new ShippingKitItemLineItem($productHolder))
             ->setProduct($product)
             ->setProductSku($product->getSku())
+            ->setProductUnit($productUnit)
+            ->setProductUnitCode($productUnit->getCode())
+            ->setQuantity($quantity)
             ->setPrice($price)
             ->setKitItem($kitItem)
             ->setSortOrder($sortOrder);

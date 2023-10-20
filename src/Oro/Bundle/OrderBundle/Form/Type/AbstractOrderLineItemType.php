@@ -176,6 +176,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
         $view->vars['sections'] = $this->getSectionProvider()->getSections(get_class($this));
 
         $product = null;
+        $checksum = '';
         if ($view->vars['value']) {
             /* @var $lineItem OrderLineItem */
             $lineItem = $view->vars['value'];
@@ -183,10 +184,15 @@ abstract class AbstractOrderLineItemType extends AbstractType
             if ($lineItem->getProduct()) {
                 $product = $lineItem->getProduct();
             }
+
+            $checksum = $lineItem->getChecksum();
         }
+
+        $view->vars['page_component_options']['fullName'] = $view->vars['full_name'];
 
         if ($product) {
             $modelAttr['product_units'] = $product->getAvailableUnitsPrecision();
+            $modelAttr['checksum'] = $checksum;
             $view->vars['page_component_options']['modelAttr'] = $modelAttr;
         }
     }

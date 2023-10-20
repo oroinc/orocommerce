@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ProductKitItemLineItemType;
-use Oro\Bundle\ShoppingListBundle\ProductKit\Provider\ProductKitItemProductsProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\DataTransformerInterface;
 
@@ -16,7 +16,7 @@ trait ProductKitItemLineItemTypeTrait
     {
         $kitItemProductsProvider = $testCase->createMock(ProductKitItemProductsProvider::class);
         $kitItemProductsProvider
-            ->method('getProductsAvailableForPurchase')
+            ->method('getAvailableProducts')
             ->willReturn($products);
 
         $productToIdDataTransformer = $testCase->createMock(DataTransformerInterface::class);

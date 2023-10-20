@@ -41,17 +41,35 @@ class SimpleProductLineItemPriceCriteriaFactoryTest extends TestCase
         return [
             'not supported - no product' => [
                 'lineItem' => (new ProductLineItem(42))
-                    ->setUnit(new ProductUnit()),
+                    ->setUnit(new ProductUnit())
+                    ->setQuantity(12.3456),
                 'expected' => false,
             ],
             'not supported - no product unit' => [
-                'lineItem' => (new ProductLineItem(42))->setProduct(new Product()),
+                'lineItem' => (new ProductLineItem(42))
+                    ->setProduct(new Product())
+                    ->setQuantity(12.3456),
+                'expected' => false,
+            ],
+            'not supported - no quantity' => [
+                'lineItem' => (new ProductLineItem(42))
+                    ->setProduct(new Product())
+                    ->setUnit(new ProductUnit())
+                    ->setQuantity(null),
+                'expected' => false,
+            ],
+            'not supported - negative quantity' => [
+                'lineItem' => (new ProductLineItem(42))
+                    ->setProduct(new Product())
+                    ->setUnit(new ProductUnit())
+                    ->setQuantity(-1.0),
                 'expected' => false,
             ],
             'supported' => [
                 'lineItem' => (new ProductLineItem(42))
                     ->setProduct(new Product())
-                    ->setUnit(new ProductUnit()),
+                    ->setUnit(new ProductUnit())
+                    ->setQuantity(12.3456),
                 'expected' => true,
             ],
         ];

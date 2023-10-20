@@ -229,7 +229,7 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
         productUnit: '@item'
         __calls:
             -   setDefaultLabel: [ 'Base Unit' ]
-            -   addKitItemProduct: [ '@product_kit2_item1_product_with_each_unit' ]
+            -   addKitItemProduct: [ '@product_kit3_item1_product_with_each_unit' ]
 
 Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
     product_kit1_item1_product1:
@@ -287,8 +287,8 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
         product: '@simple_product_with_4_precision'
         sortOrder: 1
         productUnitPrecision: '@precision_simple_product_with_item_4_precision'
-    product_kit2_item1_product_with_each_unit:
-        kitItem: '@product_kit2_item1'
+    product_kit3_item1_product_with_each_unit:
+        kitItem: '@product_kit3_item1'
         product: '@simple_product_with_each_unit'
         sortOrder: 1
         productUnitPrecision: '@precision_simple_product_with_each_unit'
@@ -335,6 +335,13 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         currency: 'USD'
         quantity: 1
         unit: '@item'
+        value: 10
+    price_simple_product_with_each_precision2:
+        product: '@simple_product_with_each_unit'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
         value: 10
     price_disabled_product:
         product: '@disabled_product'

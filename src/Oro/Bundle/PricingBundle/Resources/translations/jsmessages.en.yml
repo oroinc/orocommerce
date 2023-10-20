@@ -28,5 +28,7 @@ oro:
         pricelist.delete.message: 'Are you sure you would like to delete the "{{ priceListName }}" price list?'
         view_all_prices: 'View All Prices'
         view_all_prices_extended: 'View All Prices for {{ product_attrs }}'
+        matched_price: 'List Price'
+        per_item: 'per {{ unit }}'
     totals:
         no_data: No data

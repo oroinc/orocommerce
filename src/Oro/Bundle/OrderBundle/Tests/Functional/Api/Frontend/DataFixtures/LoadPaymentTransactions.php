@@ -59,6 +59,24 @@ class LoadPaymentTransactions extends AbstractFixture implements DependentFixtur
         $transaction3->setCurrency('USD');
         $manager->persist($transaction3);
 
+        $transaction3 = new PaymentTransaction();
+        $transaction3->setEntityClass(Order::class);
+        $transaction3->setEntityIdentifier($this->getReference('order4')->getId());
+        $transaction3->setPaymentMethod('money_order_' . $channel->getId());
+        $transaction3->setAction('pending');
+        $transaction3->setAmount('30');
+        $transaction3->setCurrency('USD');
+        $manager->persist($transaction3);
+
+        $transaction3 = new PaymentTransaction();
+        $transaction3->setEntityClass(Order::class);
+        $transaction3->setEntityIdentifier($this->getReference('order5')->getId());
+        $transaction3->setPaymentMethod('money_order_' . $channel->getId());
+        $transaction3->setAction('pending');
+        $transaction3->setAmount('30');
+        $transaction3->setCurrency('USD');
+        $manager->persist($transaction3);
+
         $manager->flush();
 
         $this->setReference('money_order_channel_1', $channel);

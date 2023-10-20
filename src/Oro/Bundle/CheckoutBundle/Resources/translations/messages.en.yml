@@ -103,7 +103,7 @@ oro:
                 label: Quantity
                 description: The quantity of product kit item units to be purchased
                 aria_label: Product Kit Item Quantity
-            unit:
+            product_unit:
                 label: Unit of Quantity
                 description: The unit of quantity of the kit item product to be purchased in
             sort_order:

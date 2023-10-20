@@ -5,7 +5,7 @@ data:
         quantity: 10
         notes: 'New Kit Line Item Notes'
         currency: USD
-        value: '12.34'
+        value: '16.78'
     relationships:
         product:
             data:

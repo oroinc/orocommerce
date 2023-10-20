@@ -88,6 +88,17 @@ oro:
             product:
                 not_found: 'Product #%product_id% is not found.'
 
+        productkititemlineitem:
+            product:
+                not_available:
+                    message: 'The selected product is not allowed'
+            unit:
+                not_available:
+                    message: 'The selected product unit is not allowed'
+            quantity:
+                invalid_precision:
+                    message: "{0} Only whole numbers are allowed for unit {{ unit }}|{1} Only %count% decimal digit are allowed for unit {{ unit }}|]1,Inf[ Only %count% decimal digits are allowed for unit {{ unit }}"
+
         frontend:
             quick_add:
                 invalid_file_type: This file type is not allowed
