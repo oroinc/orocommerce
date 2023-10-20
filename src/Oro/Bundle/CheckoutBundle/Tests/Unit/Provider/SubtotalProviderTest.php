@@ -10,63 +10,74 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
+use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
-use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class SubtotalProviderTest extends AbstractSubtotalProviderTest
+class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     private const CHECKOUT_CURRENCY = 'USD';
     private const USER_CURRENCY = 'USER_CURRENCY';
-    private const WEBSITE_CURRENCY = 'WEBSITE_CURRENCY';
     private const DEFAULT_CURRENCY = 'DEFAULT_CURRENCY';
-    private const WEBSITE_ID = 123;
-    private const SUBTOTAL_LABEL = 'test';
+    private const SUBTOTAL_LABEL = 'oro.checkout.subtotals.checkout_subtotal.label (translated)';
     private const FEATURE_NAME = 'oro_price_lists_combined';
 
-    private ProductLineItemPriceProviderInterface|MockObject $productLineItemPriceProvider;
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $currencyManager;
 
-    private CombinedPriceListTreeHandler|MockObject $priceListTreeHandler;
+    /** @var WebsiteCurrencyProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $websiteCurrencyProvider;
 
-    private ProductPriceScopeCriteriaFactoryInterface|MockObject $priceScopeCriteriaFactory;
+    /** @var ProductLineItemPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productLineItemPriceProvider;
 
-    private SubtotalProvider $provider;
+    /** @var CombinedPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceListTreeHandler;
 
-    private FeatureChecker|MockObject $featureChecker;
+    /** @var ProductPriceScopeCriteriaFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceScopeCriteriaFactory;
+
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
+
+    /** @var SubtotalProvider */
+    private $provider;
 
     protected function setUp(): void
     {
-        parent::setUp();
-
+        $this->currencyManager = $this->createMock(UserCurrencyManager::class);
+        $this->websiteCurrencyProvider = $this->createMock(WebsiteCurrencyProvider::class);
         $this->productLineItemPriceProvider = $this->createMock(ProductLineItemPriceProviderInterface::class);
         $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);
         $this->priceScopeCriteriaFactory = $this->createMock(ProductPriceScopeCriteriaFactoryInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $translator = $this->createMock(TranslatorInterface::class);
-        $translator
+        $translator->expects(self::any())
             ->method('trans')
-            ->with(SubtotalProvider::LABEL)
-            ->willReturn(self::SUBTOTAL_LABEL);
+            ->willReturnCallback(function ($id) {
+                return $id . ' (translated)';
+            });
 
         $roundingService = $this->createMock(RoundingServiceInterface::class);
-        $roundingService
+        $roundingService->expects(self::any())
             ->method('round')
             ->willReturnCallback(static fn ($value) => round($value, 2));
+
+        $this->currencyManager->expects(self::any())
+            ->method('getDefaultCurrency')
+            ->willReturn(self::DEFAULT_CURRENCY);
 
         $this->provider = new SubtotalProvider(
             $translator,
@@ -78,22 +89,16 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
         );
         $this->provider->setFeatureChecker($this->featureChecker);
         $this->provider->addFeature(self::FEATURE_NAME);
-
-        $this->currencyManager
-            ->method('getDefaultCurrency')
-            ->willReturn(self::DEFAULT_CURRENCY);
     }
 
     public function testIsSupported(): void
     {
-        $entity = new Checkout();
-        self::assertTrue($this->provider->isSupported($entity));
+        self::assertTrue($this->provider->isSupported(new Checkout()));
     }
 
     public function testIsNotSupported(): void
     {
-        $entity = new \stdClass();
-        self::assertFalse($this->provider->isSupported($entity));
+        self::assertFalse($this->provider->isSupported(new \stdClass()));
     }
 
     public function testGetSubtotalWithWrongEntity(): void
@@ -110,15 +115,14 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
         ?string $websiteCurrency,
         ?string $expectedCurrency
     ): void {
-        $entity = (new Checkout())
-            ->setCurrency($checkoutCurrency);
+        $entity = new Checkout();
+        $entity->setCurrency($checkoutCurrency);
 
-        $this->currencyManager
+        $this->currencyManager->expects(self::any())
             ->method('getUserCurrency')
             ->willReturn($userCurrency);
 
-        $this->websiteCurrencyProvider
-            ->expects(self::never())
+        $this->websiteCurrencyProvider->expects(self::never())
             ->method('getWebsiteDefaultCurrency');
 
         $subtotal = $this->provider->getSubtotal($entity);
@@ -127,49 +131,47 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
         self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals($expectedCurrency, $subtotal->getCurrency());
-        self::assertIsFloat($subtotal->getAmount());
         self::assertSame(0.0, $subtotal->getAmount());
         self::assertFalse($subtotal->isVisible());
         self::assertNull($subtotal->getPriceList());
     }
 
-    public function getSubtotalWithoutLineItemsDataProvider(): iterable
+    public function getSubtotalWithoutLineItemsDataProvider(): array
     {
-        yield [
-            'checkoutCurrency' => self::CHECKOUT_CURRENCY,
-            'userCurrency' => null,
-            'websiteCurrency' => null,
-            'expectedCurrency' => self::CHECKOUT_CURRENCY,
-        ];
-
-        yield [
-            'checkoutCurrency' => null,
-            'userCurrency' => self::USER_CURRENCY,
-            'websiteCurrency' => null,
-            'expectedCurrency' => self::USER_CURRENCY,
-        ];
-
-        yield [
-            'checkoutCurrency' => null,
-            'userCurrency' => null,
-            'websiteCurrency' => null,
-            'expectedCurrency' => self::DEFAULT_CURRENCY,
+        return [
+            [
+                'checkoutCurrency' => self::CHECKOUT_CURRENCY,
+                'userCurrency' => null,
+                'websiteCurrency' => null,
+                'expectedCurrency' => self::CHECKOUT_CURRENCY
+            ],
+            [
+                'checkoutCurrency' => null,
+                'userCurrency' => self::USER_CURRENCY,
+                'websiteCurrency' => null,
+                'expectedCurrency' => self::USER_CURRENCY
+            ],
+            [
+                'checkoutCurrency' => null,
+                'userCurrency' => null,
+                'websiteCurrency' => null,
+                'expectedCurrency' => self::DEFAULT_CURRENCY
+            ]
         ];
     }
 
     public function testGetSubtotalWithLineItemWhenNotFixedPrice(): void
     {
         $lineItem = new CheckoutLineItem();
-        $entity = (new Checkout())
-            ->addLineItem($lineItem)
-            ->setCurrency(self::CHECKOUT_CURRENCY);
+        $entity = new Checkout();
+        $entity->addLineItem($lineItem);
+        $entity->setCurrency(self::CHECKOUT_CURRENCY);
 
         $priceScopeCriteria = new ProductPriceScopeCriteria();
         $priceScopeCriteria->setCustomer(new Customer());
         $priceScopeCriteria->setWebsite(new Website());
 
-        $this->priceScopeCriteriaFactory
-            ->expects(self::once())
+        $this->priceScopeCriteriaFactory->expects(self::once())
             ->method('createByContext')
             ->willReturn($priceScopeCriteria);
 
@@ -178,8 +180,7 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
             Price::create(12.3456, self::CHECKOUT_CURRENCY),
             123.46
         );
-        $this->productLineItemPriceProvider
-            ->expects(self::once())
+        $this->productLineItemPriceProvider->expects(self::once())
             ->method('getProductLineItemsPrices')
             ->with([$lineItem], $priceScopeCriteria, self::CHECKOUT_CURRENCY)
             ->willReturn([$productLineItemPrice]);
@@ -190,7 +191,6 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
         self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
-        self::assertIsFloat($subtotal->getAmount());
         self::assertSame(123.46, $subtotal->getAmount());
         self::assertTrue($subtotal->isVisible());
         self::assertNull($subtotal->getPriceList());
@@ -199,16 +199,15 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
     public function testGetSubtotalWithLineItemWhenNotFixedPriceAndFeaturesEnabled(): void
     {
         $lineItem = new CheckoutLineItem();
-        $entity = (new Checkout())
-            ->addLineItem($lineItem)
-            ->setCurrency(self::CHECKOUT_CURRENCY);
+        $entity = new Checkout();
+        $entity->addLineItem($lineItem);
+        $entity->setCurrency(self::CHECKOUT_CURRENCY);
 
         $priceScopeCriteria = new ProductPriceScopeCriteria();
         $priceScopeCriteria->setCustomer(new Customer());
         $priceScopeCriteria->setWebsite(new Website());
 
-        $this->priceScopeCriteriaFactory
-            ->expects(self::once())
+        $this->priceScopeCriteriaFactory->expects(self::once())
             ->method('createByContext')
             ->willReturn($priceScopeCriteria);
 
@@ -217,21 +216,18 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
             Price::create(12.3456, self::CHECKOUT_CURRENCY),
             123.46
         );
-        $this->productLineItemPriceProvider
-            ->expects(self::once())
+        $this->productLineItemPriceProvider->expects(self::once())
             ->method('getProductLineItemsPrices')
             ->with([$lineItem], $priceScopeCriteria, self::CHECKOUT_CURRENCY)
             ->willReturn([$productLineItemPrice]);
 
-        $this->featureChecker
-            ->expects(self::once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with(self::FEATURE_NAME)
             ->willReturn(true);
 
         $priceList = new PriceList();
-        $this->priceListTreeHandler
-            ->expects(self::once())
+        $this->priceListTreeHandler->expects(self::once())
             ->method('getPriceList')
             ->with($priceScopeCriteria->getCustomer(), $priceScopeCriteria->getWebsite())
             ->willReturn($priceList);
@@ -242,7 +238,6 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
         self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
-        self::assertIsFloat($subtotal->getAmount());
         self::assertSame(123.46, $subtotal->getAmount());
         self::assertTrue($subtotal->isVisible());
         self::assertSame($priceList, $subtotal->getPriceList());
@@ -251,21 +246,19 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
     public function testGetSubtotalWithLineItemWhenNoPrice(): void
     {
         $lineItem = new CheckoutLineItem();
-        $entity = (new Checkout())
-            ->addLineItem($lineItem)
-            ->setCurrency(self::CHECKOUT_CURRENCY);
+        $entity = new Checkout();
+        $entity->addLineItem($lineItem);
+        $entity->setCurrency(self::CHECKOUT_CURRENCY);
 
         $priceScopeCriteria = new ProductPriceScopeCriteria();
         $priceScopeCriteria->setCustomer(new Customer());
         $priceScopeCriteria->setWebsite(new Website());
 
-        $this->priceScopeCriteriaFactory
-            ->expects(self::once())
+        $this->priceScopeCriteriaFactory->expects(self::once())
             ->method('createByContext')
             ->willReturn($priceScopeCriteria);
 
-        $this->productLineItemPriceProvider
-            ->expects(self::once())
+        $this->productLineItemPriceProvider->expects(self::once())
             ->method('getProductLineItemsPrices')
             ->with([$lineItem], $priceScopeCriteria, self::CHECKOUT_CURRENCY)
             ->willReturn([]);
@@ -276,7 +269,6 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
         self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
-        self::assertIsFloat($subtotal->getAmount());
         self::assertSame(0.0, $subtotal->getAmount());
         self::assertFalse($subtotal->isVisible());
         self::assertNull($subtotal->getPriceList());
@@ -285,34 +277,30 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
     public function testGetSubtotalWithLineItemWhenNoPriceAndFeaturesEnabled(): void
     {
         $lineItem = new CheckoutLineItem();
-        $entity = (new Checkout())
-            ->addLineItem($lineItem)
-            ->setCurrency(self::CHECKOUT_CURRENCY);
+        $entity = new Checkout();
+        $entity->addLineItem($lineItem);
+        $entity->setCurrency(self::CHECKOUT_CURRENCY);
 
         $priceScopeCriteria = new ProductPriceScopeCriteria();
         $priceScopeCriteria->setCustomer(new Customer());
         $priceScopeCriteria->setWebsite(new Website());
 
-        $this->priceScopeCriteriaFactory
-            ->expects(self::once())
+        $this->priceScopeCriteriaFactory->expects(self::once())
             ->method('createByContext')
             ->willReturn($priceScopeCriteria);
 
-        $this->productLineItemPriceProvider
-            ->expects(self::once())
+        $this->productLineItemPriceProvider->expects(self::once())
             ->method('getProductLineItemsPrices')
             ->with([$lineItem], $priceScopeCriteria, self::CHECKOUT_CURRENCY)
             ->willReturn([]);
 
-        $this->featureChecker
-            ->expects(self::once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with(self::FEATURE_NAME)
             ->willReturn(true);
 
         $priceList = new PriceList();
-        $this->priceListTreeHandler
-            ->expects(self::once())
+        $this->priceListTreeHandler->expects(self::once())
             ->method('getPriceList')
             ->with($priceScopeCriteria->getCustomer(), $priceScopeCriteria->getWebsite())
             ->willReturn($priceList);
@@ -323,7 +311,6 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
         self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
-        self::assertIsFloat($subtotal->getAmount());
         self::assertSame(0.0, $subtotal->getAmount());
         self::assertFalse($subtotal->isVisible());
         self::assertSame($priceList, $subtotal->getPriceList());
@@ -331,24 +318,21 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
 
     public function testGetSubtotalWithLineItemWhenFixedPrice(): void
     {
-        $lineItem = (new CheckoutLineItem())
-            ->setPriceFixed(true)
-            ->setPrice(Price::create(12.3456, self::CHECKOUT_CURRENCY))
-            ->setQuantity(10);
-        $entity = (new Checkout())
-            ->addLineItem($lineItem)
-            ->setCurrency(self::CHECKOUT_CURRENCY);
+        $lineItem = new CheckoutLineItem();
+        $lineItem->setPriceFixed(true);
+        $lineItem->setPrice(Price::create(12.3456, self::CHECKOUT_CURRENCY));
+        $lineItem->setQuantity(10);
+        $entity = new Checkout();
+        $entity->addLineItem($lineItem);
+        $entity->setCurrency(self::CHECKOUT_CURRENCY);
 
-        $this->priceScopeCriteriaFactory
-            ->expects(self::never())
+        $this->priceScopeCriteriaFactory->expects(self::never())
             ->method('createByContext');
 
-        $this->productLineItemPriceProvider
-            ->expects(self::never())
+        $this->productLineItemPriceProvider->expects(self::never())
             ->method('getProductLineItemsPrices');
 
-        $this->featureChecker
-            ->expects(self::never())
+        $this->featureChecker->expects(self::never())
             ->method('isFeatureEnabled');
 
         $subtotal = $this->provider->getSubtotal($entity);
@@ -357,7 +341,6 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
         self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
-        self::assertIsFloat($subtotal->getAmount());
         self::assertSame(123.46, $subtotal->getAmount());
         self::assertTrue($subtotal->isVisible());
         self::assertNull($subtotal->getPriceList());
@@ -365,18 +348,16 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
 
     public function testGetSubtotalWithLineItemWhenFixedPriceAndNoPrice(): void
     {
-        $lineItem = (new CheckoutLineItem())
-            ->setPriceFixed(true);
-        $entity = (new Checkout())
-            ->addLineItem($lineItem)
-            ->setCurrency(self::CHECKOUT_CURRENCY);
+        $lineItem = new CheckoutLineItem();
+        $lineItem->setPriceFixed(true);
+        $entity = new Checkout();
+        $entity->addLineItem($lineItem);
+        $entity->setCurrency(self::CHECKOUT_CURRENCY);
 
-        $this->priceScopeCriteriaFactory
-            ->expects(self::never())
+        $this->priceScopeCriteriaFactory->expects(self::never())
             ->method('createByContext');
 
-        $this->productLineItemPriceProvider
-            ->expects(self::never())
+        $this->productLineItemPriceProvider->expects(self::never())
             ->method('getProductLineItemsPrices');
 
         $subtotal = $this->provider->getSubtotal($entity);
@@ -385,7 +366,6 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
         self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
-        self::assertIsFloat($subtotal->getAmount());
         self::assertSame(0.0, $subtotal->getAmount());
         self::assertFalse($subtotal->isVisible());
         self::assertNull($subtotal->getPriceList());
@@ -394,21 +374,20 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
     public function testGetSubtotalWhenBothFixedPriceAndNot(): void
     {
         $lineItemWithNotFixedPrice = new CheckoutLineItem();
-        $lineItemWithFixedPrice = (new CheckoutLineItem())
-            ->setPriceFixed(true)
-            ->setPrice(Price::create(12.3456, self::CHECKOUT_CURRENCY))
-            ->setQuantity(10);
-        $entity = (new Checkout())
-            ->addLineItem($lineItemWithFixedPrice)
-            ->addLineItem($lineItemWithNotFixedPrice)
-            ->setCurrency(self::CHECKOUT_CURRENCY);
+        $lineItemWithFixedPrice = new CheckoutLineItem();
+        $lineItemWithFixedPrice->setPriceFixed(true);
+        $lineItemWithFixedPrice->setPrice(Price::create(12.3456, self::CHECKOUT_CURRENCY));
+        $lineItemWithFixedPrice->setQuantity(10);
+        $entity = new Checkout();
+        $entity->addLineItem($lineItemWithFixedPrice);
+        $entity->addLineItem($lineItemWithNotFixedPrice);
+        $entity->setCurrency(self::CHECKOUT_CURRENCY);
 
         $priceScopeCriteria = new ProductPriceScopeCriteria();
         $priceScopeCriteria->setCustomer(new Customer());
         $priceScopeCriteria->setWebsite(new Website());
 
-        $this->priceScopeCriteriaFactory
-            ->expects(self::once())
+        $this->priceScopeCriteriaFactory->expects(self::once())
             ->method('createByContext')
             ->willReturn($priceScopeCriteria);
 
@@ -417,8 +396,7 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
             Price::create(12.3456, self::CHECKOUT_CURRENCY),
             1234.60
         );
-        $this->productLineItemPriceProvider
-            ->expects(self::once())
+        $this->productLineItemPriceProvider->expects(self::once())
             ->method('getProductLineItemsPrices')
             ->with([$lineItemWithNotFixedPrice], $priceScopeCriteria, self::CHECKOUT_CURRENCY)
             ->willReturn([$productLineItemPrice]);
@@ -429,7 +407,6 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
         self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
-        self::assertIsFloat($subtotal->getAmount());
         self::assertSame(1358.06, $subtotal->getAmount());
         self::assertTrue($subtotal->isVisible());
         self::assertNull($subtotal->getPriceList());
@@ -438,21 +415,20 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
     public function testGetSubtotalWhenBothFixedPriceAndNotAndFeaturesEnabled(): void
     {
         $lineItemWithNotFixedPrice = new CheckoutLineItem();
-        $lineItemWithFixedPrice = (new CheckoutLineItem())
-            ->setPriceFixed(true)
-            ->setPrice(Price::create(12.3456, self::CHECKOUT_CURRENCY))
-            ->setQuantity(10);
-        $entity = (new Checkout())
-            ->addLineItem($lineItemWithFixedPrice)
-            ->addLineItem($lineItemWithNotFixedPrice)
-            ->setCurrency(self::CHECKOUT_CURRENCY);
+        $lineItemWithFixedPrice = new CheckoutLineItem();
+        $lineItemWithFixedPrice->setPriceFixed(true);
+        $lineItemWithFixedPrice->setPrice(Price::create(12.3456, self::CHECKOUT_CURRENCY));
+        $lineItemWithFixedPrice->setQuantity(10);
+        $entity = new Checkout();
+        $entity->addLineItem($lineItemWithFixedPrice);
+        $entity->addLineItem($lineItemWithNotFixedPrice);
+        $entity->setCurrency(self::CHECKOUT_CURRENCY);
 
         $priceScopeCriteria = new ProductPriceScopeCriteria();
         $priceScopeCriteria->setCustomer(new Customer());
         $priceScopeCriteria->setWebsite(new Website());
 
-        $this->priceScopeCriteriaFactory
-            ->expects(self::once())
+        $this->priceScopeCriteriaFactory->expects(self::once())
             ->method('createByContext')
             ->willReturn($priceScopeCriteria);
 
@@ -461,21 +437,18 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
             Price::create(12.3456, self::CHECKOUT_CURRENCY),
             1234.60
         );
-        $this->productLineItemPriceProvider
-            ->expects(self::once())
+        $this->productLineItemPriceProvider->expects(self::once())
             ->method('getProductLineItemsPrices')
             ->with([$lineItemWithNotFixedPrice], $priceScopeCriteria, self::CHECKOUT_CURRENCY)
             ->willReturn([$productLineItemPrice]);
 
-        $this->featureChecker
-            ->expects(self::once())
+        $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
             ->with(self::FEATURE_NAME)
             ->willReturn(true);
 
         $priceList = new PriceList();
-        $this->priceListTreeHandler
-            ->expects(self::once())
+        $this->priceListTreeHandler->expects(self::once())
             ->method('getPriceList')
             ->with($priceScopeCriteria->getCustomer(), $priceScopeCriteria->getWebsite())
             ->willReturn($priceList);
@@ -486,7 +459,6 @@ class SubtotalProviderTest extends AbstractSubtotalProviderTest
         self::assertEquals(SubtotalProvider::TYPE, $subtotal->getType());
         self::assertEquals(self::SUBTOTAL_LABEL, $subtotal->getLabel());
         self::assertEquals(self::CHECKOUT_CURRENCY, $subtotal->getCurrency());
-        self::assertIsFloat($subtotal->getAmount());
         self::assertSame(1358.06, $subtotal->getAmount());
         self::assertTrue($subtotal->isVisible());
         self::assertSame($priceList, $subtotal->getPriceList());

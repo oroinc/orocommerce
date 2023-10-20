@@ -106,7 +106,8 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
     public function getSubtotals(object $entity): ArrayCollection
     {
         $subtotals = [];
-        foreach ($this->subtotalProviderRegistry->getSupportedProviders($entity) as $provider) {
+        $providers = $this->subtotalProviderRegistry->getSupportedProviders($entity);
+        foreach ($providers as $provider) {
             $entitySubtotals = $this->getEntitySubtotals($provider, $entity);
             foreach ($entitySubtotals as $subtotal) {
                 $subtotals[] = $subtotal;

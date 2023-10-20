@@ -10,9 +10,8 @@ use Oro\Bundle\OrderBundle\Provider\TotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 
-class TotalProviderTest extends AbstractSubtotalProviderTest
+class TotalProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $processorProvider;
@@ -22,12 +21,11 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
 
     protected function setUp(): void
     {
-        parent::setUp();
         $this->processorProvider = $this->createMock(TotalProcessorProvider::class);
         $this->rateConverter = $this->createMock(RateConverterInterface::class);
 
         $currencyProvider = $this->createMock(DefaultCurrencyProviderInterface::class);
-        $currencyProvider->expects($this->any())
+        $currencyProvider->expects(self::any())
             ->method('getDefaultCurrency')
             ->willReturn('USD');
 
@@ -41,51 +39,51 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
     /**
      * @dataProvider subtotalsProvider
      */
-    public function testGetTotalWithSubtotalsWithBaseCurrencyValues(array $original, array $expectedResult)
+    public function testGetTotalWithSubtotalsWithBaseCurrencyValues(array $original, array $expectedResult): void
     {
         $order = $this->createMock(Order::class);
-        $order->expects($this->any())
+        $order->expects(self::any())
             ->method('getBaseTotalValue')
             ->willReturn($original[TotalProcessorProvider::TYPE]['base_amount']);
-        $order->expects($this->any())
+        $order->expects(self::any())
             ->method('getBaseSubtotalValue')
             ->willReturn($original[TotalProcessorProvider::SUBTOTALS]['base_amount']);
 
         $total = new Subtotal();
-        $total->setType(TotalProcessorProvider::TYPE)
-            ->setAmount($original[TotalProcessorProvider::TYPE]['amount'])
-            ->setCurrency($original[TotalProcessorProvider::TYPE]['currency'])
-            ->setOperation(Subtotal::OPERATION_ADD)
-            ->setLabel('Total');
+        $total->setType(TotalProcessorProvider::TYPE);
+        $total->setAmount($original[TotalProcessorProvider::TYPE]['amount']);
+        $total->setCurrency($original[TotalProcessorProvider::TYPE]['currency']);
+        $total->setOperation(Subtotal::OPERATION_ADD);
+        $total->setLabel('Total');
 
         $subtotal = new Subtotal();
-        $subtotal->setType(LineItemSubtotalProvider::TYPE)
-            ->setAmount($original[TotalProcessorProvider::SUBTOTALS]['amount'])
-            ->setCurrency($original[TotalProcessorProvider::SUBTOTALS]['currency'])
-            ->setOperation(Subtotal::OPERATION_ADD)
-            ->setLabel('Subtotal');
+        $subtotal->setType(LineItemSubtotalProvider::TYPE);
+        $subtotal->setAmount($original[TotalProcessorProvider::SUBTOTALS]['amount']);
+        $subtotal->setCurrency($original[TotalProcessorProvider::SUBTOTALS]['currency']);
+        $subtotal->setOperation(Subtotal::OPERATION_ADD);
+        $subtotal->setLabel('Subtotal');
 
         $subtotals = new ArrayCollection([$subtotal]);
 
-        $this->processorProvider->expects($this->once())
+        $this->processorProvider->expects(self::once())
             ->method('getTotalForSubtotals')
             ->with($order, $subtotals)
             ->willReturn($total);
 
-        $this->processorProvider->expects($this->once())
+        $this->processorProvider->expects(self::once())
             ->method('getSubtotals')
             ->with($order)
             ->willReturn($subtotals);
 
         $totals = $this->provider->getTotalWithSubtotalsWithBaseCurrencyValues($order);
-        $this->assertIsArray($totals);
-        $this->assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
-        $this->assertEquals(
+        self::assertIsArray($totals);
+        self::assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
+        self::assertEquals(
             $totals[TotalProcessorProvider::TYPE],
             $expectedResult[TotalProcessorProvider::TYPE]
         );
-        $this->assertArrayHasKey(TotalProcessorProvider::SUBTOTALS, $totals);
-        $this->assertEquals(
+        self::assertArrayHasKey(TotalProcessorProvider::SUBTOTALS, $totals);
+        self::assertEquals(
             $totals[TotalProcessorProvider::SUBTOTALS],
             $expectedResult[TotalProcessorProvider::SUBTOTALS]
         );
