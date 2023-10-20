@@ -32,9 +32,12 @@ services:
             - '@oro_workflow.changes.event.dispatcher'
             - '@oro_pricing.shard_manager'
             - '@oro_entity.doctrine_helper'
+            - '@oro_pricing.price_list_trigger_handler'
         public: false
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', event: postRemove }
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
             - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.listener.product_unit_precision.remove_product_price_attributes:
