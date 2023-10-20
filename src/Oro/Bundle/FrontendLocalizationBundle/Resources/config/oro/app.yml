@@ -4,6 +4,11 @@ oro_api:
             headers:
                 X-Localization-ID: ~
 
+oro_customer:
+    frontend_api:
+        non_authenticated_visitors_api_resources:
+            - Oro\Bundle\LocaleBundle\Entity\Localization
+
 oro_translation:
     package_names:
         - OroCommerce

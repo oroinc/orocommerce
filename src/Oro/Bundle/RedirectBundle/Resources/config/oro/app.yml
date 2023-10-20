@@ -4,3 +4,8 @@ doctrine:
             default:
                 hydrators:
                     oro.redirect.entity.hydrator.matching_slug: Oro\Bundle\RedirectBundle\Entity\Hydrator\MatchingSlugHydrator
+
+oro_customer:
+    frontend_api:
+        non_authenticated_visitors_api_resources:
+            - Oro\Bundle\RedirectBundle\Api\Model\Route

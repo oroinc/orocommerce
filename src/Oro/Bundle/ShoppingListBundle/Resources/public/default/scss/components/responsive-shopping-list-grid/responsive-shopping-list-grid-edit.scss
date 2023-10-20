@@ -212,7 +212,8 @@
             margin: 0;
         }
 
-        .grid-row-product-kit {
+        // Product kit row may have two or three actions
+        .row-3actions {
             .shift-mobile-row {
                 margin-right: -$responsive-shopping-list-edit-three-actions-cell-width-mobile;
             }
@@ -232,6 +233,7 @@
             display: inline-flex;
             align-items: flex-end;
             align-self: flex-start;
+            min-width: $responsive-shopping-list-edit-action-cell-width-mobile;
             width: auto;
             padding-left: 0;
             padding-right: 0;
