@@ -9,7 +9,6 @@ use Oro\Bundle\PricingBundle\Command\PriceListScheduleRecalculateCommand;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleRepository;
 use Oro\Bundle\PricingBundle\EventListener\PriceCalculationPrecisionSystemConfigListener;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -18,32 +17,23 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceCalculationPrecisionSystemConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ManagerRegistry|MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /**
-     * @var RuleCache|MockObject
-     */
+    /** @var RuleCache|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
-    /**
-     * @var Session|MockObject
-     */
+    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
     private $session;
 
-    /**
-     * @var RequestStack|MockObject
-     */
+    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     private $requestStack;
 
-    /**
-     * @var TranslatorInterface|MockObject
-     */
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    private PriceCalculationPrecisionSystemConfigListener $listener;
+    /** @var PriceCalculationPrecisionSystemConfigListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -73,11 +63,7 @@ class PriceCalculationPrecisionSystemConfigListenerTest extends \PHPUnit\Framewo
         $this->registry->expects($this->never())
             ->method($this->anything());
 
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects($this->once())
-            ->method('isChanged')
-            ->with('oro_pricing.price_calculation_precision')
-            ->willReturn(false);
+        $event = new ConfigUpdateEvent([], 'global', 0);
 
         $this->listener->updateAfter($event);
     }
@@ -98,11 +84,11 @@ class PriceCalculationPrecisionSystemConfigListenerTest extends \PHPUnit\Framewo
             ->with(PriceRule::class)
             ->willReturn($repo);
 
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects($this->once())
-            ->method('isChanged')
-            ->with('oro_pricing.price_calculation_precision')
-            ->willReturn(true);
+        $event = new ConfigUpdateEvent(
+            ['oro_pricing.price_calculation_precision' => ['old' => 1, 'new' => 2]],
+            'global',
+            0
+        );
 
         $this->listener->updateAfter($event);
     }
@@ -150,11 +136,11 @@ class PriceCalculationPrecisionSystemConfigListenerTest extends \PHPUnit\Framewo
             ->with(PriceRule::class)
             ->willReturn($repo);
 
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects($this->once())
-            ->method('isChanged')
-            ->with('oro_pricing.price_calculation_precision')
-            ->willReturn(true);
+        $event = new ConfigUpdateEvent(
+            ['oro_pricing.price_calculation_precision' => ['old' => 1, 'new' => 2]],
+            'global',
+            0
+        );
 
         $this->listener->updateAfter($event);
     }

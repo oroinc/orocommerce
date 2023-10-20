@@ -144,8 +144,6 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
 
 Oro\Bundle\ProductBundle\Entity\ProductImage:
-    constraints:
-        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImage: ~
     properties:
         product:
             - NotBlank: ~

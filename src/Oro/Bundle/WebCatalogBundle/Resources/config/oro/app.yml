@@ -4,3 +4,9 @@ doctrine:
             Oro\Component\WebCatalog\Entity\WebCatalogInterface: Oro\Bundle\WebCatalogBundle\Entity\WebCatalog
             Oro\Component\WebCatalog\Entity\ContentNodeInterface: Oro\Bundle\WebCatalogBundle\Entity\ContentNode
             Oro\Component\WebCatalog\Entity\ContentVariantInterface: Oro\Bundle\WebCatalogBundle\Entity\ContentVariant
+
+oro_customer:
+    frontend_api:
+        non_authenticated_visitors_api_resources:
+            - Oro\Bundle\WebCatalogBundle\Api\Model\SystemPage
+            - Oro\Bundle\WebCatalogBundle\Entity\ContentNode

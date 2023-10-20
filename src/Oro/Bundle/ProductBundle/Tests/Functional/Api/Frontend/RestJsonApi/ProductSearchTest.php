@@ -6,6 +6,7 @@ use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM\PreviouslyPurchasedFeatureTrait;
+use Oro\Bundle\SearchBundle\Engine\Orm;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -41,18 +42,11 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
     private function isMySqlOrmSearchEngine(): bool
     {
-        if (\Oro\Bundle\SearchBundle\Engine\Orm::ENGINE_NAME !== $this->getSearchEngine()) {
+        if (Orm::ENGINE_NAME !== self::getContainer()->get('oro_website_search.engine.parameters')->getEngineName()) {
             return false;
         }
 
         return $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof MySqlPlatform;
-    }
-
-    private function getSearchEngine(): string
-    {
-        return self::getContainer()
-            ->get('oro_website_search.engine.parameters')
-            ->getEngineName();
     }
 
     public function testNoSearchQueryFilter()

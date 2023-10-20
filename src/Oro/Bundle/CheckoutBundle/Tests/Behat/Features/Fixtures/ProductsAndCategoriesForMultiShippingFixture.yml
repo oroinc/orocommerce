@@ -4,8 +4,7 @@ Oro\Bundle\UserBundle\Entity\User:
         email: user_owner2@example.com
         firstName: SubOrder
         lastName: Owner
-        password: password
-        salt: salt
+        password: <userPassword(@owner_user->username)>
         organization: '@organization'
         owner: '@business_unit'
         businessUnits: ['@businessUnit', '@businessUnit2']

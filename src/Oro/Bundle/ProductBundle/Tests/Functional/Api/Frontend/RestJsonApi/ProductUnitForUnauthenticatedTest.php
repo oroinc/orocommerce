@@ -1,16 +1,34 @@
 <?php
 
-namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Functional\Api\Frontend\RestJsonApi;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class LocalizationForUnauthorizedTest extends FrontendRestJsonApiTestCase
+class ProductUnitForUnauthenticatedTest extends FrontendRestJsonApiTestCase
 {
-    public function testTryToGetList()
+    public function testOptionsForList(): void
+    {
+        $response = $this->options(
+            $this->getListRouteName(),
+            ['entity' => 'productunits']
+        );
+        self::assertAllowResponseHeader($response, 'OPTIONS, GET');
+    }
+
+    public function testOptionsForItem(): void
+    {
+        $response = $this->options(
+            $this->getItemRouteName(),
+            ['entity' => 'productunits', 'id' => '1']
+        );
+        self::assertAllowResponseHeader($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToGetList(): void
     {
         $response = $this->cget(
-            ['entity' => 'localizations'],
+            ['entity' => 'productunits'],
             [],
             [],
             false
@@ -18,10 +36,10 @@ class LocalizationForUnauthorizedTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testTryToGet()
+    public function testTryToGet(): void
     {
         $response = $this->get(
-            ['entity' => 'localizations', 'id' => '<toString(@en_US->id)>'],
+            ['entity' => 'productunits', 'id' => '1'],
             [],
             [],
             false
@@ -29,10 +47,10 @@ class LocalizationForUnauthorizedTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testTryToUpdate()
+    public function testTryToUpdate(): void
     {
         $response = $this->patch(
-            ['entity' => 'localizations', 'id' => '<toString(@en_US->id)>'],
+            ['entity' => 'productunits', 'id' => '1'],
             [],
             [],
             false
@@ -40,10 +58,10 @@ class LocalizationForUnauthorizedTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testTryToCreate()
+    public function testTryToCreate(): void
     {
         $response = $this->post(
-            ['entity' => 'localizations'],
+            ['entity' => 'productunits'],
             [],
             [],
             false
@@ -51,10 +69,10 @@ class LocalizationForUnauthorizedTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testTryToDelete()
+    public function testTryToDelete(): void
     {
         $response = $this->delete(
-            ['entity' => 'localizations', 'id' => '<toString(@en_US->id)>'],
+            ['entity' => 'productunits', 'id' => '1'],
             [],
             [],
             false
@@ -62,11 +80,11 @@ class LocalizationForUnauthorizedTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testTryToDeleteList()
+    public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
-            ['entity' => 'localizations'],
-            ['filter' => ['id' => '<toString(@en_US->id)>']],
+            ['entity' => 'productunits'],
+            ['filter' => ['id' => '1']],
             [],
             false
         );

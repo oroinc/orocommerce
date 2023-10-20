@@ -18,7 +18,7 @@ class CustomerUserAddressForVisitorWithGuestCheckoutTest extends FrontendRestJso
     protected function setUp(): void
     {
         parent::setUp();
-        $this->enableVisitor();
+        $this->initializeVisitor();
         $this->loadFixtures([
             LoadCustomerData::class,
             LoadCustomerUserData::class,

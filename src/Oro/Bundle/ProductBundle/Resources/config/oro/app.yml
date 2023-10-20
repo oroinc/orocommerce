@@ -25,3 +25,16 @@ oro_entity:
     entity_name_representation:
         Oro\Bundle\ProductBundle\Entity\Product:
             short: [ sku ]
+
+oro_customer:
+    frontend_api:
+        non_authenticated_visitors_api_resources:
+            - Oro\Bundle\ProductBundle\Api\Model\ProductCollection
+            - Oro\Bundle\ProductBundle\Api\Model\ProductSearch
+            - Oro\Bundle\ProductBundle\Entity\Product
+            - Oro\Bundle\ProductBundle\Entity\ProductImage
+            - Oro\Bundle\ProductBundle\Entity\ProductKitItem
+            - Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct
+            - Oro\Bundle\ProductBundle\Entity\ProductUnit
+            - Extend\Entity\EV_Prod_Inventory_Status
+            - Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily

@@ -2,15 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigChangeSet;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\OrderBundle\EventListener\PreviouslyPurchasedFeatureToggleListener;
 use Oro\Bundle\ProductBundle\Search\Reindex\ProductReindexManager;
 
 class PreviouslyPurchasedFeatureToggleListenerTest extends \PHPUnit\Framework\TestCase
 {
-    private const CONFIG_KEY = 'oro_order.enable_purchase_history';
-
     /** @var ProductReindexManager|\PHPUnit\Framework\MockObject\MockObject */
     private $reindexManager;
 
@@ -24,31 +21,26 @@ class PreviouslyPurchasedFeatureToggleListenerTest extends \PHPUnit\Framework\Te
         $this->listener = new PreviouslyPurchasedFeatureToggleListener($this->reindexManager);
     }
 
-    private function getConfigUpdateEvent(array $changeSet = [], ?string $scope = null): ConfigUpdateEvent
-    {
-        return new ConfigUpdateEvent(new ConfigChangeSet($changeSet), $scope);
-    }
-
     public function testConfigOptionNotChanged(): void
     {
-        $this->reindexManager->expects($this->never())
+        $this->reindexManager->expects(self::never())
             ->method('reindexAllProducts');
 
-        $event = $this->getConfigUpdateEvent();
-        $this->listener->reindexProducts($event);
+        $this->listener->reindexProducts(new ConfigUpdateEvent([], 'global', 0));
     }
 
     public function testConfigOptionChangedInSystemScope(): void
     {
-        $event = $this->getConfigUpdateEvent(
-            [self::CONFIG_KEY => ['new' => true, 'old' => false]],
-            'system'
-        );
-
-        $this->reindexManager->expects($this->once())
+        $this->reindexManager->expects(self::once())
             ->method('reindexAllProducts')
             ->with(null, true, ['order']);
 
-        $this->listener->reindexProducts($event);
+        $this->listener->reindexProducts(
+            new ConfigUpdateEvent(
+                ['oro_order.enable_purchase_history' => ['new' => true, 'old' => false]],
+                'global',
+                0
+            )
+        );
     }
 }
