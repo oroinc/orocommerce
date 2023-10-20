@@ -33,7 +33,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
     protected function setUp(): void
     {
         parent::setUp();
-        $this->enableVisitor();
+        $this->initializeVisitor();
         $this->loadFixtures([
             LoadCustomerData::class,
             LoadCountriesAndRegions::class,
