@@ -2,27 +2,35 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadCustomerUserRoles;
-use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadCustomerData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProductForUnauthorizedTest extends FrontendRestJsonApiTestCase
+class ProductSearchForUnauthenticatedTest extends FrontendRestJsonApiTestCase
 {
-    protected function setUp(): void
+    public function testOptionsForList(): void
     {
-        parent::setUp();
-        $this->loadFixtures([
-            LoadCustomerData::class,
-            LoadCustomerUserRoles::class,
-            '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product.yml'
-        ]);
+        $response = $this->options(
+            $this->getListRouteName(),
+            ['entity' => 'productsearch']
+        );
+        self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
 
-    public function testTryToGetList()
+    public function testTryToGetOptionsForItem(): void
+    {
+        $response = $this->options(
+            $this->getItemRouteName(),
+            ['entity' => 'productsearch', 'id' => '1'],
+            [],
+            false
+        );
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+    }
+
+    public function testTryToGetList(): void
     {
         $response = $this->cget(
-            ['entity' => 'products'],
+            ['entity' => 'productsearch'],
             [],
             [],
             false
@@ -30,10 +38,10 @@ class ProductForUnauthorizedTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testTryToGet()
+    public function testTryToGet(): void
     {
         $response = $this->get(
-            ['entity' => 'products', 'id' => '<toString(@product1->id)>'],
+            ['entity' => 'productsearch', 'id' => '1'],
             [],
             [],
             false
@@ -41,10 +49,10 @@ class ProductForUnauthorizedTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testTryToUpdate()
+    public function testTryToUpdate(): void
     {
         $response = $this->patch(
-            ['entity' => 'products', 'id' => '<toString(@product1->id)>'],
+            ['entity' => 'productsearch', 'id' => '1'],
             [],
             [],
             false
@@ -52,10 +60,10 @@ class ProductForUnauthorizedTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testTryToCreate()
+    public function testTryToCreate(): void
     {
         $response = $this->post(
-            ['entity' => 'products'],
+            ['entity' => 'productsearch'],
             [],
             [],
             false
@@ -63,10 +71,10 @@ class ProductForUnauthorizedTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testTryToDelete()
+    public function testTryToDelete(): void
     {
         $response = $this->delete(
-            ['entity' => 'products', 'id' => '<toString(@product1->id)>'],
+            ['entity' => 'productsearch', 'id' => '1'],
             [],
             [],
             false
@@ -74,11 +82,11 @@ class ProductForUnauthorizedTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testTryToDeleteList()
+    public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
-            ['entity' => 'products'],
-            ['filter' => ['id' => '<toString(@product1->id)>']],
+            ['entity' => 'productsearch'],
+            ['filter' => ['id' => '1']],
             [],
             false
         );

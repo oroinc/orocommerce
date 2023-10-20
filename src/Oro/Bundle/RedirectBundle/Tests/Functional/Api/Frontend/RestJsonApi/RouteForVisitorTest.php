@@ -9,8 +9,7 @@ class RouteForVisitorTest extends FrontendRestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->enableVisitor();
-        $this->loadVisitor();
+        $this->initializeVisitor();
     }
 
     private function getRouteId(string $pathIfo): string

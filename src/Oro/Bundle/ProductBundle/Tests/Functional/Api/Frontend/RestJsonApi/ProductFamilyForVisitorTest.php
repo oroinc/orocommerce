@@ -9,7 +9,7 @@ class ProductFamilyForVisitorTest extends FrontendRestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->enableVisitor();
+        $this->initializeVisitor();
         $this->loadFixtures([
             '@OroProductBundle/Tests/Functional/Api/Frontend/DataFixtures/product_family.yml'
         ]);
