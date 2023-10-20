@@ -1,8 +1,7 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\RestJsonApiForVisitor;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -10,17 +9,25 @@ use Symfony\Component\HttpFoundation\Response;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
+class OrderForUnauthenticatedTest extends FrontendRestJsonApiTestCase
 {
-    protected function setUp(): void
+    public function testOptionsForList(): void
     {
-        parent::setUp();
-        $this->loadFixtures([
-            LoadCustomerUserData::class,
-            '@OroOrderBundle/Tests/Functional/Api/Frontend/DataFixtures/orders.yml'
-        ]);
+        $response = $this->options(
+            $this->getListRouteName(),
+            ['entity' => 'orders']
+        );
+        self::assertAllowResponseHeader($response, 'OPTIONS, GET, POST');
+    }
+
+    public function testOptionsForItem(): void
+    {
+        $response = $this->options(
+            $this->getItemRouteName(),
+            ['entity' => 'orders', 'id' => '1']
+        );
+        self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
 
     public function testTryToGetList()
@@ -37,7 +44,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToGet()
     {
         $response = $this->get(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>'],
+            ['entity' => 'orders', 'id' => '1'],
             [],
             [],
             false
@@ -59,7 +66,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToUpdate()
     {
         $response = $this->patch(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>'],
+            ['entity' => 'orders', 'id' => '1'],
             [],
             [],
             false
@@ -70,7 +77,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToDelete()
     {
         $response = $this->delete(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>'],
+            ['entity' => 'orders', 'id' => '1'],
             [],
             [],
             false
@@ -82,7 +89,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->cdelete(
             ['entity' => 'orders'],
-            ['filter' => ['id' => '<toString(@order1->id)>']],
+            ['filter' => ['id' => '1']],
             [],
             false
         );
@@ -92,7 +99,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToGetSubresourceForLineItems()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'lineItems'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'lineItems'],
             [],
             [],
             false
@@ -103,7 +110,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToGetRelationshipForLineItems()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'lineItems'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'lineItems'],
             [],
             [],
             false
@@ -114,7 +121,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToUpdateRelationshipForLineItems()
     {
         $response = $this->patchRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'lineItems'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'lineItems'],
             [],
             [],
             false
@@ -125,7 +132,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToAddRelationshipForLineItems()
     {
         $response = $this->postRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'lineItems'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'lineItems'],
             [],
             [],
             false
@@ -136,7 +143,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToDeleteRelationshipForLineItems()
     {
         $response = $this->deleteRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'lineItems'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'lineItems'],
             [],
             [],
             false
@@ -147,7 +154,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToGetSubresourceForCustomer()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'customer'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'customer'],
             [],
             [],
             false
@@ -158,7 +165,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToGetRelationshipForCustomer()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'customer'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'customer'],
             [],
             [],
             false
@@ -169,7 +176,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToUpdateRelationshipForCustomer()
     {
         $response = $this->patchRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'customer'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'customer'],
             [],
             [],
             false
@@ -180,7 +187,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToGetSubresourceForCustomerUser()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'customerUser'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'customerUser'],
             [],
             [],
             false
@@ -191,7 +198,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToGetRelationshipForCustomerUser()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'customerUser'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'customerUser'],
             [],
             [],
             false
@@ -202,7 +209,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToUpdateRelationshipForCustomerUser()
     {
         $response = $this->patchRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'customerUser'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'customerUser'],
             [],
             [],
             false
@@ -213,7 +220,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToGetSubresourceForBillingAddress()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'billingAddress'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'billingAddress'],
             [],
             [],
             false
@@ -224,7 +231,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToGetRelationshipForBillingAddress()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'billingAddress'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'billingAddress'],
             [],
             [],
             false
@@ -235,7 +242,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToUpdateRelationshipForBillingAddress()
     {
         $response = $this->patchRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'billingAddress'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'billingAddress'],
             [],
             [],
             false
@@ -246,7 +253,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToGetSubresourceForShippingAddress()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'shippingAddress'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'shippingAddress'],
             [],
             [],
             false
@@ -257,7 +264,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToGetRelationshipForShippingAddress()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'shippingAddress'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'shippingAddress'],
             [],
             [],
             false
@@ -268,7 +275,7 @@ class OrderForUnauthorizedTest extends FrontendRestJsonApiTestCase
     public function testTryToUpdateRelationshipForShippingAddress()
     {
         $response = $this->patchRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'shippingAddress'],
+            ['entity' => 'orders', 'id' => '1', 'association' => 'shippingAddress'],
             [],
             [],
             false

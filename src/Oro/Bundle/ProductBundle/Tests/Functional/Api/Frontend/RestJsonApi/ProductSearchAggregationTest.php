@@ -4,17 +4,18 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
+use Oro\Bundle\SearchBundle\Engine\Orm;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
 {
     use WebsiteSearchExtensionTrait;
-    use ProductSearchEngineCheckTrait;
 
     protected function setUp(): void
     {
@@ -33,14 +34,21 @@ class ProductSearchAggregationTest extends FrontendRestJsonApiTestCase
         $this->reindexProductData();
     }
 
-    /**
-     * @return bool
-     */
-    private function isElasticSearchEngine()
+    private function isOrmEngine(): bool
+    {
+        return Orm::ENGINE_NAME === $this->getSearchEngine();
+    }
+
+    private function isElasticSearchEngine(): bool
     {
         return
             class_exists('Oro\Bundle\ElasticSearchBundle\Engine\ElasticSearch')
             && \Oro\Bundle\ElasticSearchBundle\Engine\ElasticSearch::ENGINE_NAME === $this->getSearchEngine();
+    }
+
+    private function getSearchEngine(): string
+    {
+        return self::getContainer()->get('oro_website_search.engine.parameters')->getEngineName();
     }
 
     public function testSeveralAggregates()

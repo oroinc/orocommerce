@@ -154,3 +154,8 @@ oro_entity:
         Oro\Bundle\CMSBundle\Entity\TabbedContentItem:
             full: [ title ]
             short: [ title ]
+
+oro_customer:
+    frontend_api:
+        non_authenticated_visitors_api_resources:
+            - Oro\Bundle\CMSBundle\Entity\Page

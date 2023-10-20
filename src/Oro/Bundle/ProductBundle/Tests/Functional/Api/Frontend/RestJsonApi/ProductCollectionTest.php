@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
+use Oro\Bundle\SearchBundle\Engine\Orm;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\Api\Frontend\RestJsonApi\WebCatalogTreeTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
 class ProductCollectionTest extends WebCatalogTreeTestCase
 {
     use WebsiteSearchExtensionTrait;
-    use ProductSearchEngineCheckTrait;
 
     protected function setUp(): void
     {
@@ -239,7 +239,8 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
 
     public function testGetWithAggregationsFilter()
     {
-        if (!$this->isOrmEngine()) {
+        $searchEngine = self::getContainer()->get('oro_website_search.engine.parameters')->getEngineName();
+        if (Orm::ENGINE_NAME !== $searchEngine) {
             $this->markTestSkipped('This test works only with ORM search engine.');
         }
 

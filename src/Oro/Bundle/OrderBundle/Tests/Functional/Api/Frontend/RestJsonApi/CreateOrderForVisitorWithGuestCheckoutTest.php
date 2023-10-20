@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\RestJsonApiForVisitor;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
@@ -34,7 +34,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
     protected function setUp(): void
     {
         parent::setUp();
-        $this->enableVisitor();
+        $this->initializeVisitor();
         $this->loadFixtures([
             LoadCustomerUserData::class,
             '@OroOrderBundle/Tests/Functional/Api/Frontend/DataFixtures/orders.yml',
