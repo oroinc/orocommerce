@@ -32,3 +32,4 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_promotion.entity_promotion_aware_helper, key: Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper }

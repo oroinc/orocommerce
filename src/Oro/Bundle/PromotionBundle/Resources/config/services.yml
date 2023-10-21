@@ -843,12 +843,8 @@ services:
 
     oro_promotion.entity_promotion_aware_helper:
         class: Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper
-        public: true
         arguments:
             - "@oro_entity_config.config_manager"
-
-    Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper:
-        alias: oro_promotion.entity_promotion_aware_helper
 
     oro_promotion.aware_entity_configuration:
         class: Oro\Bundle\PromotionBundle\EntityConfig\PromotionAwareEntityConfiguration
