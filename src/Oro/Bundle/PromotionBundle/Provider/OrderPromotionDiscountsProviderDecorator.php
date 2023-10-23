@@ -6,8 +6,6 @@ use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
-use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
-use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 
 /**
@@ -22,77 +20,57 @@ class OrderPromotionDiscountsProviderDecorator implements PromotionDiscountsProv
     }
 
     /**
-     * @param object $sourceEntity
-     * @param DiscountContextInterface $context
-     *
-     * @return array
+     * {@inheritDoc}
      */
-    public function getDiscounts($sourceEntity, DiscountContextInterface $context): array
+    public function getDiscounts(object $sourceEntity, DiscountContextInterface $context): array
     {
         $discounts = $this->baseDiscountsProvider->getDiscounts($sourceEntity, $context);
-
-        if ($this->isSupport($sourceEntity)) {
-            $appliedPromotionsIds = array_map(
-                fn (AppliedPromotion $promotion) => $promotion->getSourcePromotionId(),
-                $sourceEntity->getAppliedPromotions()->toArray()
-            );
-
-            $discounts = array_filter(
-                $discounts,
-                function (DiscountInterface $discount) use ($appliedPromotionsIds) {
-                    // Coupons are not added automatically, so you don't need to filter them.
-                    if (!$discount->getPromotion()->isUseCoupons()) {
-                        return in_array($discount->getPromotion()->getId(), $appliedPromotionsIds);
-                    }
-
-                    return true;
+        if ($sourceEntity instanceof Order && $this->isSupportedOrder($sourceEntity)) {
+            $appliedPromotionsIds = $this->getAppliedPromotionsIds($sourceEntity);
+            $filteredDiscounts = [];
+            foreach ($discounts as $discount) {
+                $promotion = $discount->getPromotion();
+                // coupons are not added automatically, so such discounts should not be filtered out
+                if ($promotion->isUseCoupons() || isset($appliedPromotionsIds[$promotion->getId()])) {
+                    $filteredDiscounts[] = $discount;
                 }
-            );
+            }
+
+            return $filteredDiscounts;
         }
 
         return $discounts;
     }
 
-    /**
-     * @param object $sourceEntity
-     *
-     * @return bool
-     */
-    private function isSupport($sourceEntity): bool
+    private function isSupportedOrder(Order $sourceEntity): bool
     {
-        /** @var Order $sourceEntity */
-        if ($this->isOrder($sourceEntity)) {
-            /** @var PersistentCollection $lineItems */
-            $lineItems = $sourceEntity->getLineItems();
-
-            /**
-             * @var OrderLineItem $lineItem
-             *
-             * Need in case a new product has not been added but an existing one has been changed.
-             */
-            foreach ($lineItems as $lineItem) {
-                if ($lineItem->getProduct() && $lineItem->getProductSku() !== $lineItem->getProduct()->getSku()) {
-                    return false;
-                }
-            }
-
-            // Need in case a new product is added to the order.
-            return !$lineItems->isDirty();
+        if (!$sourceEntity->getId() || !$this->promotionAwareHelper->isPromotionAware($sourceEntity)) {
+            return false;
         }
 
-        return false;
+        /** @var PersistentCollection $lineItems */
+        $lineItems = $sourceEntity->getLineItems();
+
+        // Need in case a new product has not been added but an existing one has been changed.
+        /** @var OrderLineItem $lineItem */
+        foreach ($lineItems as $lineItem) {
+            if ($lineItem->getProduct() && $lineItem->getProductSku() !== $lineItem->getProduct()->getSku()) {
+                return false;
+            }
+        }
+
+        // Need in case a new product is added to the order.
+        return !$lineItems->isDirty();
     }
 
-    /**
-     * @param object $sourceEntity
-     *
-     * @return bool
-     */
-    private function isOrder($sourceEntity): bool
+    private function getAppliedPromotionsIds(Order $sourceEntity): array
     {
-        return
-            $sourceEntity instanceof Order
-            && $this->promotionAwareHelper->isPromotionAware($sourceEntity)
-            && $sourceEntity->getId();
+        $appliedPromotionsIds = [];
+        $appliedPromotions = $sourceEntity->getAppliedPromotions()->toArray();
+        foreach ($appliedPromotions as $appliedPromotion) {
+            $appliedPromotionsIds[$appliedPromotion->getSourcePromotionId()] = true;
+        }
+
+        return $appliedPromotionsIds;
     }
 }
