@@ -21,6 +21,16 @@ class LoadPageData extends AbstractLoadPageData
                 '/bundles/orocms/images/landing-page/768.jpg',
             '@OroCMSBundle/Migrations/Data/ORM/data/landing-page/1384.jpg' =>
                 '/bundles/orocms/images/landing-page/1384.jpg',
+        ],
+        'homepage' => [
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/illustration-carts-order-history.png' =>
+                '/bundles/orocms/images/home-page/illustration-carts-order-history.png',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/illustration-carts-order-history-1280.png' =>
+                '/bundles/orocms/images/home-page/illustration-carts-order-history-1280.png',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/illustration-carts-contact-us.png' =>
+                '/bundles/orocms/images/home-page/illustration-carts-contact-us.png',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/illustration-carts-contact-us-1280.png' =>
+                '/bundles/orocms/images/home-page/illustration-carts-contact-us-1280.png',
         ]
     ];
 

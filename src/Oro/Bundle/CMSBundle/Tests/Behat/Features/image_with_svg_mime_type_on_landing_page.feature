@@ -26,7 +26,7 @@ Feature: Image with svg mime type on Landing page
     And click "Create Landing Page"
     And I fill in Landing Page Titles field with "Other page"
     Then I should see URL Slug field filled with "other-page"
-    When I fill in WYSIWYG "CMS Page Content" with "<picture><source srcset=\"{{ wysiwyg_image('13','86a7fe19-9de6-48f5-aa87-32f9eac7c62a','wysiwyg_original','webp') }}\" type=\"image/webp\"><img src=\"{{ wysiwyg_image('13','ba1e8f90-3300-4d11-996b-334851663661','wysiwyg_original','') }}\" alt=\"example1_svg_wysiwyg_image\"></picture>"
+    When I fill in WYSIWYG "CMS Page Content" with "<picture><source srcset=\"{{ wysiwyg_image('17','86a7fe19-9de6-48f5-aa87-32f9eac7c62a','wysiwyg_original','webp') }}\" type=\"image/webp\"><img src=\"{{ wysiwyg_image('17','ba1e8f90-3300-4d11-996b-334851663661','wysiwyg_original','') }}\" alt=\"example1_svg_wysiwyg_image\"></picture>"
     And I save and close form
     Then I should see "Page has been saved" flash message
     And image "Example1 svg wysiwyg image" is loaded
