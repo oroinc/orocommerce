@@ -4,12 +4,22 @@
     .grid-body-cell-shippingMethods {
         width: $grid-body-cell-shipping-methods-width;
     }
+
+    .group-row-has-children.shipping-methods-row {
+        .grid-body-cell-sku:first-child {
+            &::after {
+                display: block;
+                // / Stretching vertical line
+                top: -1px;
+            }
+        }
+    }
 }
 
 @include breakpoint('tablet') {
     .responsive-checkout-grid {
         .grid-body {
-            .group-row-has-children .grid-body-cell {
+            .group-row .grid-body-cell {
                 // reduce offset between rows
                 padding-bottom: $responsive-shopping-extension-row-offset-top-mobile;
             }
@@ -23,8 +33,12 @@
             display: none;
         }
 
+        .grid-body-cell-shippingMethods {
+            width: $grid-body-cell-shipping-methods-width-mobile;
+        }
+
         .grid-body {
-            .group-row-has-children {
+            .group-row {
                 // reduce offset between rows
                 padding-bottom: $responsive-shopping-extension-row-offset-top-mobile;
 

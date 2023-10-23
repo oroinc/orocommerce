@@ -6,7 +6,7 @@ use Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountryData;
 use Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadRegionData;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiUpdateListTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
 /**
  * @dbIsolationPerTest
@@ -26,7 +26,7 @@ class OrderUpdateListTest extends RestJsonApiUpdateListTestCase
         );
     }
 
-    public function testCreateEntities()
+    public function testCreateEntities(): void
     {
         $this->processUpdateList(
             Order::class,
@@ -65,6 +65,18 @@ class OrderUpdateListTest extends RestJsonApiUpdateListTestCase
                             'totalValue'    => '90.0000',
                         ],
                     ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => 'new',
+                        'attributes' => [
+                            'identifier'    => 'new_order 3',
+                            'poNumber'      => '2345677',
+                            'shipUntil'     => '2017-04-12',
+                            'currency'      => 'USD',
+                            'subtotalValue' => '1200.0000',
+                            'totalValue'    => '1200.0000',
+                        ],
+                    ],
                 ],
             ],
             $response
@@ -77,7 +89,7 @@ class OrderUpdateListTest extends RestJsonApiUpdateListTestCase
 
         $order2LineItems = $repository->findOneBy(['poNumber' => '2345679'])->getLineItems();
         self::assertEquals(1, $order2LineItems->count());
-        /** @var LineItem $lineItem */
+        /** @var OrderLineItem $lineItem */
         $lineItem = $order2LineItems->first();
         self::assertEquals($this->getReference('product-1'), $lineItem->getProduct());
         self::assertEquals('product-1', $lineItem->getProductSku());
@@ -88,12 +100,18 @@ class OrderUpdateListTest extends RestJsonApiUpdateListTestCase
         self::assertEquals(3.0, $lineItem->getQuantity());
         self::assertEquals('30.0000', $lineItem->getPrice()->getValue());
         self::assertEquals('USD', $lineItem->getPrice()->getCurrency());
+
+        $order3LineItems = $repository->findOneBy(['poNumber' => '2345677'])->getLineItems();
+        self::assertEquals(1, $order3LineItems->count());
+        /** @var OrderLineItem $productKitLineItem */
+        $productKitLineItem = $order3LineItems->get(0);
+        self::assertEquals(1, $productKitLineItem->getKitItemLineItems()->count());
     }
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testUpdateOrdersWithNewShippingTrackingsInfo()
+    public function testUpdateOrdersWithNewShippingTrackingsInfo(): void
     {
         $this->processUpdateList(
             Order::class,
@@ -211,7 +229,7 @@ class OrderUpdateListTest extends RestJsonApiUpdateListTestCase
         self::assertEquals('number 3', $order2Tracking->getNumber());
     }
 
-    public function testUpdateOrderAddresses()
+    public function testUpdateOrderAddresses(): void
     {
         $this->processUpdateList(
             Order::class,
@@ -280,7 +298,7 @@ class OrderUpdateListTest extends RestJsonApiUpdateListTestCase
         self::assertEquals('Shipping 2', $order1->getShippingAddress()->getLabel());
     }
 
-    public function testTryToCreateEntitiesWithErrors()
+    public function testTryToCreateEntitiesWithErrors(): void
     {
         $operationId = $this->processUpdateList(
             Order::class,

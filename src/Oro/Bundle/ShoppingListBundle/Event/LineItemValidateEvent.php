@@ -9,6 +9,8 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 /**
  * This event allows to manage validation errors for LineItems.
  * It is dispatched by LineItemCollectionValidator.
+ *
+ * @deprecated since 5.1, use Symfony Validator instead
  */
 class LineItemValidateEvent extends Event
 {

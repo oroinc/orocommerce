@@ -4,6 +4,9 @@ namespace Oro\Bundle\ShippingBundle\Context;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * Container of values that represents Shipping Context.
+ */
 class ShippingContext extends ParameterBag implements ShippingContextInterface
 {
     const FIELD_CUSTOMER = 'customer';

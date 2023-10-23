@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Formatter\ValueFormatterInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
@@ -28,6 +29,8 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
 
     public const MP_ALIAS = 'minimal_price.CPL_ID_CURRENCY_UNIT';
     public const MP_MERGED_ALIAS = 'minimal_price.CPL_ID_CURRENCY';
+
+    private array $notAllowedProductTypes = [];
 
     public function __construct(
         private WebsiteContextManager $websiteContextManager,
@@ -54,6 +57,15 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
             return;
         }
 
+        $entities = array_filter(
+            $event->getEntities(),
+            fn (Product $item) => !in_array($item->getType(), $this->notAllowedProductTypes, true)
+        );
+
+        if (!$entities) {
+            return;
+        }
+
         /** @var CombinedProductPriceRepository $repository */
         $repository = $this->doctrine->getRepository(CombinedProductPrice::class);
         $configCplId = $this->configManager->get(Configuration::getConfigKeyToPriceList());
@@ -66,7 +78,7 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
 
         $prices = $repository->findMinByWebsiteForFilter(
             $websiteId,
-            $event->getEntities(),
+            $entities,
             $configCpl
         );
 
@@ -85,7 +97,7 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
 
         $prices = $repository->findMinByWebsiteForSort(
             $websiteId,
-            $event->getEntities(),
+            $entities,
             $configCpl
         );
         foreach ($prices as $price) {
@@ -99,5 +111,10 @@ class WebsiteSearchProductPriceIndexerListener implements FeatureToggleableInter
                 ]
             );
         }
+    }
+
+    public function setNotAllowedProductTypes(array $notAllowedProductTypes): void
+    {
+        $this->notAllowedProductTypes = $notAllowedProductTypes;
     }
 }

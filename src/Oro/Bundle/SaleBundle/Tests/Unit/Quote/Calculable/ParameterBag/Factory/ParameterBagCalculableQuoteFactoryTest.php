@@ -6,10 +6,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\SaleBundle\Quote\Calculable\ParameterBag\Factory\ParameterBagCalculableQuoteFactory;
 use Oro\Bundle\SaleBundle\Quote\Calculable\ParameterBag\ParameterBagCalculableQuote;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
+use PHPUnit\Framework\TestCase;
 
-class ParameterBagCalculableQuoteFactoryTest extends \PHPUnit\Framework\TestCase
+class ParameterBagCalculableQuoteFactoryTest extends TestCase
 {
-    public function testCreateCalculableQuote()
+    public function testCreateCalculableQuote(): void
     {
         $lineItems = new ArrayCollection([$this->createMock(ShippingLineItemInterface::class)]);
 
@@ -21,7 +22,7 @@ class ParameterBagCalculableQuoteFactoryTest extends \PHPUnit\Framework\TestCase
 
         $parameterBagCalculableQuoteFactory = new ParameterBagCalculableQuoteFactory();
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedCalculableQuote,
             $parameterBagCalculableQuoteFactory->createCalculableQuote($lineItems)
         );

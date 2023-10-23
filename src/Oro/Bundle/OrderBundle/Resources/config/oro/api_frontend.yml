@@ -2,12 +2,6 @@ api:
     entities:
         Oro\Bundle\OrderBundle\Entity\Order:
             documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order.md'
-            form_options:
-                constraints:
-                    - Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGranted:
-                          addressType: billing
-                    - Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGranted:
-                          addressType: shipping
             fields:
                 sourceEntityClass:
                     exclude: true
@@ -103,17 +97,10 @@ api:
                 subtotalValue:
                     form_options:
                         mapped: false
-                billingAddress:
-                    form_options:
-                        constraints:
-                            - NotBlank: ~
-                            - Oro\Bundle\AddressBundle\Validator\Constraints\NewAddress: ~
-                shippingAddress:
-                    form_options:
-                        constraints:
-                            - NotBlank: ~
-                            - Oro\Bundle\AddressBundle\Validator\Constraints\NewAddress: ~
             actions:
+                create:
+                    form_options:
+                        validation_groups: [ Default, api, api_frontend_order_create ]
                 update: false
                 delete: false
                 delete_list: false
@@ -121,13 +108,6 @@ api:
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order_line_item.md'
             disable_meta_properties: [ title ]
-            form_options:
-                constraints:
-                    - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:
-                          path: productUnit
-                          sell: true
-                    - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
-                          path: quantity
             fields:
                 fromExternalSource:
                     exclude: true
@@ -154,6 +134,53 @@ api:
                     exclude: true
             actions:
                 create:
+                    form_options:
+                        validation_groups: [ Default, api, api_frontend_order_line_item_create ]
+                    status_codes:
+                        200: false
+                        201: false
+                        400: false
+                        403: Returned always
+                        409: false
+                        500: false
+                update: false
+                delete: false
+                delete_list: false
+
+        Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order_product_kit_item_line_item.md'
+            disable_meta_properties: [title]
+            fields:
+                productId:
+                    form_options:
+                        mapped: false
+                price:
+                    property_path: value
+                productUnitCode:
+                    form_options:
+                        mapped: false
+                productUnitPrecision:
+                    form_options:
+                        mapped: false
+                kitItemId:
+                    form_options:
+                        mapped: false
+                kitItemLabel:
+                    form_options:
+                        mapped: false
+                minimumQuantity:
+                    form_options:
+                        mapped: false
+                maximumQuantity:
+                    form_options:
+                        mapped: false
+                optional:
+                    form_options:
+                        mapped: false
+            actions:
+                create:
+                    form_options:
+                        validation_groups: [ Default, api, api_frontend_order_kit_item_line_item_create ]
                     status_codes:
                         200: false
                         201: false

@@ -12,6 +12,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
 /**
  * Adds line items errors data.
+ *
+ * @deprecated since 5.1, use \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+ *  instead
  */
 class DatagridLineItemsDataViolationsListener extends BaseListener
 {

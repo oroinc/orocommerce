@@ -16,33 +16,17 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ShippingPackagesByLineItemBuilderTest extends TestCase
 {
-    /**
-     * @var ShippingPackageOptionsFactory
-     */
-    private $packageOptionsFactory;
-
-    /**
-     * @var ExpressionLanguage
-     */
-    private $expressionLanguage;
-
-    /**
-     * @var ShippingPackagesByLineItemBuilder
-     */
-    private $builder;
+    private ShippingPackagesByLineItemBuilder $builder;
 
     protected function setUp(): void
     {
-        $this->packageOptionsFactory = new ShippingPackageOptionsFactory();
-        $this->expressionLanguage = new ExpressionLanguage();
-
         $this->builder = new ShippingPackagesByLineItemBuilder(
-            $this->packageOptionsFactory,
-            $this->expressionLanguage
+            new ShippingPackageOptionsFactory(),
+            new ExpressionLanguage()
         );
     }
 
-    public function testAddItemTooBigWeight()
+    public function testAddItemTooBigWeight(): void
     {
         $packageSettings = new FedexPackageSettings('kg', 'cm', 'weight < 15');
         $lineItem = new ShippingLineItem([
@@ -51,10 +35,10 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
         ]);
 
         $this->builder->init($packageSettings);
-        static::assertFalse($this->builder->addLineItem($lineItem));
+        self::assertFalse($this->builder->addLineItem($lineItem));
     }
 
-    public function testAddItemTooBigLength()
+    public function testAddItemTooBigLength(): void
     {
         $packageSettings = new FedexPackageSettings('kg', 'cm', 'weight < 15 and length < 10');
         $lineItem = new ShippingLineItem([
@@ -63,10 +47,10 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
         ]);
 
         $this->builder->init($packageSettings);
-        static::assertFalse($this->builder->addLineItem($lineItem));
+        self::assertFalse($this->builder->addLineItem($lineItem));
     }
 
-    public function testAddItemTooBigWidth()
+    public function testAddItemTooBigWidth(): void
     {
         $packageSettings = new FedexPackageSettings('kg', 'cm', 'weight < 15 and length < 10 and width < 10');
         $lineItem = new ShippingLineItem([
@@ -75,10 +59,10 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
         ]);
 
         $this->builder->init($packageSettings);
-        static::assertFalse($this->builder->addLineItem($lineItem));
+        self::assertFalse($this->builder->addLineItem($lineItem));
     }
 
-    public function testAddItemTooBigHeight()
+    public function testAddItemTooBigHeight(): void
     {
         $packageSettings = new FedexPackageSettings(
             'kg',
@@ -91,10 +75,10 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
         ]);
 
         $this->builder->init($packageSettings);
-        static::assertFalse($this->builder->addLineItem($lineItem));
+        self::assertFalse($this->builder->addLineItem($lineItem));
     }
 
-    public function testAddLineItemDividedByWeightOnlyWhenDimensionsIgnored()
+    public function testAddLineItemDividedByWeightOnlyWhenDimensionsIgnored(): void
     {
         $packageSettings = new FedexPackageSettings(
             'kg',
@@ -109,8 +93,8 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
         ]);
 
         $this->builder->init($packageSettings);
-        static::assertTrue($this->builder->addLineItem($lineItem));
-        static::assertEquals(
+        self::assertTrue($this->builder->addLineItem($lineItem));
+        self::assertEquals(
             [
                 new ShippingPackageOptions(
                     Dimensions::create(0, 0, 0, null),
@@ -125,7 +109,7 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
         );
     }
 
-    public function testAddLineItemDividedByWeight()
+    public function testAddLineItemDividedByWeight(): void
     {
         $packageSettings = new FedexPackageSettings(
             'kg',
@@ -139,8 +123,8 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
         ]);
 
         $this->builder->init($packageSettings);
-        static::assertTrue($this->builder->addLineItem($lineItem));
-        static::assertEquals(
+        self::assertTrue($this->builder->addLineItem($lineItem));
+        self::assertEquals(
             [
                 new ShippingPackageOptions(
                     Dimensions::create(2, 2, 2, (new LengthUnit())->setCode('cm')),
@@ -155,7 +139,7 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
         );
     }
 
-    public function testAddLineItemDividedByDimensions()
+    public function testAddLineItemDividedByDimensions(): void
     {
         $packageSettings = new FedexPackageSettings(
             'kg',
@@ -169,8 +153,8 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
         ]);
 
         $this->builder->init($packageSettings);
-        static::assertTrue($this->builder->addLineItem($lineItem));
-        static::assertEquals(
+        self::assertTrue($this->builder->addLineItem($lineItem));
+        self::assertEquals(
             [
                 new ShippingPackageOptions(
                     Dimensions::create(4, 4, 4, (new LengthUnit())->setCode('cm')),
@@ -185,7 +169,7 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
         );
     }
 
-    public function testBuilderReused()
+    public function testBuilderReused(): void
     {
         $this->testAddLineItemDividedByWeight();
         $this->testAddLineItemDividedByDimensions();

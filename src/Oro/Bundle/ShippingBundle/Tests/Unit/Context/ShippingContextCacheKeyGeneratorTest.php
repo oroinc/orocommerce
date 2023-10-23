@@ -18,28 +18,20 @@ use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\TestCase;
 
-class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
+class ShippingContextCacheKeyGeneratorTest extends TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var ShippingContextCacheKeyGenerator
-     */
-    protected $generator;
+    private ShippingContextCacheKeyGenerator $generator;
 
     protected function setUp(): void
     {
         $this->generator = new ShippingContextCacheKeyGenerator();
     }
 
-    /**
-     * @param $params
-     * @param ShippingContext|null $context
-     *
-     * @return ShippingContext
-     */
-    private function createContext($params, ShippingContext $context = null)
+    private function createContext(array $params, ?ShippingContext $context = null): ShippingContext
     {
         $actualParams = $params;
 
@@ -52,14 +44,10 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
         return new ShippingContext($actualParams);
     }
 
-    /**
-     * @param array $lineItemsParams
-     * @param ShippingContext|null $context
-     *
-     * @return ShippingContext
-     */
-    private function createContextWithLineItems(array $lineItemsParams, ShippingContext $context = null)
-    {
+    private function createContextWithLineItems(
+        array $lineItemsParams,
+        ?ShippingContext $context = null
+    ): ShippingContext {
         $lineItems = [];
         foreach ($lineItemsParams as $params) {
             $lineItems[] = new ShippingLineItem($params);
@@ -73,13 +61,13 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGenerateHashSimpleFields()
+    public function testGenerateHashSimpleFields(): void
     {
         $context1 = $this->createContext([]);
         $context2 = $this->createContext([]);
 
-        $this->assertEquals(crc32(''), $this->generator->generateKey($context1));
-        $this->assertEquals(crc32(''), $this->generator->generateKey($context2));
+        self::assertEquals(crc32(''), $this->generator->generateKey($context1));
+        self::assertEquals(crc32(''), $this->generator->generateKey($context2));
 
         $context1 = $this->createContext([ShippingContext::FIELD_CURRENCY => 'USD'], $context1);
         $this->assertHashNotEquals($context1, $context2);
@@ -113,7 +101,7 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->assertHashEquals($context1, $context2);
     }
 
-    public function testGenerateHashBillingAddress()
+    public function testGenerateHashBillingAddress(): void
     {
         $context1 = $this->createContext([]);
         $context2 = $this->createContext([]);
@@ -129,7 +117,7 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->assertAddressesFieldAffectsHash($context1, $context2, $address1, $address2);
     }
 
-    public function testGenerateHashShippingAddress()
+    public function testGenerateHashShippingAddress(): void
     {
         $context1 = $this->createContext([]);
         $context2 = $this->createContext([]);
@@ -145,7 +133,7 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->assertAddressesFieldAffectsHash($context1, $context2, $address1, $address2);
     }
 
-    public function testGenerateHashShippingOrigin()
+    public function testGenerateHashShippingOrigin(): void
     {
         $context1 = $this->createContext([]);
         $context2 = $this->createContext([]);
@@ -166,7 +154,7 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
         ShippingContext $context2,
         ShippingAddressStub $address1,
         ShippingAddressStub $address2
-    ) {
+    ): void {
         $address1->setStreet('street');
         $this->assertHashNotEquals($context1, $context2);
         $address2->setStreet('another_street');
@@ -241,13 +229,15 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->assertHashEquals($context1, $context2);
     }
 
-    public function testGenerateHashLineItemsOrder()
+    public function testGenerateHashLineItemsOrder(): void
     {
         $context1 = $this->createContext([]);
         $context2 = $this->createContext([]);
 
-        $unit1 = new ProductUnit();
-        $unit2 = new ProductUnit();
+        $unit1 = (new ProductUnit())
+            ->setCode('code');
+        $unit2 = (new ProductUnit())
+            ->setCode('code');
 
         $item1 = new ShippingLineItem([ShippingLineItem::FIELD_PRODUCT_UNIT => $unit1]);
         $item2 = new ShippingLineItem([ShippingLineItem::FIELD_PRODUCT_UNIT => $unit2]);
@@ -282,13 +272,15 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testGenerateHashLineItems()
+    public function testGenerateHashLineItems(): void
     {
         $context1 = $this->createContext([]);
         $context2 = $this->createContext([]);
 
-        $unit1 = new ProductUnit();
-        $unit2 = new ProductUnit();
+        $unit1 = (new ProductUnit())
+            ->setCode('code');
+        $unit2 = (new ProductUnit())
+            ->setCode('code');
 
         $context1 = $this->createContextWithLineItems(
             [[ShippingLineItem::FIELD_PRODUCT_UNIT => $unit1, ShippingLineItem::FIELD_QUANTITY => 1]],
@@ -450,13 +442,13 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit\Framework\TestCase
         $this->assertHashEquals($context1, $context2);
     }
 
-    protected function assertHashEquals(ShippingContextInterface $context1, ShippingContextInterface $context2)
+    protected function assertHashEquals(ShippingContextInterface $context1, ShippingContextInterface $context2): void
     {
-        $this->assertEquals($this->generator->generateKey($context1), $this->generator->generateKey($context2));
+        self::assertEquals($this->generator->generateKey($context1), $this->generator->generateKey($context2));
     }
 
-    protected function assertHashNotEquals(ShippingContextInterface $context1, ShippingContextInterface $context2)
+    protected function assertHashNotEquals(ShippingContextInterface $context1, ShippingContextInterface $context2): void
     {
-        $this->assertNotEquals($this->generator->generateKey($context1), $this->generator->generateKey($context2));
+        self::assertNotEquals($this->generator->generateKey($context1), $this->generator->generateKey($context2));
     }
 }

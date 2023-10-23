@@ -20,6 +20,7 @@ use Oro\Component\Action\Event\ExtendableConditionEvent;
 
 /**
  * Checks that there are enough products in the stock.
+ * Decrements the inventory levels of the products after a checkout is finished.
  */
 class CreateOrderEventListener
 {
@@ -63,6 +64,9 @@ class CreateOrderEventListener
         }
     }
 
+    /**
+     * @deprecated since 5.1, will be moved to the validation.yml config in CheckoutBundle instead.
+     */
     public function onBeforeOrderCreate(ExtendableConditionEvent $event): void
     {
         $context = $event->getContext();

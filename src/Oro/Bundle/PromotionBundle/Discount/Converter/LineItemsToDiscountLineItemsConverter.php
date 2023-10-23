@@ -54,7 +54,11 @@ class LineItemsToDiscountLineItemsConverter extends AbstractLineItemsToDiscountL
 
             if (isset($lineItemsPrices[$key])) {
                 $discountLineItem->setPrice($lineItemsPrices[$key]->getPrice());
-                $discountLineItem->setSubtotal($lineItemsPrices[$key]->getSubtotal());
+                // ProductLineItemPrice::getSubtotal is not used here on purpose because discount line item subtotal
+                // must not be rounded - as discounts must be applied before rounding.
+                $discountLineItem->setSubtotal(
+                    $lineItemsPrices[$key]->getPrice()->getValue() * $lineItem->getQuantity()
+                );
             } else {
                 $discountLineItem->setSubtotal(0);
             }

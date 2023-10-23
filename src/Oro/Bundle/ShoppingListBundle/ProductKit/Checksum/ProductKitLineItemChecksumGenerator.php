@@ -9,6 +9,9 @@ use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 
 /**
  * Line item checksum generator that creates a checksum for the line item of a product kit.
+ *
+ * @deprecated since 5.1, use {@see \Oro\Bundle\ProductBundle\ProductKit\Checksum\ProductKitLineItemChecksumGenerator}
+ * instead.
  */
 class ProductKitLineItemChecksumGenerator implements LineItemChecksumGeneratorInterface
 {

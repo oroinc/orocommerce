@@ -12,6 +12,10 @@ use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
 
+/**
+ * Creates {@see PriceRequest} by {@see UPSTransport}, {@see ShippingContextInterface},
+ * Request option and {@see ShippingService}.
+ */
 class PriceRequestFactory
 {
     const MAX_PACKAGE_WEIGHT_KGS = 70;
@@ -96,8 +100,8 @@ class PriceRequestFactory
 
     /**
      * @param ShippingLineItemInterface[] $lineItems
-     * @param string                      $unitOfWeight
-     * @param int                         $weightLimit
+     * @param string $unitOfWeight
+     * @param int $weightLimit
      *
      * @return Package[]|array
      * @throws \UnexpectedValueException
@@ -136,7 +140,7 @@ class PriceRequestFactory
 
     /**
      * @param ShippingLineItemInterface[] $lineItems
-     * @param string                      $upsWeightUnit
+     * @param string $upsWeightUnit
      *
      * @return array
      */
@@ -159,7 +163,7 @@ class PriceRequestFactory
 
     /**
      * @param ShippingLineItemInterface $lineItem
-     * @param string                    $weightUnit
+     * @param string $weightUnit
      *
      * @return float|null
      */

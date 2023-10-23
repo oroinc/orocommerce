@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,7 +16,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Order LineItem type.
+ * Form type representing {@see OrderLineItem}.
  */
 class OrderLineItemType extends AbstractOrderLineItemType
 {
@@ -24,9 +27,23 @@ class OrderLineItemType extends AbstractOrderLineItemType
      */
     protected $productUnitsProvider;
 
+    private ?EventSubscriberInterface $orderLineItemProductListener = null;
+
+    private ?EventSubscriberInterface $orderLineItemChecksumListener = null;
+
     public function __construct(ProductUnitsProvider $productUnitsProvider)
     {
         $this->productUnitsProvider = $productUnitsProvider;
+    }
+
+    public function setOrderLineItemProductListener(?EventSubscriberInterface $orderLineItemProductListener): void
+    {
+        $this->orderLineItemProductListener = $orderLineItemProductListener;
+    }
+
+    public function setOrderLineItemChecksumListener(?EventSubscriberInterface $orderLineItemChecksumListener): void
+    {
+        $this->orderLineItemChecksumListener = $orderLineItemChecksumListener;
     }
 
     /**
@@ -57,13 +74,25 @@ class OrderLineItemType extends AbstractOrderLineItemType
                 'product',
                 ProductSelectType::class,
                 [
-                    'error_bubbling' => true,
+                    'autocomplete_alias' => 'oro_order_product_visibility_limited',
+                    'grid_name' => 'products-select-grid',
+                    'grid_parameters' => [
+                        'types' => [Product::TYPE_SIMPLE, Product::TYPE_KIT]
+                    ],
                     'required' => true,
                     'label' => 'oro.product.entity_label',
                     'create_enabled' => false,
                     'data_parameters' => [
                         'scope' => 'order'
                     ]
+                ]
+            )
+            ->add(
+                'kitItemLineItems',
+                OrderProductKitItemLineItemCollectionType::class,
+                [
+                    'required' => false,
+                    'currency' => $options['currency'],
                 ]
             )
             ->add(
@@ -90,12 +119,20 @@ class OrderLineItemType extends AbstractOrderLineItemType
                     'required' => true,
                     'label' => 'oro.order.orderlineitem.price.label',
                     'hide_currency' => true,
-                    'default_currency' => $options['currency']
+                    'default_currency' => $options['currency'],
                 ]
             )
             ->add('priceType', HiddenType::class, [
-                'data' => OrderLineItem::PRICE_TYPE_UNIT,
+                'data' => PriceTypeAwareInterface::PRICE_TYPE_UNIT,
             ]);
+
+        if ($this->orderLineItemProductListener !== null) {
+            $builder->get('product')->addEventSubscriber($this->orderLineItemProductListener);
+        }
+
+        if ($this->orderLineItemChecksumListener !== null) {
+            $builder->addEventSubscriber($this->orderLineItemChecksumListener);
+        }
     }
 
     /**
@@ -125,15 +162,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
             return;
         }
 
-        $form->remove('productUnit');
-        $form->add(
-            'productUnit',
-            ProductUnitSelectionType::class,
-            [
-                'label' => 'oro.product.productunit.entity_label',
-                'required' => true,
-            ]
-        );
+        FormUtils::replaceField($form, 'productUnit');
     }
 
     /**

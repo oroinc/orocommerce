@@ -3,7 +3,7 @@ $responsive-shopping-list-layout-background: get-color('additional', 'base') !de
 $responsive-shopping-cell-desktop-offset: 23px !default;
 $responsive-shopping-sub-cell-desktop-offset: 18px !default;
 // Manually calculated a half of cells' height
-$responsive-shopping-cell-half-height: 28px !default;
+$responsive-shopping-cell-half-height: 18px !default;
 
 $responsive-shopping-list-notification-container-offset: 0 !default;
 $responsive-shopping-list-extension-row-top-offset: 0 !default;
@@ -17,27 +17,31 @@ $responsive-shopping-sub-row-cell-desktop-inner-offset: $datagrid-body-cell-offs
 
 $responsive-shopping-grid-body-cell-sku-width: 80px !default;
 
+// Desktop
+$responsive-shopping-cell-line-size-desktop: $responsive-shopping-cell-desktop-offset
+    + ($base-font-size / 2) - 1 !default;
+
 // Tablet
 $responsive-shopping-group-cell-offset-tablet: 23px !default;
 $responsive-shopping-body-cell-offset-y-tablet: 23px !default;
 $responsive-shopping-subrow-body-cell-offset-y-tablet: 20px !default;
 
 // Mobile
+$responsive-shopping-body-cell-offset-y-mobile: 2px !default;
 
 $responsive-shopping-grid-row-offset-mobile: 12px !default;
 $responsive-shopping-sub-row-offset-top-mobile: 12px !default;
 $responsive-shopping-sub-row-offset-bottom-mobile: 8px !default;
 $responsive-shopping-sub-row-border-mobile-color: get-color('additional', 'light') !default;
 $responsive-shopping-sub-row-border-mobile: 1px solid $responsive-shopping-sub-row-border-mobile-color !default;
-$responsive-shopping-grid-row-border-mobile: 2px dashed get-color('additional', 'middle');
+$responsive-shopping-grid-row-border-mobile: 2px dashed get-color('additional', 'middle') !default;
 $responsive-shopping-header-row-border-mobile: 1px solid $responsive-shopping-sub-row-border-mobile-color !default;
 
 $responsive-shopping-extension-row-error-offset-mobile: 0 !default;
-$responsive-shopping-extension-row-offset-top-mobile: 0 !default;
+$responsive-shopping-extension-row-offset-top-mobile: $responsive-shopping-body-cell-offset-y-mobile !default;
 $responsive-shopping-extension-row-offset-bottom-mobile: 7px !default;
 $responsive-shopping-extension-sub-row-offset-top-mobile: 7px !default;
 
-$responsive-shopping-body-cell-offset-y-mobile: 2px !default;
 $responsive-shopping-body-cell-action-offset-y-mobile: (
     $responsive-shopping-body-cell-offset-y-tablet - $grid-line-items-container-offset-x-mobile
 ) !default;

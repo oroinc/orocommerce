@@ -6,11 +6,18 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\ShippingLineItemBuilderInterface;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Factory;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 
+/**
+ * Basic implementation of the shipping line item model builder.
+ *
+ * @deprecated since 5.1
+ */
 class BasicShippingLineItemBuilder implements ShippingLineItemBuilderInterface
 {
     /**
@@ -58,6 +65,8 @@ class BasicShippingLineItemBuilder implements ShippingLineItemBuilderInterface
      */
     private $weight;
 
+    private Factory\ShippingKitItemLineItemFromProductKitItemLineItemFactoryInterface $shippingKitItemLineItemFactory;
+
     /**
      * @param ProductUnit $unit
      * @param string $unitCode
@@ -74,6 +83,14 @@ class BasicShippingLineItemBuilder implements ShippingLineItemBuilderInterface
         $this->unitCode = $unitCode;
         $this->quantity = $quantity;
         $this->productHolder = $productHolder;
+
+        $this->shippingKitItemLineItemFactory = new Factory\ShippingKitItemLineItemFromProductKitItemLineItemFactory();
+    }
+
+    public function setShippingKitItemLineItemFactory(
+        Factory\ShippingKitItemLineItemFromProductKitItemLineItemFactoryInterface $shippingKitItemLineItemFactory
+    ): void {
+        $this->shippingKitItemLineItemFactory = $shippingKitItemLineItemFactory;
     }
 
     /**
@@ -107,6 +124,12 @@ class BasicShippingLineItemBuilder implements ShippingLineItemBuilderInterface
 
         if (null !== $this->price) {
             $params[ShippingLineItem::FIELD_PRICE] = $this->price;
+        }
+
+        if ($this->productHolder instanceof ProductKitItemLineItemsAwareInterface) {
+            $params[ShippingLineItem::FIELD_KIT_ITEM_LINE_ITEMS] = $this->shippingKitItemLineItemFactory
+                ->createCollection($this->productHolder->getKitItemLineItems());
+            $params[ShippingLineItem::FIELD_CHECKSUM] = $this->productHolder->getChecksum();
         }
 
         return new ShippingLineItem($params);

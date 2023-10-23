@@ -4,6 +4,7 @@ namespace Oro\Bundle\SaleBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
@@ -29,7 +30,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
  *      }
  * )
  */
-class BaseQuoteProductItem implements ProductLineItemInterface, ExtendEntityInterface
+class BaseQuoteProductItem implements ProductLineItemInterface, PriceAwareInterface, ExtendEntityInterface
 {
     use ExtendEntityTrait;
 

@@ -15,7 +15,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 
 /**
- * Represents a line item of the product kit item.
+ * Represents a shopping list line item of a product kit item.
  *
  * @ORM\Table(
  *      name="oro_shopping_list_product_kit_item_line_item"

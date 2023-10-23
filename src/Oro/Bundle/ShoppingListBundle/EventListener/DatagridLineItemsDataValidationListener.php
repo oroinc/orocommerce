@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
+use Oro\Bundle\FormBundle\Utils\ValidationGroupUtils;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
 use Oro\Bundle\ProductBundle\EventListener\DatagridKitLineItemsDataListener;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactoryInterface;
@@ -25,7 +26,7 @@ class DatagridLineItemsDataValidationListener
 
     private TranslatorInterface $translator;
 
-    private array $validationGroups = ['Default', 'datagrid_line_items_data'];
+    private array $validationGroups = [['Default', 'datagrid_line_items_data']];
 
     public function __construct(
         ValidatorInterface $validator,
@@ -47,7 +48,7 @@ class DatagridLineItemsDataValidationListener
         $violationList = $this->validator->validate(
             $this->lineItemsHolderFactory->createFromLineItems($lineItems),
             null,
-            $this->validationGroups
+            ValidationGroupUtils::resolveValidationGroups($this->validationGroups)
         );
 
         [$warnings, $errors] = $this->getMessages($violationList);

@@ -16,6 +16,8 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 
 /**
  * Sets shipping options for the shipping line items when options value is null.
+ *
+ * @deprecated since 5.1
  */
 class ShippingOptionsLineItemCollectionFactoryDecorator implements ShippingLineItemCollectionFactoryInterface
 {

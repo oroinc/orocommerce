@@ -12,6 +12,19 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
  */
 class ShoppingListLineItemConverter implements CheckoutLineItemConverterInterface
 {
+    private ProductKitItemLineItemConverter $productKitItemLineItemConverter;
+
+    public function __construct()
+    {
+        $this->productKitItemLineItemConverter = new ProductKitItemLineItemConverter();
+    }
+
+    public function setProductKitItemLineItemConverter(
+        ProductKitItemLineItemConverter $productKitItemLineItemConverter
+    ): void {
+        $this->productKitItemLineItemConverter = $productKitItemLineItemConverter;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -40,7 +53,15 @@ class ShoppingListLineItemConverter implements CheckoutLineItemConverterInterfac
                 ->setProductUnit($lineItem->getProductUnit())
                 ->setProductUnitCode($lineItem->getProductUnitCode())
                 ->setQuantity($lineItem->getQuantity())
-                ->setComment($lineItem->getNotes());
+                ->setComment($lineItem->getNotes())
+                ->setChecksum($lineItem->getChecksum());
+
+            foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
+                $checkoutLineItem->addKitItemLineItem(
+                    $this->productKitItemLineItemConverter->convert($kitItemLineItem)
+                );
+            }
+
             $checkoutLineItems->add($checkoutLineItem);
         }
 

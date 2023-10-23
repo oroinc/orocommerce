@@ -71,7 +71,7 @@ class AvailableLineItemShippingMethodsProvider implements
             $multipleShippingMethodIdentifiers = $this->multiShippingMethodProvider->getShippingMethods();
             $shippingMethods = array_filter(
                 $shippingMethods,
-                fn ($identifier) => !\in_array($identifier, $multipleShippingMethodIdentifiers, true),
+                static fn (string $identifier) => !\in_array($identifier, $multipleShippingMethodIdentifiers, true),
                 ARRAY_FILTER_USE_KEY
             );
         }

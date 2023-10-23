@@ -15,6 +15,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Unit\Stub\LineItemStub;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -73,7 +74,7 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
             ->with(
                 (new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection($lineItems)),
                 null,
-                ['Default', 'datagrid_line_items_data']
+                [new GroupSequence(['Default', 'datagrid_line_items_data'])]
             )
             ->willReturn(new ConstraintViolationList());
 
@@ -114,7 +115,7 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
         $this->validator
             ->expects(self::once())
             ->method('validate')
-            ->with($lineItemsHolder, null, ['Default', 'datagrid_line_items_data'])
+            ->with($lineItemsHolder, null, [new GroupSequence(['Default', 'datagrid_line_items_data'])])
             ->willReturn($constraintViolationList);
 
         $this->listener->onLineItemData($event);
@@ -158,7 +159,7 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
         $this->validator
             ->expects(self::once())
             ->method('validate')
-            ->with($lineItemsHolder, null, ['Default', 'datagrid_line_items_data'])
+            ->with($lineItemsHolder, null, [new GroupSequence(['Default', 'datagrid_line_items_data'])])
             ->willReturn($constraintViolationList);
 
         $this->listener->onLineItemData($event);
@@ -207,7 +208,7 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
         $this->validator
             ->expects(self::once())
             ->method('validate')
-            ->with($lineItemsHolder, null, ['Default', 'datagrid_line_items_data'])
+            ->with($lineItemsHolder, null, [new GroupSequence(['Default', 'datagrid_line_items_data'])])
             ->willReturn($constraintViolationList);
 
         $this->listener->onLineItemData($event);
@@ -259,7 +260,7 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
         $this->validator
             ->expects(self::once())
             ->method('validate')
-            ->with($lineItemsHolder, null, ['Default', 'datagrid_line_items_data'])
+            ->with($lineItemsHolder, null, [new GroupSequence(['Default', 'datagrid_line_items_data'])])
             ->willReturn($constraintViolationList);
 
         $this->listener->onLineItemData($event);

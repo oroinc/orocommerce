@@ -212,6 +212,7 @@ services:
 
     oro_order.event_listener.order.tier_prices:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener'
+        deprecated: '%service_id% is deprecated since 5.1'
         arguments:
             - '@oro_pricing.provider.product_price'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
@@ -286,6 +287,7 @@ services:
             - '@logger'
         calls:
             - ['setProductPriceCriteriaFactory', ['@oro_pricing.product_price_criteria_factory']]
+            - ['setProductLineItemPriceProvider', ['@oro_pricing.provider.product_line_item_price']]
 
     oro_order.order.total.total_helper:
         class: 'Oro\Bundle\OrderBundle\Total\TotalHelper'
@@ -506,6 +508,11 @@ services:
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderLineItem, frontend: true }
 
+    oro_order.access_rule.frontend_order_product_kit_item_line_item:
+        class: Oro\Bundle\OrderBundle\Acl\AccessRule\OrderProductKitItemLineItemAccessRule
+        tags:
+            - {name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem, frontend: true}
+
     oro_order.entity_listener.order_line_item.product_variant_fields:
         class: 'Oro\Bundle\OrderBundle\EventListener\OrderLineItem\OrderLineItemEventListener'
         public: false
@@ -639,3 +646,63 @@ services:
             - [setDateHelper, ['@oro_dashboard.datetime.helper']]
         tags:
             - { name: doctrine.repository_service }
+
+    oro_order.product_kit.factory.order_product_kit_item_line_item:
+        class: Oro\Bundle\OrderBundle\ProductKit\Factory\OrderProductKitItemLineItemFactory
+        arguments:
+            - '@oro_order.product_kit.provider.product_kit_item_products'
+
+    oro_order.event_listener.order_product_kit_line_item:
+        class: Oro\Bundle\OrderBundle\EventListener\Order\OrderProductKitLineItemListener
+        arguments:
+            - '@twig'
+        tags:
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
+
+    oro_order.provider.order_product_price:
+        class: Oro\Bundle\OrderBundle\Provider\OrderProductPriceProvider
+        arguments:
+            - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+
+    oro_order.event_listener.order.order_line_item_tier_prices:
+        class: Oro\Bundle\OrderBundle\EventListener\Order\OrderLineItemTierPricesEventListener
+        arguments:
+            - '@oro_order.provider.order_product_price'
+            - '@oro_pricing.provider.product_line_item_product_price'
+        tags:
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
+
+    oro_order.autocomplete.product_visibility_limited.search_handler:
+        parent: oro_product.autocomplete.product_visibility_limited.search_handler
+        calls:
+            - setNotAllowedProductTypes:
+                  -
+                      - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_order_product_visibility_limited }
+
+    oro_order.validator.constraints.has_supported_inventory_status:
+        class: Oro\Bundle\OrderBundle\Validator\Constraints\HasSupportedInventoryStatusValidator
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_order.product_kit.checksum.order_product_kit_line_item_checksum_generator:
+        class: Oro\Bundle\OrderBundle\ProductKit\Checksum\OrderProductKitLineItemChecksumGenerator
+        tags:
+            -
+                name: oro_product.line_item_checksum_generator
+                priority: 10 # Must be called before the default one - oro_product.product_kit.checksum.product_kit_line_item_checksum_generator
+
+    oro_order.product_kit.provider.product_kit_item_products:
+        class: Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider
+        arguments:
+            - '@oro_order.product_kit.checker.product_kit_item_product_availability_checker'
+
+    oro_order.product_kit.checker.product_kit_item_product_availability_checker:
+        class: Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker
+        arguments:
+            - '@validator'
+            - ['product_kit_item_product_is_available_for_order']

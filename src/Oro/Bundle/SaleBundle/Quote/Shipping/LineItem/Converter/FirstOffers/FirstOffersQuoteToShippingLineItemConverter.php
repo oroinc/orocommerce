@@ -7,6 +7,9 @@ use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineI
 use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
 
+/**
+ * Converts first QuoteProductOffers to Shipping Line Items collection.
+ */
 class FirstOffersQuoteToShippingLineItemConverter implements QuoteToShippingLineItemConverterInterface
 {
     /**

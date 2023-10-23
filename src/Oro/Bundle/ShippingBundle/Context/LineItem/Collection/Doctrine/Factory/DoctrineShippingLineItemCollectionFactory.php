@@ -7,6 +7,11 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineIt
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 
+/**
+ * Creates a collection of shipping line items.
+ *
+ * @deprecated since 5.1
+ */
 class DoctrineShippingLineItemCollectionFactory implements ShippingLineItemCollectionFactoryInterface
 {
     /**

@@ -25,6 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -118,7 +119,7 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
         $form = $this->createForm(
             ProductKitLineItemType::class,
             $productKitLineItem,
-            ['validation_groups' => ['Default', 'add_product', 'add_product_kit_line_item']]
+            ['validation_groups' => new GroupSequence(['Default', 'add_product', 'add_product_kit_line_item'])]
         );
 
         if ($request->get('getSubtotal', false)) {

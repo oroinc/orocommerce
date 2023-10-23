@@ -4,6 +4,11 @@ namespace Oro\Bundle\CheckoutBundle\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * Event that is fired to check if it is needed to restart a checkout.
+ *
+ * @deprecated since 5.1
+ */
 class CheckoutValidateEvent extends Event
 {
     const NAME = 'checkout.checkout_validate';

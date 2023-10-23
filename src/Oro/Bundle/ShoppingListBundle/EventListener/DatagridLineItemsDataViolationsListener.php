@@ -9,6 +9,8 @@ use Symfony\Component\Validator\ConstraintViolation;
 
 /**
  * Adds line items violations data.
+ *
+ * @deprecated since 5.1, use DatagridLineItemsDataValidationListener instead
  */
 class DatagridLineItemsDataViolationsListener
 {

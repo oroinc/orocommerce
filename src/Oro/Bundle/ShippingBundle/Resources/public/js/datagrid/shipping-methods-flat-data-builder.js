@@ -20,9 +20,9 @@ export const flattenData = data => {
     return data.reduce((flatData, rawData) => {
         flatData.push(rawData);
 
-        if (!rawData.isMessage) {
+        if (!rawData.isMessage && rawData.shippingMethods) {
             flatData.push(shippingMethodsModel(rawData));
-            rawData.row_class_name = rawData.row_class_name + ' group-row group-row-has-children';
+            rawData.row_class_name = rawData.row_class_name + ' group-row';
         }
 
         return flatData;

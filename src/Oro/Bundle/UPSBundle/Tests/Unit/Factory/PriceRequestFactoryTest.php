@@ -21,22 +21,20 @@ use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
+class PriceRequestFactoryTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject */
-    private $transport;
+    private UPSTransport|MockObject $transport;
 
-    /** @var ShippingService|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingService;
+    private ShippingService|MockObject $shippingService;
 
-    /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $symmetricCrypter;
+    private SymmetricCrypterInterface|MockObject $symmetricCrypter;
 
-    /** @var PriceRequestFactory */
-    private $priceRequestFactory;
+    private PriceRequestFactory $priceRequestFactory;
 
     protected function setUp(): void
     {
@@ -87,7 +85,7 @@ class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
         int $productWeight,
         string $unitOfWeight,
         ?PriceRequest $expectedRequest
-    ) {
+    ): void {
         $this->symmetricCrypter->expects(self::once())
             ->method('decryptData')
             ->with('some password')
@@ -175,7 +173,7 @@ class PriceRequestFactoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testCreateWithNullShippingAddress()
+    public function testCreateWithNullShippingAddress(): void
     {
         $priceRequest = $this->priceRequestFactory->create($this->transport, new ShippingContext([]), '');
 

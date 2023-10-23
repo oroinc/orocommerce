@@ -22,7 +22,6 @@ use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionRowType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
-use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 use Oro\Bundle\OrderBundle\Handler\OrderLineItemCurrencyHandler;
@@ -42,13 +41,13 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -57,27 +56,21 @@ use Symfony\Component\Validator\Validation;
 class OrderTypeTest extends TypeTestCase
 {
     use QuantityTypeTrait;
+    use OrderLineItemTypeTrait;
 
-    /** @var OrderCurrencyHandler|\PHPUnit\Framework\MockObject\MockObject */
-    private $orderCurrencyHandler;
+    private OrderCurrencyHandler|MockObject $orderCurrencyHandler;
 
-    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $totalsProvider;
+    private TotalProcessorProvider|MockObject $totalsProvider;
 
-    /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $lineItemSubtotalProvider;
+    private LineItemSubtotalProvider|MockObject $lineItemSubtotalProvider;
 
-    /** @var DiscountSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $discountSubtotalProvider;
+    private DiscountSubtotalProvider|MockObject $discountSubtotalProvider;
 
-    /** @var RateConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $rateConverter;
+    private RateConverterInterface|MockObject $rateConverter;
 
-    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    private $numberFormatter;
+    private NumberFormatter|MockObject $numberFormatter;
 
-    /** @var OrderType */
-    private $type;
+    private OrderType $type;
 
     protected function setUp(): void
     {
@@ -111,10 +104,10 @@ class OrderTypeTest extends TypeTestCase
         parent::setUp();
     }
 
-    public function testConfigureOptions()
+    public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects($this->once())
+        $resolver->expects(self::once())
             ->method('setDefaults')
             ->with(['data_class' => 'Order', 'csrf_token_id' => 'order']);
 
@@ -125,16 +118,16 @@ class OrderTypeTest extends TypeTestCase
     /**
      * @dataProvider submitDataProvider
      */
-    public function testSubmitValidData(array $submitData, Order $expectedOrder)
+    public function testSubmitValidData(array $submitData, Order $expectedOrder): void
     {
         $order = new Order();
         $order->setTotalDiscounts(Price::create(99, 'USD'));
 
         $options = [
-            'data' => $order
+            'data' => $order,
         ];
 
-        $this->orderCurrencyHandler->expects($this->any())
+        $this->orderCurrencyHandler
             ->method('setOrderCurrency');
 
         $form = $this->factory->create(OrderType::class, null, $options);
@@ -142,7 +135,7 @@ class OrderTypeTest extends TypeTestCase
         $subtotal = new Subtotal();
         $subtotal->setAmount(99);
         $subtotal->setCurrency('USD');
-        $this->lineItemSubtotalProvider->expects($this->any())
+        $this->lineItemSubtotalProvider
             ->method('getSubtotal')
             ->willReturn($subtotal);
 
@@ -150,19 +143,19 @@ class OrderTypeTest extends TypeTestCase
         $total->setAmount(0);
         $total->setCurrency('USD');
 
-        $this->totalsProvider->expects($this->once())
+        $this->totalsProvider->expects(self::once())
             ->method('enableRecalculation')
             ->willReturnSelf();
-        $this->totalsProvider->expects($this->once())
+        $this->totalsProvider->expects(self::once())
             ->method('getTotal')
             ->with($order)
             ->willReturn($total);
 
-        $this->discountSubtotalProvider->expects($this->any())
+        $this->discountSubtotalProvider
             ->method('getSubtotal')
             ->willReturn([]);
 
-        $this->rateConverter->expects($this->exactly(2))
+        $this->rateConverter->expects(self::exactly(2))
             ->method('getBaseCurrencyAmount')
             ->willReturnCallback(function (MultiCurrency $value) {
                 return $value->getValue();
@@ -170,8 +163,8 @@ class OrderTypeTest extends TypeTestCase
 
         $form->submit($submitData);
 
-        $this->assertTrue($form->isSynchronized());
-        $this->assertEquals($expectedOrder, $form->getData());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($expectedOrder, $form->getData());
     }
 
     public function submitDataProvider(): array
@@ -202,7 +195,7 @@ class OrderTypeTest extends TypeTestCase
                             ],
                             'priceType' => 10,
                             'shipBy' => '',
-                            'comment' => ''
+                            'comment' => '',
                         ],
                     ],
                     'currency' => 'USD',
@@ -212,7 +205,7 @@ class OrderTypeTest extends TypeTestCase
                     'overriddenShippingCostAmount' => [
                         'value' => 5,
                         'currency' => 'USD',
-                    ]
+                    ],
                 ],
                 'expectedOrder' => $this->getOrder(
                     [
@@ -237,35 +230,31 @@ class OrderTypeTest extends TypeTestCase
                                     'currency' => 'USD',
                                 ],
                                 'priceType' => 10,
-                                'comment' => null
+                                'comment' => null,
                             ],
                         ],
                         'currency' => 'USD',
                         'shippingMethod' => 'shippingMethod1',
                         'shippingMethodType' => 'shippingType1',
                         'estimatedShippingCostAmount' => '10',
-                        'overriddenShippingCostAmount' => 5.0
+                        'overriddenShippingCostAmount' => 5.0,
                     ]
-                )
-            ]
+                ),
+            ],
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getExtensions(): array
     {
         $priceType = new PriceType();
         $priceType->setDataClass(Price::class);
 
         $productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
-        $productUnitsProvider->expects($this->any())
+        $productUnitsProvider
             ->method('getAvailableProductUnits')
             ->willReturn(['item' => 'item', 'kg' => 'kilogram']);
 
-        $orderLineItemType = new OrderLineItemType($productUnitsProvider);
-        $orderLineItemType->setDataClass(OrderLineItem::class);
+        $orderLineItemType = $this->createOrderLineItemType($this, ['item' => 0, 'kg' => 3]);
 
         return [
             new PreloadedExtension(
@@ -274,15 +263,14 @@ class OrderTypeTest extends TypeTestCase
                     new CollectionType(),
                     new OroDateType(),
                     $priceType,
-                    EntityType::class => new EntityTypeStub([
-                        2 => $this->getProduct(2),
-                        3 => $this->getProduct(3),
-                    ]),
                     UserSelectType::class => new EntityTypeStub([
                         1 => $this->getUser(1),
                         2 => $this->getUser(2),
                     ]),
-                    ProductSelectType::class => new ProductSelectTypeStub(),
+                    ProductSelectType::class => new ProductSelectEntityTypeStub([
+                        2 => $this->getProduct(2),
+                        3 => $this->getProduct(3),
+                    ]),
                     ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub([
                         'kg' => $this->getProductUnit('kg'),
                         'item' => $this->getProductUnit('item'),
@@ -309,14 +297,14 @@ class OrderTypeTest extends TypeTestCase
                 ],
                 []
             ),
-            new ValidatorExtension(Validation::createValidator())
+            new ValidatorExtension(Validation::createValidator()),
         ];
     }
 
     private function getUser(int $id): User
     {
         $user = $this->createMock(User::class);
-        $user->expects(self::any())
+        $user
             ->method('getId')
             ->willReturn($id);
 
@@ -326,7 +314,7 @@ class OrderTypeTest extends TypeTestCase
     private function getCustomer(int $id): Customer
     {
         $customer = $this->createMock(Customer::class);
-        $customer->expects(self::any())
+        $customer
             ->method('getId')
             ->willReturn($id);
 
@@ -336,7 +324,7 @@ class OrderTypeTest extends TypeTestCase
     private function getCustomerUser(int $id): CustomerUser
     {
         $customerUser = $this->createMock(CustomerUser::class);
-        $customerUser->expects(self::any())
+        $customerUser
             ->method('getId')
             ->willReturn($id);
 
@@ -346,7 +334,7 @@ class OrderTypeTest extends TypeTestCase
     private function getProduct(int $id): Product
     {
         $product = $this->createMock(Product::class);
-        $product->expects(self::any())
+        $product
             ->method('getId')
             ->willReturn($id);
 
@@ -356,7 +344,7 @@ class OrderTypeTest extends TypeTestCase
     private function getProductUnit(string $code): ProductUnit
     {
         $productUnit = $this->createMock(ProductUnit::class);
-        $productUnit->expects(self::any())
+        $productUnit
             ->method('getCode')
             ->willReturn($code);
 
@@ -366,7 +354,7 @@ class OrderTypeTest extends TypeTestCase
     private function getPriceList(int $id): PriceList
     {
         $priceList = $this->createMock(PriceList::class);
-        $priceList->expects(self::any())
+        $priceList
             ->method('getId')
             ->willReturn($id);
 

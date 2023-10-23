@@ -160,7 +160,6 @@ services:
 
     oro_promotion.discount.order_line_items_to_discount_line_items_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter
-        public: false
 
     oro_promotion.promotion.context_data_converter_registry:
         class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry

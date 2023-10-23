@@ -7,6 +7,9 @@ use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineI
 use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
 
+/**
+ * Converts selected QuoteProductDemands to Shipping Line Items collection.
+ */
 class SelectedOffersQuoteToShippingLineItemConverter implements QuoteToShippingLineItemConverterInterface
 {
     /**
@@ -27,9 +30,6 @@ class SelectedOffersQuoteToShippingLineItemConverter implements QuoteToShippingL
         $this->shippingLineItemBuilderFactory = $shippingLineItemBuilderFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function convertLineItems(Quote $quote)
     {
         $shippingLineItems = [];

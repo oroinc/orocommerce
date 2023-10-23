@@ -2,8 +2,12 @@
 
 namespace Oro\Bundle\ShippingBundle\Context;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 
+/**
+ * Generates cache key by ShippingContextInterface.
+ */
 class ShippingContextCacheKeyGenerator
 {
     /**
@@ -94,6 +98,37 @@ class ShippingContextCacheKeyGenerator
             }
         }
 
+        if ($item instanceof ShippingLineItem) {
+            $kitItemLineItemsStrings = $this->kitItemLineItemsToStrings($item->getKitItemLineItems());
+            $strings = array_merge($strings, $kitItemLineItemsStrings);
+        }
+
         return implode('', $strings);
+    }
+
+    protected function kitItemLineItemsToStrings(Collection $kitItemLineItems): array
+    {
+        $kitItemLineItemsStrings = [];
+        foreach ($kitItemLineItems as $kitItemLineItem) {
+            $kitItemLineItemsStrings[] = $kitItemLineItem->getEntityIdentifier();
+            $kitItemLineItemsStrings[] = $kitItemLineItem->getQuantity();
+            $kitItemLineItemsStrings[] = $kitItemLineItem->getProductUnitCode();
+
+            if ($kitItemLineItem->getProduct()) {
+                $kitItemLineItemProduct = $kitItemLineItem->getProduct();
+
+                $kitItemLineItemsStrings[] = $kitItemLineItemProduct->getId();
+                $kitItemLineItemsStrings[] = $kitItemLineItemProduct->getSku();
+            }
+
+            if ($kitItemLineItem->getPrice()) {
+                $kitItemLineItemPrice = $kitItemLineItem->getPrice();
+
+                $kitItemLineItemsStrings[] = $kitItemLineItemPrice->getValue();
+                $kitItemLineItemsStrings[] = $kitItemLineItemPrice->getCurrency();
+            }
+        }
+
+        return $kitItemLineItemsStrings;
     }
 }

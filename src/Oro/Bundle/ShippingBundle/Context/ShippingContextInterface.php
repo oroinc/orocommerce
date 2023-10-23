@@ -8,6 +8,9 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Describes Shipping Context.
+ */
 interface ShippingContextInterface extends CustomerOwnerAwareInterface
 {
     /**

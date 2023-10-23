@@ -831,17 +831,20 @@ services:
 
     oro_shopping_list.product_kit.checksum.product_kit_line_item:
         class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\ProductKitLineItemChecksumGenerator
+        deprecated: '%service_id% is deprecated since 5.1, use oro_product.product_kit.checksum.product_kit_line_item instead'
         tags:
             - { name: oro_shopping_list.product_kit.checksum }
 
     oro_shopping_list.product_kit.checksum:
         class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\CompositeLineItemChecksumGenerator
+        deprecated: '%service_id% is deprecated since 5.1, use oro_product.product_kit.checksum instead'
         arguments:
-            - !tagged_iterator { tag: oro_shopping_list.product_kit.checksum}
+            - !tagged_iterator { tag: oro_shopping_list.product_kit.checksum }
 
     oro_shopping_list.product_kit.checksum.hashing:
         decorates: oro_shopping_list.product_kit.checksum
         class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\HashingLineItemChecksumGenerator
+        deprecated: '%service_id% is deprecated since 5.1, use oro_product.product_kit.checksum.hashing instead'
         arguments:
             - '@.inner'
 
@@ -891,6 +894,7 @@ services:
 
     oro_shopping_list.checksum.general_product_line_item:
         class: 'Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\GeneralLineItemChecksumGenerator'
+        deprecated: '%service_id% is deprecated since 5.1, use oro_product.line_item_checksum_generator.general instead'
         tags:
             - { name: oro_shopping_list.product_kit.checksum }
 

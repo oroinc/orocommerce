@@ -251,6 +251,55 @@ td.order-discount-item-remove {
     }
 }
 
+.order-line-item-kit-item-collection {
+    tbody {
+        td {
+            &:first-child {
+                padding-left: 0;
+            }
+
+            &:last-child {
+                padding-right: 0;
+            }
+
+            label {
+                padding-top: $form-horizontal-control-label-offset;
+                padding-right: $content-padding-small;
+                line-height: $form-horizontal-control-label-line-height;
+            }
+
+            &.line-item-quantity-label,
+            &.line-item-price-label {
+                white-space: nowrap;
+            }
+
+            .tooltip-icon {
+                margin-right: $content-padding-small;
+            }
+
+            &.line-item-label {
+                min-width: 150px;
+            }
+
+            &.line-item-matched-price-cell {
+                position: relative;
+            }
+        }
+    }
+
+    .multicurrency-fields-wrapper {
+        width: auto;
+    }
+
+    input[type='text'] {
+        &.line-item-quantity-field {
+            // Rewritter high order selector `.order-line-item-type input[type=text]` with `width: 294px !important;`
+            // stylelint-disable-next-line declaration-no-important
+            width: 124px !important;
+        }
+    }
+}
+
 .possible-shipping-methods-info {
     .possible_shipping_methods_container {
         max-width: none;

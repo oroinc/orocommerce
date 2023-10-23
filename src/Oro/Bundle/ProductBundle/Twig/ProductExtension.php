@@ -93,6 +93,7 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
     /**
      * @param Product $product
      * @param FinderStrategyInterface $finderStrategy
+     *
      * @return int[]
      */
     private function getRelatedItemsIds(Product $product, FinderStrategyInterface $finderStrategy)

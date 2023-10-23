@@ -5,6 +5,11 @@ namespace Oro\Bundle\PaymentBundle\Context\LineItem\Collection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 
+/**
+ * Interface for a collection of payment line item models.
+ *
+ * @deprecated since 5.1, Doctrine {@see Collection} is used instead
+ */
 interface PaymentLineItemCollectionInterface extends Collection
 {
     /**

@@ -2309,6 +2309,13 @@ services:
         tags:
             - { name: oro_search.extension.search_filter.filter, type: frontend_brand }
 
+    oro_product.validator.product_kit_line_item_contains_required_kit_items:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitLineItemContainsRequiredKitItemsValidator
+        arguments:
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: validator.constraint_validator }
+
     oro_product.event_listener.product_import_wysiwyg_field_config_listener:
         class: Oro\Bundle\ProductBundle\EventListener\ProductImportWysiwygFieldConfigListener
         arguments:
@@ -2316,3 +2323,48 @@ services:
             - '@oro_entity_config.config.config_helper'
         tags:
             - { name: kernel.event_listener, event: oro_entity_config.after_write_field_config, method: onAfterWriteFieldConfig, priority: -255 }
+
+    oro_product.line_item_checksum_generator.general:
+        class: Oro\Bundle\ProductBundle\LineItemChecksumGenerator\GeneralLineItemChecksumGenerator
+        tags:
+            -
+                name: oro_product.line_item_checksum_generator
+                priority: -128 # General line item checksum generator should be called last.
+
+    oro_product.product_kit.checksum.product_kit_line_item_checksum_generator:
+        class: Oro\Bundle\ProductBundle\ProductKit\Checksum\ProductKitLineItemChecksumGenerator
+        tags:
+            - { name: oro_product.line_item_checksum_generator }
+
+    oro_product.line_item_checksum_generator:
+        class: Oro\Bundle\ProductBundle\LineItemChecksumGenerator\CompositeLineItemChecksumGenerator
+        arguments:
+            - !tagged_iterator { tag: oro_product.line_item_checksum_generator }
+
+    oro_product.line_item_checksum_generator.hashing:
+        decorates: oro_product.line_item_checksum_generator
+        class: Oro\Bundle\ProductBundle\LineItemChecksumGenerator\HashingLineItemChecksumGenerator
+        arguments:
+            - '@.inner'
+
+    oro_product.validator.product_kit_item_line_item_product_allowed:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductAvailableValidator
+        arguments:
+            - '@oro_entity.tools.entity_state_checker'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.validator.product_kit_item_line_item_product_unit_allowed:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductUnitAvailableValidator
+        arguments:
+            - '@oro_entity.tools.entity_state_checker'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.validator.product_kit_item_line_item_quantity_unit_precision:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecisionValidator'
+        arguments:
+            - '@oro_product.service.quantity_rounding'
+            - '@oro_product.formatter.product_unit_label'
+        tags:
+            - { name: validator.constraint_validator }

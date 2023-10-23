@@ -6,6 +6,11 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Interface for the builder of a payment line item model.
+ *
+ * @deprecated since 5.1
+ */
 interface PaymentLineItemBuilderInterface
 {
     /**

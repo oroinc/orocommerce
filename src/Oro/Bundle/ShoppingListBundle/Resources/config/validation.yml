@@ -1,196 +1,359 @@
 Oro\Bundle\ProductBundle\Entity\Product:
     properties:
         type:
-            - EqualTo:
-                value: kit
-                message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.type.kit.message'
-                groups: [product_kit_is_available_for_purchase]
-            - EqualTo:
-                value: simple
-                groups:
-                    - product_kit_item_product_is_available_for_purchase
-                    - product_kit_item_line_item
+            -   EqualTo:
+                    value: kit
+                    message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.type.kit.message'
+                    groups:
+                        # Used by oro_shopping_list.product_kit.checker.product_kit_availability_checker
+                        - product_kit_is_available_for_purchase
         status:
-            - EqualTo:
-                value: enabled
-                message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.status.enabled.message'
-                groups:
-                    - product_kit_is_available_for_purchase
-                    - product_kit_item_product_is_available_for_purchase
+            -   EqualTo:
+                    value: enabled
+                    message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.status.enabled.message'
+                    groups:
+                        # Used by oro_shopping_list.product_kit.checker.product_kit_availability_checker
+                        - product_kit_is_available_for_purchase
         kitItems:
-            - Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollectionIsAvailableForPurchase:
-                groups: [product_kit_is_available_for_purchase]
+            -   Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollectionIsAvailableForPurchase:
+                    groups:
+                        # Used by oro_shopping_list.product_kit.checker.product_kit_availability_checker
+                        - product_kit_is_available_for_purchase
 
 Oro\Bundle\ProductBundle\Entity\ProductKitItem:
     properties:
         kitItemProducts:
-            - Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductCollectionIsAvailableForPurchase:
-                groups: [product_kit_item_is_available_for_purchase]
+            -   Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductCollectionIsAvailableForPurchase:
+                    groups:
+                        # Used by oro_shopping_list.product_kit.checker.product_kit_item_availability_checker
+                        - product_kit_item_is_available_for_purchase
 
 Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
     constraints:
-        - Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPrice:
-            groups: [product_kit_item_product_is_available_for_purchase]
+        -   Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPrice:
+                groups:
+                    # Used by oro_shopping_list.product_kit.checker.product_kit_item_product_availability_checker
+                    - product_kit_item_product_is_available_for_purchase
     properties:
         product:
-            - Valid:
-                groups: [product_kit_item_product_is_available_for_purchase]
+            -   Expression:
+                    expression: 'value && value.isEnabled()'
+                    groups:
+                        # Used by oro_shopping_list.product_kit.checker.product_kit_item_product_availability_checker
+                        - product_kit_item_product_is_available_for_purchase
+            -   Expression:
+                    expression: 'value && value.isSimple()'
+                    groups:
+                        # Used by oro_shopping_list.product_kit.checker.product_kit_item_product_availability_checker
+                        - product_kit_item_product_is_available_for_purchase
 
-Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn:
     constraints:
-        - Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem:
-            groups: [update]
-        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
-            path: quantity
-            groups: [Default, create, update, add_product, add_product_kit_line_item]
+        -   Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumn: ~
     properties:
-        product:
-            - NotBlank:
-                groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
         quantity:
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
-                groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
-            - Expression:
-                expression: "!this.product || this.product.isConfigurable() || this.quantity > 0"
-                message: 'oro.shoppinglist.lineitem.quantity.greater_than_zero'
-                groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
-                payload:
-                    jsValidation:
-                        type: Range
-                        options:
-                            min: 0
-                            max: 100000000
-            - NotBlank:
-                groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
-        unit:
-            - NotBlank:
-                groups: [create, update, add_product, add_product_kit_line_item, datagrid_line_items_data]
-        shoppingList:
-            - NotBlank:
-                groups: [create, update]
-        notes:
-            - Length:
-                max: 2048
-                groups: [Default, create, update, add_product, add_product_kit_line_item]
-        kitItemLineItems:
-            - Valid:
-                groups: [add_product_kit_line_item]
-        checksum:
-            - NotNull: ~
-            - Length:
-                max: 40
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     properties:
         label:
-            - NotBlank: ~
-            - Length:
-                max: 255
+            -   NotBlank: ~
+            -   Length:
+                    max: 255
         totals:
-            - Valid: ~
+            -   Valid: ~
         notes:
-            - Length:
-                max: 2048
+            -   Length:
+                    max: 2048
         lineItems:
-            - Valid: ~
+            -   Valid: ~
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
     properties:
         subtotalValue:
-            - Type:
-                type: numeric
-                groups: [create, update, add_product, add_product_kit_line_item]
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
-                minMessage: 'oro.shoppinglist.subtotal.min.error.label'
-                maxMessage: 'oro.shoppinglist.subtotal.max.error.label'
-                groups: [Default, add_product_kit_line_item]
+            -   Type:
+                    type: numeric
+                    groups:
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - create
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - update
+                        # Used by \Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType
+                        - add_product
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
+                    minMessage: 'oro.shoppinglist.subtotal.min.error.label'
+                    maxMessage: 'oro.shoppinglist.subtotal.max.error.label'
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
 
-Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn:
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     constraints:
-        - Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumn: ~
+        -   Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem:
+                groups:
+                    # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                    - update
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+                path: quantity
+                groups:
+                    # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                    - create
+                    # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                    - update
+                    # Used by \Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType
+                    - add_product
+                    # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                    - add_product_kit_line_item
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitLineItemContainsRequiredKitItems:
+                groups:
+                    # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                    - add_product_kit_line_item
+                    # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                    - datagrid_line_items_data
     properties:
+        product:
+            -   NotBlank:
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - create
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - update
+                        # Used by \Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType
+                        - add_product
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        - datagrid_line_items_data
+            -   Expression:
+                    expression: 'value && value.isEnabled()'
+                    groups:
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - create
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - update
+                        # Used by \Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType
+                        - add_product
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        - datagrid_line_items_data
         quantity:
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            -   NotBlank:
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - create
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - update
+                        # Used by \Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType
+                        - add_product
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        - datagrid_line_items_data
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - create
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - update
+                        # Used by \Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType
+                        - add_product
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        - datagrid_line_items_data
+            -   Expression:
+                    expression: "this.getProduct() && (this.getProduct().isConfigurable() || value > 0)"
+                    message: 'oro.shoppinglist.lineitem.quantity.greater_than_zero'
+                    groups:
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - create
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - update
+                        # Used by \Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType
+                        - add_product
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        - datagrid_line_items_data
+                    payload:
+                        jsValidation:
+                            type: Range
+                            options:
+                                min: 0
+                                max: 100000000
+        unit:
+            -   NotBlank:
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - create
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - update
+                        # Used by \Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType
+                        - add_product
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        - datagrid_line_items_data
+        shoppingList:
+            -   NotBlank:
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - create
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - update
+        notes:
+            -   Length:
+                    max: 2048
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - create
+                        # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
+                        - update
+                        # Used by \Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType
+                        - add_product
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+        kitItemLineItems:
+            -   Valid:
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+        checksum:
+            -   NotNull: ~
+            -   Length:
+                    max: 40
 
 Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
-    constraints:
-        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
-            path: quantity
-            groups: [Default, create, update, add_product_kit_line_item]
     properties:
         lineItem:
-            - NotNull:
-                groups: [Default, create, update, add_product_kit_line_item]
+            -   NotNull:
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
         kitItem:
-            - NotNull:
-                groups: [Default, create, update, add_product_kit_line_item]
+            -   NotNull:
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
         product:
-            - NotNull:
-                groups: [Default, create, update, add_product_kit_line_item]
-            - Expression:
-                expression: 'this.kitItem && this.kitItem.getProducts().contains(value)'
-                message: 'oro.shoppinglist.product_kit_item_line_item.product.invalid.message'
-                groups: [Default, create, update, add_product_kit_line_item]
-            - AtLeastOneOf:
-                constraints:
-                    - Expression:
-                        expression: 'value && value.isEnabled()'
-                    - Expression:
-                        expression: 'this.kitItem && this.kitItem.optional'
-                message: 'oro.shoppinglist.product_kit_item_line_item.product.status_required.message'
-                includeInternalMessages: false
-                groups: [Default, create, update, add_product_kit_line_item]
-            - AtLeastOneOf:
-                constraints:
-                    - Expression:
-                        expression: 'value && value.isEnabled()'
-                    - Expression:
-                        expression: 'this.kitItem && !this.kitItem.optional'
-                message: 'oro.shoppinglist.product_kit_item_line_item.product.status_optional.message'
-                includeInternalMessages: false
-                groups: [Default, create, update, add_product_kit_line_item]
-            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidEmbeddable:
-                embeddedGroups: [product_kit_item_line_item]
+            -   NotNull:
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+            -   AtLeastOneOf:
+                    constraints:
+                        -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductAvailable:
+                                availabilityValidationGroups: [ product_kit_item_product_is_available_for_purchase ]
+                        -   Expression:
+                                expression: 'this.getKitItem() && this.getKitItem().isOptional()'
+                    message: 'oro.shoppinglist.product_kit_item_line_item.product.status_required.message'
+                    includeInternalMessages: false
+                    groups:
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        - datagrid_line_items_data
+            -   AtLeastOneOf:
+                    constraints:
+                        -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductAvailable:
+                                availabilityValidationGroups: [ product_kit_item_product_is_available_for_purchase ]
+                        -   Expression:
+                                expression: 'this.getKitItem() && !this.getKitItem().isOptional()'
+                    message: 'oro.shoppinglist.product_kit_item_line_item.product.status_optional.message'
+                    includeInternalMessages: false
+                    groups:
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        - datagrid_line_items_data
         quantity:
-            - Expression:
-                expression: 'value && this.product'
-                message: 'oro.shoppinglist.product_kit_item_line_item.quantity.not_blank.message'
-                groups: [Default, create, update, add_product_kit_line_item]
-            - Type:
-                type: float
-                groups: [Default, create, update, add_product_kit_line_item]
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
-                groups: [Default, create, update, add_product_kit_line_item]
-            - Sequentially:
-                payload:
-                    jsValidation:
-                        type: Range
-                        options:
-                            minPropertyPath: 'kitItem.minimumQuantity'
-                            maxPropertyPath: 'kitItem.maximumQuantity'
-                constraints:
-                    - Expression:
-                        expression: 'this.kitItem or !value'
-                        message: 'oro.shoppinglist.product_kit_item_line_item.quantity.kit_item.not_blank.message'
-                    - Range:
-                        minPropertyPath: 'kitItem.minimumQuantity'
-                        maxPropertyPath: 'kitItem.maximumQuantity'
-                groups: [Default, create, update, add_product_kit_line_item]
+            -   NotBlank:
+                    message: 'oro.shoppinglist.product_kit_item_line_item.quantity.not_blank.message'
+                    payload:
+                        jsValidation:
+                            type: NotBlank
+                            options:
+                                allowNull: true
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+            -   Type:
+                    type: float
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                    message: 'oro.shoppinglist.product_kit_item_line_item.quantity.greater_than_zero.message'
+                    groups:
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        - datagrid_line_items_data
+            -   Range:
+                    minPropertyPath: 'kitItem.minimumQuantity'
+                    maxPropertyPath: 'kitItem.maximumQuantity'
+                    minMessage: 'oro.shoppinglist.product_kit_item_line_item.quantity.range.min_message'
+                    maxMessage: 'oro.shoppinglist.product_kit_item_line_item.quantity.range.max_message'
+                    notInRangeMessage: 'oro.shoppinglist.product_kit_item_line_item.quantity.range.not_in_range_message'
+                    groups:
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        - datagrid_line_items_data
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision:
+                    groups:
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        - datagrid_line_items_data
         unit:
-            - NotNull:
-                groups: [Default, create, update, add_product_kit_line_item]
-            - Expression:
-                expression: 'this.kitItem && value == this.kitItem.productUnit'
-                message: 'oro.shoppinglist.product_kit_item_line_item.unit.invalid.message'
-                groups: [Default, create, update, add_product_kit_line_item]
+            -   NotNull:
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductUnitAvailable:
+                    message: 'oro.shoppinglist.product_kit_item_line_item.unit.invalid.message'
+                    groups:
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        - datagrid_line_items_data
         sortOrder:
-            - Type:
-                type: integer
-                groups: [Default, create, update, add_product_kit_line_item]
-            - Range:
-                # Minimum of 4-byte integer value.
-                min: -2147483648
-                # Maximum of 4-byte integer value.
-                max: 2147483647
-                groups: [Default, create, update, add_product_kit_line_item]
+            -   NotNull:
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+            -   Type:
+                    type: integer
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+            -   Range:
+                    # Minimum of 4-byte integer value.
+                    min: -2147483648
+                    # Maximum of 4-byte integer value.
+                    max: 2147483647
+                    groups:
+                        - Default
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item

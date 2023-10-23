@@ -17,6 +17,8 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * Handles line items inventory validation events.
+ *
+ * @deprecated since 5.1, will be moved to the validation.yml config in CheckoutBundle instead.
  */
 class QuantityToOrderConditionListener
 {

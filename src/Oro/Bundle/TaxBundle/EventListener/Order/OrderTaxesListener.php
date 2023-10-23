@@ -12,6 +12,9 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
+/**
+ * Adds "taxItems" to the order entry point data.
+ */
 class OrderTaxesListener
 {
     /** @var TaxProviderRegistry */
@@ -64,6 +67,9 @@ class OrderTaxesListener
         $data->offsetSet('taxItems', $taxItems);
     }
 
+    /**
+     * @deprecated since 5.1
+     */
     protected function addMatchedPriceToOrderLineItems(Order $order, \ArrayAccess $data)
     {
         if (!$data->offsetExists(MatchingPriceEventListener::MATCHED_PRICES_KEY)) {

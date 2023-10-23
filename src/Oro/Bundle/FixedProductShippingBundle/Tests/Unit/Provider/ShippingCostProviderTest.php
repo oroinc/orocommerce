@@ -12,19 +12,15 @@ use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ShippingCostProviderTest extends TestCase
 {
-    /**
-     * @var PriceAttributePricesProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $priceProvider;
+    private PriceAttributePricesProvider|MockObject $priceProvider;
 
-    /**
-     * @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $manager;
+    private ObjectRepository|MockObject $manager;
+
     private ShippingCostProvider $provider;
 
     /**
@@ -36,7 +32,7 @@ class ShippingCostProviderTest extends TestCase
         $this->manager = $this->createMock(ObjectRepository::class);
 
         $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->once())
+        $registry->expects(self::once())
             ->method('getRepository')
             ->willReturn($this->manager);
 
@@ -45,24 +41,27 @@ class ShippingCostProviderTest extends TestCase
 
     public function testCannotFoundPriceListShippingCostAttribute(): void
     {
-        $this->manager->expects($this->once())
+        $this->manager->expects(self::once())
             ->method('findOneBy')
             ->willReturn(null);
 
-        $this->assertEquals(0.0, $this->provider->getCalculatedProductShippingCost(
-            new DoctrineShippingLineItemCollection([]),
-            'USD'
-        ));
+        self::assertEquals(
+            0.0,
+            $this->provider->getCalculatedProductShippingCost(
+                new DoctrineShippingLineItemCollection([]),
+                'USD'
+            )
+        );
     }
 
     public function testCannotFoundProductUnitCode(): void
     {
         $priceAttribute = new PriceAttributePriceList();
-        $this->manager->expects($this->once())
+        $this->manager->expects(self::once())
             ->method('findOneBy')
             ->willReturn($priceAttribute);
 
-        $this->priceProvider->expects($this->once())
+        $this->priceProvider->expects(self::once())
             ->method('getPricesWithUnitAndCurrencies')
             ->with($priceAttribute, new Product())
             ->willReturn([]);
@@ -73,20 +72,23 @@ class ShippingCostProviderTest extends TestCase
         ]);
         $lineItems = new DoctrineShippingLineItemCollection([$lineItem]);
 
-        $this->assertEquals(0.0, $this->provider->getCalculatedProductShippingCost(
-            $lineItems,
-            'USD'
-        ));
+        self::assertEquals(
+            0.0,
+            $this->provider->getCalculatedProductShippingCost(
+                $lineItems,
+                'USD'
+            )
+        );
     }
 
     public function testCannotFoundCurrency(): void
     {
         $priceAttribute = new PriceAttributePriceList();
-        $this->manager->expects($this->once())
+        $this->manager->expects(self::once())
             ->method('findOneBy')
             ->willReturn($priceAttribute);
 
-        $this->priceProvider->expects($this->once())
+        $this->priceProvider->expects(self::once())
             ->method('getPricesWithUnitAndCurrencies')
             ->with($priceAttribute, new Product())
             ->willReturn(['piece' => []]);
@@ -97,23 +99,26 @@ class ShippingCostProviderTest extends TestCase
         ]);
         $lineItems = new DoctrineShippingLineItemCollection([$lineItem]);
 
-        $this->assertEquals(0.0, $this->provider->getCalculatedProductShippingCost(
-            $lineItems,
-            'USD'
-        ));
+        self::assertEquals(
+            0.0,
+            $this->provider->getCalculatedProductShippingCost(
+                $lineItems,
+                'USD'
+            )
+        );
     }
 
     public function testGetCalculatedProductShippingCost(): void
     {
         $priceAttribute = new PriceAttributePriceList();
-        $this->manager->expects($this->once())
+        $this->manager->expects(self::once())
             ->method('findOneBy')
             ->willReturn($priceAttribute);
 
         $productPrice = new PriceAttributeProductPrice();
         $productPrice->setPrice(Price::create(11.22, 'USD'));
 
-        $this->priceProvider->expects($this->any())
+        $this->priceProvider->expects(self::any())
             ->method('getPricesWithUnitAndCurrencies')
             ->with($priceAttribute, new Product())
             ->willReturn(['piece' => ['USD' => $productPrice]]);
@@ -135,9 +140,12 @@ class ShippingCostProviderTest extends TestCase
         ]);
         $lineItems = new DoctrineShippingLineItemCollection([$lineItem, $lineItem2, $lineItem3]);
 
-        $this->assertEquals(78.54, $this->provider->getCalculatedProductShippingCost(
-            $lineItems,
-            'USD'
-        ));
+        self::assertEquals(
+            78.54,
+            $this->provider->getCalculatedProductShippingCost(
+                $lineItems,
+                'USD'
+            )
+        );
     }
 }

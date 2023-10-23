@@ -6,6 +6,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 
+/**
+ * Represents a collection of payment line items.
+ *
+ * @deprecated since 5.1, Doctrine {@see ArrayCollection} is used instead
+ */
 class DoctrinePaymentLineItemCollection extends ArrayCollection implements PaymentLineItemCollectionInterface
 {
     /**

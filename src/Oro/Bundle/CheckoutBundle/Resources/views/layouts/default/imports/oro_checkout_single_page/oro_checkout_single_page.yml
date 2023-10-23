@@ -216,6 +216,12 @@ layout:
             optionName: grid_render_parameters.cssClass
             optionValue: 'responsive-shopping-list-grid-tablet'
 
+        - '@appendOption':
+              id: checkout_order_summary_line_items_datagrid
+              optionName: grid_render_parameters.themeOptions
+              optionValue:
+                  expandKitLineItem: false
+
         - '@move':
             id: checkout_order_summary_line_items_datagrid_toolbar_pagination
             parentId: checkout_order_summary_line_items_datagrid_toolbar_rightside_container

@@ -9,6 +9,8 @@ use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
 /**
  * Adds validation errors to LineItemValidateEvent.
+ *
+ * @deprecated since 5.1, will be moved to validation.yml
  */
 class LowInventoryCheckoutLineItemValidationListener
 {
@@ -42,7 +44,8 @@ class LowInventoryCheckoutLineItemValidationListener
                 $event->addWarningByUnit(
                     $lineItem->getProduct()->getSku(),
                     $lineItem->getProductUnitCode(),
-                    $lowInventoryWarning
+                    $lowInventoryWarning,
+                    $lineItem->getChecksum()
                 );
             }
         }

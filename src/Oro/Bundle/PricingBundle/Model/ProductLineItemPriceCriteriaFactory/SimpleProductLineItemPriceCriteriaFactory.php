@@ -34,6 +34,9 @@ class SimpleProductLineItemPriceCriteriaFactory implements ProductLineItemPriceC
 
     public function isSupported(ProductLineItemInterface $lineItem, ?string $currency): bool
     {
-        return $lineItem->getProduct() !== null && $lineItem->getProductUnit() !== null;
+        return $lineItem->getProduct() !== null
+            && $lineItem->getProductUnit() !== null
+            && $lineItem->getQuantity() !== null
+            && $lineItem->getQuantity() >= 0.0;
     }
 }

@@ -114,7 +114,7 @@ class ShippingPriceCacheTest extends TestCase
         ]);
 
         $price = Price::create(10, 'USD');
-        $this->cacheProvider->expects($this->once())
+        $this->cacheProvider->expects(self::once())
             ->method('getItem')
             ->with('stdClass_1|flat_rate|primary|333')
             ->willReturn($this->cacheItem);
@@ -126,7 +126,7 @@ class ShippingPriceCacheTest extends TestCase
             ->method('expiresAfter')
             ->with(3600)
             ->willReturn($this->cacheItem);
-        $this->cacheProvider->expects($this->once())
+        $this->cacheProvider->expects(self::once())
             ->method('save')
             ->with($this->cacheItem);
 

@@ -5,6 +5,11 @@ namespace Oro\Bundle\ShippingBundle\Context\LineItem\Collection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 
+/**
+ * Interface for a collection of shipping line item models.
+ *
+ * @deprecated since 5.1, Doctrine {@see Collection} is used instead
+ */
 interface ShippingLineItemCollectionInterface extends Collection
 {
     /**

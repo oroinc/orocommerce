@@ -13,6 +13,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmQueryConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
@@ -139,7 +140,12 @@ class FrontendLineItemsGridExtension extends AbstractExtension
 
     private function getDataKey(ProductLineItemInterface $item): string
     {
-        return implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
+        $key = implode(':', [$item->getProductSku(), $item->getProductUnitCode(), $item->getQuantity()]);
+        if ($item instanceof ProductKitItemLineItemsAwareInterface) {
+            $key .= ':' . $item->getChecksum();
+        }
+
+        return $key;
     }
 
     /**

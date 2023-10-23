@@ -5,16 +5,16 @@ data:
         quantity: 5
         sortOrder: 1
         currency: USD
-        value: '3.21'
+        value: '1.23'
     relationships:
         kitItem:
             data:
                 type: productkititems
-                id: '<toString(@product_kit1_item3->id)>'
+                id: '<toString(@product_kit1_item1->id)>'
         product:
             data:
                 type: products
-                id: '<toString(@product4->id)>'
+                id: '<toString(@product1->id)>'
         unit:
             data:
                 type: productunits
@@ -27,7 +27,7 @@ included:
             quantity: 10
             notes: 'New Line Item Notes'
             currency: USD
-            value: '12.34'
+            value: '18.49'
         relationships:
             product:
                 data:

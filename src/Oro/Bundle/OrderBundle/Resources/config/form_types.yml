@@ -40,8 +40,42 @@ services:
         calls:
             - [setDataClass, ['Oro\Bundle\OrderBundle\Entity\OrderLineItem']]
             - [setSectionProvider, ['@oro_order.form.section.provider']]
+            - [setOrderLineItemProductListener, ['@oro_order.form.type.event_listener.order_line_item_product']]
+            - [setOrderLineItemChecksumListener, ['@oro_order.form.type.event_listener.order_line_item_checksum']]
         tags:
             - { name: form.type, alias: "oro_order_line_item" }
+
+    oro_order.form.type.event_listener.order_line_item_product:
+        class: Oro\Bundle\OrderBundle\Form\Type\EventListener\OrderLineItemProductListener
+        arguments:
+            - '@oro_entity.tools.entity_state_checker'
+
+    oro_order.form.type.event_listener.order_line_item_checksum:
+        class: Oro\Bundle\OrderBundle\Form\Type\EventListener\OrderLineItemChecksumListener
+        arguments:
+            - '@oro_product.line_item_checksum_generator'
+
+    oro_order.form.type.order_product_kit_item_line_item:
+        class: 'Oro\Bundle\OrderBundle\Form\Type\OrderProductKitItemLineItemType'
+        arguments:
+            - '@oro_order.product_kit.provider.product_kit_item_products'
+            - '@oro_order.form.type.event_listener.order_product_kit_item_line_item_default_data'
+            - '@oro_order.form.type.event_listener.order_product_kit_item_line_item_ghost_option'
+        tags:
+            - { name: form.type }
+
+    oro_order.form.type.event_listener.order_product_kit_item_line_item_default_data:
+        class: Oro\Bundle\OrderBundle\Form\Type\EventListener\OrderProductKitItemLineItemDefaultDataListener
+        arguments:
+            - '@oro_order.product_kit.factory.order_product_kit_item_line_item'
+
+    oro_order.form.type.event_listener.order_product_kit_item_line_item_ghost_option:
+        class: Oro\Bundle\OrderBundle\Form\Type\EventListener\OrderProductKitItemLineItemGhostOptionListener
+
+    oro_order.form.type.order_product_kit_item_line_item_collection:
+        class: 'Oro\Bundle\OrderBundle\Form\Type\OrderProductKitItemLineItemCollectionType'
+        tags:
+            - { name: form.type }
 
     oro_order.form.type.order_line_item_collection:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType'

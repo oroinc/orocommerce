@@ -6,6 +6,11 @@ use Oro\Bundle\PaymentBundle\Context\LineItem\Builder\PaymentLineItemBuilderInte
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 
+/**
+ * Interface for the factory builder of a payment line item model.
+ *
+ * @deprecated since 5.1
+ */
 interface PaymentLineItemBuilderFactoryInterface
 {
     /**

@@ -1,149 +1,417 @@
 Oro\Bundle\OrderBundle\Entity\Order:
     constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: identifier
+        -   Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: identifier
+        -   Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGranted:
+                addressType: billing
+                groups:
+                    # Used in CREATE action by orderlineitems storefront API resource
+                    - api_frontend_order_create
+                    # Used in UPDATE action by orderlineitems storefront API resource
+                    - api_frontend_order_update
+        -   Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGranted:
+                addressType: shipping
+                groups:
+                    # Used in CREATE action by orderlineitems storefront API resource
+                    - api_frontend_order_create
+                    # Used in UPDATE action by orderlineitems storefront API resource
+                    - api_frontend_order_update
     properties:
         poNumber:
-            - Length:
-                max: 255
+            -   Length:
+                    max: 255
         shipUntil:
-            - Type:
-                type: DateTimeInterface
-                message: oro.order.order.ship_until.type.message
-                payload:
-                    jsValidation:
-                        type: Date
+            -   Type:
+                    type: DateTimeInterface
+                    message: oro.order.order.ship_until.type.message
+                    payload:
+                        jsValidation:
+                            type: Date
         currency:
-            - Currency: ~
+            -   Currency: ~
         totalValue:
-            - Type:
-                type: numeric
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
-                minMessage: 'oro.order.total.min.error.label'
-                maxMessage: 'oro.order.total.max.error.label'
+            -   Type:
+                    type: numeric
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
+                    minMessage: 'oro.order.total.min.error.label'
+                    maxMessage: 'oro.order.total.max.error.label'
         subtotalValue:
-            - Type:
-                type: numeric
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
-                minMessage: 'oro.order.subtotal.min.error.label'
-                maxMessage: 'oro.order.subtotal.max.error.label'
+            -   Type:
+                    type: numeric
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
+                    minMessage: 'oro.order.subtotal.min.error.label'
+                    maxMessage: 'oro.order.subtotal.max.error.label'
         customer:
-            - NotBlank: ~
+            -   NotBlank: ~
         lineItems:
-            - Count:
-                min: 1
-                minMessage: 'oro.order.orderlineitem.count'
-            - Valid: ~
+            -   Count:
+                    min: 1
+                    minMessage: 'oro.order.orderlineitem.count'
+            -   Valid: ~
+            -   Oro\Bundle\FormBundle\Validator\Constraints\AdaptivelyValidCollection:
+                    validationGroupsForNew: [ order_line_item_create ]
+                    validationGroupsForUpdated: [ order_line_item_update ]
+                    trackFields: [ product, checksum ]
+                    groups:
+                        # Used by \Oro\Bundle\OrderBundle\Controller\OrderController::update
+                        - order_create
+                        # Used by \Oro\Bundle\OrderBundle\Controller\OrderController::update
+                        - order_update
+            -   Oro\Bundle\FormBundle\Validator\Constraints\AdaptivelyValidCollection:
+                    validationGroupsForNew: [ api_order_line_item_create ]
+                    validationGroupsForUpdated: [ api_order_line_item_update ]
+                    trackFields: [ product, checksum ]
+                    groups:
+                        # Used in CREATE action by orderlineitems API resource
+                        - api_order_create
+                        # Used in UPDATE action by orderlineitems API resource
+                        - api_order_update
+            -   Oro\Bundle\FormBundle\Validator\Constraints\AdaptivelyValidCollection:
+                    validationGroupsForNew: [ api_frontend_order_line_item_create ]
+                    validationGroupsForUpdated: [ api_frontend_order_line_item_update ]
+                    trackFields: [ product, checksum ]
+                    groups:
+                        # Used in CREATE action by orderlineitems storefront API resource
+                        - api_frontend_order_create
+                        # Used in UPDATE action by orderlineitems storefront API resource
+                        - api_frontend_order_update
         discounts:
-            - Valid: ~
+            -   Valid: ~
         billingAddress:
-            - Valid: ~
+            -   Valid: ~
+            -   NotBlank:
+                    groups:
+                        # Used in CREATE action by orderlineitems storefront API resource
+                        - api_frontend_order_create
+            -   Oro\Bundle\AddressBundle\Validator\Constraints\NewAddress:
+                    groups:
+                        # Used in CREATE action by orderlineitems storefront API resource
+                        - api_frontend_order_create
         shippingAddress:
-            - Valid: ~
+            -   Valid: ~
+            -   NotBlank:
+                    groups:
+                        # Used in CREATE action by orderlineitems storefront API resource
+                        - api_frontend_order_create
+            -   Oro\Bundle\AddressBundle\Validator\Constraints\NewAddress:
+                    groups:
+                        # Used in CREATE action by orderlineitems storefront API resource
+                        - api_frontend_order_create
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     constraints:
-        - Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProduct: ~
-        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
-              path: quantity
+        -   Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProduct: ~
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:
+                path: productUnit
+                sell: true
+                groups:
+                    # Used in CREATE action by orderlineitems storefront API resource
+                    - api_frontend_order_line_item_create
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+                path: quantity
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitLineItemContainsRequiredKitItems:
+                groups:
+                    # Used in CREATE action by orders and orderlineitems API resources
+                    - api_order_line_item_create
+                    # Used in CREATE action by orderlineitems storefront API resource
+                    - api_frontend_order_line_item_create
     properties:
         order:
-            - NotBlank: ~
-            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
-                message: oro.order.orderlineitem.order.changed
-                groups: [ api ]
+            -   NotBlank: ~
+            -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                    message: oro.order.orderlineitem.order.changed
+                    groups: [ api ]
         productSku:
-            - NotBlank:
-                groups: [ Import ]
-            - Length:
-                max: 255
-                groups: [ Import ]
+            -   NotBlank:
+                    groups: [ Import ]
+            -   Length:
+                    max: 255
+                    groups: [ Import ]
         quantity:
-            - NotBlank: ~
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            -   NotBlank: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         priceType:
-            - NotBlank: ~
+            -   NotBlank: ~
         productUnit:
-            - NotBlank:
-                message: 'oro.product.productunit.invalid'
+            -   NotBlank:
+                    message: 'oro.product.productunit.invalid'
         productUnitCode:
-            - NotBlank:
-                groups: [ Import ]
+            -   NotBlank:
+                    groups: [ Import ]
         price:
-            - NotBlank: ~
-            - Valid: ~
+            -   NotBlank:
+                    message: 'oro.order.orderlineitem.product_price.blank'
+            -   Valid: ~
         freeFormProduct:
-            - Length:
-                max: 255
+            -   Length:
+                    max: 255
         shippingMethod:
-            - Length:
-                max: 255
-                allowEmptyString: true
+            -   Length:
+                    max: 255
+                    allowEmptyString: true
         shippingMethodType:
-            - Length:
-                max: 255
-                allowEmptyString: true
+            -   Length:
+                    max: 255
+                    allowEmptyString: true
         shippingEstimateAmount:
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+        kitItemLineItems:
+            -   Valid: ~
+            -   Oro\Bundle\FormBundle\Validator\Constraints\AdaptivelyValidCollection:
+                    validationGroupsForNew: [ order_kit_item_line_item_create ]
+                    validationGroupsForUpdated: [ order_kit_item_line_item_update ]
+                    trackFields: [ kitItem, product, unit, quantity, value, currency ]
+                    groups:
+                        # Used by AdaptivelyValidCollection for Order::$lineItems validation
+                        - order_line_item_create
+                        # Used by AdaptivelyValidCollection for Order::$lineItems validation
+                        - order_line_item_update
+            -   Oro\Bundle\FormBundle\Validator\Constraints\AdaptivelyValidCollection:
+                    validationGroupsForNew: [ api_order_kit_item_line_item_create ]
+                    validationGroupsForUpdated: [ api_order_kit_item_line_item_update ]
+                    trackFields: [ kitItem, product, unit, quantity, value, currency ]
+                    groups:
+                        # Used in CREATE action by orderlineitems API resource
+                        - api_order_line_item_create
+                        # Used in UPDATE action by orderlineitems API resource
+                        - api_order_line_item_update
+            -   Oro\Bundle\FormBundle\Validator\Constraints\AdaptivelyValidCollection:
+                    validationGroupsForNew: [ api_frontend_order_kit_item_line_item_create ]
+                    validationGroupsForUpdated: [ api_frontend_order_kit_item_line_item_update ]
+                    trackFields: [ kitItem, product, unit, quantity, value, currency ]
+                    groups:
+                        # Used in CREATE action by orderlineitems storefront API resource
+                        - api_frontend_order_line_item_create
+                        # Used in UPDATE action by orderlineitems storefront API resource
+                        - api_frontend_order_line_item_update
+
+Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
+    properties:
+        lineItem:
+            -   NotNull: ~
+            -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                    message: 'oro.order.orderproductkititemlineitem.line_item.changed'
+                    groups:
+                        - api
+        kitItem:
+            -   NotNull:
+                    message: 'oro.order.orderproductkititemlineitem.kit_item.blank.message'
+                    groups:
+                        # Used in CREATE action by orderproductkititemlineitems API resource
+                        - api_order_kit_item_line_item_create
+                        # Used in CREATE action by orderproductkititemlineitems storefront API resource
+                        - api_frontend_order_kit_item_line_item_create
+                        # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
+                        - order_kit_item_line_item_create
+            -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                    message: 'oro.order.orderproductkititemlineitem.kit_item.changed'
+                    groups:
+                        - api
+        kitItemId:
+            -   NotNull:
+                    message: 'oro.order.orderproductkititemlineitem.kit_item.blank.message'
+        kitItemLabel:
+            -   NotNull:
+                    message: 'oro.order.orderproductkititemlineitem.kit_item.blank.message'
+        product:
+            -   NotNull:
+                    message: 'oro.order.orderproductkititemlineitem.product.blank.message'
+                    groups:
+                        # Used in CREATE action by orderproductkititemlineitems API resource
+                        - api_order_kit_item_line_item_create
+                        # Used in CREATE action by orderproductkititemlineitems storefront API resource
+                        - api_frontend_order_kit_item_line_item_create
+                        # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
+                        - order_kit_item_line_item_create
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductAvailable:
+                    availabilityValidationGroups: [ product_kit_item_product_is_available_for_order ]
+                    ifChanged: [ 'product' ]
+                    groups:
+                        # Used in CREATE action by orderproductkititemlineitems API resource
+                        - api_order_kit_item_line_item_create
+                        # Used in UPDATE action by orderproductkititemlineitems API resource
+                        - api_order_kit_item_line_item_update
+                        # Used in CREATE action by orderproductkititemlineitems storefront API resource
+                        - api_frontend_order_kit_item_line_item_create
+                        # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
+                        - order_kit_item_line_item_create
+                        # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
+                        - order_kit_item_line_item_update
+        productId:
+            -   NotNull:
+                    message: 'oro.order.orderproductkititemlineitem.product.blank.message'
+        productSku:
+            -   NotNull:
+                    message: 'oro.order.orderproductkititemlineitem.product.blank.message'
+        productName:
+            -   NotNull:
+                    message: 'oro.order.orderproductkititemlineitem.product.blank.message'
+        quantity:
+            -   NotNull:
+                    message: 'oro.order.orderproductkititemlineitem.quantity.greater_than_zero.message'
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                    message: 'oro.order.orderproductkititemlineitem.quantity.greater_than_zero.message'
+                    groups:
+                        # Used in CREATE action by orderproductkititemlineitems API resource
+                        - api_order_kit_item_line_item_create
+                        # Used in UPDATE action by orderproductkititemlineitems API resource
+                        - api_order_kit_item_line_item_update
+                        # Used in CREATE action by orderproductkititemlineitems storefront API resource
+                        - api_frontend_order_kit_item_line_item_create
+                        # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
+                        - order_kit_item_line_item_create
+                        # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
+                        - order_kit_item_line_item_update
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision:
+                    groups:
+                        # Used in CREATE action by orderproductkititemlineitems API resource
+                        - api_order_kit_item_line_item_create
+                        # Used in UPDATE action by orderproductkititemlineitems API resource
+                        - api_order_kit_item_line_item_update
+                        # Used in CREATE action by orderproductkititemlineitems storefront API resource
+                        - api_frontend_order_kit_item_line_item_create
+                        # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
+                        - order_kit_item_line_item_create
+                        # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
+                        - order_kit_item_line_item_update
+            -   Range:
+                    minPropertyPath: 'minimumQuantity'
+                    maxPropertyPath: 'maximumQuantity'
+                    minMessage: 'oro.order.orderproductkititemlineitem.quantity.range.min_message'
+                    maxMessage: 'oro.order.orderproductkititemlineitem.quantity.range.max_message'
+                    notInRangeMessage: 'oro.order.orderproductkititemlineitem.quantity.range.not_in_range_message'
+                    groups:
+                        # Used in CREATE action by orderproductkititemlineitems API resource
+                        - api_order_kit_item_line_item_create
+                        # Used in UPDATE action by orderproductkititemlineitems API resource
+                        - api_order_kit_item_line_item_update
+                        # Used in CREATE action by orderproductkititemlineitems storefront API resource
+                        - api_frontend_order_kit_item_line_item_create
+                        # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
+                        - order_kit_item_line_item_create
+                        # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
+                        - order_kit_item_line_item_update
+        productUnit:
+            -   NotNull:
+                    groups:
+                        # Used in CREATE action by orderproductkititemlineitems API resource
+                        - api_order_kit_item_line_item_create
+                        # Used in CREATE action by orderproductkititemlineitems storefront API resource
+                        - api_frontend_order_kit_item_line_item_create
+                        # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
+                        - order_kit_item_line_item_create
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductUnitAvailable:
+                    ifChanged: [ 'productUnit' ]
+                    groups:
+                        # Used in CREATE action by orderproductkititemlineitems API resource
+                        - api_order_kit_item_line_item_create
+                        # Used in UPDATE action by orderproductkititemlineitems API resource
+                        - api_order_kit_item_line_item_update
+                        # Used in CREATE action by orderproductkititemlineitems storefront API resource
+                        - api_frontend_order_kit_item_line_item_create
+                        # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
+                        - order_kit_item_line_item_create
+                        # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
+                        - order_kit_item_line_item_update
+        productUnitCode:
+            -   NotNull: ~
+        sortOrder:
+            -   NotNull: ~
+            -   Type:
+                    type: integer
+            -   Range:
+                    # Minimum of 4-byte integer value.
+                    min: -2147483648
+                    # Maximum of 4-byte integer value.
+                    max: 2147483647
+        price:
+            -   NotNull:
+                    message: 'oro.order.orderproductkititemlineitem.product_price.blank'
+            -   Valid: ~
 
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
     constraints:
-        - Oro\Bundle\AddressBundle\Validator\Constraints\ValidRegion: ~
-        - Oro\Bundle\AddressBundle\Validator\Constraints\RegionText: ~
-        - Oro\Bundle\AddressBundle\Validator\Constraints\RequiredRegion: ~
-        - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
+        -   Oro\Bundle\AddressBundle\Validator\Constraints\ValidRegion: ~
+        -   Oro\Bundle\AddressBundle\Validator\Constraints\RegionText: ~
+        -   Oro\Bundle\AddressBundle\Validator\Constraints\RequiredRegion: ~
+        -   Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
     properties:
         street:
-            - NotBlank: ~
+            -   NotBlank: ~
         city:
-            - NotBlank: ~
+            -   NotBlank: ~
         postalCode:
-            - NotBlank: ~
+            -   NotBlank: ~
         country:
-            - NotBlank: ~
+            -   NotBlank: ~
         phone:
-            - Length:
-                max: 255
+            -   Length:
+                    max: 255
 
 Oro\Bundle\OrderBundle\Entity\OrderDiscount:
     constraints:
-        - Oro\Bundle\OrderBundle\Validator\Constraints\DiscountType:
-            groups: [Default, OrderDiscountItemType]
-        - Oro\Bundle\OrderBundle\Validator\Constraints\NotBlankDiscountValue:
-            groups: [Default, OrderDiscountItemType]
+        -   Oro\Bundle\OrderBundle\Validator\Constraints\DiscountType:
+                groups: [ Default, OrderDiscountItemType ]
+        -   Oro\Bundle\OrderBundle\Validator\Constraints\NotBlankDiscountValue:
+                groups: [ Default, OrderDiscountItemType ]
     properties:
         percent:
-            - Type:
-                groups: [Default, OrderDiscountItemType]
-                type: numeric
-            - Oro\Bundle\FormBundle\Validator\Constraints\PercentRange:
-                groups: [Default, OrderDiscountItemType]
-                min: -100
-                max: 100
-                type: fractional_100
+            -   Type:
+                    groups: [ Default, OrderDiscountItemType ]
+                    type: numeric
+            -   Oro\Bundle\FormBundle\Validator\Constraints\PercentRange:
+                    groups: [ Default, OrderDiscountItemType ]
+                    min: -100
+                    max: 100
+                    type: fractional_100
         amount:
-            - Type:
-                groups: [Default, OrderDiscountItemType]
-                type: numeric
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
-                groups: [Default, OrderDiscountItemType]
-                maxMessage: 'oro.order.discounts.item.error.label'
+            -   Type:
+                    groups: [ Default, OrderDiscountItemType ]
+                    type: numeric
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
+                    groups: [ Default, OrderDiscountItemType ]
+                    maxMessage: 'oro.order.discounts.item.error.label'
         type:
-            - Type:
-                groups: [Default, OrderDiscountItemType]
-                type: string
+            -   Type:
+                    groups: [ Default, OrderDiscountItemType ]
+                    type: string
         order:
-            - Oro\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
-            - Oro\Bundle\OrderBundle\Validator\Constraints\Discounts:
-                errorMessage: 'oro.order.discounts.sum.error.single_discount.label'
-                groups: [OrderDiscountItemType]
-            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
-                message: oro.order.discounts.order.changed
-                groups: [api]
+            -   Oro\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
+            -   Oro\Bundle\OrderBundle\Validator\Constraints\Discounts:
+                    errorMessage: 'oro.order.discounts.sum.error.single_discount.label'
+                    groups: [ OrderDiscountItemType ]
+            -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                    message: oro.order.discounts.order.changed
+                    groups: [ api ]
 
 Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
     properties:
         method:
-            - NotBlank: ~
+            -   NotBlank: ~
         number:
-            - NotBlank: ~
+            -   NotBlank: ~
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    properties:
+        product:
+            -   Valid:
+                    groups:
+                        # Used by oro_order.product_kit.checker.product_kit_item_product_availability_checker
+                        - product_kit_item_product_is_available_for_order
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    properties:
+        type:
+            -   EqualTo:
+                    value: simple
+                    groups:
+                        # Used by oro_order.product_kit.checker.product_kit_item_product_availability_checker
+                        - product_kit_item_product_is_available_for_order
+        status:
+            -   EqualTo:
+                    value: enabled
+                    message: 'oro.order.orderproductkititemlineitem.product.not_enabled.message'
+                    groups:
+                        # Used by oro_order.product_kit.checker.product_kit_item_product_availability_checker
+                        - product_kit_item_product_is_available_for_order
