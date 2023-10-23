@@ -38,6 +38,7 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', event: postRemove }
             - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
             - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.listener.product_unit_precision.remove_product_price_attributes:
