@@ -31,7 +31,7 @@ class ProductUnitPrecisionListener implements FeatureToggleableInterface
     protected ShardManager $shardManager;
     private DoctrineHelper $doctrineHelper;
     private PriceListTriggerHandler $priceListTriggerHandler;
-    private array $scheduledProductIds = [];
+    private array $scheduledProducts = [];
 
     public function __construct(
         $productPriceClass,
@@ -78,8 +78,8 @@ class ProductUnitPrecisionListener implements FeatureToggleableInterface
 
         $uow = $event->getObjectManager()->getUnitOfWork();
         foreach ($uow->getScheduledEntityInsertions() as $insertion) {
-            if ($insertion instanceof ProductUnitPrecision) {
-                $scheduledProductIds[$insertion->getProduct()->getId()] = true;
+            if ($insertion instanceof ProductUnitPrecision && $insertion->getProduct()) {
+                $this->scheduledProducts[] = $insertion->getProduct();
             }
         }
 
@@ -88,33 +88,38 @@ class ProductUnitPrecisionListener implements FeatureToggleableInterface
             if (!$update instanceof ProductUnitPrecision) {
                 continue;
             }
+            if (!$update->getProduct()) {
+                continue;
+            }
 
             $changeSet = $uow->getEntityChangeSet($update);
             if (!array_intersect(array_keys($changeSet), $expectedChanges)) {
                 continue;
             }
 
-            $this->scheduledProductIds[$update->getProduct()->getId()] = true;
+            $this->scheduledProducts[] = $update->getProduct();
         }
-
-
     }
 
     public function postFlush()
     {
-        if (!$this->scheduledProductIds) {
+        if (!$this->scheduledProducts) {
             return;
         }
 
         /** @var PriceListRepository $plRepo */
         $plRepo = $this->doctrineHelper->getEntityRepository(PriceList::class);
-        $productIds = array_keys($this->scheduledProductIds);
-        foreach ($plRepo->getPriceListsWithRulesByAssignedProducts($productIds) as $priceList) {
+        foreach ($plRepo->getPriceListsWithRulesByAssignedProducts($this->scheduledProducts) as $priceList) {
             $this->priceListTriggerHandler->handlePriceListTopic(
                 ResolvePriceRulesTopic::getName(),
                 $priceList,
-                $productIds
+                $this->scheduledProducts
             );
         }
+    }
+
+    public function onClear()
+    {
+        $this->scheduledProducts = [];
     }
 }
