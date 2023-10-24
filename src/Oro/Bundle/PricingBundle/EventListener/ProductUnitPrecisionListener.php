@@ -37,13 +37,16 @@ class ProductUnitPrecisionListener implements FeatureToggleableInterface
         $productPriceClass,
         EventDispatcherInterface $dispatcher,
         ShardManager $shardManager,
-        DoctrineHelper $helper,
-        PriceListTriggerHandler $priceListTriggerHandler
+        DoctrineHelper $helper
     ) {
         $this->productPriceClass = $productPriceClass;
         $this->eventDispatcher = $dispatcher;
         $this->shardManager = $shardManager;
         $this->doctrineHelper = $helper;
+    }
+
+    public function setPriceListTriggerHandler(PriceListTriggerHandler $priceListTriggerHandler): void
+    {
         $this->priceListTriggerHandler = $priceListTriggerHandler;
     }
 
@@ -73,6 +76,10 @@ class ProductUnitPrecisionListener implements FeatureToggleableInterface
     public function onFlush(OnFlushEventArgs $event)
     {
         if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
+        if (!$this->priceListTriggerHandler) {
             return;
         }
 
@@ -107,6 +114,10 @@ class ProductUnitPrecisionListener implements FeatureToggleableInterface
             return;
         }
 
+        if (!$this->priceListTriggerHandler) {
+            return;
+        }
+
         /** @var PriceListRepository $plRepo */
         $plRepo = $this->doctrineHelper->getEntityRepository(PriceList::class);
         foreach ($plRepo->getPriceListsWithRulesByAssignedProducts($this->scheduledProducts) as $priceList) {
@@ -116,6 +127,7 @@ class ProductUnitPrecisionListener implements FeatureToggleableInterface
                 $this->scheduledProducts
             );
         }
+        $this->scheduledProducts = [];
     }
 
     public function onClear()

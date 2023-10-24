@@ -385,6 +385,17 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         }
     }
 
+    /**
+     * @deprecated will be removed in 6.0. Restriction was moved to modifySelectPart.
+     */
+    protected function restrictBySupportedQuantity(QueryBuilder $qb, PriceRule $rule)
+    {
+        if ($rule->getQuantityExpression()) {
+            $quantityValue = (string)$this->getValueByExpression($qb, $rule->getQuantityExpression(), []);
+            $qb->andWhere($qb->expr()->gte($quantityValue, 0));
+        }
+    }
+
     protected function saveUsedPriceRelations(Node\NodeInterface $node)
     {
         foreach ($node->getNodes() as $subNode) {

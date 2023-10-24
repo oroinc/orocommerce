@@ -55,9 +55,9 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
             $this->productPriceClass,
             $this->eventDispatcher,
             $this->shardManager,
-            $this->doctrineHelper,
-            $this->priceListTriggerHandler
+            $this->doctrineHelper
         );
+        $this->listener->setPriceListTriggerHandler($this->priceListTriggerHandler);
     }
 
     public function testOnBeforeFlushFeatureDisabled()
