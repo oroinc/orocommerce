@@ -36,7 +36,7 @@ class TextContentVariantRepository extends EntityRepository
             ->setParameter('contentBlock', $contentBlock)
             ->setMaxResults(1);
 
-        $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
+        $scopeCriteria->applyWhereWithPriority($qb, 'scopes');
 
         return $qb->getQuery()->getOneOrNullResult(MatchingVariantHydrator::NAME);
     }
