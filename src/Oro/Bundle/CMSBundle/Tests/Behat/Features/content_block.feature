@@ -1,5 +1,6 @@
 @behat-test-env
 @ticket-BB-19056
+@ticket-BB-23005
 @feature-BAP-19790
 @fixture-OroCMSBundle:CustomerUserFixture.yml
 @fixture-OroCMSBundle:WysiwygRoleFixture.yml
@@ -72,27 +73,36 @@ Feature: Content Block
     When I signed in as AmandaRCole@example.org on the store frontend
     Then I should see a "Homepage Slider" element
 
-  Scenario: Block for different customers
+  Scenario: Block for different restricted condition(s)
     Given I proceed as the Admin
-    And I am on dashboard
-    And I go to Marketing/ Content Blocks
-    And I click "edit" on row "home-page-slider" in grid
+    And I click "Edit"
     And click "Add Content"
-    And I fill "Content Variant 1 form" with:
-      | Customer | Company B |
+    And I fill "Content Block Form" with:
+      | Content Variant 1 Customer | Company B |
     And I fill in WYSIWYG "Content Variant 1 Content" with "Test block"
     When I save and close form
     Then I should see "Content block has been saved" flash message
-    And click logout in user menu
     When I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     Then I should see "Best-Priced Medical Supplies"
     When I signed in as NancyJSallee@example.org on the store frontend
     Then I should see "Test block"
 
+    When I proceed as the Admin
+    And I click "Edit"
+    And click "Content Variant 1 Expand Button"
+    And I fill "Content Block Form" with:
+      | Content Variant 1 Website | Default |
+    And I fill in WYSIWYG "Content Variant 1 Content" with "Test block in default website"
+    And I clear "Content Variant 1 Customer" field in form "Content Block Form"
+    When I save and close form
+    Then I should see "Content block has been saved" flash message
+    When I proceed as the Buyer
+    And I reload the page
+    Then I should see "Test block in default website"
+
   Scenario: Block with different contents
     Given I proceed as the Admin
-    And login as administrator
     And go to Marketing/ Content Blocks
     And click "Create Content Block"
     When fill "Content Block Form" with:

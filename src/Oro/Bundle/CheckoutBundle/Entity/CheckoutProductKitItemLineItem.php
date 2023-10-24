@@ -57,9 +57,9 @@ class CheckoutProductKitItemLineItem implements
 
     /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", onDelete="CASCADE", nullable=false)
+     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="CASCADE", nullable=false)
      */
-    protected ?ProductUnit $unit = null;
+    protected ?ProductUnit $productUnit = null;
 
     /**
      * @ORM\Column(name="sort_order", type="integer", options={"default"=0}, nullable=false)
@@ -158,26 +158,21 @@ class CheckoutProductKitItemLineItem implements
         return $this->quantity;
     }
 
-    public function setUnit(?ProductUnit $unit): self
+    public function setProductUnit(?ProductUnit $productUnit): self
     {
-        $this->unit = $unit;
+        $this->productUnit = $productUnit;
 
         return $this;
     }
 
-    public function getUnit(): ?ProductUnit
-    {
-        return $this->unit;
-    }
-
     public function getProductUnit(): ?ProductUnit
     {
-        return $this->getUnit();
+        return $this->productUnit;
     }
 
     public function getProductUnitCode(): ?string
     {
-        return $this->getUnit()?->getCode();
+        return $this->getProductUnit()?->getCode();
     }
 
     public function getSortOrder(): int

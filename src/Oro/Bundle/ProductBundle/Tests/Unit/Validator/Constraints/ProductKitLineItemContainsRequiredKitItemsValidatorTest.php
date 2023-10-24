@@ -160,7 +160,7 @@ class ProductKitLineItemContainsRequiredKitItemsValidatorTest extends Constraint
                 '{{ product_kit_sku }}' => '"' . $lineItem->getProductSku() . '"',
                 '{{ product_kit_item_label }}' => '"' . (string)$kitItem3->getDefaultLabel() . '"',
             ])
-            ->atPath('property.path.kitItems')
+            ->atPath('property.path.kitItemLineItems')
             ->setCause($lineItem)
             ->setCode(ProductKitLineItemContainsRequiredKitItems::MISSING_REQUIRED_KIT_ITEM)
             ->assertRaised();

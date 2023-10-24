@@ -1,0 +1,145 @@
+data:
+    type: orders
+    attributes:
+        identifier: order#2
+        poNumber: poNumber2
+        customerNotes: Some Order with Product Kits
+    relationships:
+        billingAddress:
+            data:
+                type: orderaddresses
+                id: billing1
+        shippingAddress:
+            data:
+                type: orderaddresses
+                id: shipping1
+        lineItems:
+            data:
+                -
+                    type: orderlineitems
+                    id: lineItem1
+                -
+                    type: orderlineitems
+                    id: productKitLineItem1
+included:
+    -
+        type: orderlineitems
+        id: lineItem1
+        attributes:
+            quantity: 10
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: orderlineitems
+        id: productKitLineItem1
+        attributes:
+            quantity: 5
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-kit-3->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data:
+                    -
+                        type: orderproductkititemlineitems
+                        id: orderproductkititemlineitem1
+                    -
+                        type: orderproductkititemlineitems
+                        id: orderproductkititemlineitem2
+                    -
+                        type: orderproductkititemlineitems
+                        id: orderproductkititemlineitem3
+    -
+        type: orderaddresses
+        id: billing1
+        relationships:
+            customerAddress:
+                data:
+                    type: customeraddresses
+                    id: '<toString(@customer_address->id)>'
+    -
+        type: orderaddresses
+        id: shipping1
+        relationships:
+            customerUserAddress:
+                data:
+                    type: customeruseraddresses
+                    id: '<toString(@customer_user_address->id)>'
+    -
+        type: orderproductkititemlineitems
+        id: orderproductkititemlineitem1
+        attributes:
+            quantity: 1
+            sortOrder: 1
+            productUnitCode: liter
+            price: '115.9000'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-0->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
+    -
+        type: orderproductkititemlineitems
+        id: orderproductkititemlineitem2
+        attributes:
+            quantity: 2
+            sortOrder: 2
+            productUnitCode: milliliter
+            price: '12.5900'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-3->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: orderproductkititemlineitems
+        id: orderproductkititemlineitem3
+        attributes:
+            quantity: 1
+            sortOrder: 3
+            productUnitCode: milliliter
+            price: '13.5900'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-2->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'

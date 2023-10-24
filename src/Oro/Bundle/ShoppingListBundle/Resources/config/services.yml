@@ -61,7 +61,7 @@ services:
             - "@oro_product.provider.product_variant_availability_provider"
             - "@oro_config.manager"
             - "@oro_entity.delete_handler_registry"
-            - "@oro_shopping_list.product_kit.checksum"
+            - "@oro_product.line_item_checksum_generator"
 
     Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager:
         alias: 'oro_shopping_list.manager.shopping_list'
@@ -761,27 +761,30 @@ services:
             - { name: validator.constraint_validator }
 
     oro_shopping_list.product_kit.provider.product_kit_item_products:
-        class: Oro\Bundle\ShoppingListBundle\ProductKit\Provider\ProductKitItemProductsProvider
+        class: Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider
         arguments:
             - '@oro_shopping_list.product_kit.checker.product_kit_item_product_availability_checker'
 
     oro_shopping_list.product_kit.checker.product_kit_item_product_availability_checker:
-        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker
+        class: Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker
         arguments:
             - '@validator'
+            - ['product_kit_item_product_is_available_for_purchase']
 
     oro_shopping_list.product_kit.checker.product_kit_item_availability_checker:
-        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitItemAvailabilityChecker
+        class: Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitItemAvailabilityChecker
         arguments:
             - '@validator'
+            - ['product_kit_item_is_available_for_purchase']
 
     oro_shopping_list.product_kit.checker.product_kit_availability_checker:
-        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitAvailabilityChecker
+        class: Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitAvailabilityChecker
         arguments:
             - '@validator'
+            - ['product_kit_is_available_for_purchase']
 
     oro_shopping_list.product_kit.provider.product_kit_items:
-        class: Oro\Bundle\ShoppingListBundle\ProductKit\Provider\ProductKitItemsProvider
+        class: Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemsProvider
         arguments:
             - '@oro_shopping_list.product_kit.checker.product_kit_item_availability_checker'
 
@@ -795,22 +798,6 @@ services:
         arguments:
             - '@oro_shopping_list.product_kit.provider.product_kit_items'
             - '@oro_shopping_list.product_kit.factory.product_kit_item_line_item'
-
-    oro_shopping_list.product_kit.checksum.product_kit_line_item:
-        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\ProductKitLineItemChecksumGenerator
-        tags:
-            - { name: oro_shopping_list.product_kit.checksum }
-
-    oro_shopping_list.product_kit.checksum:
-        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\CompositeLineItemChecksumGenerator
-        arguments:
-            - !tagged_iterator { tag: oro_shopping_list.product_kit.checksum}
-
-    oro_shopping_list.product_kit.checksum.hashing:
-        decorates: oro_shopping_list.product_kit.checksum
-        class: Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\HashingLineItemChecksumGenerator
-        arguments:
-            - '@.inner'
 
     oro_shopping_list.delete_handler.product_kit_item_line_item:
         class: Oro\Bundle\ShoppingListBundle\Handler\ProductKitItemLineItemDeleteHandler
@@ -856,15 +843,10 @@ services:
         tags:
             - { name: oro_pricing.current_currency_provider }
 
-    oro_shopping_list.checksum.general_product_line_item:
-        class: 'Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\GeneralLineItemChecksumGenerator'
-        tags:
-            - { name: oro_shopping_list.product_kit.checksum }
-
     oro_shopping_list.entity_listener.line_item_event:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\LineItemEventListener'
         arguments:
-            - '@oro_shopping_list.product_kit.checksum'
+            - '@oro_product.line_item_checksum_generator'
         tags:
             - { name: doctrine.orm.entity_listener, entity_manager: default, entity: Oro\Bundle\ShoppingListBundle\Entity\LineItem, event: prePersist }
             - { name: doctrine.orm.entity_listener, entity_manager: default, entity: Oro\Bundle\ShoppingListBundle\Entity\LineItem, event: preUpdate }

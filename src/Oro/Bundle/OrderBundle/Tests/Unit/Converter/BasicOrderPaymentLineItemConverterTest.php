@@ -68,7 +68,7 @@ class BasicOrderPaymentLineItemConverterTest extends TestCase
     ): OrderProductKitItemLineItem {
         return (new OrderProductKitItemLineItem())
             ->setProduct($product)
-            ->setUnit($productUnit)
+            ->setProductUnit($productUnit)
             ->setQuantity($quantity)
             ->setPrice($price)
             ->setSortOrder(1);

@@ -293,11 +293,8 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
         StubProduct $product,
         ProductKitItem $productKitItem
     ): ShippingKitItemLineItem {
-        return (new ShippingKitItemLineItem(
-            $this->createMock(ProductUnit::class),
-            1,
-            $this->createMock(ProductHolderInterface::class)
-        ))
+        return (new ShippingKitItemLineItem($this->createMock(ProductHolderInterface::class)))
+            ->setQuantity(1)
             ->setProductUnitCode('unit_code')
             ->setProduct($product)
             ->setProductSku('sku')

@@ -58,7 +58,7 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
      *
      * @return string|null
      */
-    private function getMoneyValue($value)
+    private function getMoneyValue($value): ?string
     {
         if (null !== $value) {
             $value = (string)BigDecimal::of($value)->toScale(MoneyType::TYPE_SCALE);
@@ -67,12 +67,7 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
         return $value;
     }
 
-    /**
-     * @param Result|null $taxValue
-     *
-     * @return array
-     */
-    private function getTaxRelatedFields(?Result $taxValue)
+    private function getTaxRelatedFields(?Result $taxValue): array
     {
         if (null === $taxValue) {
             return [
@@ -95,7 +90,7 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
         ];
     }
 
-    public function testGetListShouldReturnTaxRelatedFields()
+    public function testGetListShouldReturnTaxRelatedFields(): void
     {
         /** @var Result $order1TaxValue */
         $order1TaxValue = $this->getReference('order1_tax_value')->getResult();
@@ -123,14 +118,24 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
                         'type'       => 'orders',
                         'id'         => '<toString(@order3->id)>',
                         'attributes' => $this->getTaxRelatedFields(null)
-                    ]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@order4->id)>',
+                        'attributes' => $this->getTaxRelatedFields(null)
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@order5->id)>',
+                        'attributes' => $this->getTaxRelatedFields(null)
+                    ],
                 ]
             ],
             $response
         );
     }
 
-    public function testGetShouldReturnTaxRelatedFields()
+    public function testGetShouldReturnTaxRelatedFields(): void
     {
         /** @var Result $orderTaxValue */
         $orderTaxValue = $this->getReference('order1_tax_value')->getResult();
@@ -151,7 +156,7 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetShouldEmptyValuesIfOrderDoesNotHaveTaxValue()
+    public function testGetShouldEmptyValuesIfOrderDoesNotHaveTaxValue(): void
     {
         $response = $this->get(
             ['entity' => 'orders', 'id' => '<toString(@order3->id)>']
@@ -169,7 +174,7 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testCreateShouldCalculateTaxes()
+    public function testCreateShouldCalculateTaxes(): void
     {
         $response = $this->post(
             ['entity' => 'orders'],

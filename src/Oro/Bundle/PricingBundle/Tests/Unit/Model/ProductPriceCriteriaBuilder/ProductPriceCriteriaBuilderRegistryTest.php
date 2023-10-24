@@ -50,7 +50,7 @@ class ProductPriceCriteriaBuilderRegistryTest extends TestCase
             ->expects(self::never())
             ->method(self::anything());
 
-        self::assertSame(
+        self::assertEquals(
             $this->builder1,
             $registry->getBuilderForProduct($product)
         );

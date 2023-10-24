@@ -4,15 +4,15 @@ namespace Oro\Bundle\OrderBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
  * Stores the submitted order line item price ("price" and "currency" fields) to the context
  * and sets a fake price to be sure the price value validation will pass.
- * The stored price is used by FillOrderLineItemPrice processor to validate
+ * The stored price is used by {@see FillOrderLineItemPrice} processor to validate
  * that it equals to a calculated price.
- * @see \Oro\Bundle\OrderBundle\Api\Processor\FillOrderLineItemPrice
  */
 class RememberOrderLineItemPrice implements ProcessorInterface
 {
@@ -25,17 +25,17 @@ class RememberOrderLineItemPrice implements ProcessorInterface
     {
         /** @var CustomizeFormDataContext $context */
 
-        /** @var OrderLineItem $lineItem */
+        /** @var OrderLineItem|OrderProductKitItemLineItem $lineItem */
         $lineItem = $context->getData();
         $price = $this->getPrice($lineItem);
         if ($price) {
-            $context->set(self::SUBMITTED_PRICE, $price);
+            $context->set(static::SUBMITTED_PRICE, $price);
         }
         $lineItem->setValue(0);
         $lineItem->setCurrency(null);
     }
 
-    private function getPrice(OrderLineItem $lineItem): ?array
+    private function getPrice(OrderLineItem|OrderProductKitItemLineItem $lineItem): ?array
     {
         $value = $lineItem->getValue();
         $currency = $lineItem->getCurrency();

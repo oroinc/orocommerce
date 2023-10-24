@@ -11,10 +11,8 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
 use Oro\Bundle\PricingBundle\Handler\ProductPriceHandler;
 use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
-use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -83,23 +81,6 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route("/get-matching-price", name="oro_pricing_matching_price", methods={"GET"})
-     * @AclAncestor("oro_pricing_product_price_view")
-     *
-     * {@inheritdoc}
-     */
-    public function getMatchingPriceAction(Request $request)
-    {
-        $lineItems = $request->get('items', []);
-        $matchedPrices = $this->get(MatchingPriceProvider::class)->getMatchingPrices(
-            $lineItems,
-            $this->get(ProductPriceScopeCriteriaRequestHandler::class)->getPriceScopeCriteria()
-        );
-
-        return new JsonResponse($matchedPrices);
-    }
-
-    /**
      * @Route(
      *     "/delete-product-price/{priceListId}/{productPriceId}",
      *      name="oro_product_price_delete",
@@ -164,7 +145,6 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
                 ShardManager::class,
                 UpdateHandlerFacade::class,
                 ProductPriceHandler::class,
-                MatchingPriceProvider::class,
                 ProductPriceScopeCriteriaRequestHandler::class,
                 PriceManager::class,
                 ContextHelper::class,

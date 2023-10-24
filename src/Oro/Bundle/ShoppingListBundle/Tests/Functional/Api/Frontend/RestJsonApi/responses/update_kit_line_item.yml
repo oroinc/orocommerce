@@ -5,7 +5,7 @@ data:
         quantity: 2
         notes: 'New Kit Line Item Notes'
         currency: USD
-        value: '12.34'
+        value: '19.24'
     relationships:
         product:
             data:
@@ -18,9 +18,6 @@ data:
                 -
                     type: shoppinglistkititems
                     id: '<toString(@product_kit_item1_line_item1->id)>'
-                -
-                    type: shoppinglistkititems
-                    id: '<toString(@product_kit_item1_line_item2->id)>'
                 -
                     type: shoppinglistkititems
                     id: 'kit_3'

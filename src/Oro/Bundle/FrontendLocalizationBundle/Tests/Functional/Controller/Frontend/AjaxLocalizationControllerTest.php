@@ -122,7 +122,7 @@ class AjaxLocalizationControllerTest extends WebTestCase
                 'routeParameters' => null,
                 'queryParameters' => null,
                 'serverParameters' => ['WEBSITE_PATH' => '/test'],
-                'expectedResult' => ['success' => true, 'redirectTo' => '/test/'],
+                'expectedResult' => ['success' => true, 'redirectTo' => 'http://localhost/test/'],
                 'current' => 'en_US'
             ],
             'Set to en_CA and redirect to localized page when site installed in sub-directory' => [
@@ -134,6 +134,18 @@ class AjaxLocalizationControllerTest extends WebTestCase
                 'expectedResult' => [
                     'success' => true,
                     'redirectTo' => 'http://localhost/test/localized-slug/en_ca/page3?random=1234567890'
+                ],
+                'current' => 'en_CA'
+            ],
+            'Set to en_CA and redirect to localized page having website path similar to beginning of product slug' => [
+                'code' => 'en_CA',
+                'redirectRoute' => 'oro_cms_frontend_page_view',
+                'routeParameters' => LoadPageData::PAGE_3,
+                'queryParameters' => ['random' => '1234567890'],
+                'serverParameters' => ['WEBSITE_PATH' => '/loc'],
+                'expectedResult' => [
+                    'success' => true,
+                    'redirectTo' => 'http://localhost/loc/localized-slug/en_ca/page3?random=1234567890'
                 ],
                 'current' => 'en_CA'
             ],

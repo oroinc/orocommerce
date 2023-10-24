@@ -404,40 +404,60 @@ oro:
             kit_item:
                 label: Product Kit Item
                 description: The related product kit item
+            kit_item_id:
+                label: Product Kit Item Id
+                description: The related product kit item ID. Automatically filled from the related kit item. Contains ID even if the related kit item is deleted
             kit_item_label:
                 label: Product Kit Item Label
-                description: The default label of the ordered product kit item. Fallback field to keep original data
-            kit_item_optional:
+                description: The default label of the ordered product kit item. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+            optional:
                 label: Optional
-                description: Indicates whether this kit item is required for purchase, or can be skipped by the customer. Fallback field to keep original data
+                description: Indicates whether this kit item is required for purchase, or can be skipped by the customer. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
             product:
                 label: Product
                 description: The purchased kit item product
+            product_id:
+                label: Product Id
+                description: ID of the purchased kit item product. Automatically filled from the related product. Contains ID even if the related product is deleted
             product_sku:
                 label: Product SKU
-                description: A unique human-readable product identifier. Fallback field to keep original data
+                description: A unique human-readable product identifier. Automatically filled from the related product. Contains data even if the related product is deleted
             product_name:
                 label: Product Name
-                description: The default name of the ordered product. Fallback field to keep original data
+                description: The default name of the ordered product. Automatically filled from the related product. Contains data even if the related product is deleted
             quantity:
                 label: Quantity
-                description: The quantity of a purchased product kit item units
+                description: The quantity of product kit item units to be purchased
+                form:
+                    tooltip: 'The quantity of product kit item units to be purchased: {{ unit_precision_info }}'
                 aria_label: Product Kit Item Quantity
-            unit:
+            minimum_quantity:
+                label: Minimum Quantity
+                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+            maximum_quantity:
+                label: Maximum Quantity
+                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+            product_unit:
                 label: Unit of Quantity
                 description: The unit of quantity of the kit item product was purchased in
-            unit_code:
+            product_unit_precision:
+                label: Unit Precision
+                description: The unit precision of the related product. Automatically filled from the related product. Contains data even if the related product is deleted
+            product_unit_code:
                 label: Product Unit Code
-                description: The code of the product unit of the kit item product was purchased in. Fallback field to keep original data
+                description: The code of the product unit of the kit item product was purchased in. Automatically filled from the related product unit. Contains data even if the related product unit is deleted
             sort_order:
                 label: Sort Order
-                description: Used to sort kit item line item products when displaying
+                description: Used to sort kit item line item products when displaying. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
             price:
                 label: Price
+                form_label: 'Price, %currency%'
             value:
                 label: Price Value
+                description: Price for a product kit item line item product unit
             currency:
                 label: Price Currency
+                description:  A currency for a product kit item line item price
 
         order_discount:
             add_label: Add Special Discount
@@ -526,6 +546,9 @@ oro:
                     customer_user: User Address Book
             shipping_options.label: Shipping Options
             override_shipping_cost.label: Override Shipping Cost
+            orderproductkititemlineitem:
+                product:
+                    choices.none: 'None'
 
         subtotals:
             shipping_cost: Shipping
@@ -671,3 +694,5 @@ oro:
             action:
                 view.aria_label: "View %identifier% order"
                 start_from_order.aria_label: "Re-Order %identifier% order"
+            orderlineitem:
+                kitConfiguration.label: Configuration

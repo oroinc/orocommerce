@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdm
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM\PreviouslyPurchasedFeatureTrait;
+use Oro\Bundle\SearchBundle\Engine\Orm;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\WebsiteSearchExtensionTrait;
 
 class ProductSearchTest extends FrontendRestJsonApiTestCase
@@ -38,6 +39,11 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
         $this->enablePreviouslyPurchasedFeature();
         $this->reindexProductData();
+    }
+
+    private function isOrmEngine(): bool
+    {
+        return Orm::ENGINE_NAME === self::getContainer()->get('oro_website_search.engine.parameters')->getEngineName();
     }
 
     public function testOrderedAt()
@@ -310,23 +316,5 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
             ],
             $response
         );
-    }
-
-    /**
-     * @return bool
-     */
-    private function isOrmEngine()
-    {
-        return \Oro\Bundle\SearchBundle\Engine\Orm::ENGINE_NAME === $this->getSearchEngine();
-    }
-
-    /**
-     * @return string
-     */
-    private function getSearchEngine()
-    {
-        return self::getContainer()
-            ->get('oro_website_search.engine.parameters')
-            ->getEngineName();
     }
 }

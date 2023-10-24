@@ -445,7 +445,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
     }
 
     /**
-     * @dataProvider getUpdateQuantityValidationDataProvider
+     * @dataProvider getUpdateValidationDataProvider
      */
     public function testUpdateValidation(array $parameters, array $expectedErrors): void
     {
@@ -470,7 +470,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function getUpdateQuantityValidationDataProvider(): array
+    public function getUpdateValidationDataProvider(): array
     {
         return [
             'quantity null' => [
@@ -620,8 +620,8 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 ],
                 'expectedErrors' => [
                     [
-                        'title' => 'expression constraint',
-                        'detail' => 'The selected product is not allowed',
+                        'title' => 'at least one of constraint',
+                        'detail' => 'Original selection no longer available',
                         'source' => ['pointer' => '/data/relationships/product/data'],
                     ],
                 ],
@@ -728,7 +728,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 'expectedErrors' => [
                     [
                         'status' => '400',
-                        'title' => 'expression constraint',
+                        'title' => 'product kit item line item product unit available constraint',
                         'detail' => 'The selected product unit is not allowed',
                         'source' => [
                             'pointer' => '/data/relationships/unit/data',

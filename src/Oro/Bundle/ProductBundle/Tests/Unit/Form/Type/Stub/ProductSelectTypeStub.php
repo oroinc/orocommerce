@@ -23,6 +23,7 @@ class ProductSelectTypeStub extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
+            'autocomplete_alias' => 'oro_product_visibility_limited',
             'data_parameters' => [],
             'class' => 'Oro\Bundle\ProductBundle\Entity\Product',
             'choice_label' => 'sku',

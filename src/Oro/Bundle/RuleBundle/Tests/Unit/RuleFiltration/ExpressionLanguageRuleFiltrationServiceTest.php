@@ -5,7 +5,7 @@ namespace Oro\Bundle\RuleBundle\Tests\Unit\RuleFiltration;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
-use Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationServiceDecorator;
+use Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 use Psr\Log\LoggerInterface;
@@ -16,53 +16,78 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
     private const EXPRESSION_VALUE = 1;
 
     /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $service;
+    private $baseFiltrationService;
 
-    /** @var ExpressionLanguageRuleFiltrationServiceDecorator */
-    private $serviceDecorator;
+    /** @var ExpressionLanguageRuleFiltrationService */
+    private $filtrationService;
 
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
     protected function setUp(): void
     {
-        $this->service = $this->createMock(RuleFiltrationServiceInterface::class);
+        $this->baseFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->serviceDecorator = new ExpressionLanguageRuleFiltrationServiceDecorator(
+        $this->filtrationService = new ExpressionLanguageRuleFiltrationService(
+            $this->baseFiltrationService,
             new ExpressionLanguage(),
-            $this->service,
             $this->logger
         );
     }
 
+    private function getRule(string $name, ?string $expression): Rule
+    {
+        $rule = new Rule();
+        $rule->setName($name);
+        if (null !== $expression) {
+            $rule->setExpression($expression);
+        }
+
+        return $rule;
+    }
+
+    private function getRuleOwner(RuleInterface $rule): RuleOwnerInterface
+    {
+        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
+        $ruleOwner->expects(self::any())
+            ->method('getRule')
+            ->willReturn($rule);
+
+        return $ruleOwner;
+    }
+
     /**
      * @dataProvider ruleOwnersDataProvider
-     *
-     * @param RuleOwnerInterface[]|array $ruleOwners
-     * @param RuleOwnerInterface[]|array $expectedRuleOwners
      */
     public function testGetFilteredRuleOwners(array $ruleOwners, array $expectedRuleOwners): void
     {
         $context = [self::EXPRESSION_VARIABLE => self::EXPRESSION_VALUE];
 
-        $this->service->expects(self::once())
+        $this->baseFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
             ->with($expectedRuleOwners, $context)
             ->willReturn($expectedRuleOwners);
 
-        $actualRuleOwners = $this->serviceDecorator->getFilteredRuleOwners($ruleOwners, $context);
-
-        self::assertEquals($expectedRuleOwners, $actualRuleOwners);
+        self::assertEquals(
+            $expectedRuleOwners,
+            $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)
+        );
     }
 
     public function ruleOwnersDataProvider(): array
     {
-        $applicable = $this->createApplicableOwner('1');
-        $notApplicable = $this->createNotApplicableOwner('2');
-        $exceptionOwner = $this->createExceptionOwner();
-        $typeErrorOwner = $this->createTypeErrorOwner();
-        $nullExpressionOwner = $this->createNullExpressionOwner('3');
+        $applicable = $this->getRuleOwner($this->getRule(
+            '1',
+            self::EXPRESSION_VARIABLE . ' = ' . self::EXPRESSION_VALUE
+        ));
+        $notApplicable = $this->getRuleOwner($this->getRule(
+            '2',
+            self::EXPRESSION_VARIABLE . ' > ' . self::EXPRESSION_VALUE
+        ));
+        $nullExpressionOwner = $this->getRuleOwner($this->getRule('3', null));
+        $exceptionOwner = $this->getRuleOwner($this->getRule('4', 't = %'));
+        $typeErrorOwner = $this->getRuleOwner($this->getRule('5', 't in (%)'));
 
         return [
             'testOnlyApplicablePass' => [
@@ -80,7 +105,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
             'testWithNullLanguageExpression' => [
                 [$nullExpressionOwner, $notApplicable, $applicable],
                 [$nullExpressionOwner, $applicable]
-            ],
+            ]
         ];
     }
 
@@ -88,10 +113,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
     {
         $context = [self::EXPRESSION_VARIABLE => self::EXPRESSION_VALUE];
 
-        $rule = new Rule();
-        $rule->setExpression('t = %');
-
-        $exceptionOwner = $this->createRuleOwner($rule);
+        $exceptionOwner = $this->getRuleOwner($this->getRule('testRule', 't = %'));
 
         $this->logger->expects(self::once())
             ->method('error')
@@ -108,65 +130,11 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
                 ]
             );
 
-        $this->service->expects(self::once())
+        $this->baseFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
             ->with([], $context)
             ->willReturn([]);
 
-        self::assertEmpty($this->serviceDecorator->getFilteredRuleOwners([$exceptionOwner], $context));
-    }
-
-    private function createNotApplicableOwner(string $name): RuleOwnerInterface
-    {
-        $rule = new Rule();
-        $rule
-            ->setName($name)
-            ->setExpression(self::EXPRESSION_VARIABLE . ' > ' . self::EXPRESSION_VALUE);
-
-        return $this->createRuleOwner($rule);
-    }
-
-    private function createApplicableOwner(string $name): RuleOwnerInterface
-    {
-        $rule = new Rule();
-        $rule
-            ->setName($name)
-            ->setExpression(self::EXPRESSION_VARIABLE . ' = ' . self::EXPRESSION_VALUE);
-
-        return $this->createRuleOwner($rule);
-    }
-
-    private function createNullExpressionOwner(string $name): RuleOwnerInterface
-    {
-        $rule = new Rule();
-        $rule->setName($name);
-
-        return $this->createRuleOwner($rule);
-    }
-
-    private function createExceptionOwner(): RuleOwnerInterface
-    {
-        $rule = new Rule();
-        $rule->setExpression('t = %');
-
-        return $this->createRuleOwner($rule);
-    }
-
-    private function createTypeErrorOwner(): RuleOwnerInterface
-    {
-        $rule = new Rule();
-        $rule->setExpression('t in (%)');
-
-        return $this->createRuleOwner($rule);
-    }
-
-    private function createRuleOwner(RuleInterface $rule): RuleOwnerInterface
-    {
-        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
-        $ruleOwner->expects(self::any())
-            ->method('getRule')
-            ->willReturn($rule);
-
-        return $ruleOwner;
+        self::assertSame([], $this->filtrationService->getFilteredRuleOwners([$exceptionOwner], $context));
     }
 }

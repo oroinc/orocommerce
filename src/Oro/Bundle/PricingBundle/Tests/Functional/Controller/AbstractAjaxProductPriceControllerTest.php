@@ -9,7 +9,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
 {
     protected string $pricesByCustomerActionUrl;
-    protected string $matchingPriceActionUrl;
 
     /**
      * @dataProvider getProductPricesByCustomerActionDataProvider
@@ -68,83 +67,5 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @dataProvider getMatchingPriceActionDataProvider
-     */
-    public function testGetMatchingPriceAction(
-        string $product,
-        float|int $qty,
-        string $unit,
-        string $currency,
-        array $expected
-    ) {
-        /** @var Product $product */
-        $product = $this->getReference($product);
-
-        $params = [
-            'items' => [
-                ['qty' => $qty, 'product' => $product->getId(), 'unit' => $unit, 'currency' => $currency]
-            ]
-        ];
-
-        $this->client->request('GET', $this->getUrl($this->matchingPriceActionUrl, $params));
-
-        $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
-
-        $expectedData = [];
-        if (0 !== count($expected)) {
-            $expectedData = [
-                $product->getId() .'-'. $unit .'-'. $qty .'-'. $currency  => $expected
-            ];
-        }
-
-        $data = self::jsonToArray($result->getContent());
-        $this->assertEquals($expectedData, $data);
-    }
-
     abstract public function getProductPricesByCustomerActionDataProvider(): array;
-
-    public function getMatchingPriceActionDataProvider(): array
-    {
-        return [
-            [
-                'product' => 'product-1',
-                'qty' => 0.1,
-                'unit' => 'liter',
-                'currency' => 'USD',
-                'expected' => []
-            ],
-            [
-                'product' => 'product-1',
-                'qty' => 1,
-                'unit' => 'liter',
-                'currency' => 'USD',
-                'expected' => [
-                    'value' => 10,
-                    'currency' => 'USD'
-                ]
-            ],
-            [
-                'product' => 'product-1',
-                'qty' => 10,
-                'unit' => 'liter',
-                'currency' => 'USD',
-                'expected' => [
-                    'value' => 12.2,
-                    'currency' => 'USD'
-                ]
-            ],
-            [
-                'product' => 'product-1',
-                'qty' => 120,
-                'unit' => 'liter',
-                'currency' => 'USD',
-                'expected' => [
-                    'value' => 12.2,
-                    'currency' => 'USD'
-                ]
-            ]
-        ];
-    }
 }
