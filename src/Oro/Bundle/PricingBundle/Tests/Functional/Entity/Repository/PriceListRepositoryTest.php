@@ -123,7 +123,7 @@ class PriceListRepositoryTest extends WebTestCase
                 $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
                 $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId()
             ],
-            array_map(fn(PriceList $pl) => $pl->getId(), $priceLists)
+            array_map(fn (PriceList $pl) => $pl->getId(), $priceLists)
         );
     }
 

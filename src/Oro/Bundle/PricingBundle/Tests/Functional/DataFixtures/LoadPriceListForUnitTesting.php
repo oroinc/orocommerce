@@ -121,4 +121,3 @@ class LoadPriceListForUnitTesting extends AbstractFixture implements DependentFi
         $manager->persist($priceListToProduct);
     }
 }
-
