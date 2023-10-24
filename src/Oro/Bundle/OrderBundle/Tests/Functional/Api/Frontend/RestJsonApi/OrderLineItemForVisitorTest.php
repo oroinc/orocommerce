@@ -121,4 +121,93 @@ class OrderLineItemForVisitorTest extends FrontendRestJsonApiTestCase
         );
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
+
+    public function testGetSubresourceForKitItemLineItems(): void
+    {
+        $response = $this->getSubresource(
+            [
+                'entity' => 'orderlineitems',
+                'id' => '<toString(@product_kit_2_line_item.1->id)>',
+                'association' => 'kitItemLineItems',
+            ],
+            [],
+            [],
+            false
+        );
+
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+    }
+
+    public function testGetRelationshipForKitItemLineItems(): void
+    {
+        $response = $this->getRelationship(
+            [
+                'entity' => 'orderlineitems',
+                'id' => '<toString(@product_kit_2_line_item.1->id)>',
+                'association' => 'kitItemLineItems',
+            ],
+            [],
+            [],
+            false
+        );
+
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
+    }
+
+    public function testTryToUpdateRelationshipForKitItemLineItems(): void
+    {
+        $response = $this->patchRelationship(
+            [
+                'entity' => 'orderlineitems',
+                'id' => '<toString(@product_kit_2_line_item.1->id)>',
+                'association' => 'kitItemLineItems',
+            ],
+            [],
+            [],
+            false
+        );
+
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToAddRelationshipForKitItemLineItems(): void
+    {
+        $response = $this->postRelationship(
+            [
+                'entity' => 'orderlineitems',
+                'id' => '<toString(@product_kit_2_line_item.1->id)>',
+                'association' => 'kitItemLineItems',
+            ],
+            [
+                'data' => [],
+            ],
+            [],
+            false
+        );
+
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToDeleteRelationshipForKitItemLineItems(): void
+    {
+        $response = $this->deleteRelationship(
+            [
+                'entity' => 'orderlineitems',
+                'id' => '<toString(@product_kit_2_line_item.1->id)>',
+                'association' => 'kitItemLineItems',
+            ],
+            [
+                'data' => [
+                    [
+                        'type' => 'orderproductkititemlineitems',
+                        'id' => '<toString(@order_product_kit_2_line_item.1_kit_item_line_item.1->id)>',
+                    ],
+                ],
+            ],
+            [],
+            false
+        );
+
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
 }

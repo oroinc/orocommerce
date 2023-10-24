@@ -4,8 +4,6 @@ namespace Oro\Bundle\PricingBundle\Controller\Frontend;
 
 use Oro\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
-use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,22 +22,6 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getProductPricesByCustomerAction(Request $request)
     {
         return parent::getProductPricesByCustomer($request);
-    }
-
-    /**
-     * @Route("/get-matching-price", name="oro_pricing_frontend_matching_price", methods={"GET"})
-     *
-     * {@inheritdoc}
-     */
-    public function getMatchingPriceAction(Request $request)
-    {
-        $lineItems = $request->get('items', []);
-        $matchedPrices = $this->get(MatchingPriceProvider::class)->getMatchingPrices(
-            $lineItems,
-            $this->get(ProductPriceScopeCriteriaRequestHandler::class)->getPriceScopeCriteria()
-        );
-
-        return new JsonResponse($matchedPrices);
     }
 
     /**
@@ -69,7 +51,6 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         return array_merge(
             parent::getSubscribedServices(),
             [
-                MatchingPriceProvider::class,
                 UserCurrencyManager::class,
             ]
         );

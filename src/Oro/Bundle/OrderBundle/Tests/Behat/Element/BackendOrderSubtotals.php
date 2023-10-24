@@ -11,7 +11,7 @@ class BackendOrderSubtotals extends Subtotals
      */
     public function getSubtotal($subtotalName)
     {
-        $subtotal = $this->find('xpath', sprintf('//label[text()="%s"]/following-sibling::div/label', $subtotalName));
+        $subtotal = $this->find('xpath', sprintf('//label[text()="%s"]/following-sibling::div/*', $subtotalName));
 
         return $subtotal->getText();
     }

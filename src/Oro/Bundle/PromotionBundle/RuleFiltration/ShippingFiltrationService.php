@@ -4,67 +4,66 @@ namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
+use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 /**
- * It filter out promotions for shipping discount if promotion's options not fit shipping method and shipping method
- * type from context.
+ * Filters out promotions for shipping discount if promotion's options not fit shipping method
+ * and shipping method type from context.
  */
 class ShippingFiltrationService extends AbstractSkippableFiltrationService
 {
-    /**
-     * @var RuleFiltrationServiceInterface
-     */
-    private $filtrationService;
-
-    public function __construct(RuleFiltrationServiceInterface $filtrationService)
-    {
-        $this->filtrationService = $filtrationService;
+    public function __construct(
+        private RuleFiltrationServiceInterface $baseFiltrationService
+    ) {
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
-        $shippingMethod = $context[ContextDataConverterInterface::SHIPPING_METHOD] ?? null;
-        $shippingMethodType = $context[ContextDataConverterInterface::SHIPPING_METHOD_TYPE] ?? null;
-
-        $filteredOwners = array_values(
-            array_filter(
-                $ruleOwners,
-                function ($ruleOwner) use ($shippingMethod, $shippingMethodType) {
-                    if (!$ruleOwner instanceof PromotionDataInterface) {
-                        return false;
-                    }
-
-                    if ($ruleOwner->getDiscountConfiguration()->getType() !== ShippingDiscount::NAME) {
-                        return true;
-                    }
-
-                    return $this->isShippingOptionsMatched($ruleOwner, $shippingMethod, $shippingMethodType);
-                }
-            )
+        $filteredRuleOwners = $this->filterShippingRuleOwners(
+            $ruleOwners,
+            $context[ContextDataConverterInterface::SHIPPING_METHOD] ?? null,
+            $context[ContextDataConverterInterface::SHIPPING_METHOD_TYPE] ?? null
         );
 
-        return $this->filtrationService->getFilteredRuleOwners($filteredOwners, $context);
+        return $this->baseFiltrationService->getFilteredRuleOwners($filteredRuleOwners, $context);
     }
 
-    /**
-     * @param PromotionDataInterface $promotion
-     * @param string|null            $shippingMethod
-     * @param string|null            $shippingMethodType
-     *
-     * @return bool
-     */
-    private function isShippingOptionsMatched(PromotionDataInterface $promotion, $shippingMethod, $shippingMethodType)
-    {
-        $discountOptions = $promotion->getDiscountConfiguration()->getOptions();
+    private function filterShippingRuleOwners(
+        array $ruleOwners,
+        ?string $shippingMethod,
+        ?string $shippingMethodType
+    ): array {
+        $filteredRuleOwners = [];
+        foreach ($ruleOwners as $ruleOwner) {
+            if (!$ruleOwner instanceof PromotionDataInterface) {
+                continue;
+            }
 
-        $optionsMethod = $discountOptions[ShippingDiscount::SHIPPING_OPTIONS][ShippingDiscount::SHIPPING_METHOD];
-        $optionsType = $discountOptions[ShippingDiscount::SHIPPING_OPTIONS][ShippingDiscount::SHIPPING_METHOD_TYPE];
+            $discountConfiguration = $ruleOwner->getDiscountConfiguration();
+            if ($discountConfiguration->getType() !== ShippingDiscount::NAME
+                || $this->isShippingOptionsMatched($discountConfiguration, $shippingMethod, $shippingMethodType)
+            ) {
+                $filteredRuleOwners[] = $ruleOwner;
+            }
+        }
 
-        return $shippingMethod === $optionsMethod && $shippingMethodType === $optionsType;
+        return $filteredRuleOwners;
+    }
+
+    private function isShippingOptionsMatched(
+        DiscountConfiguration $discountConfiguration,
+        ?string $shippingMethod,
+        ?string $shippingMethodType
+    ): bool {
+        $opt = $discountConfiguration->getOptions();
+
+        return
+            $shippingMethod === $opt[ShippingDiscount::SHIPPING_OPTIONS][ShippingDiscount::SHIPPING_METHOD]
+            && $shippingMethodType === $opt[ShippingDiscount::SHIPPING_OPTIONS][ShippingDiscount::SHIPPING_METHOD_TYPE];
     }
 }

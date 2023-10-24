@@ -1,6 +1,6 @@
 services:
     oro_rule.expression_language:
-        class: 'Oro\Component\ExpressionLanguage\ExpressionLanguage'
+        class: Oro\Component\ExpressionLanguage\ExpressionLanguage
 
     oro_rule.validator_constraints.expression_language_syntax_validator:
         class: Oro\Bundle\RuleBundle\Validator\Constraints\ExpressionLanguageSyntaxValidator
@@ -18,45 +18,38 @@ services:
             - { name: oro_rule.expression_language.function }
 
     oro_rule.rule_filtration.service:
-        class: 'Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService'
-        public: false
+        class: Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService
 
     oro_rule.rule_filtration.enabled_decorator:
-        class: 'Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator'
-        public: false
+        class: Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationService
         decorates: oro_rule.rule_filtration.service
-        decoration_priority: 0
         arguments:
             - '@.inner'
 
     oro_rule.rule_filtration.stop_processing_decorator:
-        class: 'Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator'
-        public: false
+        class: Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationService
         decorates: oro_rule.rule_filtration.service
         decoration_priority: 500
         arguments:
             - '@.inner'
 
     oro_rule.rule_filtration.expression_language_decorator:
-        class: 'Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationServiceDecorator'
-        public: false
+        class: Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationService
         decorates: oro_rule.rule_filtration.service
         decoration_priority: 250
         arguments:
-            - '@oro_rule.expression_language'
             - '@.inner'
+            - '@oro_rule.expression_language'
             - '@logger'
 
     oro_rule.enabled_rule_filtration.service:
-        class: 'Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService'
-        public: false
+        class: Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService
 
     oro_rule.enabled_rule_filtration.enabled_decorator:
-        class: 'Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator'
-        public: false
+        class: Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationService
         decorates: oro_rule.enabled_rule_filtration.service
         arguments:
             - '@.inner'
 
     oro_rule.action.visibility_provider:
-        class: 'Oro\Bundle\RuleBundle\Datagrid\RuleActionsVisibilityProvider'
+        class: Oro\Bundle\RuleBundle\Datagrid\RuleActionsVisibilityProvider

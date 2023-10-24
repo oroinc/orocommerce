@@ -52,7 +52,7 @@ class AjaxOrderController extends AbstractController
      */
     protected function getType(Order $order)
     {
-        return $this->createForm(OrderType::class, $order);
+        return $this->createForm(OrderType::class, $order, ['validation_groups' => ['order_entry_point']]);
     }
 
     /**

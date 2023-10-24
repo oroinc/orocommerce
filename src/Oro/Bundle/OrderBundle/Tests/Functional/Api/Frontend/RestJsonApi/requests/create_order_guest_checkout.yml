@@ -14,6 +14,9 @@ data:
                 -
                     type: orderlineitems
                     id: item1
+                -
+                    type: orderlineitems
+                    id: productKitLineItem1
         customerUser:
             data:
                 type: customerusers
@@ -85,6 +88,44 @@ included:
                 data:
                     type: regions
                     id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: orderlineitems
+        id: productKitLineItem1
+        attributes:
+            quantity: 5
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-kit-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data:
+                    -
+                        type: orderproductkititemlineitems
+                        id: orderproductkititemlineitem1
+    -
+        type: orderproductkititemlineitems
+        id: orderproductkititemlineitem1
+        attributes:
+            price: '11.5900'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-1-kit-item-0->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
     -
         type: customerusers
         id: guest

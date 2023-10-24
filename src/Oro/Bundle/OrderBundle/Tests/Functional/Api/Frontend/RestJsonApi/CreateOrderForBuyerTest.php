@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadBuyerCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\Api\FrontendRestJsonApiTestCase;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadPaymentTermData;
 
 /**
@@ -37,6 +38,31 @@ class CreateOrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
 
         $responseContent = $this->updateResponseContent('create_order.yml', $response);
+        $this->assertResponseContains($responseContent, $response);
+    }
+
+    public function testCreateWithProductKit(): void
+    {
+        $shipUntil = (new \DateTime('now + 10 day'))->format('Y-m-d');
+        $data = $this->getRequestData('create_order_with_product_kit.yml');
+        $data['data']['attributes']['shipUntil'] = $shipUntil;
+
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data
+        );
+
+        $responseContent = $this->getResponseData('create_order_with_product_kit.yml');
+        $responseContent['data']['attributes']['shipUntil'] = $shipUntil;
+
+        $newProductKitLineItemItemId = self::getNewResourceIdFromIncludedSection($response, 'productKitLineItem1');
+        /** @var OrderLineItem $lineItem */
+        $productKitLineItem = $this->getEntityManager()->find(OrderLineItem::class, $newProductKitLineItemItemId);
+
+        self::assertNotEmpty($productKitLineItem->getChecksum());
+        $responseContent['included'][1]['attributes']['checksum'] = $productKitLineItem->getChecksum();
+
+        $responseContent = $this->updateResponseContent($responseContent, $response);
         $this->assertResponseContains($responseContent, $response);
     }
 }

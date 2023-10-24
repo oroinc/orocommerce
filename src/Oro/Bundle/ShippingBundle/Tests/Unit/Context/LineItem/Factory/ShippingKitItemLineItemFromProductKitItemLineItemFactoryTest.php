@@ -6,9 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingKitItemLineItemFromProductKitItemLineItemFactory;
@@ -27,21 +25,49 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestC
     public function testCreate(): void
     {
         $productKitItemLineItem = $this->getKitItemLineItem(
+            12.3456,
+            (new ProductUnit())->setCode('item'),
+            Price::create(1, 'USD'),
+            (new ProductStub())->setId(1)->setSku('sku1')
+        );
+
+        $expectedShippingKitItemLineItem = (new ShippingKitItemLineItem($productKitItemLineItem))
+            ->setProduct($productKitItemLineItem->getProduct())
+            ->setProductSku($productKitItemLineItem->getProductSku())
+            ->setProductUnit($productKitItemLineItem->getProductUnit())
+            ->setProductUnitCode($productKitItemLineItem->getProductUnitCode())
+            ->setQuantity($productKitItemLineItem->getQuantity())
+            ->setPrice($productKitItemLineItem->getPrice())
+            ->setKitItem($productKitItemLineItem->getKitItem())
+            ->setSortOrder($productKitItemLineItem->getSortOrder());
+
+        self::assertEquals(
+            $expectedShippingKitItemLineItem,
+            $this->factory->create($productKitItemLineItem)
+        );
+    }
+
+    public function testCreateWhenNoProductUnit(): void
+    {
+        $productKitItemLineItem = $this->getKitItemLineItem(
             1,
             (new ProductUnit())->setCode('item'),
             Price::create(1, 'USD'),
             (new ProductStub())->setId(1)
         );
 
-        $expectedShippingKitItemLineItem = $this->getShippingKitItemLineItem(
-            $productKitItemLineItem->getProductUnit(),
-            $productKitItemLineItem->getQuantity(),
-            $productKitItemLineItem->getPrice(),
-            $productKitItemLineItem->getProduct(),
-            $productKitItemLineItem,
-            $productKitItemLineItem->getSortOrder(),
-            $productKitItemLineItem->getKitItem()
-        );
+        $productKitItemLineItem->setProductUnit(null);
+        $productKitItemLineItem->setProductUnitCode('set');
+
+        $expectedShippingKitItemLineItem = (new ShippingKitItemLineItem($productKitItemLineItem))
+            ->setProduct($productKitItemLineItem->getProduct())
+            ->setProductSku($productKitItemLineItem->getProductSku())
+            ->setProductUnit(null)
+            ->setProductUnitCode($productKitItemLineItem->getProductUnitCode())
+            ->setQuantity($productKitItemLineItem->getQuantity())
+            ->setPrice($productKitItemLineItem->getPrice())
+            ->setKitItem($productKitItemLineItem->getKitItem())
+            ->setSortOrder($productKitItemLineItem->getSortOrder());
 
         self::assertEquals(
             $expectedShippingKitItemLineItem,
@@ -52,13 +78,13 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestC
     public function testCreateCollection(): void
     {
         $productKitItemLineItem1 = $this->getKitItemLineItem(
-            1,
+            12.3456,
             (new ProductUnit())->setCode('item'),
             Price::create(1, 'USD'),
             (new ProductStub())->setId(1)
         );
         $productKitItemLineItem2 = $this->getKitItemLineItem(
-            1,
+            23.4567,
             (new ProductUnit())->setCode('set'),
             Price::create(2, 'USD'),
             (new ProductStub())->setId(2)
@@ -70,24 +96,24 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestC
         ]);
 
         $expectedShippingKitItemLineItems = [
-            $this->getShippingKitItemLineItem(
-                $productKitItemLineItem1->getProductUnit(),
-                $productKitItemLineItem1->getQuantity(),
-                $productKitItemLineItem1->getPrice(),
-                $productKitItemLineItem1->getProduct(),
-                $productKitItemLineItem1,
-                $productKitItemLineItem1->getSortOrder(),
-                $productKitItemLineItem1->getKitItem()
-            ),
-            $this->getShippingKitItemLineItem(
-                $productKitItemLineItem2->getProductUnit(),
-                $productKitItemLineItem2->getQuantity(),
-                $productKitItemLineItem2->getPrice(),
-                $productKitItemLineItem2->getProduct(),
-                $productKitItemLineItem2,
-                $productKitItemLineItem2->getSortOrder(),
-                $productKitItemLineItem2->getKitItem()
-            )
+            (new ShippingKitItemLineItem($productKitItemLineItem1))
+                ->setProduct($productKitItemLineItem1->getProduct())
+                ->setProductSku($productKitItemLineItem1->getProductSku())
+                ->setProductUnit($productKitItemLineItem1->getProductUnit())
+                ->setProductUnitCode($productKitItemLineItem1->getProductUnitCode())
+                ->setQuantity($productKitItemLineItem1->getQuantity())
+                ->setPrice($productKitItemLineItem1->getPrice())
+                ->setKitItem($productKitItemLineItem1->getKitItem())
+                ->setSortOrder($productKitItemLineItem1->getSortOrder()),
+            (new ShippingKitItemLineItem($productKitItemLineItem2))
+                ->setProduct($productKitItemLineItem2->getProduct())
+                ->setProductSku($productKitItemLineItem2->getProductSku())
+                ->setProductUnit($productKitItemLineItem2->getProductUnit())
+                ->setProductUnitCode($productKitItemLineItem2->getProductUnitCode())
+                ->setQuantity($productKitItemLineItem2->getQuantity())
+                ->setPrice($productKitItemLineItem2->getPrice())
+                ->setKitItem($productKitItemLineItem2->getKitItem())
+                ->setSortOrder($productKitItemLineItem2->getSortOrder()),
         ];
 
         self::assertEquals(
@@ -104,31 +130,10 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestC
     ): OrderProductKitItemLineItem {
         return (new OrderProductKitItemLineItem())
             ->setProduct($product)
-            ->setUnit($productUnit)
+            ->setProductUnit($productUnit)
             ->setQuantity($quantity)
             ->setPrice($price)
             ->setSortOrder(1)
             ->setKitItem(new ProductKitItemStub());
-    }
-
-    private function getShippingKitItemLineItem(
-        ?ProductUnit $productUnit,
-        float $quantity,
-        ?Price $price,
-        ?Product $product,
-        ?ProductHolderInterface $productHolder,
-        int $sortOrder,
-        ?ProductKitItem $kitItem
-    ): ShippingKitItemLineItem {
-        return (new ShippingKitItemLineItem(
-            $productUnit,
-            $quantity,
-            $productHolder
-        ))
-            ->setProduct($product)
-            ->setProductSku($product->getSku())
-            ->setPrice($price)
-            ->setKitItem($kitItem)
-            ->setSortOrder($sortOrder);
     }
 }

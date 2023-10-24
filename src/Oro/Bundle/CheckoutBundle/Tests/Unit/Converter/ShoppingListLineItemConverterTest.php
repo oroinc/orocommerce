@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\CheckoutBundle\Converter\ProductKitItemLineItemConverter;
 use Oro\Bundle\CheckoutBundle\Converter\ShoppingListLineItemConverter;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem;
@@ -21,7 +22,7 @@ class ShoppingListLineItemConverterTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->converter = new ShoppingListLineItemConverter();
+        $this->converter = new ShoppingListLineItemConverter(new ProductKitItemLineItemConverter());
     }
 
     /**
@@ -118,7 +119,7 @@ class ShoppingListLineItemConverterTest extends TestCase
         $checkoutKitItemLineItem1 = (new CheckoutProductKitItemLineItem())
             ->setProduct($kitItemLineItem1->getProduct())
             ->setKitItem($kitItemLineItem1->getKitItem())
-            ->setUnit($kitItemLineItem1->getUnit())
+            ->setProductUnit($kitItemLineItem1->getProductUnit())
             ->setQuantity($kitItemLineItem1->getQuantity())
             ->setSortOrder($kitItemLineItem1->getSortOrder())
             ->setPriceFixed(false);
@@ -126,7 +127,7 @@ class ShoppingListLineItemConverterTest extends TestCase
         $checkoutKitItemLineItem2 = (new CheckoutProductKitItemLineItem())
             ->setProduct($kitItemLineItem2->getProduct())
             ->setKitItem($kitItemLineItem2->getKitItem())
-            ->setUnit($kitItemLineItem2->getUnit())
+            ->setProductUnit($kitItemLineItem2->getProductUnit())
             ->setQuantity($kitItemLineItem2->getQuantity())
             ->setSortOrder($kitItemLineItem2->getSortOrder())
             ->setPriceFixed(false);

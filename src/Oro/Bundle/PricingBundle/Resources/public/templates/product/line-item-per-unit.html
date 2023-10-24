@@ -1,0 +1,5 @@
+<% const unitTranslationKey = 'oro.product.product_unit.' + unit + '.label.short' %>
+<% const unitTranslation = _.__(unitTranslationKey) %>
+<span class="prices-tier-per-item"><%- _.__('oro.pricing.per_item', {
+    unit: unitTranslationKey !== unitTranslation ? unitTranslation : unit
+}) %></span>

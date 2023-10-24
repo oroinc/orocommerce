@@ -27,7 +27,7 @@ included:
             quantity: 10
             notes: 'New Line Item Notes'
             currency: USD
-            value: '12.34'
+            value: '18.49'
         relationships:
             product:
                 data:

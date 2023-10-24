@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\LineItemChecksumGeneratorInterface;
 
 /**
  * Update checksum for line item to check duplicate.

@@ -1,5 +1,6 @@
 dependencies:
   - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData
+  - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData
   - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductNumericSkuData
   - Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders
 
@@ -25,4 +26,32 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         quantity: 1
         productUnit: '@product_unit.box'
         value: 10
+        currency: USD
+    product_kit_2_line_item.1:
+        order: '@simple_order3'
+        product: '@product-kit-2'
+        quantity: 1
+        productUnit: '@product_unit.milliliter'
+        value: 30.59
+        currency: USD
+        checksum: 'product_kit_2_line_item.1.checksum'
+
+Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
+    order_product_kit_2_line_item.1_kit_item_line_item.1:
+        lineItem: '@product_kit_2_line_item.1'
+        kitItem: '@product-kit-2-kit-item-0'
+        product: '@product-1'
+        quantity: 1
+        sortOrder: 1
+        productUnit: '@product_unit.milliliter'
+        value: 10.59
+        currency: USD
+    order_product_kit_2_line_item.1_kit_item_line_item.2:
+        lineItem: '@product_kit_2_line_item.1'
+        kitItem: '@product-kit-2-kit-item-1'
+        product: '@product-3'
+        quantity: 1
+        sortOrder: 2
+        productUnit: '@product_unit.milliliter'
+        value: 12.59
         currency: USD

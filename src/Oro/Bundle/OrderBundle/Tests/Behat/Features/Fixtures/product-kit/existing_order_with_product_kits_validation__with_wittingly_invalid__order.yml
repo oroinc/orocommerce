@@ -1,0 +1,53 @@
+Oro\Bundle\OrderBundle\Entity\Order:
+    order1:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'order1'
+        website: '@website1'
+        currency: 'USD'
+        poNumber: 'ORD1'
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    # <with wittingly invalid quantity and precision>
+    order1_line_item0:
+        product: '@product_kit1'
+        order: '@order1'
+        price: '@order1_line_item0_price'
+        quantity: 1
+        productUnit: '@piece'
+        comment: 'with wittignly invalid quantity and precision'
+        checksum: 'f8b2e2895fab118d870811680047e13b069cd838'
+        __calls:
+            -   addKitItemLineItem: [ '@order1_line_item0_kit_item1' ]
+            -   addKitItemLineItem: [ '@order1_line_item0_kit_item2' ]
+    # </with wittingly invalid maximum quantity and precision>
+
+Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
+    # <with wittingly invalid quantity and precision>
+    order1_line_item0_kit_item1:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product1'
+        price: '@order1_line_item0_kit_item1_price'
+        quantity: 100.1234
+        productUnit: '@piece'
+
+    order1_line_item0_kit_item2:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product3'
+        price: '@order1_line_item0_kit_item2_price'
+        quantity: 200.1234
+        productUnit: '@piece'
+    # </with wittingly invalid quantity and precision>
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    order1_line_item0_price:
+        value: 12.34
+        currency: USD
+    order1_line_item0_kit_item1_price:
+        value: 23.45
+        currency: USD
+    order1_line_item0_kit_item2_price:
+        value: 34.56
+        currency: USD

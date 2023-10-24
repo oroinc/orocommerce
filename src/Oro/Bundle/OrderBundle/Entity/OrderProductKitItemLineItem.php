@@ -14,9 +14,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemPriceAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductUnitPrecisionAwareInterface;
 
 /**
- * Represents a checkout line item of a product kit item.
+ * Represents an order line item of a product kit item.
  *
  * @ORM\Table(name="oro_order_product_kit_item_line_item")
  * @ORM\Entity()
@@ -33,9 +34,14 @@ use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemPriceAwareInterface;
  *          }
  *      }
  * )
+ *
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class OrderProductKitItemLineItem implements
     ProductKitItemLineItemPriceAwareInterface,
+    ProductUnitPrecisionAwareInterface,
     ExtendEntityInterface
 {
     use ExtendEntityTrait;
@@ -74,14 +80,29 @@ class OrderProductKitItemLineItem implements
     protected ?ProductKitItem $kitItem = null;
 
     /**
+     * @ORM\Column(name="product_kit_item_id_fallback", type="integer", nullable=false)
+     */
+    protected ?int $kitItemId = null;
+
+    /**
      * @ORM\Column(name="product_kit_item_label", type="string", length=255, nullable=false)
      */
     protected ?string $kitItemLabel = null;
 
     /**
-     * @ORM\Column(name="product_kit_item_optional", type="boolean", options={"default"=false})
+     * @ORM\Column(name="optional", type="boolean", options={"default"=false})
      */
-    protected bool $kitItemOptional = false;
+    protected ?bool $optional = false;
+
+    /**
+     * @ORM\Column(name="minimum_quantity", type="float", nullable=true)
+     */
+    protected ?float $minimumQuantity = null;
+
+    /**
+     * @ORM\Column(name="maximum_quantity", type="float", nullable=true)
+     */
+    protected ?float $maximumQuantity = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
@@ -95,6 +116,11 @@ class OrderProductKitItemLineItem implements
      * )
      */
     protected ?Product $product = null;
+
+    /**
+     * @ORM\Column(name="product_id_fallback", type="integer", nullable=false)
+     */
+    protected ?int $productId = null;
 
     /**
      * @ORM\Column(name="product_sku", type="string", length=255, nullable=false)
@@ -120,7 +146,7 @@ class OrderProductKitItemLineItem implements
 
     /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", onDelete="SET NULL", nullable=true)
+     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -129,12 +155,17 @@ class OrderProductKitItemLineItem implements
      *      }
      * )
      */
-    protected ?ProductUnit $unit = null;
+    protected ?ProductUnit $productUnit = null;
 
     /**
      * @ORM\Column(name="product_unit_code", type="string", length=255, nullable=false)
      */
-    protected ?string $unitCode = null;
+    protected ?string $productUnitCode = null;
+
+    /**
+     * @ORM\Column(name="product_unit_precision", type="integer", nullable=false)
+     */
+    protected int $productUnitPrecision = 0;
 
     /**
      * @ORM\Column(name="sort_order", type="integer", options={"default"=0}, nullable=false)
@@ -188,7 +219,19 @@ class OrderProductKitItemLineItem implements
         return $this->kitItem;
     }
 
-    public function setKitItemLabel(?string $kitItemLabel): self
+    public function getKitItemId(): ?int
+    {
+        return $this->kitItemId;
+    }
+
+    public function setKitItemId(?int $kitItemId): self
+    {
+        $this->kitItemId = $kitItemId;
+
+        return $this;
+    }
+
+    public function setKitItemLabel(string $kitItemLabel): self
     {
         $this->kitItemLabel = $kitItemLabel;
 
@@ -200,16 +243,16 @@ class OrderProductKitItemLineItem implements
         return $this->kitItemLabel;
     }
 
-    public function setKitItemOptional(bool $kitItemOptional): self
+    public function setOptional(bool $optional): self
     {
-        $this->kitItemOptional = $kitItemOptional;
+        $this->optional = $optional;
 
         return $this;
     }
 
-    public function isKitItemOptional(): bool
+    public function isOptional(): bool
     {
-        return $this->kitItemOptional;
+        return $this->optional;
     }
 
     public function setProduct(?Product $product): self
@@ -223,6 +266,18 @@ class OrderProductKitItemLineItem implements
     public function getProduct(): ?Product
     {
         return $this->product;
+    }
+
+    public function getProductId(): ?int
+    {
+        return $this->productId;
+    }
+
+    public function setProductId(?int $productId): self
+    {
+        $this->productId = $productId;
+
+        return $this;
     }
 
     public function setProductSku(?string $productSku): self
@@ -271,44 +326,65 @@ class OrderProductKitItemLineItem implements
         return $this->quantity;
     }
 
-    public function setUnit(?ProductUnit $unit): self
+    public function getMinimumQuantity(): ?float
     {
-        $this->unit = $unit;
+        return $this->minimumQuantity;
+    }
+
+    public function setMinimumQuantity(?float $minimumQuantity): self
+    {
+        $this->minimumQuantity = $minimumQuantity;
+
+        return $this;
+    }
+
+    public function getMaximumQuantity(): ?float
+    {
+        return $this->maximumQuantity;
+    }
+
+    public function setMaximumQuantity(?float $maximumQuantity): self
+    {
+        $this->maximumQuantity = $maximumQuantity;
+
+        return $this;
+    }
+
+    public function setProductUnit(?ProductUnit $productUnit): self
+    {
+        $this->productUnit = $productUnit;
         $this->updateProductUnitFallbackFields();
 
         return $this;
     }
 
-    public function getUnit(): ?ProductUnit
-    {
-        return $this->unit;
-    }
-
     public function getProductUnit(): ?ProductUnit
     {
-        return $this->getUnit();
+        return $this->productUnit;
     }
 
-    public function setUnitCode(?string $unitCode): self
+    public function setProductUnitCode(?string $productUnitCode): self
     {
-        $this->unitCode = $unitCode;
+        $this->productUnitCode = $productUnitCode;
 
         return $this;
     }
 
-    public function getUnitCode(): ?string
-    {
-        return $this->unitCode;
-    }
-
-    public function setProductUnitCode(?string $unitCode): self
-    {
-        return $this->setUnitCode($unitCode);
-    }
-
     public function getProductUnitCode(): ?string
     {
-        return $this->getUnitCode();
+        return $this->productUnitCode;
+    }
+
+    public function getProductUnitPrecision(): int
+    {
+        return $this->productUnitPrecision;
+    }
+
+    public function setProductUnitPrecision(int $productUnitPrecision): self
+    {
+        $this->productUnitPrecision = $productUnitPrecision;
+
+        return $this;
     }
 
     public function getSortOrder(): int
@@ -331,7 +407,6 @@ class OrderProductKitItemLineItem implements
     public function setPrice(?Price $price = null): self
     {
         $this->price = $price;
-
         $this->updatePrice();
 
         return $this;
@@ -353,8 +428,12 @@ class OrderProductKitItemLineItem implements
      */
     public function updatePrice(): void
     {
-        $this->value = $this->price?->getValue();
-        $this->currency = $this->price?->getCurrency();
+        if ($this->price !== null) {
+            $this->value = (float)$this->price->getValue();
+            $this->currency = (string)$this->price->getCurrency();
+        } else {
+            $this->value = $this->currency = null;
+        }
     }
 
     /**
@@ -363,33 +442,84 @@ class OrderProductKitItemLineItem implements
      */
     public function updateFallbackFields(): void
     {
-        $this->updateProductFallbackFields();
-        $this->updateProductUnitFallbackFields();
-        $this->updateKitItemFallbackFields();
+        if ($this->product !== null) {
+            $this->updateProductFallbackFields();
+        }
+
+        if ($this->productUnit !== null) {
+            $this->updateProductUnitFallbackFields();
+        }
+
+        if ($this->kitItem !== null) {
+            $this->updateKitItemFallbackFields();
+        }
     }
 
     protected function updateProductFallbackFields(): void
     {
-        $product = $this->getProduct();
-        if ($product) {
-            $this->productSku = $product->getSku();
-            $this->productName = $product->getDenormalizedDefaultName();
+        if ($this->product === null) {
+            $this->productId = null;
+            $this->productSku = null;
+            $this->productName = null;
+
+            return;
+        }
+
+        if ($this->productId === null || $this->product->getId() !== $this->productId) {
+            $this->productId = $this->product->getId();
+            $this->productSku = $this->product->getSku();
+            $this->productName = $this->product->getDenormalizedDefaultName();
+
+            if ($this->productUnitCode !== null) {
+                $this->updateUnitPrecisionFallbackField();
+            }
         }
     }
 
     protected function updateProductUnitFallbackFields(): void
     {
-        if ($this->getProductUnit()) {
-            $this->unitCode = $this->getProductUnit()->getCode();
+        if ($this->productUnit === null) {
+            $this->productUnitCode = null;
+            $this->productUnitPrecision = 0;
+
+            return;
+        }
+
+        if ($this->productUnitCode === null || $this->productUnit->getCode() !== $this->productUnitCode) {
+            $this->productUnitCode = $this->productUnit->getCode();
+
+            if ($this->product !== null) {
+                $this->updateUnitPrecisionFallbackField();
+            }
+        }
+    }
+
+    protected function updateUnitPrecisionFallbackField(): void
+    {
+        if ($this->product !== null && $this->productUnitCode !== null) {
+            $this->productUnitPrecision = $this->product->getUnitPrecision($this->productUnitCode)?->getPrecision()
+                ?? (int) $this->getProductUnit()?->getDefaultPrecision();
         }
     }
 
     protected function updateKitItemFallbackFields(): void
     {
-        $kitItem = $this->getKitItem();
-        if ($kitItem) {
-            $this->kitItemLabel = $kitItem->getDefaultLabel()?->getString();
-            $this->kitItemOptional = $kitItem->isOptional();
+        if ($this->kitItem === null) {
+            $this->kitItemId = null;
+            $this->kitItemLabel = null;
+            $this->optional = false;
+            $this->minimumQuantity = null;
+            $this->maximumQuantity = null;
+
+            return;
+        }
+
+        if ($this->kitItemId === null || $this->kitItem->getId() !== $this->kitItemId) {
+            $this->kitItemId = $this->kitItem->getId();
+            $this->kitItemLabel = $this->kitItem->getDefaultLabel()?->getString();
+            $this->optional = $this->kitItem->isOptional();
+            $this->minimumQuantity = $this->kitItem->getMinimumQuantity();
+            $this->maximumQuantity = $this->kitItem->getMaximumQuantity();
         }
     }
 

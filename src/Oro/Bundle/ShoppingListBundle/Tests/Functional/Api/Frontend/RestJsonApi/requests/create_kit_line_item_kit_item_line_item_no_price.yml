@@ -1,0 +1,67 @@
+data:
+    type: shoppinglistitems
+    id: new
+    attributes:
+        quantity: 10
+        notes: 'New Kit Line Item Notes'
+        checksum: 'bf38f135a3274d65ddfeb77244e250a7e9327b04'
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product_kit1->id)>'
+        parentProduct:
+            data: null
+        shoppingList:
+            data:
+                type: shoppinglists
+                id: '<toString(@shopping_list1->id)>'
+        kitItems:
+            data:
+                -
+                    type: shoppinglistkititems
+                    id: kititemlineitem1
+                -
+                    type: shoppinglistkititems
+                    id: kititemlineitem2
+        unit:
+            data:
+                type: productunits
+                id: '<toString(@item->code)>'
+included:
+    -
+        type: shoppinglistkititems
+        id: kititemlineitem1
+        attributes:
+            quantity: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: shoppinglistkititems
+        id: kititemlineitem2
+        attributes:
+            quantity: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product_kit1_item2->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product3->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'

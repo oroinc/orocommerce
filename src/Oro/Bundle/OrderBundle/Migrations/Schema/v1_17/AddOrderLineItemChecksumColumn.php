@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_17;
+namespace Oro\Bundle\OrderBundle\Migrations\Schema\v1_17;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 /**
- * Adds "checksum" column for {@see OrderProductKitItemLineItem::$checksum} field.
+ * Adds "checksum" column for {@see OrderLineItem::$checksum} field.
  */
 class AddOrderLineItemChecksumColumn implements Migration
 {

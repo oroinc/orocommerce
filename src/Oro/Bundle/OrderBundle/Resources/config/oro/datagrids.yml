@@ -818,7 +818,7 @@ datagrids:
                 frontend_type: html
                 template:      '@OroOrder/Order/Datagrid/frontendProduct.html.twig'
             quantity:
-                label: oro.order.orderlineitem.quantity.label
+                label:         oro.order.orderlineitem.quantity.label
                 type:          twig
                 frontend_type: html
                 template:      '@OroOrder/Order/Datagrid/frontendQuantity.html.twig'
@@ -831,7 +831,7 @@ datagrids:
                 label:         oro.order.orderlineitem.ship_by.label
                 frontend_type: date
             comment:
-                label: oro.order.orderlineitem.comment.label
+                label:         oro.order.orderlineitem.comment.label
         options:
             toolbarOptions:
                 placement:
