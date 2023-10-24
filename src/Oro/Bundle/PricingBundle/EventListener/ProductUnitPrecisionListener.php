@@ -116,6 +116,7 @@ class ProductUnitPrecisionListener implements FeatureToggleableInterface
                 $this->scheduledProducts
             );
         }
+        $this->scheduledProducts = [];
     }
 
     public function onClear()
