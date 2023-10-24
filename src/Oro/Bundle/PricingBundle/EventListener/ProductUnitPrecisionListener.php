@@ -73,6 +73,9 @@ class ProductUnitPrecisionListener implements FeatureToggleableInterface
             ->dispatch(new ProductPricesRemoveAfter($args), ProductPricesRemoveAfter::NAME);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     public function onFlush(OnFlushEventArgs $event)
     {
         if (!$this->isFeaturesEnabled()) {
