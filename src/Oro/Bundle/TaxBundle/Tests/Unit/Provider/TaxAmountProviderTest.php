@@ -81,21 +81,26 @@ class TaxAmountProviderTest extends TestCase
     public function testGetExcludedTaxAmount(
         bool $isProductPricesIncludeTax,
         bool $isShippingRatesIncludeTax,
-        int $totalTax,
+        int $tax,
         int $shippingTax,
         float $expectedTax
     ): void {
         $entity = new Order();
 
-        $taxTotal = [ResultElement::TAX_AMOUNT => $totalTax, AbstractResultElement::CURRENCY => 'USD'];
         $taxShipping = [ResultElement::TAX_AMOUNT => $shippingTax, AbstractResultElement::CURRENCY => 'USD'];
+        $tax = [ResultElement::TAX_AMOUNT => $tax, AbstractResultElement::CURRENCY => 'USD'];
 
-        $taxResult = Result::jsonDeserialize([Result::TOTAL => $taxTotal, Result::SHIPPING => $taxShipping]);
+        $taxResult = Result::jsonDeserialize(
+            [
+                Result::SHIPPING => $taxShipping,
+                Result::TAXES => [$tax]
+            ]
+        );
 
-        $this->taxationSettingsProvider->expects(self::any())
+        $this->taxationSettingsProvider->expects(self::once())
             ->method('isProductPricesIncludeTax')
             ->willReturn($isProductPricesIncludeTax);
-        $this->taxationSettingsProvider->expects(self::any())
+        $this->taxationSettingsProvider->expects(self::once())
             ->method('isShippingRatesIncludeTax')
             ->willReturn($isShippingRatesIncludeTax);
 
@@ -114,21 +119,21 @@ class TaxAmountProviderTest extends TestCase
             'Both product and shipping not included tax' => [
                 'isProductPricesIncludeTax' => false,
                 'isShippingRatesIncludeTax' => false,
-                'totalTax' => 3,
+                'tax' => 2,
                 'shippingTax' => 1,
                 'expectedTax' => 3.0
             ],
             'Shipping rate not included tax' => [
                 'isProductPricesIncludeTax' => true,
                 'isShippingRatesIncludeTax' => false,
-                'totalTax' => 3,
+                'tax' => 3,
                 'shippingTax' => 1,
                 'expectedTax' => 1.0
             ],
             'Product subtotal not included tax' => [
                 'isProductPricesIncludeTax' => false,
                 'isShippingRatesIncludeTax' => true,
-                'totalTax' => 3,
+                'tax' => 2,
                 'shippingTax' => 1,
                 'expectedTax' => 2.0
             ]
