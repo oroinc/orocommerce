@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Provider;
 
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
+use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 
 /**
  * Provides tax amount for entity.
@@ -48,9 +49,15 @@ class TaxAmountProvider
         $provider = $this->taxProviderRegistry->getEnabledProvider();
         $tax = $provider->loadTax($entity);
         $shippingTax = (float)$tax->getShipping()->getTaxAmount();
-        $productTax = (float)$tax->getTotal()->getTaxAmount() - $shippingTax;
-        $taxAmount = ($this->taxationSettingsProvider->isProductPricesIncludeTax() ? 0 : $productTax)
-            + ($this->taxationSettingsProvider->isShippingRatesIncludeTax() ? 0 : $shippingTax);
+
+        $productTax = array_reduce(
+            $tax->getTaxes(),
+            fn (float $accum, TaxResultElement $appliedTax): float => $accum + (float)$appliedTax->getTaxAmount(),
+            0.0
+        );
+
+        $taxAmount = ($this->taxationSettingsProvider->isProductPricesIncludeTax() ? 0.0 : $productTax)
+            + ($this->taxationSettingsProvider->isShippingRatesIncludeTax() ? 0.0 : $shippingTax);
 
         return $this->prepareResult($taxAmount);
     }
