@@ -155,6 +155,7 @@ services:
         arguments:
             - "@security.authorization_checker"
             - "@oro_featuretoggle.checker.feature_checker"
+            - "@oro_frontend.request.frontend_helper"
         tags:
             - { name: kernel.event_listener, event: oro_menu.configure.oro_customer_menu, method: onNavigationConfigure }
 
