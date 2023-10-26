@@ -18,8 +18,9 @@ define(function(require) {
         modelEvents: _.extend({}, ProductPricesEditableView.prototype.modelEvents, {
             'id updateTierPrices': ['change', 'updateTierPrices'],
             'currency updatePriceValue': ['change', 'updatePriceValue'],
-            'unit updatePriceValue': ['change', 'updatePriceValue'],
-            'quantity updatePriceValue': ['change', 'updatePriceValue']
+            'unit updateTierPrices': ['change', 'updateTierPrices'],
+            'quantity updatePriceValue': ['change', 'updatePriceValue'],
+            'checksum updateTierPrices': ['change', 'updateTierPrices']
         }),
 
         storedValues: {},
@@ -88,7 +89,12 @@ define(function(require) {
 
             const productId = this.model.get('id');
             if (!_.isUndefined(productId) && productId.length !== 0) {
-                prices = tierPrices[productId] || {};
+                const checksum = this.model.get('checksum');
+                if (!_.isUndefined(checksum) && checksum.length !== 0 && !_.isUndefined(tierPrices[productId])) {
+                    prices = tierPrices[productId][checksum] || {};
+                } else {
+                    prices = tierPrices[productId] || {};
+                }
             }
 
             const currency = this.model.get('currency');
@@ -171,6 +177,7 @@ define(function(require) {
                 let price;
                 if (this.storedValues &&
                     this.model.get('id') === this.storedValues.id &&
+                    this.model.get('checksum') === this.storedValues.checksum &&
                     this.model.get('unit') === this.storedValues.unit &&
                     this.model.get('quantity') === this.storedValues.quantity &&
                     this.model.get('currency') === this.storedValues.currency

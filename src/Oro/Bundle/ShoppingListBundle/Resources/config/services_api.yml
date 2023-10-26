@@ -152,6 +152,7 @@ services:
 
     oro_shopping_list.api.compute_line_item_price:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeLineItemPrice
+        deprecated: '%service_id% is deprecated since 5.1, use oro_shopping_list.api.compute_shopping_list_line_item_price and oro_shopping_list.api.compute_shopping_list_product_kit_item_line_item_price instead'
         arguments:
             - '@oro_pricing.provider.matching_price'
             - '@oro_pricing.model.product_price_scope_criteria_request_handler'
@@ -159,6 +160,36 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, requestType: frontend }
             - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem, requestType: frontend }
+
+    oro_shopping_list.api.compute_shopping_list_line_item_price:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeShoppingListLineItemPrice
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.provider.product_line_item_price'
+            - '@oro_shopping_list.model.product_price_scope_criteria_factory'
+        tags:
+            -
+                name: oro.api.processor
+                action: customize_loaded_data
+                class: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+                requestType: frontend
+                # Ensures this provider is located earlier to take precedence over the deprecated oro_shopping_list.api.compute_line_item_price.
+                priority: 10
+
+    oro_shopping_list.api.compute_shopping_list_product_kit_item_line_item_price:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeShoppingListProductKitItemLineItemPrice
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.provider.product_line_item_price'
+            - '@oro_shopping_list.model.product_price_scope_criteria_factory'
+        tags:
+            -
+                name: oro.api.processor
+                action: customize_loaded_data
+                class: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem
+                requestType: frontend
+                # Ensures this provider is located earlier to take precedence over the deprecated oro_shopping_list.api.compute_line_item_price.
+                priority: 10
 
     oro_shopping_list.api.validate_shopping_list_limit:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\ValidateShoppingListLimit

@@ -55,7 +55,7 @@ class LineItemsToDiscountLineItemsConverterTest extends TestCase
 
         $product = $this->getEntity(Product::class, ['id' => $productId]);
 
-        $price = Price::create(100, 'USD');
+        $price = Price::create(12.3456, 'USD');
 
         $productUnit = new ProductUnit();
         $productUnit->setCode($unitCode);
@@ -63,9 +63,9 @@ class LineItemsToDiscountLineItemsConverterTest extends TestCase
         $lineItem = new LineItem();
         $lineItem->setUnit($productUnit);
         $lineItem->setProduct($product);
-        $lineItem->setQuantity(10);
+        $lineItem->setQuantity(2);
 
-        $lineItemPrice = new ProductLineItemPrice($lineItem, Price::create(100, 'USD'), 1000);
+        $lineItemPrice = new ProductLineItemPrice($lineItem, $price, round(12.3456 * 2, 2));
 
         $lineItemWithoutProduct = new LineItem();
         $lineItemWithoutProduct->setUnit($productUnit);
@@ -79,7 +79,7 @@ class LineItemsToDiscountLineItemsConverterTest extends TestCase
                 ],
                 'expected' => [
                     (new DiscountLineItem())
-                        ->setQuantity(10)
+                        ->setQuantity(2)
                         ->setProduct($product)
                         ->setProductUnit($productUnit)
                         ->setSourceLineItem($lineItem)
@@ -92,7 +92,7 @@ class LineItemsToDiscountLineItemsConverterTest extends TestCase
                 'lineItemsPrices' => [],
                 'expected' => [
                     (new DiscountLineItem())
-                        ->setQuantity(10)
+                        ->setQuantity(2)
                         ->setProduct($product)
                         ->setProductUnit($productUnit)
                         ->setSourceLineItem($lineItem)

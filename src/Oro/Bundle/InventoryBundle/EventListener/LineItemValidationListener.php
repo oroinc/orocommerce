@@ -11,6 +11,8 @@ use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 
 /**
  * Adds validation errors to LineItemValidateEvent.
+ *
+ * @deprecated since 5.1, will be moved to validation.yml
  */
 class LineItemValidationListener
 {

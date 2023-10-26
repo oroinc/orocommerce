@@ -5,21 +5,19 @@ namespace Oro\Bundle\FedexShippingBundle\Factory;
 use Oro\Bundle\FedexShippingBundle\Builder\ShippingPackagesByLineItemBuilderInterface;
 use Oro\Bundle\FedexShippingBundle\Model\FedexPackageSettingsInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
 
+/**
+ * Creates FedEx packages by collection of {@see ShippingLineItem} and {@see FedexPackageSettingsInterface}.
+ */
 class FedexPackagesByLineItemsAndPackageSettingsFactory implements
     FedexPackagesByLineItemsAndPackageSettingsFactoryInterface
 {
-    /**
-     * @var ShippingPackagesByLineItemBuilderInterface
-     */
-    private $packagesBuilder;
+    private ShippingPackagesByLineItemBuilderInterface $packagesBuilder;
 
-    /**
-     * @var FedexPackageByShippingPackageOptionsFactoryInterface
-     */
-    private $fedexPackageFactory;
+    private FedexPackageByShippingPackageOptionsFactoryInterface $fedexPackageFactory;
 
     public function __construct(
         ShippingPackagesByLineItemBuilderInterface $packagesBuilder,
@@ -29,9 +27,6 @@ class FedexPackagesByLineItemsAndPackageSettingsFactory implements
         $this->fedexPackageFactory = $fedexPackageFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function create(
         ShippingLineItemCollectionInterface $lineItemCollection,
         FedexPackageSettingsInterface $packageSettings

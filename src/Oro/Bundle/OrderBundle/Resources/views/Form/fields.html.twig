@@ -118,6 +118,7 @@
 
 {% block oro_order_line_item_widget %}
     {% import _self as fields %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     <td class="order-line-item-sku">
         <div class="order-line-item-type-product">
@@ -127,12 +128,14 @@
         </div>
         <div class="order-line-item-type-free-form" style="display: none;">
             {{ form_widget(form.productSku) }}
+            {{ form_errors(form.productSku) }}
         </div>
     </td>
     <td class="order-line-item-type">
         <div class="fields-row">
             <div class="order-line-item-type-product">
                 {{ form_widget(form.product) }}
+                {{ form_errors(form.product) }}
                 <a class="order-line-item-type-free-form" href="#">{{ 'oro.order.orderlineitem.select.free_form'|trans }}</a>
             </div>
             <div class="order-line-item-type-free-form" style="display: none;">
@@ -140,13 +143,97 @@
                     {{ form_widget(form.freeFormProduct) }}
                 </div>
                 <a class="order-line-item-type-product" href="#">{{ 'oro.order.orderlineitem.select.product'|trans }}</a>
+                {{ form_errors(form.freeFormProduct) }}
+            </div>
+            <div class="order-line-item-kit-item-line-items">
+                {% if form.kitItemLineItems is defined %}
+                    {{ form_widget(form.kitItemLineItems) }}
+                    {{ form_errors(form.kitItemLineItems) }}
+                {% endif %}
             </div>
         </div>
-        {{ form_errors(form.product) }}
-        {{ form_errors(form.freeFormProduct) }}
     </td>
 
     {{ fields.render_form_sections(form.vars.sections, form) }}
+{% endblock %}
+
+{% block _oro_order_type_lineItems_entry_kitItemLineItems_widget %}
+    <table class="order-line-item-kit-item-collection table table-borderless">
+        <tbody>
+        {%- for child in form -%}
+            {{ form_widget(child) }}
+        {%- endfor -%}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block _oro_order_type_lineItems_entry_kitItemLineItems_entry_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    <tr data-layout="separate"
+        {% if is_optional %}data-validation-optional-group{% endif %}
+            {{ UI.renderPageComponentAttributes({
+                view: 'oroorder/js/app/views/kit-item-line-item-view',
+                options: {
+                    minimumQuantity: minimum_quantity ?: 1.0,
+                    maximumQuantity: maximum_quantity ?: null,
+                    modelAttr: {
+                        unit: unit_code,
+                        product_units: {
+                            (unit_code): unit_precision
+                        }
+                    }
+                }
+            }) }} class="order-line-kit-item">
+        <td class="line-item-label">
+            {{ form_label(form, label, {translatable_label: false}) }}
+        </td>
+        <td>
+            <div class="fields-row">
+                {{ form_widget(form.product) }}
+                {{ form_errors(form.product) }}
+            </div>
+        </td>
+        <td class="line-item-quantity-label">
+            {% set unit_precision_info = oro_format_product_unit_precision_label(unit_code|default('N/A'|trans), unit_precision|default(0)) %}
+            {{ form_label(form.quantity, 'oro.order.orderproductkititemlineitem.quantity.label'|trans ~ ':', {tooltip: 'oro.order.orderproductkititemlineitem.quantity.form.tooltip'|trans({'{{ unit_precision_info }}': unit_precision_info})}) }}
+        </td>
+        <td class="line-item-quantity">
+            <div class="fields-row">
+                {{ form_widget(form.quantity, {
+                    attr: {
+                        'data-floating-error': true,
+                        'data-precision': unit_precision,
+                        'class': 'line-item-quantity-field'
+                    }
+                }) }}
+                {{ form_errors(form.quantity) }}
+            </div>
+        </td>
+        <td class="line-item-price-label">
+            {{ form_label(form.price, 'oro.order.orderproductkititemlineitem.price.form_label'|trans({'%currency%': oro_currency_symbol(currency)}) ~ ':') }}
+        </td>
+        <td class="line-item-price">
+            <div {{ UI.renderPageComponentAttributes({
+                view: 'oropricing/js/app/views/line-item-product-prices-extended-view'
+            }) }}>
+                {{ form_widget(form.price) }}
+                {{ form_errors(form.price) }}
+            </div>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block _oro_order_type_lineItems_entry_kitItemLineItems_entry_product_entry_widget %}
+    {%- set label -%}
+        {%- if product is not null -%}
+            {%- set productName = product.names|localized_value -%}
+            <span>{{ product.skuUppercase ~ ' - ' ~ productName }}</span>
+        {%- else -%}
+            <span>{{ 'oro.order.form.orderproductkititemlineitem.product.choices.none'|trans }}</span>
+        {%- endif -%}
+    {%- endset -%}
+    {{ block('radio_widget') }}
 {% endblock %}
 
 {% macro render_form_sections(sections, form, overrides) %}

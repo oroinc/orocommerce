@@ -1,0 +1,23 @@
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+{%- set lineItem = record.rootEntity %}
+
+<div class="product-kit-line-items">
+    {% if lineItem.kitItemLineItems|length %}
+        {%- for kitItemLineItem in lineItem.kitItemLineItems %}
+            <div class="product-kit-line-items__item">
+                {% set kitItemLabel = kitItemLineItem.kitItem ? kitItemLineItem.kitItem.labels|localized_value : kitItemLineItem.kitItemLabel %}
+                <div>
+                    <span class="product-kit-line-items__item-name">{{ kitItemLabel|e }}</span>
+                    <span class="product-kit-line-items__item-quantity">{{ kitItemLineItem.quantity|oro_format_product_unit_code(kitItemLineItem.productUnitCode) }}</span>
+                    <strong class="product-kit-line-items__item-price">{{ kitItemLineItem.price|oro_format_price }}</strong>
+                </div>
+                {% set productId = kitItemLineItem.product.id|default(0) %}
+                {% if productId and is_visible_product(productId) %}
+                    <a href="{{ path('oro_product_frontend_product_view', {id: productId}) }}">{{ kitItemLineItem.product.names|localized_value|e }}</a>
+                {% else %}
+                    {{ kitItemLineItem.product_name|e }}
+                {% endif %}
+            </div>
+        {%- endfor %}
+    {% endif %}
+</div>

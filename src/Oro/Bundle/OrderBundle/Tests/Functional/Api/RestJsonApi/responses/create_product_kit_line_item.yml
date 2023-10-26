@@ -1,0 +1,24 @@
+data:
+    type: orderlineitems
+    attributes:
+        quantity: 6
+        value: '200.0000'
+        currency: 'USD'
+    relationships:
+        order:
+            data:
+                type: orders
+                id: '<toString(@simple_order3->id)>'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.milliliter->code)>'
+        product:
+            data:
+                type: products
+                id: '<toString(@product-kit-1->id)>'
+        kitItemLineItems:
+            data:
+                -
+                    type: orderproductkititemlineitems
+                    id: new

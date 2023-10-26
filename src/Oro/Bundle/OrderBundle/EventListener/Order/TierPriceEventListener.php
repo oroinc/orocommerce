@@ -9,6 +9,8 @@ use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
 
 /**
  * Adds tier price info for products from order with given currency
+ *
+ * @deprecated since 5.1, use {@see OrderLineItemTierPricesEventListener} instead.
  */
 class TierPriceEventListener
 {

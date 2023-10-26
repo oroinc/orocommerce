@@ -17,10 +17,8 @@ class LocalizationForVisitorTest extends FrontendRestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->enableVisitor();
-        $this->loadFixtures([
-            LoadLocalizationData::class
-        ]);
+        $this->initializeVisitor();
+        $this->loadFixtures([LoadLocalizationData::class]);
 
         $configManager = $this->getConfigManager();
         $enabledLocalizationsConfigKey = Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS);

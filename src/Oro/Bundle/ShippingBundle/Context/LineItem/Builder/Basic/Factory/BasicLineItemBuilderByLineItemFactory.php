@@ -7,6 +7,11 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemB
 use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\ShippingLineItemBuilderInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 
+/**
+ * Basic implementation of the shipping line item model builder factory.
+ *
+ * @deprecated since 5.1
+ */
 class BasicLineItemBuilderByLineItemFactory implements LineItemBuilderByLineItemFactoryInterface
 {
     /**
@@ -19,9 +24,6 @@ class BasicLineItemBuilderByLineItemFactory implements LineItemBuilderByLineItem
         $this->builderFactory = $builderFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function createBuilder(ShippingLineItemInterface $lineItem): ShippingLineItemBuilderInterface
     {
         $builder = $this->builderFactory->createBuilder(

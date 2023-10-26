@@ -25,6 +25,8 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -213,7 +215,11 @@ class OrderController extends AbstractController
             $order->setCustomerUser($orderRequestHandler->getCustomerUser());
         }
 
-        $form = $this->createForm(OrderType::class, $order);
+        $form = $this->createForm(
+            OrderType::class,
+            $order,
+            ['validation_groups' => $this->getValidationGroups($order)]
+        );
 
         $formTemplateDataProviderComposite = $this->get(FormTemplateDataProviderComposite::class)
             ->addFormTemplateDataProviders($resultProvider)
@@ -245,6 +251,13 @@ class OrderController extends AbstractController
             $request,
             null,
             $formTemplateDataProviderComposite
+        );
+    }
+
+    protected function getValidationGroups(Order $order): GroupSequence|array|string
+    {
+        return new GroupSequence(
+            [Constraint::DEFAULT_GROUP, $order->getId() ? 'order_update' : 'order_create']
         );
     }
 

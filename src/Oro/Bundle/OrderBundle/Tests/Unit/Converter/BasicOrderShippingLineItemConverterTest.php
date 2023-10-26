@@ -6,15 +6,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Converter\BasicOrderShippingLineItemConverter;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\Factory\BasicShippingLineItemBuilderFactory;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\Factory\DoctrineShippingLineItemCollectionFactory;
+use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\TestCase;
 
-class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCase
+class BasicOrderShippingLineItemConverterTest extends TestCase
 {
     private BasicOrderShippingLineItemConverter $orderShippingLineItemConverter;
 
@@ -54,13 +57,17 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
         float $quantity,
         ?ProductUnit $productUnit,
         ?Price $price,
-        ?Product $product
+        ?Product $product,
+        array $kitItemLineItems = []
     ): OrderLineItem {
         $lineItem = new OrderLineItem();
         $lineItem->setQuantity($quantity);
         $lineItem->setProductUnit($productUnit);
         $lineItem->setPrice($price);
         $lineItem->setProduct($product);
+        foreach ($kitItemLineItems as $kitItemLineItem) {
+            $lineItem->addKitItemLineItem($kitItemLineItem);
+        }
 
         return $lineItem;
     }
@@ -72,16 +79,30 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
             'product_holder' => $lineItem,
             'product_unit' => $lineItem->getProductUnit(),
             'product_unit_code' => $lineItem->getProductUnit()->getCode(),
-            'entity_id' => null
+            'entity_id' => null,
         ];
+    }
+
+    private function getKitItemLineItem(
+        float $quantity,
+        ?ProductUnit $productUnit,
+        ?Price $price,
+        ?Product $product
+    ): OrderProductKitItemLineItem {
+        return (new OrderProductKitItemLineItem())
+            ->setProduct($product)
+            ->setProductUnit($productUnit)
+            ->setQuantity($quantity)
+            ->setPrice($price)
+            ->setSortOrder(1);
     }
 
     /**
      * @dataProvider lineItemsDataProvider
      */
-    public function testConvertLineItems(array $lineItems, array $expectedShippingLineItems)
+    public function testConvertLineItems(array $lineItems, array $expectedShippingLineItems): void
     {
-        $this->assertEquals(
+        self::assertEquals(
             new DoctrineShippingLineItemCollection($expectedShippingLineItems),
             $this->orderShippingLineItemConverter->convertLineItems(new ArrayCollection($lineItems))
         );
@@ -93,26 +114,55 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit\Framework\TestCas
         $unit1 = $this->getProductUnit('item');
         $unit2 = $this->getProductUnit('set');
 
+        $kitItemLineItem = $this->getKitItemLineItem(
+            1,
+            $unit1,
+            $this->getPrice(13),
+            $this->getProduct(1)
+        );
+
+        $shippingKitItemLineItem = (new ShippingKitItemLineItem($kitItemLineItem))
+            ->setProductUnit($kitItemLineItem->getProductUnit())
+            ->setProductUnitCode($kitItemLineItem->getProductUnit()->getCode())
+            ->setQuantity($kitItemLineItem->getQuantity())
+            ->setKitItem($kitItemLineItem->getKitItem())
+            ->setProduct($kitItemLineItem->getProduct())
+            ->setProductSku($kitItemLineItem->getProductSku())
+            ->setSortOrder($kitItemLineItem->getSortOrder())
+            ->setPrice($kitItemLineItem->getPrice());
+
         $lineItems = [
             $this->getLineItem(12.0, $unit1, $this->getPrice(10.5), null),
             $this->getLineItem(5.0, $unit2, null, $product),
-            $this->getLineItem(7.0, $unit2, $this->getPrice(99.9), $product)
+            $this->getLineItem(7.0, $unit2, $this->getPrice(99.9), $product, [$kitItemLineItem]),
         ];
 
         return [
             'all line items have required properties' => [
                 'lineItems' => $lineItems,
                 'expectedShippingLineItems' => [
-                    new ShippingLineItem(array_merge($this->createExpected($lineItems[0]), [
-                        'price' => $lineItems[0]->getPrice(),
-                    ])),
-                    new ShippingLineItem(array_merge($this->createExpected($lineItems[1]), [
-                        'product' => $product,
-                    ])),
-                    new ShippingLineItem(array_merge($this->createExpected($lineItems[2]), [
-                        'product' => $product,
-                        'price' => $lineItems[2]->getPrice(),
-                    ]))
+                    new ShippingLineItem(
+                        array_merge($this->createExpected($lineItems[0]), [
+                            'price' => $lineItems[0]->getPrice(),
+                            'kit_item_line_items' => new ArrayCollection(),
+                            'checksum' => '',
+                        ])
+                    ),
+                    new ShippingLineItem(
+                        array_merge($this->createExpected($lineItems[1]), [
+                            'product' => $product,
+                            'kit_item_line_items' => new ArrayCollection(),
+                            'checksum' => '',
+                        ])
+                    ),
+                    new ShippingLineItem(
+                        array_merge($this->createExpected($lineItems[2]), [
+                            'product' => $product,
+                            'price' => $lineItems[2]->getPrice(),
+                            'kit_item_line_items' => new ArrayCollection([$shippingKitItemLineItem]),
+                            'checksum' => '',
+                        ])
+                    ),
                 ],
             ],
             'some line items have no product unit' => [

@@ -8,6 +8,9 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 /**
  * Line item checksum generator that delegates calls to the inner generators.
+ *
+ * @deprecated since 5.1, use {@see \Oro\Bundle\ProductBundle\ProductKit\Checksum\CompositeLineItemChecksumGenerator}
+ * instead.
  */
 class CompositeLineItemChecksumGenerator implements LineItemChecksumGeneratorInterface
 {

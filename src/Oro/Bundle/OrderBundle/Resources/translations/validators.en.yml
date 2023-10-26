@@ -33,3 +33,29 @@ oro:
             ship_until:
                 type:
                     message: 'This value is not a valid date.'
+        orderproductkititemlineitem:
+            line_item:
+                changed: 'Line Item of the Product Kit Item Line Item cannot be changed once set.'
+            product_price:
+                blank: 'No matching price found.'
+                not_match: 'The specified price must be equal to {{ expected_value }}.'
+            currency:
+                not_match: 'The specified currency must be equal to "{{ expected_value }}".'
+            kit_item:
+                blank:
+                    message: 'Product kit item must not be blank'
+                changed: 'Kit Item of the Product Kit Item Line Item cannot be changed once set.'
+            product:
+                blank:
+                    message: 'Please choose a product'
+                not_enabled:
+                    message: 'The selected product is not enabled'
+            quantity:
+                greater_than_zero:
+                    message: 'The quantity should be greater than 0'
+                range:
+                    min_message: 'The quantity should be {{ limit }} or more'
+                    max_message: 'The quantity should be {{ limit }} or less'
+                    not_in_range_message: 'The quantity should be between {{ min }} and {{ max }}'
+        inventory_status:
+            not_supported: 'The specified inventory status is not supported.'

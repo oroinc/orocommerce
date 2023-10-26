@@ -6,6 +6,7 @@ define(function(require) {
     const mediator = require('oroui/js/mediator');
     const ProductUnitComponent = require('oroproduct/js/app/components/product-unit-component');
     const LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
+    const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
 
     /**
      * @export oroorder/js/app/views/line-item-view
@@ -14,17 +15,29 @@ define(function(require) {
      */
     const LineItemView = LineItemProductView.extend({
         elements: _.extend({}, LineItemProductView.prototype.elements, {
-            isPriceChanged: '[data-name="field__is-price-changed"]'
+            id: '.order-line-item-type [data-name="field__product"]:first',
+            product: '.order-line-item-type [data-name="field__product"]:first',
+            quantity: '.order-line-item-quantity [data-name="field__quantity"]:first',
+            unit: '.order-line-item-quantity [data-name="field__product-unit"]:first',
+            isPriceChanged: '.order-line-item-price [data-name="field__is-price-changed"]',
+            priceValue: '.order-line-item-price [data-name="field__value"]',
+            kitItemLineItems: '.order-line-item-type .order-line-item-kit-item-line-items'
         }),
+
         listen: {
             'pricing:product-price:lock mediator': 'lineItemProductPriceLock',
             'pricing:product-price:unlock mediator': 'lineItemProductPriceUnlock'
         },
 
+        modelAttr: _.extend({}, LineItemProductView.prototype.modelAttr, {
+            checksum: ''
+        }),
+
         /**
          * @property {Object}
          */
         options: {
+            fullName: '',
             selectors: {
                 productSelector: '.order-line-item-type-product [data-name="field__product"]',
                 quantitySelector: '.order-line-item-quantity input',
@@ -52,6 +65,11 @@ define(function(require) {
         fieldsByName: null,
 
         /**
+         * @property {LoadingMaskView}
+         */
+        loadingMaskView: null,
+
+        /**
          * @inheritdoc
          */
         constructor: function LineItemView(options) {
@@ -68,6 +86,24 @@ define(function(require) {
 
             this.delegate('click', '.removeLineItem', this.removeRow);
             this.initializeUnitLoader();
+
+            this.loadingMaskView = new LoadingMaskView({container: this.getElement('kitItemLineItems')});
+
+            this.listenTo(mediator, {
+                'entry-point:order:load': this.onOrderEntryPoint.bind(this)
+            });
+        },
+
+        onOrderEntryPoint: function(response) {
+            this.model.set('checksum', response.checksum[this.options.fullName] || '', {silent: true});
+        },
+
+        showLoadingMask: function() {
+            this.loadingMaskView.show();
+        },
+
+        hideLoadingMask: function() {
+            this.loadingMaskView.hide();
         },
 
         /**
@@ -138,8 +174,8 @@ define(function(require) {
 
             $product.find('a' + this.options.selectors.freeFormType).click(() => {
                 showFreeFormType();
-                this.fieldsByName.product.inputWidget('val', '');
-                this.fieldsByName.product.change();
+                $(this.getElement('product')).inputWidget('val', '');
+                $(this.getElement('product')).change();
             });
 
             if (this.fieldsByName.freeFormProduct.val() !== '') {
@@ -199,14 +235,31 @@ define(function(require) {
         },
 
         initProduct: function() {
-            if (this.fieldsByName.product) {
-                this.fieldsByName.product.change(() => {
-                    this.resetData();
-
-                    const data = this.fieldsByName.product.inputWidget('data') || {};
-                    this.$el.find(this.options.selectors.productSku).text(data.sku || null);
-                });
+            if (this.getElement('product')) {
+                this.getElement('product').on('change', this.onProductChange.bind(this));
             }
+        },
+
+        onProductChange: function() {
+            this.resetData();
+
+            const data = this.getElement('product').inputWidget('data') || {};
+            this.$el.find(this.options.selectors.productSku).text(data.sku || null);
+
+            mediator.once('entry-point:order:load:before', this.showLoadingMask.bind(this));
+            mediator.once('entry-point:order:load', this.updateKitItemLineItems.bind(this));
+            mediator.once('entry-point:order:load:after', this.hideLoadingMask.bind(this));
+        },
+
+        updateKitItemLineItems: function(response) {
+            this.getElement('kitItemLineItems')
+                .one('content:initialized', () => {
+                    mediator.trigger('pricing:refresh:products-tier-prices', response.tierPrices);
+                });
+
+            this.getElement('kitItemLineItems')
+                .html(response.kitItemLineItems[this.options.fullName] || '')
+                .trigger('content:changed');
         },
 
         lineItemProductPriceLock: function() {

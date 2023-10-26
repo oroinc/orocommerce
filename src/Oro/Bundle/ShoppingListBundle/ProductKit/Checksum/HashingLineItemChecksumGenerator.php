@@ -8,6 +8,9 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 /**
  * Line item checksum generator that makes a hash from the checksum coming from the inner generator.
+ *
+ * @deprecated since 5.1, use {@see \Oro\Bundle\ProductBundle\ProductKit\Checksum\HashingLineItemChecksumGenerator}
+ * instead.
  */
 class HashingLineItemChecksumGenerator implements LineItemChecksumGeneratorInterface
 {

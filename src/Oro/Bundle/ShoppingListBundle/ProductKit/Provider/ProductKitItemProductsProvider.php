@@ -10,6 +10,8 @@ use Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitItemProductAvaila
 
 /**
  * Provides products available for purchase for the specified {@see ProductKitItem}.
+ *
+ * @deprecated since 5.1, use \Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider instead.
  */
 class ProductKitItemProductsProvider
 {

@@ -8,31 +8,31 @@
         showValuePrice: false,
         showListedPrice: false,
         doUpdateQtyForUnit: false,
-        productId: variantId ? variantId : productId,
+        productId: obj.variantId ? variantId : productId,
         elements: {
             pricesHint: '[data-prices-hint-trigger]'
         }
     }) %>"
 >
     <div class="price-value-container" data-name="price-value">
-        <% if (typeof price !== 'undefined' && price) { %>
+        <% if (obj.price !== void 0 && price) { %>
         <%- price %>
         <% } else if (obj._blankContent) { %>
-        <span data-name="price-not-found"
-              data-label="<%- _metadata.label %>:"
-              data-blank-content="<%- _blankContent %>"></span>
+            <span data-name="price-not-found"
+                data-label="<%- _metadata.label %>:"
+                data-blank-content="<%- _blankContent %>"></span>
         <% } %>
-        <% if (obj.productId) { %>
-        <button type="button"
-                data-prices-hint-trigger
-                data-trigger="manual"
-                data-placement="<%- _.isMobile() ? 'right' : 'bottom' %>"
-                data-boundary="viewport"
-                class="btn btn--link btn--size-xs prices-hint-toggler"
-                title="<%- _.__('oro.pricing.view_all_prices') %>"
-                aria-label="<%- _.__('oro.pricing.view_all_prices_extended', { product_attrs: name }) %>">
-            <span class="fa-info-circle fa--no-offset fa--loader-icon" aria-hidden="true"></span>
-        </button>
+        <% if (!obj._isKitItemLineItem && !obj.isKit) { %>
+            <button type="button"
+                    data-prices-hint-trigger
+                    data-trigger="manual"
+                    data-placement="<%- _.isMobile() ? 'right' : 'bottom' %>"
+                    data-boundary="viewport"
+                    class="btn btn--link btn--size-xs prices-hint-toggler"
+                    title="<%- _.__('oro.pricing.view_all_prices') %>"
+                    aria-label="<%- _.__('oro.pricing.view_all_prices_extended', { product_attrs: name }) %>">
+                <span class="fa-info-circle fa--no-offset fa--loader-icon" aria-hidden="true"></span>
+            </button>
         <% } %>
     </div>
 </div>

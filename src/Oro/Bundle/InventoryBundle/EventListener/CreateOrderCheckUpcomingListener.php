@@ -9,6 +9,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Checks that a checkout object is valid.
+ *
+ * @deprecated since 5.1, will be moved to validation.yml
  */
 class CreateOrderCheckUpcomingListener
 {

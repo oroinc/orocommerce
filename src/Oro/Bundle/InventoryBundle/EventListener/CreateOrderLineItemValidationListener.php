@@ -13,6 +13,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Validates that all products have enough quantity in the stock.
+ *
+ * @deprecated since 5.1, will be moved to validation.yml
  */
 class CreateOrderLineItemValidationListener
 {
@@ -62,7 +64,8 @@ class CreateOrderLineItemValidationListener
                 $event->addErrorByUnit(
                     $lineItem->getProductSku(),
                     $lineItem->getProductUnitCode(),
-                    $this->translator->trans('oro.inventory.decrement_inventory.product.not_allowed')
+                    $this->translator->trans('oro.inventory.decrement_inventory.product.not_allowed'),
+                    $lineItem->getChecksum()
                 );
             }
         }

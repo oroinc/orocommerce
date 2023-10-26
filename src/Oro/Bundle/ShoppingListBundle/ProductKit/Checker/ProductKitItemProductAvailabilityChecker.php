@@ -10,6 +10,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Checks if the product of a product kit item is available for purchase.
+ *
+ * @deprecated since 5.1, use \Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker
+ * instead.
  */
 class ProductKitItemProductAvailabilityChecker
 {

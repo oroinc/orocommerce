@@ -4,6 +4,11 @@ namespace Oro\Bundle\ShoppingListBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Universal validation constraint for line items collection.
+ *
+ * @deprecated since 5.1, use Symfony Validator instead
+ */
 class LineItemCollection extends Constraint
 {
     /**

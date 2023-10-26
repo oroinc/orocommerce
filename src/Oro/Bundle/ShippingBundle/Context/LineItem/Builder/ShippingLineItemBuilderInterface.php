@@ -8,6 +8,11 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 
+/**
+ * Interface for the builder of a shipping line item model.
+ *
+ * @deprecated since 5.1
+ */
 interface ShippingLineItemBuilderInterface
 {
     /**

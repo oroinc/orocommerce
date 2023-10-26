@@ -129,7 +129,7 @@ class CheckoutWorkflowHelper
 
         $currentStep = $this->validateStep($workflowItem);
         if ($this->isValidationNeeded($checkout, $workflowItem, $request)) {
-            $this->validateOrderLineItems($checkout, $request);
+            $this->checkLineItemsCount($checkout, $request);
         }
 
         return $currentStep;
@@ -156,6 +156,8 @@ class CheckoutWorkflowHelper
      * @param WorkflowItem $workflowItem
      *
      * @return bool
+     *
+     * @deprecated since 5.1
      */
     protected function isCheckoutRestartRequired(WorkflowItem $workflowItem)
     {
@@ -172,6 +174,8 @@ class CheckoutWorkflowHelper
     /**
      * @throws ForbiddenActionGroupException
      * @throws \Exception
+     *
+     * @deprecated since 5.1
      */
     protected function restartCheckout(WorkflowItem $workflowItem, CheckoutInterface $checkout)
     {
@@ -185,6 +189,9 @@ class CheckoutWorkflowHelper
         $this->actionGroupRegistry->findByName('start_shoppinglist_checkout')->execute($actionData);
     }
 
+    /**
+     * @deprecated since 5.1, use checkLineItemsCount instead
+     */
     protected function validateOrderLineItems(CheckoutInterface $checkout, Request $request)
     {
         $orderLineItemsCount = $this->lineItemsManager->getData($checkout, true)->count();
@@ -205,6 +212,31 @@ class CheckoutWorkflowHelper
                 ? 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
                 : 'oro.checkout.order.line_items.line_item_has_no_price_allow_rfp.message';
             $request->getSession()->getFlashBag()->add('warning', $message);
+        }
+    }
+
+    protected function checkLineItemsCount(Checkout $checkout, Request $request): void
+    {
+        $allOrderLineItemsCount = $this->lineItemsManager->getData($checkout, true)->count();
+
+        if ($allOrderLineItemsCount) {
+            $orderLineItemsCount = $this->lineItemsManager->getData($checkout)->count();
+            if ($allOrderLineItemsCount !== $orderLineItemsCount) {
+                $rfpOrderLineItems = $this->lineItemsManager
+                    ->getData($checkout, true, 'oro_rfp.frontend_product_visibility');
+                $message = $rfpOrderLineItems->isEmpty()
+                    ? 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
+                    : 'oro.checkout.order.line_items.line_item_has_no_price_allow_rfp.message';
+                $request->getSession()->getFlashBag()->add('warning', $message);
+                return;
+            }
+        }
+
+        if ($allOrderLineItemsCount !== $checkout->getLineItems()->count()) {
+            $request->getSession()->getFlashBag()->add(
+                'warning',
+                'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
+            );
         }
     }
 

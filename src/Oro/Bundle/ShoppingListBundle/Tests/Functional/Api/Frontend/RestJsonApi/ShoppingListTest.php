@@ -1479,11 +1479,6 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                     'detail' => 'This value should not be blank.',
                     'source' => ['pointer' => '/data/0/attributes/quantity'],
                 ],
-                [
-                    'title' => 'expression constraint',
-                    'detail' => 'Quantity must be greater than 0',
-                    'source' => ['pointer' => '/data/0/attributes/quantity'],
-                ],
             ],
             $response
         );
@@ -1506,11 +1501,6 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                 [
                     'title' => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/0/attributes/quantity'],
-                ],
-                [
-                    'title' => 'expression constraint',
-                    'detail' => 'Quantity must be greater than 0',
                     'source' => ['pointer' => '/data/0/attributes/quantity'],
                 ],
             ],
@@ -1537,11 +1527,6 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                     'detail' => 'This value should not be blank.',
                     'source' => ['pointer' => '/data/0/attributes/quantity'],
                 ],
-                [
-                    'title' => 'expression constraint',
-                    'detail' => 'Quantity must be greater than 0',
-                    'source' => ['pointer' => '/data/0/attributes/quantity'],
-                ],
             ],
             $response
         );
@@ -1564,11 +1549,6 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                 [
                     'title' => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/0/attributes/quantity'],
-                ],
-                [
-                    'title' => 'expression constraint',
-                    'detail' => 'Quantity must be greater than 0',
                     'source' => ['pointer' => '/data/0/attributes/quantity'],
                 ],
             ],
@@ -1748,7 +1728,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                         'attributes' => [
                             'quantity' => 2,
                             'currency' => 'USD',
-                            'value' => '12.34',
+                            'value' => '14.8',
                         ],
                     ],
                 ],

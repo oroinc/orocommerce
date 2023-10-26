@@ -4,11 +4,19 @@ namespace Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Basic;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Builder\PaymentLineItemBuilderInterface;
+use Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentKitItemLineItemFromProductKitItemLineItemFactory;
+use Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentKitItemLineItemFromProductKitItemLineItemFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 
+/**
+ * Basic implementation of the payment line item model builder.
+ *
+ * @deprecated since 5.1
+ */
 class BasicPaymentLineItemBuilder implements PaymentLineItemBuilderInterface
 {
     /**
@@ -46,6 +54,8 @@ class BasicPaymentLineItemBuilder implements PaymentLineItemBuilderInterface
      */
     private $productSku;
 
+    private PaymentKitItemLineItemFromProductKitItemLineItemFactoryInterface $paymentKitItemLineItemFactory;
+
     /**
      * @param ProductUnit $unit
      * @param string $unitCode
@@ -62,6 +72,14 @@ class BasicPaymentLineItemBuilder implements PaymentLineItemBuilderInterface
         $this->unitCode = $unitCode;
         $this->quantity = $quantity;
         $this->productHolder = $productHolder;
+
+        $this->paymentKitItemLineItemFactory = new PaymentKitItemLineItemFromProductKitItemLineItemFactory();
+    }
+
+    public function setPaymentKitItemLineItemFactory(
+        PaymentKitItemLineItemFromProductKitItemLineItemFactoryInterface $paymentKitItemLineItemFactory
+    ): void {
+        $this->paymentKitItemLineItemFactory = $paymentKitItemLineItemFactory;
     }
 
     /**
@@ -88,6 +106,13 @@ class BasicPaymentLineItemBuilder implements PaymentLineItemBuilderInterface
         if (null !== $this->price) {
             $params[PaymentLineItem::FIELD_PRICE] = $this->price;
         }
+
+        if ($this->productHolder instanceof ProductKitItemLineItemsAwareInterface) {
+            $params[PaymentLineItem::FIELD_KIT_ITEM_LINE_ITEMS] = $this->paymentKitItemLineItemFactory
+                ->createCollection($this->productHolder->getKitItemLineItems());
+            $params[PaymentLineItem::FIELD_CHECKSUM] = $this->productHolder->getChecksum();
+        }
+
 
         return new PaymentLineItem($params);
     }

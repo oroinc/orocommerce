@@ -83,6 +83,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
+     * @deprecated since 5.1
      * @Route("/get-matching-price", name="oro_pricing_matching_price", methods={"GET"})
      * @AclAncestor("oro_pricing_product_price_view")
      *

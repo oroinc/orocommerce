@@ -3,8 +3,10 @@
 namespace Oro\Bundle\CheckoutBundle\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterInterface;
+use Oro\Bundle\CheckoutBundle\Provider\CheckoutValidationGroupsBySourceEntityProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\InventoryBundle\Provider\InventoryQuantityProviderInterface;
@@ -12,7 +14,9 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Converts Order line items to CheckoutLineItems.
@@ -34,13 +38,18 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
     /** @var EntityFallbackResolver */
     protected $entityFallbackResolver;
 
-    /**
-     * @param ConfigManager $configManager
-     * @param InventoryQuantityProviderInterface $quantityProvider
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param EntityFallbackResolver $entityFallbackResolver
-     * @param string $configPath
-     */
+    /** @var ProductKitItemLineItemConverter */
+    protected $productKitItemLineItemConverter;
+
+    /** @var ValidatorInterface */
+    protected $validator;
+
+    /** @var CheckoutValidationGroupsBySourceEntityProvider */
+    protected $validationGroupsProvider;
+
+    /** @var array<string|array<string>>  */
+    protected array $validationGroups = [['Default', 'order_line_item_to_checkout_line_item_convert']];
+
     public function __construct(
         ConfigManager $configManager,
         InventoryQuantityProviderInterface $quantityProvider,
@@ -52,7 +61,33 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
         $this->quantityProvider = $quantityProvider;
         $this->authorizationChecker = $authorizationChecker;
         $this->entityFallbackResolver = $entityFallbackResolver;
+        $this->productKitItemLineItemConverter = new ProductKitItemLineItemConverter();
         $this->configPath = $configPath;
+    }
+
+    public function setProductKitItemLineItemConverter(
+        ProductKitItemLineItemConverter $productKitItemLineItemConverter
+    ): void {
+        $this->productKitItemLineItemConverter = $productKitItemLineItemConverter;
+    }
+
+    public function setValidator(ValidatorInterface $validator): void
+    {
+        $this->validator = $validator;
+    }
+
+    public function setValidationGroupsProvider(
+        CheckoutValidationGroupsBySourceEntityProvider $validationGroupsProvider
+    ): void {
+        $this->validationGroupsProvider = $validationGroupsProvider;
+    }
+
+    /**
+     * @param array<string> $validationGroups
+     */
+    public function setValidationGroups(array $validationGroups): void
+    {
+        $this->validationGroups = $validationGroups;
     }
 
     /**
@@ -72,8 +107,9 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
         $lineItems = $source->getLineItems();
         $checkoutLineItems = new ArrayCollection();
 
+        $isValidateLineItem = !$this->validator || !$this->validationGroupsProvider;
         foreach ($lineItems as $lineItem) {
-            if (!$this->isLineItemAvailable($lineItem)) {
+            if ($isValidateLineItem && !$this->isLineItemAvailable($lineItem)) {
                 continue;
             }
 
@@ -82,8 +118,7 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
                 continue;
             }
 
-            $checkoutLineItem = new CheckoutLineItem();
-            $checkoutLineItem
+            $checkoutLineItem = (new CheckoutLineItem())
                 ->setFromExternalSource(false)
                 ->setPriceFixed(false)
                 ->setProduct($lineItem->getProduct())
@@ -94,17 +129,26 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
                 ->setProductUnitCode($lineItem->getProductUnitCode())
                 // use only available quantity of the product
                 ->setQuantity(min($availableQuantity, $lineItem->getQuantity()))
-                ->setComment($lineItem->getComment());
+                ->setComment($lineItem->getComment())
+                ->setChecksum($lineItem->getChecksum());
+
+            foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
+                $checkoutLineItem->addKitItemLineItem(
+                    $this->productKitItemLineItemConverter->convert($kitItemLineItem)
+                );
+            }
 
             $checkoutLineItems->add($checkoutLineItem);
         }
 
-        return $checkoutLineItems;
+        return $isValidateLineItem ? $checkoutLineItems : $this->getValidLineItems($checkoutLineItems);
     }
 
     /**
      * @param OrderLineItem $lineItem
      * @return bool
+     *
+     * @deprecated since 5.1, use getValidLineItems instead
      */
     protected function isLineItemAvailable(OrderLineItem $lineItem)
     {
@@ -128,21 +172,58 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
     }
 
     /**
+     * @param Collection<CheckoutLineItem> $lineItems
+     *
+     * @return Collection<CheckoutLineItem>
+     */
+    private function getValidLineItems(Collection $lineItems): Collection
+    {
+        if (!$lineItems->count()) {
+            return $lineItems;
+        }
+
+        $validationGroups = $this->validationGroupsProvider
+            ->getValidationGroupsBySourceEntity($this->validationGroups, OrderLineItem::class);
+
+        $violationList = $this->validator->validate($lineItems, null, $validationGroups);
+        foreach ($violationList as $violation) {
+            if (!$violation->getPropertyPath()) {
+                continue;
+            }
+
+            $propertyPath = new PropertyPath($violation->getPropertyPath());
+            if (!$propertyPath->isIndex(0)) {
+                continue;
+            }
+
+            $index = $propertyPath->getElement(0);
+            $lineItems->remove($index);
+        }
+
+        return $lineItems;
+    }
+
+    /**
      * @param ProductLineItemInterface $lineItem
      * @return int
      */
     protected function getAvailableProductQuantity(ProductLineItemInterface $lineItem)
     {
-        if ($lineItem->getProduct()
-            && $this->entityFallbackResolver->getFallbackValue($lineItem->getProduct(), 'backOrder')
-        ) {
+        $product = $lineItem->getProduct();
+        if (!$product) {
+            return 0;
+        }
+
+        if ($this->entityFallbackResolver->getFallbackValue($product, 'backOrder')) {
             return $lineItem->getQuantity();
         }
 
-        if (!$this->quantityProvider->canDecrement($lineItem->getProduct())) {
+        if (!$this->quantityProvider->canDecrement($product)) {
             return $lineItem->getQuantity();
         }
 
-        return $this->quantityProvider->getAvailableQuantity($lineItem->getProduct(), $lineItem->getProductUnit());
+        $productUnit = $lineItem->getProductUnit();
+
+        return $productUnit ? $this->quantityProvider->getAvailableQuantity($product, $productUnit) : 0;
     }
 }

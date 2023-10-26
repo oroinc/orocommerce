@@ -48,17 +48,35 @@ class ProductKitLineItemPriceCriteriaFactoryTest extends TestCase
             'not supported - not kit' => [
                 'lineItem' => (new ProductKitItemLineItemsAwareStub(42))
                     ->setProduct(new Product())
-                    ->setUnit(new ProductUnit()),
+                    ->setUnit(new ProductUnit())
+                    ->setQuantity(12.3456),
                 'expected' => false,
             ],
             'not supported - no product unit' => [
-                'lineItem' => (new ProductKitItemLineItemsAwareStub(42))->setProduct(new Product()),
+                'lineItem' => (new ProductKitItemLineItemsAwareStub(42))
+                    ->setProduct((new Product())->setType(Product::TYPE_KIT))
+                    ->setQuantity(12.3456),
+                'expected' => false,
+            ],
+            'not supported - no quantity' => [
+                'lineItem' => (new ProductKitItemLineItemsAwareStub(42))
+                    ->setProduct((new Product())->setType(Product::TYPE_KIT))
+                    ->setUnit(new ProductUnit())
+                    ->setQuantity(null),
+                'expected' => false,
+            ],
+            'not supported - negative quantity' => [
+                'lineItem' => (new ProductKitItemLineItemsAwareStub(42))
+                    ->setProduct((new Product())->setType(Product::TYPE_KIT))
+                    ->setUnit(new ProductUnit())
+                    ->setQuantity(-1.0),
                 'expected' => false,
             ],
             'supported' => [
                 'lineItem' => (new ProductKitItemLineItemsAwareStub(42))
                     ->setProduct((new Product())->setType(Product::TYPE_KIT))
-                    ->setUnit(new ProductUnit()),
+                    ->setUnit(new ProductUnit())
+                    ->setQuantity(12.3456),
                 'expected' => true,
             ],
         ];

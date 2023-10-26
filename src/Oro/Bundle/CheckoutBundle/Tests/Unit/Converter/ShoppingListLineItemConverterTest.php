@@ -3,17 +3,22 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\CheckoutBundle\Converter\ProductKitItemLineItemConverter;
 use Oro\Bundle\CheckoutBundle\Converter\ShoppingListLineItemConverter;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use PHPUnit\Framework\TestCase;
 
-class ShoppingListLineItemConverterTest extends \PHPUnit\Framework\TestCase
+class ShoppingListLineItemConverterTest extends TestCase
 {
-    /** @var ShoppingListLineItemConverter */
-    private $converter;
+    private ShoppingListLineItemConverter $converter;
 
     protected function setUp(): void
     {
@@ -23,9 +28,9 @@ class ShoppingListLineItemConverterTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider isSourceSupportedDataProvider
      */
-    public function testIsSourceSupported(bool $expected, mixed $source)
+    public function testIsSourceSupported(bool $expected, mixed $source): void
     {
-        $this->assertEquals($expected, $this->converter->isSourceSupported($source));
+        self::assertEquals($expected, $this->converter->isSourceSupported($source));
     }
 
     public function isSourceSupportedDataProvider(): array
@@ -36,56 +41,130 @@ class ShoppingListLineItemConverterTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testConvert()
+    /**
+     * @dataProvider convertDataProvider
+     *
+     * @param ShoppingList $shoppingList
+     * @param Collection<CheckoutLineItem> $expected
+     */
+    public function testConvertWithoutKitItemLineItemConverter(ShoppingList $shoppingList, Collection $expected): void
     {
-        $shoppingList = $this->createMock(ShoppingList::class);
-        $lineItem = $this->createMock(LineItem::class);
+        /** @var CheckoutLineItem[] $checkoutLineItems */
+        $checkoutLineItems = $this->converter->convert($shoppingList);
+        self::assertInstanceOf(ArrayCollection::class, $checkoutLineItems);
+        self::assertCount(1, $checkoutLineItems);
 
-        $shoppingList->expects($this->once())
-            ->method('getLineItems')
-            ->willReturn(new ArrayCollection([$lineItem]));
+        self::assertEquals($expected, $checkoutLineItems);
+    }
 
-        $product = $this->createMock(Product::class);
-        $parentProduct = $this->createMock(Product::class);
-        $productUnit = $this->createMock(ProductUnit::class);
+    /**
+     * @dataProvider convertDataProvider
+     *
+     * @param ShoppingList $shoppingList
+     * @param Collection<CheckoutLineItem> $expected
+     */
+    public function testConvert(ShoppingList $shoppingList, Collection $expected): void
+    {
+        $this->converter->setProductKitItemLineItemConverter(new ProductKitItemLineItemConverter());
+        /** @var CheckoutLineItem[] $checkoutLineItems */
+        $checkoutLineItems = $this->converter->convert($shoppingList);
+        self::assertInstanceOf(ArrayCollection::class, $checkoutLineItems);
+        self::assertCount(1, $checkoutLineItems);
 
-        $lineItem->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($product);
-        $lineItem->expects($this->once())
-            ->method('getParentProduct')
-            ->willReturn($parentProduct);
-        $lineItem->expects($this->once())
-            ->method('getProductSku')
-            ->willReturn('SKU');
-        $lineItem->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
-        $lineItem->expects($this->once())
-            ->method('getProductUnitCode')
-            ->willReturn('UNIT_CODE');
-        $lineItem->expects($this->once())
-            ->method('getNotes')
-            ->willReturn('Notes');
-        $lineItem->expects($this->once())
-            ->method('getQuantity')
-            ->willReturn(1);
+        self::assertEquals($expected, $checkoutLineItems);
+    }
 
-        /** @var CheckoutLineItem[] $items */
-        $items = $this->converter->convert($shoppingList);
-        $this->assertInstanceOf(ArrayCollection::class, $items);
-        $this->assertCount(1, $items);
+    public function convertDataProvider(): iterable
+    {
+        $product = (new Product())->setSku('SKU1');
+        $parentProduct = new Product();
+        $productUnitItem = (new ProductUnit())->setCode('item');
 
-        foreach ($items as $item) {
-            $this->assertInstanceOf(CheckoutLineItem::class, $item);
-            $this->assertSame($product, $item->getProduct());
-            $this->assertSame($parentProduct, $item->getParentProduct());
-            $this->assertSame('SKU', $item->getProductSku());
-            $this->assertSame($productUnit, $item->getProductUnit());
-            $this->assertSame('UNIT_CODE', $item->getProductUnitCode());
-            $this->assertSame('Notes', $item->getComment());
-            $this->assertSame(1, $item->getQuantity());
-            $this->assertFalse($item->isPriceFixed());
-        }
+        $regularLineItem = (new LineItem())
+            ->setProduct($product)
+            ->setParentProduct($parentProduct)
+            ->setUnit($productUnitItem)
+            ->setNotes('sample notes')
+            ->setQuantity(12.3456);
+
+        $regularCheckoutLineItem = (new CheckoutLineItem())
+            ->setFromExternalSource(false)
+            ->setPriceFixed(false)
+            ->setProduct($regularLineItem->getProduct())
+            ->setParentProduct($regularLineItem->getParentProduct())
+            ->setProductSku($regularLineItem->getProductSku())
+            ->setProductUnit($regularLineItem->getProductUnit())
+            ->setProductUnitCode($regularLineItem->getProductUnitCode())
+            ->setQuantity($regularLineItem->getQuantity())
+            ->setComment($regularLineItem->getNotes())
+            ->setChecksum($regularLineItem->getChecksum());
+
+        yield 'regular line item' => [
+            (new ShoppingList())->addLineItem($regularLineItem),
+            new ArrayCollection([$regularCheckoutLineItem]),
+        ];
+
+        $kitItemProduct1 = new Product();
+        $kitItem1 = new ProductKitItem();
+        $productUnitEach = (new ProductUnit())->setCode('each');
+        $kitItemLineItem1 = (new ProductKitItemLineItem())
+            ->setKitItem($kitItem1)
+            ->setProduct($kitItemProduct1)
+            ->setQuantity(1.2345)
+            ->setUnit($productUnitEach)
+            ->setSortOrder(11);
+
+        $kitItemProduct2 = new Product();
+        $kitItem2 = new ProductKitItem();
+        $productUnitKg = (new ProductUnit())->setCode('kg');
+        $kitItemLineItem2 = (new ProductKitItemLineItem())
+            ->setKitItem($kitItem2)
+            ->setProduct($kitItemProduct2)
+            ->setQuantity(2.2345)
+            ->setUnit($productUnitKg)
+            ->setSortOrder(22);
+
+        $lineItemWithKitItemLineItems = (new LineItem())
+            ->setProduct($product)
+            ->setUnit($productUnitItem)
+            ->setNotes('sample notes')
+            ->setQuantity(12.3456)
+            ->setChecksum('line_item1')
+            ->addKitItemLineItem($kitItemLineItem1)
+            ->addKitItemLineItem($kitItemLineItem2);
+
+        $checkoutKitItemLineItem1 = (new CheckoutProductKitItemLineItem())
+            ->setProduct($kitItemLineItem1->getProduct())
+            ->setKitItem($kitItemLineItem1->getKitItem())
+            ->setProductUnit($kitItemLineItem1->getProductUnit())
+            ->setQuantity($kitItemLineItem1->getQuantity())
+            ->setSortOrder($kitItemLineItem1->getSortOrder())
+            ->setPriceFixed(false);
+
+        $checkoutKitItemLineItem2 = (new CheckoutProductKitItemLineItem())
+            ->setProduct($kitItemLineItem2->getProduct())
+            ->setKitItem($kitItemLineItem2->getKitItem())
+            ->setProductUnit($kitItemLineItem2->getProductUnit())
+            ->setQuantity($kitItemLineItem2->getQuantity())
+            ->setSortOrder($kitItemLineItem2->getSortOrder())
+            ->setPriceFixed(false);
+
+        $checkoutLineItemWithKitItemLineItems = (new CheckoutLineItem())
+            ->setFromExternalSource(false)
+            ->setPriceFixed(false)
+            ->setProduct($lineItemWithKitItemLineItems->getProduct())
+            ->setProductSku($lineItemWithKitItemLineItems->getProductSku())
+            ->setProductUnit($lineItemWithKitItemLineItems->getProductUnit())
+            ->setProductUnitCode($lineItemWithKitItemLineItems->getProductUnitCode())
+            ->setQuantity($lineItemWithKitItemLineItems->getQuantity())
+            ->setComment($lineItemWithKitItemLineItems->getNotes())
+            ->setChecksum($lineItemWithKitItemLineItems->getChecksum())
+            ->addKitItemLineItem($checkoutKitItemLineItem1)
+            ->addKitItemLineItem($checkoutKitItemLineItem2);
+
+        yield 'line item with kit item line items' => [
+            (new ShoppingList())->addLineItem($lineItemWithKitItemLineItems),
+            new ArrayCollection([$checkoutLineItemWithKitItemLineItems]),
+        ];
     }
 }

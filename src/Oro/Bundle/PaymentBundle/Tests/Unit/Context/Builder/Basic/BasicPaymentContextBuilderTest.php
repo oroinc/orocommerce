@@ -13,18 +13,19 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class BasicPaymentContextBuilderTest extends \PHPUnit\Framework\TestCase
+class BasicPaymentContextBuilderTest extends TestCase
 {
-    /** @var PaymentLineItemCollectionFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentLineItemCollectionFactory;
+    private PaymentLineItemCollectionFactoryInterface|MockObject $paymentLineItemCollectionFactory;
 
     protected function setUp(): void
     {
         $this->paymentLineItemCollectionFactory = $this->createMock(PaymentLineItemCollectionFactoryInterface::class);
     }
 
-    public function testFullContextBuilding()
+    public function testFullContextBuilding(): void
     {
         $entity = $this->createMock(\stdClass::class);
         $entityId = '12';

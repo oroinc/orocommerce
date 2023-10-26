@@ -16,6 +16,8 @@ use Symfony\Contracts\Cache\CacheInterface;
 /**
  * Provides info to build collection of line items by given source entity.
  * Source entity should implement ProductLineItemsHolderInterface.
+ *
+ * @deprecated since 5.1, use \Oro\Bundle\CheckoutBundle\DataProvider\CheckoutDataProvider instead.
  */
 class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
 {
@@ -38,6 +40,17 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
 
     /**
      * @param Checkout $entity
+     *
+     * @return array<int|string,array<string,mixed>> Line items data
+     *  [
+     *      [
+     *          'product' => Product $product,
+     *          'productUnit' => ProductUnit $productUnit,
+     *          'quantity' => float 12.3456,
+     *          // ...
+     *      ],
+     *      // ...
+     *  ]
      */
     protected function prepareData($entity): array
     {
@@ -52,7 +65,7 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
         foreach ($lineItems as $lineItem) {
             $unitCode = $lineItem->getProductUnitCode();
             $product = $lineItem->getProduct();
-            $productId = $product ? $product->getId() : null;
+            $productId = $product?->getId();
 
             if ($this->isLineItemNeeded($lineItem)) {
                 $data[] = [
@@ -122,7 +135,7 @@ class CheckoutLineItemsDataProvider extends AbstractCheckoutProvider
             return true;
         }
 
-        return $this->productAvailabilityCache->get((string) $product->getId(), function () use ($product) {
+        return $this->productAvailabilityCache->get((string)$product->getId(), function () use ($product) {
             return $product->getStatus() === Product::STATUS_ENABLED
                 && $this->authorizationChecker->isGranted('VIEW', $product);
         });

@@ -25,7 +25,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->enableVisitor();
+        $this->initializeVisitor();
         $this->loadFixtures([
             '@OroShoppingListBundle/Tests/Functional/Api/Frontend/DataFixtures/shopping_list_for_visitor.yml'
         ]);

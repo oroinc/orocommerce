@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Datagrid\FrontendLineItemsGridExtension;
-use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
@@ -152,18 +151,17 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->willReturn(1000);
 
         $checkout = $this->createCheckout(900);
+        $checkout->addLineItem((new CheckoutLineItem())->setChecksum('sample-checksum'));
 
         $this->checkoutRepository->expects($this->once())
             ->method('find')
             ->with(42)
             ->willReturn($checkout);
 
-        $converter = new CheckoutLineItemsConverter();
-
         $this->checkoutLineItemsManager->expects($this->once())
             ->method('getData')
             ->with($checkout)
-            ->willReturn($converter->convert($checkout->getLineItems()->toArray()));
+            ->willReturn($checkout->getLineItems()->toArray());
 
         $this->extension->processConfigs($config);
 
@@ -265,12 +263,10 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(42)
             ->willReturn($checkout);
 
-        $converter = new CheckoutLineItemsConverter();
-
         $this->checkoutLineItemsManager->expects($this->once())
             ->method('getData')
             ->with($checkout)
-            ->willReturn($converter->convert($checkout->getLineItems()->toArray()));
+            ->willReturn($checkout->getLineItems()->toArray());
 
         $this->extension->processConfigs($config);
 
@@ -323,12 +319,10 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(42)
             ->willReturn($checkout);
 
-        $converter = new CheckoutLineItemsConverter();
-
         $this->checkoutLineItemsManager->expects($this->once())
             ->method('getData')
             ->with($checkout)
-            ->willReturn($converter->convert($checkout->getLineItems()->toArray()));
+            ->willReturn($checkout->getLineItems()->toArray());
 
         $this->extension->processConfigs($config);
 
@@ -439,12 +433,10 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
             ->with(42)
             ->willReturn($checkout);
 
-        $converter = new CheckoutLineItemsConverter();
-
         $this->checkoutLineItemsManager->expects($this->once())
             ->method('getData')
             ->with($checkout)
-            ->willReturn($converter->convert($checkout->getLineItems()->toArray()));
+            ->willReturn($checkout->getLineItems()->toArray());
 
         $this->extension->processConfigs($config);
 

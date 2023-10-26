@@ -137,6 +137,9 @@ define(function(require) {
             }
         },
 
+        /**
+         * @deprecated since 5.1
+         */
         patchDeviceModel() {
             const {Devices, Canvas} = this.builder;
 

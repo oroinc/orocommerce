@@ -9,10 +9,11 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use PHPUnit\Framework\TestCase;
 
-class ShippingContextTest extends \PHPUnit\Framework\TestCase
+class ShippingContextTest extends TestCase
 {
-    public function testConstructionAndGetters()
+    public function testConstructionAndGetters(): void
     {
         $paymentMethod = 'paymentMethod';
         $currency = 'usd';
@@ -50,6 +51,6 @@ class ShippingContextTest extends \PHPUnit\Framework\TestCase
             ShippingContext::FIELD_WEBSITE => $shippingContext->getWebsite(),
         ];
 
-        $this->assertEquals($params, $getterValues);
+        self::assertEquals($params, $getterValues);
     }
 }

@@ -8,7 +8,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 use Symfony\Component\Form\FormInterface;
 
 /**
- * Removes the submitted order line item price ("price" and "currency" fields)
+ * Removes the submitted order line item price ("value" and "currency" fields)
  * from submitted data if it equals to NULL.
  * It is required to avoid incorrect validation result, as these properties are optional.
  */

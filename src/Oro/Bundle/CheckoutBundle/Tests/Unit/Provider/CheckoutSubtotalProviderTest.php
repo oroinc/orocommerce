@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalProvider;
+use Oro\Bundle\CheckoutBundle\Provider\SubtotalProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -20,6 +21,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
@@ -40,6 +42,8 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
 
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
+
+    private SubtotalProvider|MockObject $subtotalProvider;
 
     protected function setUp(): void
     {
@@ -67,6 +71,56 @@ class CheckoutSubtotalProviderTest extends AbstractSubtotalProviderTest
         );
         $this->provider->setFeatureChecker($this->featureChecker);
         $this->provider->addFeature('oro_price_lists_combined');
+
+        $this->subtotalProvider = $this->createMock(SubtotalProvider::class);
+    }
+
+    public function testIsSupportedWithNewSubtotalProvider(): void
+    {
+        $entity = new Checkout();
+
+        $this->subtotalProvider
+            ->expects(self::once())
+            ->method('isSupported')
+            ->with($entity)
+            ->willReturn(true);
+
+        $this->provider->setSubtotalProvider($this->subtotalProvider);
+
+        self::assertTrue($this->provider->isSupported($entity));
+    }
+
+    public function testGetSubtotalWithNewSubtotalProvider(): void
+    {
+        $entity = new Checkout();
+        $subtotal = new Subtotal();
+
+        $this->subtotalProvider
+            ->expects(self::once())
+            ->method('getSubtotal')
+            ->with($entity)
+            ->willReturn($subtotal);
+
+        $this->provider->setSubtotalProvider($this->subtotalProvider);
+
+        self::assertSame($subtotal, $this->provider->getSubtotal($entity));
+    }
+
+    public function testGetSubtotalByCurrencyWithNewSubtotalProvider(): void
+    {
+        $entity = new Checkout();
+        $subtotal = new Subtotal();
+        $currency = 'USD';
+
+        $this->subtotalProvider
+            ->expects(self::once())
+            ->method('getSubtotalByCurrency')
+            ->with($entity, $currency)
+            ->willReturn($subtotal);
+
+        $this->provider->setSubtotalProvider($this->subtotalProvider);
+
+        self::assertSame($subtotal, $this->provider->getSubtotalByCurrency($entity, $currency));
     }
 
     public function testGetSubtotalWithoutLineItems()

@@ -6,6 +6,11 @@ use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymen
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItemCollectionFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 
+/**
+ * Creates a collection of payment line items.
+ *
+ * @deprecated since 5.1
+ */
 class DoctrinePaymentLineItemCollectionFactory implements PaymentLineItemCollectionFactoryInterface
 {
     /**

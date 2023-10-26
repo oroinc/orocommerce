@@ -2,46 +2,38 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 
 class ShippingLineItemTest extends AbstractShippingLineItemTest
 {
-    public function testGetters()
+    public function testGetters(): void
     {
+        $anotherQuantity = 123.123;
+        $checksum = 'checksum_1';
+        $anotherSku = 'anotherSku';
+        $shippingKitItemLineItems = new ArrayCollection([$this->createMock(ShippingKitItemLineItem::class)]);
         $shippingLineItemParams = $this->getShippingLineItemParams();
 
         $shippingLineItem = new ShippingLineItem($shippingLineItemParams);
+        $shippingLineItem
+            ->setProductSku($anotherSku)
+            ->setKitItemLineItems($shippingKitItemLineItems)
+            ->setChecksum($checksum)
+            ->setQuantity($anotherQuantity);
 
-        $this->assertEquals($shippingLineItemParams[ShippingLineItem::FIELD_PRICE], $shippingLineItem->getPrice());
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_PRODUCT_UNIT],
-            $shippingLineItem->getProductUnit()
-        );
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_PRODUCT_UNIT_CODE],
-            $shippingLineItem->getProductUnitCode()
-        );
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_QUANTITY],
-            $shippingLineItem->getQuantity()
-        );
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_PRODUCT_HOLDER],
-            $shippingLineItem->getProductHolder()
-        );
-        $this->assertEquals($shippingLineItemParams[ShippingLineItem::FIELD_PRODUCT], $shippingLineItem->getProduct());
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_PRODUCT_SKU],
-            $shippingLineItem->getProductSku()
-        );
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_DIMENSIONS],
-            $shippingLineItem->getDimensions()
-        );
-        $this->assertEquals($shippingLineItemParams[ShippingLineItem::FIELD_WEIGHT], $shippingLineItem->getWeight());
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_ENTITY_IDENTIFIER],
-            $shippingLineItem->getEntityIdentifier()
-        );
+        self::assertSame($this->productUnit, $shippingLineItem->getProductUnit());
+        self::assertEquals(self::TEST_UNIT_CODE, $shippingLineItem->getProductUnitCode());
+        self::assertEquals($anotherQuantity, $shippingLineItem->getQuantity());
+        self::assertSame($this->productHolder, $shippingLineItem->getProductHolder());
+        self::assertEquals($this->productHolder->getEntityIdentifier(), $shippingLineItem->getEntityIdentifier());
+        self::assertSame($this->product, $shippingLineItem->getProduct());
+        self::assertEquals($anotherSku, $shippingLineItem->getProductSku());
+        self::assertSame($this->price, $shippingLineItem->getPrice());
+        self::assertSame($this->dimensions, $shippingLineItem->getDimensions());
+        self::assertSame($this->weight, $shippingLineItem->getWeight());
+        self::assertSame($shippingKitItemLineItems, $shippingLineItem->getKitItemLineItems());
+        self::assertEquals($checksum, $shippingLineItem->getChecksum());
     }
 }

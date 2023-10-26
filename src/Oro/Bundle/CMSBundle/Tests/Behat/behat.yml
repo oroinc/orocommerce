@@ -136,6 +136,10 @@ oro_behat_extension:
                         type: 'xpath'
                         locator: '//*[@name="oro_cms_content_block[contentVariants][1][scopes][0][website]"]'
                         class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+                    Content Variant 1 Customer:
+                        type: 'xpath'
+                        locator: '//*[@name="oro_cms_content_block[contentVariants][1][scopes][0][customer]"]'
+                        class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
 
         Content Variant 1 form:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -155,6 +159,9 @@ oro_behat_extension:
 
         Content Variant 1 Content:
             selector: "textarea[name='oro_cms_content_block[contentVariants][1][content]']"
+
+        Content Variant 1 Expand Button:
+            selector: '[data-content="oro_cms_content_block[contentVariants][1]"] .btn-toggle-variant'
 
         Homepage Slider:
             selector: '[data-title="home-page-slider"]'

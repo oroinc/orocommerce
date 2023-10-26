@@ -5,6 +5,11 @@ namespace Oro\Bundle\OrderBundle\EventListener\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
 
+/**
+ * Adds "matchedPrices" to the order entry point data.
+ *
+ * @deprecated since 5.1
+ */
 class MatchingPriceEventListener
 {
     const MATCHED_PRICES_KEY = 'matchedPrices';

@@ -10,6 +10,8 @@ use Symfony\Component\Validator\ConstraintValidator;
 /**
  * Validates LineItemCollection Constraint.
  * Also it dispatches event LineItemValidateEvent before validation.
+ *
+ * @deprecated since 5.1, use Symfony Validator instead
  */
 class LineItemCollectionValidator extends ConstraintValidator
 {

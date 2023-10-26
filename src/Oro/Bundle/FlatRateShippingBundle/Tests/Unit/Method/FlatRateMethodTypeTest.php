@@ -8,8 +8,9 @@ use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodType;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
+use PHPUnit\Framework\TestCase;
 
-class FlatRateMethodTypeTest extends \PHPUnit\Framework\TestCase
+class FlatRateMethodTypeTest extends TestCase
 {
     private const LABEL = 'Flat Rate';
 
@@ -20,17 +21,17 @@ class FlatRateMethodTypeTest extends \PHPUnit\Framework\TestCase
         $this->flatRateType = new FlatRateMethodType(self::LABEL);
     }
 
-    public function testGetIdentifier()
+    public function testGetIdentifier(): void
     {
         self::assertEquals(FlatRateMethodType::IDENTIFIER, $this->flatRateType->getIdentifier());
     }
 
-    public function testGetLabel()
+    public function testGetLabel(): void
     {
         self::assertEquals(self::LABEL, $this->flatRateType->getLabel());
     }
 
-    public function testGetOptionsConfigurationFormType()
+    public function testGetOptionsConfigurationFormType(): void
     {
         self::assertEquals(
             FlatRateOptionsType::class,
@@ -38,7 +39,7 @@ class FlatRateMethodTypeTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetSortOrder()
+    public function testGetSortOrder(): void
     {
         self::assertEquals(0, $this->flatRateType->getSortOrder());
     }
@@ -46,7 +47,7 @@ class FlatRateMethodTypeTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider ruleConfigProvider
      */
-    public function testCalculatePrice(string $currency, array $options, float $expectedPrice)
+    public function testCalculatePrice(string $currency, array $options, float $expectedPrice): void
     {
         $shippingLineItems = [
             new ShippingLineItem([ShippingLineItem::FIELD_QUANTITY => 3]),

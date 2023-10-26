@@ -21,6 +21,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Subtotal provider for the Checkout entity.
+ *
+ * @deprecated since 5.1, use \Oro\Bundle\CheckoutBundle\Provider\SubtotalProvider instead.
  */
 class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
     SubtotalProviderInterface,
@@ -46,6 +48,8 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
     /** @var ProductPriceScopeCriteriaFactoryInterface */
     protected $priceScopeCriteriaFactory;
 
+    private ?SubtotalProvider $subtotalProvider = null;
+
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
@@ -63,11 +67,22 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
     }
 
+    public function setSubtotalProvider(?SubtotalProvider $subtotalProvider): void
+    {
+        $this->subtotalProvider = $subtotalProvider;
+    }
+
     /**
      * {@inheritDoc}
      */
     public function isSupported($entity)
     {
+        if ($this->subtotalProvider !== null) {
+            return $this->subtotalProvider->isSupported($entity);
+        }
+
+        // BC fallback.
+
         return $entity instanceof Checkout;
     }
 
@@ -80,6 +95,12 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
      */
     public function getSubtotal($entity)
     {
+        if ($this->subtotalProvider !== null) {
+            return $this->subtotalProvider->getSubtotal($entity);
+        }
+
+        // BC fallback.
+
         if (!$this->isSupported($entity)) {
             return null;
         }
@@ -95,6 +116,12 @@ class CheckoutSubtotalProvider extends AbstractSubtotalProvider implements
      */
     public function getSubtotalByCurrency($entity, $currency)
     {
+        if ($this->subtotalProvider !== null) {
+            return $this->subtotalProvider->getSubtotalByCurrency($entity, $currency);
+        }
+
+        // BC fallback.
+
         if (!$this->isSupported($entity)) {
             return null;
         }

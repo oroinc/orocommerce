@@ -2,25 +2,24 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PaymentBundle\Context\PaymentKitItemLineItem;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class PaymentLineItemTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var Price|\PHPUnit\Framework\MockObject\MockObject */
-    private $price;
+    private Price|MockObject $price;
 
-    /** @var ProductUnit|\PHPUnit\Framework\MockObject\MockObject */
-    private $productUnit;
+    private ProductUnit|MockObject $productUnit;
 
-    /** @var ProductHolderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $productHolder;
+    private ProductHolderInterface|MockObject $productHolder;
 
-    /** @var Product|\PHPUnit\Framework\MockObject\MockObject */
-    private $product;
+    private Product|MockObject $product;
 
     protected function setUp(): void
     {
@@ -30,12 +29,15 @@ class PaymentLineItemTest extends \PHPUnit\Framework\TestCase
         $this->product = $this->createMock(Product::class);
     }
 
-    public function testGetters()
+    public function testGetters(): void
     {
         $unitCode = 'someCode';
         $quantity = 15;
         $productSku = 'someSku';
         $entityIdentifier = 'someId';
+        $checksum = 'checksum_1';
+
+        $paymentKitItemLineItems = new ArrayCollection([$this->createMock(PaymentKitItemLineItem::class)]);
 
         $paymentLineItemParams = [
             PaymentLineItem::FIELD_PRICE => $this->price,
@@ -46,6 +48,8 @@ class PaymentLineItemTest extends \PHPUnit\Framework\TestCase
             PaymentLineItem::FIELD_PRODUCT => $this->product,
             PaymentLineItem::FIELD_PRODUCT_SKU => $productSku,
             PaymentLineItem::FIELD_ENTITY_IDENTIFIER => $entityIdentifier,
+            PaymentLineItem::FIELD_KIT_ITEM_LINE_ITEMS => $paymentKitItemLineItems,
+            PaymentLineItem::FIELD_CHECKSUM => $checksum,
         ];
 
         $paymentLineItem = new PaymentLineItem($paymentLineItemParams);
@@ -76,5 +80,7 @@ class PaymentLineItemTest extends \PHPUnit\Framework\TestCase
             $paymentLineItemParams[PaymentLineItem::FIELD_ENTITY_IDENTIFIER],
             $paymentLineItem->getEntityIdentifier()
         );
+        self::assertSame($paymentKitItemLineItems, $paymentLineItem->getKitItemLineItems());
+        self::assertEquals($checksum, $paymentLineItem->getChecksum());
     }
 }

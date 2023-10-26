@@ -1,0 +1,57 @@
+data:
+    type: orders
+    id: '<toString(@simple_order4->id)>'
+    relationships:
+        lineItems:
+            data:
+                -
+                    type: orderlineitems
+                    id: product_kit_line_item_1
+included:
+    -
+        type: orderlineitems
+        id: product_kit_line_item_1
+        attributes:
+            quantity: 6
+            value: 200
+            currency: 'USD'
+        relationships:
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-kit-1->id)>'
+            kitItemLineItems:
+                data:
+                    -
+                        type: orderproductkititemlineitems
+                        id: kititemlineitem1
+    -
+        type: orderproductkititemlineitems
+        id: kititemlineitem1
+        attributes:
+            productSku: product-1
+            productName: product-1.names.default
+            quantity: 1
+            sortOrder: 1
+            productUnitCode: milliliter
+            value: '10.5900'
+            currency: USD
+            kitItemLabel: 'PKSKU1 - Unit of Quantity Taken from Product Kit'
+            optional: false
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-1-kit-item-0->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'

@@ -10,6 +10,8 @@ use Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitItemAvailabilityC
 
 /**
  * Provides kit items available for purchase for the specified {@see Product} kit.
+ *
+ * @deprecated since 5.1, use \Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemsProvider instead.
  */
 class ProductKitItemsProvider
 {

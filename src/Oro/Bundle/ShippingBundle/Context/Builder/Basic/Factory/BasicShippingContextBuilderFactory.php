@@ -11,9 +11,6 @@ use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
  */
 class BasicShippingContextBuilderFactory implements ShippingContextBuilderFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
     public function createShippingContextBuilder(
         object $sourceEntity,
         mixed $sourceEntityId

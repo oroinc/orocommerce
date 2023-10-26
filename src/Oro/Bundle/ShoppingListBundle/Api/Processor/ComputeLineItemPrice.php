@@ -13,6 +13,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
  * Computes values for "currency" and "value" fields for a shopping list item.
+ * @deprecated since 5.1, use {@see ComputeShoppingListLineItemPrice}
+ * and {@see ComputeShoppingListProductKitItemLineItemPrice} instead.
  */
 class ComputeLineItemPrice implements ProcessorInterface
 {

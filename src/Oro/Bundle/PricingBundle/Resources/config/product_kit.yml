@@ -16,8 +16,15 @@ services:
         class: Oro\Bundle\PricingBundle\ProductKit\ProductPriceCriteria\Factory\ProductKitLineItemPriceCriteriaFactory
         arguments:
             - '@oro_pricing.product_kit.product_price_criteria.builder'
+        calls:
+            - [setProductKitLineItemPriceCriteriaBuilderFactory, ['@oro_pricing.product_kit.product_line_item_price_criteria_builder.factory']]
         tags:
             - { name: oro_pricing.product_line_item_price_criteria.factory }
+
+    oro_pricing.product_kit.product_line_item_price_criteria_builder.factory:
+        class: Oro\Bundle\PricingBundle\ProductKit\ProductPriceCriteria\Factory\ProductKitLineItemPriceCriteriaBuilderFactory
+        arguments:
+            - '@oro_pricing.product_kit.product_price_criteria.builder'
 
     oro_pricing.product_kit.product_price_by_matching_criteria.product_kit:
         class: Oro\Bundle\PricingBundle\ProductKit\PriceByMatchingCriteria\ProductKitPriceByMatchingCriteriaProvider

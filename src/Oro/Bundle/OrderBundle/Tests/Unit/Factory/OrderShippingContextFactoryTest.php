@@ -22,26 +22,23 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
+class OrderShippingContextFactoryTest extends TestCase
 {
     private const TEST_PAYMENT_METHOD = 'SomePaymentMethod';
     private const TEST_SHIPPING_METHOD = 'SomeShippingMethod';
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    private ManagerRegistry|MockObject $doctrine;
 
-    /** @var OrderShippingLineItemConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingLineItemConverter;
+    private OrderShippingLineItemConverterInterface|MockObject $shippingLineItemConverter;
 
-    /** @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingContextBuilderFactory;
+    private ShippingContextBuilderFactoryInterface|MockObject $shippingContextBuilderFactory;
 
-    /** @var ShippingContextBuilderFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $systemShippingOriginProvider;
+    private ShippingContextBuilderFactoryInterface|MockObject $systemShippingOriginProvider;
 
-    /** @var OrderShippingContextFactory */
-    private $factory;
+    private OrderShippingContextFactory $factory;
 
     protected function setUp(): void
     {
@@ -156,7 +153,7 @@ class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testCreate()
+    public function testCreate(): void
     {
         $shippingOrigin = $this->createMock(ShippingOrigin::class);
         $this->systemShippingOriginProvider->expects(self::once())
@@ -195,7 +192,7 @@ class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         $contextBuilder->expects(self::once())
             ->method('setPaymentMethod')
             ->with(self::TEST_PAYMENT_METHOD);
-        $contextBuilder->expects($this->once())
+        $contextBuilder->expects(self::once())
             ->method('setLineItems')
             ->with($shippingLineItemCollection);
 
@@ -207,7 +204,7 @@ class OrderShippingContextFactoryTest extends \PHPUnit\Framework\TestCase
         $this->factory->create($order);
     }
 
-    public function testUnsupportedEntity()
+    public function testUnsupportedEntity(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->factory->create(new \stdClass());
