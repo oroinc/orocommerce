@@ -78,6 +78,13 @@ class ProductLineItem implements ProductLineItemInterface, ProductLineItemsHolde
         return $this;
     }
 
+    public function setProductUnit(ProductUnit $unit): self
+    {
+        $this->unit = $unit;
+
+        return $this;
+    }
+
     /**
      * {@inheritDoc}
      */
