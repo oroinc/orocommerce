@@ -57,4 +57,17 @@ class LineItemTest extends TestCase
 
         self::assertSame($shoppingList, $lineItem->getLineItemsHolder());
     }
+
+    public function testSetProductUnit(): void
+    {
+        $lineItem = new LineItem();
+
+        self::assertNull($lineItem->getProductUnit());
+
+        $unitItem = (new ProductUnit())->setCode('item');
+        $lineItem->setProductUnit($unitItem);
+
+        self::assertSame($unitItem, $lineItem->getProductUnit());
+        self::assertSame($unitItem->getCode(), $lineItem->getProductUnitCode());
+    }
 }
