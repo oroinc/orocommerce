@@ -10,8 +10,7 @@ class SystemPageForVisitorTest extends FrontendRestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->enableVisitor();
-        $this->loadVisitor();
+        $this->initializeVisitor();
     }
 
     public function testGetFrontendPage()

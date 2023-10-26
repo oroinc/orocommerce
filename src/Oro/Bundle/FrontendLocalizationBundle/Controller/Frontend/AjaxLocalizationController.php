@@ -42,7 +42,7 @@ class AjaxLocalizationController extends AbstractController
             $fromUrl = $this->generateUrlWithContext($request);
 
             if ($request->server->has('WEBSITE_PATH')) {
-                [$fromUrl, $toUrl] = $this->getUrlsForWebsitePath($request, $fromUrl, $localization);
+                $toUrl = $this->getUrlForWebsitePath($request, $fromUrl, $localization);
             } else {
                 $toUrl = $redirectHelper->getLocalizedUrl($fromUrl, $localization);
                 $toUrl = $this->rebuildQueryString($toUrl, $request);
@@ -64,7 +64,7 @@ class AjaxLocalizationController extends AbstractController
             [
                 LocalizationManager::class,
                 UserLocalizationManager::class,
-                'oro_locale.helper.localized_slug_redirect' => LocalizedSlugRedirectHelper::class
+                'oro_locale.helper.localized_slug_redirect' => LocalizedSlugRedirectHelper::class,
             ]
         );
     }
@@ -127,38 +127,50 @@ class AjaxLocalizationController extends AbstractController
         return $toUrl;
     }
 
-    private function getUrlsForWebsitePath(Request $request, string $fromUrl, Localization $localization): array
+    private function getUrlForWebsitePath(Request $request, string $fromUrl, Localization $localization): string
     {
         $baseUrl = $request->getBaseUrl();
         $redirectHelper = $this->get('oro_locale.helper.localized_slug_redirect');
+        $websitePath = $request->server->get('WEBSITE_PATH');
 
         if (in_array($baseUrl, ['/', ''])) {
-            $baseUrl = $request->server->get('WEBSITE_PATH');
+            $baseUrl = $websitePath;
         }
 
         if (str_starts_with($fromUrl, $baseUrl)) {
-            $fromUrl = preg_replace(sprintf('/^\%s/', $baseUrl), '', $fromUrl);
+            $baseUrlPattern = str_replace('/', '\/', $baseUrl);
+            $fromUrl = preg_replace(sprintf('/^%s\//', $baseUrlPattern), '/', $fromUrl);
         }
 
         $toUrl = $redirectHelper->getLocalizedUrl($fromUrl, $localization);
         $toUrl = $this->rebuildQueryString($toUrl, $request);
-        $fromUrl = $baseUrl.$fromUrl;
+
+        return $this->rebuildUrlForSubFolder($request, $baseUrl, $toUrl, $websitePath);
+    }
+
+    private function rebuildUrlForSubFolder(
+        Request $request,
+        string $baseUrl,
+        string $toUrl,
+        string $websitePath
+    ): string {
         $parsedUrl = parse_url($toUrl);
+        $scheme = $parsedUrl['scheme'] ?? $request->getScheme();
+        $host = $parsedUrl['host'] ?? $request->getHost();
+        $port = $parsedUrl['port'] ?? $request->getPort();
+        $path = $parsedUrl['path'] ?? '';
+        $query = $parsedUrl['query'] ?? '';
 
-        if (!empty($parsedUrl['scheme']) && !empty($parsedUrl['host'])) {
-            $parsedUrl['path'] = $parsedUrl['path'] ?? '';
-            $parsedUrl['path'] = $baseUrl.$parsedUrl['path'];
-            $toUrl = sprintf(
-                '%s://%s%s%s',
-                $parsedUrl['scheme'],
-                $parsedUrl['host'],
-                $parsedUrl['path'],
-                '?'.$parsedUrl['query'] ?? ''
-            );
-        } else {
-            $toUrl = $baseUrl.$toUrl;
-        }
+        $baseUrl = str_starts_with($baseUrl, $websitePath) ? $baseUrl : "{$websitePath}/{$baseUrl}";
+        $path = str_starts_with($path, "{$baseUrl}/") ? $path : "{$baseUrl}{$path}";
 
-        return [$fromUrl, $toUrl];
+        return sprintf(
+            '%s://%s%s%s%s',
+            $scheme,
+            $host,
+            !in_array($port, ['80', '443']) ? ":{$port}" : "",
+            $path,
+            $query ? "?{$query}" : ""
+        );
     }
 }

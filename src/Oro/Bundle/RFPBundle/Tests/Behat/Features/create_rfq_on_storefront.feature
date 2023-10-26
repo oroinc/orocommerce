@@ -2,6 +2,7 @@
 @ticket-BB-16463
 @ticket-BB-21064
 @ticket-BB-21454
+@ticket-BB-23035
 Feature: Create RFQ on storefront
   In order to control RFQ content
   As an Administrator
@@ -11,6 +12,15 @@ Feature: Create RFQ on storefront
     Given sessions active:
       | Buyer | first_session  |
       | Admin | second_session |
+
+  Scenario: Save "Requests For Quote" storefront menu item
+    Given I proceed as the Admin
+    And I login as administrator
+    And I go to System/Frontend Menus
+    And I click view "oro_customer_menu" in grid
+    And I click Requests For Quote in menu tree
+    And I save form
+    Then I should see "Menu item saved successfully." flash message
 
   Scenario: Create RFQ that contains notes
     Given I continue as the Buyer
@@ -28,7 +38,6 @@ Feature: Create RFQ on storefront
     Then I should see "Request has been saved" flash message
 
     When I continue as the Admin
-    And I login as administrator
     And I go to Sales/Requests For Quote
     And I click view 007 in grid
     Then I should see RFQ with:
