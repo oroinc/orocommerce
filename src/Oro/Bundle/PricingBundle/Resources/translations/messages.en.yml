@@ -221,6 +221,10 @@ oro.pricing:
         type.label: Type
         version.label: Version
         price_input.aria_label: 'Product Price'
+        debug:
+            page_title: 'Product Prices Debug'
+            currencies.label: 'Currencies'
+            show_tier_prices.label: 'Show Tier Prices'
 
     combinedproductprice:
         entity_label: 'Combined Product Price'
@@ -281,6 +285,7 @@ oro.pricing:
         shortcut_new_price_list.description: Create new price list item
         shortcut_price_lists.description: Show list of existing price lists
         shortcut_price_attribute_price_lists.description: Show list of existing price attributes
+        product_price_debug.description: Show product prices debug information.
 
     sections:
         general: General

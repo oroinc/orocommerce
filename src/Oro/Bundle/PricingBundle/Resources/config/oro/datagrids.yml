@@ -723,3 +723,44 @@ datagrids:
             columns:
                 unit:
                     data_name: unit
+
+    pricing-products-trace-grid:
+        acl_resource: oro_product_update
+        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
+        options:
+            entityHint: oro.product.entity_plural_label
+            entity_pagination: true
+        source:
+            type: orm
+            query:
+                select:
+                    - product.id
+                    - product.sku
+                from:
+                    - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
+            hints:
+                - HINT_TRANSLATABLE
+        columns:
+            sku:
+                label: oro.product.sku.label
+            name:
+                label: oro.product.names.label
+        properties:
+            id: ~
+            name:
+                type: localized_value
+                data_name: names
+        sorters:
+            columns:
+                sku:
+                    data_name: product.sku
+                name:
+                    data_name: name
+        filters:
+            columns:
+                sku:
+                    type: string
+                    data_name: product.sku
+                name:
+                    type: string
+                    data_name: name
