@@ -7,10 +7,12 @@ dynamic-imports:
         - oropricing/js/validator/unique-product-prices
     orodatagrid:
         - oro/filter/price-attribute-product-price-filter
+        - oro/filter/combined-product-price-filter
         - oro/filter/product-price-filter
     orosale:
         - oropricing/js/app/components/price-lists-errors-handler
         - oropricing/js/app/components/product-sidebar-component
+        - oropricing/js/app/components/product-price-debug-sidebar-component
         - oropricing/js/app/components/product-unit-precision-limitations-component
         - oropricing/js/app/components/totals-component
         - oropricing/js/app/views/expression-field-switcher
@@ -21,3 +23,4 @@ dynamic-imports:
 map:
     '*':
         oro/filter/price-attribute-product-price-filter: oro/filter/product-price-filter
+        oro/filter/combined-product-price-filter: oro/filter/product-price-filter

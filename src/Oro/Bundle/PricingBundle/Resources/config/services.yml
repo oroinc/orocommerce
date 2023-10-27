@@ -453,6 +453,17 @@ services:
             - '@doctrine'
             - '@oro_security.acl_helper'
 
+    Oro\Bundle\PricingBundle\Model\DebugProductPricesPriceListRequestHandler:
+        class: 'Oro\Bundle\PricingBundle\Model\DebugProductPricesPriceListRequestHandler'
+        public: true
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+            - '@oro_pricing.model.price_list_tree_handler'
+
+    oro_pricing.model.debug_product_price_price_list_request_handler:
+        alias: Oro\Bundle\PricingBundle\Model\DebugProductPricesPriceListRequestHandler
+
     Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface:
         alias: oro_pricing.model.price_list_request_handler
 
@@ -531,6 +542,19 @@ services:
             - [setProductPriceClass, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: product-price }
+
+    oro_pricing.filter.combined_product_price:
+        class: 'Oro\Bundle\PricingBundle\Filter\ProductPriceFilter'
+        public: false
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+            - '@oro_product.formatter.product_unit_label'
+            - '@oro_pricing.model.debug_product_price_price_list_request_handler'
+        calls:
+            - [setProductPriceClass, ['Oro\Bundle\PricingBundle\Entity\CombinedProductPrice']]
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: combined-product-price }
 
     oro_pricing.filter.price_lists:
         class: 'Oro\Bundle\PricingBundle\Filter\PriceListsFilter'
@@ -1523,9 +1547,25 @@ services:
         arguments:
             - '@translator'
             - '@security.authorization_checker'
+        calls:
+            - ['addSupportedGrid', ['products-grid']]
         tags:
             - { name: oro_datagrid.extension }
             - { name: oro_featuretogle.feature, feature: oro_price_lists }
+
+    oro_pricing.datagrid.extension.combined_product_price:
+        class: 'Oro\Bundle\PricingBundle\Datagrid\CombinedProductPriceDatagridExtension'
+        arguments:
+            - '@oro_pricing.model.debug_product_price_price_list_request_handler'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_datagrid.provider.selected_fields'
+            - '@translator'
+            - '@security.authorization_checker'
+        calls:
+            - ['addSupportedGrid', ['pricing-products-trace-grid']]
+        tags:
+            - { name: oro_datagrid.extension }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
 
     oro_pricing.datagrid.extension.price_attribute_product_price_datagrid:
         class: 'Oro\Bundle\PricingBundle\Datagrid\PriceAttributeProductPriceDatagridExtension'

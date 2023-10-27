@@ -9,7 +9,7 @@ use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\FilterBundle\Filter\NumberRangeFilter;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -22,7 +22,7 @@ class ProductPriceFilter extends NumberRangeFilter
     /** @var UnitLabelFormatterInterface */
     protected $formatter;
 
-    /** @var PriceListRequestHandler */
+    /** @var PriceListRequestHandlerInterface */
     protected $priceListRequestHandler;
 
     /** @var string */
@@ -32,7 +32,7 @@ class ProductPriceFilter extends NumberRangeFilter
         FormFactoryInterface $factory,
         FilterUtility $util,
         UnitLabelFormatterInterface $formatter,
-        PriceListRequestHandler $priceListRequestHandler
+        PriceListRequestHandlerInterface $priceListRequestHandler
     ) {
         parent::__construct($factory, $util);
         $this->formatter = $formatter;

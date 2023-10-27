@@ -17,6 +17,14 @@ navigation:
                     routes:      ['/^oro_pricing_price_attribute_price_list/']
                     description: 'oro.pricing.menu.price_attribute_price_lists_list.description'
 
+            pricing_product_price_debug:
+                label: 'oro.pricing.productprice.debug.page_title'
+                route: 'oro_pricing_price_product_debug_index'
+                position: 600
+                extras:
+                    routes: ['/^oro_pricing_price_product_debug/']
+                    description: 'oro.pricing.menu.product_price_debug.description'
+
             shortcut_pricing_price_attribute_price_list:
                 label:           'oro.pricing.priceattributepricelist.entity_plural_label'
                 route:           'oro_pricing_price_attribute_price_list_index'
@@ -45,6 +53,9 @@ navigation:
                     products_tab:
                         children:
                             pricing_price_attribute_price_lists_list: ~
+                    system_tab:
+                        children:
+                            pricing_product_price_debug: ~
             shortcuts:
                 children:
                     shortcut_pricing_price_list: ~
@@ -61,3 +72,5 @@ navigation:
         oro_pricing_price_attribute_price_list_view:   '%name%'
         oro_pricing_price_attribute_price_list_update: '%name% - Edit'
         oro_pricing_price_attribute_price_list_create: oro.ui.create_entity
+
+        pricing_product_price_debug: ~
