@@ -34,6 +34,12 @@ oro_behat_extension:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
   elements:
+
+    Customer User Sign In:
+      selector:
+        locator: '//form[@id="form-login"]//button[@type="submit"]'
+        type: xpath
+
     Select Billing Address:
       selector: '[name="oro_workflow_transition[billing_address][customerAddress]"]'
 

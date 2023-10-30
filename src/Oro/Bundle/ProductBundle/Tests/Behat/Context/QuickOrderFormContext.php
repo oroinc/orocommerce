@@ -107,7 +107,14 @@ class QuickOrderFormContext extends OroFeatureContext implements OroPageObjectAw
     {
         $priceField = $this->getPriceField($sku);
 
-        static::assertEquals($price, trim($priceField->getValue()));
+        $priceFieldValue = trim(
+            str_replace(
+                "\xC2\xA0", // non-breaking space (&nbsp;)
+                ' ',
+                $priceField->getValue()
+            )
+        );
+        static::assertEquals($price, $priceFieldValue);
     }
 
     /**
