@@ -112,7 +112,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         $this->applyRuleConditions($qb, $rule);
         $this->restrictBySupportedUnits($qb, $rule, $rootAlias);
         $this->restrictBySupportedCurrencies($qb, $rule);
-        $this->restrictBySupportedQuantity($qb, $rule);
         $this->restrictByAssignedProducts($rule, $qb, $rootAlias);
         $this->restrictByManualPrices($qb, $rule, $rootAlias);
         $this->restrictByOrganization($qb, $rule, $rootAlias);
@@ -177,6 +176,8 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         if ($precision !== null && $precision !== '') {
             $priceValue = sprintf('ROUND(%s, %d)', $priceValue, (int)$precision);
         }
+        // Only allow price value >= 0
+        $qb->andWhere($qb->expr()->gte($priceValue, 0.0));
 
         if ($rule->getCurrencyExpression()) {
             $currencyValue = (string)$this->getValueByExpression($qb, $rule->getCurrencyExpression(), $params);
@@ -203,6 +204,17 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             $unitValue = (string)$qb->expr()->literal($rule->getProductUnit()->getCode());
         }
 
+        // Round by product unit precision. Unsupported units will be skipped
+        $qb->join(
+            sprintf('%s.unitPrecisions', $rootAlias),
+            'unitPrecision',
+            Join::WITH,
+            $qb->expr()->eq('unitPrecision.unit', $unitValue)
+        );
+        $quantityValue = sprintf('ROUND(CAST(%s as decimal), unitPrecision.precision)', $quantityValue);
+        // Only allow quantity > 0
+        $qb->andWhere($qb->expr()->gt($quantityValue, 0.0));
+
         $this->qbSelectPart = [
             'id' => 'UUID()',
             'product' => $rootAlias . '.id',
@@ -215,7 +227,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             'value' => $priceValue,
         ];
         $this->addSelectInOrder($qb, $this->qbSelectPart);
-        $qb->andWhere($qb->expr()->gte($priceValue, 0));
         $this->applyParameters($qb, $params);
     }
 
@@ -374,6 +385,9 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         }
     }
 
+    /**
+     * @deprecated will be removed in 6.0. Restriction was moved to modifySelectPart.
+     */
     protected function restrictBySupportedQuantity(QueryBuilder $qb, PriceRule $rule)
     {
         if ($rule->getQuantityExpression()) {

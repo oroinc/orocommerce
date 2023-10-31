@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelation
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PriceListRepositoryTest extends WebTestCase
@@ -107,6 +108,23 @@ class PriceListRepositoryTest extends WebTestCase
         $expectedPriceList = $this->getReference('price_list_5');
 
         $this->assertSame($expectedPriceList->getId(), $priceList->getId());
+    }
+
+    public function testGetPriceListsWithRulesByAssignedProducts()
+    {
+        $products = [
+            $this->getReference(LoadProductData::PRODUCT_1)
+        ];
+
+        $priceLists = iterator_to_array($this->getRepository()->getPriceListsWithRulesByAssignedProducts($products));
+        self::assertCount(2, $priceLists);
+        self::assertEqualsCanonicalizing(
+            [
+                $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
+                $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId()
+            ],
+            array_map(fn (PriceList $pl) => $pl->getId(), $priceLists)
+        );
     }
 
     private function getRepository(): PriceListRepository
