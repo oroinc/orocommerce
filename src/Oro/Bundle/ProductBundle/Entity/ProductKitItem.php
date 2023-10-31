@@ -226,6 +226,17 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
         return $this;
     }
 
+    public function getKitItemProduct(Product $product): ?ProductKitItemProduct
+    {
+        foreach ($this->kitItemProducts as $productKitItemProduct) {
+            if ($productKitItemProduct->getProduct() === $product) {
+                return $productKitItemProduct;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * @return Collection<Product>
      */

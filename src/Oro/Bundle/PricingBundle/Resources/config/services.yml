@@ -86,6 +86,14 @@ services:
             - '@oro_pricing.shard_manager'
             - '@oro_pricing.model.price_list_tree_handler'
 
+    oro_pricing.migrations.actualize_cpl_activation_rules_migration:
+        class: Oro\Bundle\PricingBundle\Migrations\Service\ActualizeCplActivationRulesMigration
+        public: true
+        arguments:
+            - '@doctrine'
+            - '@event_dispatcher'
+            - '@oro_pricing.combined_price_list_relation_helper'
+
     oro_pricing.migrations.minimal_strategy_naming_migration:
         class: Oro\Bundle\PricingBundle\Migrations\Service\MinimalStrategyNamingMigration
         public: true
@@ -618,6 +626,7 @@ services:
             - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.combined_price_list.create, method: onCreate }
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.actualize_schedule, method: onActualizeSchedule }
 
     oro_pricing.system_config_converter:
         class: 'Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter'
@@ -819,19 +828,6 @@ services:
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.pre_load, method: onPreLoad }
             - { name: kernel.event_listener, event: oro_migration.data_fixtures.post_load, method: onPostLoad }
             - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
-
-    oro_pricing.provider.matching_price:
-        class: 'Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider'
-        public: true
-        arguments:
-            - '@oro_pricing.provider.product_price'
-            - '@oro_entity.doctrine_helper'
-            - '@oro_pricing.product_price_criteria_factory'
-            - 'Oro\Bundle\ProductBundle\Entity\Product'
-            - 'Oro\Bundle\ProductBundle\Entity\ProductUnit'
-
-    Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider:
-        alias: 'oro_pricing.provider.matching_price'
 
     oro_pricing.subtotal_processor.subtotal_provider_registry:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry'
@@ -1765,3 +1761,10 @@ services:
         class: Oro\Bundle\PricingBundle\Twig\ProductPriceExtension
         tags:
             - { name: twig.extension }
+
+    oro_pricing.provider.product_line_item_product_price:
+        class: Oro\Bundle\PricingBundle\Provider\ProductLineItemProductPriceProvider
+        arguments:
+            - '@oro_pricing.product_price_criteria_factory'
+            - '@oro_pricing.provider.product_price_by_matching_criteria'
+            - '@oro_currency.rounding.price_rounding_service'

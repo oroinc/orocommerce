@@ -5,9 +5,14 @@ namespace Oro\Component\Expression\QueryExpressionConverter;
 use Doctrine\ORM\Query\Expr;
 use Oro\Component\Expression\Node\NodeInterface;
 
+/**
+ * Interface for converters to convert Oro\Component\Expression\Node\NodeInterface nodes to query builder expressions.
+ */
 interface QueryExpressionConverterInterface
 {
-    const REQUIRE_PARAMETRIZATION = '_parametrize_';
+    public const REQUIRE_PARAMETRIZATION = '_parametrize_';
+    public const MAPPING_TABLES = 'tables';
+    public const MAPPING_COLUMNS = 'columns';
 
     /**
      * @param NodeInterface $node

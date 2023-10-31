@@ -10,21 +10,45 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 class DuplicateFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $filtrationService;
+    private $baseFiltrationService;
 
     /** @var DuplicateFiltrationService */
-    private $duplicateFiltrationService;
+    private $filtrationService;
 
     protected function setUp(): void
     {
-        $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
+        $this->baseFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);
 
-        $this->duplicateFiltrationService = new DuplicateFiltrationService(
-            $this->filtrationService
+        $this->filtrationService = new DuplicateFiltrationService($this->baseFiltrationService);
+    }
+
+    private function getRuleOwner(int $id): PromotionDataInterface
+    {
+        $ruleOwner = $this->createMock(PromotionDataInterface::class);
+        $ruleOwner->expects(self::any())
+            ->method('getId')
+            ->willReturn($id);
+
+        return $ruleOwner;
+    }
+
+    public function testShouldBeSkippable(): void
+    {
+        $ruleOwners = [$this->createMock(RuleOwnerInterface::class)];
+
+        $this->baseFiltrationService->expects(self::never())
+            ->method('getFilteredRuleOwners');
+
+        self::assertSame(
+            $ruleOwners,
+            $this->filtrationService->getFilteredRuleOwners(
+                $ruleOwners,
+                ['skip_filters' => [DuplicateFiltrationService::class => true]]
+            )
         );
     }
 
-    public function testGetFilteredRuleOwners()
+    public function testGetFilteredRuleOwners(): void
     {
         $ruleOwners = [
             $this->getRuleOwner(1),
@@ -43,36 +67,14 @@ class DuplicateFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         ];
 
         $context = [];
-        $this->filtrationService->expects($this->once())
+        $this->baseFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
             ->with($expected, $context)
             ->willReturnArgument(0);
 
-        $this->assertEquals(
+        self::assertEquals(
             $expected,
-            $this->duplicateFiltrationService->getFilteredRuleOwners($ruleOwners, $context)
-        );
-    }
-
-    private function getRuleOwner(int $id): PromotionDataInterface
-    {
-        $ruleOwner = $this->createMock(PromotionDataInterface::class);
-        $ruleOwner->expects($this->any())
-            ->method('getId')
-            ->willReturn($id);
-
-        return $ruleOwner;
-    }
-
-    public function testFilterIsSkippable()
-    {
-        $this->filtrationService->expects($this->never())
-            ->method('getFilteredRuleOwners');
-
-        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
-        $this->duplicateFiltrationService->getFilteredRuleOwners(
-            [$ruleOwner],
-            ['skip_filters' => [get_class($this->duplicateFiltrationService) => true]]
+            $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)
         );
     }
 }

@@ -7,22 +7,28 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
-use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
+class DiscountSubtotalProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
-    private $translator;
+    private const SUBTOTAL_LABEL = 'oro.order.subtotals.discount (translated)';
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|LineItemSubtotalProvider */
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $currencyManager;
+
+    /** @var WebsiteCurrencyProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $websiteCurrencyProvider;
+
+    /** @var LineItemSubtotalProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $lineItemSubtotal;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface */
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
     /** @var DiscountSubtotalProvider */
@@ -30,21 +36,27 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
 
     protected function setUp(): void
     {
-        parent::setUp();
-
-        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->currencyManager = $this->createMock(UserCurrencyManager::class);
+        $this->websiteCurrencyProvider = $this->createMock(WebsiteCurrencyProvider::class);
         $this->lineItemSubtotal = $this->createMock(LineItemSubtotalProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects(self::any())
+            ->method('trans')
+            ->willReturnCallback(function ($id) {
+                return $id . ' (translated)';
+            });
+
         $roundingService = $this->createMock(RoundingServiceInterface::class);
-        $roundingService->expects($this->any())
+        $roundingService->expects(self::any())
             ->method('round')
             ->willReturnCallback(function ($value) {
                 return round($value, 2, PHP_ROUND_HALF_UP);
             });
 
         $this->provider = new DiscountSubtotalProvider(
-            $this->translator,
+            $translator,
             $roundingService,
             $this->lineItemSubtotal,
             $this->tokenAccessor,
@@ -52,32 +64,32 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         );
     }
 
-    public function testGetDiscountSubtotalEmpty()
+    public function testIsSupportedEntity(): void
     {
-        $this->translator->expects($this->never())
-            ->method('trans')
-            ->with('oro.order.subtotals.' . DiscountSubtotalProvider::TYPE)
-            ->willReturn(ucfirst(DiscountSubtotalProvider::TYPE));
+        self::assertTrue($this->provider->isSupported(new Order()));
+    }
 
+    public function testIsNotSupportedEntity(): void
+    {
+        self::assertFalse($this->provider->isSupported(new \stdClass()));
+    }
+
+    public function testGetDiscountSubtotalEmpty(): void
+    {
         $order = new Order();
         $currency = 'USD';
         $order->setCurrency($currency);
 
-        $subtotal = $this->provider->getSubtotal($order);
-        $this->assertEmpty($subtotal);
+        self::assertSame([], $this->provider->getSubtotal($order));
     }
 
-    public function testGetDiscountSubtotal()
+    public function testGetDiscountSubtotal(): void
     {
-        $this->translator->expects($this->exactly(3))
-            ->method('trans')
-            ->with('oro.order.subtotals.' . DiscountSubtotalProvider::TYPE)
-            ->willReturn(ucfirst(DiscountSubtotalProvider::TYPE));
         $subtotalMock =  $this->createMock(Subtotal::class);
-        $this->lineItemSubtotal->expects($this->once())
+        $this->lineItemSubtotal->expects(self::once())
             ->method('getSubtotal')
             ->willReturn($subtotalMock);
-        $subtotalMock->expects($this->once())
+        $subtotalMock->expects(self::once())
             ->method('getAmount')
             ->willReturn(1000.0);
 
@@ -98,28 +110,22 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         $order->addDiscount($discount3);
 
         $subtotal = $this->provider->getSubtotal($order);
+        self::assertCount(3, $subtotal);
         [$firstDiscountSubtotal, $secondDiscountSubtotal, $threadDiscountSubtotal] = $subtotal;
-        $this->assertCount(3, $subtotal);
-        $this->assertInstanceOf(Subtotal::class, $firstDiscountSubtotal);
-        $this->assertEquals(DiscountSubtotalProvider::TYPE, $firstDiscountSubtotal->getType());
-        $this->assertEquals($description . ' (Discount)', $firstDiscountSubtotal->getLabel());
-        $this->assertEquals('Discount', $secondDiscountSubtotal->getLabel());
-        $this->assertEquals($order->getCurrency(), $firstDiscountSubtotal->getCurrency());
-        $this->assertIsFloat($firstDiscountSubtotal->getAmount());
-        $this->assertEquals(150, $firstDiscountSubtotal->getAmount());
-        $this->assertEquals(100, $secondDiscountSubtotal->getAmount());
-        $this->assertEquals(100, $threadDiscountSubtotal->getAmount());
+        self::assertInstanceOf(Subtotal::class, $firstDiscountSubtotal);
+        self::assertEquals(DiscountSubtotalProvider::TYPE, $firstDiscountSubtotal->getType());
+        self::assertEquals($description . ' (' . self::SUBTOTAL_LABEL . ')', $firstDiscountSubtotal->getLabel());
+        self::assertEquals(self::SUBTOTAL_LABEL, $secondDiscountSubtotal->getLabel());
+        self::assertEquals($order->getCurrency(), $firstDiscountSubtotal->getCurrency());
+        self::assertSame(150.0, $firstDiscountSubtotal->getAmount());
+        self::assertSame(100.0, $secondDiscountSubtotal->getAmount());
+        self::assertSame(100.0, $threadDiscountSubtotal->getAmount());
     }
 
-    public function testGetDiscountSubtotalFrontendUser()
+    public function testGetDiscountSubtotalFrontendUser(): void
     {
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->with('oro.order.subtotals.' . DiscountSubtotalProvider::TYPE)
-            ->willReturn(ucfirst(DiscountSubtotalProvider::TYPE));
-
         $customerUser = $this->createMock(CustomerUser::class);
-        $this->tokenAccessor->expects($this->once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getUser')
             ->willReturn($customerUser);
 
@@ -133,28 +139,13 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         $order->addDiscount($discount);
 
         $subtotal = $this->provider->getSubtotal($order);
+        self::assertCount(1, $subtotal);
         $discountSubtotal = $subtotal[0];
-        $this->assertCount(1, $subtotal);
-        $this->assertInstanceOf(Subtotal::class, $discountSubtotal);
-        $this->assertEquals(DiscountSubtotalProvider::TYPE, $discountSubtotal->getType());
-        $this->assertEquals($description, $discountSubtotal->getLabel());
-        $this->assertEquals($order->getCurrency(), $discountSubtotal->getCurrency());
-        $this->assertEquals(50, $discountSubtotal->getSortOrder());
-        $this->assertIsFloat($discountSubtotal->getAmount());
-        $this->assertEquals(150, $discountSubtotal->getAmount());
-    }
-
-    public function testIsSupportedEntity()
-    {
-        $order = new Order();
-        $supported = $this->provider->isSupported($order);
-        $this->assertTrue($supported);
-    }
-
-    public function testIsNotSupportedEntity()
-    {
-        $order = new \stdClass();
-        $supported = $this->provider->isSupported($order);
-        $this->assertFalse($supported);
+        self::assertInstanceOf(Subtotal::class, $discountSubtotal);
+        self::assertEquals(DiscountSubtotalProvider::TYPE, $discountSubtotal->getType());
+        self::assertEquals($description, $discountSubtotal->getLabel());
+        self::assertEquals($order->getCurrency(), $discountSubtotal->getCurrency());
+        self::assertSame(50, $discountSubtotal->getSortOrder());
+        self::assertSame(150.0, $discountSubtotal->getAmount());
     }
 }

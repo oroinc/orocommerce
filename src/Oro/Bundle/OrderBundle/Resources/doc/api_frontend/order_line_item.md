@@ -98,6 +98,14 @@ is the same as in the created order.**
 **Note:**
 This value can be omitted if the **productSku** field is specified in the request.
 
+### checksum
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ## SUBRESOURCES
 
 ### order
@@ -139,3 +147,13 @@ Retrieve a record of product unit assigned to a specific line item record.
 #### get_relationship
 
 Retrieve ID of product unit record assigned to a specific line item record.
+
+### kitItemLineItems
+
+#### get_subresource
+
+Retrieve a list of order product kit item line item records assigned to a specific line item record.
+
+#### get_relationship
+
+Retrieve IDs of order product kit item line item records assigned to a specific line item record.

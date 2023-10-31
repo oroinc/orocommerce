@@ -13,8 +13,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
       - setEmail: [ 'customer_user_email_<current()>\@example.com' ]
     emailLowercase: 'customer_user_email@example.com<current()>'
     username: 'Acme_user_<current()>'
-    password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
-    salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+    password: <userPassword(@customer_user<current()>->username)>
     firstName: 'Acme_User_<current()>'
     lastName: 'Acme_User_<current()>'
     enabled: true

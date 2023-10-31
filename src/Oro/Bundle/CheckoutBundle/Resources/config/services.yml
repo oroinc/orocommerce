@@ -627,19 +627,24 @@ services:
 
     oro_checkout.line_item.converter.shopping_list:
         class: 'Oro\Bundle\CheckoutBundle\Converter\ShoppingListLineItemConverter'
+        arguments:
+            - '@oro_checkout.converter.product_kit_item_line_item_converter'
         tags:
             - { name: oro.checkout.line_item.converter, alias: shopping_list }
 
     oro_checkout.line_item.converter.order:
         class: 'Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter'
         arguments:
-            - '@oro_config.manager'
             - '@oro_inventory.provider.inventory_quantity'
-            - '@security.authorization_checker'
             - '@oro_entity.fallback.resolver.entity_fallback_resolver'
-            - 'oro_order.frontend_product_visibility'
+            - '@oro_checkout.converter.product_kit_item_line_item_converter'
+            - '@validator'
+            - '@oro_checkout.provider.checkout_validation_groups_by_source_entity'
         tags:
             - { name: oro.checkout.line_item.converter, alias: order }
+
+    oro_checkout.converter.product_kit_item_line_item_converter:
+        class: Oro\Bundle\CheckoutBundle\Converter\ProductKitItemLineItemConverter
 
     oro_checkout.data_provider.checkout:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\CheckoutDataProvider'

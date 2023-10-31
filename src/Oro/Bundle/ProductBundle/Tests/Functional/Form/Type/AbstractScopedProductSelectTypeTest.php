@@ -15,7 +15,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
     /** @var string */
     protected $configPath;
 
-    /** @var int|object|null */
+    /** @var object|int|null */
     protected $configScopeIdentifier;
 
     protected string $configScopeName = 'global';

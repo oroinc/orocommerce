@@ -30,15 +30,8 @@ class ShippingKitItemLineItemTest extends TestCase
 
     public function testOnlyRequiredParameters(): void
     {
-        $shippingKitItemLineItem = (new ShippingKitItemLineItem(
-            $this->productUnit,
-            self::QUANTITY,
-            $this->productHolder
-        ));
+        $shippingKitItemLineItem = new ShippingKitItemLineItem($this->productHolder);
 
-        self::assertSame($this->productUnit, $shippingKitItemLineItem->getProductUnit());
-        self::assertEquals($this->productUnit->getCode(), $shippingKitItemLineItem->getProductUnitCode());
-        self::assertEquals(self::QUANTITY, $shippingKitItemLineItem->getQuantity());
         self::assertSame($this->productHolder, $shippingKitItemLineItem->getProductHolder());
         self::assertEquals(
             $this->productHolder->getEntityIdentifier(),
@@ -46,6 +39,9 @@ class ShippingKitItemLineItemTest extends TestCase
         );
         self::assertNull($shippingKitItemLineItem->getProduct());
         self::assertNull($shippingKitItemLineItem->getProductSku());
+        self::assertNull($shippingKitItemLineItem->getProductUnit());
+        self::assertNull($shippingKitItemLineItem->getProductUnitCode());
+        self::assertEquals(0, $shippingKitItemLineItem->getQuantity());
         self::assertNull($shippingKitItemLineItem->getPrice());
         self::assertNull($shippingKitItemLineItem->getKitItem());
         self::assertEquals(0, $shippingKitItemLineItem->getSortOrder());
@@ -63,11 +59,8 @@ class ShippingKitItemLineItemTest extends TestCase
         $anotherSku = 'anotherSku';
         $anotherUnitCode = 'anotherUnitCode';
 
-        $shippingKitItemLineItem = (new ShippingKitItemLineItem(
-            $this->productUnit,
-            self::QUANTITY,
-            $this->productHolder
-        ))
+        $shippingKitItemLineItem = (new ShippingKitItemLineItem($this->productHolder))
+            ->setProductUnit($this->productUnit)
             ->setProductUnitCode($anotherUnitCode)
             ->setQuantity($anotherQuantity)
             ->setProduct($product)

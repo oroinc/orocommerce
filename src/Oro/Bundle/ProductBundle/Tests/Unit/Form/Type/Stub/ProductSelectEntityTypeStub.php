@@ -15,6 +15,9 @@ class ProductSelectEntityTypeStub extends EntityTypeStub
     {
         parent::configureOptions($resolver);
         $resolver->setDefaults([
+            'autocomplete_alias' => 'oro_product_visibility_limited',
+            'grid_name'       => 'products-select-grid',
+            'grid_parameters' => [],
             'query_builder'   => null,
             'create_enabled'  => false,
             'class'           => Product::class,

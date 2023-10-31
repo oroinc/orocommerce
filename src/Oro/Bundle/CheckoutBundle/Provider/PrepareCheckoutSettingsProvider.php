@@ -4,14 +4,14 @@ namespace Oro\Bundle\CheckoutBundle\Provider;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Event\PrepareCheckoutSettingsEvent;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Action of service to trigger prepare checkout settings.
  */
 class PrepareCheckoutSettingsProvider
 {
-    public function __construct(private EventDispatcher $dispatcher)
+    public function __construct(private EventDispatcherInterface $dispatcher)
     {
     }
 

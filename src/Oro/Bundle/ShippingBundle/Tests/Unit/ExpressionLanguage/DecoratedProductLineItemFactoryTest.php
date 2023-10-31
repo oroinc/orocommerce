@@ -67,11 +67,9 @@ class DecoratedProductLineItemFactoryTest extends TestCase
         $kitItem = new ProductKitItem();
         $sortOrder = 1;
 
-        $shippingKitItemLineItemToDecorate = (new ShippingKitItemLineItem(
-            $productUnit,
-            $quantity,
-            $productHolder
-        ))
+        $shippingKitItemLineItemToDecorate = (new ShippingKitItemLineItem($productHolder))
+            ->setQuantity($quantity)
+            ->setProductUnit($productUnit)
             ->setProductUnitCode($unitCode)
             ->setProduct($product2)
             ->setProductSku($product2->getSku())
@@ -92,11 +90,9 @@ class DecoratedProductLineItemFactoryTest extends TestCase
             ->setKitItemLineItems($shippingKitItemLineItemsToDecorate)
             ->setChecksum('checksum_1');
 
-        $shippingKitItemLineItemWithDecoratedProduct = (new ShippingKitItemLineItem(
-            $productUnit,
-            $quantity,
-            $productHolder
-        ))
+        $shippingKitItemLineItemWithDecoratedProduct = (new ShippingKitItemLineItem($productHolder))
+            ->setQuantity($quantity)
+            ->setProductUnit($productUnit)
             ->setProductUnitCode($unitCode)
             ->setProduct($decoratedProduct2Mock)
             ->setProductSku($product2->getSku())

@@ -48,25 +48,23 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
         if (!$this->isSupported($entity)) {
             throw new \InvalidArgumentException('Entity not supported for provider');
         }
-        $subtotal = new Subtotal();
 
+        $subtotal = new Subtotal();
         $subtotal->setType(self::TYPE);
         $subtotal->setSortOrder(self::SUBTOTAL_SORT_ORDER);
-        $translation = 'oro.order.subtotals.' . self::TYPE;
-        $subtotal->setLabel($this->translator->trans($translation));
-        $subtotal->setVisible((bool) $entity->getShippingCost());
-        $subtotal->setCurrency($this->getBaseCurrency($entity));
+        $subtotal->setLabel($this->translator->trans('oro.order.subtotals.' . self::TYPE));
         $subtotal->setRemovable(false);
 
-        $subtotalAmount = 0.0;
-        if ($entity->getShippingCost() !== null) {
-            $subtotalAmount = $entity->getShippingCost()->getValue();
-            if ($entity->getShippingCost()->getCurrency()) {
-                $subtotal->setCurrency($entity->getShippingCost()->getCurrency());
-            }
+        $shippingCost = $entity->getShippingCost();
+        if (null === $shippingCost) {
+            $subtotal->setVisible(false);
+            $subtotal->setAmount(0.0);
+            $subtotal->setCurrency($this->getBaseCurrency($entity));
+        } else {
+            $subtotal->setVisible(true);
+            $subtotal->setAmount($this->rounding->round($shippingCost->getValue()));
+            $subtotal->setCurrency($shippingCost->getCurrency() ?? $this->getBaseCurrency($entity));
         }
-
-        $subtotal->setAmount($this->rounding->round($subtotalAmount));
 
         return $subtotal;
     }

@@ -117,7 +117,7 @@ services:
     oro_shopping_list.api.complete_new_line_item:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\CompleteNewLineItem
         arguments:
-            - '@oro_shopping_list.product_kit.checksum'
+            - '@oro_product.line_item_checksum_generator'
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: 30 }
 
@@ -150,14 +150,22 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList }
 
-    oro_shopping_list.api.compute_line_item_price:
-        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeLineItemPrice
+    oro_shopping_list.api.compute_shopping_list_line_item_price:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeShoppingListLineItemPrice
         arguments:
-            - '@oro_pricing.provider.matching_price'
-            - '@oro_pricing.model.product_price_scope_criteria_request_handler'
-            - '@oro_pricing.user_currency_manager'
+            - '@doctrine'
+            - '@oro_pricing.provider.product_line_item_price'
+            - '@oro_shopping_list.model.product_price_scope_criteria_factory'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, requestType: frontend }
+
+    oro_shopping_list.api.compute_shopping_list_product_kit_item_line_item_price:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeShoppingListProductKitItemLineItemPrice
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.provider.product_line_item_price'
+            - '@oro_shopping_list.model.product_price_scope_criteria_factory'
+        tags:
             - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem, requestType: frontend }
 
     oro_shopping_list.api.validate_shopping_list_limit:
@@ -250,3 +258,10 @@ services:
             - 'shoppingList'
         tags:
             - { name: oro.api.processor, action: get_config, extra: '!descriptions', requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: -250 }
+
+    oro_shopping_list.api.reset_line_item_checksum:
+        class: 'Oro\Bundle\ShoppingListBundle\Api\Processor\ResetLineItemChecksum'
+        arguments:
+            - '@oro_product.line_item_checksum_generator'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: update, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem }

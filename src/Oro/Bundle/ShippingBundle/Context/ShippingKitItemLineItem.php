@@ -35,15 +35,9 @@ class ShippingKitItemLineItem extends ParameterBag implements
     public const FIELD_KIT_ITEM = 'kit_item';
     public const FIELD_SORT_ORDER = 'sort_order';
 
-    public function __construct(
-        ProductUnit $productUnit,
-        float|int $quantity,
-        ProductHolderInterface $productHolder
-    ) {
+    public function __construct(ProductHolderInterface $productHolder)
+    {
         parent::__construct([
-            self::FIELD_PRODUCT_UNIT => $productUnit,
-            self::FIELD_PRODUCT_UNIT_CODE => $productUnit->getCode(),
-            self::FIELD_QUANTITY => $quantity,
             self::FIELD_PRODUCT_HOLDER => $productHolder,
             self::FIELD_ENTITY_IDENTIFIER => $productHolder->getEntityIdentifier(),
             self::FIELD_SORT_ORDER => 0,
@@ -73,19 +67,19 @@ class ShippingKitItemLineItem extends ParameterBag implements
         return $this->get(self::FIELD_PRODUCT_HOLDER);
     }
 
-    public function getProductUnit(): ProductUnit
+    public function getProductUnit(): ?ProductUnit
     {
         return $this->get(self::FIELD_PRODUCT_UNIT);
     }
 
-    public function getProductUnitCode(): string
+    public function getProductUnitCode(): ?string
     {
         return $this->get(self::FIELD_PRODUCT_UNIT_CODE);
     }
 
-    public function getQuantity(): float|int
+    public function getQuantity(): float
     {
-        return $this->get(self::FIELD_QUANTITY);
+        return (float)$this->get(self::FIELD_QUANTITY);
     }
 
     public function getPrice(): ?Price
@@ -101,6 +95,13 @@ class ShippingKitItemLineItem extends ParameterBag implements
     public function getSortOrder(): int
     {
         return $this->get(self::FIELD_SORT_ORDER, 0);
+    }
+
+    public function setProductUnit(?ProductUnit $productUnit): self
+    {
+        $this->set(self::FIELD_PRODUCT_UNIT, $productUnit);
+
+        return $this;
     }
 
     public function setProductUnitCode(string $productUnitCode): self

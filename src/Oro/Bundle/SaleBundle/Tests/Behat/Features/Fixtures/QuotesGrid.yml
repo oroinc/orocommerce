@@ -7,8 +7,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     test3:
         email: 'test3e@example.org'
         username: 'test3e@example.org'
-        password: 'RQ0+FN3TZyBpB4W6FenR4kTugMt0LW6Gcq9hsMkC5hwkA+C9UQBvt2th0RXEbVMG3DcV7LXi+26CjK8L2EkLVQ=='
-        salt: '687ji8ylggkck4wg8gggkooo44gks8g'
+        password: <userPassword(@test3->username)>
         firstName: 'Test3'
         lastName: 'Test3'
         enabled: true

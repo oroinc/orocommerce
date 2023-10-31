@@ -24,7 +24,7 @@ class UpdateCronDefinitionConfigListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnUpdateAfterWithoutNeededConfigOption()
     {
-        $event = new ConfigUpdateEvent(['some_config' => ['old' => 0, 'new' => 1]]);
+        $event = new ConfigUpdateEvent(['some_config' => ['old' => 0, 'new' => 1]], 'global', 0);
         $this->deferredScheduler->expects($this->never())
             ->method('removeSchedule');
         $this->deferredScheduler->expects($this->never())
@@ -38,9 +38,11 @@ class UpdateCronDefinitionConfigListenerTest extends \PHPUnit\Framework\TestCase
     {
         $oldValue = 'old_value';
         $newValue = 'new_value';
-        $event = new ConfigUpdateEvent([
-            UpdateCronDefinitionConfigListener::CONFIG_FIELD => ['old' => $oldValue, 'new' => $newValue]
-        ]);
+        $event = new ConfigUpdateEvent(
+            [UpdateCronDefinitionConfigListener::CONFIG_FIELD => ['old' => $oldValue, 'new' => $newValue]],
+            'global',
+            0
+        );
         $this->deferredScheduler->expects($this->once())
             ->method('removeSchedule')
             ->with(GenerateSitemapCommand::getDefaultName(), [], $oldValue);

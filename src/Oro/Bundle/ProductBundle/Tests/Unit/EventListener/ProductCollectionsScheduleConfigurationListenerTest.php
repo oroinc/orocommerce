@@ -24,12 +24,12 @@ class ProductCollectionsScheduleConfigurationListenerTest extends \PHPUnit\Frame
 
     public function testOnUpdateAfterWhenConfigurationHasNotChanged()
     {
-        $event = new ConfigUpdateEvent(['some_config' => ['old' => 0, 'new' => 1]]);
-        $this->deferredScheduler->expects($this->never())
+        $event = new ConfigUpdateEvent(['some_config' => ['old' => 0, 'new' => 1]], 'global', 0);
+        $this->deferredScheduler->expects(self::never())
             ->method('removeSchedule');
-        $this->deferredScheduler->expects($this->never())
+        $this->deferredScheduler->expects(self::never())
             ->method('addSchedule');
-        $this->deferredScheduler->expects($this->never())
+        $this->deferredScheduler->expects(self::never())
             ->method('flush');
         $this->listener->onUpdateAfter($event);
     }
@@ -38,16 +38,18 @@ class ProductCollectionsScheduleConfigurationListenerTest extends \PHPUnit\Frame
     {
         $oldValue = 'old_value';
         $newValue = 'new_value';
-        $event = new ConfigUpdateEvent([
-            'oro_product.product_collections_indexation_cron_schedule' => ['old' => $oldValue, 'new' => $newValue]
-        ]);
-        $this->deferredScheduler->expects($this->once())
+        $event = new ConfigUpdateEvent(
+            ['oro_product.product_collections_indexation_cron_schedule' => ['old' => $oldValue, 'new' => $newValue]],
+            'global',
+            0
+        );
+        $this->deferredScheduler->expects(self::once())
             ->method('removeSchedule')
             ->with(ProductCollectionsIndexCronCommand::getDefaultName(), [], $oldValue);
-        $this->deferredScheduler->expects($this->once())
+        $this->deferredScheduler->expects(self::once())
             ->method('addSchedule')
             ->with(ProductCollectionsIndexCronCommand::getDefaultName(), [], $newValue);
-        $this->deferredScheduler->expects($this->once())
+        $this->deferredScheduler->expects(self::once())
             ->method('flush');
         $this->listener->onUpdateAfter($event);
     }

@@ -23,7 +23,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     /** @var array */
     protected static $formMapping = [
         'Billing Information' => 'oro_workflow_transition[billing_address][customerAddress]',
-        'Shipping Information' => 'oro_workflow_transition[shipping_address][customerAddress]'
+        'Shipping Information' => 'oro_workflow_transition[shipping_address][customerAddress]',
+        'Rechnungsinformationen' => 'oro_workflow_transition[billing_address][customerAddress]',
+        'Versandinformationen' => 'oro_workflow_transition[shipping_address][customerAddress]',
+        'Informations de facturation' => 'oro_workflow_transition[billing_address][customerAddress]',
+        'Informations de livraison' => 'oro_workflow_transition[shipping_address][customerAddress]',
     ];
 
     /** @var array */
@@ -44,6 +48,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @When /^I select "(?P<value>.+)" on the "(?P<step>[\w\s]+)" checkout step and press (?P<button>[\w\s]+)$/
+     *
+     * Use these steps for UTF-8 chars
+     * @When /^I select "(?P<value>.+)" on the "(?P<step>.+)" checkout step and press "(?P<button>.+)"$/
      *
      * @param string $value
      * @param string $step
@@ -90,6 +97,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @When /^I check "(?P<value>.+)" on the "(?P<step>[\w\s]+)" checkout step and press (?P<button>[\w\s]+)$/
+     *
+     * Use these steps for UTF-8 chars
+     * @When /^I check "(?P<value>.+)" on the "(?P<step>.+)" checkout step and press "(?P<button>.+)"$/
      *
      * @param string $value
      * @param string $step

@@ -5,19 +5,19 @@ Oro\Bundle\ProductBundle\Entity\Product:
                     value: kit
                     message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.type.kit.message'
                     groups:
-                        # Used by \Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitAvailabilityChecker
+                        # Used by oro_shopping_list.product_kit.checker.product_kit_availability_checker
                         - product_kit_is_available_for_purchase
         status:
             -   EqualTo:
                     value: enabled
                     message: 'oro.shoppinglist.product_kit_is_available_for_purchase.product.status.enabled.message'
                     groups:
-                        # Used by \Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitAvailabilityChecker
+                        # Used by oro_shopping_list.product_kit.checker.product_kit_availability_checker
                         - product_kit_is_available_for_purchase
         kitItems:
             -   Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollectionIsAvailableForPurchase:
                     groups:
-                        # Used by \Oro\Bundle\ShoppingListBundle\ProductKit\Checker\ProductKitAvailabilityChecker
+                        # Used by oro_shopping_list.product_kit.checker.product_kit_availability_checker
                         - product_kit_is_available_for_purchase
 
 Oro\Bundle\ProductBundle\Entity\ProductKitItem:
@@ -25,26 +25,26 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
         kitItemProducts:
             -   Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductCollectionIsAvailableForPurchase:
                     groups:
-                        # Used by \Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollectionIsAvailableForPurchaseValidator
+                        # Used by oro_shopping_list.product_kit.checker.product_kit_item_availability_checker
                         - product_kit_item_is_available_for_purchase
 
 Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
     constraints:
         -   Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPrice:
                 groups:
-                    # Used by \Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductCollectionIsAvailableForPurchaseValidator
+                    # Used by oro_shopping_list.product_kit.checker.product_kit_item_product_availability_checker
                     - product_kit_item_product_is_available_for_purchase
     properties:
         product:
             -   Expression:
                     expression: 'value && value.isEnabled()'
                     groups:
-                        # Used by \Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductCollectionIsAvailableForPurchaseValidator
+                        # Used by oro_shopping_list.product_kit.checker.product_kit_item_product_availability_checker
                         - product_kit_item_product_is_available_for_purchase
             -   Expression:
                     expression: 'value && value.isSimple()'
                     groups:
-                        # Used by \Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductCollectionIsAvailableForPurchaseValidator
+                        # Used by oro_shopping_list.product_kit.checker.product_kit_item_product_availability_checker
                         - product_kit_item_product_is_available_for_purchase
 
 Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn:
@@ -226,14 +226,6 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                     max: 40
 
 Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
-    constraints:
-        -   Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
-                path: quantity
-                groups:
-                    # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
-                    - add_product_kit_line_item
-                    # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
-                    - datagrid_line_items_data
     properties:
         lineItem:
             -   NotNull: ~
@@ -241,23 +233,10 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
             -   NotNull: ~
         product:
             -   NotNull: ~
-            -   Expression:
-                    expression: 'value && value.isSimple()'
-                    groups:
-                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
-                        - add_product_kit_line_item
-            -   Expression:
-                    expression: 'value && this.getKitItem() && this.getKitItem().getProducts().contains(value)'
-                    message: 'oro.shoppinglist.product_kit_item_line_item.product.invalid.message'
-                    groups:
-                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
-                        - add_product_kit_line_item
-                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
-                        - datagrid_line_items_data
             -   AtLeastOneOf:
                     constraints:
-                        -   Expression:
-                                expression: 'value && value.isEnabled()'
+                        -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductAvailable:
+                                availabilityValidationGroups: [ product_kit_item_product_is_available_for_purchase ]
                         -   Expression:
                                 expression: 'this.getKitItem() && this.getKitItem().isOptional()'
                     message: 'oro.shoppinglist.product_kit_item_line_item.product.status_required.message'
@@ -269,8 +248,8 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                         - datagrid_line_items_data
             -   AtLeastOneOf:
                     constraints:
-                        -   Expression:
-                                expression: 'value && value.isEnabled()'
+                        -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductAvailable:
+                                availabilityValidationGroups: [ product_kit_item_product_is_available_for_purchase ]
                         -   Expression:
                                 expression: 'this.getKitItem() && !this.getKitItem().isOptional()'
                     message: 'oro.shoppinglist.product_kit_item_line_item.product.status_optional.message'
@@ -308,11 +287,15 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                         - add_product_kit_line_item
                         # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
                         - datagrid_line_items_data
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision:
+                    groups:
+                        # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
+                        - add_product_kit_line_item
+                        # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
+                        - datagrid_line_items_data
         unit:
             -   NotNull: ~
-            -   Expression:
-                    expression: 'value && this.getKitItem() && value.getCode() == this.getKitItem().getProductUnit().getCode()'
-                    message: 'oro.shoppinglist.product_kit_item_line_item.unit.invalid.message'
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductUnitAvailable:
                     groups:
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                         - add_product_kit_line_item

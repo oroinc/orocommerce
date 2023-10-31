@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -14,6 +13,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
@@ -23,7 +23,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
-use Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\LineItemChecksumGeneratorInterface;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Stub\LineItemStub;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -61,22 +60,6 @@ class ShoppingListManagerTest extends TestCase
     protected function setUp(): void
     {
         $this->lineItemRepository = $this->createMock(LineItemRepository::class);
-        $this->lineItemRepository
-            ->expects(self::any())
-            ->method('findDuplicateInShoppingList')
-            ->willReturnCallback(function (LineItem $lineItem, ShoppingList $shoppingList) {
-                /** @var ArrayCollection $shoppingListLineItems */
-                $shoppingListLineItems = $shoppingList->getLineItems();
-                if ($shoppingList->getId() === 1
-                    && $shoppingListLineItems->count() > 0
-                    && $shoppingListLineItems->current()->getUnit() === $lineItem->getUnit()
-                ) {
-                    return $shoppingList->getLineItems()->current();
-                }
-
-                return null;
-            });
-
         $this->em = $this->createMock(EntityManager::class);
         $this->em->expects(self::any())
             ->method('getRepository')
@@ -363,6 +346,11 @@ class ShoppingListManagerTest extends TestCase
             ->setUnit($this->getProductUnit('test', 1))
             ->setQuantity(10);
 
+        $this->lineItemRepository
+            ->expects(self::exactly(2))
+            ->method('findDuplicateInShoppingList')
+            ->willReturnOnConsecutiveCalls(null, $lineItem);
+
         $this->manager->addLineItem($lineItem, $shoppingList);
         self::assertCount(1, $shoppingList->getLineItems());
         $lineItemDuplicate = clone $lineItem;
@@ -386,6 +374,11 @@ class ShoppingListManagerTest extends TestCase
         $lineItem = (new LineItem())
             ->setUnit($unitItem)
             ->setQuantity(10);
+
+        $this->lineItemRepository
+            ->expects(self::exactly(3))
+            ->method('findDuplicateInShoppingList')
+            ->willReturnOnConsecutiveCalls(null, null, $lineItem);
 
         $this->manager->addLineItem($lineItem, $shoppingList);
         $lineItemDuplicate = clone $lineItem;
@@ -413,6 +406,11 @@ class ShoppingListManagerTest extends TestCase
         $lineItem = (new LineItem())
             ->setUnit($this->getProductUnit('test', 1))
             ->setNotes('Notes');
+
+        $this->lineItemRepository
+            ->expects(self::exactly(2))
+            ->method('findDuplicateInShoppingList')
+            ->willReturnOnConsecutiveCalls(null, $lineItem);
 
         $this->manager->addLineItem($lineItem, $shoppingList);
 
@@ -648,6 +646,10 @@ class ShoppingListManagerTest extends TestCase
         $lineItem = (new LineItem())
             ->setUnit($this->getProductUnit('test', 1))
             ->setQuantity(10);
+        $this->lineItemRepository
+            ->expects(self::once())
+            ->method('findDuplicateInShoppingList')
+            ->willReturn($lineItem);
 
         $shoppingList = $this->getShoppingList(1);
         $shoppingList->addLineItem($lineItem);
@@ -671,6 +673,10 @@ class ShoppingListManagerTest extends TestCase
             ->setProduct($productKit)
             ->setUnit($this->getProductUnit('test', 1))
             ->setQuantity(10);
+        $this->lineItemRepository
+            ->expects(self::once())
+            ->method('findDuplicateInShoppingList')
+            ->willReturn($productKitLineItem);
 
         $shoppingList = $this->getShoppingList(1);
         $shoppingList->addLineItem($productKitLineItem);
@@ -717,6 +723,10 @@ class ShoppingListManagerTest extends TestCase
         $lineItemDuplicate = clone $lineItem;
         $lineItemDuplicate->setQuantity(0);
 
+        $this->lineItemRepository
+            ->expects(self::once())
+            ->method('findDuplicateInShoppingList')
+            ->willReturn($lineItem);
         $deleteHandler = $this->createMock(EntityDeleteHandlerInterface::class);
         $this->deleteHandlerRegistry->expects(self::once())
             ->method('getHandler')
@@ -857,5 +867,69 @@ class ShoppingListManagerTest extends TestCase
             ->with($shoppingList, true);
 
         $this->manager->actualizeLineItems($shoppingList);
+    }
+
+    public function testBatchUpdateLineItems(): void
+    {
+        $shoppingList = $this->getShoppingList(1);
+        $lineItem1 = $this->getLineItem(41)
+            ->setProduct($this->getProduct(47, Product::TYPE_SIMPLE))
+            ->setUnit($this->getProductUnit('item', 0))
+            ->setQuantity(10);
+        $lineItem2 = $this->getLineItem(42)
+            ->setProduct($this->getProduct(48, Product::TYPE_SIMPLE))
+            ->setUnit($this->getProductUnit('set', 0))
+            ->setQuantity(5);
+        $this->totalManager->expects(self::once())
+            ->method('invalidateAndRecalculateTotals')
+            ->with($shoppingList, false);
+
+        $this->em
+            ->expects(self::exactly(3))
+            ->method('persist')
+            ->withConsecutive([$lineItem1], [$lineItem2], [$shoppingList]);
+
+        $this->manager->batchUpdateLineItems([41 => $lineItem1, 42 => $lineItem2], $shoppingList);
+
+        self::assertCount(2, $shoppingList->getLineItems());
+    }
+
+    public function testBatchUpdateLineItemsExchangeUnits(): void
+    {
+        $shoppingList = $this->getShoppingList(2);
+        $lineItem1 = $this->getLineItem(41)
+            ->setProduct($this->getProduct(48, Product::TYPE_SIMPLE))
+            ->setUnit($this->getProductUnit('item', 0))
+            ->setQuantity(10)
+        ;
+        $lineItem2 = $this->getLineItem(42)
+            ->setProduct($this->getProduct(48, Product::TYPE_SIMPLE))
+            ->setUnit($this->getProductUnit('set', 0))
+            ->setQuantity(5);
+
+        $this->lineItemChecksumGenerator->expects(self::exactly(2))
+            ->method('getChecksum')
+            ->withConsecutive([$lineItem1], [$lineItem2])
+            ->willReturn(sha1('2|48|item'), sha1('2|48|set'));
+        $this->lineItemRepository
+            ->expects(self::exactly(2))
+            ->method('findDuplicateInShoppingList')
+            ->withConsecutive([$lineItem1, $shoppingList], [$lineItem2, $shoppingList])
+            ->willReturnOnConsecutiveCalls($lineItem2, $lineItem1);
+
+        $this->totalManager->expects(self::once())
+            ->method('invalidateAndRecalculateTotals')
+            ->with($shoppingList, false);
+
+        $this->em->expects(self::exactly(2))
+            ->method('remove')
+            ->withConsecutive([$lineItem2], [$lineItem1]);
+        $this->em->expects(self::exactly(3))
+            ->method('persist')
+            ->withConsecutive([$lineItem1], [$lineItem2], [$shoppingList]);
+
+        $this->manager->batchUpdateLineItems([41 => $lineItem1, 42 => $lineItem2], $shoppingList);
+
+        self::assertCount(2, $shoppingList->getLineItems());
     }
 }

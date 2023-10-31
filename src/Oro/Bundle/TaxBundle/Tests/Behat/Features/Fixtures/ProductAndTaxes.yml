@@ -133,8 +133,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     marlene:
         email: 'MarleneSBradley@example.org'
         username: 'MarleneSBradley@example.org'
-        password: 'pj5tHuTmxutgSkIbx84JtlzPA6TBjx00MARrJWyN06FcI2u5zzhyrKe28++k+ZH2hzRwn3WUYq762IJwoCfaBw=='
-        salt: 'hggf02559tkwgoowk40c4c8scosos40'
+        password: <userPassword(@marlene->username)>
         firstName: 'Marlene'
         lastName: 'Bradley'
         enabled: '1'

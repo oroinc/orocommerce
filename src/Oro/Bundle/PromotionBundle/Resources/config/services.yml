@@ -11,38 +11,33 @@ services:
 
     oro_promotion.rule_filtration.service:
         class: Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService
-        parent: oro_rule.rule_filtration.service
 
     oro_promotion.rule_filtration.duplicate_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\DuplicateFiltrationService
-        public: false
         decorates: oro_promotion.rule_filtration.service
         decoration_priority: 20
         arguments:
             - '@.inner'
 
     oro_promotion.rule_filtration.expression_language_decorator:
-        class: Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationServiceDecorator
-        public: false
+        class: Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationService
         decorates: oro_promotion.rule_filtration.service
         decoration_priority: 100
         arguments:
-            - '@oro_rule.expression_language'
             - '@.inner'
+            - '@oro_rule.expression_language'
             - '@logger'
 
     oro_promotion.rule_filtration.coupon_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
         decorates: oro_promotion.rule_filtration.service
         decoration_priority: 250
-        public: false
         arguments:
             - '@.inner'
             - '@doctrine'
 
-    oro_promotion.rule_filtration.matching_items:
+    oro_promotion.rule_filtration.matching_items_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService
-        public: false
         decorates: oro_promotion.rule_filtration.service
         decoration_priority: 300
         arguments:
@@ -53,23 +48,20 @@ services:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\ShippingFiltrationService
         decorates: oro_promotion.rule_filtration.service
         decoration_priority: 350
-        public: false
         arguments:
             - '@.inner'
 
     oro_promotion.rule_filtration.stop_processing_decorator:
-        class: Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator
-        public: false
+        class: Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationService
         decorates: oro_promotion.rule_filtration.service
         decoration_priority: 400
         arguments:
             - '@.inner'
 
-    oro_promotion.rule_filtration.sub_entities_promotions_decorator:
-        class: Oro\Bundle\PromotionBundle\RuleFiltration\SubOrdersPromotionsFiltrationService
+    oro_promotion.rule_filtration.sub_orders_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\SubOrdersFiltrationService
         decorates: oro_promotion.rule_filtration.service
         decoration_priority: 5
-        public: false
         arguments:
             - '@.inner'
             - '@oro_promotion.promotion.context_data_converter_registry'
@@ -725,7 +717,6 @@ services:
 
     oro_promotion.provider.promotion_discounts_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProvider
-        public: false
         arguments:
             - '@oro_promotion.promotion_provider'
             - '@oro_promotion.discount_factory'
@@ -740,7 +731,6 @@ services:
 
     oro_promotion.provider.disabled_promotion_discounts_provider_decorator:
         class: Oro\Bundle\PromotionBundle\Provider\DisabledPromotionDiscountProviderDecorator
-        public: false
         decorates: oro_promotion.provider.promotion_discounts_provider
         arguments:
             - '@.inner'
@@ -748,7 +738,6 @@ services:
 
     oro_promotion.provider.order_promotion_discounts_provider_decorator:
         class: Oro\Bundle\PromotionBundle\Provider\OrderPromotionDiscountsProviderDecorator
-        public: false
         decorates: oro_promotion.provider.promotion_discounts_provider
         arguments:
             - '@.inner'
@@ -843,12 +832,8 @@ services:
 
     oro_promotion.entity_promotion_aware_helper:
         class: Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper
-        public: true
         arguments:
             - "@oro_entity_config.config_manager"
-
-    Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper:
-        alias: oro_promotion.entity_promotion_aware_helper
 
     oro_promotion.aware_entity_configuration:
         class: Oro\Bundle\PromotionBundle\EntityConfig\PromotionAwareEntityConfiguration

@@ -55,7 +55,6 @@ class Configuration implements ConfigurationInterface
     const NEW_ARRIVALS_MIN_ITEMS = 'new_arrivals_min_items';
     const NEW_ARRIVALS_USE_SLIDER_ON_MOBILE = 'new_arrivals_use_slider_on_mobile';
     const IMAGE_PREVIEW_ON_PRODUCT_LISTING_ENABLED = 'image_preview_on_product_listing_enabled';
-    const POPUP_GALLERY_ON_PRODUCT_VIEW = 'popup_gallery_on_product_view';
     const MATRIX_FORM_ON_PRODUCT_VIEW = 'matrix_form_on_product_view';
     const MATRIX_FORM_ON_PRODUCT_LISTING = 'matrix_form_on_product_listing';
     const MATRIX_FORM_NONE = 'none';
@@ -155,7 +154,6 @@ class Configuration implements ConfigurationInterface
                 static::NEW_ARRIVALS_MIN_ITEMS => ['type' => 'integer', 'value' => 3],
                 static::NEW_ARRIVALS_USE_SLIDER_ON_MOBILE => ['type' => 'boolean', 'value' => false],
                 static::IMAGE_PREVIEW_ON_PRODUCT_LISTING_ENABLED => ['type' => 'boolean', 'value' => true],
-                static::POPUP_GALLERY_ON_PRODUCT_VIEW => ['type' => 'boolean', 'value' => true],
                 static::GUEST_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => false],
                 static::MATRIX_FORM_ON_PRODUCT_VIEW => [
                     'type' => 'string',
