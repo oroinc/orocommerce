@@ -10,7 +10,7 @@
     }
 
     &__item-quantity {
-        padding-right: $offset-x-m;
+        padding-right: spacing('sm');
         color: $product-kit-line-items-quantity-color;
     }
 
