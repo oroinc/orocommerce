@@ -824,8 +824,9 @@ services:
         class: Oro\Bundle\ShoppingListBundle\EventListener\FrontendShoppingListTotalListener
         arguments:
             - '@oro_customer.security.customer_user_provider'
-            - '@oro_shopping_list.manager.shopping_list_total'
+            - '@Psr\Container\ContainerInterface'
         tags:
+            - { name: container.service_subscriber, id: oro_shopping_list.manager.shopping_list_total, key: Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager }
             - { name: kernel.event_listener, event: kernel.controller_arguments, method: onKernelController }
 
     oro_shopping_list.model.product_price_scope_criteria_factory:
