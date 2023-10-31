@@ -645,6 +645,8 @@ services:
         public: false
         arguments:
             - '@oro_tax.provider.tax_provider_registry'
+        calls:
+            - [setTaxationSettingsProvider, ['@oro_tax.provider.taxation_settings_provider']]
 
     oro_tax.provider.tax_rule_entity_name:
         class: Oro\Bundle\TaxBundle\Provider\TaxRuleEntityNameProvider
