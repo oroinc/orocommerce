@@ -8,14 +8,10 @@ use Oro\Bundle\SEOBundle\EventListener\ScheduleSitemapGenerationOnGuestAccessCha
 
 class ScheduleSitemapGenerationOnGuestAccessChangeListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var SitemapGenerationScheduler|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var SitemapGenerationScheduler|\PHPUnit\Framework\MockObject\MockObject */
     private $scheduleSitemapGenerationProvider;
 
-    /**
-     * @var ScheduleSitemapGenerationOnGuestAccessChangeListener
-     */
+    /** @var ScheduleSitemapGenerationOnGuestAccessChangeListener */
     private $generateSitemapListener;
 
     protected function setUp(): void
@@ -28,13 +24,11 @@ class ScheduleSitemapGenerationOnGuestAccessChangeListenerTest extends \PHPUnit\
 
     public function testOnConfigUpdate()
     {
-        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event **/
-        $event = $this->createMock(ConfigUpdateEvent::class);
-
-        $event->expects(static::once())
-            ->method('isChanged')
-            ->with('oro_frontend.guest_access_enabled')
-            ->willReturn(true);
+        $event = new ConfigUpdateEvent(
+            ['oro_frontend.guest_access_enabled' => ['old' => false, 'new' => true]],
+            'global',
+            0
+        );
 
         $this->scheduleSitemapGenerationProvider->expects(static::once())
             ->method('scheduleSend');
@@ -44,13 +38,7 @@ class ScheduleSitemapGenerationOnGuestAccessChangeListenerTest extends \PHPUnit\
 
     public function testOnConfigUpdateFalse()
     {
-        /** @var ConfigUpdateEvent|\PHPUnit\Framework\MockObject\MockObject $event **/
-        $event = $this->createMock(ConfigUpdateEvent::class);
-
-        $event->expects(static::once())
-            ->method('isChanged')
-            ->with('oro_frontend.guest_access_enabled')
-            ->willReturn(false);
+        $event = new ConfigUpdateEvent([], 'global', 0);
 
         $this->scheduleSitemapGenerationProvider->expects(static::never())
             ->method('scheduleSend');

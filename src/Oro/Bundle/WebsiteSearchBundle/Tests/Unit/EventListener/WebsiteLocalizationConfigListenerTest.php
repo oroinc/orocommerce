@@ -9,65 +9,62 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class WebsiteLocalizationConfigListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @dataProvider dataProviderForListenerWillProcessOnlyLocalizationChanges
-     */
-    public function testListenerWillProcessOnlyLocalizationChanges(ConfigUpdateEvent $eventWithLocalizationChange)
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $dispatcher;
+
+    /** @var WebsiteLocalizationConfigListener */
+    private $listener;
+
+    protected function setUp(): void
     {
-        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $eventDispatcher->expects($this->once())
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $this->listener = new WebsiteLocalizationConfigListener($this->dispatcher);
+    }
+
+    /**
+     * @dataProvider processOnlyLocalizationChangesData
+     */
+    public function testProcessOnlyLocalizationChanges(array $changeSet): void
+    {
+        $this->dispatcher->expects(self::once())
             ->method('dispatch')
-            ->with(
-                $this->callback(function (ReindexationRequestEvent $reindexationEvent) {
-                    return count($reindexationEvent->getWebsitesIds()) === 0
-                        && $reindexationEvent->getFieldGroups() === ['main'];
-                }),
-                ReindexationRequestEvent::EVENT_NAME
-            );
+            ->with(new ReindexationRequestEvent([], [], [], true, ['main']), ReindexationRequestEvent::EVENT_NAME);
 
-        $listener = new WebsiteLocalizationConfigListener($eventDispatcher);
-        $listener->onLocalizationSettingsChange($eventWithLocalizationChange);
+        $this->listener->onLocalizationSettingsChange(new ConfigUpdateEvent($changeSet, 'website', 1));
     }
 
-    /**
-     * @dataProvider dataProviderForListenerWillNotProcessOnOtherConfigChanges
-     */
-    public function testListenerWillNotProcessOnOtherConfigChanges(ConfigUpdateEvent $eventWithConfigChange)
-    {
-        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $eventDispatcher->expects($this->never())
-            ->method('dispatch');
-
-        $listener = new WebsiteLocalizationConfigListener($eventDispatcher);
-        $listener->onLocalizationSettingsChange($eventWithConfigChange);
-    }
-
-    public function dataProviderForListenerWillProcessOnlyLocalizationChanges(): array
+    public function processOnlyLocalizationChangesData(): array
     {
         return [
             [
-                new ConfigUpdateEvent([
-                    WebsiteLocalizationConfigListener::CONFIG_LOCALIZATION_DEFAULT => 1,
-                ])
+                ['oro_locale.default_localization' => ['old' => 1, 'new' => 2]]
             ],
             [
-                new ConfigUpdateEvent([
-                    WebsiteLocalizationConfigListener::CONFIG_LOCALIZATION_ENABLED => 1,
-                ])
+                ['oro_locale.enabled_localizations' => ['old' => 1, 'new' => 2]]
             ],
         ];
     }
 
-    public function dataProviderForListenerWillNotProcessOnOtherConfigChanges(): array
+    /**
+     * @dataProvider notProcessOnOtherConfigChangesDataProvider
+     */
+    public function testNotProcessOnOtherConfigChanges(array $changeSet): void
+    {
+        $this->dispatcher->expects(self::never())
+            ->method('dispatch');
+
+        $this->listener->onLocalizationSettingsChange(new ConfigUpdateEvent($changeSet, 'website', 1));
+    }
+
+    public function notProcessOnOtherConfigChangesDataProvider(): array
     {
         return [
             [
-                new ConfigUpdateEvent([])
+                []
             ],
             [
-                new ConfigUpdateEvent([
-                    'other_config_change' => 1,
-                ])
+                ['other_config_change' => ['old' => 1, 'new' => 2]]
             ],
         ];
     }

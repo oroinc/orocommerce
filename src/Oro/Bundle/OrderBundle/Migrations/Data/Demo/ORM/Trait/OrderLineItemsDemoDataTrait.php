@@ -35,7 +35,7 @@ trait OrderLineItemsDemoDataTrait
     protected function getProduct(ObjectManager $manager): ?Product
     {
         if (empty($this->products)) {
-            $this->products = $manager->getRepository(Product::class)->findAll();
+            $this->products = $manager->getRepository(Product::class)->findBy(['type' => Product::TYPE_SIMPLE]);
         }
 
         return $this->products[array_rand($this->products)];

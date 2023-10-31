@@ -47,6 +47,18 @@ class LoadPaymentOrderStatuses extends AbstractFixture implements DependentFixtu
         $status3->setPaymentStatus(PaymentStatusProvider::PENDING);
         $manager->persist($status3);
 
+        $status3 = new PaymentStatus();
+        $status3->setEntityClass(Order::class);
+        $status3->setEntityIdentifier($this->getReference('order4')->getId());
+        $status3->setPaymentStatus(PaymentStatusProvider::PENDING);
+        $manager->persist($status3);
+
+        $status3 = new PaymentStatus();
+        $status3->setEntityClass(Order::class);
+        $status3->setEntityIdentifier($this->getReference('order5')->getId());
+        $status3->setPaymentStatus(PaymentStatusProvider::PENDING);
+        $manager->persist($status3);
+
         $manager->flush();
     }
 }

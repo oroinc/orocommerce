@@ -3,7 +3,6 @@ data:
         type: shoppinglistitems
         id: '<toString(@line_item1->id)>'
         attributes:
-            checksum: ''
             quantity: 5
             notes: null
             currency: USD
@@ -29,7 +28,6 @@ data:
         type: shoppinglistitems
         id: '<toString(@line_item2->id)>'
         attributes:
-            checksum: ''
             quantity: 10
             notes: null
             currency: USD
@@ -55,7 +53,6 @@ data:
         type: shoppinglistitems
         id: '<toString(@line_item3->id)>'
         attributes:
-            checksum: ''
             quantity: 20
             notes: null
             currency: USD
@@ -81,7 +78,6 @@ data:
         type: shoppinglistitems
         id: '<toString(@line_item6->id)>'
         attributes:
-            checksum: ''
             quantity: 1
             notes: null
             currency: USD
@@ -111,7 +107,7 @@ data:
             quantity: 2
             notes: null
             currency: USD
-            value: '12.34'
+            value: '14.8'
         relationships:
             product:
                 data:
@@ -143,7 +139,7 @@ data:
             quantity: 2
             notes: null
             currency: USD
-            value: '12.34'
+            value: '14.8'
         relationships:
             product:
                 data:

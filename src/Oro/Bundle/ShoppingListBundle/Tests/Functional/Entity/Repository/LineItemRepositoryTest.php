@@ -62,10 +62,12 @@ class LineItemRepositoryTest extends WebTestCase
     {
         /** @var LineItem $lineItem1 */
         $lineItem1 = $this->getReference(LoadShoppingListLineItems::LINE_ITEM_1);
+        $checksumGenerator = self::getContainer()->get('oro_product.line_item_checksum_generator');
 
         $sameLineItem = (new LineItem())
             ->setUnit($lineItem1->getUnit())
             ->setProduct($lineItem1->getProduct());
+        $sameLineItem->setChecksum($checksumGenerator->getChecksum($sameLineItem));
 
         self::assertEquals(
             $lineItem1,

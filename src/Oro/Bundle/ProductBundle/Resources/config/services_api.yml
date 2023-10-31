@@ -91,6 +91,7 @@ services:
             - { name: oro.api.processor, action: delete_list, group: initialize, requestType: frontend, priority: 250 }
             - { name: oro.api.processor, action: create, group: initialize, requestType: frontend, priority: 250 }
             - { name: oro.api.processor, action: update, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: update_list, group: initialize, requestType: frontend, priority: 250 }
             - { name: oro.api.processor, action: get_subresource, group: initialize, requestType: frontend, priority: 250 }
             - { name: oro.api.processor, action: delete_subresource, group: initialize, requestType: frontend, priority: 250 }
             - { name: oro.api.processor, action: add_subresource, group: initialize, requestType: frontend, priority: 250 }
@@ -378,11 +379,10 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch }
 
-    oro_product.api.add_validate_unit_precisions_duplicate_form_listener:
-        class: Oro\Bundle\ProductBundle\Api\Processor\AddValidateUnitPrecisionsDuplicateFormListener
+    oro_product.api.validate_duplicated_product_unit_precisions:
+        class: Oro\Bundle\ProductBundle\Api\Processor\ValidateDuplicatedProductUnitPrecisions
         tags:
-            - { name: oro.api.processor, action: create, group: transform_data, class: Oro\Bundle\ProductBundle\Entity\Product, priority: 90 }
-            - { name: oro.api.processor, action: update, group: transform_data, class: Oro\Bundle\ProductBundle\Entity\Product, priority: 90 }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit, class: Oro\Bundle\ProductBundle\Entity\Product }
 
     oro_product.api.create.related_product.validate_access:
         class: Oro\Bundle\ProductBundle\Api\Processor\ValidateRelatedItemAccess

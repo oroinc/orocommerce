@@ -133,7 +133,10 @@ data:
             shippingAddress:
                 data: null
             lineItems:
-                data: []
+                data:
+                    -
+                        type: orderlineitems
+                        id: '<toString(@product_kit_2_line_item.1->id)>'
             discounts:
                 data: []
             shippingTrackings:

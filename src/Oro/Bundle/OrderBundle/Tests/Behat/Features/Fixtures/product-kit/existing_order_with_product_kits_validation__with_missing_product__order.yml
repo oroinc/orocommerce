@@ -1,0 +1,87 @@
+Oro\Bundle\OrderBundle\Entity\Order:
+    order1:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'order1'
+        website: '@website1'
+        currency: 'USD'
+        poNumber: 'ORD1'
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    # <with missing product>
+    order1_line_item1:
+        product: '@product_kit1'
+        order: '@order1'
+        price: '@order1_line_item1_price'
+        quantity: 1
+        productUnit: '@piece'
+        comment: 'with missing product'
+        __calls:
+            -   addKitItemLineItem: [ '@order1_line_item1_kit_item1' ]
+            -   addKitItemLineItem: [ '@order1_line_item1_kit_item2' ]
+    # </with missing product>
+
+    # <with disabled product>
+    order1_line_item2:
+        product: '@product_kit1'
+        order: '@order1'
+        price: '@order1_line_item2_price'
+        quantity: 1
+        productUnit: '@piece'
+        comment: 'with disabled product'
+        __calls:
+            -   addKitItemLineItem: [ '@order1_line_item2_kit_item1' ]
+            -   addKitItemLineItem: [ '@order1_line_item2_kit_item2' ]
+    # </with disabled product>
+
+Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
+    # <with missing product>
+    order1_line_item1_kit_item1:
+        kitItem: '@product_kit1_item1'
+        price: '@order1_line_item1_kit_item1_price'
+        quantity: 1
+        productUnit: '@piece'
+        productId: 2147483647 # Maximum of 4-byte integer.
+        productSku: 'MP1'
+        productName: 'Missing Product'
+        productUnitPrecision: 0
+
+    order1_line_item1_kit_item2:
+        kitItem: '@product_kit1_item2'
+        price: '@order1_line_item1_kit_item2_price'
+        quantity: 1
+        productUnit: '@piece'
+        productId: 2147483647 # Maximum of 4-byte integer.
+        productSku: 'MP1'
+        productName: 'Missing Product'
+        productUnitPrecision: 0
+    # </with missing product>
+
+    # <with disabled product>
+    order1_line_item2_kit_item1:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product4_disabled'
+        price: '@order1_line_item2_kit_item1_price'
+        quantity: 1
+        productUnit: '@piece'
+
+    order1_line_item2_kit_item2:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product4_disabled'
+        price: '@order1_line_item2_kit_item2_price'
+        quantity: 1
+        productUnit: '@piece'
+    # </with disabled product>
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    order1_line_item{1..2}_price:
+        value: 12.34
+        currency: USD
+    order1_line_item{1..2}_kit_item1_price:
+        value: 23.45
+        currency: USD
+    order1_line_item{1..2}_kit_item2_price:
+        value: 34.56
+        currency: USD

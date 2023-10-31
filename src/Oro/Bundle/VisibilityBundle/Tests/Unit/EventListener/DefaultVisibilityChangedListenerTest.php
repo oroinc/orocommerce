@@ -25,11 +25,11 @@ class DefaultVisibilityChangedListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnConfigUpdateWhenCategoryDefaultVisibilityWasChanged()
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects($this->once())
-            ->method('isChanged')
-            ->with('oro_visibility.category_visibility')
-            ->willReturn(true);
+        $event = new ConfigUpdateEvent(
+            ['oro_visibility.category_visibility' => ['old' => 1, 'new' => 2]],
+            'global',
+            0
+        );
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
@@ -40,13 +40,11 @@ class DefaultVisibilityChangedListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnConfigUpdateWhenProductDefaultVisibilityWasChanged()
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects($this->exactly(2))
-            ->method('isChanged')
-            ->willReturnMap([
-                ['oro_visibility.category_visibility', false],
-                ['oro_visibility.product_visibility', true]
-            ]);
+        $event = new ConfigUpdateEvent(
+            ['oro_visibility.product_visibility' => ['old' => 1, 'new' => 2]],
+            'global',
+            0
+        );
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
@@ -57,13 +55,7 @@ class DefaultVisibilityChangedListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnConfigUpdateWhenDefaultVisibilitiesWereNotChanged()
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects($this->exactly(2))
-            ->method('isChanged')
-            ->willReturnMap([
-                ['oro_visibility.category_visibility', false],
-                ['oro_visibility.product_visibility', false]
-            ]);
+        $event = new ConfigUpdateEvent([], 'global', 0);
 
         $this->eventDispatcher->expects($this->never())
             ->method('dispatch');

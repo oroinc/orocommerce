@@ -219,7 +219,8 @@ class OrderLineItem implements
      *     targetEntity="OrderProductKitItemLineItem",
      *     mappedBy="lineItem",
      *     cascade={"ALL"},
-     *     orphanRemoval=true
+     *     orphanRemoval=true,
+     *     indexBy="kitItemId"
      * )
      * @OrderBy({"sortOrder"="ASC"})
      */
@@ -752,9 +753,15 @@ class OrderLineItem implements
 
     public function addKitItemLineItem(OrderProductKitItemLineItem $productKitItemLineItem): self
     {
-        if (!$this->kitItemLineItems->contains($productKitItemLineItem)) {
+        $index = $productKitItemLineItem->getKitItemId();
+
+        if (!$this->kitItemLineItems->containsKey($index)) {
             $productKitItemLineItem->setLineItem($this);
-            $this->kitItemLineItems->add($productKitItemLineItem);
+            if ($index) {
+                $this->kitItemLineItems->set($index, $productKitItemLineItem);
+            } else {
+                $this->kitItemLineItems->add($productKitItemLineItem);
+            }
         }
 
         return $this;

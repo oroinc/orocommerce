@@ -5,6 +5,7 @@ namespace Oro\Component\Expression\Tests\Unit\QueryExpressionConverter;
 use Doctrine\ORM\Query\Expr;
 use Oro\Component\Expression\Node\NodeInterface;
 use Oro\Component\Expression\Node\RelationNode;
+use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
 use Oro\Component\Expression\QueryExpressionConverter\RelationNodeConverter;
 
 class RelationNodeConverterTest extends \PHPUnit\Framework\TestCase
@@ -42,21 +43,34 @@ class RelationNodeConverterTest extends \PHPUnit\Framework\TestCase
     public function convertDataProvider(): array
     {
         return [
-            [
+            'relation with identifier' => [
                 'PriceList',
                 'products',
                 'value',
                 42,
-                ['PriceList::products|42' => 'pp42'],
+                [QueryExpressionConverterInterface::MAPPING_TABLES => ['PriceList::products|42' => 'pp42']],
                 'pp42.value'
             ],
-            [
+            'simple relation' => [
                 'Product',
                 'category',
                 'id',
                 null,
-                ['Product::category' => 'cat'],
+                [QueryExpressionConverterInterface::MAPPING_TABLES => ['Product::category' => 'cat']],
                 'cat.id'
+            ],
+            'relation with virtual field' => [
+                'Product',
+                'category',
+                'id',
+                null,
+                [
+                    QueryExpressionConverterInterface::MAPPING_TABLES => ['Product::category' => 'cat'],
+                    QueryExpressionConverterInterface::MAPPING_COLUMNS => [
+                        'Product::category' => ['id' => 'CAST(cat.id as integer)']
+                    ]
+                ],
+                'CAST(cat.id as integer)'
             ]
         ];
     }

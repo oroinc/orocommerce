@@ -108,11 +108,6 @@ layout:
             id: product_view_attribute_group_general_attribute_product_images_images
             parentId: product_view_attribute_group_images
 
-        - '@setOption':
-            id: product_view_attribute_group_general_attribute_product_images_images
-            optionName: popup_gallery
-            optionValue: '=data["system_config_provider"].getValue("oro_product.popup_gallery_on_product_view")'
-
         - '@add':
             id: product_js_modules_config
             parentId: layout_js_modules_config

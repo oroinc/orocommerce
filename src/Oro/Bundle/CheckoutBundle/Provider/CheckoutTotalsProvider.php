@@ -29,6 +29,7 @@ class CheckoutTotalsProvider
     public function getTotalsArray(Checkout $checkout): array
     {
         $checkout->setShippingCost($this->checkoutShippingMethodsProvider->getPrice($checkout));
+
         $order = $this->checkoutToOrderConverter->getOrder($checkout);
         $this->totalsProvider->enableRecalculation();
 

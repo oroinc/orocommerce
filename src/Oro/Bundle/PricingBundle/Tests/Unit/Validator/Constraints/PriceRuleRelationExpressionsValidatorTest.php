@@ -339,17 +339,7 @@ class PriceRuleRelationExpressionsValidatorTest extends ConstraintValidatorTestC
                     new RelationNode(Product::class, 'map', 'quantity'),
                     '+'
                 ),
-            ],
-            'test_name_node' => [
-                'quantityExpression' => 'product.id + 10',
-                'message' => 'oro.pricing.validators.too_many_relations.message',
-                'messageParams' => ['%fieldName%' => 'oro.pricing.pricerule.quantity.label (translated)'],
-                'parsedQuantityExpression' => new BinaryNode(
-                    new NameNode(Product::class, 'id'),
-                    new ValueNode(10),
-                    '+'
-                ),
-            ],
+            ]
         ];
     }
 

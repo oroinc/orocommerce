@@ -8,6 +8,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityExtendBundle\EntityReflectionClass;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
+use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
@@ -162,7 +163,7 @@ class CheckoutLineItemsConverterTest extends TestCase
                         'productUnit' => $unitItem,
                         'productUnitCode' => $unitItem->getCode(),
                         'price' => $price,
-                        'priceType' => OrderLineItem::PRICE_TYPE_BUNDLED,
+                        'priceType' => PriceTypeAwareInterface::PRICE_TYPE_BUNDLED,
                         'shipBy' => $now,
                         'fromExternalSource' => true,
                         'comment' => 'Comment',
@@ -184,7 +185,7 @@ class CheckoutLineItemsConverterTest extends TestCase
                         ->setProductUnitCode($unitItem->getCode())
                         ->setFreeFormProduct('test2')
                         ->setPrice($price)
-                        ->setPriceType(OrderLineItem::PRICE_TYPE_BUNDLED)
+                        ->setPriceType(PriceTypeAwareInterface::PRICE_TYPE_BUNDLED)
                         ->setShipBy($now)
                         ->setFromExternalSource(true)
                         ->setComment('Comment'),
@@ -206,7 +207,7 @@ class CheckoutLineItemsConverterTest extends TestCase
                                 'product' => $product3,
                                 'productSku' => $product3->getSku(),
                                 'quantity' => $kitItemLineItemQuantity,
-                                'unit' => $unitEach,
+                                'productUnit' => $unitEach,
                                 'productUnitCode' => $unitEach->getCode(),
                                 'price' => $kitItemLineItemPrice,
                                 'nonExistentProperty' => 'sample data',
@@ -221,7 +222,7 @@ class CheckoutLineItemsConverterTest extends TestCase
                         'productUnit' => $unitItem,
                         'productUnitCode' => $unitItem->getCode(),
                         'price' => $price,
-                        'priceType' => OrderLineItem::PRICE_TYPE_BUNDLED,
+                        'priceType' => PriceTypeAwareInterface::PRICE_TYPE_BUNDLED,
                         'shipBy' => $now,
                         'fromExternalSource' => true,
                         'comment' => 'Comment',
@@ -241,7 +242,7 @@ class CheckoutLineItemsConverterTest extends TestCase
                                 ->setProduct($product3)
                                 ->setQuantity($kitItemLineItemQuantity)
                                 ->setPrice($kitItemLineItemPrice)
-                                ->setUnit($unitEach)
+                                ->setProductUnit($unitEach)
                         ),
                     (new OrderLineItem())->setProduct($product2)
                         ->setProductSku($product2->getSku())
@@ -250,7 +251,7 @@ class CheckoutLineItemsConverterTest extends TestCase
                         ->setProductUnitCode($unitItem->getCode())
                         ->setFreeFormProduct('test2')
                         ->setPrice($price)
-                        ->setPriceType(OrderLineItem::PRICE_TYPE_BUNDLED)
+                        ->setPriceType(PriceTypeAwareInterface::PRICE_TYPE_BUNDLED)
                         ->setShipBy($now)
                         ->setFromExternalSource(true)
                         ->setComment('Comment'),

@@ -10,6 +10,13 @@ class OrderLineItemStub extends OrderLineItem
     /** @var AbstractEnumValue */
     protected $internalStatus;
 
+    public function __construct(?int $id = null)
+    {
+        parent::__construct();
+
+        $this->id = $id;
+    }
+
     /**
      * @return AbstractEnumValue
      */

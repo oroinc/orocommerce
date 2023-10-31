@@ -1,0 +1,275 @@
+data:
+    type: orders
+    id: new
+    attributes:
+        identifier: null
+        poNumber: null
+        customerNotes: null
+        shipUntil: null
+        currency: USD
+        subtotalWithDiscounts: '68.0500'
+        subtotalValue: '68.0500'
+        totalValue: '68.0500'
+        shippingCostAmount: null
+        disablePromotions: null
+        shippingMethod: null
+        paymentStatus:
+            code: pending
+            label: 'Pending payment'
+        paymentMethod:
+            -
+                code: '@payment_term_method_config->type'
+                label: Payment Term
+        totalIncludingTax: '68.0500'
+        totalExcludingTax: '68.0500'
+        totalTaxAmount: '0.0000'
+        paymentTerm: '@payment_term_net_10->label'
+        discounts: {  }
+        shippingTrackings: {  }
+    relationships:
+        billingAddress:
+            data:
+                type: orderaddresses
+                id: new
+        shippingAddress:
+            data:
+                type: orderaddresses
+                id: new
+        lineItems:
+            data:
+                -
+                    type: orderlineitems
+                    id: new
+                -
+                    type: orderlineitems
+                    id: new
+        parent:
+            data: null
+        subOrders:
+            data: []
+        customerUser:
+            data:
+                type: customerusers
+                id: new
+        customer:
+            data:
+                type: customers
+                id: new
+included:
+    -
+        type: orderlineitems
+        id: new
+        meta:
+            includeId: item1
+        attributes:
+            productSku: PSKU1
+            productName: 'Product 1'
+            freeFormProduct: null
+            quantity: 10
+            productUnitCode: '<toString(@item->code)>'
+            price: '1.0100'
+            currency: USD
+            shipUntil: null
+            comment: null
+            shippingEstimateAmount: null
+            unitPriceIncludingTax: '1.0100'
+            unitPriceExcludingTax: '1.0100'
+            unitPriceTaxAmount: '0.0000'
+            rowTotalIncludingTax: '10.1000'
+            rowTotalExcludingTax: '10.1000'
+            rowTotalTaxAmount: '0.0000'
+            taxes: {  }
+            rowTotalDiscountAmount: '0.0000'
+            rowTotalAfterDiscountIncludingTax: '10.1000'
+            rowTotalAfterDiscountExcludingTax: '10.1000'
+            rowTotalAfterDiscount: '10.1000'
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: new
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+            kitItemLineItems:
+                data: []
+    -
+        type: orderaddresses
+        id: new
+        meta:
+            includeId: billingAddress
+        attributes:
+            phone: 123-456
+            label: 'Billing Address'
+            street: 'Street 1'
+            street2: 'Street 2'
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: Mr.
+            firstName: John
+            middleName: Edgar
+            lastName: Doo
+            nameSuffix: M.D.
+        relationships:
+            customerAddress:
+                data: null
+            customerUserAddress:
+                data: null
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: orderaddresses
+        id: new
+        meta:
+            includeId: shippingAddress
+        attributes:
+            phone: 123-456
+            label: 'Shipping Address'
+            street: 'Street 1'
+            street2: 'Street 2'
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: Mr.
+            firstName: John
+            middleName: Edgar
+            lastName: Doo
+            nameSuffix: M.D.
+        relationships:
+            customerAddress:
+                data: null
+            customerUserAddress:
+                data: null
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: orderlineitems
+        id: new
+        meta:
+            includeId: productKitLineItem1
+        attributes:
+            productSku: product-kit-1
+            productName: 'Product Kit with Single Kit Item'
+            freeFormProduct: null
+            quantity: 5
+            productUnitCode: '<toString(@product_unit.milliliter->code)>'
+            price: '11.5900'
+            currency: USD
+            shipUntil: null
+            comment: null
+            shippingEstimateAmount: null
+            unitPriceIncludingTax: '11.5900'
+            unitPriceExcludingTax: '11.5900'
+            unitPriceTaxAmount: '0.0000'
+            rowTotalIncludingTax: '57.9500'
+            rowTotalExcludingTax: '57.9500'
+            rowTotalTaxAmount: '0.0000'
+            taxes: {  }
+            rowTotalDiscountAmount: '0.0000'
+            rowTotalAfterDiscountIncludingTax: '57.9500'
+            rowTotalAfterDiscountExcludingTax: '57.9500'
+            rowTotalAfterDiscount: '57.9500'
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: new
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-kit-1->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data:
+                    -
+                        type: orderproductkititemlineitems
+                        id: new
+    -
+        type: orderproductkititemlineitems
+        id: new
+        attributes:
+            kitItemId: '@product-kit-1-kit-item-0->id'
+            kitItemLabel: '<toString(@product-kit-1-kit-item-0->defaultLabel)>'
+            optional: '@product-kit-1-kit-item-0->optional'
+            minimumQuantity: '@product-kit-1-kit-item-0->minimumQuantity'
+            maximumQuantity: '@product-kit-1-kit-item-0->maximumQuantity'
+            productId: '@product-1->id'
+            productSku: '<toString(@product-1->sku)>'
+            productName: '<toString(@product-1->defaultName)>'
+            quantity: 1
+            productUnitCode: '<toString(@product-kit-1-kit-item-0->productUnit->code)>'
+            productUnitPrecision: 0
+            sortOrder: 0
+            price: '11.5900'
+            currency: USD
+        relationships:
+            lineItem:
+                data:
+                    type: orderlineitems
+                    id: new
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-1-kit-item-0->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: customerusers
+        id: new
+        meta:
+            includeId: guest
+        attributes:
+            confirmed: false
+            email: test2341@test.com
+            namePrefix: null
+            firstName: null
+            middleName: null
+            lastName: null
+            nameSuffix: null
+            birthday: null
+            enabled: false
+        relationships:
+            userRoles:
+                data:
+                    -
+                        type: customeruserroles
+                        id: '<toString(@buyer->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: new
+            addresses:
+                data: []

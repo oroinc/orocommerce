@@ -329,6 +329,13 @@ class LineItem implements
         return $this;
     }
 
+    public function setProductUnit(ProductUnit $unit): self
+    {
+        $this->unit = $unit;
+
+        return $this;
+    }
+
     /**
      * @return string
      */

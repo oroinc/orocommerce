@@ -6,32 +6,32 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProduct;
 use Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProductValidator;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Exception\UnexpectedValueException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class LineItemProductValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator()
+    protected function createValidator(): LineItemProductValidator
     {
         return new LineItemProductValidator();
     }
 
-    public function testGetTargets()
+    public function testGetTargets(): void
     {
         $constraint = new LineItemProduct();
-        $this->assertEquals(LineItemProduct::CLASS_CONSTRAINT, $constraint->getTargets());
+        self::assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
     }
 
-    public function testValidateException()
+    public function testValidateException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Value must be instance of "Oro\Bundle\OrderBundle\Entity\OrderLineItem"');
+        $this->expectExceptionObject(new UnexpectedValueException(null, OrderLineItem::class));
 
         $constraint = new LineItemProduct();
         $this->validator->validate(null, $constraint);
     }
 
-    public function testValidateNoProduct()
+    public function testValidateNoProduct(): void
     {
         $value = (new OrderLineItem())->setPrice(Price::create(1, 'USD'));
 
@@ -39,33 +39,6 @@ class LineItemProductValidatorTest extends ConstraintValidatorTestCase
         $this->validator->validate($value, $constraint);
 
         $this->buildViolation($constraint->emptyProductMessage)
-            ->atPath('property.path.product')
-            ->assertRaised();
-    }
-
-    public function testValidateNoProductPrice()
-    {
-        $value = (new OrderLineItem())->setProduct(new Product());
-
-        $constraint = new LineItemProduct();
-        $this->validator->validate($value, $constraint);
-
-        $this->buildViolation($constraint->priceNotFoundMessage)
-            ->atPath('property.path.product')
-            ->assertRaised();
-    }
-
-    public function testValidateNoProductAndProductPrice()
-    {
-        $value = new OrderLineItem();
-
-        $constraint = new LineItemProduct();
-        $this->validator->validate($value, $constraint);
-
-        $this
-            ->buildViolation($constraint->emptyProductMessage)
-            ->atPath('property.path.product')
-            ->buildNextViolation($constraint->priceNotFoundMessage)
             ->atPath('property.path.product')
             ->assertRaised();
     }

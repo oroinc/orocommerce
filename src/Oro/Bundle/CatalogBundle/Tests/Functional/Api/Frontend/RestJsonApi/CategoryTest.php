@@ -324,7 +324,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testGetSubresourceForProducts()
+    public function testTryToGetSubresourceForProducts()
     {
         $response = $this->getSubresource(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1->id)>', 'association' => 'products'],
@@ -335,7 +335,7 @@ class CategoryTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testGetRelationshipForProducts()
+    public function testTryToGetRelationshipForProducts()
     {
         $response = $this->getRelationship(
             ['entity' => 'mastercatalogcategories', 'id' => '<toString(@category1->id)>', 'association' => 'products'],

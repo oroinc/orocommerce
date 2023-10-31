@@ -51,20 +51,18 @@ class MultiShippingCostProviderTest extends \PHPUnit\Framework\TestCase
         return $lineItem;
     }
 
-    public function testGetCalculatedMultiShippingCost()
+    public function testGetCalculatedMultiShippingCost(): void
     {
         $checkout = $this->getCheckout([
             $this->getCheckoutLineItem('flat_rate_1', 'primary'),
-            $this->getCheckoutLineItem('flat_rate_1', 'primary', 'USD', 5.10),
+            $this->getCheckoutLineItem('flat_rate_1', 'primary', 'USD', 5.1),
             $this->getCheckoutLineItem('flat_rate_2', 'primary')
         ]);
 
-        $this->lineItemShippingPriceProvider->expects($this->exactly(2))
+        $this->lineItemShippingPriceProvider->expects(self::exactly(2))
             ->method('getPrice')
-            ->willReturnOnConsecutiveCalls(Price::create(7.05, 'USD'), Price::create(18.46, 'USD'));
+            ->willReturnOnConsecutiveCalls(null, Price::create(1.2, 'USD'));
 
-        $result = $this->costProvider->getCalculatedMultiShippingCost($checkout);
-
-        $this->assertEquals(30.61, $result);
+        self::assertSame(6.3, $this->costProvider->getCalculatedMultiShippingCost($checkout));
     }
 }

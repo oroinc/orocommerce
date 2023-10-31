@@ -7,23 +7,11 @@ use Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService;
 
 class BasicRuleFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var BasicRuleFiltrationService */
-    private $service;
-
-    protected function setUp(): void
+    public function testGetFilteredRuleOwners(): void
     {
-        $this->service = new BasicRuleFiltrationService();
-    }
+        $ruleOwners = [$this->createMock(RuleOwnerInterface::class)];
 
-    public function testGetFilteredRuleOwners()
-    {
-        $context = [];
-
-        $ruleOwners = [
-            $this->createMock(RuleOwnerInterface::class),
-            $this->createMock(RuleOwnerInterface::class),
-        ];
-
-        self::assertEquals($ruleOwners, $this->service->getFilteredRuleOwners($ruleOwners, $context));
+        $filtrationService = new BasicRuleFiltrationService();
+        self::assertSame($ruleOwners, $filtrationService->getFilteredRuleOwners($ruleOwners, []));
     }
 }

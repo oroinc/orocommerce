@@ -343,7 +343,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         $table->addColumn('line_item_id', 'integer');
         $table->addColumn('product_kit_item_id', 'integer');
         $table->addColumn('product_id', 'integer');
-        $table->addColumn('unit_code', 'string', ['length' => 255]);
+        $table->addColumn('product_unit_id', 'string', ['length' => 255]);
         $table->addColumn('quantity', 'float');
         $table->addColumn('sort_order', 'integer', ['default' => 0]);
         $table->addColumn(
@@ -379,7 +379,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product_unit'),
-            ['unit_code'],
+            ['product_unit_id'],
             ['code'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

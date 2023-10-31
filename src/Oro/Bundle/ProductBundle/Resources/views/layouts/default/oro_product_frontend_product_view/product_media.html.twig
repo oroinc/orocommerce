@@ -27,8 +27,6 @@
 
     {% if popup_gallery %}
         {{ block('_product_view_media_gallery_widget') }}
-    {% else %}
-        {{ block('_product_view_media_slider_widget') }}
     {% endif %}
 {% endblock %}
 
@@ -173,63 +171,4 @@
             {% endfor %}
         </div>
     {% endif %}
-{% endblock %}
-
-{% block _product_view_media_slider_widget %}
-    {% import '@OroUI/macros.html.twig' as UI %}
-
-    {% set imageListOptions = {
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        fade: true,
-        arrows: true,
-        lazyLoad: 'progressive',
-        infinite: true,
-        dots: true,
-    } %}
-
-    {% set slideImageAttr = productImages|length > 1 ? {
-        'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
-        'data-page-component-options': imageListOptions|json_encode
-    } : {} %}
-
-    <div class="product-view-media-slider" {{ UI.attributes(slideImageAttr) }}>
-        {% if productImages|length == 0 %}
-            <div class="product-view-media-slider__image-item">
-                {% include '@OroAttachment/Twig/picture.html.twig' with {
-                    sources: product_filtered_picture_sources(null, 'product_gallery_main'),
-                    img_attrs: {
-                        class: 'product-view-media-slider__image',
-                        alt: product.names|localized_value,
-                        width: 378,
-                        height: 378,
-                    }
-                } %}
-            </div>
-        {% else %}
-            {% for productImage in productImages %}
-                <div class="product-view-media-slider__image-item">
-                    {% set img_attrs = {
-                        class: 'product-view-media-slider__image',
-                        alt: product.names|localized_value|e
-                    } %}
-
-                    {% if loop.first %}
-                        {% set img_attrs = {
-                            src: product_filtered_image(productImage.image, 'product_gallery_main'),
-                        }|merge(img_attrs) %}
-                    {% else %}
-                        {% set img_attrs = {
-                            'data-lazy': product_filtered_image(productImage.image, 'product_gallery_main'),
-                        }|merge(img_attrs) %}
-                    {% endif %}
-
-                    {% include '@OroAttachment/Twig/picture.html.twig' with {
-                        sources: product_filtered_picture_sources(productImage.image, 'product_gallery_main'),
-                        img_attrs: img_attrs
-                    } %}
-                </div>
-            {% endfor %}
-        {% endif %}
-    </div>
 {% endblock %}

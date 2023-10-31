@@ -5,47 +5,64 @@ namespace Oro\Bundle\RuleBundle\Tests\Unit\RuleFiltration;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
-use Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator;
+use Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 class EnabledRuleFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $service;
+    private $baseFiltrationService;
 
-    /** @var EnabledRuleFiltrationServiceDecorator */
-    private $serviceDecorator;
+    /** @var EnabledRuleFiltrationService */
+    private $filtrationService;
 
     protected function setUp(): void
     {
-        $this->service = $this->createMock(RuleFiltrationServiceInterface::class);
+        $this->baseFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);
 
-        $this->serviceDecorator = new EnabledRuleFiltrationServiceDecorator($this->service);
+        $this->filtrationService = new EnabledRuleFiltrationService($this->baseFiltrationService);
+    }
+
+    private function getRule(bool $enabled): Rule
+    {
+        $rule = new Rule();
+        $rule->setEnabled($enabled);
+
+        return $rule;
+    }
+
+    private function getRuleOwner(RuleInterface $rule): RuleOwnerInterface
+    {
+        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
+        $ruleOwner->expects(self::any())
+            ->method('getRule')
+            ->willReturn($rule);
+
+        return $ruleOwner;
     }
 
     /**
      * @dataProvider getFilteredRuleOwnersDataProvider
-     * @param RuleOwnerInterface[]|array $ruleOwners
-     * @param RuleOwnerInterface[]|array $expectedRuleOwners
      */
-    public function testGetFilteredRuleOwners(array $ruleOwners, array $expectedRuleOwners)
+    public function testGetFilteredRuleOwners(array $ruleOwners, array $expectedRuleOwners): void
     {
         $context = [];
-        $this->service->expects(self::once())
+
+        $this->baseFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
             ->with($expectedRuleOwners, $context)
             ->willReturn($expectedRuleOwners);
-        $actualShippingRuleOwners = $this->serviceDecorator->getFilteredRuleOwners($ruleOwners, $context);
-        self::assertEquals($expectedRuleOwners, $actualShippingRuleOwners);
+
+        self::assertEquals(
+            $expectedRuleOwners,
+            $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)
+        );
     }
 
     public function getFilteredRuleOwnersDataProvider(): array
     {
-        $enabledRule = (new Rule())->setEnabled(true);
-        $disabledRule = (new Rule())->setEnabled(false);
-
-        $ownerEnabledRule = $this->createRuleOwner($enabledRule);
-        $ownerDisabledRule = $this->createRuleOwner($disabledRule);
+        $ownerEnabledRule = $this->getRuleOwner($this->getRule(true));
+        $ownerDisabledRule = $this->getRuleOwner($this->getRule(false));
 
         return [
             'one disabled rule owner' => [
@@ -61,15 +78,5 @@ class EnabledRuleFiltrationServiceTest extends \PHPUnit\Framework\TestCase
                 'expectedRuleOwners' => [$ownerEnabledRule],
             ],
         ];
-    }
-
-    private function createRuleOwner(RuleInterface $rule): RuleOwnerInterface
-    {
-        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
-        $ruleOwner->expects(self::any())
-            ->method('getRule')
-            ->willReturn($rule);
-
-        return $ruleOwner;
     }
 }

@@ -9,7 +9,6 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Tests\Functional\Entity\ConsentFeatureTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
 use Symfony\Component\DomCrawler\Crawler;
@@ -26,7 +25,7 @@ class ConsentControllerTest extends WebTestCase
 
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
@@ -48,22 +47,19 @@ class ConsentControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_consent_index'));
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         self::assertStringContainsString('consents-grid', $crawler->html());
     }
 
     public function testCreate(): int
     {
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
-        $this->configManager->set(
-            WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME,
-            $webCatalog
-        );
+        $this->configManager->set('oro_web_catalog.web_catalog', $webCatalog);
         $this->configManager->flush();
         $contentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2);
         $crawler = $this->client->request('GET', $this->getUrl('oro_consent_create'));
         $result  = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Save and Close')->form();
 
@@ -74,17 +70,17 @@ class ConsentControllerTest extends WebTestCase
         unset($formValues['oro_consent']['declinedNotification']);
         $formValues['input_action'] = '{"route":"oro_consent_update","params":{"id":"$id"}}';
 
-        $this->assertEquals(
+        self::assertEquals(
             $webCatalog->getId(),
             $form['oro_consent[webcatalog]']->getValue()
         );
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
 
         // Submit form
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
         $result = $this->client->getResponse();
 
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertConsentSaved($crawler, self::CONSENT_TEST_NAME, 'Consent has been created');
 
         return $this->getConsentDataByName(self::CONSENT_TEST_NAME)->getId();
@@ -101,7 +97,7 @@ class ConsentControllerTest extends WebTestCase
         self::assertStringContainsString(self::CONSENT_TEST_NAME, $html);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Save and Close')->form();
 
@@ -112,13 +108,13 @@ class ConsentControllerTest extends WebTestCase
 
         // Submit form
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
 
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertConsentSaved($crawler, self::CONSENT_UPDATED_TEST_NAME, 'Consent has been saved');
 
         $consent = $this->getConsentDataByName(self::CONSENT_UPDATED_TEST_NAME);
-        $this->assertEquals($id, $consent->getId());
+        self::assertEquals($id, $consent->getId());
 
         return $consent->getId();
     }
@@ -145,8 +141,8 @@ class ConsentControllerTest extends WebTestCase
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
-        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertEquals(
+        self::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertEquals(
             [
                 'success' => true,
                 'message' => '',
@@ -161,7 +157,7 @@ class ConsentControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
 
-        $this->assertHtmlResponseStatusCodeEquals($result, 404);
+        self::assertHtmlResponseStatusCodeEquals($result, 404);
     }
 
     private function assertConsentSaved(Crawler $crawler, string $consentName, string $assertText): void
@@ -171,16 +167,17 @@ class ConsentControllerTest extends WebTestCase
         self::assertStringContainsString($assertText, $html);
         self::assertStringContainsString($consentName, $html);
         self::assertStringContainsString($contentNode->getDefaultTitle()->getString(), $html);
-        $this->assertEquals($consentName, $crawler->filter('h1.page-title__entity-title')->html());
+        self::assertEquals($consentName, $crawler->filter('h1.page-title__entity-title')->html());
     }
 
     private function getConsentDataByName(string $name): Consent
     {
         /** @var EntityRepository $repository */
-        $repository = $this->getContainer()->get('doctrine')
+        $repository = self::getContainer()->get('doctrine')
             ->getRepository(Consent::class);
         $qb = $repository->createQueryBuilder('consent');
         $joinExpr = $qb->expr()->isNull('name.localization');
+        /** @var Consent $consent */
         $consent = $qb
             ->select('partial consent.{id}')
             ->innerJoin('consent.names', 'name', Join::WITH, $joinExpr)
@@ -190,8 +187,8 @@ class ConsentControllerTest extends WebTestCase
             ->getQuery()
             ->getOneOrNullResult();
 
-        $this->assertNotEmpty($consent);
-        $this->assertEquals(false, $consent->getDeclinedNotification());
+        self::assertNotEmpty($consent);
+        self::assertFalse($consent->getDeclinedNotification());
 
         return $consent;
     }

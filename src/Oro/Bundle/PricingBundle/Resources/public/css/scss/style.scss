@@ -163,3 +163,23 @@
         margin-left: $allow-merge-block-label-offset;
     }
 }
+
+.line-item-product-prices-extended {
+    display: flex;
+    flex-direction: column;
+    row-gap: $content-padding-small / 2;
+
+    .prices-tier-per-item {
+        color: $primary-550;
+        align-self: center;
+        white-space: nowrap;
+        padding-left: $content-padding-small;
+    }
+
+    .line-item-matched-price {
+        color: $primary-550;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+    }
+}

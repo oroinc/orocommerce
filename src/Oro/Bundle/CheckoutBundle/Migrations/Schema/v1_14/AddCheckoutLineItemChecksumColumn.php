@@ -9,7 +9,7 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 /**
- * Adds "checksum" column for {@see CheckoutProductKitItemLineItem::$checksum} field.
+ * Adds "checksum" column for {@see CheckoutLineItem::$checksum} field.
  */
 class AddCheckoutLineItemChecksumColumn implements Migration
 {

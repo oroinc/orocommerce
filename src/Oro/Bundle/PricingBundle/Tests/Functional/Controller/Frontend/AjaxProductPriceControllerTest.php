@@ -10,7 +10,6 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPr
 class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerTest
 {
     protected string $pricesByCustomerActionUrl = 'oro_pricing_frontend_price_by_customer';
-    protected string $matchingPriceActionUrl = 'oro_pricing_frontend_matching_price';
 
     /** @var Client */
     protected $client;

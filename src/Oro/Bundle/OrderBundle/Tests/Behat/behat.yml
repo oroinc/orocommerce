@@ -155,6 +155,33 @@ oro_behat_extension:
           Product:
             locator: '//div[contains(@id,"s2id_oro_order_type_lineItems_0_product-uid")]/input'
             type: xpath
+          ProductKitItem1Product:
+            locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][1]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
+            type: xpath
+          ProductKitItem1Quantity:
+            locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][1]/td//input[@data-name="field__quantity"]'
+            type: xpath
+          ProductKitItem1Price:
+            locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][1]/td//input[@data-name="field__value"]'
+            type: xpath
+          ProductKitItem2Product:
+            locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][2]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
+            type: xpath
+          ProductKitItem2Quantity:
+            locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][2]/td//input[@data-name="field__quantity"]'
+            type: xpath
+          ProductKitItem2Price:
+            locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][2]/td//input[@data-name="field__value"]'
+            type: xpath
+          ProductKitItem3Product:
+            locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][3]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
+            type: xpath
+          ProductKitItem3Quantity:
+            locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][3]/td//input[@data-name="field__quantity"]'
+            type: xpath
+          ProductKitItem3Price:
+            locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][3]/td//input[@data-name="field__value"]'
+            type: xpath
           Quantity:
             locator: '//input[@name="oro_order_type[lineItems][0][quantity]"]'
             type: xpath
@@ -163,6 +190,28 @@ oro_behat_extension:
             type: xpath
           Product2:
             locator: '//div[contains(@id,"s2id_oro_order_type_lineItems_1_product-uid")]/input'
+            type: xpath
+          Product2Dropdown:
+            element: Select2Entity
+            locator: '//div[contains(@id,"s2id_oro_order_type_lineItems_1_product-uid")]/input'
+            type: xpath
+          Product2KitItem1Product:
+            locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//tr[contains(@class, "order-line-kit-item")][1]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
+            type: xpath
+          Product2KitItem1Quantity:
+            locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//tr[contains(@class, "order-line-kit-item")][1]/td//input[@data-name="field__quantity"]'
+            type: xpath
+          Product2KitItem1Price:
+            locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//tr[contains(@class, "order-line-kit-item")][1]/td//input[@data-name="field__value"]'
+            type: xpath
+          Product2KitItem2Product:
+            locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//tr[contains(@class, "order-line-kit-item")][2]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
+            type: xpath
+          Product2KitItem2Quantity:
+            locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//tr[contains(@class, "order-line-kit-item")][2]/td//input[@data-name="field__quantity"]'
+            type: xpath
+          Product2KitItem2Price:
+            locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//tr[contains(@class, "order-line-kit-item")][2]/td//input[@data-name="field__value"]'
             type: xpath
           Quantity2:
             locator: '//input[@name="oro_order_type[lineItems][1][quantity]"]'
@@ -185,6 +234,116 @@ oro_behat_extension:
           Do Not Ship Later Than:
             type: 'css'
             locator: 'input[name^="oro_order_type_shipUntil"]'
+
+    Order Form Line Item 1 Remove:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//td[contains(@class, "order-line-item-remove")]/button'
+        type: xpath
+
+    Order Form Line Item 1 Kit Item 1 Label:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][1]/td[contains(@class, "line-item-label")]/label'
+        type: xpath
+
+    Order Form Line Item 1 Kit Item 1 Quantity Label Tooltip:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][1]/td[contains(@class, "line-item-quantity-label")]//i[contains(@class, "tooltip-icon")]'
+        type: xpath
+
+    Order Form Line Item 1 Kit Item 1 Unit:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][1]/td//span[contains(@class, "prices-tier-per-item")]'
+        type: xpath
+
+    Order Form Line Item 1 Price Overridden:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//td[contains(@class, "order-line-item-price")]//div[contains(@class, "product-price-overridden")]'
+        type: xpath
+
+    Order Form Line Item 1 Kit Item 1 Matched Price:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][1]/td//div[contains(@class, "line-item-matched-price")]//strong'
+        type: xpath
+
+    Order Form Line Item 1 Kit Item 1 Price Overridden:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][1]/td//div[contains(@class, "product-price-overridden")]'
+        type: xpath
+
+    Order Form Line Item 1 Kit Item 2 Label:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][2]/td[contains(@class, "line-item-label")]/label'
+        type: xpath
+
+    Order Form Line Item 1 Kit Item 2 Quantity Label Tooltip:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][2]/td[contains(@class, "line-item-quantity-label")]//i[contains(@class, "tooltip-icon")]'
+        type: xpath
+
+    Order Form Line Item 1 Kit Item 2 Unit:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][2]/td//span[contains(@class, "prices-tier-per-item")]'
+        type: xpath
+
+    Order Form Line Item 1 Kit Item 2 Matched Price:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][2]/td//div[contains(@class, "line-item-matched-price")]//strong'
+        type: xpath
+
+    Order Form Line Item 1 Kit Item 2 Price Overridden:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][2]/td//div[contains(@class, "product-price-overridden")]'
+        type: xpath
+
+    Order Form Line Item 1 Kit Item 3 Label:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][3]/td[contains(@class, "line-item-label")]/label'
+        type: xpath
+
+    Order Form Line Item 2 Price Overridden:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//td[contains(@class, "order-line-item-price")]//div[contains(@class, "product-price-overridden")]'
+        type: xpath
+
+    Order Form Line Item 2 Remove:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//td[contains(@class, "order-line-item-remove")]/button'
+        type: xpath
+
+    Order Form Line Item 2 Kit Item 1 Label:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//tr[contains(@class, "order-line-kit-item")][1]/td[contains(@class, "line-item-label")]/label'
+        type: xpath
+
+    Order Form Line Item 2 Kit Item 1 Matched Price:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//tr[contains(@class, "order-line-kit-item")][1]/td//div[contains(@class, "line-item-matched-price")]//strong'
+        type: xpath
+
+    Order Form Line Item 2 Kit Item 1 Price Overridden:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//tr[contains(@class, "order-line-kit-item")][1]/td//div[contains(@class, "product-price-overridden")]'
+        type: xpath
+
+    Order Form Line Item 2 Kit Item 2 Label:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//tr[contains(@class, "order-line-kit-item")][2]/td[contains(@class, "line-item-label")]/label'
+        type: xpath
+
+    Order Form Line Item 2 Kit Item 2 Matched Price:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//tr[contains(@class, "order-line-kit-item")][2]/td//div[contains(@class, "line-item-matched-price")]//strong'
+        type: xpath
+
+    Order Form Line Item 2 Kit Item 2 Price Overridden:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][1]"]//tr[contains(@class, "order-line-kit-item")][2]/td//div[contains(@class, "product-price-overridden")]'
+        type: xpath
+
+    Order Product Kit Item Line Item Product Ghost Option 1:
+      selector:
+        locator: '//li[1][contains(@class, "select2-result") and contains(@class, "ghost-option")]'
+        type: xpath
 
     Order Form Line Item 1 Offer 1:
       selector: '[name="oro_order_type[lineItems][0][offers]"]'

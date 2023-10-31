@@ -24,18 +24,23 @@ class CreateOrderProductKitItemLineItemTable implements Migration
     private function createOrderProductKitItemLineItemTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_order_product_kit_item_line_item');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('line_item_id', 'integer');
+        $table->addColumn('id', 'integer', ['notnull' => true, 'autoincrement' => true]);
+        $table->addColumn('line_item_id', 'integer', ['notnull' => true]);
         $table->addColumn('product_kit_item_id', 'integer', ['notnull' => false]);
-        $table->addColumn('product_kit_item_label', 'string', ['length' => 255]);
-        $table->addColumn('product_kit_item_optional', 'boolean', ['default' => false]);
+        $table->addColumn('product_kit_item_id_fallback', 'integer', ['notnull' => true]);
+        $table->addColumn('product_kit_item_label', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('optional', 'boolean', ['notnull' => true, 'default' => false]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
-        $table->addColumn('product_sku', 'string', ['length' => 255]);
-        $table->addColumn('product_name', 'string', ['length' => 255]);
-        $table->addColumn('unit_code', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('product_unit_code', 'string', ['length' => 255]);
-        $table->addColumn('quantity', 'float');
-        $table->addColumn('sort_order', 'integer', ['default' => 0]);
+        $table->addColumn('product_id_fallback', 'integer', ['notnull' => true]);
+        $table->addColumn('product_sku', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('product_name', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('product_unit_code', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('product_unit_precision', 'integer', ['notnull' => true]);
+        $table->addColumn('quantity', 'float', ['notnull' => true]);
+        $table->addColumn('minimum_quantity', 'float', ['notnull' => false]);
+        $table->addColumn('maximum_quantity', 'float', ['notnull' => false]);
+        $table->addColumn('sort_order', 'integer', ['notnull' => true, 'default' => 0]);
         $table->addColumn(
             'value',
             'money',
@@ -68,7 +73,7 @@ class CreateOrderProductKitItemLineItemTable implements Migration
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product_unit'),
-            ['unit_code'],
+            ['product_unit_id'],
             ['code'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );

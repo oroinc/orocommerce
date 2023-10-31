@@ -93,7 +93,7 @@ class ProductKitPriceByMatchingCriteriaProviderTest extends TestCase
             new ProductKitPriceDTO(
                 $productPriceCriteria->getProduct(),
                 Price::create(0.0, $productPriceCriteria->getCurrency()),
-                0.0,
+                1.0,
                 $productPriceCriteria->getProductUnit()
             ),
             $this->provider->getProductPriceMatchingCriteria($productPriceCriteria, $productPriceCollection)
@@ -162,7 +162,7 @@ class ProductKitPriceByMatchingCriteriaProviderTest extends TestCase
         $productKitPriceDTO = (new ProductKitPriceDTO(
             $productKitPriceCriteria->getProduct(),
             Price::create(12.68, $productKitPriceCriteria->getCurrency()),
-            0.0,
+            1.0,
             $productKitPriceCriteria->getProductUnit()
         ))
             ->addKitItemPrice($kitItem2PriceDTO);

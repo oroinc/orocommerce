@@ -50,10 +50,10 @@ class MessageFactory
         return $data;
     }
 
-    public function createShoppingListTotalsInvalidateMessageForConfigScope(string $scope, int|string $id): array
+    public function createShoppingListTotalsInvalidateMessageForConfigScope(string $scope, int $scopeId): array
     {
         if ($scope === 'website') {
-            return [self::CONTEXT_KEY => [self::CLASS_KEY => Website::class, self::ID_KEY => $id]];
+            return [self::CONTEXT_KEY => [self::CLASS_KEY => Website::class, self::ID_KEY => $scopeId]];
         }
 
         return [];

@@ -4,89 +4,76 @@ namespace Oro\Bundle\OrderBundle\Pricing;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
-use Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider;
+use Oro\Bundle\PricingBundle\ProductKit\ProductLineItemPrice\ProductKitLineItemPrice;
+use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 
 /**
  * Match prices by order line items.
  */
 class PriceMatcher
 {
-    /** @var MatchingPriceProvider */
-    protected $provider;
+    private ProductLineItemPriceProviderInterface $productLineItemPriceProvider;
 
-    /** @var ProductPriceScopeCriteriaFactoryInterface */
-    protected $priceScopeCriteriaFactory;
-
-    private ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory;
+    private ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory;
 
     public function __construct(
-        MatchingPriceProvider $provider,
-        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
-        ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory
+        ProductLineItemPriceProviderInterface $productLineItemPriceProvider,
+        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory
     ) {
-        $this->provider = $provider;
+        $this->productLineItemPriceProvider = $productLineItemPriceProvider;
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
-        $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
-    /**
-     * @param Order $order
-     * @return array
-     */
-    public function getMatchingPrices(Order $order)
+    public function addMatchingPrices(Order $order): void
     {
-        $lineItems = $order->getLineItems()->map(
-            function (OrderLineItem $orderLineItem) use ($order) {
-                $product = $orderLineItem->getProduct();
-
-                return [
-                    'product' => $product ? $product->getId() : null,
-                    'unit' => $orderLineItem->getProductUnit() ? $orderLineItem->getProductUnit()->getCode() : null,
-                    'qty' => $orderLineItem->getQuantity(),
-                    'currency' => $orderLineItem->getCurrency() ?: $order->getCurrency(),
-                ];
+        $lineItems = [];
+        foreach ($order->getLineItems() as $key => $lineItem) {
+            if ($lineItem->getProduct() === null) {
+                continue;
             }
-        );
 
-        return $this->provider->getMatchingPrices(
-            $lineItems->toArray(),
-            $this->priceScopeCriteriaFactory->createByContext($order)
-        );
-    }
+            if ($lineItem->getCurrency() === null || $lineItem->getValue() === null) {
+                $lineItems[$key] = $lineItem;
+            }
+        }
 
-    public function fillMatchingPrices(Order $order, array $matchedPrices = [])
-    {
-        $lineItems = $order->getLineItems();
+        if ($lineItems) {
+            $productLineItemsPrices = $this->productLineItemPriceProvider->getProductLineItemsPrices(
+                $lineItems,
+                $this->priceScopeCriteriaFactory->createByContext($order),
+                $order->getCurrency()
+            );
 
-        $productsPriceCriteria = $this->productPriceCriteriaFactory->createListFromProductLineItems(
-            $lineItems,
-            $order->getCurrency()
-        );
+            foreach ($lineItems as $key => $lineItem) {
+                if (!isset($productLineItemsPrices[$key])) {
+                    continue;
+                }
 
-        foreach ($productsPriceCriteria as $lineItemIdx => $productPriceCriteria) {
-            $identifier = $productPriceCriteria->getIdentifier();
-            if (array_key_exists($identifier, $matchedPrices)) {
-                $this->fillOrderLineItemData($lineItems->get($lineItemIdx), $matchedPrices[$identifier]);
+                $this->fillPrice($lineItem, $productLineItemsPrices[$key]);
             }
         }
     }
 
-    public function addMatchingPrices(Order $order)
+    private function fillPrice(OrderLineItem $lineItem, ProductLineItemPrice $productLineItemPrice): void
     {
-        $matchedPrices = $this->getMatchingPrices($order);
-
-        $this->fillMatchingPrices($order, $matchedPrices);
-    }
-
-    protected function fillOrderLineItemData(OrderLineItem $orderLineItem, array $matchedPrice = [])
-    {
-        if (null === $orderLineItem->getCurrency() && !empty($matchedPrice['currency'])) {
-            $orderLineItem->setCurrency((string)$matchedPrice['currency']);
+        $lineItem->setPrice(clone($productLineItemPrice->getPrice()));
+        if ($lineItem->getProduct()->isKit() !== true) {
+            return;
         }
-        if (null === $orderLineItem->getValue() && !empty($matchedPrice['value'])) {
-            $orderLineItem->setValue((string)$matchedPrice['value']);
+
+        if (!$productLineItemPrice instanceof ProductKitLineItemPrice) {
+            return;
+        }
+
+        foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
+            $kitItemLineItemPrice = $productLineItemPrice->getKitItemLineItemPrice($kitItemLineItem);
+            if ($kitItemLineItemPrice === null) {
+                continue;
+            }
+
+            $kitItemLineItem->setPrice(clone($kitItemLineItemPrice->getPrice()));
         }
     }
 }

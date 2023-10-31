@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Oro\Bundle\PricingBundle\ProductKit\ProductPriceCriteria\Builder;
 
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaBuilder\ProductPriceCriteriaBuilderInterface;
+use Oro\Bundle\PricingBundle\ProductKit\ProductPriceCriteria\ProductKitPriceCriteria;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
  * Interface for product kit price criteria builders.
+ *
+ * @method ProductKitPriceCriteria create()
  */
 interface ProductKitPriceCriteriaBuilderInterface extends ProductPriceCriteriaBuilderInterface
 {

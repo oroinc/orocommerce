@@ -7,8 +7,8 @@ namespace Oro\Bundle\ShoppingListBundle\ProductKit\Factory;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
-use Oro\Bundle\ShoppingListBundle\ProductKit\Provider\ProductKitItemProductsProvider;
 
 /**
  * Creates an instance of {@see ProductKitItemLineItem} for use in the product kit shopping list line item.
@@ -33,7 +33,7 @@ class ProductKitItemLineItemFactory
             ->setSortOrder($kitItem->getSortOrder());
 
         if ($product === null && !$kitItem->isOptional()) {
-            $product = $this->kitItemProductsProvider->getFirstProductAvailableForPurchase($kitItem);
+            $product = $this->kitItemProductsProvider->getFirstAvailableProduct($kitItem);
         }
 
         $kitItemLineItem->setProduct($product);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional\Api\RestJsonApi;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
@@ -30,10 +30,7 @@ class ProductLocalizedFallbackValueTest extends RestJsonApiTestCase
     public function testUpdateProductName(): void
     {
         $response = $this->patch(
-            [
-                'entity' => 'productnames',
-                'id' => '<toString(@product1_name->id)>'
-            ],
+            ['entity' => 'productnames', 'id' => '<toString(@product1_name->id)>'],
             [
                 'data' => [
                     'type' => 'productnames',
@@ -44,42 +41,37 @@ class ProductLocalizedFallbackValueTest extends RestJsonApiTestCase
                     ],
                     'relationships' => [
                         'product' => [
-                            'data' => [
-                                'type' => 'products',
-                                'id' => '<toString(@product1->id)>'
-                            ]
+                            'data' => ['type' => 'products', 'id' => '<toString(@product1->id)>']
                         ]
                     ]
-                ]]
+                ]
+            ]
         );
 
         $this->assertResponseContains('update_product_name.yml', $response);
 
         /** @var ProductName $productName */
         $productName = $this->getReference('product1_name');
-        $this->assertEquals('An Updated Name', $productName->getProduct()->getDenormalizedDefaultName());
-        $this->assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
-        $this->assertMessageSent(
+        self::assertEquals('An Updated Name', $productName->getProduct()->getDenormalizedDefaultName());
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
+        self::assertMessageSent(
             WebsiteSearchReindexTopic::getName(),
             [
                 'class' => [Product::class],
                 'granulize' => true,
                 'context' => [
-                    'websiteIds' => [$this->getDefaultWebsiteId()],
+                    'websiteIds' => [self::getDefaultWebsiteId()],
                     'entityIds' => [$productName->getProduct()->getId()],
-                ],
+                ]
             ]
         );
-        $this->assertMessageSentWithPriority(WebsiteSearchReindexTopic::getName(), MessagePriority::LOW);
+        self::assertMessageSentWithPriority(WebsiteSearchReindexTopic::getName(), MessagePriority::LOW);
     }
 
     public function testUpdateProductDescription(): void
     {
         $response = $this->patch(
-            [
-                'entity' => 'productdescriptions',
-                'id' => '<toString(@product1_es_description->id)>'
-            ],
+            ['entity' => 'productdescriptions', 'id' => '<toString(@product1_es_description->id)>'],
             [
                 'data' => [
                     'type' => 'productdescriptions',
@@ -94,37 +86,32 @@ class ProductLocalizedFallbackValueTest extends RestJsonApiTestCase
                     ],
                     'relationships' => [
                         'localization' => [
-                            'data' => [
-                                "type" => "localizations",
-                                "id" => '<toString(@es->id)>',
-                            ]
+                            'data' => ['type' => 'localizations', 'id' => '<toString(@es->id)>']
                         ],
                         'product' => [
-                            'data' => [
-                                'type' => 'products',
-                                'id' => '<toString(@product1->id)>'
-                            ]
+                            'data' => ['type' => 'products', 'id' => '<toString(@product1->id)>']
                         ]
                     ]
-                ]]
+                ]
+            ]
         );
 
         $this->assertResponseContains('update_product_description.yml', $response);
 
         /** @var ProductDescription $productDesc */
         $productDesc = $this->getReference('product1_es_description');
-        $this->assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
-        $this->assertMessageSent(
+        self::assertMessagesCount(WebsiteSearchReindexTopic::getName(), 1);
+        self::assertMessageSent(
             WebsiteSearchReindexTopic::getName(),
             [
                 'class' => [Product::class],
                 'granulize' => true,
                 'context' => [
-                    'websiteIds' => [$this->getDefaultWebsiteId()],
+                    'websiteIds' => [self::getDefaultWebsiteId()],
                     'entityIds' => [$productDesc->getProduct()->getId()],
                 ],
             ]
         );
-        $this->assertMessageSentWithPriority(WebsiteSearchReindexTopic::getName(), MessagePriority::LOW);
+        self::assertMessageSentWithPriority(WebsiteSearchReindexTopic::getName(), MessagePriority::LOW);
     }
 }

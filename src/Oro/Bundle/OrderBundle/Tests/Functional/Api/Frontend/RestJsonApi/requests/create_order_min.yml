@@ -14,6 +14,9 @@ data:
                 -
                     type: orderlineitems
                     id: item1
+                -
+                    type: orderlineitems
+                    id: productKitLineItem1
 included:
     -
         type: orderlineitems
@@ -45,3 +48,40 @@ included:
                 data:
                     type: customeraddresses
                     id: '<toString(@customer_address->id)>'
+    -
+        type: orderlineitems
+        id: productKitLineItem1
+        attributes:
+            quantity: 5
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-kit-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data:
+                    -
+                        type: orderproductkititemlineitems
+                        id: orderproductkititemlineitem1
+    -
+        type: orderproductkititemlineitems
+        id: orderproductkititemlineitem1
+        attributes:
+            quantity: 1
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-1-kit-item-0->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'

@@ -3,7 +3,6 @@ data:
         type: shoppinglistitems
         id: '<toString(@line_item1->id)>'
         attributes:
-            checksum: ''
             quantity: 5
             notes: null
             currency: USD
@@ -33,7 +32,7 @@ data:
             quantity: 2
             notes: null
             currency: USD
-            value: '12.34'
+            value: '21.82'
         relationships:
             product:
                 data:

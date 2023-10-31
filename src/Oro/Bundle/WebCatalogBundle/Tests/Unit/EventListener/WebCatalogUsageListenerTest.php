@@ -8,12 +8,11 @@ use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogUsageListener;
 use Oro\Bundle\WebCatalogBundle\Provider\CacheableWebCatalogUsageProvider;
-use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebCatalogUsageListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|CacheableWebCatalogUsageProvider */
+    /** @var CacheableWebCatalogUsageProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $cacheableProvider;
 
     /** @var WebCatalogUsageListener */
@@ -28,12 +27,8 @@ class WebCatalogUsageListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnConfigurationUpdateWhenWebCatalogConfigIsNotChanged()
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
+        $event = new ConfigUpdateEvent([], 'global', 0);
 
-        $event->expects(self::once())
-            ->method('isChanged')
-            ->with(WebCatalogUsageProvider::SETTINGS_KEY)
-            ->willReturn(false);
         $this->cacheableProvider->expects(self::never())
             ->method('clearCache');
 
@@ -42,12 +37,8 @@ class WebCatalogUsageListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnConfigurationUpdateWhenWebCatalogConfigIsChanged()
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
+        $event = new ConfigUpdateEvent(['oro_web_catalog.web_catalog' => ['old' => 1, 'new' => 2]], 'global', 0);
 
-        $event->expects(self::once())
-            ->method('isChanged')
-            ->with(WebCatalogUsageProvider::SETTINGS_KEY)
-            ->willReturn(true);
         $this->cacheableProvider->expects(self::once())
             ->method('clearCache');
 

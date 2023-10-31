@@ -10,6 +10,11 @@
     }
 
     &__item-quantity {
+        padding-right: $offset-x-m;
         color: $product-kit-line-items-quantity-color;
+    }
+
+    &__item-price {
+        font-weight: bold;
     }
 }

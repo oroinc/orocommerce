@@ -7,23 +7,20 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface;
 
 /**
- * Provides empty discounts for the order which has subOrders.
+ * Provides empty discounts for an order that has sub orders.
+ * For such orders promotions should not be applied.
  */
 class MainOrderPromotionDiscountsProviderDecorator implements PromotionDiscountsProviderInterface
 {
-    private PromotionDiscountsProviderInterface $baseDiscountsProvider;
-
-    public function __construct(PromotionDiscountsProviderInterface $baseDiscountsProvider)
-    {
-        $this->baseDiscountsProvider = $baseDiscountsProvider;
+    public function __construct(
+        private PromotionDiscountsProviderInterface $baseDiscountsProvider
+    ) {
     }
 
     /**
      * {@inheritDoc}
-     * Promotions should not be applied to orders with subOrders. For this cases return empty promotions set for such
-     * orders.
      */
-    public function getDiscounts($sourceEntity, DiscountContextInterface $context): array
+    public function getDiscounts(object $sourceEntity, DiscountContextInterface $context): array
     {
         if ($sourceEntity instanceof Order && !$sourceEntity->getSubOrders()->isEmpty()) {
             return [];

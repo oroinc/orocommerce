@@ -14,34 +14,29 @@ use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemBatchUpdateHandler
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Model\LineItemModel;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ShoppingListLineItemBatchUpdateHandlerTest extends \PHPUnit\Framework\TestCase
+class ShoppingListLineItemBatchUpdateHandlerTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var LineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $lineItemRepository;
+    private LineItemRepository|MockObject $lineItemRepository;
 
-    /** @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $productUnitRepository;
+    private ProductUnitRepository|MockObject $productUnitRepository;
 
-    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityManager;
+    private ObjectManager|MockObject $entityManager;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
+    private DoctrineHelper|MockObject $doctrineHelper;
 
-    /** @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $shoppingListManager;
+    private ShoppingListManager|MockObject $shoppingListManager;
 
-    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $validator;
+    private ValidatorInterface|MockObject $validator;
 
-    /** @var ShoppingListLineItemBatchUpdateHandler */
-    private $handler;
+    private ShoppingListLineItemBatchUpdateHandler $handler;
 
     protected function setUp(): void
     {
@@ -101,12 +96,9 @@ class ShoppingListLineItemBatchUpdateHandlerTest extends \PHPUnit\Framework\Test
             ->with([$product1, $product2], [$model1->getUnitCode(), $model2->getUnitCode()])
             ->willReturn([$model1->getUnitCode() => $productUnit1, $model2->getUnitCode() => $productUnit2]);
 
-        $this->shoppingListManager->expects($this->exactly(2))
-            ->method('addLineItem')
-            ->withConsecutive(
-                [$item1, $shoppingList, false, true],
-                [$item2, $shoppingList, false, true]
-            );
+        $this->shoppingListManager->expects($this->once())
+            ->method('batchUpdateLineItems')
+            ->with(['1001' => $item1, '2002' => $item2], $shoppingList, false, true);
 
         $this->validator->expects($this->once())
             ->method('validate')
@@ -150,10 +142,8 @@ class ShoppingListLineItemBatchUpdateHandlerTest extends \PHPUnit\Framework\Test
             ->willReturn([$model1->getUnitCode() => $productUnit1]);
 
         $this->shoppingListManager->expects($this->once())
-            ->method('addLineItem')
-            ->withConsecutive(
-                [$item1, $shoppingList, false, true],
-            );
+            ->method('batchUpdateLineItems')
+            ->with(['1001' => $item1], $shoppingList, false, true);
 
         $this->validator->expects($this->once())
             ->method('validate')

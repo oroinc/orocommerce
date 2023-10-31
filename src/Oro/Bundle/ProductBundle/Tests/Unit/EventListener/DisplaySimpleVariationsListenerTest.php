@@ -33,11 +33,7 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testConfigWasChanged()
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects($this->once())
-            ->method('isChanged')
-            ->with(self::CONFIG_KEY)
-            ->willReturn(true);
+        $event = new ConfigUpdateEvent([self::CONFIG_KEY => ['old' => 1, 'new' => 2]], 'global', 0);
 
         $this->productCache->expects($this->once())
             ->method('clear');
@@ -50,11 +46,7 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testConfigWasNotChanged()
     {
-        $event = $this->createMock(ConfigUpdateEvent::class);
-        $event->expects($this->once())
-            ->method('isChanged')
-            ->with(self::CONFIG_KEY)
-            ->willReturn(false);
+        $event = new ConfigUpdateEvent([], 'global', 0);
 
         $this->productCache->expects($this->never())
             ->method('clear');

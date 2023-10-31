@@ -1,0 +1,135 @@
+include:
+    - '@OroCustomerBundle:CustomerAndCustomerUserWithAddressFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product_kit1:
+        sku: 'product-kit-01'
+        type: 'kit'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            -   setDefaultName: [ 'Product Kit 01' ]
+            -   addKitItem: [ '@product_kit1_item1' ]
+            -   addKitItem: [ '@product_kit1_item2' ]
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+        inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@product_kit1_precision1'
+        unitPrecisions: [ '@product_kit1_precision1' ]
+    simple_product{1..3}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'simple-product-<sprintf("%02d", $current)>'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@simple_product_precision<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            -   setDefaultName: [ 'Simple Product <sprintf("%02d", $current)>' ]
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product_kit1_precision1:
+        unit: '@piece'
+        precision: '0'
+    simple_product_precision{1..3}:
+        unit: '@piece'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    product_kit1_item1:
+        optional: false
+        sortOrder: 2
+        minimumQuantity: 1
+        maximumQuantity: 10
+        productUnit: '@piece'
+        __calls:
+            -   setDefaultLabel: [ 'Mandatory Item' ]
+            -   addKitItemProduct: [ '@product_kit1_item1_product1' ]
+            -   addKitItemProduct: [ '@product_kit1_item1_product2' ]
+    product_kit1_item2:
+        optional: true
+        sortOrder: 1
+        minimumQuantity: 0
+        maximumQuantity: 5
+        productUnit: '@piece'
+        __calls:
+            -   setDefaultLabel: [ 'Optional Item' ]
+            -   addKitItemProduct: [ '@product_kit1_item2_product3' ]
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    product_kit1_item1_product1:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product1'
+        sortOrder: 1
+        productUnitPrecision: '@simple_product_precision1'
+    product_kit1_item1_product2:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product2'
+        sortOrder: 2
+        productUnitPrecision: '@simple_product_precision2'
+    product_kit1_item2_product3:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product3'
+        sortOrder: 1
+        productUnitPrecision: '@simple_product_precision3'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price_product_kit1:
+        product: '@product_kit1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 123.4567
+    price_simple_product{1..3}:
+        product: '@simple_product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: '<(1.2345 * $current)>'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    price_relation_product_kit1:
+        product: '@product_kit1'
+        priceList: '@defaultPriceList'
+    price_relation_simple_product{1..3}:
+        product: '@simple_product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    product_kit_line_item_discount_promotion_segment:
+        name: 'Product Kit Promotion Segment'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"product-kit","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    product_kit_line_item_discount_promotion_config:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_currency: 'USD'
+            discount_product_unit_code: 'piece'
+            discount_value: 0.1
+            apply_to: 'each_item'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    product_kit_line_item_discount_promotion_rule:
+        enabled: true
+        sortOrder: 1
+        name: 'Product Kit Line Item Discount Promotion'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    product_kit_line_item_discount_promotion:
+        __calls:
+            -   addScope: [ '@default_scope' ]
+        productsSegment: '@product_kit_line_item_discount_promotion_segment'
+        rule: '@product_kit_line_item_discount_promotion_rule'
+        discountConfiguration: '@product_kit_line_item_discount_promotion_config'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false
