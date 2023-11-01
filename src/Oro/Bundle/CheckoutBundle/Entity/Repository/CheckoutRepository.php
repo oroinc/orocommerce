@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -30,8 +31,10 @@ class CheckoutRepository extends ServiceEntityRepository implements ResettableCu
     public function getCheckoutWithRelations($checkoutId)
     {
         $qb = $this->createQueryBuilder('c');
-        $qb->select('c', 'cli', 'p')
+        $qb->select('c', 'cli', 'p', 'kitItemLineItem', 'kitItemLineItemProduct')
             ->leftJoin('c.lineItems', 'cli')
+            ->leftJoin('cli.kitItemLineItems', 'kitItemLineItem')
+            ->leftJoin('kitItemLineItem.product', 'kitItemLineItemProduct')
             ->leftJoin('cli.product', 'p')
             ->where($qb->expr()->eq('c.id', ':id'))
             ->setParameter('id', $checkoutId);
@@ -134,12 +137,15 @@ class CheckoutRepository extends ServiceEntityRepository implements ResettableCu
     ) {
         $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName, $currency);
         $qb
+            ->select('c.id')
             ->andWhere(
                 $qb->expr()->eq('c.customerUser', ':customerUser')
             )
             ->setParameter('customerUser', $customerUser);
 
-        return $qb->getQuery()->getOneOrNullResult();
+        $checkoutId = $qb->getQuery()->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
+
+        return $checkoutId ? $this->getCheckoutWithRelations($checkoutId) : null;
     }
 
     public function deleteWithoutWorkflowItem()
@@ -200,8 +206,11 @@ class CheckoutRepository extends ServiceEntityRepository implements ResettableCu
         ?string $currency = null
     ) {
         $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName, $currency);
+        $qb->select('c.id');
 
-        return $qb->getQuery()->getOneOrNullResult();
+        $checkoutId = $qb->getQuery()->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
+
+        return $checkoutId ? $this->getCheckoutWithRelations($checkoutId) : null;
     }
 
     /**

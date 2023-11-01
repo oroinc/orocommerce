@@ -987,3 +987,32 @@ services:
         class: Oro\Bundle\CheckoutBundle\Provider\CheckoutValidationGroupsBySourceEntityProvider
         arguments:
             - '@oro_entity.entity_alias_resolver'
+
+    oro_checkout.event_listener.datagrid_line_items_data.preload:
+        class: Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataPreloadListener
+        arguments:
+            - '@oro_entity.manager.preloading_manager'
+        tags:
+            # This listener must be called first as it preloads line items data which might be needed by others.
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: 1024 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: 1024 }
+
+    oro_checkout.event_listener.line_item_preloading:
+        parent: oro_entity.event_listener.default_preloading
+        tags:
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.checkoutlineitem, method: onPreload }
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.checkoutproductkititemlineitem, method: onPreload }
+
+    oro_checkout.event_listener.preload_checkout_on_start:
+        class: Oro\Bundle\CheckoutBundle\EventListener\PreloadCheckoutOnStartEventListener
+        arguments:
+            - '@oro_entity.manager.preloading_manager'
+        tags:
+            - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStart, priority: 128 }
+
+    oro_checkout.event_listener.preload_checkout_on_start_from_shopping_list:
+        class: Oro\Bundle\CheckoutBundle\EventListener\PreloadCheckoutOnStartFromShoppingListEventListener
+        arguments:
+            - '@oro_entity.manager.preloading_manager'
+        tags:
+            - { name: kernel.event_listener, event: extendable_condition.shopping_list_start, method: onStartFromShoppingList, priority: 128 }

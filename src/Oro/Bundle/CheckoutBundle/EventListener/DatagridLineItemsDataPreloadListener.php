@@ -1,18 +1,14 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\EventListener;
+namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
+use Oro\Bundle\ProductBundle\EventListener\DatagridLineItemsDataPreloadListener as ParentPreloadListener;
 
 /**
- * Preloads line items.
+ * Preloads checkout line items.
  */
-class DatagridLineItemsDataPreloadListener
+class DatagridLineItemsDataPreloadListener extends ParentPreloadListener
 {
-    private PreloadingManager $preloadingManager;
-
     /** @var array */
     protected const FIELDS_FOR_SIMPLE = [
         'product' => [
@@ -65,7 +61,7 @@ class DatagridLineItemsDataPreloadListener
                 ],
                 'unitPrecisions' => [],
             ],
-            'unit' => [],
+            'productUnit' => [],
         ],
     ] + self::FIELDS_FOR_SIMPLE;
 
@@ -94,34 +90,4 @@ class DatagridLineItemsDataPreloadListener
             ],
         ],
     ] + self::FIELDS_FOR_SIMPLE;
-
-    public function __construct(PreloadingManager $preloadingManager)
-    {
-        $this->preloadingManager = $preloadingManager;
-    }
-
-    public function onLineItemData(DatagridLineItemsDataEvent $event): void
-    {
-        $isGrouped = $event->getContext()['isGrouped'] ?? false;
-        $simpleLineItems = [];
-        $configurableLineItems = [];
-        $kitLineItems = [];
-        foreach ($event->getLineItems() as $lineItemId => $lineItem) {
-            $lineItemType = $event->getDataForLineItem($lineItemId)['type'] ?? '';
-            if ($lineItemType === Product::TYPE_CONFIGURABLE) {
-                $configurableLineItems[] = $lineItem;
-            } elseif ($lineItemType === Product::TYPE_KIT) {
-                $kitLineItems[] = $lineItem;
-            } else {
-                $simpleLineItems[] = $lineItem;
-            }
-        }
-
-        $this->preloadingManager->preloadInEntities($simpleLineItems, static::FIELDS_FOR_SIMPLE);
-        $this->preloadingManager->preloadInEntities(
-            $configurableLineItems,
-            $isGrouped ? static::FIELDS_FOR_CONFIGURABLE_WHEN_GROUPED : static::FIELDS_FOR_CONFIGURABLE_WHEN_UNGROUPED
-        );
-        $this->preloadingManager->preloadInEntities($kitLineItems, static::FIELDS_FOR_KITS);
-    }
 }

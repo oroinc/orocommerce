@@ -132,10 +132,12 @@ class OrderLineItemConverter implements CheckoutLineItemConverterInterface
                 ->setComment($lineItem->getComment())
                 ->setChecksum($lineItem->getChecksum());
 
-            foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
-                $checkoutLineItem->addKitItemLineItem(
-                    $this->productKitItemLineItemConverter->convert($kitItemLineItem)
-                );
+            if ($lineItem->getProduct()?->isKit()) {
+                foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
+                    $checkoutLineItem->addKitItemLineItem(
+                        $this->productKitItemLineItemConverter->convert($kitItemLineItem)
+                    );
+                }
             }
 
             $checkoutLineItems->add($checkoutLineItem);

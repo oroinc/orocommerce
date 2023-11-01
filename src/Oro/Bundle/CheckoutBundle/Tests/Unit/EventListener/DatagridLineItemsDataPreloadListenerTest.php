@@ -1,12 +1,12 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataPreloadListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
-use Oro\Bundle\ProductBundle\EventListener\DatagridLineItemsDataPreloadListener;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductKitItemLineItemsAwareStub;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -173,7 +173,7 @@ class DatagridLineItemsDataPreloadListenerTest extends TestCase
                                 ],
                                 'unitPrecisions' => [],
                             ],
-                            'unit' => [],
+                            'productUnit' => [],
                         ],
                     ],
                 ]
@@ -335,7 +335,7 @@ class DatagridLineItemsDataPreloadListenerTest extends TestCase
                                 ],
                                 'unitPrecisions' => [],
                             ],
-                            'unit' => [],
+                            'productUnit' => [],
                         ],
                     ],
                 ]
