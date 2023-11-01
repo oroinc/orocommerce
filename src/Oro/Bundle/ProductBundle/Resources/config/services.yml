@@ -1887,6 +1887,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_entity.preload_entity.product, method: onPreload }
             - { name: kernel.event_listener, event: oro_entity.preload_entity.productimage, method: onPreload }
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.productkititem, method: onPreload }
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.productkititemlabel, method: onPreload }
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.productkititemproduct, method: onPreload }
 
     oro_product.event_listener.product_data_converter:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductDataConverterEventListener'

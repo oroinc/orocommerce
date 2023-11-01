@@ -743,7 +743,7 @@ services:
             - '@security.authorization_checker'
             - '@oro_visibility.provider.resolved_product_visibility_provider'
         tags:
-            - { name: oro_datagrid.extension }
+            - { name: oro_datagrid.extension, priority: 10 }
 
     oro_shopping_list.validator.product_kit_item_collection_is_available_for_purchase:
         class: Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemCollectionIsAvailableForPurchaseValidator
