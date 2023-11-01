@@ -1,0 +1,170 @@
+{% extends '@OroUI/actions/index.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% oro_title_set({params : {"%sku%": product.sku|default('N/A'|trans), "%name%": product.defaultName.string|default('N/A'|trans) }}) %}
+
+{% block content_datagrid %}
+    {% set content_attr = content_attr|default({})|merge({
+        'class': (content_attr.class is defined ? content_attr.class : 'layout-content')|trim
+    }) %}
+
+    <div{{ UI.attributes(content_attr) }}
+            {% if pageComponent is defined %}{{ UI.renderPageComponentAttributes(pageComponent) }}{% endif %}
+    >
+        <div class="container-fluid page-title">
+            {% set pageActionsBlock %}
+                {% block pageActions %}
+                    {% placeholder view_pageActions_before with {entity: product} %}
+                    {% placeholder view_pageActions_after with {entity: product} %}
+                {% endblock pageActions %}
+            {% endset %}
+
+            <div class="navigation navbar-extra navbar-extra-right">
+                {% block pageHeader %}
+                    <div class="row">
+                        <div class="pull-left-extra">
+
+                            <div class="page-title__path">
+                                <div class="top-row">
+                                    {% set breadcrumbs = {
+                                        'entity': product,
+                                        'indexPath': path('oro_pricing_price_product_debug_index'),
+                                        'indexLabel': 'oro.pricing.productprice.debug.page_title'|trans,
+                                        'entityTitle': product.sku ~ ' - ' ~ product.defaultName
+                                    } %}
+
+                                    {{ block("breadcrumbs", "@OroUI/actions/view.html.twig") }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row inline-info">
+                        <div class="pull-right page-title__entity-info-state">
+                            <div class="inline-decorate-container">
+                                <ul class="inline-decorate">
+                                    {{ pageActionsBlock }}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% endblock pageHeader %}
+            </div>
+            {% placeholder page_title_after with {entity: product} %}
+        </div>
+
+        {% set content_data_attr = content_data_attr|default({})|merge({
+            'class': ((content_data_attr.class is defined ? content_data_attr.class : 'layout-content') ~ ' scrollable-container')|trim
+        }) %}
+
+        <div class="layout-content product-container" data-role="grid-sidebar-component-container">
+            <div class="scrollable-container sidebar-container">
+                {% embed "@OroUI/content_sidebar.html.twig" %}
+                    {% block sidebar %}
+                        {% set componentOptions = {
+                            sidebarAlias: 'product-prices-debug-sidebar',
+                            widgetAlias: 'trace-sidebar-data-widget'
+                        } %}
+
+                        <div data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
+                             data-page-component-options="{{ componentOptions|json_encode }}"
+                        >
+                            {{ render(controller('Oro\\Bundle\\PricingBundle\\Debug\\Controller\\DebugController::sidebarViewAction')) }}
+                        </div>
+                    {% endblock sidebar %}
+
+                    {% block content %}
+                        {% import '@OroUI/macros.html.twig' as UI %}
+                        <div class="category-data">
+                            <div{{ UI.attributes(content_data_attr) }}>
+                                {% block content_data %}
+                                    {% import '@OroUI/macros.html.twig' as UI %}
+
+                                    {% set pricesTable %}
+                                        {% for currency, prices in current_prices %}
+                                            {% with {value: prices, shownUnit: '', showTierPrices: true} %}
+                                            {{ block("prices_table", "@OroPricing/Datagrid/Column/productPrice.html.twig") }}
+                                            {% endwith %}
+                                        {% endfor %}
+                                    {% endset %}
+                                    {% set pricing_strategy_name = ('oro.pricing.system_configuration.fields.strategy_type.choices.' ~ oro_config_value('oro_pricing.price_strategy'))|trans %}
+
+                                    {% set generalSection %}
+                                        {{ UI.renderHtmlProperty(
+                                            'oro.product.entity_label'|trans,
+                                            UI.entityViewLink(product, product.defaultName.string, 'oro_product_view')
+                                        ) }}
+
+                                        {{ UI.renderHtmlProperty(
+                                            'oro.pricing.productprice.debug.pricing_strategy.label'|trans,
+                                            UI.link({
+                                                'label' : pricing_strategy_name,
+                                                'title' : pricing_strategy_name,
+                                                'path'  : path('oro_config_configuration_system', {'activeGroup': 'commerce', 'activeSubGroup': 'pricing'})
+                                            })
+                                        ) }}
+                                        {{ UI.renderHtmlProperty('oro.pricing.productprice.debug.current_prices.label'|trans, pricesTable) }}
+                                    {% endset %}
+
+                                    {% set assignmentsSection %}
+                                        {% set tabsOptions = {
+                                            verticalTabs: true,
+                                            useDropdown: false
+                                        } %}
+
+                                        {% for assignments in price_list_assignments %}
+                                            {% set tabContent %}
+                                                <a href="{{ assignments.link }}">{{ assignments.link_title }}</a>
+
+                                                {% include '@OroPricing/Customer/price_list_view.html.twig' with {
+                                                    'fallback': assignments.fallback,
+                                                    'priceLists': assignments.priceLists
+                                                } %}
+                                                <br/>
+                                            {% endset %}
+
+                                            {% set tabs = [{
+                                                'alias': 'oro_pricelist_assignment_info_' ~ loop.index,
+                                                'widgetType': 'oro_pricelist_assignment_info',
+                                                'label': assignments.section_title,
+                                                'content': tabContent,
+                                                'url': null
+                                            }] %}
+
+                                            {{ tabPanel(tabs, tabsOptions|default({})) }}
+                                        {% endfor %}
+                                    {% endset %}
+
+                                    {% set chainSection %}
+                                        {% include '@OroPricing/Customer/price_list_view.html.twig' with {
+                                            'fallback': null,
+                                            'priceLists': cpl_used_price_lists
+                                        } %}
+                                    {% endset %}
+
+                                    {% set dataBlocks = [
+                                        {
+                                            'title': 'oro.pricing.productprice.debug.general.label'|trans,
+                                            'subblocks':  [{'data' : [generalSection]}]
+                                        },
+                                        {
+                                            'title': 'oro.pricing.productprice.debug.price_list_used_chain.label'|trans,
+                                            'subblocks':  [{'data' : [chainSection]}]
+                                        },
+                                        {
+                                            'title': 'oro.pricing.productprice.debug.price_list_assignment_info.label'|trans,
+                                            'subblocks':  [{'data' : [assignmentsSection]}]
+                                        }
+                                    ] %}
+
+                                    {% set data = oro_view_process({'dataBlocks': dataBlocks}, product) %}
+                                    {% set data = data|merge({'dataBlocks':  data.dataBlocks}) %}
+
+                                    {{ UI.scrollData('product-price-debug-view', data, product) }}
+                                {% endblock content_data %}
+                            </div>
+                        </div>
+                    {% endblock content %}
+                {% endembed %}
+            </div>
+        </div>
+    </div>
+{% endblock content_datagrid %}

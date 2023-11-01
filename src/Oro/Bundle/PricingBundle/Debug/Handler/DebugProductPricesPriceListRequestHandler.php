@@ -1,10 +1,12 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Model;
+namespace Oro\Bundle\PricingBundle\Debug\Handler;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -17,6 +19,7 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
 {
     public const CUSTOMER_KEY = 'customer';
     public const WEBSITE_KEY = 'website';
+    public const DATE_KEY = 'date';
 
     private RequestStack $requestStack;
     private ManagerRegistry $doctrine;
@@ -113,8 +116,13 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
         return filter_var($request->get(self::TIER_PRICES_KEY, true), FILTER_VALIDATE_BOOLEAN);
     }
 
+    public function getSelectedDate()
+    {
+        return $this->getRequest()?->get(self::DATE_KEY);
+    }
+
     private function getRequest(): ?Request
     {
-        return $this->requestStack->getCurrentRequest();
+        return $this->requestStack->getMainRequest();
     }
 }

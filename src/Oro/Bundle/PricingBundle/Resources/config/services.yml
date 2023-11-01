@@ -453,17 +453,6 @@ services:
             - '@doctrine'
             - '@oro_security.acl_helper'
 
-    Oro\Bundle\PricingBundle\Model\DebugProductPricesPriceListRequestHandler:
-        class: 'Oro\Bundle\PricingBundle\Model\DebugProductPricesPriceListRequestHandler'
-        public: true
-        arguments:
-            - '@request_stack'
-            - '@doctrine'
-            - '@oro_pricing.model.price_list_tree_handler'
-
-    oro_pricing.model.debug_product_price_price_list_request_handler:
-        alias: Oro\Bundle\PricingBundle\Model\DebugProductPricesPriceListRequestHandler
-
     Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface:
         alias: oro_pricing.model.price_list_request_handler
 
@@ -1554,7 +1543,7 @@ services:
             - { name: oro_featuretogle.feature, feature: oro_price_lists }
 
     oro_pricing.datagrid.extension.combined_product_price:
-        class: 'Oro\Bundle\PricingBundle\Datagrid\CombinedProductPriceDatagridExtension'
+        class: 'Oro\Bundle\PricingBundle\Debug\Datagrid\CombinedProductPriceDatagridExtension'
         arguments:
             - '@oro_pricing.model.debug_product_price_price_list_request_handler'
             - '@oro_entity.doctrine_helper'

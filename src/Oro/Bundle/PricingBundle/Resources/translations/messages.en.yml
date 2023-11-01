@@ -225,6 +225,13 @@ oro.pricing:
             page_title: 'Product Prices Debug'
             currencies.label: 'Currencies'
             show_tier_prices.label: 'Show Tier Prices'
+            trace.label: 'Debug Prices'
+            show_for_date.label: 'Show for Date'
+            general.label: 'General'
+            pricing_strategy.label: 'Pricing Strategy'
+            current_prices.label: 'Current Prices'
+            price_list_assignment_info.label: 'Price Lists Assignment Info'
+            price_list_used_chain.label: 'Used Price Lists Chain'
 
     combinedproductprice:
         entity_label: 'Combined Product Price'

@@ -24,7 +24,7 @@ oro_product_price_product:
     prefix:       /productprice/product
 
 oro_product_price_debug:
-    resource:     "@OroPricingBundle/Controller/DebugController.php"
+    resource:     "@OroPricingBundle/Debug/Controller/DebugController.php"
     type:         annotation
     prefix:       /productprice/debug
 
