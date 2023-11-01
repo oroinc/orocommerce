@@ -32,12 +32,6 @@ services:
         tags:
             - { name: container.service_subscriber }
 
-    Oro\Bundle\PricingBundle\Controller\DebugController:
-        calls:
-            - [setContainer, ['@Psr\Container\ContainerInterface']]
-        tags:
-            - { name: container.service_subscriber }
-
     Oro\Bundle\PricingBundle\Controller\PriceAttributePriceListController:
         calls:
             - [setContainer, ['@Psr\Container\ContainerInterface']]

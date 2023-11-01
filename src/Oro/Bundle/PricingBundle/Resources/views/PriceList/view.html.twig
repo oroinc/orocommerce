@@ -22,6 +22,20 @@
     {{ parent() }}
 {% endblock navButtons %}
 
+{% block breadcrumbs %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {{ parent() }}
+    <span class="page-title__status">
+        {% if entity.active %}
+            {{ UI.badge('oro.pricing.pricelist.status.enabled'|trans, 'enabled') }}
+        {% else %}
+            {{ UI.badge('oro.pricing.pricelist.status.disabled'|trans, 'disabled') }}
+        {% endif %}
+        {% placeholder view_page_title_status with {entity: entity} %}
+    </span>
+{% endblock breadcrumbs %}
+
 {% block content_data %}
     {% set pricingInformationWidget %}
         {{ oro_widget_render({

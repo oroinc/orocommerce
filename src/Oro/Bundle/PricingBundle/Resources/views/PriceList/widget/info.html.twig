@@ -13,8 +13,6 @@
                     {% set currencies = currencies|merge([currency|oro_localized_currency_name]) %}
                 {% endfor %}
                 {{ UI.renderHtmlProperty('oro.pricing.pricelist.currencies.label'|trans, UI.renderList(currencies)) }}
-                {% set status = entity.active ? 'oro.pricing.pricelist.status.enabled'|trans : 'oro.pricing.pricelist.status.disabled'|trans %}
-                {{ UI.renderProperty('oro.pricing.pricelist.status.label'|trans, status) }}
             {% endif %}
 
             {% if entity.isActive() and not entity.schedules.isEmpty() %}

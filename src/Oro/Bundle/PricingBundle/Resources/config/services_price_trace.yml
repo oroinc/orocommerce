@@ -1,0 +1,63 @@
+services:
+    Oro\Bundle\PricingBundle\Debug\Controller\DebugController:
+        public: true
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler:
+        public: true
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+            - '@oro_pricing.model.price_list_tree_handler'
+
+    oro_pricing.model.debug_product_price_price_list_request_handler:
+        alias: Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler
+
+    Oro\Bundle\PricingBundle\Debug\Provider\PriceListsAssignmentProvider:
+        arguments:
+            - !tagged_iterator oro_pricing.debug.provider.price_list_assignment
+
+    Oro\Bundle\PricingBundle\Debug\Provider\CustomerPriceListsAssignmentProvider:
+        arguments:
+            - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
+            - '@doctrine'
+            - '@translator'
+            - '@router'
+        tags:
+            - { name: 'oro_pricing.debug.provider.price_list_assignment', 'priority': 300}
+
+    Oro\Bundle\PricingBundle\Debug\Provider\CustomerGroupPriceListsAssignmentProvider:
+        arguments:
+            - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
+            - '@doctrine'
+            - '@translator'
+            - '@router'
+            - '@oro_customer.provider.customer_user_relations_provider'
+        tags:
+            - { name: 'oro_pricing.debug.provider.price_list_assignment', 'priority': 200 }
+
+    Oro\Bundle\PricingBundle\Debug\Provider\WebsitePriceListsAssignmentProvider:
+        arguments:
+            - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
+            - '@doctrine'
+            - '@translator'
+            - '@router'
+        tags:
+            - { name: 'oro_pricing.debug.provider.price_list_assignment', 'priority': 100 }
+
+    Oro\Bundle\PricingBundle\Debug\Provider\ConfigListsAssignmentProvider:
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_pricing.system_config_converter'
+            - '@translator'
+            - '@router'
+        tags:
+            - { name: 'oro_pricing.debug.provider.price_list_assignment', 'priority': 0 }
+
+    Oro\Bundle\PricingBundle\Debug\Provider\ProductPricesProvider:
+        arguments:
+            - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
+            - '@oro_pricing.storage.prices'

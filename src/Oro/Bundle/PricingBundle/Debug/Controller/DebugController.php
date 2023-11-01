@@ -1,12 +1,17 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Controller;
+namespace Oro\Bundle\PricingBundle\Debug\Controller;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\MultiWebsiteBundle\Form\Type\WebsiteSelectType;
-use Oro\Bundle\PricingBundle\Model\DebugProductPricesPriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Debug\Provider\PriceListsAssignmentProvider;
+use Oro\Bundle\PricingBundle\Debug\Provider\ProductPricesProvider;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -14,7 +19,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Intl\Currencies;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -54,14 +58,13 @@ class DebugController extends AbstractController
      * @Route("/sidebar", name="oro_pricing_price_product_debug_sidebar")
      * @Template
      *
-     * @param Request $request
      * @return array
      */
-    public function sidebarAction(Request $request)
+    public function sidebarAction()
     {
         $sidebarData = [];
 
-        $currenciesForm = $this->createCurrenciesForm($request);
+        $currenciesForm = $this->createCurrenciesForm();
         if ($currenciesForm) {
             $sidebarData['currencies'] = $currenciesForm->createView();
         }
@@ -71,6 +74,59 @@ class DebugController extends AbstractController
         $sidebarData['customers'] = $this->createCustomersForm()->createView();
 
         return $sidebarData;
+    }
+
+    /**
+     * @Route("/sidebar-view", name="oro_pricing_price_product_debug_sidebar_view")
+     * @Template
+     *
+     * @return array
+     */
+    public function sidebarViewAction()
+    {
+        $sidebarData = [];
+
+        $sidebarData['websites'] = $this->createWebsiteForm()->createView();
+        $sidebarData['customers'] = $this->createCustomersForm()->createView();
+        $sidebarData['date'] = $this->createDateForm()->createView();
+
+        return $sidebarData;
+    }
+
+    /**
+     * @Route("/trace/{id}", name="oro_pricing_price_product_debug_trace", requirements={"id"="\d+"})
+     * @AclAncestor("oro_pricing_product_price_view")
+     * @Template
+     *
+     * @return array
+     */
+    public function traceAction(Product $product)
+    {
+        return [
+            'product' => $product,
+            'current_prices' => $this->getCurrentPrices($product),
+            'price_list_assignments' => $this->getPriceListAssignments(),
+            'cpl_used_price_lists' => $this->getCplUsedPriceLists($product)
+        ];
+    }
+
+    private function getPriceListAssignments(): ?array
+    {
+        return $this->get(PriceListsAssignmentProvider::class)->getPriceListAssignments();
+    }
+
+    private function getCurrentPrices(Product $product): array
+    {
+        return $this->get(ProductPricesProvider::class)->getCurrentPrices($product);
+    }
+
+    private function getCplUsedPriceLists(Product $product): array
+    {
+        /** @var CombinedPriceList $cpl */
+        $cpl = $this->getPriceListHandler()->getPriceList();
+
+        return $this->getDoctrine()->getRepository(CombinedPriceListToPriceList::class)
+            ->getPriceListRelations($cpl, [$product]);
     }
 
     /**
@@ -131,13 +187,15 @@ class DebugController extends AbstractController
 
     protected function createWebsiteForm(): FormInterface
     {
+        $website = $this->getPriceListHandler()->getWebsite();
+
         return $this->createForm(
             WebsiteSelectType::class,
-            null,
+            $website,
             [
                 'label' => 'oro.website.entity_label',
                 'required' => false,
-                'data' => $this->getPriceListHandler()->getWebsite(),
+                'empty_data' => $website,
                 'create_enabled' => false
             ]
         );
@@ -145,14 +203,31 @@ class DebugController extends AbstractController
 
     protected function createCustomersForm(): FormInterface
     {
+        $customer = $this->getPriceListHandler()->getCustomer();
+
         return $this->createForm(
             CustomerSelectType::class,
-            null,
+            $customer,
             [
                 'label' => 'oro.customer.entity_label',
                 'required' => false,
-                'data' => $this->getPriceListHandler()->getCustomer(),
+                'empty_data' => $customer,
                 'create_enabled' => false
+            ]
+        );
+    }
+
+    protected function createDateForm(): FormInterface
+    {
+        $date = $this->getPriceListHandler()->getSelectedDate();
+
+        return $this->createForm(
+            OroDateTimeType::class,
+            $date,
+            [
+                'label' => 'oro.pricing.productprice.debug.show_for_date.label',
+                'required' => false,
+                'empty_data' => $date
             ]
         );
     }
@@ -165,6 +240,14 @@ class DebugController extends AbstractController
         return $this->get(DebugProductPricesPriceListRequestHandler::class);
     }
 
+    private function getPriceListCurrencies(): array
+    {
+        $currencies = (array)$this->getPriceListHandler()->getPriceList()?->getCurrencies();
+        sort($currencies);
+
+        return $currencies;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -174,16 +257,10 @@ class DebugController extends AbstractController
             parent::getSubscribedServices(),
             [
                 LocaleSettings::class,
-                DebugProductPricesPriceListRequestHandler::class
+                DebugProductPricesPriceListRequestHandler::class,
+                PriceListsAssignmentProvider::class,
+                ProductPricesProvider::class
             ]
         );
-    }
-
-    private function getPriceListCurrencies(): array
-    {
-        $currencies = (array)$this->getPriceListHandler()->getPriceList()?->getCurrencies();
-        sort($currencies);
-
-        return $currencies;
     }
 }
