@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -39,16 +40,16 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider criteriaDataProvider
      */
-    public function testFindEntityLexemes(string $className, array $updatedFields = [], int $relationId = null)
+    public function testFindEntityLexemes(string $className, array $updatedFields = [], int $relationId = null): void
     {
         $lexemes = [new PriceRuleLexeme()];
         $repo = $this->createMock(PriceRuleLexemeRepository::class);
-        $repo->expects($this->once())
+        $repo->expects(self::once())
             ->method('findEntityLexemes')
             ->with($className, $updatedFields, $relationId)
             ->willReturn($lexemes);
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getRepository')
             ->with(PriceRuleLexeme::class)
             ->willReturn($repo);
@@ -82,19 +83,22 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider productDataProvider
      */
-    public function testProcessLexemes(Product $product = null)
+    public function testProcessLexemes(Product $product = null): void
     {
+        $organization = $this->getEntity(Organization::class, ['id' => 1]);
         $priceList1 = $this->getEntity(PriceList::class, ['id' => 1]);
+        $priceList1->setOrganization($organization);
         $priceList2 = $this->getEntity(PriceList::class, ['id' => 2]);
+        $priceList2->setOrganization($organization);
 
         $priceLists = [1 => $priceList1, 2 => $priceList2];
 
-        $repo = $this->createMock(PriceListRepository::class);
-        $repo->expects($this->once())
+        $repo = self::createMock(PriceListRepository::class);
+        $repo->expects(self::once())
             ->method('updatePriceListsActuality')
             ->with($priceLists, false);
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getRepository')
             ->with(PriceList::class)
             ->willReturn($repo);
@@ -112,7 +116,7 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
         $lexemes = [$lexeme1, $lexeme2, $lexeme3];
 
-        $this->priceListTriggerHandler->expects($this->exactly(2))
+        $this->priceListTriggerHandler->expects(self::exactly(2))
             ->method('handlePriceListTopic')
             ->withConsecutive(
                 [ResolvePriceListAssignedProductsTopic::getName(), $priceList1, $product ? [$product] : []],
@@ -124,20 +128,61 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function productDataProvider(): array
     {
+        $organization = $this->getEntity(Organization::class, ['id' => 1]);
+        $product = new Product();
+        $product->setOrganization($organization);
         return [
             [null],
-            [new Product()]
+            [$product]
         ];
     }
 
-    public function testProcessLexemesWhenNoLexemes()
+    public function testProcessLexemesWhenNoLexemes(): void
     {
-        $this->doctrine->expects($this->never())
+        $this->doctrine->expects(self::never())
             ->method('getRepository');
 
-        $this->priceListTriggerHandler->expects($this->never())
+        $this->priceListTriggerHandler->expects(self::never())
             ->method('handlePriceListTopic');
 
         $this->handler->processLexemes([], [new Product()]);
+    }
+
+    public function testProcessLexemesForPriceListFromAnotherOrganization(): void
+    {
+        $organization = $this->getEntity(Organization::class, ['id' => 1]);
+        $priceList1 = $this->getEntity(PriceList::class, ['id' => 1]);
+        $priceList1->setOrganization($organization);
+        $priceList2 = $this->getEntity(PriceList::class, ['id' => 2]);
+        $priceList2->setOrganization($organization);
+
+        $organization1 = $this->getEntity(Organization::class, ['id' => 2]);
+        $product = new Product();
+        $product->setOrganization($organization1);
+
+        $this->doctrine->expects(self::never())
+            ->method('getRepository');
+
+        $lexeme1 = new PriceRuleLexeme();
+        $lexeme1->setPriceList($priceList1);
+
+        $lexeme2 = new PriceRuleLexeme();
+        $lexeme2->setPriceList($priceList1);
+        $lexeme2->setPriceRule(new PriceRule());
+
+        $lexeme3 = new PriceRuleLexeme();
+        $lexeme3->setPriceList($priceList2);
+        $lexeme3->setPriceRule(new PriceRule());
+
+        $lexemes = [$lexeme1, $lexeme2, $lexeme3];
+
+        $this->priceListTriggerHandler->expects(self::exactly(2))
+            ->method('handlePriceListTopic')
+            ->withConsecutive(
+                [ResolvePriceListAssignedProductsTopic::getName(), $priceList1, $product ? [$product] : []],
+                [ResolvePriceRulesTopic::getName(), $priceList2, $product ? [$product] : []]
+            );
+
+        $this->handler->processLexemes($lexemes, $product ? [$product] : []);
     }
 }
