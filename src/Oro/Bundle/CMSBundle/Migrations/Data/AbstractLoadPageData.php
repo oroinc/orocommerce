@@ -108,6 +108,9 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
             $page->addTitle((new LocalizedFallbackValue())->setString($row['title']));
             $page->addSlugPrototype((new LocalizedFallbackValue())->setString($row['slug']));
             $page->setContent($row['content']);
+            if ($row['contentStyle'] ?? '') {
+                $page->setContentStyle($row['contentStyle']);
+            }
             $page->setOrganization($organization);
 
             $pages[$reference] = $page;
