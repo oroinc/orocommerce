@@ -65,9 +65,17 @@ class WYSIWYGType extends AbstractType
 
         $options['page-component']['options']['allow_tags'] = $allowedElements;
         $options['page-component']['options']['allowed_iframe_domains'] = $allowedIframeDomains;
-        $options['page-component']['options']['jsmodules'] = $options['jsmodules'];
+        $options['page-component']['options']['jsmodules'] = [
+            'orocms/js/app/grapesjs/plugins/wysiwyg-icons',
+            ...$options['jsmodules']
+        ];
         $options['page-component']['options']['autoRender'] = $options['auto_render'];
-        $options['page-component']['options']['builderPlugins'] = $options['builder_plugins'];
+        $options['page-component']['options']['builderPlugins'] = [
+            'wysiwyg-icons' => [
+                'baseSvgSpriteUrl' => $this->assetHelper->getUrl('/build/__theme__/svg-icons/theme-icons.svg')
+            ],
+            ...$options['builder_plugins']
+        ];
         $options['page-component']['options']['disableIsolation'] = $options['disable_isolation'];
         $options['page-component']['options']['entityClass'] = $dataClass;
         $options['page-component']['options']['entityLabels'] = [

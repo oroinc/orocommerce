@@ -532,6 +532,21 @@ oro_behat_extension:
 
         FirstColumnInGrid:
             selector: '[data-gjs-type="grid-row"] > [data-gjs-type="grid-column"]:first-child'
+
+        FirstColumn:
+            selector: '[data-gjs-type="columns"] > [data-gjs-type="columns-item"]:first-child'
+
+        ClockIconInDialog:
+            selector: '.icons-collection-item > [title="clock"]'
+
+        SearchIconInSettings:
+            selector: '.icons-settings .search-field [name="search"]'
+
+        AddClassInPanel:
+            selector: '#gjs-clm-add-tag'
+
+        ClassInputPanel:
+            selector: '#gjs-clm-new'
     suites:
         OroCMSBundle:
             contexts:

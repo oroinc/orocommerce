@@ -73,6 +73,8 @@ define(function(require) {
             this.currentTheme = _.find(this.themes, function(theme) {
                 return theme.active;
             });
+
+            this.editor.em.set('currentTheme', this.currentTheme);
         },
 
         onClick(e) {
@@ -83,6 +85,7 @@ define(function(require) {
             this.setCurrentTheme(key);
 
             this.editor.trigger('changeTheme', key);
+            this.editor.em.trigger('changeTheme', key);
 
             this.render();
         },
