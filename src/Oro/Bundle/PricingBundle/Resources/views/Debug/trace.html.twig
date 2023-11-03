@@ -104,40 +104,69 @@
                                         {{ UI.renderHtmlProperty('oro.pricing.productprice.debug.current_prices.label'|trans, pricesTable) }}
                                     {% endset %}
 
-                                    {% set assignmentsSection %}
+                                    {% set chainSection %}
+                                        {% include '@OroPricing/Customer/price_list_view.html.twig' with {
+                                            'fallback': null,
+                                            'priceLists': cpl_used_price_lists
+                                        } %}
+                                    {% endset %}
+
+                                    {% set priceMergeDetailsSection %}
                                         {% set tabsOptions = {
                                             verticalTabs: true,
                                             useDropdown: false
                                         } %}
 
-                                        {% for assignments in price_list_assignments %}
-                                            {% set tabContent %}
-                                                <a href="{{ assignments.link }}">{{ assignments.link_title }}</a>
+                                        {# TODO: Extract #}
+                                        <style>
+                                            .price-list-prices li.selected-price {
+                                                font-weight: bold;
+                                            }
+                                            .price-list-prices li.price-unit {
+                                                list-style: none;
+                                                font-weight: bold;
+                                                margin-top: 10px;
+                                            }
+                                            .price-list-prices li.new-currency {
+                                                margin-top: 10px;
+                                            }
+                                        </style>
 
-                                                {% include '@OroPricing/Customer/price_list_view.html.twig' with {
-                                                    'fallback': assignments.fallback,
-                                                    'priceLists': assignments.priceLists
-                                                } %}
-                                                <br/>
+                                        {% for used_price_list_relation in cpl_used_price_lists %}
+                                            {% set price_list = used_price_list_relation.priceList %}
+                                            {% set tabContent %}
+                                                {% if price_merging_details[price_list.id] is defined  %}
+                                                    <ul class="price-list-prices">
+                                                    {% set shownUnit = '' %}
+                                                    {% set showCurrency = '' %}
+                                                    {% for price_data in price_merging_details[price_list.id] %}
+                                                        {% set price = price_data.price %}
+                                                        {% if shownUnit != price.productUnitCode %}
+                                                            {% set shownUnit = price.productUnitCode %}
+                                                            <li class="price-unit">{{ price.productUnitCode|oro_format_product_unit_label|capitalize }}</li>
+                                                        {% endif %}
+                                                        <li class="{% if price_data.is_selected %}selected-price{% else %}not-selected-price{% endif %}
+                                                            {% if showCurrency != price.price.currency %}{% set showCurrency = price.price.currency %}new-currency{% endif %}">
+                                                            {{ price.quantity }}: {{ price.price|oro_format_price }}
+                                                        </li>
+                                                    {% endfor %}
+                                                    </ul>
+                                                {% else %}
+                                                    {{ 'oro.pricing.productprice.debug.no_prices.message'|trans }}
+                                                    <p></p>
+                                                {% endif %}
                                             {% endset %}
 
                                             {% set tabs = [{
-                                                'alias': 'oro_pricelist_assignment_info_' ~ loop.index,
-                                                'widgetType': 'oro_pricelist_assignment_info',
-                                                'label': assignments.section_title,
+                                                'alias': 'oro_prices_info_' ~ loop.index,
+                                                'widgetType': 'oro_prices_info',
+                                                'label': price_list.name,
                                                 'content': tabContent,
                                                 'url': null
                                             }] %}
 
                                             {{ tabPanel(tabs, tabsOptions|default({})) }}
                                         {% endfor %}
-                                    {% endset %}
-
-                                    {% set chainSection %}
-                                        {% include '@OroPricing/Customer/price_list_view.html.twig' with {
-                                            'fallback': null,
-                                            'priceLists': cpl_used_price_lists
-                                        } %}
                                     {% endset %}
 
                                     {% set dataBlocks = [
@@ -150,10 +179,45 @@
                                             'subblocks':  [{'data' : [chainSection]}]
                                         },
                                         {
-                                            'title': 'oro.pricing.productprice.debug.price_list_assignment_info.label'|trans,
-                                            'subblocks':  [{'data' : [assignmentsSection]}]
+                                            'title': 'oro.pricing.productprice.debug.price_merge_details.label'|trans,
+                                            'subblocks':  [{'data' : [priceMergeDetailsSection]}]
                                         }
                                     ] %}
+
+                                    {% if price_list_assignments is defined %}
+                                        {% set assignmentsSection %}
+                                            {% set tabsOptions = {
+                                                verticalTabs: true,
+                                                useDropdown: false
+                                            } %}
+
+                                            {% for assignments in price_list_assignments %}
+                                                {% set tabContent %}
+                                                    <a href="{{ assignments.link }}">{{ assignments.link_title }}</a>
+
+                                                    {% include '@OroPricing/Customer/price_list_view.html.twig' with {
+                                                        'fallback': assignments.fallback,
+                                                        'priceLists': assignments.priceLists
+                                                    } %}
+                                                    <br/>
+                                                {% endset %}
+
+                                                {% set tabs = [{
+                                                    'alias': 'oro_pricelist_assignment_info_' ~ loop.index,
+                                                    'widgetType': 'oro_pricelist_assignment_info',
+                                                    'label': assignments.section_title,
+                                                    'content': tabContent,
+                                                    'url': null
+                                                }] %}
+
+                                                {{ tabPanel(tabs, tabsOptions|default({})) }}
+                                            {% endfor %}
+                                        {% endset %}
+                                        {% set dataBlocks = dataBlocks|merge([{
+                                            'title': 'oro.pricing.productprice.debug.price_list_assignment_info.label'|trans,
+                                            'subblocks':  [{'data' : [assignmentsSection]}]
+                                        }]) %}
+                                    {% endif %}
 
                                     {% set data = oro_view_process({'dataBlocks': dataBlocks}, product) %}
                                     {% set data = data|merge({'dataBlocks':  data.dataBlocks}) %}

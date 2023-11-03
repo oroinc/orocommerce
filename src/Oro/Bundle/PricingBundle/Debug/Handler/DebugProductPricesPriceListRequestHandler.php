@@ -20,6 +20,8 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
     public const CUSTOMER_KEY = 'customer';
     public const WEBSITE_KEY = 'website';
     public const DATE_KEY = 'date';
+    public const DETAILED_ASSIGNMENTS_KEY = 'showDetailedAssignments';
+    public const SHOW_FULL_USED_CHAIN_KEY = 'showFullUsedChain';
 
     private RequestStack $requestStack;
     private ManagerRegistry $doctrine;
@@ -124,5 +126,27 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
     private function getRequest(): ?Request
     {
         return $this->requestStack->getMainRequest();
+    }
+
+    public function getShowDetailedAssignmentInfo(): bool
+    {
+        $request = $this->getRequest();
+        if (!$request) {
+            return false;
+        }
+
+        return filter_var($request->get(self::DETAILED_ASSIGNMENTS_KEY, false), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    public function getShowFullUsedChain(): bool
+    {
+        return true;
+
+        $request = $this->getRequest();
+        if (!$request) {
+            return false;
+        }
+
+        return filter_var($request->get(self::SHOW_FULL_USED_CHAIN_KEY, false), FILTER_VALIDATE_BOOLEAN);
     }
 }

@@ -61,3 +61,21 @@ services:
         arguments:
             - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
             - '@oro_pricing.storage.prices'
+
+    Oro\Bundle\PricingBundle\Debug\Provider\MinimalPricesSelectedPriceProvider:
+        arguments:
+            - '@doctrine'
+
+    Oro\Bundle\PricingBundle\Debug\Provider\MergeByPriorityPricesSelectedPriceProvider:
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.shard_manager'
+
+    Oro\Bundle\PricingBundle\Debug\Provider\PriceMergeInfoProvider:
+        arguments:
+            - '@oro_config.manager'
+            - '@doctrine'
+            - '@oro_pricing.shard_manager'
+        calls:
+            - ['addSelectedPriceProvider', ['minimal_prices', '@Oro\Bundle\PricingBundle\Debug\Provider\MinimalPricesSelectedPriceProvider']]
+            - ['addSelectedPriceProvider', ['merge_by_priority', '@Oro\Bundle\PricingBundle\Debug\Provider\MergeByPriorityPricesSelectedPriceProvider']]
