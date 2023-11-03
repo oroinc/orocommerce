@@ -232,6 +232,10 @@ oro.pricing:
             current_prices.label: 'Current Prices'
             price_list_assignment_info.label: 'Price Lists Assignment Info'
             price_list_used_chain.label: 'Used Price Lists Chain'
+            show_detailed_assignment_info.label: 'Show Detailed Assignment Info'
+            show_full_used_chain.label: 'Show Full Used Chain'
+            price_merge_details.label: 'Price Merge Details'
+            no_prices.message: 'No prices'
 
     combinedproductprice:
         entity_label: 'Combined Product Price'

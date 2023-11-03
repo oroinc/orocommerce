@@ -9,6 +9,7 @@ use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\MultiWebsiteBundle\Form\Type\WebsiteSelectType;
 use Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Debug\Provider\PriceListsAssignmentProvider;
+use Oro\Bundle\PricingBundle\Debug\Provider\PriceMergeInfoProvider;
 use Oro\Bundle\PricingBundle\Debug\Provider\ProductPricesProvider;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
@@ -89,6 +90,8 @@ class DebugController extends AbstractController
         $sidebarData['websites'] = $this->createWebsiteForm()->createView();
         $sidebarData['customers'] = $this->createCustomersForm()->createView();
         $sidebarData['date'] = $this->createDateForm()->createView();
+        $sidebarData['showDetailedAssignmentInfo'] = $this->createShowDetailedAssignmentInfoForm()->createView();
+        $sidebarData['showFullUsedChain'] = $this->createShowFullUsedChainForm()->createView();
 
         return $sidebarData;
     }
@@ -102,12 +105,22 @@ class DebugController extends AbstractController
      */
     public function traceAction(Product $product)
     {
-        return [
+        $usedPriceLists = $this->getCplUsedPriceLists(
+            $this->getPriceListHandler()->getShowFullUsedChain() ? null : $product
+        );
+
+        $data = [
             'product' => $product,
             'current_prices' => $this->getCurrentPrices($product),
-            'price_list_assignments' => $this->getPriceListAssignments(),
-            'cpl_used_price_lists' => $this->getCplUsedPriceLists($product)
+            'cpl_used_price_lists' => $usedPriceLists,
+            'price_merging_details' => $this->getPriceMergingDetails($usedPriceLists, $product),
         ];
+
+        if ($this->getPriceListHandler()->getShowDetailedAssignmentInfo()) {
+            $data['price_list_assignments'] = $this->getPriceListAssignments();
+        }
+
+        return $data;
     }
 
     private function getPriceListAssignments(): ?array
@@ -120,13 +133,22 @@ class DebugController extends AbstractController
         return $this->get(ProductPricesProvider::class)->getCurrentPrices($product);
     }
 
-    private function getCplUsedPriceLists(Product $product): array
+    private function getPriceMergingDetails(array $usedPriceLists, Product $product): array
+    {
+        return $this->get(PriceMergeInfoProvider::class)->getPriceMergingDetails($usedPriceLists, $product);
+    }
+
+    private function getCplUsedPriceLists(?Product $product): array
     {
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getPriceListHandler()->getPriceList();
+        $products = [];
+        if ($product) {
+            $products[] = $product;
+        }
 
         return $this->getDoctrine()->getRepository(CombinedPriceListToPriceList::class)
-            ->getPriceListRelations($cpl, [$product]);
+            ->getPriceListRelations($cpl, $products);
     }
 
     /**
@@ -181,6 +203,32 @@ class DebugController extends AbstractController
                 'label' => 'oro.pricing.productprice.debug.show_tier_prices.label',
                 'required' => false,
                 'data' => $this->getPriceListHandler()->getShowTierPrices(),
+            ]
+        );
+    }
+
+    protected function createShowDetailedAssignmentInfoForm(): FormInterface
+    {
+        return $this->createForm(
+            CheckboxType::class,
+            null,
+            [
+                'label' => 'oro.pricing.productprice.debug.show_detailed_assignment_info.label',
+                'required' => false,
+                'data' => $this->getPriceListHandler()->getShowDetailedAssignmentInfo(),
+            ]
+        );
+    }
+
+    protected function createShowFullUsedChainForm(): FormInterface
+    {
+        return $this->createForm(
+            CheckboxType::class,
+            null,
+            [
+                'label' => 'oro.pricing.productprice.debug.show_full_used_chain.label',
+                'required' => false,
+                'data' => $this->getPriceListHandler()->getShowFullUsedChain(),
             ]
         );
     }
@@ -259,7 +307,8 @@ class DebugController extends AbstractController
                 LocaleSettings::class,
                 DebugProductPricesPriceListRequestHandler::class,
                 PriceListsAssignmentProvider::class,
-                ProductPricesProvider::class
+                ProductPricesProvider::class,
+                PriceMergeInfoProvider::class
             ]
         );
     }
