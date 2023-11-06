@@ -9,11 +9,11 @@ use Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 class ProductHandlerListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PropertyAccessor */
+    /** @var PropertyAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $propertyAccessor;
 
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -24,9 +24,7 @@ class ProductHandlerListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->propertyAccessor = $this->getMockBuilder(PropertyAccessor::class)
-            ->onlyMethods(['setValue'])
-            ->getMock();
+        $this->propertyAccessor = $this->createMock(PropertyAccessorInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->listener = new ProductHandlerListener($this->propertyAccessor, $this->logger);

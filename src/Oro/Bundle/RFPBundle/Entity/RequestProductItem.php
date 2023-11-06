@@ -8,8 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
-use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
  * RFP Request Product Item entity.
@@ -30,7 +29,7 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInterface, ExtendEntityInterface
+class RequestProductItem implements ProductLineItemInterface, ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
@@ -264,5 +263,10 @@ class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInt
     public function getProductSku()
     {
         return $this->getProduct()?->getSku();
+    }
+
+    public function getParentProduct()
+    {
+        return null;
     }
 }

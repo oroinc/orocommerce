@@ -1,0 +1,315 @@
+data:
+    type: orders
+    id: new
+    attributes:
+        identifier: 'order#2'
+        poNumber: poNumber2
+        customerNotes: 'Some Order with Product Kits'
+        currency: USD
+        subtotalWithDiscounts: '783.4500'
+        subtotalValue: '783.4500'
+        totalValue: '783.4500'
+        shippingCostAmount: null
+        disablePromotions: null
+        shippingMethod: null
+        paymentStatus:
+            code: pending
+            label: 'Pending payment'
+        paymentMethod:
+            -
+                code: '@payment_term_method_config->type'
+                label: Payment Term
+        totalIncludingTax: '783.4500'
+        totalExcludingTax: '783.4500'
+        totalTaxAmount: '0.0000'
+        paymentTerm: '@payment_term_net_10->label'
+        discounts: {  }
+        shippingTrackings: {  }
+    relationships:
+        billingAddress:
+            data:
+                type: orderaddresses
+                id: new
+        shippingAddress:
+            data:
+                type: orderaddresses
+                id: new
+        lineItems:
+            data:
+                -
+                    type: orderlineitems
+                    id: new
+                -
+                    type: orderlineitems
+                    id: new
+        parent:
+            data: null
+        subOrders:
+            data: []
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@customer_user->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@customer->id)>'
+included:
+    -
+        type: orderlineitems
+        id: new
+        meta:
+            includeId: lineItem1
+        attributes:
+            productSku: PSKU1
+            productName: 'Product 1'
+            freeFormProduct: null
+            quantity: 10
+            productUnitCode: '<toString(@item->code)>'
+            price: '1.0100'
+            currency: USD
+            shipUntil: null
+            comment: null
+            shippingEstimateAmount: null
+            unitPriceIncludingTax: '1.0100'
+            unitPriceExcludingTax: '1.0100'
+            unitPriceTaxAmount: '0.0000'
+            rowTotalIncludingTax: '10.1000'
+            rowTotalExcludingTax: '10.1000'
+            rowTotalTaxAmount: '0.0000'
+            taxes: {  }
+            rowTotalDiscountAmount: '0.0000'
+            rowTotalAfterDiscountIncludingTax: '10.1000'
+            rowTotalAfterDiscountExcludingTax: '10.1000'
+            rowTotalAfterDiscount: '10.1000'
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: new
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product1->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+            kitItemLineItems:
+                data: []
+    -
+        type: orderlineitems
+        id: new
+        meta:
+            includeId: productKitLineItem1
+        attributes:
+            productSku: product-kit-3
+            productName: 'Product Kit Utilizing Min and Max Quantity'
+            freeFormProduct: null
+            quantity: 5
+            productUnitCode: '<toString(@product_unit.milliliter->code)>'
+            price: '154.6700'
+            currency: USD
+            shipUntil: null
+            comment: null
+            shippingEstimateAmount: null
+            unitPriceIncludingTax: '154.6700'
+            unitPriceExcludingTax: '154.6700'
+            unitPriceTaxAmount: '0.0000'
+            rowTotalIncludingTax: '773.3500'
+            rowTotalExcludingTax: '773.3500'
+            rowTotalTaxAmount: '0.0000'
+            taxes: {  }
+            rowTotalDiscountAmount: '0.0000'
+            rowTotalAfterDiscountIncludingTax: '773.3500'
+            rowTotalAfterDiscountExcludingTax: '773.3500'
+            rowTotalAfterDiscount: '773.3500'
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: new
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-kit-3->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data:
+                    -
+                        type: orderproductkititemlineitems
+                        id: new
+                    -
+                        type: orderproductkititemlineitems
+                        id: new
+                    -
+                        type: orderproductkititemlineitems
+                        id: new
+    -
+        type: orderaddresses
+        id: new
+        meta:
+            includeId: billing1
+        attributes:
+            phone: 123-456
+            label: 'Address 1'
+            street: 'Street 1'
+            street2: 'Street 2'
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: Mr.
+            firstName: John
+            middleName: Edgar
+            lastName: Doo
+            nameSuffix: M.D.
+        relationships:
+            customerAddress:
+                data:
+                    type: customeraddresses
+                    id: '<toString(@customer_address->id)>'
+            customerUserAddress:
+                data: null
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: orderaddresses
+        id: new
+        meta:
+            includeId: shipping1
+        attributes:
+            phone: 123-456
+            label: Address
+            street: Street
+            street2: null
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: null
+            firstName: John
+            middleName: Edgar
+            lastName: Doo
+            nameSuffix: null
+        relationships:
+            customerAddress:
+                data: null
+            customerUserAddress:
+                data:
+                    type: customeruseraddresses
+                    id: '<toString(@customer_user_address->id)>'
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: orderproductkititemlineitems
+        id: new
+        attributes:
+            kitItemId: '@product-kit-3-kit-item-0->id'
+            kitItemLabel: '<toString(@product-kit-3-kit-item-0->defaultLabel)>'
+            optional: '@product-kit-3-kit-item-0->optional'
+            minimumQuantity: '@product-kit-3-kit-item-0->minimumQuantity'
+            maximumQuantity: '@product-kit-3-kit-item-0->maximumQuantity'
+            productId: '@product-1->id'
+            productSku: '<toString(@product-1->sku)>'
+            productName: '<toString(@product-1->defaultName)>'
+            quantity: 1
+            productUnitCode: '<toString(@product-kit-3-kit-item-0->productUnit->code)>'
+            productUnitPrecision: 3
+            sortOrder: 1
+            price: '115.9000'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-0->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
+    -
+        type: orderproductkititemlineitems
+        id: new
+        attributes:
+            kitItemId: '@product-kit-3-kit-item-1->id'
+            kitItemLabel: '<toString(@product-kit-3-kit-item-1->defaultLabel)>'
+            optional: '@product-kit-3-kit-item-1->optional'
+            minimumQuantity: '@product-kit-3-kit-item-1->minimumQuantity'
+            maximumQuantity: '@product-kit-3-kit-item-1->maximumQuantity'
+            productId: '@product-3->id'
+            productSku: '<toString(@product-3->sku)>'
+            productName: '<toString(@product-3->defaultName)>'
+            quantity: 2
+            productUnitCode: '<toString(@product-kit-3-kit-item-1->productUnit->code)>'
+            productUnitPrecision: 0
+            sortOrder: 2
+            price: '12.5900'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-3->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: orderproductkititemlineitems
+        id: new
+        attributes:
+            kitItemId: '@product-kit-3-kit-item-2->id'
+            kitItemLabel: '<toString(@product-kit-3-kit-item-2->defaultLabel)>'
+            optional: '@product-kit-3-kit-item-2->optional'
+            minimumQuantity: '@product-kit-3-kit-item-2->minimumQuantity'
+            maximumQuantity: '@product-kit-3-kit-item-2->maximumQuantity'
+            productId: '@product-4->id'
+            productSku: '<toString(@product-4->sku)>'
+            productName: '<toString(@product-4->defaultName)>'
+            quantity: 1
+            productUnitCode: '<toString(@product-kit-3-kit-item-2->productUnit->code)>'
+            productUnitPrecision: 0
+            sortOrder: 3
+            price: '13.5900'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-2->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'

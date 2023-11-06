@@ -1,0 +1,56 @@
+Oro\Bundle\OrderBundle\Entity\Order:
+    order1:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'order1'
+        website: '@website1'
+        currency: 'USD'
+        poNumber: 'ORD1'
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    # <with different min/max quantity>
+    order1_line_item4:
+        product: '@product_kit1'
+        order: '@order1'
+        price: '@order1_line_item4_price'
+        quantity: 1
+        productUnit: '@piece'
+        comment: 'with different min/max quantity'
+        __calls:
+            -   addKitItemLineItem: [ '@order1_line_item4_kit_item1' ]
+            -   addKitItemLineItem: [ '@order1_line_item4_kit_item2' ]
+    # </with different min/max quantity>
+
+Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
+    # <with different min/max quantity>
+    order1_line_item4_kit_item1:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product1'
+        price: '@order1_line_item4_kit_item1_price'
+        quantity: 11
+        productUnit: '@piece'
+        minimumQuantity: 11
+        maximumQuantity: 15
+
+    order1_line_item4_kit_item2:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product3'
+        price: '@order1_line_item4_kit_item2_price'
+        quantity: 6
+        productUnit: '@piece'
+        minimumQuantity: 6
+        maximumQuantity: 9
+    # </with different min/max quantity>
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    order1_line_item4_price:
+        value: 12.34
+        currency: USD
+    order1_line_item4_kit_item1_price:
+        value: 23.45
+        currency: USD
+    order1_line_item4_kit_item2_price:
+        value: 34.56
+        currency: USD

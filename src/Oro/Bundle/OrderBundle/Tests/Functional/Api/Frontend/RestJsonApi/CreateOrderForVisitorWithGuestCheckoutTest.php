@@ -137,10 +137,10 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         // do the second request with the guest customer user created by the first request
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['data']['relationships']['customerUser']['data']['id'] = (string)$customerUserId;
-        unset($data['included'][3]);
+        unset($data['included'][5]);
         $response = $this->post(['entity' => 'orders'], $data);
         $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
-        unset($responseContent['included'][3]);
+        unset($responseContent['included'][5]);
         $this->assertResponseContains($responseContent, $response);
 
         self::assertSame(
@@ -155,7 +155,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['data']['relationships']['customerUser']['data']['id'] =
             (string)$this->getReference('customer_user')->getId();
-        unset($data['included'][3]);
+        unset($data['included'][5]);
         $response = $this->post(['entity' => 'orders'], $data, [], false);
 
         $this->assertResponseValidationError(
@@ -177,7 +177,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['data']['relationships']['customerUser']['data']['id'] =
             (string)$this->getReference('customer_user')->getId();
-        unset($data['included'][3]);
+        unset($data['included'][5]);
         $response = $this->post(['entity' => 'orders'], $data, [], false);
 
         $this->assertResponseValidationError(
@@ -193,7 +193,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
     public function testTryToCreateWithoutCustomerUser(): void
     {
         $data = $this->getRequestData('create_order_guest_checkout.yml');
-        unset($data['data']['relationships']['customerUser'], $data['included'][3]);
+        unset($data['data']['relationships']['customerUser'], $data['included'][5]);
         $response = $this->post(['entity' => 'orders'], $data, [], false);
 
         $this->assertResponseValidationError(
@@ -210,7 +210,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
     {
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['data']['relationships']['customerUser']['data'] = null;
-        unset($data['included'][3]);
+        unset($data['included'][5]);
         $response = $this->post(['entity' => 'orders'], $data, [], false);
 
         $this->assertResponseValidationError(
@@ -226,14 +226,14 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
     public function testTryToCreateWithoutCustomerUserEmail(): void
     {
         $data = $this->getRequestData('create_order_guest_checkout.yml');
-        unset($data['included'][3]['attributes']);
+        unset($data['included'][5]['attributes']);
         $response = $this->post(['entity' => 'orders'], $data, [], false);
 
         $this->assertResponseValidationError(
             [
                 'title'  => 'not blank constraint',
                 'detail' => 'This value should not be blank.',
-                'source' => ['pointer' => '/included/3/attributes/email']
+                'source' => ['pointer' => '/included/5/attributes/email']
             ],
             $response
         );
@@ -242,14 +242,14 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
     public function testTryToCreateWithInvalidCustomerUserEmail(): void
     {
         $data = $this->getRequestData('create_order_guest_checkout.yml');
-        $data['included'][3]['attributes']['email'] = 'invalid email';
+        $data['included'][5]['attributes']['email'] = 'invalid email';
         $response = $this->post(['entity' => 'orders'], $data, [], false);
 
         $this->assertResponseValidationError(
             [
                 'title'  => 'email constraint',
                 'detail' => 'This value is not a valid email address.',
-                'source' => ['pointer' => '/included/3/attributes/email']
+                'source' => ['pointer' => '/included/5/attributes/email']
             ],
             $response
         );
@@ -720,7 +720,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['data']['relationships']['customerUser']['data']['id'] = (string)$customerUserId;
-        unset($data['included'][3], $data['included'][1]['attributes']);
+        unset($data['included'][5], $data['included'][1]['attributes']);
         $data['included'][1]['relationships'] = [
             'customerUserAddress' => [
                 'data' => ['type' => 'customeruseraddresses', 'id' => (string)$customerUserAddressId]
@@ -746,7 +746,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['data']['relationships']['customerUser']['data']['id'] = (string)$customerUserId;
-        unset($data['included'][3], $data['included'][2]['attributes']);
+        unset($data['included'][5], $data['included'][2]['attributes']);
         $data['included'][2]['relationships'] = [
             'customerUserAddress' => [
                 'data' => ['type' => 'customeruseraddresses', 'id' => (string)$customerUserAddressId]
@@ -785,7 +785,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['data']['relationships']['customerUser']['data']['id'] = (string)$customerUserId;
-        unset($data['included'][3], $data['included'][1]['attributes']);
+        unset($data['included'][5], $data['included'][1]['attributes']);
         $data['included'][1]['relationships'] = [
             'customerUserAddress' => [
                 'data' => ['type' => 'customeruseraddresses', 'id' => (string)$customerUserAddressId]
@@ -793,7 +793,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         ];
         $response = $this->post(['entity' => 'orders'], $data);
         $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
-        unset($responseContent['included'][3]);
+        unset($responseContent['included'][5]);
         $responseContent['included'][1]['attributes'] = [
             'phone'        => $customerUserAddressData['attributes']['phone'],
             'label'        => $customerUserAddressData['attributes']['label'],
@@ -842,7 +842,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['data']['relationships']['customerUser']['data']['id'] = (string)$customerUserId;
-        unset($data['included'][3], $data['included'][2]['attributes']);
+        unset($data['included'][5], $data['included'][2]['attributes']);
         $data['included'][2]['relationships'] = [
             'customerUserAddress' => [
                 'data' => ['type' => 'customeruseraddresses', 'id' => (string)$customerUserAddressId]
@@ -850,7 +850,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         ];
         $response = $this->post(['entity' => 'orders'], $data);
         $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
-        unset($responseContent['included'][3]);
+        unset($responseContent['included'][5]);
         $responseContent['included'][2]['attributes'] = [
             'phone'        => $customerUserAddressData['attributes']['phone'],
             'label'        => $customerUserAddressData['attributes']['label'],
@@ -886,7 +886,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['data']['relationships']['customerUser']['data']['id'] = (string)$customerUserId;
-        unset($data['included'][3], $data['included'][1]['attributes']);
+        unset($data['included'][5], $data['included'][1]['attributes']);
         $data['included'][1]['relationships'] = [
             'customerUserAddress' => [
                 'data' => ['type' => 'customeruseraddresses', 'id' => (string)$customerUserAddressId]
@@ -912,7 +912,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['data']['relationships']['customerUser']['data']['id'] = (string)$customerUserId;
-        unset($data['included'][3], $data['included'][2]['attributes']);
+        unset($data['included'][5], $data['included'][2]['attributes']);
         $data['included'][2]['relationships'] = [
             'customerUserAddress' => [
                 'data' => ['type' => 'customeruseraddresses', 'id' => (string)$customerUserAddressId]
@@ -950,7 +950,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['data']['relationships']['customerUser']['data']['id'] = (string)$customerUserId;
-        unset($data['included'][3], $data['included'][1]['attributes']);
+        unset($data['included'][5], $data['included'][1]['attributes']);
         $data['included'][1]['relationships'] = [
             'customerUserAddress' => [
                 'data' => ['type' => 'customeruseraddresses', 'id' => (string)$customerUserAddressId]
@@ -988,7 +988,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['data']['relationships']['customerUser']['data']['id'] = (string)$customerUserId;
-        unset($data['included'][3], $data['included'][2]['attributes']);
+        unset($data['included'][5], $data['included'][2]['attributes']);
         $data['included'][2]['relationships'] = [
             'customerUserAddress' => [
                 'data' => ['type' => 'customeruseraddresses', 'id' => (string)$customerUserAddressId]

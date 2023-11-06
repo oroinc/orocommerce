@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
-use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
@@ -15,11 +15,8 @@ use Oro\Component\Testing\ReflectionUtil;
 
 class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    private const ENABLED_PROMOTION_ID = 7;
-    private const DISABLED_PROMOTION_ID = 2;
-
     /** @var PromotionDiscountsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $promotionDiscountsProvider;
+    private $baseDiscountsProvider;
 
     /** @var PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $promotionAwareHelper;
@@ -29,14 +26,11 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\
 
     protected function setUp(): void
     {
-        $this->promotionDiscountsProvider = $this->createMock(PromotionDiscountsProviderInterface::class);
-        $this->promotionAwareHelper = $this->getMockBuilder(PromotionAwareEntityHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isPromotionAware'])
-            ->getMock();
+        $this->baseDiscountsProvider = $this->createMock(PromotionDiscountsProviderInterface::class);
+        $this->promotionAwareHelper = $this->createMock(PromotionAwareEntityHelper::class);
 
         $this->providerDecorator = new DisabledPromotionDiscountProviderDecorator(
-            $this->promotionDiscountsProvider,
+            $this->baseDiscountsProvider,
             $this->promotionAwareHelper
         );
     }
@@ -58,56 +52,75 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\
         return $appliedPromotion;
     }
 
-    public function testGetDiscountsWithNotSupportedSourceEntity()
+    public function testGetDiscountsForNotSupportedSourceEntity(): void
     {
         $sourceEntity = new \stdClass();
-        $context = new DiscountContext();
+        $context = $this->createMock(DiscountContextInterface::class);
+        $discounts = [new DiscountStub()];
 
-        $discounts = [new DiscountStub(), new DiscountStub()];
-
-        $this->promotionDiscountsProvider->expects($this->once())
+        $this->baseDiscountsProvider->expects(self::once())
             ->method('getDiscounts')
-            ->with($sourceEntity, $context)
+            ->with(self::identicalTo($sourceEntity), self::identicalTo($context))
             ->willReturn($discounts);
 
-        $this->assertEquals($discounts, $this->providerDecorator->getDiscounts($sourceEntity, $context));
+        $this->promotionAwareHelper->expects(self::once())
+            ->method('isPromotionAware')
+            ->willReturn(false);
+
+        self::assertSame($discounts, $this->providerDecorator->getDiscounts($sourceEntity, $context));
     }
 
-    public function testGetDiscountsWithSupportedSourceEntity()
+    public function testGetDiscountsForSupportedSourceEntity(): void
     {
+        $disabledPromotionId = 1;
+        $enabledPromotionId = 2;
+
         $sourceEntity = new Order();
         $sourceEntity->setAppliedPromotions([
-            $this->getAppliedPromotion(false, self::DISABLED_PROMOTION_ID),
-            $this->getAppliedPromotion(true, self::ENABLED_PROMOTION_ID)
+            $this->getAppliedPromotion(false, $disabledPromotionId),
+            $this->getAppliedPromotion(true, $enabledPromotionId)
         ]);
-
-        $context = new DiscountContext();
-
-        $disabledPromotion = $this->getPromotion(self::DISABLED_PROMOTION_ID);
-        $enabledPromotion = $this->getPromotion(self::ENABLED_PROMOTION_ID);
+        $context = $this->createMock(DiscountContextInterface::class);
 
         $discountWithDisabledPromotion = new DiscountStub();
-        $discountWithDisabledPromotion->setPromotion($disabledPromotion);
+        $discountWithDisabledPromotion->setPromotion($this->getPromotion($disabledPromotionId));
         $discountWithEnabledPromotion = new DiscountStub();
-        $discountWithEnabledPromotion->setPromotion($enabledPromotion);
+        $discountWithEnabledPromotion->setPromotion($this->getPromotion($enabledPromotionId));
 
-        $discounts = [$discountWithDisabledPromotion, $discountWithEnabledPromotion];
-
-        $this->promotionDiscountsProvider
-            ->expects($this->once())
+        $this->baseDiscountsProvider->expects(self::once())
             ->method('getDiscounts')
-            ->with($sourceEntity, $context)
-            ->willReturn($discounts);
+            ->with(self::identicalTo($sourceEntity), self::identicalTo($context))
+            ->willReturn([$discountWithDisabledPromotion, $discountWithEnabledPromotion]);
 
-        $expectedDiscounts = [
-            new DisabledDiscountDecorator($discountWithDisabledPromotion),
-            $discountWithEnabledPromotion
-        ];
-
-        $this->promotionAwareHelper->expects($this->any())
+        $this->promotionAwareHelper->expects(self::once())
             ->method('isPromotionAware')
             ->willReturn(true);
 
-        $this->assertEquals($expectedDiscounts, $this->providerDecorator->getDiscounts($sourceEntity, $context));
+        self::assertEquals(
+            [
+                new DisabledDiscountDecorator($discountWithDisabledPromotion),
+                $discountWithEnabledPromotion
+            ],
+            $this->providerDecorator->getDiscounts($sourceEntity, $context)
+        );
+    }
+
+    public function testGetDiscountsWhenNoAppliedDisabledPromotions(): void
+    {
+        $sourceEntity = new Order();
+        $sourceEntity->setAppliedPromotions([$this->getAppliedPromotion(true, 1)]);
+        $context = $this->createMock(DiscountContextInterface::class);
+        $discounts = [new DiscountStub()];
+
+        $this->baseDiscountsProvider->expects(self::once())
+            ->method('getDiscounts')
+            ->with(self::identicalTo($sourceEntity), self::identicalTo($context))
+            ->willReturn($discounts);
+
+        $this->promotionAwareHelper->expects(self::once())
+            ->method('isPromotionAware')
+            ->willReturn(true);
+
+        self::assertSame($discounts, $this->providerDecorator->getDiscounts($sourceEntity, $context));
     }
 }

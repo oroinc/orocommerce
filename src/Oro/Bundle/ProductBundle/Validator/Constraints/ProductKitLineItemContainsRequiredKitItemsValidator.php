@@ -35,7 +35,7 @@ class ProductKitLineItemContainsRequiredKitItemsValidator extends ConstraintVali
             throw new UnexpectedTypeException($constraint, ProductKitLineItemContainsRequiredKitItems::class);
         }
 
-        if ($value === null || $value->getProduct() === null) {
+        if ($value?->getProduct()?->isKit() !== true) {
             return;
         }
 
@@ -55,18 +55,18 @@ class ProductKitLineItemContainsRequiredKitItemsValidator extends ConstraintVali
             }
 
             if (!isset($requiredKitItems[spl_object_hash($kitItem)])) {
-                $kitItemLabel = (string)$this->localizationHelper->getLocalizedValue(
-                    $kitItem->getLabels(),
-                    $localization
-                );
+                $kitItemLabel = (string)$this->localizationHelper
+                    ->getLocalizedValue($kitItem->getLabels(), $localization);
+                $productSku = $value->getProductSku() ?? $value->getProduct()->getSku();
+
                 $this->context->buildViolation(
                     $constraint->message,
                     [
-                        '{{ product_kit_sku }}' => $this->formatValue($value->getProductSku()),
+                        '{{ product_kit_sku }}' => $this->formatValue($productSku),
                         '{{ product_kit_item_label }}' => $this->formatValue($kitItemLabel),
                     ]
                 )
-                    ->atPath('kitItems')
+                    ->atPath('kitItemLineItems')
                     ->setCause($value)
                     ->setCode(ProductKitLineItemContainsRequiredKitItems::MISSING_REQUIRED_KIT_ITEM)
                     ->addViolation();

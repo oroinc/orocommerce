@@ -26,14 +26,14 @@ class OrderTest extends RestJsonApiTestCase
         ]);
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(['entity' => 'orders']);
 
         $this->assertResponseContains('cget_order.yml', $response);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'orders', 'id' => '<toString(@simple_order->id)>']
@@ -42,7 +42,7 @@ class OrderTest extends RestJsonApiTestCase
         $this->assertResponseContains('get_order.yml', $response);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $organizationId = $this->getReference(LoadOrders::ORDER_1)->getOrganization()->getId();
 
@@ -56,15 +56,21 @@ class OrderTest extends RestJsonApiTestCase
         /** @var Order $item */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals('2345678', $order->getPoNumber());
-        self::assertSame('10.0000', $order->getSubtotal());
-        self::assertSame('10.0000', $order->getTotal());
+        self::assertSame('1210.0000', $order->getSubtotal());
+        self::assertSame('1210.0000', $order->getTotal());
         self::assertNull($order->getTotalDiscounts());
         self::assertEquals('USD', $order->getCurrency());
         self::assertNotEmpty($order->getOwner()->getId());
         self::assertEquals($organizationId, $order->getOrganization()->getId());
+        $lineItems = $order->getLineItems();
+        self::assertEquals(2, $lineItems->count());
+
+        /** @var OrderLineItem $productKitLineItem */
+        $productKitLineItem = $lineItems->get(1);
+        self::assertEquals(1, $productKitLineItem->getKitItemLineItems()->count());
     }
 
-    public function testCreateWhenLineItemDoesNotHaveProductRelationshipButHaveProductSku()
+    public function testCreateWhenLineItemDoesNotHaveProductRelationshipButHaveProductSku(): void
     {
         /** @var Product $product */
         $product = $this->getReference('product-1');
@@ -88,7 +94,7 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame($productId, $lineItem->getProduct()->getId());
     }
 
-    public function testCreateWhenLineItemDoesNotHaveProductRelationshipButHaveProductSkuWhenSkuIsNumber()
+    public function testCreateWhenLineItemDoesNotHaveProductRelationshipButHaveProductSkuWhenSkuIsNumber(): void
     {
         /** @var Product $product */
         $product = $this->getReference('product-100');
@@ -113,7 +119,7 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame($productId, $lineItem->getProduct()->getId());
     }
 
-    public function testTryToCreateWhenLineItemDoesNotHaveProductRelationshipAndHaveUnknownProductSku()
+    public function testTryToCreateWhenLineItemDoesNotHaveProductRelationshipAndHaveUnknownProductSku(): void
     {
         $data = $this->getRequestData('create_order_product_sku.yml');
         $data['included'][0]['attributes']['productSku'] = 'unknown';
@@ -134,7 +140,7 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateWhenLineItemDoesNotHaveProductRelationshipButHaveProductSkuForFreeFormProduct()
+    public function testCreateWhenLineItemDoesNotHaveProductRelationshipButHaveProductSkuForFreeFormProduct(): void
     {
         $data = $this->getRequestData('create_order_product_sku.yml');
         $data['included'][0]['attributes']['freeFormProduct'] = 'Test';
@@ -177,7 +183,7 @@ class OrderTest extends RestJsonApiTestCase
         self::assertTrue(null === $lineItem->getProduct());
     }
 
-    public function testCreateWhenLineItemHasProductRelationshipAndProductSkuForAnotherProduct()
+    public function testCreateWhenLineItemHasProductRelationshipAndProductSkuForAnotherProduct(): void
     {
         /** @var Product $product */
         $product = $this->getReference('product-1');
@@ -206,7 +212,7 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame($productId, $lineItem->getProduct()->getId());
     }
 
-    public function testCreateWhenLineItemHasProductRelationshipAndProductSkuForAnotherProductForFreeFormProduct()
+    public function testCreateWhenLineItemHasProductRelationshipAndProductSkuForAnotherProductForFreeFormProduct(): void
     {
         /** @var Product $product */
         $product = $this->getReference('product-1');
@@ -237,7 +243,7 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame($productId, $lineItem->getProduct()->getId());
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -279,7 +285,29 @@ class OrderTest extends RestJsonApiTestCase
         self::assertNull($updatedOrder->getTotalDiscounts());
     }
 
-    public function testGetSubresourceForOwner()
+    public function testAddProductKitLineItem(): void
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_4);
+        $orderId = $order->getId();
+
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => $orderId],
+            'add_product_kit_line_item_to_order.yml',
+        );
+
+        $responseContent = $this->updateResponseContent('add_product_kit_line_item_to_order.yml', $response);
+        /** @var Order $updatedOrder */
+        $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
+        /** @var OrderLineItem $lineItem */
+        foreach ($updatedOrder->getLineItems() as $k => $lineItem) {
+            $responseContent['data']['relationships']['lineItems']['data'][$k]['id'] =
+                (string)$lineItem->getId();
+        }
+        $this->assertResponseContains($responseContent, $response);
+    }
+
+    public function testGetSubresourceForOwner(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -296,7 +324,7 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForOwner()
+    public function testGetRelationshipForOwner(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -313,7 +341,7 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetSubresourceForOrganization()
+    public function testGetSubresourceForOrganization(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -330,7 +358,7 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForOrganization()
+    public function testGetRelationshipForOrganization(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -347,7 +375,7 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetSubresourceForCustomer()
+    public function testGetSubresourceForCustomer(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -364,7 +392,7 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForCustomer()
+    public function testGetRelationshipForCustomer(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -381,7 +409,7 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetSubresourceForCustomerUser()
+    public function testGetSubresourceForCustomerUser(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -398,7 +426,7 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForCustomerUser()
+    public function testGetRelationshipForCustomerUser(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -415,7 +443,39 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWithoutLineItems()
+    public function testGetSubresourceForProductKitLineItems(): void
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_3);
+        $productKitLineItemId = $this->getReference('product_kit_2_line_item.1')->getId();
+
+        $response = $this->getSubresource(
+            ['entity' => 'orders', 'id' => (string)$order->getId(), 'association' => 'lineItems']
+        );
+
+        $this->assertResponseContains(
+            ['data' => [['type' => 'orderlineitems', 'id' => (string)$productKitLineItemId]]],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForProductKitLineItems(): void
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_3);
+        $productKitLineItemId = $this->getReference('product_kit_2_line_item.1')->getId();
+
+        $response = $this->getRelationship(
+            ['entity' => 'orders', 'id' => (string)$order->getId(), 'association' => 'lineItems']
+        );
+
+        $this->assertResponseContains(
+            ['data' => [['type' => 'orderlineitems', 'id' => (string)$productKitLineItemId]]],
+            $response
+        );
+    }
+
+    public function testTryToCreateWithoutLineItems(): void
     {
         $data = [
             'data' => [
@@ -446,7 +506,7 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToSetEmptyLineItems()
+    public function testTryToSetEmptyLineItems(): void
     {
         $data = [
             'data' => [
@@ -475,7 +535,7 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToDeleteLastLineItemFromOrder()
+    public function testTryToDeleteLastLineItemFromOrder(): void
     {
         $data = [
             'data' => [
@@ -497,7 +557,7 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToMoveExitingLineItemToNewOrder()
+    public function testTryToMoveExitingLineItemToNewOrder(): void
     {
         $data = [
             'data' => [
@@ -533,7 +593,7 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToMoveExitingLineItemToAnotherOrder()
+    public function testTryToMoveExitingLineItemToAnotherOrder(): void
     {
         $data = [
             'data' => [
@@ -564,7 +624,7 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
-    public function testDeleteLineItemFromOrder()
+    public function testDeleteLineItemFromOrder(): void
     {
         $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
         $lineItemId = $this->getReference('order_line_item.2')->getId();
@@ -588,7 +648,7 @@ class OrderTest extends RestJsonApiTestCase
         self::assertNull($order->getTotalDiscounts());
     }
 
-    public function testDeleteList()
+    public function testDeleteList(): void
     {
         $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
 

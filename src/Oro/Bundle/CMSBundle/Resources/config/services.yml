@@ -110,7 +110,7 @@ services:
             # properties
             - []
             # functions
-            - [ 'date', 'widget', 'content_block', 'wysiwyg_image', 'wysiwyg_file' ]
+            - [ 'date', 'widget', 'content_block', 'wysiwyg_image', 'wysiwyg_file', 'widget_icon' ]
 
     oro_cms.twig.sandbox_extension:
         class: Twig\Extension\SandboxExtension
@@ -122,6 +122,7 @@ services:
         class: 'Oro\Bundle\CMSBundle\Twig\WidgetExtension'
         arguments:
             - '@oro_cms.content_widget.renderer'
+            - '@oro_cms.content_widget.wysiwyg_widget_icon_renderer'
 
     oro_cms.twig.content_widget_type_extension:
         class: 'Oro\Bundle\CMSBundle\Twig\ContentWidgetTypeExtension'
@@ -495,3 +496,13 @@ services:
             - '@oro_scope.scope_manager'
         tags:
             - { name: validator.constraint_validator, extended_type: Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType }
+
+    oro_cms.content_widget.wysiwyg_widget_icon_renderer:
+        class: Oro\Bundle\CMSBundle\ContentWidget\WysiwygWidgetIconRenderer
+        arguments:
+            - '@twig'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: oro_cms }
+

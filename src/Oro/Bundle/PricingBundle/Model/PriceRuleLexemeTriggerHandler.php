@@ -79,22 +79,47 @@ class PriceRuleLexemeTriggerHandler
             }
         }
 
-        $this->markMentionedPriceListNotActual($lexemes);
+        $this->markMentionedPriceListNotActual($lexemes, $products);
+    }
+
+    private function isPriceListShouldBeProcessed(PriceList $priceList, array $products): bool
+    {
+        if (!$products) {
+            return true;
+        }
+
+        $priceListOrganizationId = $priceList->getOrganization()->getId();
+        foreach ($products as $product) {
+            if (null === $product
+                || (\is_object($product) && $priceListOrganizationId !== $product->getOrganization()->getId())
+            ) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
      * @param PriceRuleLexeme[] $lexemes
+     * @param array|Product[] $products
      */
-    private function markMentionedPriceListNotActual(array $lexemes): void
+    private function markMentionedPriceListNotActual(array $lexemes, array $products): void
     {
         $priceLists = [];
         foreach ($lexemes as $lexeme) {
             $priceList = $lexeme->getPriceList();
-            $priceLists[$priceList->getId()] = $priceList;
+            if ($this->isPriceListShouldBeProcessed($priceList, $products)) {
+                $priceLists[$priceList->getId()] = $priceList;
+            }
         }
 
-        /** @var PriceListRepository $priceListRepository */
-        $priceListRepository = $this->doctrine->getRepository(PriceList::class);
-        $priceListRepository->updatePriceListsActuality($priceLists, false);
+        if ($priceLists) {
+            /** @var PriceListRepository $priceListRepository */
+            $priceListRepository = $this->doctrine->getRepository(PriceList::class);
+            $priceListRepository->updatePriceListsActuality($priceLists, false);
+        }
     }
 }

@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use PHPUnit\Framework\TestCase;
@@ -65,7 +66,20 @@ class OrderLineItemTest extends TestCase
         $entity = new OrderLineItem();
         self::assertPropertyAccessors($entity, $properties);
 
-        self::assertPropertyCollection($entity, 'kitItemLineItems', new OrderProductKitItemLineItem());
+        $productKitItem = new ProductKitItemStub(42);
+        $orderProductKitItemLineItem = (new OrderProductKitItemLineItem())
+            ->setKitItem($productKitItem);
+
+        self::assertSame([], $entity->getKitItemLineItems()->toArray());
+
+        $entity->addKitItemLineItem($orderProductKitItemLineItem);
+        self::assertSame(
+            [$productKitItem->getId() => $orderProductKitItemLineItem],
+            $entity->getKitItemLineItems()->toArray()
+        );
+
+        $entity->removeKitItemLineItem($orderProductKitItemLineItem);
+        self::assertSame([], $entity->getKitItemLineItems()->toArray());
     }
 
     public function testCreatePrice(): void

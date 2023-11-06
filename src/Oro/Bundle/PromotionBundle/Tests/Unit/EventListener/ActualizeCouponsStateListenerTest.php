@@ -13,37 +13,31 @@ use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
 use Oro\Bundle\PromotionBundle\Tests\Unit\CouponsTrait;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Stub\AppliedCouponsAwareStub;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\HttpFoundation\Request;
 
 class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
 {
     use CouponsTrait;
 
-    /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /**
-     * @var EntityCouponsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var EntityCouponsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $entityCouponsProvider;
 
-    private PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject $promotionAwareHelper;
+    /** @var PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $promotionAwareHelper;
 
-    /**
-     * @var ActualizeCouponsStateListener
-     */
+    /** @var ActualizeCouponsStateListener */
     private $listener;
 
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->entityCouponsProvider = $this->createMock(EntityCouponsProvider::class);
-        $this->promotionAwareHelper = $this->getMockBuilder(PromotionAwareEntityHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isCouponAware'])
-            ->getMock();
+        $this->promotionAwareHelper = $this->createMock(PromotionAwareEntityHelper::class);
+
         $this->listener = new ActualizeCouponsStateListener(
             $this->registry,
             $this->entityCouponsProvider,
@@ -98,8 +92,8 @@ class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
         $request = $this->getRequest(['addedCouponIds' => $couponIds]);
 
         $promotionId = 777;
-        /** @var Promotion $promotion */
-        $promotion = $this->getEntity(Promotion::class, ['id' => $promotionId]);
+        $promotion = new Promotion();
+        ReflectionUtil::setId($promotion, $promotionId);
 
         $couponId1 = 1;
         $couponCode1 = 'first-code';

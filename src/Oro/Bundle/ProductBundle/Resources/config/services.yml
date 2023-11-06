@@ -939,16 +939,16 @@ services:
             - { name: layout.data_provider, alias: segment_products }
 
     oro_product.event_listener.product_image_listener:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageListener'
-        public: false
+        class: Oro\Bundle\ProductBundle\EventListener\ProductImageListener
         arguments:
             - '@event_dispatcher'
-            - '@oro_layout.provider.image_type'
-            - '@oro_product.helper.product_image_helper'
+            - '@Psr\Container\ContainerInterface'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductImage', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductImage', event: postUpdate }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\AttachmentBundle\Entity\File', event: postUpdate, method: filePostUpdate }
+            - { name: container.service_subscriber, id: oro_layout.provider.image_type, key: Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider }
+            - { name: container.service_subscriber, id: oro_product.helper.product_image_helper, key: Oro\Bundle\ProductBundle\Helper\ProductImageHelper }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductImage, event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductImage, event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\AttachmentBundle\Entity\File, event: postUpdate, method: filePostUpdate }
             - { name: doctrine.event_listener, event: postFlush }
             - { name: doctrine.event_listener, event: onClear }
 
@@ -1887,6 +1887,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_entity.preload_entity.product, method: onPreload }
             - { name: kernel.event_listener, event: oro_entity.preload_entity.productimage, method: onPreload }
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.productkititem, method: onPreload }
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.productkititemlabel, method: onPreload }
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.productkititemproduct, method: onPreload }
 
     oro_product.event_listener.product_data_converter:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductDataConverterEventListener'
@@ -2297,3 +2300,48 @@ services:
             - '@oro_entity_config.config.config_helper'
         tags:
             - { name: kernel.event_listener, event: oro_entity_config.after_write_field_config, method: onAfterWriteFieldConfig, priority: -255 }
+
+    oro_product.line_item_checksum_generator.general:
+        class: Oro\Bundle\ProductBundle\LineItemChecksumGenerator\GeneralLineItemChecksumGenerator
+        tags:
+            -
+                name: oro_product.line_item_checksum_generator
+                priority: -128 # General line item checksum generator should be called last.
+
+    oro_product.product_kit.checksum.product_kit_line_item_checksum_generator:
+        class: Oro\Bundle\ProductBundle\ProductKit\Checksum\ProductKitLineItemChecksumGenerator
+        tags:
+            - { name: oro_product.line_item_checksum_generator }
+
+    oro_product.line_item_checksum_generator:
+        class: Oro\Bundle\ProductBundle\LineItemChecksumGenerator\CompositeLineItemChecksumGenerator
+        arguments:
+            - !tagged_iterator { tag: oro_product.line_item_checksum_generator }
+
+    oro_product.line_item_checksum_generator.hashing:
+        decorates: oro_product.line_item_checksum_generator
+        class: Oro\Bundle\ProductBundle\LineItemChecksumGenerator\HashingLineItemChecksumGenerator
+        arguments:
+            - '@.inner'
+
+    oro_product.validator.product_kit_item_line_item_product_allowed:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductAvailableValidator
+        arguments:
+            - '@oro_entity.tools.entity_state_checker'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.validator.product_kit_item_line_item_product_unit_allowed:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductUnitAvailableValidator
+        arguments:
+            - '@oro_entity.tools.entity_state_checker'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.validator.product_kit_item_line_item_quantity_unit_precision:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecisionValidator'
+        arguments:
+            - '@oro_product.service.quantity_rounding'
+            - '@oro_product.formatter.product_unit_label'
+        tags:
+            - { name: validator.constraint_validator }

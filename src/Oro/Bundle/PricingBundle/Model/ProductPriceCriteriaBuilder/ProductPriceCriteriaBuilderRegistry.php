@@ -26,7 +26,7 @@ class ProductPriceCriteriaBuilderRegistry
     {
         foreach ($this->productPriceCriteriaBuilders as $productPriceCriteriaBuilder) {
             if ($productPriceCriteriaBuilder->isSupported($product)) {
-                return $productPriceCriteriaBuilder;
+                return clone $productPriceCriteriaBuilder;
             }
         }
 

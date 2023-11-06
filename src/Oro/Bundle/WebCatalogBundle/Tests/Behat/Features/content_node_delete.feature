@@ -39,7 +39,6 @@ Feature: Content Node Delete
   Scenario Outline:
     And I click on "<MenuItem>"
     And I should see "Delete" button
-    And I wait for action
     And I should see "Delete Current Content Node Button" button disabled
     And I should see "Delete" button with attributes:
       | title | <Title> |

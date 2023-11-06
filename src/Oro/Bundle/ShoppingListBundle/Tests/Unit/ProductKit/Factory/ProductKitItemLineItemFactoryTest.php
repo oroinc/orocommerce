@@ -8,10 +8,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 use Oro\Bundle\ShoppingListBundle\ProductKit\Factory\ProductKitItemLineItemFactory;
-use Oro\Bundle\ShoppingListBundle\ProductKit\Provider\ProductKitItemProductsProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -35,7 +35,7 @@ class ProductKitItemLineItemFactoryTest extends TestCase
 
         $this->kitItemProductsProvider
             ->expects(self::never())
-            ->method('getFirstProductAvailableForPurchase');
+            ->method('getFirstAvailableProduct');
 
         $kitItemLineItem = (new ProductKitItemLineItem())
             ->setKitItem($kitItem)
@@ -51,7 +51,7 @@ class ProductKitItemLineItemFactoryTest extends TestCase
 
         $this->kitItemProductsProvider
             ->expects(self::once())
-            ->method('getFirstProductAvailableForPurchase')
+            ->method('getFirstAvailableProduct')
             ->with($kitItem)
             ->willReturn(null);
 
@@ -79,7 +79,7 @@ class ProductKitItemLineItemFactoryTest extends TestCase
 
         $this->kitItemProductsProvider
             ->expects(self::never())
-            ->method('getFirstProductAvailableForPurchase');
+            ->method('getFirstAvailableProduct');
 
         $expected
             ->setKitItem($kitItem)
@@ -183,7 +183,7 @@ class ProductKitItemLineItemFactoryTest extends TestCase
             ->addUnitPrecision($firstProductUnitPrecision);
 
         $this->kitItemProductsProvider
-            ->method('getFirstProductAvailableForPurchase')
+            ->method('getFirstAvailableProduct')
             ->with($kitItem)
             ->willReturn($firstProduct);
 

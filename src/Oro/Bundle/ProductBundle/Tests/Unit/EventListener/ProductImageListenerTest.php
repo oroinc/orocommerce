@@ -18,23 +18,31 @@ use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
 {
-    private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
 
-    private ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject $imageTypeProvider;
+    /** @var ImageTypeProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $imageTypeProvider;
 
-    private ProductImageHelper|\PHPUnit\Framework\MockObject\MockObject $productImageHelper;
+    /** @var ProductImageHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $productImageHelper;
 
-    private EntityManager|\PHPUnit\Framework\MockObject\MockObject $productImageEntityManager;
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $productImageEntityManager;
 
-    private LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject $lifecycleArgs;
+    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $productRepository;
 
-    private ProductRepository|\PHPUnit\Framework\MockObject\MockObject $productRepository;
+    /** @var LifecycleEventArgs|\PHPUnit\Framework\MockObject\MockObject */
+    private $lifecycleArgs;
 
-    private ProductImageListener $listener;
+    /** @var ProductImageListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -42,19 +50,40 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
         $this->imageTypeProvider = $this->createMock(ImageTypeProvider::class);
         $this->productImageHelper = $this->createMock(ProductImageHelper::class);
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->productRepository = $this->createMock(ProductRepository::class);
 
         $this->lifecycleArgs = $this->createMock(LifecycleEventArgs::class);
         $this->lifecycleArgs->expects(self::any())
             ->method('getObjectManager')
             ->willReturn($this->productImageEntityManager);
 
-        $this->productRepository = $this->createMock(ProductRepository::class);
+        $container = TestContainerBuilder::create()
+            ->add(ImageTypeProvider::class, $this->imageTypeProvider)
+            ->add(ProductImageHelper::class, $this->productImageHelper)
+            ->getContainer($this);
 
-        $this->listener = new ProductImageListener(
-            $this->eventDispatcher,
-            $this->imageTypeProvider,
-            $this->productImageHelper
+        $this->listener = new ProductImageListener($this->eventDispatcher, $container);
+    }
+
+    private function prepareProductImage(int $imageId, int $productId): StubProductImage
+    {
+        $parentProductImage = new StubProductImage();
+        $parentProductImage->setImage(new File());
+        $parentProductImage->setTypes(
+            new ArrayCollection([new ProductImageType('main'), new ProductImageType('listing')])
         );
+
+        $parentProduct = new ProductStub();
+        $parentProduct->setId($productId);
+        $parentProduct->addImage($parentProductImage);
+
+        $productImage = new StubProductImage();
+        $productImage->setId($imageId);
+        $productImage->setImage(new File());
+        $productImage->addType(new ProductImageType('main'));
+        $productImage->setProduct($parentProduct);
+
+        return $productImage;
     }
 
     public function testPostPersist(): void
@@ -360,31 +389,5 @@ class ProductImageListenerTest extends \PHPUnit\Framework\TestCase
             );
 
         $this->listener->postFlush(new PostFlushEventArgs($this->productImageEntityManager));
-    }
-
-    private function prepareProductImage(int $imageId, int $productId): StubProductImage
-    {
-        $parentProductImage = new StubProductImage();
-        $parentProductImage->setImage(new File());
-        $parentProductImage->setTypes(
-            new ArrayCollection(
-                [
-                    new ProductImageType('main'),
-                    new ProductImageType('listing')
-                ]
-            )
-        );
-
-        $parentProduct = new ProductStub();
-        $parentProduct->setId($productId);
-        $parentProduct->addImage($parentProductImage);
-
-        $productImage = new StubProductImage();
-        $productImage->setId($imageId);
-        $productImage->setImage(new File());
-        $productImage->addType(new ProductImageType('main'));
-        $productImage->setProduct($parentProduct);
-
-        return $productImage;
     }
 }

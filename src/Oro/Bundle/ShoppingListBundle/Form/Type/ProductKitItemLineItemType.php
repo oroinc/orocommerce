@@ -6,8 +6,8 @@ namespace Oro\Bundle\ShoppingListBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
-use Oro\Bundle\ShoppingListBundle\ProductKit\Provider\ProductKitItemProductsProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Event\PreSetDataEvent;
@@ -55,7 +55,7 @@ class ProductKitItemLineItemType extends AbstractType
                 return;
             }
 
-            $choices = $this->kitItemProductsProvider->getProductsAvailableForPurchase($kitItemLineItem->getKitItem());
+            $choices = $this->kitItemProductsProvider->getAvailableProducts($kitItemLineItem->getKitItem());
             $isOptional = $kitItemLineItem->getKitItem()?->isOptional();
             if ($isOptional) {
                 $choices[] = null;

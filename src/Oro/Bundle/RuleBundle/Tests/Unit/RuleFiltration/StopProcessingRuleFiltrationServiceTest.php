@@ -5,94 +5,34 @@ namespace Oro\Bundle\RuleBundle\Tests\Unit\RuleFiltration;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
-use Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
-use Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator;
+use Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationService;
 
 class StopProcessingRuleFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $service;
+    private $baseFiltrationService;
 
-    /** @var EnabledRuleFiltrationServiceDecorator */
-    private $serviceDecorator;
+    /** @var StopProcessingRuleFiltrationService */
+    private $filtrationService;
 
     protected function setUp(): void
     {
-        $this->service = $this->createMock(RuleFiltrationServiceInterface::class);
+        $this->baseFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);
 
-        $this->serviceDecorator = new StopProcessingRuleFiltrationServiceDecorator($this->service);
+        $this->filtrationService = new StopProcessingRuleFiltrationService($this->baseFiltrationService);
     }
 
-    public function testGetFilteredRuleOwnersSortWithStopProcessing()
+    private function getRule(int $sortOrder, bool $stopProcessing): Rule
     {
-        $context = [];
+        $rule = new Rule();
+        $rule->setSortOrder($sortOrder);
+        $rule->setStopProcessing($stopProcessing);
 
-        $firstOwnerNonStopProcessingRule = $this->createRuleOwner($this->createRule(1, false));
-        $secondOwnerStopProcessingRule = $this->createRuleOwner($this->createRule(2, true));
-        $thirdOwnerStopProcessingRule = $this->createRuleOwner($this->createRule(3, true));
-        $forthOwnerNonStopProcessingRule = $this->createRuleOwner($this->createRule(4, false));
-
-        $ruleOwners = [
-            $forthOwnerNonStopProcessingRule,
-            $firstOwnerNonStopProcessingRule,
-            $thirdOwnerStopProcessingRule,
-            $secondOwnerStopProcessingRule,
-        ];
-
-        $expectedRuleOwners = [
-            $firstOwnerNonStopProcessingRule,
-            $secondOwnerStopProcessingRule
-        ];
-
-        $this->service->expects(self::once())
-            ->method('getFilteredRuleOwners')
-            ->with($expectedRuleOwners, $context)
-            ->willReturn($expectedRuleOwners);
-
-        $actualRuleOwners = $this->serviceDecorator->getFilteredRuleOwners($ruleOwners, $context);
-
-        self::assertEquals($expectedRuleOwners, $actualRuleOwners);
+        return $rule;
     }
 
-    public function testGetFilteredRuleOwnersOneNonStopProcessing()
-    {
-        $context = [];
-
-        $ownerNonStopProcessingRule = $this->createRuleOwner($this->createRule(1, false));
-
-        $ruleOwners = [$ownerNonStopProcessingRule];
-
-        $this->service->expects(self::once())
-            ->method('getFilteredRuleOwners')
-            ->with($ruleOwners, $context)
-            ->willReturn($ruleOwners);
-
-        self::assertEquals($ruleOwners, $this->serviceDecorator->getFilteredRuleOwners($ruleOwners, $context));
-    }
-
-    public function testGetFilteredRuleOwnersOneStopProcessing()
-    {
-        $context = [];
-
-        $ownerNonStopProcessingRule = $this->createRuleOwner($this->createRule(1, true));
-
-        $ruleOwners = [$ownerNonStopProcessingRule];
-
-        $this->service->expects(self::once())
-            ->method('getFilteredRuleOwners')
-            ->with($ruleOwners, $context)
-            ->willReturn($ruleOwners);
-
-        self::assertEquals($ruleOwners, $this->serviceDecorator->getFilteredRuleOwners($ruleOwners, $context));
-    }
-
-    private function createRule(int $sortOrder, bool $stopProcessing): RuleInterface
-    {
-        return (new Rule())->setSortOrder($sortOrder)->setStopProcessing($stopProcessing);
-    }
-
-    private function createRuleOwner(RuleInterface $rule): RuleOwnerInterface
+    private function getRuleOwner(RuleInterface $rule): RuleOwnerInterface
     {
         $ruleOwner = $this->createMock(RuleOwnerInterface::class);
         $ruleOwner->expects(self::any())
@@ -100,5 +40,75 @@ class StopProcessingRuleFiltrationServiceTest extends \PHPUnit\Framework\TestCas
             ->willReturn($rule);
 
         return $ruleOwner;
+    }
+
+    public function testGetFilteredRuleOwnersSortWithStopProcessing(): void
+    {
+        $context = [];
+
+        $firstOwnerNonStopProcessingRule = $this->getRuleOwner($this->getRule(1, false));
+        $secondOwnerStopProcessingRule = $this->getRuleOwner($this->getRule(2, true));
+        $thirdOwnerStopProcessingRule = $this->getRuleOwner($this->getRule(3, true));
+        $forthOwnerNonStopProcessingRule = $this->getRuleOwner($this->getRule(4, false));
+
+        $ruleOwners = [
+            $forthOwnerNonStopProcessingRule,
+            $firstOwnerNonStopProcessingRule,
+            $thirdOwnerStopProcessingRule,
+            $secondOwnerStopProcessingRule
+        ];
+
+        $expectedRuleOwners = [
+            $firstOwnerNonStopProcessingRule,
+            $secondOwnerStopProcessingRule
+        ];
+
+        $this->baseFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->with($expectedRuleOwners, $context)
+            ->willReturn($expectedRuleOwners);
+
+        self::assertEquals(
+            $expectedRuleOwners,
+            $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)
+        );
+    }
+
+    public function testGetFilteredRuleOwnersOneNonStopProcessing(): void
+    {
+        $context = [];
+
+        $ownerNonStopProcessingRule = $this->getRuleOwner($this->getRule(1, false));
+
+        $ruleOwners = [$ownerNonStopProcessingRule];
+
+        $this->baseFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->with($ruleOwners, $context)
+            ->willReturn($ruleOwners);
+
+        self::assertEquals(
+            $ruleOwners,
+            $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)
+        );
+    }
+
+    public function testGetFilteredRuleOwnersOneStopProcessing(): void
+    {
+        $context = [];
+
+        $ownerNonStopProcessingRule = $this->getRuleOwner($this->getRule(1, true));
+
+        $ruleOwners = [$ownerNonStopProcessingRule];
+
+        $this->baseFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->with($ruleOwners, $context)
+            ->willReturn($ruleOwners);
+
+        self::assertEquals(
+            $ruleOwners,
+            $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)
+        );
     }
 }

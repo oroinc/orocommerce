@@ -65,4 +65,45 @@ class ProductKitItemTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals([$product1, $product2], $kitItem->getProducts()->toArray());
     }
+
+    public function testGetKitItemProductWhenNoKitItemProducts(): void
+    {
+        $kitItem = new ProductKitItemStub();
+        self::assertNull($kitItem->getKitItemProduct(new Product()));
+    }
+
+    public function testGetKitItemProductWhenKitItemProductNotFound(): void
+    {
+        $kitItem = new ProductKitItemStub();
+
+        $productKitItemProduct1 = new ProductKitItemProduct();
+        $product1 = (new ProductStub())
+            ->setId(10);
+        $productKitItemProduct1
+            ->setProduct($product1);
+        $kitItem->addKitItemProduct($productKitItemProduct1);
+
+        self::assertNull($kitItem->getKitItemProduct(new Product()));
+    }
+
+    public function testGetKitItemProduct(): void
+    {
+        $kitItem = new ProductKitItemStub();
+
+        $productKitItemProduct1 = new ProductKitItemProduct();
+        $product1 = (new ProductStub())
+            ->setId(10);
+        $productKitItemProduct1
+            ->setProduct($product1);
+        $kitItem->addKitItemProduct($productKitItemProduct1);
+
+        $productKitItemProduct2 = new ProductKitItemProduct();
+        $product2 = (new ProductStub())
+            ->setId(20);
+        $productKitItemProduct2
+            ->setProduct($product2);
+        $kitItem->addKitItemProduct($productKitItemProduct2);
+
+        self::assertSame($productKitItemProduct1, $kitItem->getKitItemProduct($product1));
+    }
 }

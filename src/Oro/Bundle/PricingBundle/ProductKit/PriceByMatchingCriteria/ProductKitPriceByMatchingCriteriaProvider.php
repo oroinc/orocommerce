@@ -77,7 +77,7 @@ class ProductKitPriceByMatchingCriteriaProvider implements ProductPriceByMatchin
         $productKitPrice = new ProductKitPriceDTO(
             $productPriceCriteria->getProduct(),
             Price::create($productKitPriceValue->toFloat(), $productPriceCriteria->getCurrency()),
-            $productPrice?->getQuantity() ?? 0.0,
+            $productPrice?->getQuantity() ?? 1.0,
             $productPriceCriteria->getProductUnit()
         );
 

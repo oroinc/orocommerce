@@ -22,6 +22,20 @@ const isTagUnderWrapStyle = rte => {
         );
 };
 
+const getNodeContent = node => {
+    const model = node.__cashData?.model;
+
+    if (model) {
+        return model.toHTML();
+    }
+
+    if (node.nodeType === Node.TEXT_NODE) {
+        return node.nodeValue;
+    }
+
+    return node.outerHTML;
+};
+
 export default {
     name: 'wrap',
 
@@ -90,7 +104,7 @@ export default {
                     return str;
                 }
 
-                str += node.nodeType === Node.TEXT_NODE ? node.nodeValue : node.outerHTML;
+                str += getNodeContent(node);
 
                 if (index === 0 || index === nodes.length - 1) {
                     node.remove();

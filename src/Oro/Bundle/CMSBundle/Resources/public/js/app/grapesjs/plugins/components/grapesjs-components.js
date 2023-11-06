@@ -5,6 +5,7 @@ import traitManagerExtends from 'orocms/js/app/grapesjs/plugins/components/trait
 import {unescapeTwigExpression} from '../../utils';
 import fullscreenCommand from '../../commands/fullscreen';
 import clearCanvasCommand from '../../commands/clear-canvas';
+import componentSettingsDialog from '../../commands/component-settings-dialog';
 
 export default GrapesJS.plugins.add('grapesjs-components', function(editor, options) {
     const {Blocks, Commands, Panels} = editor;
@@ -39,6 +40,7 @@ export default GrapesJS.plugins.add('grapesjs-components', function(editor, opti
 
     Commands.add('fullscreen', fullscreenCommand);
     Commands.add('core:canvas-clear', clearCanvasCommand);
+    Commands.add('component:settings-dialog', componentSettingsDialog);
 
     traitManagerExtends(editor);
 

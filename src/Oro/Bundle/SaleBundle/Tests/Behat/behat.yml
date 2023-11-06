@@ -53,7 +53,7 @@ oro_behat_extension:
             type: 'css'
             locator: 'input[name="oro_sale_quote[customer]"]'
             element: Select2Entity
-          CustomerUser:
+          Customer User:
               type: 'css'
               locator: 'input[name="oro_sale_quote[customerUser]"]'
               element: Select2Entity

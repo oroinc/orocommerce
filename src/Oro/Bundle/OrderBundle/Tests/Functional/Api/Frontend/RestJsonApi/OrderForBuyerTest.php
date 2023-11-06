@@ -23,7 +23,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(['entity' => 'orders']);
 
@@ -31,26 +31,42 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     ['type' => 'orders', 'id' => '<toString(@order1->id)>'],
-                    ['type' => 'orders', 'id' => '<toString(@order2->id)>']
+                    ['type' => 'orders', 'id' => '<toString(@order2->id)>'],
+                    ['type' => 'orders', 'id' => '<toString(@order4->id)>'],
                 ]
             ],
             $response
         );
     }
 
-    public function testGet()
+    /**
+     * @dataProvider getOrderDataProvider
+     */
+    public function testGet(string $orderReference): void
     {
         $response = $this->get(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>']
+            ['entity' => 'orders', 'id' => $orderReference]
         );
 
         $this->assertResponseContains(
-            ['data' => ['type' => 'orders', 'id' => '<toString(@order1->id)>']],
+            ['data' => ['type' => 'orders', 'id' => $orderReference]],
             $response
         );
     }
 
-    public function testGetForChildCustomer()
+    public function getOrderDataProvider(): array
+    {
+        return [
+            'order' => [
+                'orderReference' => '<toString(@order1->id)>',
+            ],
+            'order with product kit line items' => [
+                'orderReference' => '<toString(@order4->id)>',
+            ],
+        ];
+    }
+
+    public function testGetForChildCustomer(): void
     {
         $response = $this->get(
             ['entity' => 'orders', 'id' => '<toString(@order3->id)>'],
@@ -68,7 +84,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetForCustomerFromAnotherDepartment()
+    public function testTryToGetForCustomerFromAnotherDepartment(): void
     {
         $response = $this->get(
             ['entity' => 'orders', 'id' => '<toString(@another_order->id)>'],
@@ -86,7 +102,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdate()
+    public function testTryToUpdate(): void
     {
         $response = $this->patch(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>'],
@@ -97,7 +113,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDelete()
+    public function testTryToDelete(): void
     {
         $response = $this->delete(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>'],
@@ -108,7 +124,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteList()
+    public function testTryToDeleteList(): void
     {
         $response = $this->cdelete(
             ['entity' => 'orders'],
@@ -119,39 +135,60 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET, POST');
     }
 
-    public function testGetSubresourceForLineItems()
+    /**
+     * @dataProvider getLineItemsDataProvider
+     */
+    public function testGetSubresourceForLineItems(string $orderReference, array $expectedLineItemsData): void
     {
         $response = $this->getSubresource(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'lineItems']
+            ['entity' => 'orders', 'id' => $orderReference, 'association' => 'lineItems']
         );
         $this->assertResponseContains(
             [
-                'data' => [
-                    ['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item1->id)>'],
-                    ['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item2->id)>']
-                ]
+                'data' => $expectedLineItemsData,
             ],
             $response
         );
     }
 
-    public function testGetRelationshipForLineItems()
+    /**
+     * @dataProvider getLineItemsDataProvider
+     */
+    public function testGetRelationshipForLineItems(string $orderReference, array $expectedLineItemsData): void
     {
         $response = $this->getRelationship(
-            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'lineItems']
+            ['entity' => 'orders', 'id' => $orderReference, 'association' => 'lineItems']
         );
         $this->assertResponseContains(
             [
-                'data' => [
-                    ['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item1->id)>'],
-                    ['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item2->id)>']
-                ]
+                'data' => $expectedLineItemsData,
             ],
             $response
         );
     }
 
-    public function testTryToGetSubresourceForLineItemsOfOrderForChildCustomer()
+    public function getLineItemsDataProvider(): array
+    {
+        return [
+            'order' => [
+                'orderReference' => '<toString(@order1->id)>',
+                'expectedLineItemsData' => [
+                    ['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item1->id)>'],
+                    ['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item2->id)>'],
+                ],
+            ],
+            'order with product kit line items' => [
+                'orderReference' => '<toString(@order4->id)>',
+                'expectedLineItemsData' => [
+                    ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_2_line_item.1->id)>'],
+                    ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_3_line_item.1->id)>'],
+                    ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_2_line_item.2->id)>'],
+                ],
+            ],
+        ];
+    }
+
+    public function testTryToGetSubresourceForLineItemsOfOrderForChildCustomer(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'lineItems'],
@@ -169,7 +206,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForLineItemsOfOrderForChildCustomer()
+    public function testTryToGetRelationshipForLineItemsOfOrderForChildCustomer(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'lineItems'],
@@ -187,7 +224,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetSubresourceForLineItemsOfOrderForCustomerFromAnotherDepartment()
+    public function testTryToGetSubresourceForLineItemsOfOrderForCustomerFromAnotherDepartment(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'lineItems'],
@@ -205,7 +242,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForLineItemsOfOrderForCustomerFromAnotherDepartment()
+    public function testTryToGetRelationshipForLineItemsOfOrderForCustomerFromAnotherDepartment(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'lineItems'],
@@ -223,7 +260,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdateRelationshipForLineItems()
+    public function testTryToUpdateRelationshipForLineItems(): void
     {
         $response = $this->patchRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'lineItems'],
@@ -234,7 +271,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToAddRelationshipForLineItems()
+    public function testTryToAddRelationshipForLineItems(): void
     {
         $response = $this->postRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'lineItems'],
@@ -245,7 +282,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteRelationshipForLineItems()
+    public function testTryToDeleteRelationshipForLineItems(): void
     {
         $response = $this->deleteRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'lineItems'],
@@ -256,7 +293,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testGetSubresourceForCustomer()
+    public function testGetSubresourceForCustomer(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'customer']
@@ -267,7 +304,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForCustomer()
+    public function testGetRelationshipForCustomer(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'customer']
@@ -278,7 +315,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetSubresourceForCustomerOfOrderForChildCustomer()
+    public function testTryToGetSubresourceForCustomerOfOrderForChildCustomer(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'customer'],
@@ -296,7 +333,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForCustomerOfOrderForChildCustomer()
+    public function testTryToGetRelationshipForCustomerOfOrderForChildCustomer(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'customer'],
@@ -314,7 +351,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetSubresourceForCustomerOfOrderForCustomerFromAnotherDepartment()
+    public function testTryToGetSubresourceForCustomerOfOrderForCustomerFromAnotherDepartment(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'customer'],
@@ -332,7 +369,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForCustomerOfOrderForCustomerFromAnotherDepartment()
+    public function testTryToGetRelationshipForCustomerOfOrderForCustomerFromAnotherDepartment(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'customer'],
@@ -350,7 +387,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdateRelationshipForCustomer()
+    public function testTryToUpdateRelationshipForCustomer(): void
     {
         $response = $this->patchRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'customer'],
@@ -361,7 +398,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testGetSubresourceForCustomerUser()
+    public function testGetSubresourceForCustomerUser(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'customerUser']
@@ -372,7 +409,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForCustomerUser()
+    public function testGetRelationshipForCustomerUser(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'customerUser']
@@ -383,7 +420,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetSubresourceForCustomerUserOfOrderForChildCustomer()
+    public function testTryToGetSubresourceForCustomerUserOfOrderForChildCustomer(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'customerUser'],
@@ -401,7 +438,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForCustomerUserOfOrderForChildCustomer()
+    public function testTryToGetRelationshipForCustomerUserOfOrderForChildCustomer(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'customerUser'],
@@ -419,7 +456,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetSubresourceForCustomerUserOfOrderForCustomerFromAnotherDepartment()
+    public function testTryToGetSubresourceForCustomerUserOfOrderForCustomerFromAnotherDepartment(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'customerUser'],
@@ -437,7 +474,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForCustomerUserOfOrderForCustomerFromAnotherDepartment()
+    public function testTryToGetRelationshipForCustomerUserOfOrderForCustomerFromAnotherDepartment(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'customerUser'],
@@ -455,7 +492,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdateRelationshipForCustomerUser()
+    public function testTryToUpdateRelationshipForCustomerUser(): void
     {
         $response = $this->patchRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'customerUser'],
@@ -466,7 +503,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testGetSubresourceForBillingAddress()
+    public function testGetSubresourceForBillingAddress(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'billingAddress']
@@ -477,7 +514,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForBillingAddress()
+    public function testGetRelationshipForBillingAddress(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'billingAddress']
@@ -488,7 +525,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetSubresourceForBillingAddressOfOrderForChildCustomer()
+    public function testTryToGetSubresourceForBillingAddressOfOrderForChildCustomer(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'billingAddress'],
@@ -506,7 +543,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForBillingAddressOfOrderForChildCustomer()
+    public function testTryToGetRelationshipForBillingAddressOfOrderForChildCustomer(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'billingAddress'],
@@ -524,7 +561,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetSubresourceForBillingAddressOfOrderForCustomerFromAnotherDepartment()
+    public function testTryToGetSubresourceForBillingAddressOfOrderForCustomerFromAnotherDepartment(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'billingAddress'],
@@ -542,7 +579,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForBillingAddressOfOrderForCustomerFromAnotherDepartment()
+    public function testTryToGetRelationshipForBillingAddressOfOrderForCustomerFromAnotherDepartment(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'billingAddress'],
@@ -560,7 +597,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdateRelationshipForBillingAddress()
+    public function testTryToUpdateRelationshipForBillingAddress(): void
     {
         $response = $this->patchRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'billingAddress'],
@@ -571,7 +608,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testGetSubresourceForShippingAddress()
+    public function testGetSubresourceForShippingAddress(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'shippingAddress']
@@ -582,7 +619,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetRelationshipForShippingAddress()
+    public function testGetRelationshipForShippingAddress(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'shippingAddress']
@@ -593,7 +630,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetSubresourceForShippingAddressOfOrderForChildCustomer()
+    public function testTryToGetSubresourceForShippingAddressOfOrderForChildCustomer(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'shippingAddress'],
@@ -611,7 +648,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForShippingAddressOfOrderForChildCustomer()
+    public function testTryToGetRelationshipForShippingAddressOfOrderForChildCustomer(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order3->id)>', 'association' => 'shippingAddress'],
@@ -629,7 +666,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetSubresourceForShippingAddressOfOrderForCustomerFromAnotherDepartment()
+    public function testTryToGetSubresourceForShippingAddressOfOrderForCustomerFromAnotherDepartment(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'shippingAddress'],
@@ -647,7 +684,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetRelationshipForShippingAddressOfOrderForCustomerFromAnotherDepartment()
+    public function testTryToGetRelationshipForShippingAddressOfOrderForCustomerFromAnotherDepartment(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => '<toString(@another_order->id)>', 'association' => 'shippingAddress'],
@@ -665,7 +702,7 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdateRelationshipForShippingAddress()
+    public function testTryToUpdateRelationshipForShippingAddress(): void
     {
         $response = $this->patchRelationship(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'shippingAddress'],

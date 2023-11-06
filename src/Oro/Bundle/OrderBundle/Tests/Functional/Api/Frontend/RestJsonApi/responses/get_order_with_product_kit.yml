@@ -1,0 +1,56 @@
+data:
+    type: orders
+    id: '<toString(@order4->id)>'
+    attributes:
+        identifier: order4
+        poNumber: PO4
+        customerNotes: null
+        shipUntil: null
+        currency: USD
+        subtotalValue: '101.5400'
+        totalValue: '101.5400'
+        shippingMethod: null
+        shippingCostAmount: null
+        createdAt: '@order4->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@order4->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        paymentTerm: 'net 10'
+        paymentStatus:
+            code: 'pending'
+            label: 'Pending payment'
+        paymentMethod:
+            -
+                code: '<("money_order_" . @money_order_channel_1->id)>'
+                label: 'Check/Money Order'
+        discounts: []
+        shippingTrackings:
+            -
+                method: 'method 1'
+                number: 'number 1'
+    relationships:
+        billingAddress:
+            data:
+                type: orderaddresses
+                id: '<toString(@order4_billing_address->id)>'
+        shippingAddress:
+            data:
+                type: orderaddresses
+                id: '<toString(@order4_shipping_address->id)>'
+        lineItems:
+            data:
+                -
+                    type: orderlineitems
+                    id: '<toString(@product_kit_2_line_item.1->id)>'
+                -
+                    type: orderlineitems
+                    id: '<toString(@product_kit_3_line_item.1->id)>'
+                -
+                    type: orderlineitems
+                    id: '<toString(@product_kit_2_line_item.2->id)>'
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@customer_user->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@customer->id)>'

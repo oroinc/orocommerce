@@ -1,0 +1,35 @@
+data:
+    type: orderproductkititemlineitems
+    id: '<toString(@order_product_kit_3_line_item.1_kit_item_line_item.1->id)>'
+    attributes:
+        kitItemId: '@product-kit-3-kit-item-0->id'
+        kitItemLabel: '<toString(@product-kit-3-kit-item-0->defaultLabel)>'
+        optional: '@product-kit-3-kit-item-0->optional'
+        minimumQuantity: '@product-kit-3-kit-item-0->minimumQuantity'
+        maximumQuantity: '@product-kit-3-kit-item-0->maximumQuantity'
+        productId: '@product-1->id'
+        productSku: '<toString(@product-1->sku)>'
+        productName: '<toString(@product-1->defaultName)>'
+        quantity: 1
+        productUnitCode: '<toString(@product-kit-3-kit-item-0->productUnit->code)>'
+        productUnitPrecision: 3
+        sortOrder: 1
+        price: '11.5900'
+        currency: USD
+    relationships:
+        lineItem:
+            data:
+                type: orderlineitems
+                id: '<toString(@product_kit_3_line_item.1->id)>'
+        kitItem:
+            data:
+                type: productkititems
+                id: '<toString(@product-kit-3-kit-item-0->id)>'
+        product:
+            data:
+                type: products
+                id: '<toString(@product-1->id)>'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.liter->code)>'

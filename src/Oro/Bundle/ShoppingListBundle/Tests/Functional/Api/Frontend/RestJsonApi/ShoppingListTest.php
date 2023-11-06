@@ -1728,7 +1728,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                         'attributes' => [
                             'quantity' => 2,
                             'currency' => 'USD',
-                            'value' => '12.34',
+                            'value' => '14.8',
                         ],
                     ],
                 ],

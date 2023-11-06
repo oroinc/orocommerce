@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -15,7 +16,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\ProductKit\Factory\ProductKitItemLineItemFactory;
 use Oro\Bundle\ShoppingListBundle\ProductKit\Factory\ProductKitLineItemFactory;
-use Oro\Bundle\ShoppingListBundle\ProductKit\Provider\ProductKitItemsProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -41,7 +41,7 @@ class ProductKitLineItemFactoryTest extends TestCase
 
         $this->productKitItemsProvider
             ->expects(self::once())
-            ->method('getKitItemsAvailableForPurchase')
+            ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([]);
 
@@ -60,7 +60,7 @@ class ProductKitLineItemFactoryTest extends TestCase
 
         $this->productKitItemsProvider
             ->expects(self::once())
-            ->method('getKitItemsAvailableForPurchase')
+            ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([]);
 
@@ -79,7 +79,7 @@ class ProductKitLineItemFactoryTest extends TestCase
 
         $this->productKitItemsProvider
             ->expects(self::once())
-            ->method('getKitItemsAvailableForPurchase')
+            ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([]);
 
@@ -98,7 +98,7 @@ class ProductKitLineItemFactoryTest extends TestCase
 
         $this->productKitItemsProvider
             ->expects(self::once())
-            ->method('getKitItemsAvailableForPurchase')
+            ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([]);
 
@@ -123,7 +123,7 @@ class ProductKitLineItemFactoryTest extends TestCase
 
         $this->productKitItemsProvider
             ->expects(self::once())
-            ->method('getKitItemsAvailableForPurchase')
+            ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([]);
 
@@ -156,7 +156,7 @@ class ProductKitLineItemFactoryTest extends TestCase
 
         $this->productKitItemsProvider
             ->expects(self::once())
-            ->method('getKitItemsAvailableForPurchase')
+            ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([$kitItem1, $kitItem2]);
 
@@ -195,7 +195,7 @@ class ProductKitLineItemFactoryTest extends TestCase
 
         $this->productKitItemsProvider
             ->expects(self::once())
-            ->method('getKitItemsAvailableForPurchase')
+            ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([$kitItem1, $kitItem2]);
 

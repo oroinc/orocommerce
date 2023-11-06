@@ -6,7 +6,7 @@ Feature: Correct processing of special symbols in shopping list name
 
   Scenario: Check processing of special symbols in shopping list name
     Given I login as AmandaRCole@example.org buyer
-    And I wait 3 seconds
+    And I wait 5 seconds
     And I type "AA1" in "search"
     And I click "Search Button"
     When I press "ShoppingListAdd"

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemPriceAwareInterface;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
@@ -19,9 +20,14 @@ class AddAssociatedOrderToUpdateTotals implements ProcessorInterface
         /** @var CustomizeFormDataContext $context */
 
         if ($context->getForm()->isValid()) {
+            $entity = $context->getData();
+            $order = $entity instanceof ProductKitItemLineItemPriceAwareInterface
+                ? $entity->getLineItem()->getOrder()
+                : $entity->getOrder();
+
             UpdateOrderTotals::addOrderToUpdateTotals(
                 $context,
-                $context->getData()->getOrder(),
+                $order,
                 $context->getForm(),
                 $context->findFormFieldName('order')
             );

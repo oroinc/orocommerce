@@ -1,0 +1,85 @@
+Oro\Bundle\OrderBundle\Entity\Order:
+    order1:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'order1'
+        website: '@website1'
+        currency: 'USD'
+        poNumber: 'ORD1'
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    # <with different unit>
+    order1_line_item5:
+        product: '@product_kit1'
+        order: '@order1'
+        price: '@order1_line_item5_price'
+        quantity: 1
+        productUnit: '@piece'
+        comment: 'with different unit'
+        __calls:
+            -   addKitItemLineItem: [ '@order1_line_item5_kit_item1' ]
+            -   addKitItemLineItem: [ '@order1_line_item5_kit_item2' ]
+    # </with different unit>
+
+    # <with missing unit>
+    order1_line_item6:
+        product: '@product_kit1'
+        order: '@order1'
+        price: '@order1_line_item6_price'
+        quantity: 1
+        productUnit: '@piece'
+        comment: 'with missing unit'
+        __calls:
+            -   addKitItemLineItem: [ '@order1_line_item6_kit_item1' ]
+            -   addKitItemLineItem: [ '@order1_line_item6_kit_item2' ]
+    # </with missing unit>
+
+Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
+    # <with different unit>
+    order1_line_item5_kit_item1:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product1'
+        price: '@order1_line_item5_kit_item1_price'
+        quantity: 1
+        productUnit: '@each'
+        productUnitPrecision: 0
+
+    order1_line_item5_kit_item2:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product3'
+        price: '@order1_line_item5_kit_item2_price'
+        quantity: 2.22
+        productUnit: '@item'
+        productUnitPrecision: 2
+    # </with different unit>
+
+    # <with missing unit>
+    order1_line_item6_kit_item1:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product1'
+        price: '@order1_line_item6_kit_item1_price'
+        quantity: 1
+        productUnitCode: 'missing_unit'
+        productUnitPrecision: 1
+
+    order1_line_item6_kit_item2:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product3'
+        price: '@order1_line_item6_kit_item2_price'
+        quantity: 1
+        productUnitCode: 'missing_unit'
+        productUnitPrecision: 2
+    # </with missing unit>
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    order1_line_item{5..6}_price:
+        value: 12.34
+        currency: USD
+    order1_line_item{5..6}_kit_item1_price:
+        value: 23.45
+        currency: USD
+    order1_line_item{5..6}_kit_item2_price:
+        value: 34.56
+        currency: USD

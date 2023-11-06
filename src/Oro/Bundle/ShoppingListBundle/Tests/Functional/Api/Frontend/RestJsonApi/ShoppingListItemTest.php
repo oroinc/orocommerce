@@ -1160,7 +1160,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
                 'request' => 'create_kit_line_item_unit_not_equal_to_kit_item_product_unit.yml',
                 'expectedErrors' => [
                     [
-                        'title' => 'expression constraint',
+                        'title' => 'product kit item line item product unit available constraint',
                         'detail' => 'The selected product unit is not allowed',
                         'source' => ['pointer' => '/included/0/relationships/unit/data'],
                     ],
@@ -1241,7 +1241,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             $responseContent['data']['relationships']['kitItems']['data'][$k]['id'] = (string)$kitItemLineItem->getId();
         }
         $this->assertResponseContains($responseContent, $response);
-        $this->assertShoppingListTotal($shoppingList, 194.85, 'USD');
+        $this->assertShoppingListTotal($shoppingList, 226.95, 'USD');
     }
 
     public function testUpdateKitLineItem(): void
@@ -1264,7 +1264,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             ->getRepository(LineItem::class)
             ->find($lineItemId);
         self::assertNotNull($lineItem);
-        self::assertCount(3, $lineItem->getKitItemLineItems());
+        self::assertCount(2, $lineItem->getKitItemLineItems());
 
         $shoppingList = $lineItem->getShoppingList();
         self::assertNotNull($shoppingList);

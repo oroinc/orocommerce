@@ -93,7 +93,9 @@ oro_behat_extension:
           Short Description: 'oro_product[shortDescriptions][values][default]'
 
     Customer User Addresses Form:
-      selector: 'form[name="oro_customer_customer_user"]'
+      selector:
+        locator: '//div[@data-content="address-form"]'
+        type: xpath
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -491,6 +493,16 @@ oro_behat_extension:
     Save on conf window:
       selector:
         locator: '//div[@class="modal oro-modal-normal show"]//a[text()="Save"]'
+        type: xpath
+
+    Save on conf window DE:
+      selector:
+        locator: '//div[@class="modal oro-modal-normal show"]//a[text()="Speichern"]'
+        type: xpath
+
+    Save on conf window FR:
+      selector:
+        locator: '//div[@class="modal oro-modal-normal show"]//a[text()="Enregistrer"]'
         type: xpath
 
     Quick Order Configuration Form:
