@@ -9,6 +9,7 @@ dependencies:
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
     payment_term_net_10:
@@ -221,6 +222,66 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
         middleName: 'Edgar'
         lastName: 'Doo'
         phone: '888-858'
+    order4_billing_address:
+        customerAddress: '@customer_address'
+        customerUserAddress: '@customer_user_address'
+        label: 'Billing Address 4'
+        street: 'Street 4'
+        street2: 'Street 4'
+        city: 'Tel Aviv'
+        postalCode: '80564'
+        country: '@country_israel'
+        region: '@region_israel_telaviv'
+        organization: 'Gamma'
+        firstName: 'John'
+        middleName: 'Edgar'
+        lastName: 'Doo'
+        phone: '888-858'
+    order4_shipping_address:
+        customerAddress: '@customer_address'
+        customerUserAddress: '@customer_user_address'
+        label: 'Shipping Address 4'
+        street: 'Street 4'
+        street2: 'Street 4'
+        city: 'Tel Aviv'
+        postalCode: '80564'
+        country: '@country_israel'
+        region: '@region_israel_telaviv'
+        organization: 'Gamma'
+        firstName: 'John'
+        middleName: 'Edgar'
+        lastName: 'Doo'
+        phone: '888-858'
+    order5_billing_address:
+        customerAddress: '@customer1_address'
+        customerUserAddress: '@customer_user1_address'
+        label: 'Billing Address 4'
+        street: 'Street 4'
+        street2: 'Street 4'
+        city: 'Tel Aviv'
+        postalCode: '80564'
+        country: '@country_israel'
+        region: '@region_israel_telaviv'
+        organization: 'Gamma'
+        firstName: 'John'
+        middleName: 'Edgar'
+        lastName: 'Doo'
+        phone: '888-858'
+    order5_shipping_address:
+        customerAddress: '@customer1_address'
+        customerUserAddress: '@customer_user1_address'
+        label: 'Shipping Address 4'
+        street: 'Street 4'
+        street2: 'Street 4'
+        city: 'Tel Aviv'
+        postalCode: '80564'
+        country: '@country_israel'
+        region: '@region_israel_telaviv'
+        organization: 'Gamma'
+        firstName: 'John'
+        middleName: 'Edgar'
+        lastName: 'Doo'
+        phone: '888-858'
     another_order_billing_address:
         customerAddress: '@another_customer_address'
         customerUserAddress: '@another_customer_user_address'
@@ -236,6 +297,34 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
         lastName: 'Rose'
         phone: '888-858'
     another_order_shipping_address:
+        customerAddress: '@customer_address'
+        customerUserAddress: '@another_customer_user_address'
+        label: 'Shipping Address another'
+        street: 'Street 1'
+        street2: 'Street 2'
+        city: 'Los Angeles'
+        postalCode: '90210'
+        country: '@country_usa'
+        region: '@region_usa_california'
+        organization: 'Beta'
+        firstName: 'Bill'
+        lastName: 'Doe'
+        phone: '789-123'
+    another_order2_billing_address:
+        customerAddress: '@another_customer_address'
+        customerUserAddress: '@another_customer_user_address'
+        label: 'Billing Address another'
+        street: 'Street 1'
+        street2: 'Street 2'
+        city: 'Los Angeles'
+        postalCode: '90210'
+        country: '@country_usa'
+        region: '@region_usa_california'
+        organization: 'Gamma'
+        firstName: 'Clint'
+        lastName: 'Rose'
+        phone: '888-858'
+    another_order2_shipping_address:
         customerAddress: '@customer_address'
         customerUserAddress: '@another_customer_user_address'
         label: 'Shipping Address another'
@@ -267,6 +356,9 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         unit: '@set'
         sell: false
         precision: '0'
+    precision6:
+        unit: '@product_unit.milliliter'
+        precision: '0'
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
     product1_name:
@@ -281,7 +373,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku: 'PSKU1'
         names: ['@product1_name']
         primaryUnitPrecision: '@precision1'
-        unitPrecisions: ['@precision2']
+        unitPrecisions: ['@precision2', '@precision6']
         attributeFamily: '@default_product_family'
         inventoryStatus: '@in_stock'
         status: 'enabled'
@@ -348,6 +440,34 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         quantity: 1
         value: 2.34
         currency: USD
+    product-1_price1_liter:
+        priceList: '@default_combined_price_list'
+        product: '@product-1'
+        unit: '@product_unit.liter'
+        quantity: 1
+        value: 115.90
+        currency: USD
+    product-1_price2_milliliter:
+        priceList: '@default_combined_price_list'
+        product: '@product-1'
+        unit: '@product_unit.milliliter'
+        quantity: 1
+        value: 11.59
+        currency: USD
+    product-3_price1_milliliter:
+        priceList: '@default_combined_price_list'
+        product: '@product-3'
+        unit: '@product_unit.milliliter'
+        quantity: 1
+        value: 12.59
+        currency: USD
+    product-4_price1_milliliter:
+        priceList: '@default_combined_price_list'
+        product: '@product-4'
+        unit: '@product_unit.milliliter'
+        quantity: 1
+        value: 13.59
+        currency: USD
 
 Oro\Bundle\OrderBundle\Entity\Order:
     order1:
@@ -395,6 +515,34 @@ Oro\Bundle\OrderBundle\Entity\Order:
         organization: '@organization'
         billingAddress: '@order3_billing_address'
         shippingAddress: '@order3_shipping_address'
+    order4:
+        identifier: order4
+        currency: 'USD'
+        poNumber: 'PO4'
+        subtotal: '101.54'
+        total: '101.54'
+        payment_term_7c4f1e8e: '@payment_term_net_10'
+        customer: '@customer'
+        customerUser: '@customer_user'
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+        billingAddress: '@order4_billing_address'
+        shippingAddress: '@order4_shipping_address'
+    order5:
+        identifier: order5
+        currency: 'USD'
+        poNumber: 'PO5'
+        subtotal: '101.54'
+        total: '101.54'
+        payment_term_7c4f1e8e: '@payment_term_net_10'
+        customer: '@customer1'
+        customerUser: '@customer_user1'
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+        billingAddress: '@order5_billing_address'
+        shippingAddress: '@order5_shipping_address'
     another_order:
         identifier: another_order
         currency: 'USD'
@@ -408,6 +556,19 @@ Oro\Bundle\OrderBundle\Entity\Order:
         organization: '@organization'
         billingAddress: '@another_order_billing_address'
         shippingAddress: '@another_order_shipping_address'
+    another_order2:
+        identifier: another_order2
+        currency: 'USD'
+        poNumber: 'ANOTHER_PO2'
+        subtotal: '101.54'
+        total: '101.54'
+        customer: '@another_customer'
+        customerUser: '@another_customer_user'
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+        billingAddress: '@another_order2_billing_address'
+        shippingAddress: '@another_order2_shipping_address'
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     order1_line_item1:
@@ -453,6 +614,120 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         productUnit: '@item'
         value: 1.1
         currency: 'USD'
+    product_kit_2_line_item.1:
+        order: '@order4'
+        product: '@product-kit-2'
+        quantity: 1
+        productUnit: '@product_unit.milliliter'
+        value: 20.59
+        currency: USD
+        checksum: 'product_kit_2_line_item.1.checksum'
+    product_kit_3_line_item.1:
+        order: '@order4'
+        product: '@product-kit-3'
+        quantity: 1
+        productUnit: '@product_unit.milliliter'
+        value: 60.36
+        currency: USD
+        checksum: 'product_kit_3_line_item.1.checksum'
+    product_kit_2_line_item.2:
+        order: '@order4'
+        product: '@product-kit-2'
+        quantity: 1
+        productUnit: '@product_unit.milliliter'
+        value: 20.59
+        currency: USD
+        checksum: 'product_kit_2_line_item.2.checksum'
+    order5_product_kit_2_line_item.1:
+        order: '@order5'
+        product: '@product-kit-2'
+        quantity: 1
+        productUnit: '@product_unit.milliliter'
+        value: 20.59
+        currency: USD
+        checksum: 'o5_product_kit_2_line_item.1.checksum'
+    another_order2_product_kit_2_line_item.1:
+        order: '@another_order2'
+        product: '@product-kit-2'
+        quantity: 1
+        productUnit: '@product_unit.milliliter'
+        value: 20.59
+        currency: USD
+        checksum: 'ao2_product_kit_2_line_item.1.checksum'
+
+Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
+    order_product_kit_2_line_item.1_kit_item_line_item.1:
+        lineItem: '@product_kit_2_line_item.1'
+        kitItem: '@product-kit-2-kit-item-0'
+        product: '@product-1'
+        quantity: 1
+        sortOrder: 1
+        productUnit: '@product_unit.milliliter'
+        value: 10.59
+        currency: USD
+    order_product_kit_3_line_item.1_kit_item_line_item.1:
+        lineItem: '@product_kit_3_line_item.1'
+        kitItem: '@product-kit-3-kit-item-0'
+        product: '@product-1'
+        quantity: 1
+        sortOrder: 1
+        productUnit: '@product_unit.liter'
+        value: 11.59
+        currency: USD
+    order_product_kit_3_line_item.1_kit_item_line_item.2:
+        lineItem: '@product_kit_3_line_item.1'
+        kitItem: '@product-kit-3-kit-item-1'
+        product: '@product-3'
+        quantity: 2
+        sortOrder: 2
+        productUnit: '@product_unit.milliliter'
+        value: 12.59
+        currency: USD
+    order_product_kit_3_line_item.1_kit_item_line_item.3:
+        lineItem: '@product_kit_3_line_item.1'
+        kitItem: '@product-kit-3-kit-item-2'
+        product: '@product-4'
+        quantity: 1
+        sortOrder: 3
+        productUnit: '@product_unit.milliliter'
+        value: 13.59
+        currency: USD
+    order_product_kit_2_line_item.2_kit_item_line_item.1:
+        lineItem: '@product_kit_2_line_item.2'
+        kitItem: '@product-kit-2-kit-item-0'
+        product: '@product-1'
+        quantity: 1
+        sortOrder: 1
+        productUnit: '@product_unit.milliliter'
+        value: 10.59
+        currency: USD
+    order_product_kit_2_line_item.2_kit_item_line_item.2:
+        lineItem: '@product_kit_2_line_item.2'
+        kitItem: '@product-kit-2-kit-item-1'
+        product: '@product-3'
+        quantity: 1
+        sortOrder: 2
+        productUnit: '@product_unit.milliliter'
+        value: 12.59
+        currency: USD
+    order5_product_kit_2_line_item.1_kit_item_line_item.1:
+        lineItem: '@order5_product_kit_2_line_item.1'
+        kitItem: '@product-kit-2-kit-item-0'
+        product: '@product-1'
+        quantity: 1
+        sortOrder: 1
+        productUnit: '@product_unit.milliliter'
+        value: 10.59
+        currency: USD
+    another_order2_product_kit_2_line_item.1_kit_item_line_item.1:
+        lineItem: '@another_order2_product_kit_2_line_item.1'
+        kitItem: '@product-kit-2-kit-item-0'
+        product: '@product-1'
+        quantity: 1
+        sortOrder: 1
+        productUnit: '@product_unit.milliliter'
+        value: 10.59
+        currency: USD
 
 Oro\Bundle\OrderBundle\Entity\OrderDiscount:
     order1_discount_percent:
@@ -491,6 +766,14 @@ Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
         number: 'number 2'
     order3_shipping_tracking1:
         order: '@order3'
+        method: 'method 1'
+        number: 'number 1'
+    order4_shipping_tracking1:
+        order: '@order4'
+        method: 'method 1'
+        number: 'number 1'
+    order5_shipping_tracking1:
+        order: '@order5'
         method: 'method 1'
         number: 'number 1'
     another_order_shipping_tracking1:

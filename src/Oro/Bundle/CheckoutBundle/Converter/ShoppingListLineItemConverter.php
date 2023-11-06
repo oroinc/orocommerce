@@ -4,7 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\Converter;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -13,6 +12,13 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
  */
 class ShoppingListLineItemConverter implements CheckoutLineItemConverterInterface
 {
+    private ProductKitItemLineItemConverter $productKitItemLineItemConverter;
+
+    public function __construct(ProductKitItemLineItemConverter $productKitItemLineItemConverter)
+    {
+        $this->productKitItemLineItemConverter = $productKitItemLineItemConverter;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -44,16 +50,12 @@ class ShoppingListLineItemConverter implements CheckoutLineItemConverterInterfac
                 ->setComment($lineItem->getNotes())
                 ->setChecksum($lineItem->getChecksum());
 
-            foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
-                $checkoutKitItemLineItem = (new CheckoutProductKitItemLineItem())
-                    ->setProduct($kitItemLineItem->getProduct())
-                    ->setKitItem($kitItemLineItem->getKitItem())
-                    ->setUnit($kitItemLineItem->getUnit())
-                    ->setQuantity($kitItemLineItem->getQuantity())
-                    ->setSortOrder($kitItemLineItem->getSortOrder())
-                    ->setPriceFixed(false);
-
-                $checkoutLineItem->addKitItemLineItem($checkoutKitItemLineItem);
+            if ($lineItem->getProduct()?->isKit()) {
+                foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
+                    $checkoutLineItem->addKitItemLineItem(
+                        $this->productKitItemLineItemConverter->convert($kitItemLineItem)
+                    );
+                }
             }
 
             $checkoutLineItems->add($checkoutLineItem);

@@ -6,14 +6,15 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 
 /**
- * Describers interface which gets applicable discounts for a given source entity and properly configures them.
+ * Represents a service to get applicable discounts for a given source entity and properly configures them.
  */
 interface PromotionDiscountsProviderInterface
 {
     /**
-     * @param object $sourceEntity
+     * @param object                   $sourceEntity
      * @param DiscountContextInterface $context
+     *
      * @return DiscountInterface[]
      */
-    public function getDiscounts($sourceEntity, DiscountContextInterface $context): array;
+    public function getDiscounts(object $sourceEntity, DiscountContextInterface $context): array;
 }

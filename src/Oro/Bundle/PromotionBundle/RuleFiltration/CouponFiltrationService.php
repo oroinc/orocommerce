@@ -9,133 +9,108 @@ use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
+/**
+ * Filters out promotions which use coupons and have no intersection with coupons
+ * of a source entity from the context.
+ */
 class CouponFiltrationService extends AbstractSkippableFiltrationService
 {
-    /**
-     * @var RuleFiltrationServiceInterface
-     */
-    private $filtrationService;
-
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
     public function __construct(
-        RuleFiltrationServiceInterface $filtrationService,
-        ManagerRegistry $registry
+        private RuleFiltrationServiceInterface $baseFiltrationService,
+        private ManagerRegistry $doctrine
     ) {
-        $this->filtrationService = $filtrationService;
-        $this->registry  = $registry;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
-        $ruleOwners = array_filter($ruleOwners, function ($ruleOwner) {
-            return $ruleOwner instanceof PromotionDataInterface;
-        });
+        $filteredRuleOwners = $this->doFilterRuleOwners($ruleOwners, $this->getAppliedCouponCodes($context));
 
-        $ruleOwnersNoCoupons = $this->extractRuleOwnersNotUsingCoupons($ruleOwners);
-
-        $ruleOwners = array_merge($ruleOwnersNoCoupons, $this->filterRuleOwnersWithCoupons($ruleOwners, $context));
-
-        return $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context);
+        return $this->baseFiltrationService->getFilteredRuleOwners($filteredRuleOwners, $context);
     }
 
-    /**
-     * @param array|PromotionDataInterface[] $ruleOwners
-     * @return array
-     */
-    private function extractRuleOwnersNotUsingCoupons(array &$ruleOwners): array
+    private function doFilterRuleOwners(array $ruleOwners, array $appliedCouponCodes): array
     {
-        $ruleOwnersNotUsingCoupons = [];
-        foreach ($ruleOwners as $key => $ruleOwner) {
+        $filteredRuleOwners = [];
+        $ruleOwnersWithCoupons = [];
+        foreach ($ruleOwners as $ruleOwner) {
+            if (!$ruleOwner instanceof PromotionDataInterface) {
+                continue;
+            }
             if (!$ruleOwner->isUseCoupons()) {
-                $ruleOwnersNotUsingCoupons[] = $ruleOwner;
-                unset($ruleOwners[$key]);
+                $filteredRuleOwners[] = $ruleOwner;
+            } elseif ($appliedCouponCodes) {
+                $ruleOwnersWithCoupons[] = $ruleOwner;
             }
         }
 
-        return $ruleOwnersNotUsingCoupons;
+        if ($ruleOwnersWithCoupons) {
+            $filteredRuleOwners = array_merge(
+                $filteredRuleOwners,
+                $this->filterRuleOwnersWithCoupons($ruleOwnersWithCoupons, $appliedCouponCodes)
+            );
+        }
+
+        return $filteredRuleOwners;
     }
 
-    /**
-     * @param array|PromotionDataInterface[] $ruleOwners
-     * @param array $context
-     * @return array
-     */
-    private function filterRuleOwnersWithCoupons(array $ruleOwners, array $context): array
+    private function getAppliedCouponCodes(array $context): array
     {
-        if (!array_key_exists(ContextDataConverterInterface::APPLIED_COUPONS, $context)) {
+        $appliedCoupons = $context[ContextDataConverterInterface::APPLIED_COUPONS] ?? [];
+        if (\count($appliedCoupons) === 0) {
             return [];
         }
 
+        $appliedCouponCodes = [];
+        /** @var Coupon $appliedCoupon */
+        foreach ($appliedCoupons as $appliedCoupon) {
+            $appliedCouponCodes[$appliedCoupon->getCode()] = true;
+        }
+
+        return $appliedCouponCodes;
+    }
+
+    private function filterRuleOwnersWithCoupons(array $ruleOwnersWithCoupons, array $appliedCouponCodes): array
+    {
+        $filteredRuleOwners = [];
         $promotions = [];
-        foreach ($ruleOwners as $key => $ruleOwner) {
+        foreach ($ruleOwnersWithCoupons as $ruleOwner) {
             if ($ruleOwner instanceof Promotion) {
                 $promotions[] = $ruleOwner;
-                unset($ruleOwners[$key]);
-            }
-        }
-
-        $couponCodes = [];
-        /** @var Coupon $appliedCoupon */
-        foreach ($context[ContextDataConverterInterface::APPLIED_COUPONS] as $appliedCoupon) {
-            $couponCodes[$appliedCoupon->getCode()] = true;
-        }
-
-        $promotionsData = $this->filterPromotionsDataWithCoupons($ruleOwners, $couponCodes);
-
-        return array_merge(
-            $promotionsData,
-            $this->filterPromotionsWithCoupons($promotions, $couponCodes)
-        );
-    }
-
-    /**
-     * @param array|Promotion[] $promotions
-     * @param array|string[] $couponCodes
-     * @return array
-     */
-    private function filterPromotionsWithCoupons(array $promotions, array $couponCodes): array
-    {
-        if (empty($promotions)) {
-            return [];
-        }
-
-        $matchedPromotionsIds = $this->registry
-            ->getManagerForClass(Coupon::class)
-            ->getRepository(Coupon::class)
-            ->getPromotionsWithMatchedCoupons($promotions, array_keys($couponCodes));
-
-        $matchedPromotionsIds = array_flip($matchedPromotionsIds);
-
-        return array_filter($promotions, function ($promotion) use ($matchedPromotionsIds) {
-            /** @var Promotion $promotion */
-            return isset($matchedPromotionsIds[$promotion->getId()]);
-        });
-    }
-
-    /**
-     * @param array|PromotionDataInterface[] $promotionsData
-     * @param array $couponCodes
-     * @return array
-     */
-    private function filterPromotionsDataWithCoupons(array $promotionsData, array &$couponCodes): array
-    {
-        return array_filter($promotionsData, function ($promotionData) use (&$couponCodes) {
-            /** @var PromotionDataInterface $promotionData */
-            foreach ($promotionData->getCoupons() as $coupon) {
-                if (isset($couponCodes[$coupon->getCode()])) {
-                    unset($couponCodes[$coupon->getCode()]);
-                    return true;
+            } else {
+                $isCouponApplied = false;
+                foreach ($ruleOwner->getCoupons() as $coupon) {
+                    if (isset($appliedCouponCodes[$coupon->getCode()])) {
+                        unset($appliedCouponCodes[$coupon->getCode()]);
+                        $isCouponApplied = true;
+                        break;
+                    }
+                }
+                if ($isCouponApplied) {
+                    $filteredRuleOwners[] = $ruleOwner;
                 }
             }
+        }
 
-            return false;
-        });
+        if ($promotions) {
+            $matchedPromotionIds = $this->getMatchedPromotionsIds($promotions, array_keys($appliedCouponCodes));
+            foreach ($promotions as $promotion) {
+                if (isset($matchedPromotionIds[$promotion->getId()])) {
+                    $filteredRuleOwners[] = $promotion;
+                }
+            }
+        }
+
+        return $filteredRuleOwners;
+    }
+
+    private function getMatchedPromotionsIds(array $promotions, array $couponCodes): array
+    {
+        return array_fill_keys(
+            $this->doctrine->getRepository(Coupon::class)->getPromotionsWithMatchedCoupons($promotions, $couponCodes),
+            true
+        );
     }
 }

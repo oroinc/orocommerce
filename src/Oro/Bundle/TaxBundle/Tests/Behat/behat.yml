@@ -95,9 +95,17 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: 'table.tax-result-grid'
 
-    Backend Shipping Cost Tax Table:
+    Backend Order Taxes Totals Table:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
-      selector: '[data-role=order-taxes-totals] table.tax-result-grid'
+      selector:
+        locator: '//div[contains(@data-role, "order-taxes-totals")]//descendant::table[contains(@class, "tax-result-grid")][1]'
+        type: xpath
+
+    Backend Order Taxes Results Table:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector:
+        locator: '//div[contains(@data-role, "order-taxes-totals")]//descendant::table[contains(@class, "tax-result-grid")][2]'
+        type: xpath
 
     Tax Shipping Form:
       selector: 'form[name="tax_shipping"]'

@@ -3,44 +3,37 @@
 namespace Oro\Bundle\PromotionBundle\Model;
 
 use Doctrine\Common\Util\ClassUtils;
-use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 
 /**
- * Promotion aware entity helper.
+ * The utility class that helps to check if an entity is a coupon or promotion aware.
  */
 class PromotionAwareEntityHelper
 {
-    public function __construct(protected ConfigManager $configProvider)
+    private ConfigManager $configManager;
+
+    public function __construct(ConfigManager $configManager)
     {
+        $this->configManager = $configManager;
     }
 
     public function isCouponAware(object|string $objectOrClass): bool
     {
-        $className = is_object($objectOrClass) ? $objectOrClass::class : $objectOrClass;
-
-        return $this->getPromotionAwareInfo($className, 'is_coupon_aware');
+        return $this->isOptionEnabled($objectOrClass, 'is_coupon_aware');
     }
 
     public function isPromotionAware(object|string $objectOrClass): bool
     {
-        $className = is_object($objectOrClass) ? $objectOrClass::class : $objectOrClass;
-
-        return $this->getPromotionAwareInfo($className, 'is_promotion_aware');
+        return $this->isOptionEnabled($objectOrClass, 'is_promotion_aware');
     }
 
-    protected function getPromotionAwareInfo(string $className, string $optionName): bool
+    private function isOptionEnabled(object|string $objectOrClass, string $optionName): bool
     {
-        $className = ClassUtils::getRealClass($className);
-        if ($this->configProvider->hasConfig($className)) {
-            /** @var Config $promotionAwareInfo */
-            $promotionAwareInfo = $this->configProvider->getEntityConfig('promotion', $className);
-            $promotionValues = $promotionAwareInfo->getValues();
-            if (isset($promotionValues[$optionName])) {
-                return $promotionValues[$optionName];
-            }
+        $entityClass = \is_object($objectOrClass) ? ClassUtils::getClass($objectOrClass) : $objectOrClass;
+        if (!$this->configManager->hasConfig($entityClass)) {
+            return false;
         }
 
-        return false;
+        return $this->configManager->getEntityConfig('promotion', $entityClass)->is($optionName);
     }
 }

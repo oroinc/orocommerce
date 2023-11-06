@@ -52,7 +52,7 @@ class LoadShoppingListProductKitLineItems extends AbstractShoppingListLineItemsF
             $this->setReference($name, $kitItemLineItem);
 
             $lineItem->addKitItemLineItem($kitItemLineItem);
-            $checksumGenerator = $this->container->get('oro_shopping_list.product_kit.checksum');
+            $checksumGenerator = $this->container->get('oro_product.line_item_checksum_generator');
             $lineItem->setChecksum($checksumGenerator->getChecksum($lineItem));
         }
 

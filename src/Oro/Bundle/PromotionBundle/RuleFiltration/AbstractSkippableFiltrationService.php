@@ -6,19 +6,18 @@ use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 /**
- * This class makes filtration service skippable by passing an option with skipped filtration service
- * class into context.
+ * The base class for skippable filtration services.
  */
 abstract class AbstractSkippableFiltrationService implements RuleFiltrationServiceInterface
 {
-    const SKIP_FILTERS_KEY = 'skip_filters';
+    public const SKIP_FILTERS_KEY = 'skip_filters';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getFilteredRuleOwners(array $ruleOwners, array $context): array
     {
-        if (!empty($context[self::SKIP_FILTERS_KEY][get_class($this)])) {
+        if (!empty($context[self::SKIP_FILTERS_KEY][\get_class($this)])) {
             return $ruleOwners;
         }
 
@@ -26,9 +25,10 @@ abstract class AbstractSkippableFiltrationService implements RuleFiltrationServi
     }
 
     /**
-     * @param RuleOwnerInterface[]|array $ruleOwners
-     * @param array $context
-     * @return RuleOwnerInterface[]|array
+     * @param RuleOwnerInterface[] $ruleOwners
+     * @param array                $context
+     *
+     * @return RuleOwnerInterface[]
      */
-    abstract protected function filterRuleOwners(array $ruleOwners, array $context);
+    abstract protected function filterRuleOwners(array $ruleOwners, array $context): array;
 }

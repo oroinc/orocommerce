@@ -25,6 +25,8 @@ class ProductLineItem implements ProductLineItemInterface, ProductLineItemsHolde
      */
     protected $unit;
 
+    protected ?string $unitCode = null;
+
     /**
      * @var float
      */
@@ -71,6 +73,15 @@ class ProductLineItem implements ProductLineItemInterface, ProductLineItemsHolde
     public function setUnit(ProductUnit $unit)
     {
         $this->unit = $unit;
+        $this->unitCode = $unit->getCode();
+
+        return $this;
+    }
+
+    public function setProductUnit(ProductUnit $unit): self
+    {
+        $this->unit = $unit;
+
         return $this;
     }
 
@@ -87,7 +98,7 @@ class ProductLineItem implements ProductLineItemInterface, ProductLineItemsHolde
      */
     public function getProductUnitCode()
     {
-        return $this->unit ? $this->unit->getCode() : null;
+        return $this->unit ? $this->unit->getCode() : $this->unitCode;
     }
 
     /**

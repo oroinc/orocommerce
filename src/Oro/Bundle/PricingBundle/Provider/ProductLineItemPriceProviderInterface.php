@@ -18,8 +18,8 @@ interface ProductLineItemPriceProviderInterface
      * Provides {@see ProductLineItemPrice} objects for the specified $lineItems.
      *
      * @param iterable<ProductLineItemInterface> $lineItems
-     * @param string|null $currency When null - currency is detected automatically from the current context.
      * @param ProductPriceScopeCriteriaInterface|null $priceScopeCriteria
+     * @param string|null $currency When null - currency is detected automatically from the current context.
      *
      * @return array<int|string,ProductLineItemPrice> Array of product line item prices, each element
      *  associated with the key of the corresponding line item from $lineItems

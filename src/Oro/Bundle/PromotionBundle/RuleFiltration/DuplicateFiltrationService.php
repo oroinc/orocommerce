@@ -6,41 +6,42 @@ use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 /**
- * Filter out rule owners that are already present.
+ * Filters out rule owners that are already present.
  */
 class DuplicateFiltrationService extends AbstractSkippableFiltrationService
 {
-    /**
-     * @var RuleFiltrationServiceInterface
-     */
-    private $filtrationService;
-
-    public function __construct(RuleFiltrationServiceInterface $filtrationService)
-    {
-        $this->filtrationService = $filtrationService;
+    public function __construct(
+        private RuleFiltrationServiceInterface $baseFiltrationService
+    ) {
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
-        $appliedIds = [];
-        $ruleOwners = array_values(array_filter($ruleOwners, function ($ruleOwner) use (&$appliedIds) {
+        $filteredRuleOwners = $this->filterDuplicatedRuleOwners($ruleOwners);
+
+        return $this->baseFiltrationService->getFilteredRuleOwners($filteredRuleOwners, $context);
+    }
+
+    private function filterDuplicatedRuleOwners(array $ruleOwners): array
+    {
+        $filteredRuleOwners = [];
+        $processedIds = [];
+        foreach ($ruleOwners as $ruleOwner) {
             if (!$ruleOwner instanceof PromotionDataInterface) {
-                return false;
+                continue;
             }
 
-            if (!array_key_exists($ruleOwner->getId(), $appliedIds)) {
-                $appliedIds[$ruleOwner->getId()] = true;
-
-                return true;
+            if (\array_key_exists($ruleOwner->getId(), $processedIds)) {
+                continue;
             }
 
-            return false;
-        }));
-        unset($appliedIds);
+            $processedIds[$ruleOwner->getId()] = true;
+            $filteredRuleOwners[] = $ruleOwner;
+        }
 
-        return $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context);
+        return $filteredRuleOwners;
     }
 }

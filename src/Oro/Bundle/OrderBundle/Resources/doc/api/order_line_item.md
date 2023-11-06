@@ -191,6 +191,14 @@ Delete a collection of line item records.
 
 **The read-only field. A passed value will be ignored.**
 
+### checksum
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ## SUBRESOURCES
 
 ### order
@@ -284,3 +292,50 @@ Example:
 ```
 {@/request}
 
+### kitItemLineItems
+
+#### get_subresource
+
+Retrieve a list of order product kit item line item records assigned to a specific line item record.
+
+#### get_relationship
+
+Retrieve IDs of order product kit item line item records assigned to a specific line item record.
+
+#### update_relationship
+
+Replace the list of order product kit item line items assigned to a specific line item record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "orderproductkititemlineitems",
+      "id": "2"
+    }
+  ]
+}
+```
+{@/request}
+
+#### delete_relationship
+
+Remove order product kit item line item records from a specific line item record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "orderproductkititemlineitems",
+      "id": "1"
+    }
+  ]
+}
+```
+{@/request}

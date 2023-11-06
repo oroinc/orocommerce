@@ -2,6 +2,7 @@ import 'jasmine-jquery';
 import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 import '../fixtures/load-plugin-modules';
+import 'orocms/js/app/grapesjs/plugins/wysiwyg-icons';
 
 describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
     let grapesjsEditorView;
@@ -25,7 +26,10 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                 stylesheet: '',
                 active: true
             }],
-            disableDeviceManager: true
+            disableDeviceManager: true,
+            builderPlugins: {
+                'wysiwyg-icons': {}
+            }
         });
         const context = grapesjsEditorView.builder.Parser.parserHtml;
         htmlParser = context.parse.bind(context);
@@ -860,6 +864,104 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             }];
 
             expect(htmlParser(str).html).toEqual(result);
+        });
+
+        it('icon inside button', () => {
+            const cases = [
+                [
+                    '<div><a class="btn">{{ widget_icon("icon-before") }}Link text{{ widget_icon("icon-after") }}</a></div>',
+                    [{
+                        tagName: 'div',
+                        components: [{
+                            type: 'link-button',
+                            tagName: 'a',
+                            attributes: {},
+                            classes: ['btn'],
+                            components: [{
+                                type: 'icon',
+                                attributes: {
+                                    'data-init-icon': 'icon-before'
+                                },
+                                iconId: 'icon-before',
+                                tagName: 'svg'
+                            }, {
+                                type: 'textnode',
+                                tagName: '',
+                                content: 'Link text'
+                            }, {
+                                type: 'icon',
+                                attributes: {
+                                    'data-init-icon': 'icon-after'
+                                },
+                                iconId: 'icon-after',
+                                tagName: 'svg'
+                            }]
+                        }]
+                    }]
+                ],
+                [
+                    '<a class="btn">{{ widget_icon("icon-before") }}Link text</a><a class="btn">Link text{{ widget_icon("icon-after") }}</a>',
+                    [{
+                        type: 'link-button',
+                        tagName: 'a',
+                        attributes: {},
+                        classes: ['btn'],
+                        components: [{
+                            type: 'icon',
+                            attributes: {
+                                'data-init-icon': 'icon-before'
+                            },
+                            iconId: 'icon-before',
+                            tagName: 'svg'
+                        }, {
+                            type: 'textnode',
+                            tagName: '',
+                            content: 'Link text'
+                        }]
+                    }, {
+                        type: 'link-button',
+                        tagName: 'a',
+                        attributes: {},
+                        classes: ['btn'],
+                        components: [{
+                                type: 'textnode',
+                                tagName: '',
+                                content: 'Link text'
+                            }, {
+                                type: 'icon',
+                                attributes: {
+                                    'data-init-icon': 'icon-after'
+                                },
+                                iconId: 'icon-after',
+                                tagName: 'svg'
+                        }]
+                    }]
+                ],
+                [
+                    '<div class="block">{{ widget_icon("icon-id", {"id": "test-id", "class": "test-class1 test-class2", "custom-attr": "custom-value"}) }}</div>',
+                    [{
+                        type: 'div-block',
+                        classes: ['block'],
+                        attributes: {},
+                        tagName: 'div',
+                        components: [{
+                            type: 'icon',
+                            tagName: 'svg',
+                            iconId: 'icon-id',
+                            attributes: {
+                                'data-init-icon': 'icon-id',
+                                'id': 'test-id',
+                                'custom-attr': 'custom-value'
+                            },
+                            classes: ['test-class1', 'test-class2']
+                        }]
+                    }]
+                ]
+            ];
+
+            for (const [source, expectRes] of cases) {
+                expect(htmlParser(source).html).toEqual(expectRes);
+            }
         });
     });
 });

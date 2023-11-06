@@ -11,6 +11,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\FrontendLineItemsGridVisibilityExtension;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
@@ -37,6 +38,8 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
 
     private ShoppingListRepository|MockObject $shoppingListRepository;
 
+    private LineItemRepository|MockObject $lineItemRepository;
+
     private ParameterBag $parameters;
 
     private FrontendLineItemsGridVisibilityExtension $extension;
@@ -49,6 +52,7 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
 
         $this->lineItemManager = $this->createMock(ObjectManager::class);
         $this->shoppingListRepository = $this->createMock(ShoppingListRepository::class);
+        $this->lineItemRepository = $this->createMock(LineItemRepository::class);
 
         $this->parameters = new ParameterBag();
 
@@ -58,6 +62,13 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
             $this->resolvedProductVisibilityProvider
         );
         $this->extension->setParameters($this->parameters);
+
+        $this->registry
+            ->method('getRepository')
+            ->willReturnMap([
+                [ShoppingList::class, null, $this->shoppingListRepository],
+                [LineItem::class, null, $this->lineItemRepository],
+            ]);
     }
 
     public function testIsApplicable(): void
@@ -186,23 +197,24 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
             ['id' => 2002, 'skuUppercase' => 'PRODUCT_SKU2', 'status' => Product::STATUS_ENABLED]
         );
 
+        $lineItem1 = $this->getEntity(LineItem::class, ['product' => $product1]);
+        $lineItem2 = $this->getEntity(LineItem::class, ['product' => $product2]);
         $shoppingList = $this->getEntity(
             ShoppingList::class,
-            ['lineItems' => new ArrayCollection([
-                $this->getEntity(LineItem::class, ['product' => $product1]),
-                $this->getEntity(LineItem::class, ['product' => $product2])
-            ])]
+            ['lineItems' => new ArrayCollection([$lineItem1, $lineItem2])]
         );
+
+        $this->lineItemRepository
+            ->expects(self::once())
+            ->method('getItemsWithProductByShoppingList')
+            ->with($shoppingList)
+            ->willReturn([$lineItem1, $lineItem2]);
 
         return [$shoppingList, $product1, $product2];
     }
 
     private function findShoppingList(int $shoppingListId, ?ShoppingList $shoppingList): void
     {
-        $this->registry->expects(self::once())
-            ->method('getRepository')
-            ->with(ShoppingList::class)
-            ->willReturn($this->shoppingListRepository);
         $this->shoppingListRepository->expects(self::once())
             ->method('find')
             ->with($shoppingListId)
@@ -211,7 +223,7 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
 
     private static function getDefaultDatagridConfigs(): array
     {
-        return             [
+        return [
             'options' => [
                 'toolbarOptions' => [
                     'pageSize' => [

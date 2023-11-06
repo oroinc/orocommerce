@@ -5,6 +5,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
@@ -12,7 +14,6 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\SubtotalProviderConstructorArguments;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\CacheAwareSubtotalProviderStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityWithoutCurrencyStub;
@@ -23,78 +24,78 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
+class TotalProcessorProviderTest extends \PHPUnit\Framework\TestCase
 {
+    private const SUBTOTAL_LABEL = 'oro.pricing.subtotals.total.label (translated)';
+
+    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $currencyManager;
+
+    /** @var WebsiteCurrencyProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $websiteCurrencyProvider;
+
     /** @var SubtotalProviderRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $subtotalProviderRegistry;
-
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
 
     /** @var TotalProcessorProvider */
     private $provider;
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->currencyManager = $this->createMock(UserCurrencyManager::class);
+        $this->websiteCurrencyProvider = $this->createMock(WebsiteCurrencyProvider::class);
         $this->subtotalProviderRegistry = $this->createMock(SubtotalProviderRegistry::class);
-        $this->translator = $this->createMock(TranslatorInterface::class);
+
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects(self::any())
+            ->method('trans')
+            ->willReturnCallback(function ($id) {
+                return $id . ' (translated)';
+            });
 
         $roundingService = $this->createMock(RoundingServiceInterface::class);
-        $roundingService->expects($this->any())
+        $roundingService->expects(self::any())
             ->method('round')
             ->willReturnCallback(function ($value) {
-                return round($value, 0, PHP_ROUND_HALF_UP);
+                return round($value);
             });
 
         $this->provider = new TotalProcessorProvider(
             $this->subtotalProviderRegistry,
-            $this->translator,
+            $translator,
             $roundingService,
             new SubtotalProviderConstructorArguments($this->currencyManager, $this->websiteCurrencyProvider)
         );
     }
 
-    public function testGetSubtotals()
+    public function testGetSubtotals(): void
     {
-        $this->translator->expects($this->never())
-            ->method('trans')
-            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
-            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
-
         $entity = $this->prepareSubtotals(new EntityStub());
 
         $subtotals = $this->provider->enableRecalculation()->getSubtotals($entity);
-        $this->assertInstanceOf(ArrayCollection::class, $subtotals);
+        self::assertInstanceOf(ArrayCollection::class, $subtotals);
         $subtotal = $subtotals->get(0);
 
-        $this->assertInstanceOf(Subtotal::class, $subtotal);
-        $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
-        $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $subtotal->getLabel());
-        $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
-        $this->assertIsFloat($subtotal->getAmount());
-        $this->assertEquals(142.0, $subtotal->getAmount());
+        self::assertInstanceOf(Subtotal::class, $subtotal);
+        self::assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
+        self::assertEquals('Total', $subtotal->getLabel());
+        self::assertEquals($entity->getCurrency(), $subtotal->getCurrency());
+        self::assertSame(142.0, $subtotal->getAmount());
     }
 
-    public function testGetTotal()
+    public function testGetTotal(): void
     {
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
-            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
-
         $entity = $this->prepareSubtotals(new EntityStub());
 
         $total = $this->provider->enableRecalculation()->getTotal($entity);
-        $this->assertInstanceOf(Subtotal::class, $total);
-        $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
-        $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
-        $this->assertEquals($entity->getCurrency(), $total->getCurrency());
-        $this->assertIsFloat($total->getAmount());
-        $this->assertEquals(182.0, $total->getAmount());
+        self::assertInstanceOf(Subtotal::class, $total);
+        self::assertEquals(TotalProcessorProvider::TYPE, $total->getType());
+        self::assertEquals(self::SUBTOTAL_LABEL, $total->getLabel());
+        self::assertEquals($entity->getCurrency(), $total->getCurrency());
+        self::assertSame(182.0, $total->getAmount());
     }
 
-    public function testRecalculationIsEnabledAndProviderIsCacheAware()
+    public function testRecalculationIsEnabledAndProviderIsCacheAware(): void
     {
         $subtotalProvider = $this->createMock(CacheAwareSubtotalProviderStub::class);
 
@@ -103,14 +104,14 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotal = new Subtotal();
         $expected = new ArrayCollection([$subtotal]);
 
-        $subtotalProvider->expects($this->once())
+        $subtotalProvider->expects(self::once())
             ->method('getSubtotal')
             ->willReturn($subtotal);
 
-        $this->assertEquals($expected, $this->provider->enableRecalculation()->getSubtotals(new EntityStub()));
+        self::assertEquals($expected, $this->provider->enableRecalculation()->getSubtotals(new EntityStub()));
     }
 
-    public function testRecalculationIsEnabledAndProviderIsNotCacheAware()
+    public function testRecalculationIsEnabledAndProviderIsNotCacheAware(): void
     {
         $subtotalProvider = $this->createMock(LineItemNotPricedSubtotalProvider::class);
 
@@ -119,14 +120,14 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotal = new Subtotal();
         $expected = new ArrayCollection([$subtotal]);
 
-        $subtotalProvider->expects($this->once())
+        $subtotalProvider->expects(self::once())
             ->method('getSubtotal')
             ->willReturn($subtotal);
 
-        $this->assertEquals($expected, $this->provider->enableRecalculation()->getSubtotals(new EntityStub()));
+        self::assertEquals($expected, $this->provider->enableRecalculation()->getSubtotals(new EntityStub()));
     }
 
-    public function testRecalculationIsEnabledAndProviderIsSubtotalCacheAware()
+    public function testRecalculationIsEnabledAndProviderIsSubtotalCacheAware(): void
     {
         $subtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
 
@@ -135,14 +136,14 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotal = new Subtotal();
         $expected = new ArrayCollection([$subtotal]);
 
-        $subtotalProvider->expects($this->once())
+        $subtotalProvider->expects(self::once())
             ->method('getSubtotal')
             ->willReturn($subtotal);
 
-        $this->assertEquals($expected, $this->provider->enableRecalculation()->getSubtotals(new EntityStub()));
+        self::assertEquals($expected, $this->provider->enableRecalculation()->getSubtotals(new EntityStub()));
     }
 
-    public function testProviderIsSubtotalCacheAwareButEntityIsNotShouldFail()
+    public function testProviderIsSubtotalCacheAwareButEntityIsNotShouldFail(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('SubtotalAwareInterface" expected, but "stdClass" given');
@@ -154,7 +155,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->provider->getSubtotals(new \stdClass());
     }
 
-    public function testRecalculationIsDisabledAndProviderIsSubtotalCacheAware()
+    public function testRecalculationIsDisabledAndProviderIsSubtotalCacheAware(): void
     {
         $subtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
 
@@ -163,14 +164,14 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotal = new Subtotal();
         $expected = new ArrayCollection([$subtotal]);
 
-        $subtotalProvider->expects($this->once())
+        $subtotalProvider->expects(self::once())
             ->method('getCachedSubtotal')
             ->willReturn($subtotal);
 
-        $this->assertEquals($expected, $this->provider->disableRecalculation()->getSubtotals(new SubtotalEntityStub()));
+        self::assertEquals($expected, $this->provider->disableRecalculation()->getSubtotals(new SubtotalEntityStub()));
     }
 
-    public function testRecalculationIsDisabledAndProviderIsCacheAware()
+    public function testRecalculationIsDisabledAndProviderIsCacheAware(): void
     {
         $subtotalProvider = $this->createMock(CacheAwareSubtotalProviderStub::class);
 
@@ -179,18 +180,18 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotal = new Subtotal();
         $expected = new ArrayCollection([$subtotal]);
 
-        $subtotalProvider->expects($this->once())
+        $subtotalProvider->expects(self::once())
             ->method('supportsCachedSubtotal')
             ->willReturn(true);
 
-        $subtotalProvider->expects($this->once())
+        $subtotalProvider->expects(self::once())
             ->method('getCachedSubtotal')
             ->willReturn($subtotal);
 
-        $this->assertEquals($expected, $this->provider->disableRecalculation()->getSubtotals(new SubtotalEntityStub()));
+        self::assertEquals($expected, $this->provider->disableRecalculation()->getSubtotals(new SubtotalEntityStub()));
     }
 
-    public function testRecalculationIsDisabledAndProviderIsCacheAwareButNotSupported()
+    public function testRecalculationIsDisabledAndProviderIsCacheAwareButNotSupported(): void
     {
         $subtotalProvider = $this->createMock(CacheAwareSubtotalProviderStub::class);
 
@@ -199,19 +200,19 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotal = new Subtotal();
         $expected = new ArrayCollection([$subtotal]);
 
-        $subtotalProvider->expects($this->once())
+        $subtotalProvider->expects(self::once())
             ->method('supportsCachedSubtotal')
             ->willReturn(false);
-        $subtotalProvider->expects($this->never())
+        $subtotalProvider->expects(self::never())
             ->method('getCachedSubtotal');
-        $subtotalProvider->expects($this->once())
+        $subtotalProvider->expects(self::once())
             ->method('getSubtotal')
             ->willReturn($subtotal);
 
-        $this->assertEquals($expected, $this->provider->disableRecalculation()->getSubtotals(new SubtotalEntityStub()));
+        self::assertEquals($expected, $this->provider->disableRecalculation()->getSubtotals(new SubtotalEntityStub()));
     }
 
-    public function testRecalculationIsDisabledAndProviderIsNotCacheAware()
+    public function testRecalculationIsDisabledAndProviderIsNotCacheAware(): void
     {
         $subtotalProvider = $this->createMock(LineItemNotPricedSubtotalProvider::class);
 
@@ -220,14 +221,14 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotal = new Subtotal();
         $expected = new ArrayCollection([$subtotal]);
 
-        $subtotalProvider->expects($this->once())
+        $subtotalProvider->expects(self::once())
             ->method('getSubtotal')
             ->willReturn($subtotal);
 
-        $this->assertEquals($expected, $this->provider->disableRecalculation()->getSubtotals(new EntityStub()));
+        self::assertEquals($expected, $this->provider->disableRecalculation()->getSubtotals(new EntityStub()));
     }
 
-    public function testRecalculationIsDisabledByDefault()
+    public function testRecalculationIsDisabledByDefault(): void
     {
         $subtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
 
@@ -236,112 +237,88 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotal = new Subtotal();
         $expected = new ArrayCollection([$subtotal]);
 
-        $subtotalProvider->expects($this->once())
+        $subtotalProvider->expects(self::once())
             ->method('getCachedSubtotal')
             ->willReturn($subtotal);
 
-        $this->assertEquals($expected, $this->provider->getSubtotals(new SubtotalEntityStub()));
+        self::assertEquals($expected, $this->provider->getSubtotals(new SubtotalEntityStub()));
     }
 
-    public function testClearSubtotalsCache()
+    public function testClearSubtotalsCache(): void
     {
-        $this->translator->expects($this->never())
-            ->method('trans')
-            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
-            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
-
         $entity = $this->prepareSubtotals(new EntityStub(), 2);
 
         $subtotals = $this->provider->enableRecalculation()->getSubtotals($entity);
-        $this->assertInstanceOf(ArrayCollection::class, $subtotals);
+        self::assertInstanceOf(ArrayCollection::class, $subtotals);
         $subtotal1 = $subtotals->get(0);
-        $this->assertInstanceOf(Subtotal::class, $subtotal1);
+        self::assertInstanceOf(Subtotal::class, $subtotal1);
 
         // try to get again and getProviders and getSubtotal expect run twice
         $subtotals = $this->provider->getSubtotals($entity);
-        $this->assertInstanceOf(ArrayCollection::class, $subtotals);
+        self::assertInstanceOf(ArrayCollection::class, $subtotals);
         $subtotal1 = $subtotals->get(0);
         $subtotal2 = $subtotals->get(1);
 
-        $this->assertInstanceOf(Subtotal::class, $subtotal1);
-        $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal1->getType());
-        $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $subtotal1->getLabel());
-        $this->assertEquals($entity->getCurrency(), $subtotal1->getCurrency());
-        $this->assertIsFloat($subtotal1->getAmount());
-        $this->assertEquals(142.0, $subtotal1->getAmount());
-        $this->assertEquals(40.0, $subtotal2->getAmount());
+        self::assertInstanceOf(Subtotal::class, $subtotal1);
+        self::assertEquals(LineItemSubtotalProvider::TYPE, $subtotal1->getType());
+        self::assertEquals('Total', $subtotal1->getLabel());
+        self::assertEquals($entity->getCurrency(), $subtotal1->getCurrency());
+        self::assertSame(142.0, $subtotal1->getAmount());
+        self::assertSame(40.0, $subtotal2->getAmount());
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
-        $this->assertEquals('oro_pricing.subtotal_total', $this->provider->getName());
+        self::assertEquals('oro_pricing.subtotal_total', $this->provider->getName());
     }
 
-    public function testGetTotalInDefaultCurrency()
+    public function testGetTotalInDefaultCurrency(): void
     {
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
-            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
-
         $entity = new EntityWithoutCurrencyStub();
-        $this->currencyManager->expects($this->once())
+        $this->currencyManager->expects(self::once())
             ->method('getUserCurrency')
             ->willReturn('USD');
 
         $entity = $this->prepareSubtotals($entity);
 
         $total = $this->provider->enableRecalculation()->getTotal($entity);
-        $this->assertInstanceOf(Subtotal::class, $total);
-        $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
-        $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
-        $this->assertEquals('USD', $total->getCurrency());
-        $this->assertIsFloat($total->getAmount());
-        $this->assertEquals(182.0, $total->getAmount());
+        self::assertInstanceOf(Subtotal::class, $total);
+        self::assertEquals(TotalProcessorProvider::TYPE, $total->getType());
+        self::assertEquals(self::SUBTOTAL_LABEL, $total->getLabel());
+        self::assertEquals('USD', $total->getCurrency());
+        self::assertSame(182.0, $total->getAmount());
     }
 
-    public function testGetTotalSubstractOperation()
+    public function testGetTotalSubstractOperation(): void
     {
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
-            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
-
         $entity = $this->prepareSubtotals(new EntityStub(), 1, Subtotal::OPERATION_SUBTRACTION);
 
         $total = $this->provider->enableRecalculation()->getTotal($entity);
-        $this->assertInstanceOf(Subtotal::class, $total);
-        $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
-        $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
-        $this->assertEquals($entity->getCurrency(), $total->getCurrency());
-        $this->assertIsFloat($total->getAmount());
-        $this->assertEquals(102.0, $total->getAmount());
+        self::assertInstanceOf(Subtotal::class, $total);
+        self::assertEquals(TotalProcessorProvider::TYPE, $total->getType());
+        self::assertEquals(self::SUBTOTAL_LABEL, $total->getLabel());
+        self::assertEquals($entity->getCurrency(), $total->getCurrency());
+        self::assertSame(102.0, $total->getAmount());
     }
 
-    public function testGetTotalSubstractOperationMinLimit()
+    public function testGetTotalSubstractOperationMinLimit(): void
     {
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
-            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
-
         $entity = $this->prepareSubtotals(new EntityStub(), 1, Subtotal::OPERATION_SUBTRACTION, 200.0);
 
         $total = $this->provider->enableRecalculation()->getTotal($entity);
-        $this->assertInstanceOf(Subtotal::class, $total);
-        $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
-        $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
-        $this->assertEquals($entity->getCurrency(), $total->getCurrency());
-        $this->assertIsFloat($total->getAmount());
-        $this->assertEquals(0.0, $total->getAmount());
+        self::assertInstanceOf(Subtotal::class, $total);
+        self::assertEquals(TotalProcessorProvider::TYPE, $total->getType());
+        self::assertEquals(self::SUBTOTAL_LABEL, $total->getLabel());
+        self::assertEquals($entity->getCurrency(), $total->getCurrency());
+        self::assertSame(0.0, $total->getAmount());
     }
 
-    public function testSubtotalsOrdering()
+    public function testSubtotalsOrdering(): void
     {
         $firstSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
         $secondSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
 
-        $this->subtotalProviderRegistry->expects($this->any())
+        $this->subtotalProviderRegistry->expects(self::any())
             ->method('getSupportedProviders')
             ->willReturn([$firstSubtotalProvider, $secondSubtotalProvider]);
 
@@ -353,15 +330,15 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $notOrderedSubtotal1 = new Subtotal();
         $notOrderedSubtotal2 = new Subtotal();
 
-        $firstSubtotalProvider->expects($this->any())
+        $firstSubtotalProvider->expects(self::any())
             ->method('getSubtotal')
             ->willReturn([$subtotal2, $notOrderedSubtotal1, $subtotal5, $subtotal1]);
 
-        $secondSubtotalProvider->expects($this->any())
+        $secondSubtotalProvider->expects(self::any())
             ->method('getSubtotal')
             ->willReturn([$subtotal4, $subtotal3, $notOrderedSubtotal2]);
 
-        $this->assertEquals(
+        self::assertEquals(
             new ArrayCollection([
                 $notOrderedSubtotal1, $notOrderedSubtotal2, $subtotal1, $subtotal2, $subtotal3, $subtotal4, $subtotal5
             ]),
@@ -397,35 +374,30 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $subtotal2->setLabel('Total');
         $subtotal2->setOperation($operation);
 
-        $this->subtotalProviderRegistry->expects($this->exactly($runCount))
+        $this->subtotalProviderRegistry->expects(self::exactly($runCount))
             ->method('getSupportedProviders')
             ->willReturn([$subtotalProvider1, $subtotalProvider2]);
-        $subtotalProvider1->expects($this->exactly($runCount))
+        $subtotalProvider1->expects(self::exactly($runCount))
             ->method('getSubtotal')
             ->willReturn($subtotal1);
-        $subtotalProvider2->expects($this->exactly($runCount))
+        $subtotalProvider2->expects(self::exactly($runCount))
             ->method('getSubtotal')
             ->willReturn($subtotal2);
 
         return $entity;
     }
 
-    public function testGetTotalWithSubtotalsAsArray()
+    public function testGetTotalWithSubtotalsAsArray(): void
     {
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
-            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
-
         $entity = $this->prepareSubtotals(new EntityStub());
 
         $totals = $this->provider->enableRecalculation()->getTotalWithSubtotalsAsArray($entity);
-        $this->assertIsArray($totals);
-        $this->assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
-        $this->assertEquals(
+        self::assertIsArray($totals);
+        self::assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
+        self::assertEquals(
             [
                 'type' => 'total',
-                'label' => 'Total',
+                'label' => self::SUBTOTAL_LABEL,
                 'amount' => 182.0,
                 'signedAmount' => 182.0,
                 'currency' => 'USD',
@@ -434,8 +406,8 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
             ],
             $totals[TotalProcessorProvider::TYPE]
         );
-        $this->assertArrayHasKey(TotalProcessorProvider::SUBTOTALS, $totals);
-        $this->assertEquals(
+        self::assertArrayHasKey(TotalProcessorProvider::SUBTOTALS, $totals);
+        self::assertEquals(
             [
                 [
                     'type' => 'subtotal',
@@ -460,33 +432,30 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         );
     }
 
-    private function setProviderToRegistry(SubtotalProviderInterface $subtotalProvider)
+    private function setProviderToRegistry(SubtotalProviderInterface $subtotalProvider): void
     {
-        $this->subtotalProviderRegistry->expects($this->once())
+        $this->subtotalProviderRegistry->expects(self::once())
             ->method('getSupportedProviders')
             ->willReturn([$subtotalProvider]);
     }
 
-    public function testGetTotalForSubtotals()
+    public function testGetTotalForSubtotals(): void
     {
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
-            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
         $entity = new EntityStub();
         $entity->setCurrency('USD');
+
         $subtotal = new Subtotal();
         $subtotal->setCurrency('USD');
         $subtotal->setAmount(142.0);
         $subtotal->setType(LineItemSubtotalProvider::TYPE);
         $subtotal->setLabel('Total');
         $subtotal->setOperation(Subtotal::OPERATION_ADD);
+
         $total = $this->provider->getTotalForSubtotals($entity, new ArrayCollection([$subtotal]));
-        $this->assertInstanceOf(Subtotal::class, $total);
-        $this->assertEquals(TotalProcessorProvider::TYPE, $total->getType());
-        $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
-        $this->assertEquals($entity->getCurrency(), $total->getCurrency());
-        $this->assertIsFloat($total->getAmount());
-        $this->assertEquals(142.0, $total->getAmount());
+        self::assertInstanceOf(Subtotal::class, $total);
+        self::assertEquals(TotalProcessorProvider::TYPE, $total->getType());
+        self::assertEquals(self::SUBTOTAL_LABEL, $total->getLabel());
+        self::assertEquals($entity->getCurrency(), $total->getCurrency());
+        self::assertSame(142.0, $total->getAmount());
     }
 }

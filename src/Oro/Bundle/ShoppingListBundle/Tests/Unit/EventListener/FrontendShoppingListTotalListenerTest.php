@@ -7,29 +7,32 @@ use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\EventListener\FrontendShoppingListTotalListener;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerArgumentsEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class FrontendShoppingListTotalListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var FrontendShoppingListTotalListener|\PHPUnit\Framework\MockObject\MockObject */
-    private $listener;
-
     /** @var CustomerUserProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $customerUserProvider;
 
     /** @var ShoppingListTotalManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingListTotalManager;
 
+    /** @var FrontendShoppingListTotalListener */
+    private $listener;
+
     protected function setUp(): void
     {
         $this->customerUserProvider = $this->createMock(CustomerUserProvider::class);
         $this->shoppingListTotalManager = $this->createMock(ShoppingListTotalManager::class);
-        $this->listener = new FrontendShoppingListTotalListener(
-            $this->customerUserProvider,
-            $this->shoppingListTotalManager
-        );
+
+        $container = TestContainerBuilder::create()
+            ->add(ShoppingListTotalManager::class, $this->shoppingListTotalManager)
+            ->getContainer($this);
+
+        $this->listener = new FrontendShoppingListTotalListener($this->customerUserProvider, $container);
     }
 
     /**
@@ -54,14 +57,12 @@ class FrontendShoppingListTotalListenerTest extends \PHPUnit\Framework\TestCase
             HttpKernelInterface::MAIN_REQUEST
         );
 
-        $this->customerUserProvider
-            ->expects($this->once())
+        $this->customerUserProvider->expects(self::once())
             ->method('getLoggedUser')
             ->with(false)
             ->willReturn($customerUser);
 
-        $this->shoppingListTotalManager
-            ->expects($this->once())
+        $this->shoppingListTotalManager->expects(self::once())
             ->method('setSubtotalsForCustomerUser')
             ->with($source, $customerUser);
 
@@ -92,14 +93,12 @@ class FrontendShoppingListTotalListenerTest extends \PHPUnit\Framework\TestCase
             HttpKernelInterface::MAIN_REQUEST
         );
 
-        $this->customerUserProvider
-            ->expects($this->once())
+        $this->customerUserProvider->expects(self::once())
             ->method('getLoggedUser')
             ->with(false)
             ->willReturn($customerUser);
 
-        $this->shoppingListTotalManager
-            ->expects($this->never())
+        $this->shoppingListTotalManager->expects(self::never())
             ->method('setSubtotalsForCustomerUser');
 
         $this->listener->onKernelController($event);
@@ -132,14 +131,12 @@ class FrontendShoppingListTotalListenerTest extends \PHPUnit\Framework\TestCase
             HttpKernelInterface::MAIN_REQUEST
         );
 
-        $this->customerUserProvider
-            ->expects($this->once())
+        $this->customerUserProvider->expects(self::once())
             ->method('getLoggedUser')
             ->with(false)
             ->willReturn($customerUser);
 
-        $this->shoppingListTotalManager
-            ->expects($this->never())
+        $this->shoppingListTotalManager->expects(self::never())
             ->method('setSubtotalsForCustomerUser');
 
         $this->listener->onKernelController($event);

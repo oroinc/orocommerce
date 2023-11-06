@@ -184,13 +184,13 @@ Feature: Product kits validation on shopping list page
 
       | product-kit-01                  | Product Kit 1 Kit item quantity greater than max quantity                                                                        | In Stock     | 2      | pieces | $60.00 | $120.00  |
       | simple-product-02               | Barcode Scanner: Product 2                                                                                                       |              | 4      | pieces | $10.00 |          |
-      |                                 | The quantity should be between 2 and 3.                                                                                            |              |        |        |        |          |
+      |                                 | The quantity should be between 2 and 3.                                                                                          |              |        |        |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1      | piece  | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |        |        |        |          |
 
       | product-kit-01                  | Product Kit 1 Kit item quantity is less than min quantity                                                                        | In Stock     | 2      | pieces | $30.00 | $60.00   |
       | simple-product-02               | Barcode Scanner: Product 2                                                                                                       |              | 1      | piece  | $10.00 |          |
-      |                                 | The quantity should be between 2 and 3.                                                                                            |              |        |        |        |          |
+      |                                 | The quantity should be between 2 and 3.                                                                                          |              |        |        |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1      | piece  | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |        |        |        |          |
 
@@ -198,11 +198,11 @@ Feature: Product kits validation on shopping list page
       |                                 | Product kit "product-kit-01" is missing the required kit item "Base Unit"                                                        |              |        |        |        |          |
 
       | product-kit-01                  | Product Kit 1 Invalid required kit item                                                                                          | In Stock     | 2      | pieces |        |          |
-      |                                 | Base Unit: The selected product is not allowed                                                                                   |              | 1      | piece  |        |          |
+      |                                 | Base Unit: Selection required                                                                                                    |              | 1      | piece  |        |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |        |        |        |          |
 
       | product-kit-01                  | Product Kit 1 Invalid optional kit item                                                                                          | In Stock     | 2      | pieces | $20.00 | $40.00   |
-      |                                 | Barcode Scanner: The selected product is not allowed                                                                             |              | 2      | pieces |        |          |
+      |                                 | Barcode Scanner: Original selection no longer available                                                                          |              | 2      | pieces |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1      | piece  | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |        |        |        |          |
 
@@ -217,10 +217,12 @@ Feature: Product kits validation on shopping list page
 
       | product-kit-01                  | Product Kit 1 Priceless required kit item                                                                                        | In Stock     | 2      | pieces |        |          |
       | priceless-product               | Base Unit: Priceless product                                                                                                     |              | 1      | piece  |        |          |
+      |                                 | Selection required                                                                                                               |              |        |        |        |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |        |        |        |          |
 
       | product-kit-01                  | Product Kit 1 Priceless optional kit item                                                                                        | In Stock     | 2      | pieces | $20.00 | $40.00   |
       | priceless-product               | Barcode Scanner: Priceless product                                                                                               |              | 2      | pieces |        |          |
+      |                                 | Original selection no longer available                                                                                           |              |        |        |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1      | piece  | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |        |        |        |          |
 
@@ -233,7 +235,7 @@ Feature: Product kits validation on shopping list page
 
       | product-kit-02                  | Product Kit 2 Invalid kit item precision                                                                                         | In Stock     | 2      | pieces | $22.35 | $44.70   |
       | simple-product-with-4-precision | Base Unit: Product with 4 precision                                                                                              |              | 1.2345 | items  | $10.00 |          |
-      |                                 | The precision for the unit "item" is not valid.                                                                                  |              |        |        |        |          |
+      |                                 | Only whole numbers are allowed for unit "item"                                                                                   |              |        |        |        |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |        |        |        |          |
 
       | product-kit-03                  | Product Kit 3 Invalid kit item unit                                                                                              | In Stock     | 2      | pieces | $20.00 | $40.00   |
@@ -271,13 +273,13 @@ Feature: Product kits validation on shopping list page
 
       | product-kit-01                  | Product Kit 1 Kit item quantity greater than max quantity                                                                        | In Stock     | 2 pieces       | $60.00 | $120.00  |
       | simple-product-02               | Barcode Scanner: Product 2                                                                                                       |              | 4 pieces       | $10.00 |          |
-      |                                 | The quantity should be between 2 and 3.                                                                                            |              |                |        |          |
+      |                                 | The quantity should be between 2 and 3.                                                                                          |              |                |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1 piece        | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Kit item quantity is less than min quantity                                                                        | In Stock     | 2 pieces       | $30.00 | $60.00   |
       | simple-product-02               | Barcode Scanner: Product 2                                                                                                       |              | 1 piece        | $10.00 |          |
-      |                                 | The quantity should be between 2 and 3.                                                                                            |              |                |        |          |
+      |                                 | The quantity should be between 2 and 3.                                                                                          |              |                |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1 piece        | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
@@ -285,11 +287,11 @@ Feature: Product kits validation on shopping list page
       |                                 | Product kit "product-kit-01" is missing the required kit item "Base Unit"                                                        |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Invalid required kit item                                                                                          | In Stock     | 2 pieces       |        |          |
-      |                                 | Base Unit: The selected product is not allowed                                                                                   |              | 1 piece        |        |          |
+      |                                 | Base Unit: Selection required                                                                                                    |              | 1 piece        |        |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Invalid optional kit item                                                                                          | In Stock     | 2 pieces       | $20.00 | $40.00   |
-      |                                 | Barcode Scanner: The selected product is not allowed                                                                             |              | 2 pieces       |        |          |
+      |                                 | Barcode Scanner: Original selection no longer available                                                                          |              | 2 pieces       |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1 piece        | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
@@ -304,10 +306,12 @@ Feature: Product kits validation on shopping list page
 
       | product-kit-01                  | Product Kit 1 Priceless required kit item                                                                                        | In Stock     | 2 pieces       |        |          |
       | priceless-product               | Base Unit: Priceless product                                                                                                     |              | 1 piece        |        |          |
+      |                                 | Selection required                                                                                                               |              |                |        |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Priceless optional kit item                                                                                        | In Stock     | 2 pieces       | $20.00 | $40.00   |
       | priceless-product               | Barcode Scanner: Priceless product                                                                                               |              | 2 pieces       |        |          |
+      |                                 | Original selection no longer available                                                                                           |              |                |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1 piece        | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
@@ -320,7 +324,7 @@ Feature: Product kits validation on shopping list page
 
       | product-kit-02                  | Product Kit 2 Invalid kit item precision                                                                                         | In Stock     | 2 pieces       | $22.35 | $44.70   |
       | simple-product-with-4-precision | Base Unit: Product with 4 precision                                                                                              |              | 1.2345 items   | $10.00 |          |
-      |                                 | The precision for the unit "item" is not valid.                                                                                  |              |                |        |          |
+      |                                 | Only whole numbers are allowed for unit "item"                                                                                   |              |                |        |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
       | product-kit-03                  | Product Kit 3 Invalid kit item unit                                                                                              | In Stock     | 2 pieces       | $20.00 | $40.00   |
@@ -357,13 +361,13 @@ Feature: Product kits validation on shopping list page
 
       | product-kit-01                  | Product Kit 1 Kit item quantity greater than max quantity                                                                        | In Stock     | 2 pieces       | $60.00 | $120.00  |
       | simple-product-02               | Barcode Scanner: Product 2                                                                                                       |              | 4 pieces       | $10.00 |          |
-      |                                 | The quantity should be between 2 and 3.                                                                                            |              |                |        |          |
+      |                                 | The quantity should be between 2 and 3.                                                                                          |              |                |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1 piece        | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Kit item quantity is less than min quantity                                                                        | In Stock     | 2 pieces       | $30.00 | $60.00   |
       | simple-product-02               | Barcode Scanner: Product 2                                                                                                       |              | 1 piece        | $10.00 |          |
-      |                                 | The quantity should be between 2 and 3.                                                                                            |              |                |        |          |
+      |                                 | The quantity should be between 2 and 3.                                                                                          |              |                |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1 piece        | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
@@ -371,11 +375,11 @@ Feature: Product kits validation on shopping list page
       |                                 | Product kit "product-kit-01" is missing the required kit item "Base Unit"                                                        |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Invalid required kit item                                                                                          | In Stock     | 2 pieces       |        |          |
-      |                                 | Base Unit: The selected product is not allowed                                                                                   |              | 1 piece        |        |          |
+      |                                 | Base Unit: Selection required                                                                                                    |              | 1 piece        |        |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Invalid optional kit item                                                                                          | In Stock     | 2 pieces       | $20.00 | $40.00   |
-      |                                 | Barcode Scanner: The selected product is not allowed                                                                             |              | 2 pieces       |        |          |
+      |                                 | Barcode Scanner: Original selection no longer available                                                                          |              | 2 pieces       |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1 piece        | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
@@ -390,10 +394,12 @@ Feature: Product kits validation on shopping list page
 
       | product-kit-01                  | Product Kit 1 Priceless required kit item                                                                                        | In Stock     | 2 pieces       |        |          |
       | priceless-product               | Base Unit: Priceless product                                                                                                     |              | 1 piece        |        |          |
+      |                                 | Selection required                                                                                                               |              |                |        |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
       | product-kit-01                  | Product Kit 1 Priceless optional kit item                                                                                        | In Stock     | 2 pieces       | $20.00 | $40.00   |
       | priceless-product               | Barcode Scanner: Priceless product                                                                                               |              | 2 pieces       |        |          |
+      |                                 | Original selection no longer available                                                                                           |              |                |        |          |
       | simple-product-01               | Base Unit: Product 1                                                                                                             |              | 1 piece        | $10.00 |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
@@ -406,7 +412,7 @@ Feature: Product kits validation on shopping list page
 
       | product-kit-02                  | Product Kit 2 Invalid kit item precision                                                                                         | In Stock     | 2 pieces       | $22.35 | $44.70   |
       | simple-product-with-4-precision | Base Unit: Product with 4 precision                                                                                              |              | 1.2345 items   | $10.00 |          |
-      |                                 | The precision for the unit "item" is not valid.                                                                                  |              |                |        |          |
+      |                                 | Only whole numbers are allowed for unit "item"                                                                                   |              |                |        |          |
       |                                 | The selected kit configuration is not available for purchase. Please modify or remove this configuration from the shopping list. |              |                |        |          |
 
       | product-kit-03                  | Product Kit 3 Invalid kit item unit                                                                                              | In Stock     | 2 pieces       | $20.00 | $40.00   |

@@ -627,19 +627,24 @@ services:
 
     oro_checkout.line_item.converter.shopping_list:
         class: 'Oro\Bundle\CheckoutBundle\Converter\ShoppingListLineItemConverter'
+        arguments:
+            - '@oro_checkout.converter.product_kit_item_line_item_converter'
         tags:
             - { name: oro.checkout.line_item.converter, alias: shopping_list }
 
     oro_checkout.line_item.converter.order:
         class: 'Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter'
         arguments:
-            - '@oro_config.manager'
             - '@oro_inventory.provider.inventory_quantity'
-            - '@security.authorization_checker'
             - '@oro_entity.fallback.resolver.entity_fallback_resolver'
-            - 'oro_order.frontend_product_visibility'
+            - '@oro_checkout.converter.product_kit_item_line_item_converter'
+            - '@validator'
+            - '@oro_checkout.provider.checkout_validation_groups_by_source_entity'
         tags:
             - { name: oro.checkout.line_item.converter, alias: order }
+
+    oro_checkout.converter.product_kit_item_line_item_converter:
+        class: Oro\Bundle\CheckoutBundle\Converter\ProductKitItemLineItemConverter
 
     oro_checkout.data_provider.checkout:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\CheckoutDataProvider'
@@ -937,3 +942,32 @@ services:
         arguments:
             - '@event_dispatcher'
         public: true
+
+    oro_checkout.event_listener.datagrid_line_items_data.preload:
+        class: Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataPreloadListener
+        arguments:
+            - '@oro_entity.manager.preloading_manager'
+        tags:
+            # This listener must be called first as it preloads line items data which might be needed by others.
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: 1024 }
+            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: 1024 }
+
+    oro_checkout.event_listener.line_item_preloading:
+        parent: oro_entity.event_listener.default_preloading
+        tags:
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.checkoutlineitem, method: onPreload }
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.checkoutproductkititemlineitem, method: onPreload }
+
+    oro_checkout.event_listener.preload_checkout_on_start:
+        class: Oro\Bundle\CheckoutBundle\EventListener\PreloadCheckoutOnStartEventListener
+        arguments:
+            - '@oro_entity.manager.preloading_manager'
+        tags:
+            - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStart, priority: 128 }
+
+    oro_checkout.event_listener.preload_checkout_on_start_from_shopping_list:
+        class: Oro\Bundle\CheckoutBundle\EventListener\PreloadCheckoutOnStartFromShoppingListEventListener
+        arguments:
+            - '@oro_entity.manager.preloading_manager'
+        tags:
+            - { name: kernel.event_listener, event: extendable_condition.shopping_list_start, method: onStartFromShoppingList, priority: 128 }

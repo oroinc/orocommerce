@@ -149,7 +149,10 @@ datagrids:
             query:
                 where:
                     and:
-                        - product.type = 'simple'
+                        - product.type IN (:types)
+            bind_parameters:
+                types:
+                    default: ['simple']
         filters:
             columns:
                 type:

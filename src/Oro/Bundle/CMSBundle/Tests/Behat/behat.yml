@@ -136,6 +136,10 @@ oro_behat_extension:
                         type: 'xpath'
                         locator: '//*[@name="oro_cms_content_block[contentVariants][1][scopes][0][website]"]'
                         class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+                    Content Variant 1 Customer:
+                        type: 'xpath'
+                        locator: '//*[@name="oro_cms_content_block[contentVariants][1][scopes][0][customer]"]'
+                        class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
 
         Content Variant 1 form:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -155,6 +159,9 @@ oro_behat_extension:
 
         Content Variant 1 Content:
             selector: "textarea[name='oro_cms_content_block[contentVariants][1][content]']"
+
+        Content Variant 1 Expand Button:
+            selector: '[data-content="oro_cms_content_block[contentVariants][1]"] .btn-toggle-variant'
 
         Homepage Slider:
             selector: '[data-title="home-page-slider"]'
@@ -525,6 +532,21 @@ oro_behat_extension:
 
         FirstColumnInGrid:
             selector: '[data-gjs-type="grid-row"] > [data-gjs-type="grid-column"]:first-child'
+
+        FirstColumn:
+            selector: '[data-gjs-type="columns"] > [data-gjs-type="columns-item"]:first-child'
+
+        ClockIconInDialog:
+            selector: '.icons-collection-item > [title="clock"]'
+
+        SearchIconInSettings:
+            selector: '.icons-settings .search-field [name="search"]'
+
+        AddClassInPanel:
+            selector: '#gjs-clm-add-tag'
+
+        ClassInputPanel:
+            selector: '#gjs-clm-new'
     suites:
         OroCMSBundle:
             contexts:

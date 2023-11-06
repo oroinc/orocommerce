@@ -26,7 +26,7 @@ class CheckoutProductKitItemLineItemTest extends TestCase
             ['kitItem', new ProductKitItem()],
             ['product', new Product()],
             ['quantity', 123.4567],
-            ['unit', new ProductUnit()],
+            ['productUnit', new ProductUnit()],
             ['sortOrder', 42],
             ['value', 12.3456],
             ['currency', 'USD'],
@@ -73,7 +73,7 @@ class CheckoutProductKitItemLineItemTest extends TestCase
         self::assertNull($kitItemLineItem->getProductUnit());
 
         $productUnit = new ProductUnit();
-        $kitItemLineItem->setUnit($productUnit);
+        $kitItemLineItem->setProductUnit($productUnit);
 
         self::assertSame($productUnit, $kitItemLineItem->getProductUnit());
     }
@@ -85,7 +85,7 @@ class CheckoutProductKitItemLineItemTest extends TestCase
 
         $unitCode = 'sample_code';
         $productUnit = (new ProductUnit())->setCode($unitCode);
-        $kitItemLineItem->setUnit($productUnit);
+        $kitItemLineItem->setProductUnit($productUnit);
 
         self::assertSame($unitCode, $kitItemLineItem->getProductUnitCode());
     }

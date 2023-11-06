@@ -758,4 +758,59 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $this->selectTextRange($strPos, 'after');
         $this->pressKeyboardKeyInCanvas('Enter', 'ActiveEditableComponent');
     }
+
+    /**
+     * Example: I select "icon-id" icon in modal window
+     *
+     * @When /^(?:|I )select "(?P<iconId>[^"]+)" icon in modal window$/
+     */
+    public function selectIconInModelWindow(string $iconId): void
+    {
+        $modalWindow = $this->spin(function () {
+            return $this->getPage()->findVisible('css', 'div.modal, div[role="dialog"]');
+        }, 5);
+
+        self::assertNotNull($modalWindow, 'There is no visible modal window on page at this moment');
+
+        try {
+            $button = $modalWindow->find('css', sprintf(
+                '.icons-collection-item [title="%s"]',
+                $iconId
+            ));
+
+            $button->click();
+        } catch (ElementNotFoundException $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Example: I select "icon-id" icon in traits
+     *
+     * @When /^(?:|I )select "(?P<iconId>[^"]+)" icon in traits$/
+     */
+    public function selectIconInTraits(string $iconId): void
+    {
+        $layerTabBtn = $this->createElement('OpenStyleTab');
+        if (!$layerTabBtn->hasClass('gjs-pn-active')) {
+            $layerTabBtn->click();
+        }
+
+        $scope = $this->spin(function () {
+            return $this->getPage()->findVisible('css', '.gjs-trt-traits div[data-icon-collection]');
+        }, 5);
+
+        self::assertNotNull($scope, 'There is no visible icons collection in traits');
+
+        try {
+            $button = $scope->find('css', sprintf(
+                '.icons-collection-item [title="%s"]',
+                $iconId
+            ));
+
+            $button->click();
+        } catch (ElementNotFoundException $e) {
+            throw $e;
+        }
+    }
 }

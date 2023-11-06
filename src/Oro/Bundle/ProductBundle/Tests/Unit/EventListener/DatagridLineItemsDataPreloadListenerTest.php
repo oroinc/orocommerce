@@ -76,6 +76,7 @@ class DatagridLineItemsDataPreloadListenerTest extends TestCase
                                 'maximumQuantityToOrder' => [],
                             ],
                         ],
+                        'kitItemLineItems' => [],
                     ],
                 ],
                 [
@@ -121,6 +122,7 @@ class DatagridLineItemsDataPreloadListenerTest extends TestCase
                                 'maximumQuantityToOrder' => [],
                             ],
                         ],
+                        'kitItemLineItems' => [],
                     ],
                 ],
                 [
@@ -154,13 +156,10 @@ class DatagridLineItemsDataPreloadListenerTest extends TestCase
                         'kitItemLineItems' => [
                             'kitItem' => [
                                 'labels' => [],
+                                'productUnit' => [],
                             ],
                             'product' => [
                                 'names' => [],
-                                'isUpcoming' => [],
-                                'highlightLowInventory' => [],
-                                'minimumQuantityToOrder' => [],
-                                'maximumQuantityToOrder' => [],
                                 'images' => [
                                     'image' => [
                                         'digitalAsset' => [
@@ -173,13 +172,8 @@ class DatagridLineItemsDataPreloadListenerTest extends TestCase
                                     'types' => [],
                                 ],
                                 'unitPrecisions' => [],
-                                'category' => [
-                                    'isUpcoming' => [],
-                                    'highlightLowInventory' => [],
-                                    'minimumQuantityToOrder' => [],
-                                    'maximumQuantityToOrder' => [],
-                                ],
                             ],
+                            'unit' => [],
                         ],
                     ],
                 ]
@@ -256,6 +250,7 @@ class DatagridLineItemsDataPreloadListenerTest extends TestCase
                                 'maximumQuantityToOrder' => [],
                             ],
                         ],
+                        'kitItemLineItems' => [],
                     ],
                 ],
                 [
@@ -289,6 +284,7 @@ class DatagridLineItemsDataPreloadListenerTest extends TestCase
                                 'maximumQuantityToOrder' => [],
                             ],
                         ],
+                        'kitItemLineItems' => [],
                     ],
                 ],
                 [
@@ -322,13 +318,10 @@ class DatagridLineItemsDataPreloadListenerTest extends TestCase
                         'kitItemLineItems' => [
                             'kitItem' => [
                                 'labels' => [],
+                                'productUnit' => [],
                             ],
                             'product' => [
                                 'names' => [],
-                                'isUpcoming' => [],
-                                'highlightLowInventory' => [],
-                                'minimumQuantityToOrder' => [],
-                                'maximumQuantityToOrder' => [],
                                 'images' => [
                                     'image' => [
                                         'digitalAsset' => [
@@ -341,13 +334,8 @@ class DatagridLineItemsDataPreloadListenerTest extends TestCase
                                     'types' => [],
                                 ],
                                 'unitPrecisions' => [],
-                                'category' => [
-                                    'isUpcoming' => [],
-                                    'highlightLowInventory' => [],
-                                    'minimumQuantityToOrder' => [],
-                                    'maximumQuantityToOrder' => [],
-                                ],
                             ],
+                            'unit' => [],
                         ],
                     ],
                 ]

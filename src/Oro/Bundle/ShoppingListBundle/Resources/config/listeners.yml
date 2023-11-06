@@ -25,6 +25,7 @@ services:
         parent: oro_entity.event_listener.default_preloading
         tags:
             - { name: kernel.event_listener, event: oro_entity.preload_entity.lineitem, method: onPreload }
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.productkititemlineitem, method: onPreload }
 
     oro_shopping_list.migration.demo_data_fixtures_listener.shopping_list_totals:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListTotalsDemoDataFixturesListener'
@@ -42,8 +43,6 @@ services:
             # This listener must be called first as it preloads line items data which might be needed by others.
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-grid, method: onLineItemData, priority: 1024 }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-customer-user-shopping-list-edit-grid, method: onLineItemData, priority: 1024 }
-            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: 1024 }
-            - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: 1024 }
 
     oro_shopping_list.event_listener.datagrid_line_items_data.basic:
         class: Oro\Bundle\ProductBundle\EventListener\DatagridLineItemsDataListener

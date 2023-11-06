@@ -68,6 +68,7 @@ The current file describes significant changes in the code that may affect the u
 #### OrderBundle
 * Added the ability to contain product kit line items for `\Oro\Bundle\OrderBundle\Entity\Order` entity class:
   * Added `\Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem` entity class, added `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$kitItemLineItems` association and `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$checksum`.
+* Added `\Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem` to backoffice and storefront API.
 
 #### PricingBundle
 * Improved the mechanism of getting product prices. See more in [documentation](https://doc.oroinc.com/bundles/commerce/PricingBundle/getting-product-price.html).
@@ -85,6 +86,7 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\ProductBundle\Filter\ComposedSkuStringFilter` for SKU filter on the product line items storefront datagrids to take into account product kit item line items SKUs during filtration.
 * Added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener` that switches status and inventory status of a product kit depending on its kit item products.
 * Disabled the ability to add a product kit to Quick Order Form via `\Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler::setNotAllowedProductTypes`.
+* Removed the `oro_product.popup_gallery_on_product_view` option from the system configuration.
 
 #### PaymentBundle
 * Added the new and only way to create a payment line items `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` - see `\Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactoryInterface`.
@@ -112,6 +114,7 @@ The current file describes significant changes in the code that may affect the u
 * Changed `\Oro\Bundle\CheckoutBundle\Datagrid\FrontendLineItemsGridExtension`, `\Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider`, `\Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider` to take into account checkout line item checksum.
 * Changed `b2b_flow_checkout` workflow: enabled the check for `order_line_items_not_empty` action group in `place_order_definition` transition definition.
 * Changed `frontend-checkout-line-items-grid` checkout line items datagrid to make it show checkout product kit line items, update related frontend templates.
+* Updated `order_confirmation_email` email notification template to include kit item line items data.
 
 #### FedexShippingBundle
 * Changed `\Oro\Bundle\FedexShippingBundle\Builder\ShippingPackagesByLineItemBuilderInterface::addLineItem` so it expects `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem` argument instead of the removed `\Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface`.
@@ -129,6 +132,11 @@ The current file describes significant changes in the code that may affect the u
 * Changed `\Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface` so it returns a collection `\Doctrine\Common\Collections\Collection` of `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem` instead of the removed `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface`.
 * Changed `\Oro\Bundle\OrderBundle\Converter\BasicOrderShippingLineItemConverter` to make it work with the new shipping line item factory `\Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingLineItemFromProductLineItemFactory`.
 * Changed `\Oro\Bundle\OrderBundle\Converter\BasicOrderPaymentLineItemConverter` to make it work with the new payment line item factory `\Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactory`.
+* Updated `\Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter` to make it create order line items with kit item line items.
+* Updated `\Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType` to add `kitItemLineItems` form field needed for an order line item of a product kit.
+* Updated order create/update page in back-office with kit item line items form.
+* Updated order view page in back-office with kit item line items data.
+* Updated order view page on storefront with kit item line items data.
 
 #### PaymentBundle
 * Reworked and simplified the mechanism of creating payment line items `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem`, see section "Removed" for details.
@@ -180,6 +188,11 @@ The current file describes significant changes in the code that may affect the u
 * Removed `\Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator::isLineItemRunningLow`, use `\Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator::isRunningLow` instead.
 * Removed `\Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator::getMessageIfLineItemRunningLow`, use `\Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator::getMessageIfRunningLow` instead.
 
+#### OrderBundle
+* Removed `\Oro\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener`, its responsibility is fulfilled by `\Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber`.
+* Removed `\Oro\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener`, its responsibility is fulfilled by `\Oro\Bundle\OrderBundle\EventListener\Order\OrderLineItemTierPricesEventListener` now that adds both tier prices for simple products and for product kits.
+* Removed `getMatchingPrices`, `fillMatchingPrices` methods from `\Oro\Bundle\OrderBundle\Pricing\PriceMatcher`, use `addMatchingPrices` instead. 
+
 #### PaymentBundle
 * Removed `\Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface`, use `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` instead.
 * Removed `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface` and `\Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection`, use collection `\Doctrine\Common\Collections\Collection` of `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` entities instead.
@@ -198,6 +211,12 @@ The current file describes significant changes in the code that may affect the u
 * Removed methods `getMatchedPrices`, `getMatchedPrice` from `\Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider`, added `getProductLineItemPricesForShoppingLists` instead.
 * Removed `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataViolationsListener`, use `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead.
 * Removed `\Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent`, `\Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollection`, `\Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollectionValidator`, `\Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider`.
+* Removed `\Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\LineItemChecksumGeneratorInterface` and implementations. Use `\Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface` instead.
+* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Checker\ProductKitAvailabilityChecker`, use `\Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitAvailabilityChecker` instead.
+* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Checker\ProductKitItemAvailabilityChecker`, use `\Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitItemAvailabilityChecker` instead.
+* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker`, use `\Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker` instead.
+* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Provider\ProductKitItemsProvider`, use `\Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemsProvider` instead.
+* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Provider\ProductKitItemProductsProvider`, use `\Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider` instead.
 
 
 ## 5.1.0 (2023-03-31)

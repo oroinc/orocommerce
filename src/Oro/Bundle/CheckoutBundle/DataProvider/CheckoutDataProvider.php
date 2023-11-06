@@ -92,17 +92,19 @@ class CheckoutDataProvider extends AbstractCheckoutProvider
             $kitItemLineItemsData = [];
             $productLineItemPrice = $productLineItemPrices[$key] ?? null;
 
-            foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
-                $kitItemLineItemsData[] = [
-                    'kitItem' => $kitItemLineItem->getKitItem(),
-                    'product' => $kitItemLineItem->getProduct(),
-                    'productSku' => $kitItemLineItem->getProductSku(),
-                    'unit' => $kitItemLineItem->getProductUnit(),
-                    'productUnitCode' => $kitItemLineItem->getProductUnitCode(),
-                    'quantity' => $kitItemLineItem->getQuantity(),
-                    'price' => $this->getKitItemLineItemPrice($kitItemLineItem, $productLineItemPrice),
-                    'sortOrder' => $kitItemLineItem->getSortOrder(),
-                ];
+            if ($lineItem->getProduct()?->isKit()) {
+                foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
+                    $kitItemLineItemsData[] = [
+                        'kitItem' => $kitItemLineItem->getKitItem(),
+                        'product' => $kitItemLineItem->getProduct(),
+                        'productSku' => $kitItemLineItem->getProductSku(),
+                        'productUnit' => $kitItemLineItem->getProductUnit(),
+                        'productUnitCode' => $kitItemLineItem->getProductUnitCode(),
+                        'quantity' => $kitItemLineItem->getQuantity(),
+                        'price' => $this->getKitItemLineItemPrice($kitItemLineItem, $productLineItemPrice),
+                        'sortOrder' => $kitItemLineItem->getSortOrder(),
+                    ];
+                }
             }
 
             $lineItemsData[] = [

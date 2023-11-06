@@ -6,9 +6,9 @@ namespace Oro\Bundle\ShoppingListBundle\ProductKit\Factory;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemsProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\ProductKit\Provider\ProductKitItemsProvider;
 
 /**
  * Creates an instance of {@see LineItem} for the product kit for use in a shopping list.
@@ -66,7 +66,7 @@ class ProductKitLineItemFactory
 
     public function addKitItemLineItemsAvailableForPurchase(LineItem $lineItem): void
     {
-        foreach ($this->productKitItemsProvider->getKitItemsAvailableForPurchase($lineItem->getProduct()) as $kitItem) {
+        foreach ($this->productKitItemsProvider->getAvailableKitItems($lineItem->getProduct()) as $kitItem) {
             $isLineItemContainsKitItemLineItem = false;
             foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
                 if ($kitItemLineItem->getKitItem()?->getId() === $kitItem->getId()) {

@@ -5,7 +5,11 @@ namespace Oro\Bundle\OrderBundle\Validator\Constraints;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
+/**
+ * Constraint validator checking if either a product or freeFormProduct field is filled in {@see OrderLineItem}.
+ */
 class LineItemProductValidator extends ConstraintValidator
 {
     /**
@@ -14,26 +18,14 @@ class LineItemProductValidator extends ConstraintValidator
      *
      * {@inheritdoc}
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$value instanceof OrderLineItem) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Value must be instance of "%s", "%s" given',
-                    'Oro\Bundle\OrderBundle\Entity\OrderLineItem',
-                    is_object($value) ? get_class($value) : gettype($value)
-                )
-            );
+            throw new UnexpectedValueException($value, OrderLineItem::class);
         }
 
         if (!$value->getProduct() && !$value->getFreeFormProduct()) {
             $this->context->buildViolation($constraint->emptyProductMessage)
-                ->atPath('product')
-                ->addViolation();
-        }
-
-        if (!$value->getPrice()) {
-            $this->context->buildViolation($constraint->priceNotFoundMessage)
                 ->atPath('product')
                 ->addViolation();
         }

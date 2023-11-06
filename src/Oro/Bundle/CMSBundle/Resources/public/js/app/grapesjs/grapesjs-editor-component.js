@@ -1,7 +1,7 @@
 import BaseComponent from 'oroui/js/app/components/base/component';
 import loadModules from 'oroui/js/app/services/load-modules';
 import errorHandler from 'oroui/js/error';
-import GrapesjsEditorView from './grapesjs-editor-view';
+import GrapesjsEditorView from 'orocms/js/app/grapesjs/grapesjs-editor-view';
 
 const GrapesjsEditorComponent = BaseComponent.extend({
     defaultModules: [

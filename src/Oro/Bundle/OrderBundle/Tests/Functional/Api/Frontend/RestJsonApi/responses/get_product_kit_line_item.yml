@@ -1,0 +1,34 @@
+data:
+    type: orderlineitems
+    id: '<toString(@product_kit_2_line_item.1->id)>'
+    attributes:
+        productSku: product-kit-2
+        productName: Product Kit Utilizing Sort Order
+        freeFormProduct: null
+        quantity: 1
+        productUnitCode: milliliter
+        price: '20.5900'
+        currency: USD
+        shipUntil: null
+        comment: null
+        checksum: 'product_kit_2_line_item.1.checksum'
+    relationships:
+        order:
+            data:
+                type: orders
+                id: '<toString(@order4->id)>'
+        product:
+            data:
+                type: products
+                id: '<toString(@product-kit-2->id)>'
+        parentProduct:
+            data: null
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.milliliter->code)>'
+        kitItemLineItems:
+            data:
+                -
+                    type: orderproductkititemlineitems
+                    id: '<toString(@order_product_kit_2_line_item.1_kit_item_line_item.1->id)>'

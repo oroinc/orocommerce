@@ -13,54 +13,63 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 class ShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $filtrationService;
+    private $baseFiltrationService;
 
     /** @var ShippingFiltrationService */
-    private $shippingFiltrationService;
+    private $filtrationService;
 
     protected function setUp(): void
     {
-        $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
-        $this->shippingFiltrationService = new ShippingFiltrationService($this->filtrationService);
+        $this->baseFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);
+
+        $this->filtrationService = new ShippingFiltrationService($this->baseFiltrationService);
     }
 
-    /**
-     * @dataProvider contextDataProvider
-     */
-    public function testFilterRuleOwnersWithNotSupportedClass(array $context)
+    private function getPromotion(DiscountConfiguration $discountConfiguration): PromotionDataInterface
     {
-        $notSupportedRuleOwner = new \stdClass();
+        $promotion = $this->createMock(PromotionDataInterface::class);
+        $promotion->expects(self::once())
+            ->method('getDiscountConfiguration')
+            ->willReturn($discountConfiguration);
 
-        $this->filtrationService->expects($this->once())
+        return $promotion;
+    }
+
+    public function testShouldBeSkippable(): void
+    {
+        $ruleOwners = [$this->createMock(RuleOwnerInterface::class)];
+
+        $this->baseFiltrationService->expects(self::never())
+            ->method('getFilteredRuleOwners');
+
+        self::assertSame(
+            $ruleOwners,
+            $this->filtrationService->getFilteredRuleOwners(
+                $ruleOwners,
+                ['skip_filters' => [ShippingFiltrationService::class => true]]
+            )
+        );
+    }
+
+    public function testFilterRuleOwnersWithNotSupportedClass(): void
+    {
+        $context = [
+            ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
+            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',
+        ];
+
+        $this->baseFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
             ->with([], $context)
             ->willReturn([]);
 
-        $this->shippingFiltrationService->getFilteredRuleOwners(
-            [$notSupportedRuleOwner],
-            $context
-        );
-    }
-
-    public function contextDataProvider(): array
-    {
-        return [
-            'empty context' => [
-                'context' => [],
-            ],
-            'filled context' => [
-                'context' => [
-                    ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
-                    ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',
-                ],
-            ]
-        ];
+        self::assertSame([], $this->filtrationService->getFilteredRuleOwners([new \stdClass()], $context));
     }
 
     /**
      * @dataProvider contextDataProvider
      */
-    public function testFilterShippingPromotionsWithNotMatchedShippingOptions(array $context)
+    public function testFilterShippingPromotionsWithNotMatchedShippingOptions(array $context): void
     {
         $discountConfiguration = new DiscountConfiguration();
         $discountConfiguration->setType('shipping');
@@ -71,23 +80,37 @@ class ShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             ]
         ]);
 
-        $promotion = $this->createMock(PromotionDataInterface::class);
-        $promotion->expects($this->any())
-            ->method('getDiscountConfiguration')
-            ->willReturn($discountConfiguration);
+        $promotion = $this->getPromotion($discountConfiguration);
 
-        $this->filtrationService->expects($this->once())
+        $filteredRuleOwners = [$promotion];
+
+        $this->baseFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
             ->with([], $context)
-            ->willReturn([]);
+            ->willReturn($filteredRuleOwners);
 
-        $this->shippingFiltrationService->getFilteredRuleOwners(
-            [$promotion],
-            $context
+        self::assertSame(
+            $filteredRuleOwners,
+            $this->filtrationService->getFilteredRuleOwners([$promotion], $context)
         );
     }
 
-    public function testAllowShippingPromotionsWithMatchedShippingOptions()
+    public function contextDataProvider(): array
+    {
+        return [
+            'empty context' => [
+                'context' => []
+            ],
+            'filled context' => [
+                'context' => [
+                    ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
+                    ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',
+                ]
+            ]
+        ];
+    }
+
+    public function testAllowShippingPromotionsWithMatchedShippingOptions(): void
     {
         $discountConfiguration = new DiscountConfiguration();
         $discountConfiguration->setType('shipping');
@@ -98,62 +121,48 @@ class ShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             ]
         ]);
 
-        $promotion = $this->createMock(PromotionDataInterface::class);
-        $promotion->expects($this->any())
-            ->method('getDiscountConfiguration')
-            ->willReturn($discountConfiguration);
+        $promotion = $this->getPromotion($discountConfiguration);
 
         $context = [
             ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
             ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',
         ];
 
-        $this->filtrationService->expects($this->once())
+        $filteredRuleOwners = [$promotion];
+
+        $this->baseFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
             ->with([$promotion], $context)
-            ->willReturn([]);
+            ->willReturn($filteredRuleOwners);
 
-        $this->shippingFiltrationService->getFilteredRuleOwners(
-            [$promotion],
-            $context
+        self::assertSame(
+            $filteredRuleOwners,
+            $this->filtrationService->getFilteredRuleOwners([$promotion], $context)
         );
     }
 
-    public function testAllowNotShippingPromotions()
+    public function testAllowNotShippingPromotions(): void
     {
         $discountConfiguration = new DiscountConfiguration();
         $discountConfiguration->setType('order');
 
-        $promotion = $this->createMock(PromotionDataInterface::class);
-        $promotion->expects($this->any())
-            ->method('getDiscountConfiguration')
-            ->willReturn($discountConfiguration);
+        $promotion = $this->getPromotion($discountConfiguration);
 
         $context = [
             ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
             ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',
         ];
 
-        $this->filtrationService->expects($this->once())
+        $filteredRuleOwners = [$promotion];
+
+        $this->baseFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
             ->with([$promotion], $context)
-            ->willReturn([]);
+            ->willReturn($filteredRuleOwners);
 
-        $this->shippingFiltrationService->getFilteredRuleOwners(
-            [$promotion],
-            $context
-        );
-    }
-
-    public function testFilterIsSkippable()
-    {
-        $this->filtrationService->expects($this->never())
-            ->method('getFilteredRuleOwners');
-
-        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
-        $this->shippingFiltrationService->getFilteredRuleOwners(
-            [$ruleOwner],
-            ['skip_filters' => [get_class($this->shippingFiltrationService) => true]]
+        self::assertSame(
+            $filteredRuleOwners,
+            $this->filtrationService->getFilteredRuleOwners([$promotion], $context)
         );
     }
 }

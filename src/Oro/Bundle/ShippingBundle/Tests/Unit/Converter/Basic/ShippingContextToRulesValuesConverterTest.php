@@ -90,11 +90,9 @@ class ShippingContextToRulesValuesConverterTest extends TestCase
         $productHolder = $this->createMock(ProductHolderInterface::class);
         $product = (new ProductStub())->setId(2);
 
-        $shippingKitItemLineItem = (new ShippingKitItemLineItem(
-            $productUnit,
-            $quantity,
-            $productHolder
-        ))
+        $shippingKitItemLineItem = (new ShippingKitItemLineItem($productHolder))
+            ->setQuantity($quantity)
+            ->setProductUnit($productUnit)
             ->setProductUnitCode($unitCode)
             ->setProduct($product);
 

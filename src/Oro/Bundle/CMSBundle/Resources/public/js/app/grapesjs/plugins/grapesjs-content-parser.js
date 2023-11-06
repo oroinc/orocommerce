@@ -76,6 +76,16 @@ const postParseModel = model => {
  */
 export default function ContentParser(editor) {
     const originParseNode = editor.Parser.parserHtml.parseNode;
+    const originParse = editor.Parser.parserHtml.parse;
+
+    editor.Parser.parserHtml.parse = (content, options) => {
+        for (const type of editor.Parser.parserHtml.compTypes) {
+            if (typeof type.model.beforeParse === 'function') {
+                content = type.model.beforeParse(content);
+            }
+        }
+        return originParse.call(editor.Parser.parserHtml, content, options);
+    };
 
     editor.Parser.parserHtml.parseNode = (...args) =>
         originParseNode.apply(editor.Parser.parserHtml, args).map(postParseModel);

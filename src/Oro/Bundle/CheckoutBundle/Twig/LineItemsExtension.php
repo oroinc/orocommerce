@@ -7,8 +7,10 @@ use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
@@ -21,44 +23,40 @@ use Twig\TwigFunction;
  */
 class LineItemsExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
+    protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
-    /**
-     * @return TotalProcessorProvider
-     */
-    private function getTotalsProvider()
+    private function getTotalsProvider(): TotalProcessorProvider
     {
         return $this->container->get(TotalProcessorProvider::class);
     }
 
-    /**
-     * @return LineItemSubtotalProvider
-     */
-    private function getLineItemSubtotalProvider()
+    private function getLineItemSubtotalProvider(): LineItemSubtotalProvider
     {
         return $this->container->get(LineItemSubtotalProvider::class);
     }
 
-    /**
-     * @return LocalizationHelper
-     */
-    private function getLocalizationHelper()
+    private function getLocalizationHelper(): LocalizationHelper
     {
         return $this->container->get(LocalizationHelper::class);
     }
 
-    /**
-     * @return EntityNameResolver
-     */
-    private function getEntityNameResolver()
+    private function getEntityNameResolver(): EntityNameResolver
     {
         return $this->container->get(EntityNameResolver::class);
+    }
+
+    private function getProductName(?Product $product): ?string
+    {
+        return $this->getEntityNameResolver()->getName(
+            $product,
+            EntityNameProviderInterface::FULL,
+            $this->getLocalizationHelper()->getCurrentLocalization()
+        );
     }
 
     /**
@@ -69,22 +67,11 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
         return [new TwigFunction('order_line_items', [$this, 'getOrderLineItems'])];
     }
 
-    /**
-     * @param Order $order
-     * @return array
-     */
-    public function getOrderLineItems(Order $order)
+    public function getOrderLineItems(Order $order): array
     {
         $lineItems = [];
         foreach ($order->getLineItems() as $lineItem) {
-            $product = $lineItem->getProduct();
-            $productName = $this->getEntityNameResolver()->getName(
-                $product,
-                EntityNameProviderInterface::FULL,
-                $this->getLocalizationHelper()->getCurrentLocalization()
-            );
-
-            $data['product_name'] = $productName ?? $lineItem->getFreeFormProduct();
+            $data['product_name'] = $this->getProductName($lineItem->getProduct()) ?? $lineItem->getFreeFormProduct();
             $data['product_sku'] = $lineItem->getProductSku();
             $data['quantity'] = $lineItem->getQuantity();
             $data['unit'] = $lineItem->getProductUnit();
@@ -96,6 +83,8 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
                 $this->getLineItemSubtotalProvider()->getRowTotal($lineItem, $order->getCurrency()),
                 $order->getCurrency()
             );
+            $data['kitItemLineItems'] = $this->getKitItemLineItemsData($lineItem);
+
             $lineItems[] = $data;
         }
         $result['lineItems'] = $lineItems;
@@ -106,12 +95,25 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
         return $result;
     }
 
-    /**
-     * @param Order $order
-     *
-     * @return array
-     */
-    protected function getSubtotals(Order $order)
+    protected function getKitItemLineItemsData(OrderLineItem $lineItem): array
+    {
+        $kitItemLineItemsData = [];
+        foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
+            $kitItemLineItemData['kitItemLabel'] = $this->getLocalizationHelper()->getLocalizedValue(
+                $kitItemLineItem->getKitItem()->getLabels()
+            );
+            $kitItemLineItemData['unit'] = $kitItemLineItem->getProductUnit();
+            $kitItemLineItemData['quantity'] = $kitItemLineItem->getQuantity();
+            $kitItemLineItemData['price'] = $kitItemLineItem->getPrice();
+            $kitItemLineItemData['productName'] = $this->getProductName($kitItemLineItem->getProduct());
+
+            $kitItemLineItemsData[] = $kitItemLineItemData;
+        }
+
+        return $kitItemLineItemsData;
+    }
+
+    protected function getSubtotals(Order $order): array
     {
         $result = [];
         $subtotals = $this->getTotalsProvider()->getSubtotals($order);
@@ -128,12 +130,7 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
         return $result;
     }
 
-    /**
-     * @param Order $order
-     *
-     * @return array
-     */
-    protected function getTotal(Order $order)
+    protected function getTotal(Order $order): array
     {
         $total = $this->getTotalsProvider()->getTotal($order);
 
