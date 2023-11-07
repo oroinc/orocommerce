@@ -1,4 +1,5 @@
 @ticket-BB-12309
+@ticket-BB-22976
 @waf-skip
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroShippingBundle:ShippingMethodsConfigsRule_BB12309.yml
@@ -11,6 +12,7 @@ Feature: Manage Shipping Rules
   Scenario: Verify Shipping rules grid
     Given I login as administrator
     When I go to System/Shipping Rules
+    And I check "Flat Rate" in Configurations filter
     Then I should see following grid:
       | ID | Name                      | Enabled | Sort Order | Currency | Expression | CONFIGURATIONS                                | Destinations                                     |
       | 1  | <script>alert(1)</script> | Yes     | 5          | USD      | expression | Flat Rate (Price: $1.50, Handling Fee: $1.50) | Florida, United States <script>alert(2)</script> |

@@ -93,8 +93,18 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
                                         'types' => [],
                                     ]
                                 ),
+                                'ups 2' => $this->getEntity(
+                                    ShippingMethodStub::class,
+                                    [
+                                        'identifier' => 'ups_2',
+                                        'sortOrder' => 1,
+                                        'label' => 'ups',
+                                        'isEnabled' => false,
+                                        'types' => [],
+                                    ]
+                                ),
                             ],
-                        'result' => ['flat rate' => 'flat_rate', 'ups' => 'ups'],
+                        'result' => ['flat rate' => 'flat_rate', 'ups' => 'ups', 'ups (2)' => 'ups_2'],
                         'translate' => false,
                     ],
                 'some_methods_with_translation' =>
