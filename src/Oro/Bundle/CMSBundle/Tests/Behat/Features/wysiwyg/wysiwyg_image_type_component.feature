@@ -37,6 +37,7 @@ Feature: WYSIWYG image type component
       | picture | 1 |
       | image   | 1 |
     And I enter to edit mode "SelectedComponent" component in canvas
+    And I filter "Title" as Contains "about_1384"
     And I click on about_1384.jpg in grid
     And I check wysiwyg content in "CMS Page Content":
       | 5 | <img alt="about_1384.jpg"/> |
@@ -89,6 +90,7 @@ Feature: WYSIWYG image type component
 
   Scenario: Add style to image
     When I add new component "Image" from panel to editor area
+    And I filter "Title" as Contains "promo-slider-small-6"
     And I click on promo-slider-small-6 in grid
     And I select component in canvas by tree:
       | picture | 1 |

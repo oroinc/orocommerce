@@ -35,10 +35,14 @@
     }
 }
 
-@include breakpoint('mobile-big') {
+@include breakpoint('mobile-landscape') {
     .illustration-carts {
         --grid-gap: #{spacing('md')};
+    }
+}
 
+@include breakpoint('mobile') {
+    .illustration-carts {
         &__btn {
             border-width: 0;
             padding-left: 0;

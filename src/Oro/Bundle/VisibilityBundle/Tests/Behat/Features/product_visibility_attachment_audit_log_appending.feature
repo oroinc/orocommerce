@@ -55,7 +55,7 @@ Feature: Product Visibility Attachment Audit Log Appending
     When I click "Change History"
     Then should see following "Audit History Grid" grid:
       | Old Values  | New values                                                                    |
-      | Attachment: | Attachment:  Attachment "Item #1" added: File: File "33" Product: Product "1" |
+      | Attachment: | Attachment:  Attachment "Item #1" added: File: File "83" Product: Product "1" |
     And I close ui dialog
 
   Scenario: Delete attachment
@@ -65,7 +65,7 @@ Feature: Product Visibility Attachment Audit Log Appending
     When I click "Change History"
     Then should see following "Audit History Grid" grid:
       | Old Values                                                                     | New values  |
-      | Attachment: Attachment "Item #1" removed: File: File "33" Product: Product "1" | Attachment: |
+      | Attachment: Attachment "Item #1" removed: File: File "83" Product: Product "1" | Attachment: |
     And I close ui dialog
 
   Scenario: Should see audit log once update visibility to all for current product
