@@ -420,6 +420,8 @@ services:
         public: true
         arguments:
             - '@oro_shipping.shipping_method_provider'
+        calls:
+            - ['setDoctrineHelper', ['@oro_entity.doctrine_helper']]
 
     oro_shipping.checker.shipping_method_enabled:
         class: 'Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierChecker'

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProvider;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
@@ -12,14 +14,19 @@ class ShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingMethodProvider;
 
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
+
     /** @var ShippingMethodChoicesProvider */
     private $choicesProvider;
 
     protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
         $this->choicesProvider = new ShippingMethodChoicesProvider($this->shippingMethodProvider);
+        $this->choicesProvider->setDoctrineHelper($this->doctrineHelper);
     }
 
     private function getShippingMethod(
@@ -64,6 +71,38 @@ class ShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
             [
                 'flat rate' => 'flat_rate',
                 'ups'       => 'ups'
+            ],
+            $this->choicesProvider->getMethods()
+        );
+    }
+
+    public function testGetMethodsWhenShippingMethodHasIntegration()
+    {
+        $this->shippingMethodProvider->expects($this->once())
+            ->method('getShippingMethods')
+            ->willReturn([
+                $this->getShippingMethod('flat_rate_1', 1, 'flat rate', true),
+                $this->getShippingMethod('disabled', 2, 'disabled', false),
+                $this->getShippingMethod('ups_2', 3, 'ups', true),
+                $this->getShippingMethod('ups_3', 3, 'ups', true)
+            ]);
+
+        $flatRateChannel = new Channel();
+        $flatRateChannel->setName('Flat Rate');
+
+        $this->doctrineHelper->expects($this->exactly(3))
+            ->method('getEntity')
+            ->willReturnMap([
+                [Channel::class, 1, $flatRateChannel],
+                [Channel::class, 2, null],
+                [Channel::class, 3, null],
+            ]);
+
+        $this->assertEquals(
+            [
+                $flatRateChannel->getName() => 'flat_rate_1',
+                'ups'       => 'ups_2',
+                'ups (3)'   => 'ups_3',
             ],
             $this->choicesProvider->getMethods()
         );
