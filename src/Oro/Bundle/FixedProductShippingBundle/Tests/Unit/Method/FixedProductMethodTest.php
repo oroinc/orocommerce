@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class FixedProductMethodTest extends \PHPUnit\Framework\TestCase
 {
+    private const NAME = 'Fixed Product';
     private const LABEL = 'test';
     private const IDENTIFIER = 'fixed_product';
     private const ICON = 'bundles/icon-uri.png';
@@ -20,6 +21,7 @@ class FixedProductMethodTest extends \PHPUnit\Framework\TestCase
     {
         $this->fixedProduct = new FixedProductMethod(
             self::IDENTIFIER,
+            self::NAME,
             self::LABEL,
             self::ICON,
             true,
@@ -41,6 +43,11 @@ class FixedProductMethodTest extends \PHPUnit\Framework\TestCase
     public function testIsEnabled(): void
     {
         $this->assertTrue($this->fixedProduct->isEnabled());
+    }
+
+    public function testGetName()
+    {
+        $this->assertSame(self::NAME, $this->fixedProduct->getName());
     }
 
     public function testGetLabel(): void

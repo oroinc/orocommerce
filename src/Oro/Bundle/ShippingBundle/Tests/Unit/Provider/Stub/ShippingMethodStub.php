@@ -12,6 +12,7 @@ class ShippingMethodStub implements ShippingMethodInterface, ShippingMethodIconA
     private bool $isGrouped = false;
     private bool $isEnabled = true;
     private string $identifier;
+    private string $name = '';
     private string $label = '';
     /** @var ShippingMethodTypeStub[] */
     private array $types = [];
@@ -56,6 +57,16 @@ class ShippingMethodStub implements ShippingMethodInterface, ShippingMethodIconA
     public function setIdentifier(string $identifier): void
     {
         $this->identifier = $identifier;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
     }
 
     /**

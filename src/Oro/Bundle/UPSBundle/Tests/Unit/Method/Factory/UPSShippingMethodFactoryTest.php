@@ -68,12 +68,14 @@ class UPSShippingMethodFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $identifier = 'ups_1';
         $enabled = true;
+        $name = 'UPS';
         $label = 'label';
         $iconUri = 'bundles/icon-uri.png';
 
         $transport = $this->createMock(UPSSettings::class);
 
         $channel = new Channel();
+        $channel->setName($name);
         $channel->setTransport($transport);
         $channel->setEnabled($enabled);
 
@@ -128,6 +130,7 @@ class UPSShippingMethodFactoryTest extends \PHPUnit\Framework\TestCase
             $this->shippingPriceCache,
             $enabled
         );
+        $expected->setName($name);
         self::assertEquals($expected, $this->factory->create($channel));
     }
 }

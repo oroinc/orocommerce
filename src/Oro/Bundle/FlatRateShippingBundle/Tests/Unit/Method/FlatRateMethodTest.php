@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class FlatRateMethodTest extends \PHPUnit\Framework\TestCase
 {
+    private const NAME = 'Flat Rate';
     private const LABEL = 'test';
     private const IDENTIFIER = 'flat_rate';
     private const ICON = 'bundles/icon-uri.png';
@@ -16,7 +17,13 @@ class FlatRateMethodTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->flatRate = new FlatRateMethod(self::IDENTIFIER, self::LABEL, self::ICON, true);
+        $this->flatRate = new FlatRateMethod(
+            self::IDENTIFIER,
+            self::NAME,
+            self::LABEL,
+            self::ICON,
+            true
+        );
     }
 
     public function testGetIdentifier()
@@ -32,6 +39,11 @@ class FlatRateMethodTest extends \PHPUnit\Framework\TestCase
     public function testIsEnabled()
     {
         self::assertTrue($this->flatRate->isEnabled());
+    }
+
+    public function testGetName()
+    {
+        self::assertSame(self::NAME, $this->flatRate->getName());
     }
 
     public function testGetLabel()

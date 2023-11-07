@@ -32,7 +32,7 @@ Feature: Shipping Method Configurations disappear when removing integration
       |Name      |New Shipping Rule|
       |Sort Order|1                |
       |Currency  |$                |
-      |Method    |Flat Rate New    |
+      |Method    |New Flat Rate    |
     And I fill "Shipping Rule" with:
       |Price     |25               |
     And I save and close form
