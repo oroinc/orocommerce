@@ -2,7 +2,7 @@ import {escape, sortBy, uniqueId} from 'underscore';
 import __ from 'orotranslation/js/translator';
 import GrapesJS from 'grapesjs';
 import ComponentManager from 'orocms/js/app/grapesjs/plugins/components/component-manager';
-import CustomCodeTypeBuilder from './content-template-type';
+import ContentTypeType from './content-template-type';
 import ContentTemplatesPanelView from './content-templates-panel-view';
 import ContentTemplatesPanelModel from './content-templates-panel-model';
 import ApiAccessor from 'oroui/js/tools/api-accessor';
@@ -62,7 +62,7 @@ export default GrapesJS.plugins.add('content-templates', (editor, {contentTempla
     const {Commands, Panels} = editor;
 
     ComponentManager.registerComponentType('content-template', {
-        Constructor: CustomCodeTypeBuilder
+        Constructor: ContentTypeType
     });
 
     Commands.add('toggle-content-templates-panel', {

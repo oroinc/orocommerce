@@ -1,0 +1,108 @@
+/* @theme: admin.oro; */
+
+.icons-settings {
+    padding: $content-padding-medium;
+
+    &.trait-mode {
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: $content-padding-small;
+
+        .svg-icon-preview__name {
+            display: none;
+        }
+    }
+}
+
+.icons-collection {
+    --tiles-column-count: 7;
+    --tiles-column-gap: #{$content-padding-medium};
+
+    display: flex;
+    flex-wrap: wrap;
+    width: 800px;
+    max-height: 500px;
+    gap: var(--tiles-column-gap);
+    overflow-y: auto;
+
+    .trait-mode & {
+        --tiles-column-gap: #{$content-padding-small / 2};
+
+        width: 100%;
+    }
+
+    &-item {
+        text-align: center;
+        width: $tiles-item-width;
+        flex-shrink: 0;
+        flex-grow: 0;
+        padding: $content-padding-small;
+        border-radius: $border-radius;
+        transition: all 250ms ease-in;
+
+        &:hover {
+            box-shadow: 0 0 0 2px $primary-500 inset;
+        }
+
+        &:not(.show) {
+            display: none;
+        }
+
+        &.selected {
+            background: $secondary;
+            color: $primary-inverse;
+
+            .theme-icon {
+                fill: $primary-inverse;
+            }
+
+            &:hover {
+                box-shadow: 0 0 0 2px $secondary inset;
+            }
+        }
+    }
+
+    .svg-icon-preview {
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        &__svg {
+            display: block;
+            width: 24px;
+            height: 24px;
+            position: relative;
+
+            .theme-icon {
+                width: 24px;
+                height: 24px;
+            }
+        }
+    }
+
+    .no-data {
+        width: 100%;
+    }
+}
+
+.gjs-trt-trait--icon-id {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $content-padding-small;
+
+    .gjs-label-wrp,
+    .gjs-field-wrp {
+        width: 100%;
+    }
+
+    .gjs-field-icon-id {
+        border: none;
+    }
+
+    &.gjs-field-wrp--icon-id {
+        width: 100%;
+    }
+}

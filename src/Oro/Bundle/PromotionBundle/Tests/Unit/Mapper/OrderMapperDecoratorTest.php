@@ -8,31 +8,24 @@ use Oro\Bundle\PromotionBundle\Mapper\OrderMapperDecorator;
 use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Checkout;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class OrderMapperDecoratorTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var MapperInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MapperInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $orderMapper;
 
-    /**
-     * @var OrderMapperDecorator
-     */
-    private $orderMapperDecorator;
+    /** @var PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $promotionAwareHelper;
 
-    private PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject $promotionAwareHelper;
+    /** @var OrderMapperDecorator */
+    private $orderMapperDecorator;
 
     protected function setUp(): void
     {
         $this->orderMapper = $this->createMock(MapperInterface::class);
-        $this->promotionAwareHelper = $this->getMockBuilder(PromotionAwareEntityHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isCouponAware'])
-            ->getMock();
+        $this->promotionAwareHelper = $this->createMock(PromotionAwareEntityHelper::class);
+
         $this->orderMapperDecorator = new OrderMapperDecorator($this->orderMapper, $this->promotionAwareHelper);
     }
 
@@ -42,12 +35,11 @@ class OrderMapperDecoratorTest extends \PHPUnit\Framework\TestCase
         $sourcePromotionId = 3;
         $sourceCouponId = 22;
 
-        $appliedCoupon = $this->getEntity(AppliedCoupon::class, [
-            'id' => 5,
-            'couponCode' => $couponCode,
-            'sourcePromotionId' => $sourcePromotionId,
-            'sourceCouponId' => $sourceCouponId,
-        ]);
+        $appliedCoupon = new AppliedCoupon();
+        ReflectionUtil::setId($appliedCoupon, 5);
+        $appliedCoupon->setCouponCode($couponCode);
+        $appliedCoupon->setSourcePromotionId($sourcePromotionId);
+        $appliedCoupon->setSourceCouponId($sourceCouponId);
 
         $checkout = new Checkout();
         $checkout->addAppliedCoupon($appliedCoupon);
@@ -55,8 +47,7 @@ class OrderMapperDecoratorTest extends \PHPUnit\Framework\TestCase
         $order = new Order();
         $data = ['paymentTerm' => 'Term30'];
 
-        $this->orderMapper
-            ->expects($this->once())
+        $this->orderMapper->expects($this->once())
             ->method('map')
             ->with($checkout, $data, ['appliedCoupons' => true])
             ->willReturn($order);

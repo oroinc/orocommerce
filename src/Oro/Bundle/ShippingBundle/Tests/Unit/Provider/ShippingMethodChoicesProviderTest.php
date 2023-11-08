@@ -9,29 +9,25 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
 
 class ShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $shippingMethodProvider;
-
-    /** @var ShippingMethodChoicesProvider */
-    private $choicesProvider;
+    private ShippingMethodProviderInterface $shippingMethodProvider;
+    private ShippingMethodChoicesProvider $choicesProvider;
 
     protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
-
         $this->choicesProvider = new ShippingMethodChoicesProvider($this->shippingMethodProvider);
     }
 
     private function getShippingMethod(
         string $identifier,
+        string $name,
         int $sortOrder,
-        string $label,
         bool $enabled
     ): ShippingMethodStub {
         $shippingMethod = new ShippingMethodStub();
         $shippingMethod->setIdentifier($identifier);
+        $shippingMethod->setName($name);
         $shippingMethod->setSortOrder($sortOrder);
-        $shippingMethod->setLabel($label);
         $shippingMethod->setIsEnabled($enabled);
 
         return $shippingMethod;
@@ -52,22 +48,25 @@ class ShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMethods(): void
     {
-        $this->shippingMethodProvider->expects($this->once())
+        $this->shippingMethodProvider->expects(self::once())
             ->method('getShippingMethods')
             ->willReturn([
-                'flat_rate' => $this->getShippingMethod('flat_rate', 1, 'flat rate', true),
-                'disabled'  => $this->getShippingMethod('disabled', 2, 'disabled', false),
-                'ups'       => $this->getShippingMethod('ups', 3, 'ups', true)
+                $this->getShippingMethod('flat_rate', 'Flat Rate', 1, true),
+                $this->getShippingMethod('disabled', '', 2, false),
+                $this->getShippingMethod('ups', 'UPS', 3, true),
+                $this->getShippingMethod('ups_2', 'UPS', 4, true)
             ]);
 
         $this->assertEquals(
             [
-                'flat rate' => 'flat_rate',
-                'ups'       => 'ups'
+                'Flat Rate' => 'flat_rate',
+                'UPS'       => 'ups',
+                'UPS (2)'   => 'ups_2',
             ],
             $this->choicesProvider->getMethods()
         );
     }
+
 
     public function testGetMethodsWhenShippingMethodProviderDoesNotReturnShippingMethods(): void
     {
@@ -80,15 +79,15 @@ class ShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMethodsWhenNoOptionsConfigurationForm(): void
     {
-        $method1 = $this->getShippingMethod('method1', 1, 'method 1', true);
+        $method1 = $this->getShippingMethod('method1', 'method 1', 1, true);
         $method1->setOptionsConfigurationFormType('');
 
-        $method2 = $this->getShippingMethod('method2', 2, 'method 2', true);
+        $method2 = $this->getShippingMethod('method2', 'method 2', 2, true);
 
-        $method3 = $this->getShippingMethod('method3', 3, 'method 3', true);
+        $method3 = $this->getShippingMethod('method3', 'method 3', 3, true);
         $method3->setTypes([$this->getShippingMethodType('type1', 1, 'type 1')]);
 
-        $method4 = $this->getShippingMethod('method4', 4, 'method 4', true);
+        $method4 = $this->getShippingMethod('method4', 'method 4', 4, true);
         $method4->setTypes([
             $this->getShippingMethodType('type1', 1, 'type 1'),
             $this->getShippingMethodType('type2', 2, 'type 2')
@@ -96,7 +95,7 @@ class ShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
         $method4->getType('type1')->setOptionsConfigurationFormType('');
         $method4->getType('type2')->setOptionsConfigurationFormType('');
 
-        $method5 = $this->getShippingMethod('method5', 5, 'method 5', true);
+        $method5 = $this->getShippingMethod('method5', 'method 5', 5, true);
         $method5->setTypes([
             $this->getShippingMethodType('type1', 1, 'type 1'),
             $this->getShippingMethodType('type2', 2, 'type 2')

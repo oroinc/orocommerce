@@ -70,11 +70,11 @@ class CommerceMainContext extends OroFeatureContext implements
         /** @var OroForm $form */
         $form = $this->createElement('OroForm');
         $table = new TableNode([
-            ['Email Address', $email],
-            ['Password', $password ?? $email]
+            ['_username', $email],
+            ['_password', $password ?? $email]
         ]);
         $form->fill($table);
-        $form->pressButton('Sign In');
+        $this->createElement('Customer User Sign In')->click();
         $this->waitForAjax();
     }
 

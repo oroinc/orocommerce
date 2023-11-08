@@ -61,7 +61,7 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
             $types[] = $this->typeFactory->create($channel, $shippingService);
         }
 
-        return new FedexShippingMethod(
+        $method = new FedexShippingMethod(
             $this->rateServiceRequestSettingsFactory,
             $this->rateServiceRequestFactory,
             $this->rateServiceClient,
@@ -72,5 +72,6 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
             $transport,
             $types
         );
+        return $method->setName($channel->getName());
     }
 }

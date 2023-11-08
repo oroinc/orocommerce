@@ -13,54 +13,45 @@ use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
 /**
  * Handles assign images to product and ensures that maximum number of images per type is not exceeded.
  */
-class ProductImageListener
+class ProductImageListener implements ServiceSubscriberInterface
 {
-    /**
-     * @var int[]
-     */
-    protected $updatedProductImageIds = [];
+    private EventDispatcherInterface $eventDispatcher;
+    private ContainerInterface $container;
+    /** @var int[] */
+    private $updatedProductImageIds = [];
+    /** @var int[] */
+    private $productIdsToReindex = [];
 
-    /**
-     * @var int[]
-     */
-    protected $productIdsToReindex = [];
-
-    /**
-     * @var EventDispatcherInterface $eventDispatcher
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var ImageTypeProvider $imageTypeProvider
-     */
-    protected $imageTypeProvider;
-
-    /**
-     * @var ProductImageHelper $productImageHelper
-     */
-    protected $productImageHelper;
-
-    public function __construct(
-        EventDispatcherInterface $eventDispatcher,
-        ImageTypeProvider $imageTypeProvider,
-        ProductImageHelper $productImageHelper
-    ) {
+    public function __construct(EventDispatcherInterface $eventDispatcher, ContainerInterface $container)
+    {
         $this->eventDispatcher = $eventDispatcher;
-        $this->imageTypeProvider = $imageTypeProvider;
-        $this->productImageHelper = $productImageHelper;
+        $this->container = $container;
     }
 
-    public function postPersist(ProductImage $newProductImage, LifecycleEventArgs $args)
+    /**
+     * {@inheritDoc}
+     */
+    public static function getSubscribedServices(): array
+    {
+        return [
+            ImageTypeProvider::class,
+            ProductImageHelper::class
+        ];
+    }
+
+    public function postPersist(ProductImage $newProductImage, LifecycleEventArgs $args): void
     {
         $entityManager = $args->getObjectManager();
         $product = $newProductImage->getProduct();
         $productImages = $product->getImages();
-        $imagesByTypeCounter = $this->productImageHelper->countImagesByType($productImages);
+        $imagesByTypeCounter = $this->getProductImageHelper()->countImagesByType($productImages);
 
         $currentTypes = array_map(
             static function (ProductImageType $productImageType) {
@@ -99,14 +90,7 @@ class ProductImageListener
         $this->dispatchEvent($newProductImage);
     }
 
-    private function getMaxNumberByType(string $typeName): ?int
-    {
-        $maxNumberByType = $this->imageTypeProvider->getMaxNumberByType();
-
-        return $maxNumberByType[$typeName]['max'] ?? null;
-    }
-
-    public function postUpdate(ProductImage $productImage, LifecycleEventArgs $args)
+    public function postUpdate(ProductImage $productImage, LifecycleEventArgs $args): void
     {
         if (!in_array($productImage->getId(), $this->updatedProductImageIds)) {
             $this->dispatchEvent($productImage);
@@ -114,7 +98,7 @@ class ProductImageListener
         }
     }
 
-    public function filePostUpdate(File $file, LifecycleEventArgs $args)
+    public function filePostUpdate(File $file, LifecycleEventArgs $args): void
     {
         /** @var ProductImage $productImage */
         $productImage = $args->getObjectManager()->getRepository(ProductImage::class)->findOneBy(['image' => $file]);
@@ -124,7 +108,41 @@ class ProductImageListener
         }
     }
 
-    protected function dispatchEvent(ProductImage $productImage)
+    public function postFlush(PostFlushEventArgs $event): void
+    {
+        if ($this->productIdsToReindex) {
+            $this->eventDispatcher->dispatch(
+                new ReindexationRequestEvent(
+                    [Product::class],
+                    [],
+                    $this->productIdsToReindex,
+                    true,
+                    ['image']
+                ),
+                ReindexationRequestEvent::EVENT_NAME
+            );
+        }
+
+        $this->updatedProductImageIds = [];
+        $this->productIdsToReindex = [];
+    }
+
+    public function onClear(OnClearEventArgs $event): void
+    {
+        if (!$event->getEntityClass() || $event->getEntityClass() === ProductImage::class) {
+            $this->updatedProductImageIds = [];
+            $this->productIdsToReindex = [];
+        }
+    }
+
+    private function getMaxNumberByType(string $typeName): ?int
+    {
+        $maxNumberByType = $this->getImageTypeProvider()->getMaxNumberByType();
+
+        return $maxNumberByType[$typeName]['max'] ?? null;
+    }
+
+    private function dispatchEvent(ProductImage $productImage): void
     {
         if ($productImage->getTypes()->isEmpty()) {
             return;
@@ -146,30 +164,13 @@ class ProductImageListener
         );
     }
 
-    public function postFlush(PostFlushEventArgs $event)
+    private function getImageTypeProvider(): ImageTypeProvider
     {
-        if ($this->productIdsToReindex) {
-            $this->eventDispatcher->dispatch(
-                new ReindexationRequestEvent(
-                    [Product::class],
-                    [],
-                    $this->productIdsToReindex,
-                    true,
-                    ['image']
-                ),
-                ReindexationRequestEvent::EVENT_NAME
-            );
-        }
-
-        $this->updatedProductImageIds = [];
-        $this->productIdsToReindex = [];
+        return $this->container->get(ImageTypeProvider::class);
     }
 
-    public function onClear(OnClearEventArgs $event)
+    private function getProductImageHelper(): ProductImageHelper
     {
-        if (!$event->getEntityClass() || $event->getEntityClass() === ProductImage::class) {
-            $this->updatedProductImageIds = [];
-            $this->productIdsToReindex = [];
-        }
+        return $this->container->get(ProductImageHelper::class);
     }
 }

@@ -52,11 +52,13 @@ class FixedProductMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCa
     public function testCreate(): void
     {
         $identifier = 'fixed_product_1';
+        $name = 'Fixed Product';
         $label = 'test';
         $iconUri = 'bundles/icon-uri.png';
         $enabled = true;
 
         $channel = new Channel();
+        $channel->setName($name);
         $channel->setTransport(new FixedProductSettings());
         $channel->setEnabled($enabled);
 
@@ -76,6 +78,7 @@ class FixedProductMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCa
 
         $expected = new FixedProductMethod(
             $identifier,
+            $name,
             $label,
             $iconUri,
             $enabled,

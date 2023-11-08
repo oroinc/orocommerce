@@ -10,6 +10,8 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -130,5 +132,27 @@ class PriceListRepository extends BasePriceListRepository
             ->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function getPriceListsWithRulesByAssignedProducts(array $products): \Generator
+    {
+        $assignedProductsQb = $this->getEntityManager()->createQueryBuilder();
+        $assignedProductsQb->from(PriceListToProduct::class, 'pl2p')
+            ->select('pl2p.id')
+            ->where($assignedProductsQb->expr()->eq('pl2p.priceList', 'pr.priceList'))
+            ->andWhere($assignedProductsQb->expr()->in('pl2p.product', ':products'));
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('IDENTITY(pr.priceList) as priceListId')
+            ->distinct(true)
+            ->from(PriceRule::class, 'pr')
+            ->where(
+                $qb->expr()->exists($assignedProductsQb)
+            )
+            ->setParameter('products', $products);
+
+        foreach ($qb->getQuery()->toIterable() as $row) {
+            yield $this->getEntityManager()->getReference(PriceList::class, $row['priceListId']);
+        }
     }
 }

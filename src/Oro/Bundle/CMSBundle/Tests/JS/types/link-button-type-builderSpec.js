@@ -1,6 +1,6 @@
 import 'jasmine-jquery';
 import grapesJS from 'grapesjs';
-import LinkButtonTypeBuilder from 'orocms/js/app/grapesjs/types/link-button-type';
+import LinkButtonTypeBuilder from 'orocms/js/app/grapesjs/types/link-button';
 import ComponentRestriction from 'orocms/js/app/grapesjs/plugins/components/component-restriction';
 import html from 'text-loader!../fixtures/grapesjs-editor-view-fixture.html';
 

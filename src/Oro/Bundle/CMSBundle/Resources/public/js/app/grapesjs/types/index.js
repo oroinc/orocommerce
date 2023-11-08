@@ -11,7 +11,7 @@ export {default as TableTheadType} from './table-thead-type';
 export {default as TableCellType} from './table-cell-type';
 export {default as TableResponsiveType} from './table-responsive-type';
 export {default as LinkBLockType} from './link-block-type';
-export {default as LinkButtonType} from './link-button-type';
+export {default as LinkButtonType} from './link-button';
 export {default as LinkType} from './link-type';
 export {default as CodeType} from './code-type';
 export {default as TextBasicType} from './text-basic-type';

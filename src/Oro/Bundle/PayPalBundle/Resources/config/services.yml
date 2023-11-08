@@ -43,7 +43,6 @@ services:
         arguments:
             - '@oro_payment.provider.payment_order_line_item_options'
             - '@oro_tax.provider.tax_amount'
-            - '@oro_tax.provider.taxation_settings_provider'
             - '@translator'
             - '@oro_paypal.options_provider.line_item_options.formatter'
 
