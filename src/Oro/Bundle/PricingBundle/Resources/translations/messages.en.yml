@@ -406,6 +406,12 @@ oro.pricing:
         total.label: Total
         no_data.label: No data
 
+    acl:
+        action:
+            debug_prices:
+                label: Debug prices
+                description: Allows user to access pricing debug functionality
+
     frontend:
         pricelist:
             index:

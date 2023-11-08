@@ -50,12 +50,10 @@ navigation:
                     sales_tab:
                         children:
                             pricing_price_lists_list: ~
+                            pricing_product_price_debug: ~
                     products_tab:
                         children:
                             pricing_price_attribute_price_lists_list: ~
-                    system_tab:
-                        children:
-                            pricing_product_price_debug: ~
             shortcuts:
                 children:
                     shortcut_pricing_price_list: ~
