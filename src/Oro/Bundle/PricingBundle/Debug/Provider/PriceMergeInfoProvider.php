@@ -10,6 +10,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * Get prices by price list with info about prices selected by merge strategy.
+ *
+ * @internal This service is applicable for pricing debug purpose only.
  */
 class PriceMergeInfoProvider
 {
@@ -36,7 +38,12 @@ class PriceMergeInfoProvider
         $result = [];
         foreach ($priceListRelations as $priceListRelation) {
             $priceList = $priceListRelation->getPriceList();
-            $prices = $priceRepo->findByPriceList($this->shardManager, $priceList, ['product' => $product]);
+            $prices = $priceRepo->findByPriceList(
+                $this->shardManager,
+                $priceList,
+                ['product' => $product],
+                ['unit' => 'ASC', 'currency' => 'ASC', 'quantity' => 'ASC']
+            );
             foreach ($prices as $price) {
                 $result[$priceList->getId()][] = [
                     'price' => $price,

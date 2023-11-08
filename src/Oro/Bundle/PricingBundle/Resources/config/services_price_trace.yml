@@ -6,12 +6,19 @@ services:
         tags:
             - { name: container.service_subscriber }
 
+    Oro\Bundle\PricingBundle\Debug\Provider\CombinedPriceListActivationRulesProvider:
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+            - '@oro_customer.provider.customer_user_relations_provider'
+
     Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler:
         public: true
         arguments:
             - '@request_stack'
             - '@doctrine'
             - '@oro_pricing.model.price_list_tree_handler'
+            - '@Oro\Bundle\PricingBundle\Debug\Provider\CombinedPriceListActivationRulesProvider'
 
     oro_pricing.model.debug_product_price_price_list_request_handler:
         alias: Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler
@@ -60,7 +67,8 @@ services:
     Oro\Bundle\PricingBundle\Debug\Provider\ProductPricesProvider:
         arguments:
             - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
-            - '@oro_pricing.storage.prices'
+            - '@doctrine'
+            - '@oro_pricing.shard_manager'
 
     Oro\Bundle\PricingBundle\Debug\Provider\MinimalPricesSelectedPriceProvider:
         arguments:

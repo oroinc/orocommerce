@@ -9,6 +9,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * Return price ids of prices chosen by the merge by priority strategy.
+ *
+ * @internal This service is applicable for pricing debug purpose only.
  */
 class MergeByPriorityPricesSelectedPriceProvider implements SelectedPriceProviderInterface
 {
