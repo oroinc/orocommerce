@@ -15,7 +15,6 @@ use Oro\Bundle\PricingBundle\Debug\Provider\ProductPricesProvider;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -31,7 +30,6 @@ class DebugController extends AbstractController
 {
     /**
      * @Route("/index", name="oro_pricing_price_product_debug_index")
-     * @AclAncestor("oro_product_view")
      * @Template
      *
      * @return array
@@ -101,7 +99,6 @@ class DebugController extends AbstractController
 
     /**
      * @Route("/trace/{id}", name="oro_pricing_price_product_debug_trace", requirements={"id"="\d+"})
-     * @AclAncestor("oro_pricing_product_price_view")
      * @Template
      *
      * @return array
@@ -142,6 +139,23 @@ class DebugController extends AbstractController
         }
 
         return $data;
+    }
+
+    /**
+     * Get price list currencies.
+     *
+     * @Route("/get-currency-list", name="oro_pricing_price_product_debug_currency_list")
+     *
+     * @return JsonResponse
+     */
+    public function getPriceListCurrencyListAction()
+    {
+        $currencyNames = Currencies::getNames($this->get(LocaleSettings::class)->getLocale());
+        $currencies = array_intersect_key($currencyNames, array_fill_keys($this->getPriceListCurrencies(), null));
+
+        ksort($currencies);
+
+        return new JsonResponse($currencies);
     }
 
     private function getActivationRules(?CombinedPriceList $priceList): iterable
@@ -186,23 +200,6 @@ class DebugController extends AbstractController
 
         return $this->getDoctrine()->getRepository(CombinedPriceListToPriceList::class)
             ->getPriceListRelations($cpl, $products);
-    }
-
-    /**
-     * Get price list currencies.
-     *
-     * @Route("/get-currency-list", name="oro_pricing_price_product_debug_currency_list")
-     *
-     * @return JsonResponse
-     */
-    public function getPriceListCurrencyListAction()
-    {
-        $currencyNames = Currencies::getNames($this->get(LocaleSettings::class)->getLocale());
-        $currencies = array_intersect_key($currencyNames, array_fill_keys($this->getPriceListCurrencies(), null));
-
-        ksort($currencies);
-
-        return new JsonResponse($currencies);
     }
 
     protected function createCurrenciesForm(): ?FormInterface
