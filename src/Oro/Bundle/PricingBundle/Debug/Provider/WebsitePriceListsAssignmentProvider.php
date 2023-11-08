@@ -12,6 +12,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Provide information about price lists assigned to website.
+ *
+ * @internal This service is applicable for pricing debug purpose only.
  */
 class WebsitePriceListsAssignmentProvider implements PriceListsAssignmentProviderInterface
 {

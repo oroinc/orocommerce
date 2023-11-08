@@ -9,6 +9,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * Return price ids of prices chosen by the minimal strategy.
+ *
+ * @internal This service is applicable for pricing debug purpose only.
  */
 class MinimalPricesSelectedPriceProvider implements SelectedPriceProviderInterface
 {

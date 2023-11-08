@@ -8,6 +8,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\MultiWebsiteBundle\Form\Type\WebsiteSelectType;
 use Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Debug\Provider\CombinedPriceListActivationRulesProvider;
 use Oro\Bundle\PricingBundle\Debug\Provider\PriceListsAssignmentProvider;
 use Oro\Bundle\PricingBundle\Debug\Provider\PriceMergeInfoProvider;
 use Oro\Bundle\PricingBundle\Debug\Provider\ProductPricesProvider;
@@ -78,14 +79,16 @@ class DebugController extends AbstractController
     }
 
     /**
-     * @Route("/sidebar-view", name="oro_pricing_price_product_debug_sidebar_view")
+     * @Route("/sidebar-view/{id}", name="oro_pricing_price_product_debug_sidebar_view", requirements={"id"="\d+"})
      * @Template
      *
      * @return array
      */
-    public function sidebarViewAction()
+    public function sidebarViewAction(Product $product)
     {
-        $sidebarData = [];
+        $sidebarData = [
+            'product' => $product
+        ];
 
         $sidebarData['websites'] = $this->createWebsiteForm()->createView();
         $sidebarData['customers'] = $this->createCustomersForm()->createView();
@@ -105,15 +108,33 @@ class DebugController extends AbstractController
      */
     public function traceAction(Product $product)
     {
+        $cpl = $this->getPriceListHandler()->getPriceList();
+        $fullChainCpl = $this->getPriceListHandler()->getFullChainCpl();
+
         $usedPriceLists = $this->getCplUsedPriceLists(
+            $cpl,
             $this->getPriceListHandler()->getShowFullUsedChain() ? null : $product
         );
 
+        $fullChainCplId = null;
+        $usedPriceListsFullCpl = null;
+        if ($fullChainCpl && $fullChainCpl->getId() !== $cpl?->getId()) {
+            $fullChainCplId = $fullChainCpl->getId();
+            $usedPriceListsFullCpl = $this->getCplUsedPriceLists(
+                $fullChainCpl,
+                $this->getPriceListHandler()->getShowFullUsedChain() ? null : $product
+            );
+        }
+
         $data = [
+            'cplId' => $cpl?->getId(),
+            'fullChainCplId' => $fullChainCplId,
             'product' => $product,
             'current_prices' => $this->getCurrentPrices($product),
             'cpl_used_price_lists' => $usedPriceLists,
+            'full_cpl_used_price_lists' => $usedPriceListsFullCpl,
             'price_merging_details' => $this->getPriceMergingDetails($usedPriceLists, $product),
+            'cpl_activation_rules' => $this->getActivationRules($fullChainCpl)
         ];
 
         if ($this->getPriceListHandler()->getShowDetailedAssignmentInfo()) {
@@ -121,6 +142,20 @@ class DebugController extends AbstractController
         }
 
         return $data;
+    }
+
+    private function getActivationRules(?CombinedPriceList $priceList): iterable
+    {
+        if (!$priceList) {
+            return [];
+        }
+
+        $provider = $this->get(CombinedPriceListActivationRulesProvider::class);
+        if (!$provider->hasActivationRules($priceList)) {
+            return [];
+        }
+
+        return $provider->getActivationRules($priceList);
     }
 
     private function getPriceListAssignments(): ?array
@@ -138,10 +173,12 @@ class DebugController extends AbstractController
         return $this->get(PriceMergeInfoProvider::class)->getPriceMergingDetails($usedPriceLists, $product);
     }
 
-    private function getCplUsedPriceLists(?Product $product): array
+    private function getCplUsedPriceLists(?CombinedPriceList $cpl, ?Product $product): array
     {
-        /** @var CombinedPriceList $cpl */
-        $cpl = $this->getPriceListHandler()->getPriceList();
+        if (!$cpl) {
+            return [];
+        }
+
         $products = [];
         if ($product) {
             $products[] = $product;
@@ -308,7 +345,8 @@ class DebugController extends AbstractController
                 DebugProductPricesPriceListRequestHandler::class,
                 PriceListsAssignmentProvider::class,
                 ProductPricesProvider::class,
-                PriceMergeInfoProvider::class
+                PriceMergeInfoProvider::class,
+                CombinedPriceListActivationRulesProvider::class
             ]
         );
     }

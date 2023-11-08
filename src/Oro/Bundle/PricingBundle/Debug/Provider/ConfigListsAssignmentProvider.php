@@ -9,6 +9,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Provide information about price lists assigned to config level.
+ *
+ * @internal This service is applicable for pricing debug purpose only.
  */
 class ConfigListsAssignmentProvider implements PriceListsAssignmentProviderInterface
 {

@@ -4,7 +4,10 @@ namespace Oro\Bundle\PricingBundle\Debug\Handler;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\PricingBundle\Debug\Provider\CombinedPriceListActivationRulesProvider;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -14,35 +17,57 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Provides methods to obtain price list by given website, customer and currencies,
  * decide whether tier prices should be shown or not
+ *
+ * @internal This service is applicable for pricing debug purpose only.
  */
 class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandlerInterface
 {
     public const CUSTOMER_KEY = 'customer';
     public const WEBSITE_KEY = 'website';
     public const DATE_KEY = 'date';
-    public const DETAILED_ASSIGNMENTS_KEY = 'showDetailedAssignments';
+    public const DETAILED_ASSIGNMENTS_KEY = 'showDetailedAssignmentInfo';
     public const SHOW_FULL_USED_CHAIN_KEY = 'showFullUsedChain';
 
     private RequestStack $requestStack;
-    private ManagerRegistry $doctrine;
+    private ManagerRegistry $registry;
     private CombinedPriceListTreeHandler $combinedPriceListTreeHandler;
+    private CombinedPriceListActivationRulesProvider $cplActivationRulesProvider;
 
     public function __construct(
         RequestStack $requestStack,
         ManagerRegistry $doctrine,
-        CombinedPriceListTreeHandler $combinedPriceListTreeHandler
+        CombinedPriceListTreeHandler $combinedPriceListTreeHandler,
+        CombinedPriceListActivationRulesProvider $cplActivationRulesProvider
     ) {
         $this->requestStack = $requestStack;
-        $this->doctrine = $doctrine;
+        $this->registry = $doctrine;
         $this->combinedPriceListTreeHandler = $combinedPriceListTreeHandler;
+        $this->cplActivationRulesProvider = $cplActivationRulesProvider;
     }
 
     public function getPriceList()
     {
         $website = $this->getWebsite();
         $customer = $this->getCustomer();
+        $date = $this->getSelectedDate();
+
+        if ($date) {
+            $activationRuleRepo = $this->registry->getRepository(CombinedPriceListActivationRule::class);
+            $fullCpl = $this->getFullChainCpl();
+            if ($fullCpl) {
+                $newRule = $activationRuleRepo->getActualRuleByCpl($fullCpl, $date);
+                if ($newRule) {
+                    return $newRule->getCombinedPriceList();
+                }
+            }
+        }
 
         return $this->combinedPriceListTreeHandler->getPriceList($customer, $website);
+    }
+
+    public function getFullChainCpl(): ?CombinedPriceList
+    {
+        return $this->cplActivationRulesProvider->getFullChainCpl($this->getCustomer(), $this->getWebsite());
     }
 
     public function getWebsite(): Website
@@ -50,7 +75,7 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
         $request = $this->getRequest();
 
         $website = null;
-        $websiteRepo = $this->doctrine->getRepository(Website::class);
+        $websiteRepo = $this->registry->getRepository(Website::class);
         if ($request) {
             $websiteId = $request->get(self::WEBSITE_KEY);
             if ($websiteId) {
@@ -75,7 +100,7 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
 
         $customerId = $request->get(self::CUSTOMER_KEY);
         if ($customerId) {
-            return $this->doctrine->getRepository(Customer::class)->find($customerId);
+            return $this->registry->getRepository(Customer::class)->find($customerId);
         }
 
         return null;
@@ -120,7 +145,12 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
 
     public function getSelectedDate()
     {
-        return $this->getRequest()?->get(self::DATE_KEY);
+        $date = $this->getRequest()?->get(self::DATE_KEY);
+        if (!$date) {
+            return null;
+        }
+
+        return new \DateTime($date, new \DateTimeZone('UTC'));
     }
 
     private function getRequest(): ?Request
@@ -140,8 +170,6 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
 
     public function getShowFullUsedChain(): bool
     {
-        return true;
-
         $request = $this->getRequest();
         if (!$request) {
             return false;

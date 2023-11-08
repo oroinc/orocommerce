@@ -16,6 +16,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Adds CPL price and price per unit columns, sorters, filters for each currency enabled in current price list.
+ *
+ * @internal This service is applicable for pricing debug purpose only.
  */
 class CombinedProductPriceDatagridExtension extends ProductPriceDatagridExtension
 {

@@ -13,6 +13,7 @@ dynamic-imports:
         - oropricing/js/app/components/price-lists-errors-handler
         - oropricing/js/app/components/product-sidebar-component
         - oropricing/js/app/components/product-price-debug-sidebar-component
+        - oropricing/js/app/components/product-price-debug-sidebar-view-component
         - oropricing/js/app/components/product-unit-precision-limitations-component
         - oropricing/js/app/components/totals-component
         - oropricing/js/app/components/product-prices-update-widget-component
