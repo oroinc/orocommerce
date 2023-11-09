@@ -629,10 +629,10 @@ homepage:
             </div>
             <div class="grid-col-12">
                 <div class="illustration-carts grid">
-                    <div class="illustration-carts__item grid-col grid grid-col-6 grid-col-mobile-12">
+                    <div class="illustration-carts__item grid-col grid grid-col-6 grid-col-mobile-landscape-12">
                         <div class="illustration-carts__info grid-col grid-col-mobile-12">
-                            <h2 class="no-offset">Order History</h2>
-                            <p class="no-offset">Keep track of all current and submitted orders under your account menu.</p>
+                            <h2 class="illustration-carts__title no-offset">Order History</h2>
+                            <p class="illustration-carts__text no-offset">Keep track of all current and submitted orders under your account menu.</p>
                             <a class="illustration-carts__btn btn btn--outlined" href="/customer/order">View Order History</a>
                         </div>
                         <div class="illustration-carts__img grid-col hide-on-mobile-big">
@@ -642,10 +642,10 @@ homepage:
                             </picture>
                         </div>
                     </div>
-                    <div class="illustration-carts__item grid grid-col grid-col-6 grid-col-mobile-12">
+                    <div class="illustration-carts__item grid grid-col grid-col-6 grid-col-mobile-landscape-12">
                         <div class="illustration-carts__info grid-col grid-col-mobile-12">
-                            <h2 class="no-offset">Contact Us for Help</h2>
-                            <p class="no-offset">Need assistance with a product, checkout, or your order?</p>
+                            <h2 class="illustration-carts__title no-offset">Contact Us for Help</h2>
+                            <p class="illustration-carts__text no-offset">Need assistance with a product, checkout, or your order?</p>
                             <a class="illustration-carts__btn btn btn--outlined" href="/contact-us">Contact Us</a>
                         </div>
                         <div class="illustration-carts__img grid-col hide-on-mobile-big">
