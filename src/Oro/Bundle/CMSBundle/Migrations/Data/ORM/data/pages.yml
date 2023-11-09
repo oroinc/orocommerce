@@ -523,7 +523,7 @@ homepage:
                             <picture>
                                 <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-1-640.png">
                                 <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-1-992.png">
-                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-1.png" loading="lazy" alt="Lighting Products">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-1.png" alt="Lighting Products">
                             </picture>
                         </div>
                     </a>
@@ -536,7 +536,7 @@ homepage:
                         <div class="featured-categories-grid__picture featured-categories-grid__picture--align-end grid-col grid-col-mobile-landscape-12">
                             <picture>
                                 <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-4-640.png">
-                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-4.png" loading="lazy" alt="Headlamps">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-4.png" alt="Headlamps">
                             </picture>
                         </div>
                     </a>
@@ -550,7 +550,7 @@ homepage:
                             <picture>
                                 <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-7-640.png">
                                 <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-7-992.png">
-                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-7.png" loading="lazy" alt="Medical Apparel">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-7.png" alt="Medical Apparel">
                             </picture>
                         </div>
                     </a>
@@ -565,7 +565,7 @@ homepage:
                                 <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-2-640.png">
                                 <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-2-992.png">
                                 <source media="(max-width: 1280px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-2-1280.png">
-                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-2.png" loading="lazy" alt="Medical Uniforms">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-2.png" alt="Medical Uniforms">
                             </picture>
                         </div>
                     </a>
@@ -579,7 +579,7 @@ homepage:
                             <picture>
                                 <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-3-640.png">
                                 <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-3-992.png">
-                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-3.png" loading="lazy" alt="Footwear">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-3.png" alt="Footwear">
                             </picture>
                         </div>
                     </a>
@@ -593,7 +593,7 @@ homepage:
                             <picture>
                                 <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-5-640.png">
                                 <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-5-992.png">
-                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-5.png" loading="lazy" alt="Medical">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-5.png" alt="Medical">
                             </picture>
                         </div>
                     </a>
@@ -607,7 +607,7 @@ homepage:
                             <picture>
                                 <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-6-640.png">
                                 <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-6-992.png">
-                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-6.png" loading="lazy" alt="Patient Transportation Equipment">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-6.png" alt="Patient Transportation Equipment">
                             </picture>
                         </div>
                     </a>
@@ -621,7 +621,7 @@ homepage:
                                 <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-8-640.png">
                                 <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-8-992.png">
                                 <source media="(max-width: 1280px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-8-1280.png">
-                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-8.png" loading="lazy" alt="New Arrivals">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-8.png" alt="New Arrivals">
                             </picture>
                         </div>
                     </a>
@@ -638,7 +638,7 @@ homepage:
                         <div class="illustration-carts__img grid-col hide-on-mobile-big">
                             <picture>
                                 <source media="(max-width: 1280px)" srcset="/bundles/orocms/images/home-page/illustration-carts-order-history-1280.png" type="image/png">
-                                <img src="/bundles/orocms/images/home-page/illustration-carts-order-history.png" loading="lazy" alt="Order history">
+                                <img src="/bundles/orocms/images/home-page/illustration-carts-order-history.png" alt="Order history">
                             </picture>
                         </div>
                     </div>
@@ -651,7 +651,7 @@ homepage:
                         <div class="illustration-carts__img grid-col hide-on-mobile-big">
                             <picture>
                                 <source media="(max-width: 1280px)" srcset="/bundles/orocms/images/home-page/illustration-carts-contact-us-1280.png" type="image/png">
-                                <img src="/bundles/orocms/images/home-page/illustration-carts-contact-us.png" loading="lazy" alt="Contact us">
+                                <img src="/bundles/orocms/images/home-page/illustration-carts-contact-us.png" alt="Contact us">
                             </picture>
                         </div>
                     </div>
