@@ -18,27 +18,30 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\ProductTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
-
-    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $aclHelper;
+    private ManagerRegistry|MockObject $registry;
+    private AclHelper|MockObject $aclHelper;
+    private RequestStack|MockObject $requestStack;
 
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
 
         parent::setUp();
     }
@@ -55,6 +58,9 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
                 return $string . '_translated';
             });
 
+        $formExtension = new PriceAttributesProductFormExtension($this->registry, $this->aclHelper);
+        $formExtension->setRequestStack($this->requestStack);
+
         return [
             new PreloadedExtension(
                 [
@@ -64,7 +70,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
                 ],
                 [
                     ProductTypeStub::class => [
-                        new PriceAttributesProductFormExtension($this->registry, $this->aclHelper)
+                        $formExtension
                     ]
                 ]
             )
@@ -106,6 +112,17 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         $this->registry->expects($this->exactly(2))
             ->method('getManagerForClass')
             ->willReturn($em);
+
+        $request = $this->createMock(Request::class);
+        $request->expects($this->once())
+            ->method('get')
+            ->with('oro_product')
+            ->willReturn(null);
+
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
         $form = $this->factory->create(ProductType::class, new Product(), []);
 
         $form->submit([]);
@@ -113,6 +130,9 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         $this->assertTrue($form->isSynchronized());
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testDataAddedOnPostSetData()
     {
         $em = $this->createMock(ObjectManager::class);
@@ -178,6 +198,8 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ->method('getManagerForClass')
             ->willReturn($em);
 
+        $unit3 = $this->expectUnitPrecisionFromRequest('kg');
+
         $form = $this->factory->create(ProductType::class, $product, []);
         $expected = [
             1 => [
@@ -190,11 +212,23 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
                     ->setPriceList($priceAttribute1)
                     ->setProduct($product),
                 (new PriceAttributeProductPrice())
+                    ->setUnit($unit3)
+                    ->setPrice(Price::create(null, 'EUR'))
+                    ->setQuantity(1)
+                    ->setPriceList($priceAttribute1)
+                    ->setProduct($product),
+                (new PriceAttributeProductPrice())
                     ->setUnit($unit2)
                     ->setPrice(Price::create(null, 'USD'))
                     ->setQuantity(1)
                     ->setPriceList($priceAttribute1)
-                    ->setProduct($product)
+                    ->setProduct($product),
+                (new PriceAttributeProductPrice())
+                    ->setUnit($unit3)
+                    ->setPrice(Price::create(null, 'USD'))
+                    ->setQuantity(1)
+                    ->setPriceList($priceAttribute1)
+                    ->setProduct($product),
             ],
             2 => [
                 $price2USD,
@@ -203,12 +237,52 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
                     ->setPrice(Price::create(null, 'USD'))
                     ->setQuantity(1)
                     ->setPriceList($priceAttribute2)
-                    ->setProduct($product)
+                    ->setProduct($product),
+                (new PriceAttributeProductPrice())
+                    ->setUnit($unit3)
+                    ->setPrice(Price::create(null, 'USD'))
+                    ->setQuantity(1)
+                    ->setPriceList($priceAttribute2)
+                    ->setProduct($product),
             ]
         ];
 
         $actual = $form->get(PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES)->getData();
         $this->assertEquals($expected, $actual);
+    }
+
+    private function expectUnitPrecisionFromRequest(string $unitCode): ProductUnit
+    {
+        $requestProduct = [
+            'primaryUnitPrecision' => [
+                'unit' => $unitCode,
+            ]
+        ];
+
+        $request = $this->createMock(Request::class);
+        $request->expects($this->once())
+            ->method('get')
+            ->with('oro_product')
+            ->willReturn($requestProduct);
+
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $unit = (new ProductUnit())->setCode($unitCode);
+
+        $productUnitRepository = $this->createMock(ProductUnitRepository::class);
+        $productUnitRepository->expects($this->once())
+            ->method('find')
+            ->with($unitCode)
+            ->willReturn($unit);
+
+        $this->registry->expects($this->once())
+            ->method('getRepository')
+            ->with(ProductUnit::class)
+            ->willReturn($productUnitRepository);
+
+        return $unit;
     }
 
     public function testPostSubmitNewPricesPersisted()
@@ -261,6 +335,16 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         $this->registry->expects($this->exactly(3))
             ->method('getManagerForClass')
             ->willReturn($em);
+
+        $request = $this->createMock(Request::class);
+        $request->expects($this->once())
+            ->method('get')
+            ->with('oro_product')
+            ->willReturn(null);
+
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
 
         $form = $this->factory->create(ProductType::class, $product, []);
 
@@ -336,6 +420,16 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         $this->registry->expects($this->exactly(3))
             ->method('getManagerForClass')
             ->willReturn($em);
+
+        $request = $this->createMock(Request::class);
+        $request->expects($this->once())
+            ->method('get')
+            ->with('oro_product')
+            ->willReturn(null);
+
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
 
         $form = $this->factory->create(ProductType::class, $product, []);
 

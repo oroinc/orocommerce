@@ -1,3 +1,26 @@
-{% if form.shippingCost is defined %}
-    {{ form_widget(form.shippingCost) }}
+{% if form.vars.value.id is defined and form.vars.value.id %}
+    {% if form.shippingCost is defined %}
+        {{ form_widget(form.shippingCost) }}
+    {% endif %}
+{% else %}
+    {% set productShippingCostWidgetAlias = 'oro_pricing_product_shipping_cost_update' %}
+
+    {% set widgetOptions = {
+        unit: form.primaryUnitPrecision.unit.vars.value,
+        precision: form.primaryUnitPrecision.precision.vars.value,
+        unitFormId: '#' ~ form.primaryUnitPrecision.unit.vars.id,
+        precisionFormId: '#' ~ form.primaryUnitPrecision.precision.vars.id,
+        widgetAlias: productShippingCostWidgetAlias
+    } %}
+
+    <div class="control-group-container"
+         data-page-component-module="orofixedproductshipping/js/app/components/product-shipping-cost-update-widget-component"
+         data-page-component-options="{{ widgetOptions|json_encode }}">
+    </div>
+
+    {{ oro_widget_render({
+        'widgetType': 'block',
+        'url': path('oro_fixed_product_shipping_widget_shipping_cost_update', widgetOptions),
+        'alias': productShippingCostWidgetAlias
+    }) }}
 {% endif %}
