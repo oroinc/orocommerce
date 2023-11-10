@@ -2,13 +2,13 @@
     'websitesSelector': '#' ~ websites.vars.id,
     'customersSelector': '#' ~ customers.vars.id,
     'dateSelector': '#hidden_' ~ date.vars.id,
-    'showFullUsedChainSelector': '#' ~ showFullUsedChain.vars.id,
+    'showDevelopersInfoSelector': '#' ~ showDevelopersInfo.vars.id,
     'showDetailedAssignmentInfoSelector': '#' ~ showDetailedAssignmentInfo.vars.id,
     'productId': product.id
 } %}
 
 {% form_theme showDetailedAssignmentInfo with '@OroPricing/Form/sidebar.html.twig' %}
-{% form_theme showFullUsedChain with '@OroPricing/Form/sidebar.html.twig' %}
+{% form_theme showDevelopersInfo with '@OroPricing/Form/sidebar.html.twig' %}
 
 {# TODO: Move me elsewhere #}
 <style>
@@ -27,5 +27,5 @@
         <p></p><div class="customers">{{ form_row(customers) }}</div>
         <p></p><div class="date">{{ form_row(date) }}</div>
         <p></p><div class="show-detailed-assignment-info">{{ form_row(showDetailedAssignmentInfo) }}</div>
-        <p></p><div class="show-full-used-chain">{{ form_row(showFullUsedChain) }}</div>
+        <p></p><div class="show-developers-info">{{ form_row(showDevelopersInfo) }}</div>
 </div>

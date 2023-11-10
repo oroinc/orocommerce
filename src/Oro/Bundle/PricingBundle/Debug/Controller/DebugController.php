@@ -92,7 +92,7 @@ class DebugController extends AbstractController
         $sidebarData['customers'] = $this->createCustomersForm()->createView();
         $sidebarData['date'] = $this->createDateForm()->createView();
         $sidebarData['showDetailedAssignmentInfo'] = $this->createShowDetailedAssignmentInfoForm()->createView();
-        $sidebarData['showFullUsedChain'] = $this->createShowFullUsedChainForm()->createView();
+        $sidebarData['showDevelopersInfo'] = $this->createShowDevelopersInfoForm()->createView();
 
         return $sidebarData;
     }
@@ -106,36 +106,36 @@ class DebugController extends AbstractController
     public function traceAction(Product $product)
     {
         $cpl = $this->getPriceListHandler()->getPriceList();
-        $fullChainCpl = $this->getPriceListHandler()->getFullChainCpl();
 
-        $usedPriceLists = $this->getCplUsedPriceLists(
-            $cpl,
-            $this->getPriceListHandler()->getShowFullUsedChain() ? null : $product
-        );
+        $fullChainCpl = $this->getPriceListHandler()->getFullChainCpl();
+        $usedPriceLists = $this->getCplUsedPriceLists($cpl);
 
         $fullChainCplId = null;
         $usedPriceListsFullCpl = null;
         if ($fullChainCpl && $fullChainCpl->getId() !== $cpl?->getId()) {
             $fullChainCplId = $fullChainCpl->getId();
-            $usedPriceListsFullCpl = $this->getCplUsedPriceLists(
-                $fullChainCpl,
-                $this->getPriceListHandler()->getShowFullUsedChain() ? null : $product
-            );
+            $usedPriceListsFullCpl = $this->getCplUsedPriceLists($fullChainCpl);
         }
 
+        $showDevelopersInfo = $this->getPriceListHandler()->getShowDevelopersInfo();
+
         $data = [
-            'cplId' => $cpl?->getId(),
-            'fullChainCplId' => $fullChainCplId,
             'product' => $product,
             'current_prices' => $this->getCurrentPrices($product),
-            'cpl_used_price_lists' => $usedPriceLists,
-            'full_cpl_used_price_lists' => $usedPriceListsFullCpl,
             'price_merging_details' => $this->getPriceMergingDetails($usedPriceLists, $product),
-            'cpl_activation_rules' => $this->getActivationRules($fullChainCpl)
+            'full_cpl_used_price_lists' => $usedPriceListsFullCpl ?: $usedPriceLists,
+            'show_developers_info' => $showDevelopersInfo
         ];
 
         if ($this->getPriceListHandler()->getShowDetailedAssignmentInfo()) {
             $data['price_list_assignments'] = $this->getPriceListAssignments();
+        }
+
+        if ($showDevelopersInfo) {
+            $data['cpl_used_price_lists'] = $usedPriceLists;
+            $data['cplId'] = $cpl?->getId();
+            $data['fullChainCplId'] = $fullChainCplId;
+            $data['cpl_activation_rules'] = $this->getActivationRules($fullChainCpl);
         }
 
         return $data;
@@ -187,19 +187,13 @@ class DebugController extends AbstractController
         return $this->get(PriceMergeInfoProvider::class)->getPriceMergingDetails($usedPriceLists, $product);
     }
 
-    private function getCplUsedPriceLists(?CombinedPriceList $cpl, ?Product $product): array
+    private function getCplUsedPriceLists(?CombinedPriceList $cpl): array
     {
         if (!$cpl) {
             return [];
         }
 
-        $products = [];
-        if ($product) {
-            $products[] = $product;
-        }
-
-        return $this->getDoctrine()->getRepository(CombinedPriceListToPriceList::class)
-            ->getPriceListRelations($cpl, $products);
+        return $this->getDoctrine()->getRepository(CombinedPriceListToPriceList::class)->getPriceListRelations($cpl);
     }
 
     protected function createCurrenciesForm(): ?FormInterface
@@ -254,15 +248,15 @@ class DebugController extends AbstractController
         );
     }
 
-    protected function createShowFullUsedChainForm(): FormInterface
+    protected function createShowDevelopersInfoForm(): FormInterface
     {
         return $this->createForm(
             CheckboxType::class,
             null,
             [
-                'label' => 'oro.pricing.productprice.debug.show_full_used_chain.label',
+                'label' => 'oro.pricing.productprice.debug.show_developers_info.label',
                 'required' => false,
-                'data' => $this->getPriceListHandler()->getShowFullUsedChain(),
+                'data' => $this->getPriceListHandler()->getShowDevelopersInfo(),
             ]
         );
     }

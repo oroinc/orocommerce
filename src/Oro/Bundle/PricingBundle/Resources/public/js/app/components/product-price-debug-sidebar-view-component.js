@@ -15,7 +15,7 @@ define(function(require) {
             websitesSelector: '.priceListSelectorContainer',
             customersSelector: '.priceListSelectorContainer',
             dateSelector: '.dateContainer',
-            showFullUsedChainSelector: '.showFullUsedChainContainer',
+            showDevelopersInfoSelector: '.showDevelopersInfoContainer',
             showDetailedAssignmentInfoSelector: '.showDetailedAssignmentInfoContainer',
             sidebarAlias: 'product-prices-debug-view-sidebar',
             traceViewRoute: 'oro_pricing_price_product_debug_trace',
@@ -39,7 +39,7 @@ define(function(require) {
                 .on('change', this.options.websitesSelector, this.triggerSidebarChanged.bind(this))
                 .on('change', this.options.customersSelector, this.triggerSidebarChanged.bind(this))
                 .on('change', this.options.dateSelector, this.triggerSidebarChanged.bind(this))
-                .on('change', this.options.showFullUsedChainSelector, this.triggerSidebarChanged.bind(this))
+                .on('change', this.options.showDevelopersInfoSelector, this.triggerSidebarChanged.bind(this))
                 .on(
                     'change',
                     this.options.showDetailedAssignmentInfoSelector,
@@ -53,7 +53,7 @@ define(function(require) {
                 website: $(this.options.websitesSelector).val(),
                 customer: $(this.options.customersSelector).val(),
                 date: $(this.options.dateSelector).val(),
-                showFullUsedChain: $(this.options.showFullUsedChainSelector).prop('checked'),
+                showDevelopersInfo: $(this.options.showDevelopersInfoSelector).prop('checked'),
                 showDetailedAssignmentInfo: $(this.options.showDetailedAssignmentInfoSelector).prop('checked')
             };
 

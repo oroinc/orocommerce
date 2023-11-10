@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Debug\Handler;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Debug\Provider\CombinedPriceListActivationRulesProvider;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -26,23 +27,26 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
     public const WEBSITE_KEY = 'website';
     public const DATE_KEY = 'date';
     public const DETAILED_ASSIGNMENTS_KEY = 'showDetailedAssignmentInfo';
-    public const SHOW_FULL_USED_CHAIN_KEY = 'showFullUsedChain';
+    public const SHOW_DEVELOPERS_INFO = 'showDevelopersInfo';
 
     private RequestStack $requestStack;
     private ManagerRegistry $registry;
     private CombinedPriceListTreeHandler $combinedPriceListTreeHandler;
     private CombinedPriceListActivationRulesProvider $cplActivationRulesProvider;
+    private CustomerUserRelationsProvider $customerUserRelationsProvider;
 
     public function __construct(
         RequestStack $requestStack,
         ManagerRegistry $doctrine,
         CombinedPriceListTreeHandler $combinedPriceListTreeHandler,
-        CombinedPriceListActivationRulesProvider $cplActivationRulesProvider
+        CombinedPriceListActivationRulesProvider $cplActivationRulesProvider,
+        CustomerUserRelationsProvider $customerUserRelationsProvider
     ) {
         $this->requestStack = $requestStack;
         $this->registry = $doctrine;
         $this->combinedPriceListTreeHandler = $combinedPriceListTreeHandler;
         $this->cplActivationRulesProvider = $cplActivationRulesProvider;
+        $this->customerUserRelationsProvider = $customerUserRelationsProvider;
     }
 
     public function getPriceList()
@@ -60,6 +64,11 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
                     return $newRule->getCombinedPriceList();
                 }
             }
+        }
+
+        // Support anonymous
+        if (!$customer) {
+            $customer = $this->customerUserRelationsProvider->getCustomerIncludingEmpty();
         }
 
         return $this->combinedPriceListTreeHandler->getPriceList($customer, $website);
@@ -168,13 +177,13 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
         return filter_var($request->get(self::DETAILED_ASSIGNMENTS_KEY, false), FILTER_VALIDATE_BOOLEAN);
     }
 
-    public function getShowFullUsedChain(): bool
+    public function getShowDevelopersInfo(): bool
     {
         $request = $this->getRequest();
         if (!$request) {
             return false;
         }
 
-        return filter_var($request->get(self::SHOW_FULL_USED_CHAIN_KEY, false), FILTER_VALIDATE_BOOLEAN);
+        return filter_var($request->get(self::SHOW_DEVELOPERS_INFO, false), FILTER_VALIDATE_BOOLEAN);
     }
 }
