@@ -207,7 +207,7 @@ homepage:
             justify-content: center;
         }
         .featured-categories-grid__content-main h2 {
-            font-size: 42px;
+            font-size: 46px;
         }
         .featured-categories-grid__content-main p {
             font-size: 20px;
@@ -572,7 +572,7 @@ homepage:
                     <a href="/medical/medical-apparel/footwear" class="featured-categories-grid__cell featured-categories-grid__2-rows grid-col grid grid-columns-2">
                         <div class="featured-categories-grid__content featured-categories-content-over featured-categories-offset-top-bottom-start featured-categories-offset-top-end-start-mobile featured-categories-grid__content-flex grid-col grid-col-mobile-landscape-12">
                             <h2 class="no-offset">Footwear</h2>
-                            <p class="no-offset hide-on-mobile-landscape">Find supportive, stain-and slip-resistant medical footwear for the demanding healthcare environment</p>
+                            <p class="no-offset hide-on-mobile-landscape">Find supportive, stain- and slip-resistant medical footwear for the demanding healthcare environment</p>
                             <span class="featured-categories-grid__link hide-on-mobile-landscape">Shop Now</span>
                         </div>
                         <div class="featured-categories-grid__picture featured-categories-grid__picture--align-end grid-col grid-col-mobile-landscape-12">
@@ -613,7 +613,7 @@ homepage:
                     </a>
                     <a href="/navigation-root/new-arrivals" class="featured-categories-grid__cell featured-categories-grid__2-rows featured-categories-grid__content grid-col grid">
                         <h2 class="featured-categories-content-over grid-col-12 grid-col-mobile-landscape-12 featured-categories-offset-top-end-start featured-categories-offset-top-end-start-mobile no-offset">New Arrivals</h2>
-                        <div class="grid-col-6 featured-categories-offset-start hide-on-mobile-landscape">
+                        <div class="grid-col-6 featured-categories-offset-start featured-categories-content-over hide-on-mobile-landscape">
                             <span class="featured-categories-grid__link">Shop Now</span>
                         </div>
                         <div class="featured-categories-grid__picture featured-categories-grid__picture--align-end featured-categories-grid__picture--bottom-end grid-col-6 grid-col-mobile-landscape-12">
