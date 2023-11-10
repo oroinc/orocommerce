@@ -77,6 +77,16 @@ export default [{
             name: __('oro.cms.wysiwyg.style_manager.properties.margin_left.name')
         }]
     }, {
+        property: 'margin-inline-start',
+        name: __('oro.cms.wysiwyg.style_manager.properties.margin_inline_start.name'),
+        type: 'number',
+        units: ['px', '%', 'em', 'rem', 'vh', 'vw']
+    }, {
+        property: 'margin-inline-end',
+        name: __('oro.cms.wysiwyg.style_manager.properties.margin_inline_end.name'),
+        type: 'number',
+        units: ['px', '%', 'em', 'rem', 'vh', 'vw']
+    }, {
         property: 'padding',
         name: __('oro.cms.wysiwyg.style_manager.properties.padding.name'),
         properties: [{
@@ -92,6 +102,16 @@ export default [{
             property: 'padding-left',
             name: __('oro.cms.wysiwyg.style_manager.properties.padding_left.name')
         }]
+    }, {
+        property: 'padding-inline-start',
+        name: __('oro.cms.wysiwyg.style_manager.properties.padding_inline_start.name'),
+        type: 'number',
+        units: ['px', '%', 'em', 'rem', 'vh', 'vw']
+    }, {
+        property: 'padding-inline-end',
+        name: __('oro.cms.wysiwyg.style_manager.properties.padding_inline_end.name'),
+        type: 'number',
+        units: ['px', '%', 'em', 'rem', 'vh', 'vw']
     }]
 }, {
     id: 'typography',

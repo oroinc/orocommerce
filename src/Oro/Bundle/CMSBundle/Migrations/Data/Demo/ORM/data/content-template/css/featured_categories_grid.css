@@ -4,17 +4,16 @@
     --grid-gap: 24px;
 }
 .featured-categories-offset-top-bottom-start {
-    padding:
-            var(--featured-categories-content-offset)
-            0 var(--featured-categories-content-offset)
-            var(--featured-categories-content-offset);
+    padding-top: var(--featured-categories-content-offset);
+    padding-inline-end: 0;
+    padding-bottom: var(--featured-categories-content-offset);
+    padding-inline-start: var(--featured-categories-content-offset);
 }
 .featured-categories-offset-top-end-start {
-    padding:
-            var(--featured-categories-content-offset)
-            var(--featured-categories-content-offset)
-            0
-            var(--featured-categories-content-offset);
+    padding: var(--featured-categories-content-offset);
+    padding-inline-end: var(--featured-categories-content-offset);
+    padding-bottom: 0;
+    padding-inline-start: var(--featured-categories-content-offset);
 }
 .featured-categories-offset-start {
     padding-inline-start: var(--featured-categories-content-offset);
@@ -254,18 +253,20 @@
         --grid-gap: 12px;
     }
     .featured-categories-offset-top-end-start-mobile {
-        padding:
-                var(--featured-categories-content-offset)
-                var(--featured-categories-content-offset)
-                0
-                var(--featured-categories-content-offset);
+        padding-top: var(--featured-categories-content-offset);
+        padding-inline-end: var(--featured-categories-content-offset);
+        padding-bottom: 0;
+        padding-inline-start: var(--featured-categories-content-offset);
     }
     .featured-categories-grid__picture {
         position: relative;
         justify-content: end;
     }
     .featured-categories-grid__picture--mobile-has-offset {
-        padding: 0 var(--featured-categories-content-offset) var(--featured-categories-content-offset) 0;
+        padding-top: 0;
+        padding-inline-end: var(--featured-categories-content-offset);
+        padding-bottom: var(--featured-categories-content-offset);
+        padding-inline-start: 0;
     }
     .featured-categories-grid__content-main {
         gap: 8px;
