@@ -19,6 +19,7 @@ services:
             - '@doctrine'
             - '@oro_pricing.model.price_list_tree_handler'
             - '@Oro\Bundle\PricingBundle\Debug\Provider\CombinedPriceListActivationRulesProvider'
+            - '@oro_customer.provider.customer_user_relations_provider'
 
     oro_pricing.model.debug_product_price_price_list_request_handler:
         alias: Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler
