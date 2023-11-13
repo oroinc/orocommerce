@@ -331,7 +331,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should not see "ConfigurableProductB" in the "RequestAQuoteProducts" element
 
   Scenario: Update empty matrix form in the shopping list and create order
-    Given I open shopping list widget
+    Given I reload the page
+    When I open shopping list widget
     And I click "View Details"
     And I click Edit CNFB in grid
     And I fill "Matrix Grid Form" with:

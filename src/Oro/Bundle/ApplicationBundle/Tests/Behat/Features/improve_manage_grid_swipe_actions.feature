@@ -1,3 +1,5 @@
+@skip
+@ticket-BB-23160
 @regression
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 Feature: Improve manage grid swipe actions

@@ -58,7 +58,7 @@ define(function(require) {
                 !showShoppingListDropdown
             );
 
-            $shoppingListWidget.find('.header-row__trigger')
+            $shoppingListWidget.find('.shopping-list-trigger')
                 .toggleClass('disabled', !showShoppingListDropdown)
                 .attr('disabled', !showShoppingListDropdown);
         }

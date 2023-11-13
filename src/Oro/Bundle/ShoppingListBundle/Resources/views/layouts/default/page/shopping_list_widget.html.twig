@@ -1,13 +1,3 @@
-{% block _main_menu_shopping_lists_wrapper_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " cart-widget"
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _header_row_shopping_toggle_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroshoppinglist/js/app/components/shoppinglist-widget-view-component',
@@ -28,37 +18,43 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_dropdown_widget %}
-    <div class="cart-widget__content">
-        <span class="cart-widget__icon" aria-hidden="true">
-            {% if not is_one_shopping_list_enabled() %}
-                <span class="fa-clipboard"></span>
-            {% else %}
-                <span class="fa-shopping-cart"></span>
+    {% import '@OroFrontend/layouts/renderIcon.html.twig' as renderIcon %}
+    {% if showLabel is not defined %}
+        {% set showLabel = showLabel|default(true) %}
+    {% endif %}
+    {{ renderIcon.icon({id: 'shopping-list', extraClass: 'theme-icon--medium'}) }}
+    <span class="text-clip">
+        {% set isShowDropdown = true %}
+        {% if not is_one_shopping_list_enabled() %}
+            {% if shoppingLists|length > 0 %}
+                <span class="shopping-list-trigger__count">{{ shoppingLists|length }}</span>
             {% endif %}
-        </span>
-        <span class="cart-widget-counter">
-            <span class="cart-widget__text">
-                {% set isShowDropdown = true %}
-                {% if not is_one_shopping_list_enabled() %}
-                    {{ 'oro.frontend.shoppinglist.view.entity.label'|trans({'%count%': shoppingLists|length})|raw }}
-                {% else %}
-                    {% if (shoppingLists|length > 0) %}
-                        {% set shoppingList = shoppingLists[0] %}
-                        {{ 'oro.shoppinglist.default.label'|trans}}
-                        {% if shoppingList.lineItems|length > 0 %}
-                            <span aria-hidden="true">|</span> {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
-                        {% endif %}
-                    {% else %}
-                        {% set isShowDropdown = false %}
-                        {{ 'oro.frontend.shoppinglist.view.entity.label'|trans({'%count%': shoppingLists|length})|raw }}
-                    {% endif %}
+            {% if showLabel %}
+                <span class="shopping-list-trigger__label hide-on-tablet">
+                    {{- 'oro.frontend.shoppinglist.view.entity.label'|trans({'%count%': shoppingLists|length}) -}}
+                </span>
+            {% endif %}
+        {% else %}
+            {% if (shoppingLists|length > 0) %}
+                {% set shoppingList = shoppingLists[0] %}
+                {{ 'oro.shoppinglist.default.label'|trans}}
+                {% if shoppingList.lineItems|length > 0 %}
+                    <span aria-hidden="true">|</span> {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
                 {% endif %}
-            </span>
-            {% if isShowDropdown is same as(true) %}
-                <span class="fa-angle-down" aria-hidden="true"></span>
+            {% else %}
+                {% set isShowDropdown = false %}
+                <span class="shopping-list-trigger__count">{{ shoppingLists|length }}</span>
+                {% if showLabel %}
+                    <span class="shopping-list-trigger__label">
+                        {{- 'oro.frontend.shoppinglist.view.entity.label'|trans({'%count%': shoppingLists|length}) -}}
+                    </span>
+                {% endif %}
             {% endif %}
-        </span>
-    </div>
+        {% endif %}
+    </span>
+    {% if isShowDropdown is same as(true) %}
+        {{ renderIcon.icon({id: 'chevron-down', extraClass: 'theme-icon--medium shopping-list-trigger__dropdown-icon hide-on-tablet'}) }}
+    {% endif %}
     {{ block_widget(block) }}
 {% endblock %}
 

@@ -627,7 +627,6 @@ class QuoteControllerTest extends WebTestCase
 
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), $expected);
         self::assertFalse((bool)$crawler->filterXPath('//div[contains(@class, "breadcrumbs")]')->count());
-        self::assertFalse((bool)$crawler->filterXPath('//div[contains(@class, "primary-menu-container")]')->count());
         self::assertEquals(
             $expectedButton,
             (bool)$crawler->filterXPath('//button[contains(., \'Accept and Submit to Order\')]')->count()

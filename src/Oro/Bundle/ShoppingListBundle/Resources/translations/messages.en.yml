@@ -280,7 +280,7 @@ oro:
                 is_default.label: 'Default'
                 assigned_to.label: 'Assigned To'
 
-                entity.label: '{0} No Shopping Lists|{1} <strong>%count%</strong> Shopping List|]1,Inf[ <strong>%count%</strong> Shopping Lists'
+                entity.label: '{0} No Shopping Lists|{1} Shopping List|]1,Inf[ Shopping Lists'
                 items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
                 total.label: 'Total:'
                 subtotal.label: 'Subtotal:'

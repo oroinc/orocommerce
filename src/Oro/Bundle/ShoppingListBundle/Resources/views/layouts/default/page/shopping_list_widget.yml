@@ -11,12 +11,12 @@ layout:
                         shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
                 header_row_shopping_toggle:
                     blockType: container
-                main_menu_shopping_lists_wrapper:
-                    blockType: container
                 main_menu_shopping_lists_dropdown:
                     blockType: shopping_lists_awere_container
                     options:
                         shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
+                        vars:
+                            showLabel: '=true'
                 main_menu_shopping_dropdown:
                     blockType: shopping_lists_awere_container
                     options:
@@ -47,8 +47,7 @@ layout:
             tree:
                 header_row_shopping:
                     header_row_shopping_trigger:
-                        main_menu_shopping_lists_wrapper:
-                            main_menu_shopping_lists_dropdown: ~
+                        main_menu_shopping_lists_dropdown: ~
                     header_row_shopping_toggle:
                         main_menu_shopping_dropdown:
                             main_menu_shopping_lists_dropdown_container:

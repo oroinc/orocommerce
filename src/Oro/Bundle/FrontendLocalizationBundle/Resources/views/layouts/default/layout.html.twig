@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block localization_switcher_widget %}
+    {% import '@OroFrontend/layouts/renderIcon.html.twig' as renderIcon %}
     {% if localizations|length > 1 %}
         <div class="oro-toolbar oro-localization-switcher">
             {% set togglerId = 'dropdown-'|uniqid %}
@@ -16,9 +17,7 @@
                  aria-haspopup="true" aria-expanded="false"
                  aria-label="{{ 'oro.frontendlocalization.select.label'|trans }}">
                 {{ selected_localization.titles|localized_value }}
-                <span class="oro-toolbar__icon" aria-hidden="true">
-                    <span class="fa-angle-down"></span>
-                </span>
+                {{ renderIcon.icon({id: 'chevron-down', extraClass: 'theme-icon--medium'}) }}
             </div>
             {% set currentRoute = app.request.get('_route') %}
             {% set routeParameters = app.request.get('_route_params') %}
