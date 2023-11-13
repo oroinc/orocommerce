@@ -32,6 +32,7 @@ class WebsiteSearchProductIndexerListener
     private AttachmentManager $attachmentManager;
     private AttributeManager $attributeManager;
     private ProductIndexDataProviderInterface $dataProvider;
+    private int $batchSize = 100;
 
     public function __construct(
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
@@ -81,8 +82,7 @@ class WebsiteSearchProductIndexerListener
         $primaryUnits = $this->getProductUnitRepository()->getPrimaryProductsUnits($productIds);
         $attributes = $this->attributeManager
             ->getActiveAttributesByClassForOrganization($event->getEntityClass(), $website->getOrganization());
-        $attributeFamilies = $this->getAttributeFamilyRepository()
-            ->getFamilyIdsForAttributesByOrganization($attributes, $website->getOrganization());
+        $attributeFamilies = $this->getAttributeFamilies($attributes, $website);
 
         $countVariantLinks = 0;
         $batchSize = 2000;
@@ -143,6 +143,11 @@ class WebsiteSearchProductIndexerListener
                 $countVariantLinks = 0;
             }
         }
+    }
+
+    public function setBatchSize(int $batchSize): void
+    {
+        $this->batchSize = $batchSize;
     }
 
     private function getWebsite(IndexEntityEvent $event): ?Website
@@ -223,5 +228,29 @@ class WebsiteSearchProductIndexerListener
     private function getAttributeFamilyRepository(): AttributeFamilyRepository
     {
         return $this->doctrine->getRepository(AttributeFamily::class);
+    }
+
+    private function getAttributeFamilies(array $attributes, Website $website): array
+    {
+        $organization = $website->getOrganization();
+        $attributeFamilyRepo = $this->getAttributeFamilyRepository();
+
+        if (count($attributes) <= $this->batchSize) {
+            $attributeFamilies = $attributeFamilyRepo
+                ->getFamilyIdsForAttributesByOrganization($attributes, $organization);
+        } else {
+            $attributeFamilies = array_reduce(
+                array_chunk($attributes, $this->batchSize),
+                function (array $accum, array $currentAttrChunk) use ($organization, $attributeFamilyRepo): array {
+                    $accum += $attributeFamilyRepo
+                        ->getFamilyIdsForAttributesByOrganization($currentAttrChunk, $organization);
+
+                    return $accum;
+                },
+                []
+            );
+        }
+
+        return $attributeFamilies;
     }
 }
