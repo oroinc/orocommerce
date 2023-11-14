@@ -121,7 +121,7 @@ Feature: Guest Shopping Lists
     When I click "Add to Shopping List"
     Then should see 'Shopping list "Shopping List" was updated successfully' flash message
     When I open shopping list widget
-    And I click "View List"
+    And I click "Open List"
     Then I should see following grid:
       | SKU    | Item         | Qty Update All                   | Price | Subtotal |
       | 1GB83  | Slip-On Clog | Click "edit" to select variants  |       |          |
@@ -146,7 +146,7 @@ Feature: Guest Shopping Lists
     Then I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
     And I hover on "Shopping List Widget"
-    And I should see "1 ea | $3.00" in the "Shopping List Widget" element
+    And I should see "1 ea $3.00" in the "Shopping List Widget" element
 
   Scenario: Check Update Shopping List
     Given I should see "Update Shopping list"
@@ -161,7 +161,7 @@ Feature: Guest Shopping Lists
 
   Scenario: Check shopping list widget
     When I hover on "Shopping List Widget"
-    Then I should see "10 ea | $3.00" in the "Shopping List Widget" element
+    Then I should see "10 ea $3.00" in the "Shopping List Widget" element
 
   Scenario: Add more products to shopping list from list page (search)
     Given I type "CONTROL1" in "search"

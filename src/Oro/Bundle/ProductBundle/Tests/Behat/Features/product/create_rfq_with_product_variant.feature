@@ -130,7 +130,7 @@ Feature: Create RFQ with product variant
 
     When click "Submit Request"
     Then should see "Request has been saved" flash message
-    And I should see "Item #: PROD_A_1"
+    And I should see "PROD_A_1"
 
     When I type "PROD_A_1" in "search"
     And I click "Search Button"
@@ -155,4 +155,4 @@ Feature: Create RFQ with product variant
       | PO Number | RFQ002 |
     When click "Submit Request"
     Then should see "Request has been saved" flash message
-    And I should see "Item #: PROD_A_1"
+    And I should see "PROD_A_1"

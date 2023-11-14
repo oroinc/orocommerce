@@ -80,7 +80,7 @@ Feature: Product kits add from product view page
   Scenario: Check shopping list widget
     When I open shopping list widget
     Then I should see "Product Kit Shopping List" on shopping list widget
-    And I should see "1 Item | $268.00"
+    And I should see "1 item | $268.00"
     And I close shopping list widget
 
   Scenario: Check shopping list view page

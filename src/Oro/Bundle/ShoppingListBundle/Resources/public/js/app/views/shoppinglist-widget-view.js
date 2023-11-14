@@ -51,7 +51,7 @@ define(function(require) {
             const $shoppingListWidget = this.$el.closest('.shopping-list-widget');
             const showShoppingListDropdown =
                 this.shoppingListCollection.length ||
-                $shoppingListWidget.find('.shopping-list-widget__create-btn').length;
+                $shoppingListWidget.find('[data-shopping-list-create]').length;
 
             $shoppingListWidget.toggleClass(
                 'shopping-list-widget--disabled',
@@ -61,6 +61,11 @@ define(function(require) {
             $shoppingListWidget.find('.shopping-list-trigger')
                 .toggleClass('disabled', !showShoppingListDropdown)
                 .attr('disabled', !showShoppingListDropdown);
+
+            this.$('[data-role="set-default"]:checked').closest('.shopping-list-dropdown__item')
+                .addClass('shopping-list-dropdown__item--default')
+                .siblings()
+                .removeClass('shopping-list-dropdown__item--default');
         }
     });
 

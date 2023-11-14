@@ -106,6 +106,5 @@ Feature: Product kits merge same configurations
   Scenario: Check shopping list widget
     When I open shopping list widget
     Then I should see "Product Kit Shopping List" on shopping list widget
-    And I should see "1 Item | $402.00"
+    And I should see "1 item | $402.00"
     And I close shopping list widget
-

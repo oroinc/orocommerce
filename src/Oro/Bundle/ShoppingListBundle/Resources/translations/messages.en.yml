@@ -296,7 +296,7 @@ oro:
 
                 view_details.label: 'View Details'
                 view_details.title: 'Click to see all items, discounts, taxes and other applicable fees'
-                view_list.label: 'View List'
+                view_list.label: 'Open List'
                 create_new_shopping_list.label: 'Create New List'
                 create_new_shopping_list.aria_label: 'Create New List. Opens a popup'
                 choose_assign_user.label: 'Choose a User to assign "%label%"'

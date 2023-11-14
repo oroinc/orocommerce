@@ -167,8 +167,8 @@ Feature: Hide simple products that are variations of configurable on front store
     Then should see 'Shopping list "Shopping list" was updated successfully' flash message
     When I open shopping list widget
     Then I should see "Configurable Product A"
-    And I should see "Item #: PROD_A_1"
-    And I should see "Item #: PROD_A_2"
+    And I should see "PROD_A_1"
+    And I should see "PROD_A_2"
     When I click "Configurable Product A"
     Then I should not see "404 Not Found"
 
@@ -226,8 +226,8 @@ Feature: Hide simple products that are variations of configurable on front store
     And I should see "PROD_C_2"
     When I open shopping list widget
     Then I should see "Product A 1"
-    And I should see "Item #: PROD_A_1"
+    And I should see "PROD_A_1"
     And I should see "Product A 2"
-    And I should see "Item #: PROD_A_2"
+    And I should see "PROD_A_2"
     When I click "Product A 2"
     Then I should not see "404 Not Found"

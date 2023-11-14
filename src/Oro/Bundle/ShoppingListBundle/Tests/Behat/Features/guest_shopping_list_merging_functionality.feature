@@ -43,13 +43,14 @@ Feature: Guest shopping list merging functionality
     And I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
     And I hover on "Shopping List Widget"
-    And I should see "1 Item | $0.00" in the "Shopping List Widget" element
+    And I should see "1 ea N/A" in the "Shopping List Widget" element
+    And I should see "$0.00" in the "Shopping List Widget" element
 
   Scenario: Check guest shopping list was added to customer
     Given I signed in as AmandaRCole@example.org on the store frontend in old session
     And I should see "Shopping List"
     And I open shopping list widget
-    And I click "View List"
+    And I click "Open List"
     And I should see "PSKU1"
     And click "Sign Out"
 
@@ -72,7 +73,7 @@ Feature: Guest shopping list merging functionality
     Given I signed in as AmandaRCole@example.org on the store frontend in old session
     And I should see "Shopping List"
     And I open shopping list widget
-    And I click "View List"
+    And I click "Open List"
     And I should see following grid:
       | SKU      | Qty Update All |
       | PSKU1    | 2 each         |

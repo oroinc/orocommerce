@@ -78,7 +78,7 @@ Feature: Price List Customer Group fallback
     And I should see "Your Price: <Expected Price> / item" for "PSKU1" product
     When I click "Add to Shopping List" for "PSKU1" product
     And I open shopping list widget
-    And I should see "1 Item | <Expected Price>" in the "Shopping List Widget" element
+    And I should see "1 item | <Expected Price>" in the "Shopping List Widget" element
     When I click "Shopping List" on shopping list widget
     Then I should see "Subtotal <Expected Price>"
     And I should see "Total <Expected Price>"
@@ -148,7 +148,7 @@ Feature: Price List Customer Group fallback
     Then I should see "Product 1"
     And I should see "Your Price: <Expected Price> / item" for "PSKU1" product
     And I open shopping list widget
-    And I should see "1 Item | <Expected Price>" in the "Shopping List Widget" element
+    And I should see "1 item | <Expected Price>" in the "Shopping List Widget" element
     When I click "Shopping List" on shopping list widget
     Then I should see "Subtotal <Expected Price>"
     And I should see "Total <Expected Price>"

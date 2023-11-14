@@ -33,7 +33,7 @@ Feature: Shopping list duplication for non authenticated visitor
     When I click "Add to Shopping List" for "SKU123" product
     Then I should see "Product has been added to " flash message
     And I open shopping list widget
-    And I click "View List"
+    And I click "Open List"
     And click on "Create Order"
     And I click "Continue as a Guest"
     And I fill form with:
@@ -68,7 +68,7 @@ Feature: Shopping list duplication for non authenticated visitor
     When I click "Add to Shopping List" for "SKU123" product
     Then I should see "Product has been added to " flash message
     And I open shopping list widget
-    And I click "View List"
+    And I click "Open List"
     And click on "Create Order"
     And I click "Continue as a Guest"
     And I fill form with:

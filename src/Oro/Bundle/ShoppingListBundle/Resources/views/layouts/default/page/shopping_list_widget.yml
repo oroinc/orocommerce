@@ -54,9 +54,9 @@ layout:
                                 main_menu_shopping_lists_dropdown_item:
                                     main_menu_shopping_lists_dropdown_item_image: ~
                                     main_menu_shopping_lists_dropdown_item_product_base:
-                                        main_menu_shopping_lists_dropdown_item_product_base_total: ~
                                         main_menu_shopping_lists_dropdown_item_product_base_title: ~
                                         main_menu_shopping_lists_dropdown_item_product_base_sku: ~
+                                        main_menu_shopping_lists_dropdown_item_product_base_total: ~
                         main_menu_shopping_lists_dropdown_create: ~
 
         - '@setOption':

@@ -52,7 +52,7 @@ Feature: Product kits in shopping list dialog
   Scenario: Check shopping list widget
     When I open shopping list widget
     Then I should see "Product Kit Shopping List" on shopping list widget
-    And I should see "3 Items | $515.00"
+    And I should see "3 items | $515.00"
     And I close shopping list widget
 
   Scenario: Check shopping list view page
@@ -192,7 +192,7 @@ Feature: Product kits in shopping list dialog
   Scenario: Check shopping list widget
     When I open shopping list widget
     Then I should see "Product Kit Shopping List" on shopping list widget
-    And I should see "2 Items | $525.00"
+    And I should see "2 items | $525.00"
     And I close shopping list widget
 
   Scenario: Check shopping list view page

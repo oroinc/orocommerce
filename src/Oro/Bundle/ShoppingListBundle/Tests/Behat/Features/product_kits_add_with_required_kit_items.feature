@@ -65,7 +65,7 @@ Feature: Product kits add with required kit items
   Scenario: Check shopping list widget
     When I open shopping list widget
     Then I should see "Product Kit Shopping List" on shopping list widget
-    And I should see "1 Item | $41.00"
+    And I should see "1 item | $41.00"
     And I close shopping list widget
 
   Scenario: Check shopping list view page

@@ -85,7 +85,7 @@ Feature: Product kits add from in shopping list dialog
   Scenario: Check shopping list widget
     When I open shopping list widget
     Then I should see "Product Kit Shopping List" on shopping list widget
-    And I should see "2 Items | $309.00"
+    And I should see "2 items | $309.00"
     And I close shopping list widget
 
   Scenario: Check shopping list view page
