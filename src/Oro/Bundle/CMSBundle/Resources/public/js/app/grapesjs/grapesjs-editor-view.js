@@ -916,11 +916,11 @@ const GrapesjsEditorView = BaseView.extend({
         this.enabled = true;
         Promise.all(this.editorRenderPromises).then(() => {
             this.renderStart = false;
-            this.builder.trigger('editor:rendered');
             this.subview('loadingMask').hide();
             this._resolveDeferredRender();
             // Start tracking history after editor initialize have been done
             UndoManager.start();
+            this.builder.trigger('editor:rendered');
         }).catch(error => console.error(error));
     },
 
