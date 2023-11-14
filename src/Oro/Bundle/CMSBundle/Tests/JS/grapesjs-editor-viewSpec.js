@@ -53,5 +53,11 @@ describe('orocms/js/app/grapesjs/grapesjs-editor-view', () => {
         it('check "CodeValidator" should be defined', () => {
             expect(grapesjsEditorView.builder.CodeValidator).toBeDefined();
         });
+
+        it('check safe twig in CSS', () => {
+            grapesjsEditorView.builder.setComponents('<div id="test-id"></div>');
+            grapesjsEditorView.builder.setStyle('@media (max-width: 700px) {#test-id{color: red;}}');
+            expect(grapesjsEditorView.builder.getCss()).toEqual('@media (max-width: 700px){ #test-id{color:red;}}');
+        });
     });
 });
