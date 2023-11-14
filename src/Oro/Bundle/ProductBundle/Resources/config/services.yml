@@ -1,5 +1,6 @@
 parameters:
     oro_product.sku.regex_pattern: '/^[-_a-zA-Z0-9]*$/'
+    oro_product.sku.import_export.separator: '|'
 
 services:
     oro_product.product.manager.api:
@@ -2170,6 +2171,11 @@ services:
 
     oro_product.validator.only_simple_products_in_product_kit_item_products_collection_validator:
         class: Oro\Bundle\ProductBundle\Validator\Constraints\OnlySimpleProductsInProductKitItemProductsCollectionValidator
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.validator.only_product_kit_can_have_kit_items_validator:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\OnlyProductKitCanHaveKitItemsValidator
         tags:
             - { name: validator.constraint_validator }
 

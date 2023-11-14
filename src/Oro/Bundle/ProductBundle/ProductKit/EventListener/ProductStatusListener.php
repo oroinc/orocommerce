@@ -25,6 +25,8 @@ use Oro\Bundle\ProductBundle\ProductKit\Resolver\ProductKitStatusResolver;
  * may affect statuses of product kit
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ *
+ * @deprecated since 5.1, use StatusListener instead
  */
 class ProductStatusListener
 {

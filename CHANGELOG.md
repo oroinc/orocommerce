@@ -34,7 +34,7 @@ The current file describes significant changes in the code that may affect the u
 
 #### OrderBundle
 * Added the ability to contain product kit line items for `\Oro\Bundle\OrderBundle\Entity\Order` entity class:
-  * Added `\Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem` entity class, added `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$kitItemLineItems` association and `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$checksum`.
+* Added `\Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem` entity class, added `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$kitItemLineItems` association and `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$checksum`.
 * Added `\Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem` to backoffice and storefront API.
 
 #### PricingBundle
@@ -74,6 +74,10 @@ The current file describes significant changes in the code that may affect the u
 * Added `is_visible_product` TWIG function for checking if a product is visible.
 
 ### Changed
+
+#### ProductBundle
+* Changed `\Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy` - added the possibility of postponing rows for missing product kits item products and fixed losing the related kitItems collections located deeper than 1st level.
+* Changed `\Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture` - added new simple and kit products.
 
 #### CheckoutBundle
 * Changed `\Oro\Bundle\CheckoutBundle\Converter\ShoppingListLineItemConverter`, `\Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter`, `\Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShoppingListLineItemDiffMapper` to take into account `\Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem` entities.
@@ -140,6 +144,7 @@ The current file describes significant changes in the code that may affect the u
 
 #### ProductBundle
 * Deprecated `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface::getKitItem` and `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface::getSortOrder` - will be moved to `\Oro\Bundle\ProductBundle\Model\ProductKitItemAwareInterface`.
+* Deprecated `\Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener`, use `\Oro\Bundle\ProductBundle\ProductKit\EventListener\StatusListener` instead.
 
 #### ShippingBundle
 * Deprecated `\Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface`, use `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem` instead.

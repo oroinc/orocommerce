@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext;
 use Oro\Bundle\GaufretteBundle\FileManager;
 use Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -11,6 +12,8 @@ use Symfony\Component\Finder\Finder;
 
 /**
  * Behat context for product import/export functionality.
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductImportExportContext extends OroFeatureContext
 {
@@ -19,6 +22,7 @@ class ProductImportExportContext extends OroFeatureContext
     private const PRODUCT_ATTRIBUTES_PROCESSOR = 'oro_entity_config_attribute.export_template';
 
     private ?ImportExportContext $importExportContext = null;
+    private ?EmailContext $emailContext = null;
 
     /**
      * @BeforeScenario
@@ -27,6 +31,7 @@ class ProductImportExportContext extends OroFeatureContext
     {
         $environment = $scope->getEnvironment();
         $this->importExportContext = $environment->getContext(ImportExportContext::class);
+        $this->emailContext = $environment->getContext(EmailContext::class);
     }
 
     /**
@@ -43,6 +48,37 @@ class ProductImportExportContext extends OroFeatureContext
             $expectedEntities,
             self::PRODUCT_PROCESSOR
         );
+    }
+
+    //@codingStandardsIgnoreStart
+    /**
+     * Example: Exported file with Product Kits divided by "\n" delimiter contains at least the following data
+     *
+     * @Given /^Exported file with Product Kits divided by "(?P<delimeter>(?:[^"]+))" delimiter contains at least the following data:$/
+     */
+    //@codingStandardsIgnoreEnd
+    public function exportedFileWithProductKitsDividedByDelimiterContainsAtLeastTheFollowingData(
+        $delimiter,
+        TableNode $table
+    ) {
+        $table = $this->splitKitItems($delimiter, $table);
+
+        $this->emailContext->downloadedFileFromEmailMustContains($table);
+    }
+
+    /**
+     * Fill downloaded csv file template
+     * Example: And I fill product KitItems template divided by "\n" delimiter with data:
+     *            | SKU   | Name      | Kit Items                                                                      |
+     *            | PSKU1 | Product 1 | id=,label=Base,optional=true,products=5TJ23|2RW93,min_qty=1,max_qty=1,unit=set |
+     *
+     * @Given /^(?:|I )fill product KitItems template divided by "(?P<delimeter>(?:[^"]+))" delimiter with data:$/
+     */
+    public function iFillProductKitItemsTemplateDividedByDelimiterWithData($delimiter, TableNode $table)
+    {
+        $table = $this->splitKitItems($delimiter, $table);
+
+        $this->importExportContext->iFillTemplateWithData($table);
     }
 
     /**
@@ -167,6 +203,25 @@ class ProductImportExportContext extends OroFeatureContext
             }
             $fileManager->writeFileToStorage($file->getPathname(), $fileName);
         }
+    }
+
+    private function splitKitItems($delimiter, TableNode $table): TableNode
+    {
+        $rows = $table->getRows();
+        $kitItemIndex = array_search('Kit Items', $rows[0], true);
+        if ($kitItemIndex) {
+            foreach ($rows as $key => $row) {
+                if ($key === 0 || empty($row[$kitItemIndex])) {
+                    continue;
+                }
+
+                $rows[$key][$kitItemIndex] = str_replace($delimiter, PHP_EOL, $row[$kitItemIndex]);
+            }
+
+            $table = new TableNode($rows);
+        }
+
+        return $table;
     }
 
     private function getProductImportImagesFileManager(): FileManager

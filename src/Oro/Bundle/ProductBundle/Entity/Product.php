@@ -714,7 +714,10 @@ class Product implements
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *               "excluded"=true
+     *              "excluded"=false,
+     *              "immutable"=true,
+     *              "full"=true,
+     *              "process_as_scalar"=true
      *          }
      *      }
      * )
