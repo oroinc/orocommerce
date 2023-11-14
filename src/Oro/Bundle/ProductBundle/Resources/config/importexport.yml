@@ -286,3 +286,27 @@ services:
         parent: oro_locale.importexport.data_converter.property_path_title
         calls:
             - [setConfigProvider, ['@oro_entity_config.provider.frontend']]
+
+    # Event Listener
+    oro_product.importexport.event_listener.kit_items_product_normalize:
+        class: Oro\Bundle\ProductBundle\ImportExport\EventListener\KitItemsProductNormalizeEventListener
+        arguments:
+            - '%oro_product.sku.import_export.separator%'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.normalizer.normalizer, method: onNormalize }
+
+    oro_product.importexport.event_listener.kit_items_product_data_converter:
+        class: Oro\Bundle\ProductBundle\ImportExport\EventListener\KitItemsProductDataConverterEventListener
+        arguments:
+            - '%oro_product.sku.import_export.separator%'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.data_converter.convert_to_import, method: onConvertToImport }
+
+    oro_product.importexport.event_listener.kit_items_product_strategy:
+        class: Oro\Bundle\ProductBundle\ImportExport\EventListener\KitItemsProductStrategyListener
+        arguments:
+            - '@oro_importexport.strategy.import.helper'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_importexport.strategy.process_before, method: onProcessBefore, priority: -255 }
+            - { name: kernel.event_listener, event: oro_importexport.strategy.process_after, method: onProcessAfter, priority: -255 }

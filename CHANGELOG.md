@@ -115,6 +115,8 @@ The current file describes significant changes in the code that may affect the u
 
 #### ProductBundle
 * Decomposed `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface` into `\Oro\Bundle\ProductBundle\Model\ProductKitItemAwareInterface`.
+* Changed `\Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy` - added the possibility of postponing rows for missing product kits item products and fixed losing the related kitItems collections located deeper than 1st level.
+* Changed `\Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture` - added new simple and kit products.
 
 #### SaleBundle
 * Changed `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\FirstOffers\FirstOffersQuoteToShippingLineItemConverter` and `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\SelectedOffers\SelectedOffersQuoteToShippingLineItemConverter` to make them work with the new shipping line item factory `\Oro\Bundle\SaleBundle\Quote\Shipping\Context\LineItem\Factory\ShippingLineItemFromQuoteProductDemandFactory`. 
@@ -184,6 +186,9 @@ The current file describes significant changes in the code that may affect the u
 * Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker`, use `\Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker` instead.
 * Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Provider\ProductKitItemsProvider`, use `\Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemsProvider` instead.
 * Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Provider\ProductKitItemProductsProvider`, use `\Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider` instead.
+
+#### ProductBundle
+* Removed `\Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener`, added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\StatusListener` instead.
 
 
 ## 5.1.0 (2023-03-31)
