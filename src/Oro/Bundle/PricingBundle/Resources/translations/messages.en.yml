@@ -244,6 +244,8 @@ oro.pricing:
             cpl_activation_rules.label: 'Combined Price List Activation Rules'
             dev_info_general.label: General
             dev_info.label: 'Developers Info'
+            actualize.label: 'Actualize Prices'
+            planned_for_actualization.message: 'Combined Price List was scheduled for actualization'
 
     combinedproductprice:
         entity_label: 'Combined Product Price'

@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Debug\Provider\PriceListsAssignmentProvider;
 use Oro\Bundle\PricingBundle\Debug\Provider\PriceMergeInfoProvider;
 use Oro\Bundle\PricingBundle\Debug\Provider\ProductPricesProvider;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListBuildActivity;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -106,6 +107,7 @@ class DebugController extends AbstractController
     public function traceAction(Product $product)
     {
         $cpl = $this->getPriceListHandler()->getPriceList();
+        $currentActiveCpl = $this->getPriceListHandler()->getCurrentActivePriceList();
 
         $fullChainCpl = $this->getPriceListHandler()->getFullChainCpl();
         $usedPriceLists = $this->getCplUsedPriceLists($cpl);
@@ -119,12 +121,24 @@ class DebugController extends AbstractController
 
         $showDevelopersInfo = $this->getPriceListHandler()->getShowDevelopersInfo();
 
+        $currentPrices = $this->getCurrentPrices($product);
+        $priceMergeDetails = $this->getPriceMergingDetails($usedPriceLists, $product);
+
+        $isActualizationRequired = $this->isActualizationRequired(
+            $cpl,
+            $currentActiveCpl,
+            $priceMergeDetails,
+            $currentPrices
+        );
+
         $data = [
+            'current_active_cpl' => $currentActiveCpl,
             'product' => $product,
-            'current_prices' => $this->getCurrentPrices($product),
-            'price_merging_details' => $this->getPriceMergingDetails($usedPriceLists, $product),
+            'current_prices' => $currentPrices,
+            'price_merging_details' => $priceMergeDetails,
             'full_cpl_used_price_lists' => $usedPriceListsFullCpl ?: $usedPriceLists,
-            'show_developers_info' => $showDevelopersInfo
+            'show_developers_info' => $showDevelopersInfo,
+            'requires_price_actualization' => $isActualizationRequired
         ];
 
         if ($this->getPriceListHandler()->getShowDetailedAssignmentInfo()) {
@@ -185,6 +199,12 @@ class DebugController extends AbstractController
     private function getPriceMergingDetails(array $usedPriceLists, Product $product): array
     {
         return $this->get(PriceMergeInfoProvider::class)->getPriceMergingDetails($usedPriceLists, $product);
+    }
+
+    private function isMergedPricesSameToCurrentPrices(array $mergedPrices, array $currentPrices): bool
+    {
+        return $this->get(PriceMergeInfoProvider::class)
+            ->isMergedPricesSameToCurrentPrices($mergedPrices, $currentPrices);
     }
 
     private function getCplUsedPriceLists(?CombinedPriceList $cpl): array
@@ -322,6 +342,31 @@ class DebugController extends AbstractController
         sort($currencies);
 
         return $currencies;
+    }
+
+    private function isActualizationRequired(
+        ?CombinedPriceList $cpl,
+        ?CombinedPriceList $currentActiveCpl,
+        array $priceMergeDetails,
+        array $currentPrices
+    ): bool {
+        $isActualizationRequired = false;
+        if ($cpl && $cpl->getId() === $currentActiveCpl?->getId()) {
+            $isActualizationRequired = !$this->isMergedPricesSameToCurrentPrices(
+                $priceMergeDetails,
+                $currentPrices
+            );
+
+            if ($isActualizationRequired) {
+                $isBuilding = $this->getDoctrine()->getRepository(CombinedPriceListBuildActivity::class)
+                    ->findBy(['combinedPriceList' => $currentActiveCpl]);
+                if ($isBuilding) {
+                    $isActualizationRequired = false;
+                }
+            }
+        }
+
+        return $isActualizationRequired;
     }
 
     /**
