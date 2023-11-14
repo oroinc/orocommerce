@@ -55,6 +55,51 @@ class PriceMergeInfoProvider
         return $result;
     }
 
+    public function isMergedPricesSameToCurrentPrices(array $mergedPrices, array $currentPrices): bool
+    {
+        $calculatedPrices = [];
+        foreach ($mergedPrices as $priceRows) {
+            foreach ($priceRows as $priceRow) {
+                if (empty($priceRow['is_selected'])) {
+                    continue;
+                }
+                /** @var ProductPrice $priceData */
+                $priceData = $priceRow['price'];
+                $calculatedPrices[$priceData->getPrice()->getCurrency()][] = sprintf(
+                    '%s_%s_%s',
+                    $priceData->getProductUnitCode(),
+                    (float)$priceData->getPrice()->getValue(),
+                    $priceData->getQuantity()
+                );
+            }
+        }
+
+        if (count($calculatedPrices) !== count($currentPrices)) {
+            return false;
+        }
+
+        foreach ($currentPrices as $currency => $prices) {
+            if (!array_key_exists($currency, $calculatedPrices)) {
+                return false;
+            }
+
+            if (count($prices) !== count($calculatedPrices[$currency])) {
+                return false;
+            }
+
+            $prices = array_map(
+                fn (array $row) => sprintf('%s_%s_%s', $row['unitCode'], $row['price']->getValue(), $row['quantity']),
+                $prices
+            );
+
+            if (array_diff($prices, $calculatedPrices[$currency])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private function getSelectedPriceIds(array $priceListRelations, Product $product): array
     {
         $strategy = $this->configManager->get('oro_pricing.price_strategy');

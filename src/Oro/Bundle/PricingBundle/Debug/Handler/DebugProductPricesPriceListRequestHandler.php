@@ -49,10 +49,8 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
         $this->customerUserRelationsProvider = $customerUserRelationsProvider;
     }
 
-    public function getPriceList()
+    public function getPriceList(): ?CombinedPriceList
     {
-        $website = $this->getWebsite();
-        $customer = $this->getCustomer();
         $date = $this->getSelectedDate();
 
         if ($date) {
@@ -65,6 +63,14 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
                 }
             }
         }
+
+        return $this->getCurrentActivePriceList();
+    }
+
+    public function getCurrentActivePriceList(): ?CombinedPriceList
+    {
+        $website = $this->getWebsite();
+        $customer = $this->getCustomer();
 
         // Support anonymous
         if (!$customer) {
