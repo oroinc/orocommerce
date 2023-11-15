@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
@@ -91,6 +95,98 @@ class FrontendShoppingListProductsProviderTest extends TestCase
             ->method('formatProducts');
 
         $this->provider->getAllPrices();
+    }
+
+    public function testGetMatchedPrice(): void
+    {
+        $shoppingList1 = (new ShoppingListStub())->setId(11);
+        $unitItem = (new ProductUnit())->setCode('item');
+        $product = (new ProductStub())->setId(1100)->setType(Product::TYPE_SIMPLE);
+        $lineItem1 = (new LineItem())
+            ->setProduct($product)
+            ->setUnit($unitItem);
+        $unitEach = (new ProductUnit())->setCode('each');
+        $productKit = (new ProductStub())->setId(1101)->setType(Product::TYPE_KIT);
+        $lineItem2 = (new LineItem())
+            ->setProduct($productKit)
+            ->setUnit($unitEach)
+            ->setChecksum('sample_checksum');
+
+        $productLineItemPrice1 = new ProductLineItemPrice($lineItem1, Price::create(12.3456, 'USD'), 12.3456 * 2);
+        $productLineItemPrice2 = new ProductLineItemPrice($lineItem2, Price::create(34.5678, 'USD'), 34.5678 * 2);
+
+        $this->shoppingListLineItemsDataProvider
+            ->expects(self::once())
+            ->method('getShoppingListLineItems')
+            ->with($shoppingList1)
+            ->willReturn([$lineItem1, $lineItem2]);
+
+        $this->productLineItemPriceProvider
+            ->expects(self::once())
+            ->method('getProductLineItemsPrices')
+            ->with([$lineItem1, $lineItem2])
+            ->willReturn([$productLineItemPrice1, $productLineItemPrice2]);
+
+        self::assertEquals(
+            [
+                $product->getId() => [$lineItem1->getProductUnitCode() => $productLineItemPrice1->getPrice()],
+                $productKit->getId() => [
+                    $lineItem2->getProductUnitCode() => [
+                        $lineItem2->getChecksum() => $productLineItemPrice2->getPrice(),
+                    ],
+                ],
+            ],
+            $this->provider->getMatchedPrice($shoppingList1)
+        );
+    }
+
+    public function testGetMatchedPrices(): void
+    {
+        $shoppingList1 = (new ShoppingListStub())->setId(11);
+        $shoppingList2 = (new ShoppingListStub())->setId(22);
+        $unitItem = (new ProductUnit())->setCode('item');
+        $product = (new ProductStub())->setId(1100)->setType(Product::TYPE_SIMPLE);
+        $lineItem1 = (new LineItem())
+            ->setProduct($product)
+            ->setUnit($unitItem);
+        $unitEach = (new ProductUnit())->setCode('each');
+        $productKit = (new ProductStub())->setId(1101)->setType(Product::TYPE_KIT);
+        $lineItem2 = (new LineItem())
+            ->setProduct($productKit)
+            ->setUnit($unitEach)
+            ->setChecksum('sample_checksum');
+
+        $productLineItemPrice1 = new ProductLineItemPrice($lineItem1, Price::create(12.3456, 'USD'), 12.3456 * 2);
+        $productLineItemPrice2 = new ProductLineItemPrice($lineItem2, Price::create(34.5678, 'USD'), 34.5678 * 2);
+
+        $this->shoppingListLineItemsDataProvider
+            ->expects(self::exactly(2))
+            ->method('getShoppingListLineItems')
+            ->willReturnMap([
+                [$shoppingList1, [$lineItem1, $lineItem2]],
+                [$shoppingList2, []],
+            ]);
+
+        $this->productLineItemPriceProvider
+            ->expects(self::once())
+            ->method('getProductLineItemsPrices')
+            ->with([$lineItem1, $lineItem2])
+            ->willReturn([$productLineItemPrice1, $productLineItemPrice2]);
+
+        self::assertEquals(
+            [
+                $shoppingList1->getId() => [
+                    $product->getId() => [$lineItem1->getProductUnitCode() => $productLineItemPrice1->getPrice()],
+                    $productKit->getId() => [
+                        $lineItem2->getProductUnitCode() => [
+                            $lineItem2->getChecksum() => $productLineItemPrice2->getPrice(),
+                        ],
+                    ],
+                ],
+                $shoppingList2->getId() => [],
+            ],
+            $this->provider->getMatchedPrices([$shoppingList1, $shoppingList2])
+        );
     }
 
     public function testGetProductLineItemPricesForShoppingListsWhenNoShoppingLists(): void
