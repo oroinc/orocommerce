@@ -84,6 +84,7 @@ Feature: Product visibility on categories
 
   Scenario: Check product visibility for All
     Given I proceed as the Buyer
+    And I click "Account Dropdown"
     When I click "Sign Out"
     And I click "Lighting Products"
     And I click "All Products"

@@ -180,4 +180,4 @@ Feature: Guest Checkout
       | Email Address | tester@test.com   |
       | Password      | TesterT1@test.com |
     When click "Sign In"
-    Then should see "Signed in as: TesterFromRegistrationFlow"
+    Then should see "TesterFromRegistrationFlow"

@@ -25,7 +25,7 @@ Feature: Create RFQ on storefront
   Scenario: Create RFQ that contains notes
     Given I continue as the Buyer
     When I signed in as AmandaRCole@example.org on the store frontend
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"
     And fill form with:
@@ -49,7 +49,7 @@ Feature: Create RFQ on storefront
 
   Scenario: Products management in RFQ on storefront
     Given I continue as the Buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"
     When I open select entity popup for field "Line Item Product" in form "Frontend Request Form"

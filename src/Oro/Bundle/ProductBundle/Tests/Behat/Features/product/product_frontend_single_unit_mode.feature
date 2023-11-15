@@ -107,6 +107,7 @@ Feature: Product frontend single unit mode
     And I should see "Your Price: $40.00 / item" for "PSKU4" product
 
   Scenario: As guest user verify that prices are correctly displayed in "List page" layout view
+    And I click "Account Dropdown"
     When I click "Sign Out"
     When I type "PSKU2" in "search"
     And click "Search Button"

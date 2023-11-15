@@ -15,5 +15,5 @@ Feature: Quick order form with anonymous user
       | Email Address | AmandaRCole@example.org |
       | Password      | AmandaRCole@example.org |
     And click "Sign In"
-    Then I should see "Signed in as: Amanda Cole"
+    Then I should see "Amanda Cole"
     And should see "Quick Order Form"

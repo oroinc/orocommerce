@@ -21,7 +21,7 @@ Feature: Buyer can Edit and Delete address
     And fill in "Theme" with "Custom theme"
     And save form
     And I continue as the Buyer
-    And follow "Account"
+    And I click "Account Dropdown"
     When click "Address Book"
     Then I should not see "Item Edit Button" element inside "Customer Company Addresses List" element
     And I should not see "Item Delete Button" element inside "Customer Company Addresses List" element

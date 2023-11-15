@@ -462,10 +462,10 @@ oro_behat_extension:
     First Line Item Row Checkbox:
       selector: '.grid-body .grid-row:first-child input[type=checkbox]'
 
-    Shopping Lists Navigation Link:
+    Shopping Lists:
       selector:
         type: xpath
-        locator: '//a[text()="Shopping Lists" and contains(@class,"primary-menu__link")]'
+        locator: '//a[text()="Shopping Lists"]'
 
     Frontend Customer User Shopping Lists Grid:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-lists-grid"]'

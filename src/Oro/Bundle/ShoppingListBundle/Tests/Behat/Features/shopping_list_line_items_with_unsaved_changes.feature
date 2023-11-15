@@ -34,8 +34,8 @@ Feature: Shopping List Line Items With Unsaved Changes
   Scenario: Open Shopping List edit page
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
-    Then I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     And I click Edit "List 2" in grid
     Then I should see following grid:
       | SKU    | Qty Update All |

@@ -92,6 +92,7 @@ Feature: Highlighting new products
     And I click "List View"
     When click "View Details" for "PSKU1" product
     Then I should see an "New Arrival Sticker" element
+    And I click "Account Dropdown"
     And click "Sign Out"
     And click "NewCategory"
     When click "View Details" for "PSKU1" product
@@ -110,6 +111,7 @@ Feature: Highlighting new products
     And click "NewCategory"
     When click "View Details" for "PSKU1" product
     Then I should not see an "New Arrival Sticker" element
+    And I click "Account Dropdown"
     And click "Sign Out"
 
   Scenario: UnAssign product

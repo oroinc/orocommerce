@@ -7,7 +7,7 @@ Feature: Frontend rfq product grid filters hint is appears after reloading page
 
   Scenario: Feature background
     Given I login as AmandaRCole@example.org buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"
     And I fill form with:
@@ -22,6 +22,7 @@ Feature: Frontend rfq product grid filters hint is appears after reloading page
     And I click "Submit Request"
 
   Scenario: Check that the selected filter appears after reloading the page
+    And I click "Account Dropdown"
     Given I click "Requests For Quote"
     And I show filter "Status" in frontend grid
     And I choose filter for Status as is any of "Submitted"

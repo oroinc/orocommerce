@@ -31,7 +31,7 @@ Feature: Quote translations
     And I am on the homepage
     And I click "Localization Switcher"
     And I select "Zulu" localization
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"
     And I click "Add a Note to This Item"

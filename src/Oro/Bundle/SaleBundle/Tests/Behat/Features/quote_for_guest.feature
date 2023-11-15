@@ -121,6 +121,7 @@ Feature: Quote for guest
   Scenario: Logged in user has not access to quote from Quotes grid in profile
     Given I proceed as the Buyer
     And I am on the homepage
+    And I click "Account Dropdown"
     When I click "Quotes"
     Then I should see "There are no quotes"
 

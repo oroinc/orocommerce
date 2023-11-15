@@ -474,7 +474,8 @@ Feature: Commerce smoke e2e
       |Email Address|AmandaRCole1@example.org|
       |Password     |AmandaRCole1@example.org|
     And click "Sign In"
-    Then should see "Signed in as: Amanda Cole"
+    Then should see "Amanda Cole"
+    And I click "Account Dropdown"
     And click "Sign Out"
 
   Scenario: Create customer group
@@ -618,6 +619,7 @@ Feature: Commerce smoke e2e
     When I hover on "Shopping Cart"
     And click "View Details"
     And should see "Subtotal $175.20"
+    And I click "Account Dropdown"
     And click "Sign Out"
     And I signed in as BrandaJSanborn1@example.org on the store frontend
     And click "Phones"
@@ -725,6 +727,7 @@ Feature: Commerce smoke e2e
     And should see "TOTAL $1,893.90"
     And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+    And I click "Account Dropdown"
     And click "Sign Out"
 
   Scenario: Checkout by customer created from front store through the shopping list created by himself and review the submited order
@@ -819,7 +822,7 @@ Feature: Commerce smoke e2e
       | Internal Status | Sent to Customer |
       | Customer Status | N/A              |
     And I proceed as the User
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     And click on PO00001 in grid
     When click "Accept and Submit to Order"
@@ -844,6 +847,7 @@ Feature: Commerce smoke e2e
     And should see "TOTAL $4,014.00"
     And click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+    And I click "Account Dropdown"
     And click "Sign Out"
 
   Scenario: Create Quote from admin and check that Customers able to checkout from it (Quote assigned to buyer, check out by admin)
@@ -892,7 +896,7 @@ Feature: Commerce smoke e2e
     Then I should see "Quote #2 successfully sent to customer" flash message
     And I proceed as the User
     And I signed in as LonnieVTownsend1@example.org on the store frontend
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on PO1001 in grid
     When click "Accept and Submit to Order"
@@ -906,7 +910,7 @@ Feature: Commerce smoke e2e
 
   Scenario: Customer User with Administrator privileges have ability to see orders, RFQ, quotes of other users for the same customer
     Given I proceed as the User
-    And follow "Account"
+    And I click "Account Dropdown"
     When click "Requests For Quote"
     And click on PO00001 in grid
     Then should see "First Name Amanda"
@@ -916,12 +920,14 @@ Feature: Commerce smoke e2e
     And should see "Owner Amanda Cole"
     And should see "Xiaomi Redmi 3S Item #: Xiaomi_Redmi_3S_sku 12 items $112.00"
     And should see "Lenovo Vibe Item #: Lenovo_Vibe_sku 30 items $75.00"
+    And I click "Account Dropdown"
     When click "Quotes"
     Then should see following grid:
       | Quote # | PO Number | Owner       |
       | 1       | PO00001   | Amanda Cole |
       | 2       | PO1001    | Amanda Cole |
-    When click "Order History"
+    And I click "Account Dropdown"
+    And click "Order History"
     And click on $295.20 in grid
     Then should see "Billing Address Home Address NewAmanda NewCole NewOrg Stanyan St 12 SAN FRANCISCO CA US 90001"
     And should see "Shipping Address Home Address NewAmanda NewCole NewOrg Stanyan St 12 SAN FRANCISCO CA US 90001"
@@ -938,7 +944,7 @@ Feature: Commerce smoke e2e
 
   Scenario: Customer User with Administrator privileges create/update/block/delete new Customer User
     Given I proceed as the User
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Roles"
     When click edit "Buyer" in grid
     And fill form with:
@@ -957,19 +963,22 @@ Feature: Commerce smoke e2e
       |NewByerRole (Customizable)|true              |
     And click "Save"
     Then should see "Customer User has been saved" flash message
+    And I click "Account Dropdown"
     And click "Sign Out"
     When I signed in as TestUser1@test.com on the store frontend
-    Then should see "Signed in as: TestF TestL"
+    Then should see "TestF TestL"
+    And I click "Account Dropdown"
     And click "Sign Out"
     And I signed in as LonnieVTownsend1@example.org on the store frontend
-    When follow "Account"
+    And I click "Account Dropdown"
     And click "Users"
     And click disable "TestUser1@test.com" in grid
+    And I click "Account Dropdown"
     And click "Sign Out"
     And I signed in as TestUser1@test.com on the store frontend
     Then I should see "Your login was unsuccessful. Please check your e-mail address and password before trying again."
     And I signed in as LonnieVTownsend1@example.org on the store frontend
-    When follow "Account"
+    And I click "Account Dropdown"
     And click "Users"
     And click edit "TestUser1@test.com" in grid
     And fill form with:

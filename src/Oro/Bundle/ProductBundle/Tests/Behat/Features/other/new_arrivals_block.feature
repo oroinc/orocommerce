@@ -97,6 +97,7 @@ Feature: New Arrivals Block
     When I proceed as the User
     And reload the page
     Then I should not see "New Arrivals"
+    And I click "Account Dropdown"
     When click "Sign Out"
     Then I should not see "New Arrivals"
 

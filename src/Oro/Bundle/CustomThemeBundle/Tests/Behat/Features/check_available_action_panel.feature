@@ -15,6 +15,6 @@ Feature: Check available action panel
   Scenario: Check available datagrid actions
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    And follow "Account"
+    And I click "Account Dropdown"
     When I click "Order History"
     Then I should see an "PastOrdersGridToolbarActions" element

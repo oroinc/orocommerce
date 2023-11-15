@@ -27,6 +27,7 @@ Feature: Guest shopping list merging functionality
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I should see "No Shopping Lists"
+    And I click "Account Dropdown"
     And I click "Sign Out"
 
   Scenario: Create shopping list as a guest
@@ -52,6 +53,7 @@ Feature: Guest shopping list merging functionality
     And I open shopping list widget
     And I click "Open List"
     And I should see "PSKU1"
+    And I click "Account Dropdown"
     And click "Sign Out"
 
   Scenario: Create other shopping List as a guest

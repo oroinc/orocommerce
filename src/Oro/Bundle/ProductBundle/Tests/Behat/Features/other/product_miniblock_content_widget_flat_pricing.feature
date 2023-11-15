@@ -81,6 +81,7 @@ Feature: Product mini-block content widget flat pricing
 
   Scenario: Check prices is not available for guest with restricted price list but enabled in widget
     Given I proceed as the Buyer
+    And I click "Account Dropdown"
     And I click "Sign Out"
     When I click "Product Mini-Block Page"
     Then Page title equals to "Product Mini-Block Page"

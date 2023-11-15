@@ -87,7 +87,7 @@ Feature: Create RFQ with product variant
     And I click "Search Button"
     Then I should not see "PROD_A_1" product
 
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
 
     When I click "New Quote"

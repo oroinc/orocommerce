@@ -50,14 +50,15 @@ Feature: Removed products in order history
   Scenario: Customer User must see deleted products in order history
     Given I operate as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    When I follow "Account"
+    And I click "Account Dropdown"
     And I click "Order History"
     And I click view "SimpleOrder" in grid
     Then I should see AA1 in grid with following data:
       | Product   | Product1 Item #: AA1 |
       | Quantity  | 10 items             |
       | Price     | $5.00                |
-    When I click "Order History"
+    And I click "Account Dropdown"
+    And I click "Order History"
     And I click view "configurableOrder" in grid
     Then I should see 1GB81 in grid with following data:
       | Product   | Slip-On Clog Item #: 1GB81 |

@@ -121,6 +121,7 @@ Feature: Mass Product Actions processing
     Then I should not see "Shopping List of Amanda" in the "ProductFrontendMassPanelInBottomSticky" element
     And I uncheck PSKU3 record in "Product Frontend Grid" grid
     # Guest, shouldn't see others lists
+    And I click "Account Dropdown"
     When click "Sign Out"
     And I type "PSKU3" in "search"
     And I click "Search Button"

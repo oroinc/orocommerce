@@ -103,7 +103,7 @@ Feature: Localized email notification for RFQ
 
     When I proceed as the User
     And I login as AmandaRCole@example.org buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"
     And I fill form with:
@@ -168,6 +168,7 @@ Feature: Localized email notification for RFQ
     Then I should see "Configuration saved" flash message
 
     When I proceed as the User
+    And I click "Account Dropdown"
     And I click "Sign Out"
     And I click "Localization Switcher"
     And I select "French Localization" localization

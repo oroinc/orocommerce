@@ -150,8 +150,8 @@ Feature: Check shopping list subtotal using different customer users
 
   Scenario: Update cache from CustomerDepartment
     Given I proceed as the CustomerDepartment
-    And I follow "Account"
-    When I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    When I click on "Shopping Lists"
     Then I should see following grid:
       | Name          | Subtotal | Items |
       | Shopping List | $40.00   | 1     |
