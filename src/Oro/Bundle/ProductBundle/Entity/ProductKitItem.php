@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping\OrderBy;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -37,6 +38,13 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "immutable"=true,
+     *          }
+     *      }
+     * )
      */
     protected ?int $id = null;
 
@@ -47,17 +55,40 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
      *     cascade={"ALL"},
      *     orphanRemoval=true
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "immutable"=true,
+     *              "full"=true,
+     *              "fallback_field"="string"
+     *          }
+     *      }
+     * )
      */
     protected $labels;
 
     /**
      * @ORM\Column(name="sort_order", type="integer", options={"default"=0})
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "immutable"=true,
+     *          }
+     *      }
+     * )
      */
     protected int $sortOrder = 0;
 
     /**
      * @ORM\ManyToOne(targetEntity="Product", inversedBy="kitItems")
      * @ORM\JoinColumn(name="product_kit_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "immutable"=true,
+     *          }
+     *      }
+     * )
      */
     protected ?Product $productKit = null;
 
@@ -72,27 +103,63 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
      *     fetch="EXTRA_LAZY"
      * )
      * @OrderBy({"sortOrder"="ASC"})
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "immutable"=true,
+     *              "full"=true,
+     *          }
+     *      }
+     * )
      */
     protected $kitItemProducts;
 
     /**
      * @ORM\Column(name="optional", type="boolean", options={"default"=false})
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "immutable"=true,
+     *          }
+     *      }
+     * )
      */
     protected bool $optional = false;
 
     /**
      * @ORM\Column(name="minimum_quantity", type="float", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "immutable"=true,
+     *          }
+     *      }
+     * )
      */
     protected ?float $minimumQuantity = null;
 
     /**
      * @ORM\Column(name="maximum_quantity", type="float", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "immutable"=true,
+     *          }
+     *      }
+     * )
      */
     protected ?float $maximumQuantity = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="ProductUnit")
      * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "immutable"=true,
+     *          }
+     *      }
+     * )
      */
     protected ?ProductUnit $productUnit = null;
 
@@ -242,9 +309,9 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
      */
     public function getProducts(): Collection
     {
-        return $this->kitItemProducts->map(
-            static fn (ProductKitItemProduct $kitItemProduct) => $kitItemProduct->getProduct()
-        );
+        return $this->kitItemProducts
+            ->filter(static fn (ProductKitItemProduct $kitItemProduct) => $kitItemProduct->getProduct() !== null)
+            ->map(static fn (ProductKitItemProduct $kitItemProduct) => $kitItemProduct->getProduct());
     }
 
     public function setOptional(bool $optional): self

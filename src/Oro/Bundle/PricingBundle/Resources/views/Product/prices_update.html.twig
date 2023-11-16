@@ -1,8 +1,34 @@
 <div id="product_prices">
-    {% if form.productPriceAttributesPrices is defined and form.productPriceAttributesPrices.children is not empty %}
-        {{ form_row(form.productPriceAttributesPrices, { 'attr': {'class': 'price-attributes-collection'}}) }}
-    {% endif %}
-    {% if form.prices is defined %}
-        {{ form_row(form.prices) }}
+    {% if form.vars.value.id is defined and form.vars.value.id %}
+        {% if form.productPriceAttributesPrices is defined and form.productPriceAttributesPrices.children is not empty %}
+            {{ form_row(form.productPriceAttributesPrices, { 'attr': {'class': 'price-attributes-collection'}}) }}
+        {% endif %}
+        {% if form.prices is defined %}
+            {{ form_row(form.prices) }}
+        {% endif %}
+    {% else %}
+        {% set productPricesWidgetAlias = 'oro_pricing_product_prices_update' %}
+
+        {% do form.productPriceAttributesPrices.setRendered %}
+        {% do form.prices.setRendered %}
+
+        {% set widgetOptions = {
+            unit: form.primaryUnitPrecision.unit.vars.value,
+            precision: form.primaryUnitPrecision.precision.vars.value,
+            unitFormId: '#' ~ form.primaryUnitPrecision.unit.vars.id,
+            precisionFormId: '#' ~ form.primaryUnitPrecision.precision.vars.id,
+            widgetAlias: productPricesWidgetAlias
+        } %}
+
+        <div class="control-group-container"
+             data-page-component-module="oropricing/js/app/components/product-prices-update-widget-component"
+             data-page-component-options="{{ widgetOptions|json_encode }}">
+        </div>
+
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('oro_pricing_widget_prices_update', widgetOptions),
+            'alias': productPricesWidgetAlias
+        }) }}
     {% endif %}
 </div>

@@ -1,0 +1,195 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision1:
+    unit: '@set'
+    precision: '1'
+  precision2:
+    unit: '@set'
+    precision: '1'
+  additionalPrecision2:
+    unit: '@item'
+    precision: '1'
+  precision3:
+    unit: '@set'
+    precision: '1'
+  precision4:
+    unit: '@item'
+    precision: '1'
+  precisionKit1:
+    unit: '@set'
+    precision: '1'
+  additionalPrecisionKit1:
+    unit: '@item'
+    precision: '1'
+  precisionKit2:
+    unit: '@item'
+    precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+  productKitItemProduct1:
+    kitItem: '@productKitItem1'
+    productUnitPrecision: '@precision1'
+    product: '@product1'
+  productKitItemProduct2:
+    kitItem: '@productKitItem1'
+    productUnitPrecision: '@precision1'
+    product: '@product2'
+  productKitItemProduct3:
+    kitItem: '@productKitItem1'
+    productUnitPrecision: '@precision3'
+    product: '@product3'
+  productKitItemProduct4:
+    kitItem: '@productKitItem2'
+    productUnitPrecision: '@precision4'
+    product: '@product4'
+  productKitItemProduct5:
+    kitItem: '@productKitItem3'
+    productUnitPrecision: '@precision1'
+    product: '@product1'
+  productKitItemProduct6:
+    kitItem: '@productKitItem3'
+    productUnitPrecision: '@precision3'
+    product: '@product3'
+  productKitItemProduct7:
+    kitItem: '@productKitItem4'
+    productUnitPrecision: '@precision4'
+    product: '@product4'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+  productKitItem1:
+    productUnit: '@set'
+    optional: false
+    sortOrder: 1
+    minimumQuantity: 1
+    maximumQuantity: 1
+    __calls:
+      - setDefaultLabel: ['Base Unit']
+  productKitItem2:
+    productUnit: '@item'
+    optional: false
+    sortOrder: 2
+    minimumQuantity: 1
+    maximumQuantity: 1
+    __calls:
+      - setDefaultLabel: ['Barcode Scanner']
+  productKitItem3:
+    productUnit: '@set'
+    optional: true
+    sortOrder: 3
+    minimumQuantity: 1
+    maximumQuantity: null
+    __calls:
+      - setDefaultLabel: ['Receipt Printer(s)']
+  productKitItem4:
+    productUnit: '@item'
+    optional: true
+    sortOrder: 1
+    minimumQuantity: 1
+    maximumQuantity: null
+    __calls:
+      - setDefaultLabel: ['Additional Card Reader(s)']
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product1:
+    sku: 'PSKU1'
+    primaryUnitPrecision: '@precision1'
+    unitPrecisions: ['@precision1']
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - setDefaultName: ['@locvalue1']
+      - addDescription: ['@description_value1']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    organization: '@organization'
+    owner: '@business_unit'
+  product2:
+    sku: 'PSKU2'
+    primaryUnitPrecision: '@precision2'
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - addAdditionalUnitPrecision: ['@additionalPrecision2']
+      - setDefaultName: ['@locvalue2']
+      - addDescription: ['@description_value2']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    organization: '@organization'
+    owner: '@business_unit'
+  product3:
+    sku: 'PSKU3'
+    primaryUnitPrecision: '@precision3'
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - setDefaultName: ['@locvalue3']
+      - addDescription: ['@description_value3']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    organization: '@organization'
+    owner: '@business_unit'
+  product4:
+    sku: 'PSKU4'
+    primaryUnitPrecision: '@precision4'
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - setDefaultName: ['@locvalue4']
+      - addDescription: ['@description_value4']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    organization: '@organization'
+    owner: '@business_unit'
+  product5:
+    sku: 'PSKU_KIT1'
+    type: 'kit'
+    primaryUnitPrecision: '@precisionKit1'
+    unitPrecisions: ['@precisionKit1']
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - addAdditionalUnitPrecision: ['@additionalPrecisionKit1']
+      - setDefaultName: ['@locvalueKit1']
+      - addDescription: ['@description_valueKit1']
+      - addKitItem: ['@productKitItem1']
+      - addKitItem: ['@productKitItem2']
+      - addKitItem: ['@productKitItem3']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    organization: '@organization'
+    owner: '@business_unit'
+  product6:
+    sku: 'PSKU_KIT2'
+    type: 'kit'
+    primaryUnitPrecision: '@precisionKit2'
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - setDefaultName: ['@locvalueKit2']
+      - addDescription: ['@description_valueKit2']
+      - addKitItem: ['@productKitItem4']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    organization: '@organization'
+    owner: '@business_unit'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+  locvalue1:
+    string: 'Product 1'
+  locvalue2:
+    string: 'Product 2'
+  locvalue3:
+    string: 'Product 3'
+  locvalue4:
+    string: 'Product 4'
+  locvalueKit1:
+    string: 'Product Kit 1'
+  locvalueKit2:
+    string: 'Product Kit 2'
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
+  description_value1:
+    wysiwyg: 'Product 1 Description'
+  description_value2:
+    wysiwyg: 'Product 2 Description'
+  description_value3:
+    wysiwyg: 'Product 3 Description'
+  description_value4:
+    wysiwyg: 'Product 4 Description'
+  description_valueKit1:
+    wysiwyg: 'Product Kit 1 Description'
+  description_valueKit2:
+    wysiwyg: 'Product Kit 2 Description'

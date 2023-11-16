@@ -105,6 +105,10 @@ class ProductFormExtension extends AbstractTypeExtension
                     continue;
                 }
 
+                // In case prices were created before the product was persisted,
+                // productSku in the price may be null and needs to be updated
+                $this->ensureProductSkuInPrice($price);
+
                 // persist new prices
                 if (null === $price->getId()) {
                     $entityManager->persist($price);
@@ -120,6 +124,15 @@ class ProductFormExtension extends AbstractTypeExtension
             ->setProduct($product)
             ->setPrice(Price::create(null, $newInstanceData['currency']))
             ->setPriceList($newInstanceData['attribute']);
+    }
+
+    private function ensureProductSkuInPrice(PriceAttributeProductPrice $price): void
+    {
+        if (null === $price->getProductSku()
+            && $price->getProduct()?->getSku()
+        ) {
+            $price->setProduct($price->getProduct());
+        }
     }
 
     private function transformPriceAttributes(

@@ -195,4 +195,21 @@ class ProductKitItemRepository extends ServiceEntityRepository
 
         return $result;
     }
+
+    /**
+     * Returns ProductKitItem by ID and Product organization.
+     */
+    public function getProductKitItemByIdAndOrganization(int $kitItemId, int $organizationId): ?ProductKitItem
+    {
+        $qb = $this->createQueryBuilder('pki');
+
+        return $qb
+            ->innerJoin('pki.productKit', 'pk')
+            ->where($qb->expr()->eq('pki.id', ':product_kit_item_id'))
+            ->andWhere($qb->expr()->eq('pk.organization', ':organization_id'))
+            ->setParameter('product_kit_item_id', $kitItemId, Types::INTEGER)
+            ->setParameter('organization_id', $organizationId, Types::INTEGER)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

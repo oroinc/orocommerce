@@ -95,6 +95,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'extend.entity.test.wysiwyg' => '',
         'extend.entity.test.wysiwyg_attr' => '',
         'Upcoming.value' => '',
+        'Kit Items' => ''
     ];
 
     private LocalizedFallbackValueAwareDataConverter $converter;

@@ -15,10 +15,10 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 /**
  * @dbIsolationPerTest
  *
- * @covers \Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener
+ * @covers \Oro\Bundle\ProductBundle\ProductKit\EventListener\StatusListener
  * @covers \Oro\Bundle\ProductBundle\ProductKit\Resolver\ProductKitStatusResolver
  */
-class ProductStatusListenerTest extends WebTestCase
+class StatusListenerTest extends WebTestCase
 {
     private ManagerRegistry $registry;
 

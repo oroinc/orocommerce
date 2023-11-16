@@ -16,6 +16,7 @@ dynamic-imports:
         - oropricing/js/app/components/product-price-debug-sidebar-view-component
         - oropricing/js/app/components/product-unit-precision-limitations-component
         - oropricing/js/app/components/totals-component
+        - oropricing/js/app/components/product-prices-update-widget-component
         - oropricing/js/app/views/expression-field-switcher
         - oropricing/js/app/views/line-item-product-prices-view
         - oropricing/js/app/views/line-item-product-prices-extended-view
