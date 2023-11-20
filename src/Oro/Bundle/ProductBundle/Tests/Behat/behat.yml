@@ -920,7 +920,7 @@ oro_behat_extension:
       selector: '.product-list .product-item.grid-row'
 
     ProductFrontendRowSku:
-      selector: '.product-item__primary-content .product-item__sku-value'
+      selector: '.product-item .product-item__sku-value'
 
     Galery View Button:
       selector:

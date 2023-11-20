@@ -1,9 +1,11 @@
 /* @theme: default; */
 
 .product-price-hint-btn {
+    min-height: initial;
+    margin-top: -#{spacing('xs')};
+    padding-block: spacing('xs');
+
     &:hover {
         text-decoration: $product-price-hint-btn-text-decoration;
     }
-
-    @include fa-icon($product-price-hint-btn-icon);
 }

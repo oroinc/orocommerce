@@ -56,9 +56,8 @@ Feature: Highlighting new products
     And should not see "New Arrival Sticker" for "PSKU2" product
     When I click "Catalog Switcher Toggle"
     And I click "No Image View"
-    Then should not see "New Arrival Sticker" for "PSKU1" product
-    And should see "New Arrival Text" for "PSKU1" product
-    And should not see "New Arrival Text" for "PSKU2" product
+    Then should see "New Arrival Sticker" for "PSKU1" product
+    And should not see "New Arrival Sticker" for "PSKU2" product
 
   Scenario: New Arrival Sticker for logged in user
     Given I proceed as the User
@@ -74,9 +73,8 @@ Feature: Highlighting new products
     And should not see "New Arrival Sticker" for "PSKU2" product
     When I click "Catalog Switcher Toggle"
     And I click "No Image View"
-    Then should not see "New Arrival Sticker" for "PSKU1" product
-    And should see "New Arrival Text" for "PSKU1" product
-    And should not see "New Arrival Text" for "PSKU2" product
+    Then should see "New Arrival Sticker" for "PSKU1" product
+    And should not see "New Arrival Sticker" for "PSKU2" product
 
   Scenario: New Arrival Sticker on product view page - active
     Given I proceed as the Admin
@@ -134,7 +132,6 @@ Feature: Highlighting new products
     When I click "Catalog Switcher Toggle"
     And I click "No Image View"
     Then should not see "New Arrival Sticker" for "PSKU1" product
-    And should not see "New Arrival Text" for "PSKU1" product
 
   Scenario: New Arrival Sticker for loged user (UnAssign)
     Given I proceed as the User
@@ -149,4 +146,3 @@ Feature: Highlighting new products
     When I click "Catalog Switcher Toggle"
     And I click "No Image View"
     Then should not see "New Arrival Sticker" for "PSKU1" product
-    And should not see "New Arrival Text" for "PSKU1" product

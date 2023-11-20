@@ -56,7 +56,7 @@
         {% endif %}
         {% if product.schemaOrgBrandName is defined %}
             {% set productSchemaOrgBrand %}
-                <span itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
+                <span class="hidden" itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
                     <meta itemprop="name" content="{{ product.schemaOrgBrandName }}" />
                 </span>
             {% endset %}
@@ -73,6 +73,22 @@
     </div>
 {% endblock %}
 
+{% block __oro_product_list_item__product_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__container product-item__container--{{ class_prefix }}',
+    }) %}
+
+    {% if matrixFormType == 'inline' %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-item__container--has-matrixform',
+        }) %}
+    {% endif %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block __oro_product_list_item__product_image_holder_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__image-holder product-item__image-holder--{{ class_prefix }}',
@@ -85,7 +101,7 @@
 
 {% block __oro_product_list_item__product_view_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__preview',
+        '~class': ' product-item__preview product-item__preview--{{ class_prefix }}',
         'href': path('oro_product_frontend_product_view', {id: product.id}),
         'aria-label': 'oro.product.frontend.index.view_details_prefix'|trans ~ ' ' ~ product.name
     }) %}
@@ -116,6 +132,7 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_popup_gallery_widget %}
+    {% import '@OroFrontend/layouts/renderIcon.html.twig' as renderIcon %}
     {% if product.hasImage %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' view-product-gallery',
@@ -124,7 +141,7 @@
             'aria-label': 'oro.product.images.zoom.label'|trans,
             'type': 'button'
         }) %}
-        <button {{ block('block_attributes') }}></button>
+        <button {{ block('block_attributes') }}>{{ renderIcon.icon({id: 'zoom-in'}) }}</button>
     {% endif %}
 {% endblock %}
 
@@ -216,7 +233,7 @@
 
 {% block __oro_product_list_item__product_sku_widget %}
     <div>
-        {{- 'oro.product.frontend.index.item'|trans }} <span class="product-item__sku-value" itemprop="sku">{{- product.sku -}}</span>
+        <span class="product-item__sku-value" itemprop="sku">{{- product.sku -}}</span>
     </div>
 {% endblock %}
 

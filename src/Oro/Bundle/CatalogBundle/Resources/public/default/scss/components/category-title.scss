@@ -11,5 +11,6 @@
         margin: $category-title-divide-content-offset;
         padding: $category-title-divide-content-inner-offset;
         border-bottom: $category-title-divide-content-border-bottom;
+        grid-column: 1 / -1;
     }
 }

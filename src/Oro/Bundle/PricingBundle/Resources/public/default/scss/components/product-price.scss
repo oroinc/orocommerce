@@ -1,12 +1,9 @@
 /* @theme: default; */
 
 .product-price {
-    display: $product-price-display;
     width: $product-price-width;
-    overflow: $product-price-overflow;
 
     &__main {
-        padding-top: $product-price-main-offset-top;
         padding-bottom: $product-price-main-offset-bottom;
     }
 
@@ -27,20 +24,12 @@
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
-    }
-
-    &__label,
-    &__listed-label {
-        padding-right: spacing('sm');
+        gap: 0 spacing('sm');
     }
 
     &__value,
     &__listed-value {
         font-weight: $product-price-value-font-weight;
-    }
-
-    &__listed {
-        padding-top: spacing('xs');
     }
 
     // Modifier for simple view(only main price)
