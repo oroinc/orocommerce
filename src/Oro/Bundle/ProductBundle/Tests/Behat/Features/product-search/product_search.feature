@@ -19,6 +19,11 @@ Feature: Product search
     And I signed in as AmandaRCole@example.org on the store frontend
     And I go to the homepage
 
+  Scenario: Check that storefront search field retains entered value after submit
+    Given I type "something" in "search"
+    When click "Search Button"
+    Then "Search Widget Input" element "value" attribute should contain "something"
+
   Scenario: Check the search results match the specified criteria (search text).
     Given I type "Description3" in "search"
     When click "Search Button"
