@@ -122,10 +122,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
         $rowTotal = $lineItem->getPrice()->getValue();
         $rowCurrency = $lineItem->getPrice()->getCurrency();
 
-        if ($lineItem instanceof PriceTypeAwareInterface &&
-            $lineItem instanceof QuantityAwareInterface &&
-            (int)$lineItem->getPriceType() === PriceTypeAwareInterface::PRICE_TYPE_UNIT
-        ) {
+        if ($lineItem instanceof QuantityAwareInterface) {
             $rowTotal *= $lineItem->getQuantity();
         }
 
