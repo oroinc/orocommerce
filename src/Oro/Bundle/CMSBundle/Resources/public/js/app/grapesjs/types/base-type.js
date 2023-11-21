@@ -1,5 +1,13 @@
 import {pick} from 'underscore';
+import __ from 'orotranslation/js/translator';
 import BaseClass from 'oroui/js/base-class';
+
+export const CATEGORIES = {
+    basic: __('oro.cms.wysiwyg.block_manager.categories.basic'),
+    layout: __('oro.cms.wysiwyg.block_manager.categories.layout'),
+    uiComponents: __('oro.cms.wysiwyg.block_manager.categories.ui_components'),
+    legacy: __('oro.cms.wysiwyg.block_manager.categories.legacy')
+};
 
 const BaseType = BaseClass.extend({
     optionNames: ['editor', 'componentType', 'usedTags', 'template'],
@@ -27,6 +35,12 @@ const BaseType = BaseClass.extend({
      * @property {function} TypeModel
      */
     TypeView: null,
+
+    /**
+     * Define what is methos assign as static method to type model
+     * @property {string[]}
+     */
+    definedStatic: ['isComponent', 'beforeParse'],
 
     constructor: function BaseType(options) {
         this.usedTags = [];
@@ -99,11 +113,13 @@ const BaseType = BaseClass.extend({
         if (this.TypeModel && typeof this.TypeModel === 'function') {
             const model = this.TypeModel(ParentModel, this.getTypeModelOptions());
 
-            if (this.isComponent) {
-                model.isComponent = this.isComponent;
-            } else if (ParentModel.isComponent) {
-                model.isComponent = ParentModel.isComponent;
-            }
+            this.definedStatic.forEach(staticMethod => {
+                if (this[staticMethod]) {
+                    model[staticMethod] = this[staticMethod];
+                } else if (ParentModel[staticMethod]) {
+                    model[staticMethod] = ParentModel[staticMethod];
+                }
+            });
 
             model.componentType = this.componentType;
 
@@ -119,9 +135,18 @@ const BaseType = BaseClass.extend({
                     ...this.getTypeModelOptions(),
                     editor: this.editor
                 },
-                isComponent: this.isComponent,
+                ...this.definedStatic.reduce((obj, staticMethod) => {
+                    if (this[staticMethod]) {
+                        obj[staticMethod] = this[staticMethod];
+                    }
+                    return obj;
+                }, {}),
                 extend,
                 extendFn: [...extendFn]
+            };
+        } else if (this.parentType) {
+            return {
+                extend: this.parentType
             };
         }
 
@@ -145,6 +170,10 @@ const BaseType = BaseClass.extend({
                 },
                 extendView,
                 extendFnView: [...extendFnView]
+            };
+        } else if (this.parentType) {
+            return {
+                extend: this.parentType
             };
         }
 
@@ -276,6 +305,8 @@ const BaseType = BaseClass.extend({
         const {model: ownModel} = this.getType();
         return model instanceof ownModel;
     }
+}, {
+    CATEGORIES
 });
 
 export default BaseType;

@@ -39,12 +39,14 @@ class FlatRateMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreate(): void
     {
+        $name = 'Flat Rate';
         $label = 'test';
         $identifier = 'flat_rate_1';
         $enabled = true;
         $iconUri = 'bundles/icon-uri.png';
 
         $channel = new Channel();
+        $channel->setName($name);
         $channel->setTransport(new FlatRateSettings());
         $channel->setEnabled($enabled);
 
@@ -64,6 +66,7 @@ class FlatRateMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCase
 
         $expected = new FlatRateMethod(
             $identifier,
+            $name,
             $label,
             $iconUri,
             $enabled

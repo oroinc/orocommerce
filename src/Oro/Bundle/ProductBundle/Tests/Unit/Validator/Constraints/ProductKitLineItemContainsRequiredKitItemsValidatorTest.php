@@ -8,10 +8,10 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductKitItemLineItemsAwareStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductKitItemLineItemStub;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitLineItemContainsRequiredKitItems;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitLineItemContainsRequiredKitItemsValidator;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -19,20 +19,18 @@ class ProductKitLineItemContainsRequiredKitItemsValidatorTest extends Constraint
 {
     private LocalizationHelper|MockObject $localizationHelper;
 
-    private Localization $localization;
-
     protected function setUp(): void
     {
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
 
-        $this->localization = $this->createMock(Localization::class);
+        $localization = $this->createMock(Localization::class);
         $this->localizationHelper
             ->method('getCurrentLocalization')
-            ->willReturn($this->localization);
+            ->willReturn($localization);
 
         $this->localizationHelper
             ->method('getLocalizedValue')
-            ->with(self::isInstanceOf(Collection::class), $this->localization)
+            ->with(self::isInstanceOf(Collection::class), $localization)
             ->willReturnCallback(static fn (Collection $value) => $value[0]);
 
         parent::setUp();
@@ -59,9 +57,26 @@ class ProductKitLineItemContainsRequiredKitItemsValidatorTest extends Constraint
 
     public function testValidateWhenNoKitItemLineItemsAndNoProduct(): void
     {
-        $kitItemLineItem1 = new ProductKitItemLineItem();
-        $lineItem = (new LineItem())
+        $kitItemLineItem1 = new ProductKitItemLineItemStub(142);
+        $lineItem = (new ProductKitItemLineItemsAwareStub(42))
             ->addKitItemLineItem($kitItemLineItem1);
+
+        $this->validator->validate($lineItem, new ProductKitLineItemContainsRequiredKitItems());
+
+        $this->assertNoViolation();
+    }
+
+    public function testValidateWhenNotKit(): void
+    {
+        $lineItem = $this->createMock(ProductKitItemLineItemsAwareStub::class);
+        $lineItem
+            ->expects(self::once())
+            ->method('getProduct')
+            ->willReturn(new Product());
+
+        $lineItem
+            ->expects(self::never())
+            ->method('getKitItemLineItems');
 
         $this->validator->validate($lineItem, new ProductKitLineItemContainsRequiredKitItems());
 
@@ -70,9 +85,9 @@ class ProductKitLineItemContainsRequiredKitItemsValidatorTest extends Constraint
 
     public function testValidateWhenNoKitItemLineItemsAndNoKitItems(): void
     {
-        $kitItemLineItem1 = new ProductKitItemLineItem();
-        $lineItem = (new LineItem())
-            ->setProduct(new Product())
+        $kitItemLineItem1 = new ProductKitItemLineItemStub(142);
+        $lineItem = (new ProductKitItemLineItemsAwareStub(42))
+            ->setProduct((new Product())->setType(Product::TYPE_KIT))
             ->addKitItemLineItem($kitItemLineItem1);
 
         $this->validator->validate($lineItem, new ProductKitLineItemContainsRequiredKitItems());
@@ -85,16 +100,17 @@ class ProductKitLineItemContainsRequiredKitItemsValidatorTest extends Constraint
         $kitItem1 = (new ProductKitItem())->setOptional(true);
         $kitItem2 = (new ProductKitItem())->setOptional(true);
 
-        $kitItemLineItem1 = (new ProductKitItemLineItem())
+        $kitItemLineItem1 = (new ProductKitItemLineItemStub(142))
             ->setKitItem($kitItem1);
-        $kitItemLineItem2 = (new ProductKitItemLineItem())
+        $kitItemLineItem2 = (new ProductKitItemLineItemStub(242))
             ->setKitItem($kitItem2);
 
         $productKit = (new Product())
+            ->setType(Product::TYPE_KIT)
             ->addKitItem($kitItem1)
             ->addKitItem($kitItem2);
 
-        $lineItem = (new LineItem())
+        $lineItem = (new ProductKitItemLineItemsAwareStub(42))
             ->setProduct($productKit)
             ->addKitItemLineItem($kitItemLineItem1)
             ->addKitItemLineItem($kitItemLineItem2);
@@ -110,17 +126,18 @@ class ProductKitLineItemContainsRequiredKitItemsValidatorTest extends Constraint
         $kitItem2 = (new ProductKitItem())->setOptional(false);
         $kitItem3 = (new ProductKitItem())->setOptional(true);
 
-        $kitItemLineItem1 = (new ProductKitItemLineItem())
+        $kitItemLineItem1 = (new ProductKitItemLineItemStub(142))
             ->setKitItem($kitItem1);
-        $kitItemLineItem2 = (new ProductKitItemLineItem())
+        $kitItemLineItem2 = (new ProductKitItemLineItemStub(242))
             ->setKitItem($kitItem2);
 
         $productKit = (new Product())
+            ->setType(Product::TYPE_KIT)
             ->addKitItem($kitItem1)
             ->addKitItem($kitItem2)
             ->addKitItem($kitItem3);
 
-        $lineItem = (new LineItem())
+        $lineItem = (new ProductKitItemLineItemsAwareStub(42))
             ->setProduct($productKit)
             ->addKitItemLineItem($kitItemLineItem1)
             ->addKitItemLineItem($kitItemLineItem2);
@@ -138,16 +155,17 @@ class ProductKitLineItemContainsRequiredKitItemsValidatorTest extends Constraint
             ->setOptional(false)
             ->setDefaultLabel('sample kit item');
 
-        $kitItemLineItem1 = (new ProductKitItemLineItem())
+        $kitItemLineItem1 = (new ProductKitItemLineItemStub(142))
             ->setKitItem($kitItem1);
 
         $productKit = (new Product())
             ->setSku('sample-sku')
+            ->setType(Product::TYPE_KIT)
             ->addKitItem($kitItem1)
             ->addKitItem($kitItem2)
             ->addKitItem($kitItem3);
 
-        $lineItem = (new LineItem())
+        $lineItem = (new ProductKitItemLineItemsAwareStub(42))
             ->setProduct($productKit)
             ->addKitItemLineItem($kitItemLineItem1);
 

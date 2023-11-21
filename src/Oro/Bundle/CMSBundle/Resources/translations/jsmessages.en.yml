@@ -103,6 +103,8 @@ oro.cms:
             link_button:
                 label: 'Link Button'
                 content: 'Link Button'
+                icon_enabled: 'Icon Enable'
+                icon_before: 'Icon Before'
             image:
                 label: 'Image'
             video:
@@ -135,6 +137,9 @@ oro.cms:
                 dialog_title: 'Tiles'
             tiles_item:
                 label: 'Tile'
+            icon:
+                label: 'Icon'
+                search_not_found: 'No results found'
         validation:
             import: 'Please remove not permitted HTML-tags in the content field: {{ tags }}'
         import:
@@ -185,6 +190,7 @@ oro.cms:
                 forms: 'Forms'
                 layout: 'Layout'
                 legacy: 'Legacy'
+                ui_components: 'UI Components'
         selector_manager:
             label: 'Classes'
             selected: 'Selected'
@@ -616,6 +622,8 @@ oro.cms:
                 main_image: 'Main image'
                 select_breakpoints: 'Click to select breakpoint'
                 unknown_type: 'unknown'
+            component_settings:
+                label: '{{ name }} Settings'
         screenshot_plugin:
             onerror: 'Something went wrong during create template preview'
         content_template_plugin:

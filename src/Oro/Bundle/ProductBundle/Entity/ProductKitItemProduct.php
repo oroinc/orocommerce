@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
@@ -28,12 +29,28 @@ class ProductKitItemProduct implements ExtendEntityInterface
     /**
      * @ORM\ManyToOne(targetEntity="ProductKitItem", inversedBy="kitItemProducts")
      * @ORM\JoinColumn(name="product_kit_item_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ConfigField(
+     *       defaultValues={
+     *           "importexport"={
+     *               "identity"=true,
+     *               "immutable"=true
+     *           }
+     *       }
+     *  )
      */
     protected ?ProductKitItem $kitItem = null;
 
     /**
      * @ORM\ManyToOne(targetEntity="Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ConfigField(
+     *        defaultValues={
+     *            "importexport"={
+     *                "identity"=true,
+     *                "immutable"=true
+     *            }
+     *        }
+     *   )
      */
     protected ?Product $product = null;
 

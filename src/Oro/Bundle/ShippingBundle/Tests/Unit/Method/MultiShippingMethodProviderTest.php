@@ -48,6 +48,7 @@ class MultiShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
         $shippingMethod = new MultiShippingMethod(
             $shippingMethodIdentifier,
             $shippingMethodLabel,
+            $shippingMethodLabel,
             'bundles/oroshipping/img/multi-shipping-logo.png',
             true,
             $this->roundingService,
@@ -68,7 +69,7 @@ class MultiShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
                 return $callable($arguments);
             });
 
-        $this->translator->expects(self::once())
+        $this->translator->expects(self::exactly(2))
             ->method('trans')
             ->with('oro.shipping.multi_shipping_method.label')
             ->willReturn($shippingMethodLabel);

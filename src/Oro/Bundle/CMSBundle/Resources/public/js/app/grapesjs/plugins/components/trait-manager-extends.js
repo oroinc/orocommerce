@@ -1,6 +1,5 @@
 export default editor => {
     const TraitText = editor.TraitManager.getType('text');
-
     TraitText.prototype.templateLabel = function() {
         const {ppfx, em} = this;
         const {name} = this.model.attributes;

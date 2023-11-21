@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\Extension;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
@@ -56,7 +55,7 @@ class FrontendLineItemsGridVisibilityExtension extends AbstractExtension
             return;
         }
 
-        $lineItems = $shoppingList->getLineItems();
+        $lineItems = $this->doctrine->getRepository(LineItem::class)->getItemsWithProductByShoppingList($shoppingList);
         $this->prefetchProductsVisibility($lineItems);
 
         $manager = $this->doctrine->getManagerForClass(LineItem::class);
@@ -87,7 +86,7 @@ class FrontendLineItemsGridVisibilityExtension extends AbstractExtension
         }
     }
 
-    private function prefetchProductsVisibility(Collection $lineItems): void
+    private function prefetchProductsVisibility(iterable $lineItems): void
     {
         $productIds = [];
         foreach ($lineItems as $lineItem) {

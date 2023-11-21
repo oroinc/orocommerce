@@ -71,14 +71,20 @@ class ProductControllerTest extends WebTestCase
 
     public function testSearchAction(): void
     {
-        $this->client->request('GET', $this->getUrl('oro_product_frontend_product_search'));
+        $this->client->request(
+            'GET',
+            $this->getUrl('oro_product_frontend_product_search'),
+            ['search' => 'product']
+        );
         $result = $this->client->getResponse();
         self::assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
+
         self::assertNotEmpty($content);
         self::assertStringContainsString(LoadProductData::PRODUCT_1, $content);
         self::assertStringContainsString(LoadProductData::PRODUCT_2, $content);
         self::assertStringContainsString(LoadProductData::PRODUCT_3, $content);
+        self::assertInputValueSame('search', 'product');
     }
 
     public function testAutocompleteAction(): void

@@ -9,6 +9,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
 use Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -35,6 +36,9 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
+    /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceListTriggerHandler;
+
     /** @var string */
     private $productPriceClass;
 
@@ -45,11 +49,14 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->shardManager = $this->createMock(ShardManager::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);
+
         $this->listener = new ProductUnitPrecisionListener(
             $this->productPriceClass,
             $this->eventDispatcher,
             $this->shardManager,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->priceListTriggerHandler
         );
     }
 

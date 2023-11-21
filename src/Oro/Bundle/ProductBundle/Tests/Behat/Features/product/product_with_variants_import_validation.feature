@@ -204,7 +204,7 @@ Feature: Product with variants import validation
     Then Email should contains the following "Errors: 2 processed: 0, read: 1, added: 0, updated: 0, replaced: 0" text
     And I follow "Error log" link from the email
     Then I should see "Error in row #1. Not found entity \"Product\". Item data: {\"sku\":\"Non-ex\"}."
-    Then I should see "Error in row #1. variantLinks[0].product: This value should not be blank."
+    And I should see "Error in row #1. variantLinks[2].product: This value should not be blank."
 
   Scenario: Import configurable product with non-existing product variant and existing product variant
     Given I login as administrator
@@ -220,7 +220,7 @@ Feature: Product with variants import validation
     Then Email should contains the following "Errors: 2 processed: 0, read: 1, added: 0, updated: 0, replaced: 0" text
     And I follow "Error log" link from the email
     Then I should see "Error in row #1. Not found entity \"Product\". Item data: {\"sku\":\"Non-ex\"}."
-    Then I should see "Error in row #1. variantLinks[0].product: This value should not be blank."
+    And I should see "Error in row #1. variantLinks[2].product: This value should not be blank."
 
   Scenario: Import configurable products with non-existing product variant and existing product variant
     Given I login as administrator
@@ -237,4 +237,4 @@ Feature: Product with variants import validation
     Then Email should contains the following "Errors: 2 processed: 1, read: 2, added: 0, updated: 0, replaced: 1" text
     And I follow "Error log" link from the email
     Then I should see "Error in row #1. Not found entity \"Product\". Item data: {\"sku\":\"Non-ex\"}."
-    Then I should see "Error in row #1. variantLinks[0].product: This value should not be blank."
+    And I should see "Error in row #1. variantLinks[2].product: This value should not be blank."

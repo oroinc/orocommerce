@@ -43,9 +43,7 @@ const LinkType = BaseType.extend({
                     const newAttrs = Object.assign({title: ''}, data);
 
                     for (const [attr, value] of Object.entries(newAttrs)) {
-                        if (attr === 'text') {
-                            $link.text(value);
-                        } else {
+                        if (attr !== 'text') {
                             $link.attr(attr, value);
                         }
                     }
@@ -114,7 +112,15 @@ const LinkType = BaseType.extend({
         tempAttr: TEMP_ATTR,
 
         init() {
-            this.listenTo(this, 'change:attributes:text', (model, value) => model.components(_.escape(value)));
+            this.listenTo(this, 'change:attributes:text', this.onTextChange);
+        },
+
+        onTextChange(model, value) {
+            const [textnode] = this.findType('textnode');
+
+            if (textnode) {
+                textnode.replaceWith(_.escape(value));
+            }
         },
 
         getAttrToHTML() {

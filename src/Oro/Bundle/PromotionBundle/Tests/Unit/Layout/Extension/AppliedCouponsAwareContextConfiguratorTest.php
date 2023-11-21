@@ -13,14 +13,12 @@ use Oro\Component\Layout\LayoutContext;
 
 class AppliedCouponsAwareContextConfiguratorTest extends \PHPUnit\Framework\TestCase
 {
-    private PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject $promotionAwareHelper;
+    /** @var PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $promotionAwareHelper;
 
     protected function setUp(): void
     {
-        $this->promotionAwareHelper = $this->getMockBuilder(PromotionAwareEntityHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isCouponAware'])
-            ->getMock();
+        $this->promotionAwareHelper = $this->createMock(PromotionAwareEntityHelper::class);
     }
 
     /**
@@ -45,7 +43,6 @@ class AppliedCouponsAwareContextConfiguratorTest extends \PHPUnit\Framework\Test
     public function contextDataProvider(): array
     {
         $sourceEntity = $this->createMock(QuoteDemand::class);
-        /** @var CheckoutSource|\PHPUnit\Framework\MockObject\MockObject $checkoutSource */
         $checkoutSource = $this->createMock(CheckoutSource::class);
         $checkoutSource->expects($this->any())
             ->method('getEntity')

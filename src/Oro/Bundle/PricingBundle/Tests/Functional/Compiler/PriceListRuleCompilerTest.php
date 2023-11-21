@@ -200,7 +200,7 @@ class PriceListRuleCompilerTest extends WebTestCase
                 'priceList' => $priceList->getId(),
                 'unit' => 'liter',
                 'currency' => 'EUR',
-                'quantity' => '6',
+                'quantity' => '6.000',
                 'productSku' => 'product-1',
                 'priceRule' => $priceRule->getId(),
                 'value' => '100.0000',
@@ -210,7 +210,7 @@ class PriceListRuleCompilerTest extends WebTestCase
                 'priceList' => $priceList->getId(),
                 'unit' => 'liter',
                 'currency' => 'USD',
-                'quantity' => '6',
+                'quantity' => '6.000',
                 'productSku' => 'product-1',
                 'priceRule' => $priceRule->getId(),
                 'value' => '110.0000',
@@ -220,7 +220,7 @@ class PriceListRuleCompilerTest extends WebTestCase
                 'priceList' => $priceList->getId(),
                 'unit' => 'bottle',
                 'currency' => 'USD',
-                'quantity' => '6',
+                'quantity' => '6.00',
                 'productSku' => 'product-1',
                 'priceRule' => $priceRule->getId(),
                 'value' => '122.0000',
@@ -230,7 +230,7 @@ class PriceListRuleCompilerTest extends WebTestCase
                 'priceList' => $priceList->getId(),
                 'unit' => 'bottle',
                 'currency' => 'EUR',
-                'quantity' => '6',
+                'quantity' => '6.00',
                 'productSku' => 'product-1',
                 'priceRule' => $priceRule->getId(),
                 'value' => '200.0000',
@@ -425,7 +425,7 @@ class PriceListRuleCompilerTest extends WebTestCase
             ->setPriority(1)
             ->setQuantity(1)
             ->setProductUnitExpression('product.price_attribute_price_list_1.unit')
-            ->setQuantityExpression('product.price_attribute_price_list_1.quantity + 5')
+            ->setQuantityExpression('product.price_attribute_price_list_1.quantity + 5.0009')
             ->setProductUnit($this->getReference(LoadProductUnits::LITER))
             ->setRuleCondition($condition)
             ->setRule($rule);
@@ -440,7 +440,7 @@ class PriceListRuleCompilerTest extends WebTestCase
                 'priceList' => $priceList->getId(),
                 'unit' => 'liter',
                 'currency' => 'EUR',
-                'quantity' => '6',
+                'quantity' => '6.001',
                 'productSku' => 'product-1',
                 'priceRule' => $priceRule->getId(),
                 'value' => '110.0000',
@@ -450,7 +450,7 @@ class PriceListRuleCompilerTest extends WebTestCase
                 'priceList' => $priceList->getId(),
                 'unit' => 'bottle',
                 'currency' => 'EUR',
-                'quantity' => '6',
+                'quantity' => '6.00',
                 'productSku' => 'product-1',
                 'priceRule' => $priceRule->getId(),
                 'value' => '122.0000',

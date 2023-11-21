@@ -95,14 +95,13 @@ datagrids:
                 expression:
                     type:      string
                     data_name: rule.expression
-# should be uncommented and fixed in scope of BB-22237 task.
-#                methodConfigs:
-#                    type: choice
-#                    data_name: methodConfig.method
-#                    options:
-#                        field_options:
-#                            multiple: true
-#                            choices: '@oro_shipping.provider.shipping_methods_choices->getMethods()'
+                methodConfigs:
+                    type: choice
+                    data_name: methodConfig.method
+                    options:
+                        field_options:
+                            multiple: true
+                            choices: '@oro_shipping.provider.shipping_methods_choices->getMethods()'
         actions:
             view:
                 type:          navigate

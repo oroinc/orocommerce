@@ -1,5 +1,6 @@
 parameters:
     oro_product.sku.regex_pattern: '/^[-_a-zA-Z0-9]*$/'
+    oro_product.sku.import_export.separator: '|'
 
 services:
     oro_product.product.manager.api:
@@ -939,16 +940,16 @@ services:
             - { name: layout.data_provider, alias: segment_products }
 
     oro_product.event_listener.product_image_listener:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageListener'
-        public: false
+        class: Oro\Bundle\ProductBundle\EventListener\ProductImageListener
         arguments:
             - '@event_dispatcher'
-            - '@oro_layout.provider.image_type'
-            - '@oro_product.helper.product_image_helper'
+            - '@Psr\Container\ContainerInterface'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductImage', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\ProductImage', event: postUpdate }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\AttachmentBundle\Entity\File', event: postUpdate, method: filePostUpdate }
+            - { name: container.service_subscriber, id: oro_layout.provider.image_type, key: Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider }
+            - { name: container.service_subscriber, id: oro_product.helper.product_image_helper, key: Oro\Bundle\ProductBundle\Helper\ProductImageHelper }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductImage, event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductImage, event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\AttachmentBundle\Entity\File, event: postUpdate, method: filePostUpdate }
             - { name: doctrine.event_listener, event: postFlush }
             - { name: doctrine.event_listener, event: onClear }
 
@@ -1887,6 +1888,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_entity.preload_entity.product, method: onPreload }
             - { name: kernel.event_listener, event: oro_entity.preload_entity.productimage, method: onPreload }
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.productkititem, method: onPreload }
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.productkititemlabel, method: onPreload }
+            - { name: kernel.event_listener, event: oro_entity.preload_entity.productkititemproduct, method: onPreload }
 
     oro_product.event_listener.product_data_converter:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductDataConverterEventListener'
@@ -2141,6 +2145,11 @@ services:
 
     oro_product.validator.only_simple_products_in_product_kit_item_products_collection_validator:
         class: Oro\Bundle\ProductBundle\Validator\Constraints\OnlySimpleProductsInProductKitItemProductsCollectionValidator
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_product.validator.only_product_kit_can_have_kit_items_validator:
+        class: Oro\Bundle\ProductBundle\Validator\Constraints\OnlyProductKitCanHaveKitItemsValidator
         tags:
             - { name: validator.constraint_validator }
 

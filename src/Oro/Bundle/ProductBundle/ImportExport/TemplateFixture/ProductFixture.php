@@ -10,6 +10,8 @@ use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductDescription;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -20,18 +22,78 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
  */
 class ProductFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
-    /** @var LocalizationManager */
-    private $localizationManager;
+    public const PRODUCT_SIMPLE  = 'Product Simple';
+    public const PRODUCT_SIMPLE2 = 'Product Second Simple';
+    public const PRODUCT_KIT     = 'Product Kit';
 
-    public function __construct(LocalizationManager $localizationManager)
-    {
-        $this->localizationManager = $localizationManager;
+    private static array $productData = [
+        self::PRODUCT_SIMPLE => [
+            'sku' => 'sku_001',
+            'type' => Product::TYPE_SIMPLE,
+            'name' => 'Product Simple',
+            'description' => 'Product Simple Description',
+            'shortDescription' => 'Product Simple Short Description',
+            'status' => Product::STATUS_ENABLED,
+            'inventoryStatusId' => Product::INVENTORY_STATUS_IN_STOCK,
+            'inventoryStatusName' => 'In Stock',
+            'primaryUnitCode' => 'item',
+            'additionalUnitCode' => 'kg',
+        ],
+        self::PRODUCT_SIMPLE2 => [
+            'sku' => 'sku_002',
+            'type' => Product::TYPE_SIMPLE,
+            'name' => 'Product Second Simple',
+            'description' => 'Product Second Simple Description',
+            'shortDescription' => 'Product Second Simple Short Description',
+            'status' => Product::STATUS_ENABLED,
+            'inventoryStatusId' => Product::INVENTORY_STATUS_IN_STOCK,
+            'inventoryStatusName' => 'In Stock',
+            'primaryUnitCode' => 'item',
+            'additionalUnitCode' => 'set',
+        ],
+        self::PRODUCT_KIT    => [
+            'sku' => 'sku_003',
+            'type' => Product::TYPE_KIT,
+            'name' => 'Product Kit',
+            'description' => 'Product Kit Description',
+            'shortDescription' => 'Product Kit Short Description',
+            'status' => Product::STATUS_DISABLED,
+            'inventoryStatusId' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+            'inventoryStatusName' => 'Out of Stock',
+            'primaryUnitCode' => 'item',
+            'additionalUnitCode' => 'set',
+        ]
+    ];
+
+    private static array $kitItemData = [
+        [
+            'unitCode' => 'item',
+            'label' => 'Base Unit',
+            'optional' => true,
+            'minQty' => 1,
+            'maxQty' => 2,
+            'sortOrder' => 2,
+            'kitItemsProduct' => ['sku_001', 'sku_002'],
+        ], [
+            'unitCode' => 'item',
+            'label' => 'Additional Unit',
+            'optional' => false,
+            'minQty' => null,
+            'maxQty' => null,
+            'sortOrder' => 1,
+            'kitItemsProduct' => ['sku_001'],
+        ]
+    ];
+
+    public function __construct(
+        private readonly LocalizationManager $localizationManager
+    ) {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getEntityClass()
+    public function getEntityClass(): string
     {
         return Product::class;
     }
@@ -39,15 +101,19 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
     /**
      * {@inheritdoc}
      */
-    public function getData()
+    public function getData(): iterable
     {
-        return $this->getEntityData('Example Product');
+        return new \ArrayIterator([
+            $this->getEntityData(self::PRODUCT_SIMPLE)->current(),
+            $this->getEntityData(self::PRODUCT_SIMPLE2)->current(),
+            $this->getEntityData(self::PRODUCT_KIT)->current()
+        ]);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function createEntity($key)
+    protected function createEntity($key): Product
     {
         return new Product();
     }
@@ -56,40 +122,50 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
      * @param string  $key
      * @param Product $entity
      */
-    public function fillEntityData($key, $entity)
+    public function fillEntityData($key, $entity): void
+    {
+        $this->fillProduct($key, $entity);
+
+        if ($key === self::PRODUCT_KIT) {
+            $this->fillProductKit($entity);
+        }
+    }
+
+    private function fillProduct(string $key, Product $entity): void
     {
         $localization = $this->localizationManager->getDefaultLocalization();
+        $data = self::$productData[$key];
 
         $name = new ProductName();
-        $name->setString('Product Name');
+        $name->setString($data['name']);
 
         $localizedName = new ProductName();
         $localizedName->setLocalization($localization)
-            ->setString('US Product Name')
+            ->setString(sprintf('US %s', $data['name']))
             ->setFallback('system');
 
         $description = new ProductDescription();
-        $description->setWysiwyg('Product Description');
+        $description->setWysiwyg($data['description']);
 
         $localizedDescription = new ProductDescription();
         $localizedDescription->setLocalization($localization)
-            ->setWysiwyg('US Product Description')
+            ->setWysiwyg(sprintf('US %s', $data['description']))
             ->setFallback('system');
 
         $shortDescription = new ProductShortDescription();
-        $shortDescription->setText('Product Short Description');
+        $shortDescription->setText($data['shortDescription']);
 
         $localizedShortDescription = new ProductShortDescription();
         $localizedShortDescription->setLocalization($localization)
-            ->setText('US Product Short Description')
+            ->setText(sprintf('US %s', $data['shortDescription']))
             ->setFallback('system');
 
         $primaryProductUnit = (new ProductUnit())
-            ->setCode('kg')
+            ->setCode($data['primaryUnitCode'])
             ->setDefaultPrecision(3);
 
         $additionalProductUnit = (new ProductUnit())
-            ->setCode('item')
+            ->setCode($data['additionalUnitCode'])
             ->setDefaultPrecision(0);
 
         $primaryProductUnitPrecision = new ProductUnitPrecision();
@@ -111,11 +187,11 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
         $attributeFamily = new AttributeFamily();
         $attributeFamily->setCode('default_family');
 
-        $entity->setSku('sku_001')
+        $entity->setSku($data['sku'])
             ->setAttributeFamily($attributeFamily)
-            ->setStatus('enabled')
-            ->setType(Product::TYPE_SIMPLE)
-            ->setInventoryStatus($this->createInventoryStatus(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock'))
+            ->setStatus($data['status'])
+            ->setType($data['type'])
+            ->setInventoryStatus($this->createInventoryStatus($data['inventoryStatusId'], $data['inventoryStatusName']))
             ->addName($name)
             ->addName($localizedName)
             ->setPrimaryUnitPrecision($primaryProductUnitPrecision)
@@ -126,7 +202,41 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->addShortDescription($localizedShortDescription);
     }
 
-    private function setEntityId(object $entity, int $id): void
+    private function fillProductKit(Product $entity): void
+    {
+        foreach (self::$kitItemData as $datum) {
+            $kitItem = $this->createKitItem($datum);
+            $kitItem->setProductKit($entity);
+            $entity->addKitItem($kitItem);
+        }
+    }
+
+    private function createKitItem(array $data): ProductKitItem
+    {
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($data['unitCode']);
+        $productUnit->setDefaultPrecision(0);
+
+        $kitItem = new ProductKitItem();
+        $kitItem->setDefaultLabel($data['label']);
+        $kitItem->setOptional($data['optional']);
+        $kitItem->setMinimumQuantity($data['minQty']);
+        $kitItem->setMaximumQuantity($data['maxQty']);
+        $kitItem->setSortOrder($data['sortOrder']);
+        $kitItem->setProductUnit($productUnit);
+
+        foreach ($data['kitItemsProduct'] as $sku) {
+            $productKitItem = new ProductKitItemProduct();
+            $productKitItem->setKitItem($kitItem);
+            $productKitItem->setProduct((new Product())->setSku($sku));
+
+            $kitItem->addKitItemProduct($productKitItem);
+        }
+
+        return $kitItem;
+    }
+
+    private function setEntityId(object $entity, ?int $id): void
     {
         $reflectionClass = new \ReflectionClass($entity);
         $method = $reflectionClass->getProperty('id');

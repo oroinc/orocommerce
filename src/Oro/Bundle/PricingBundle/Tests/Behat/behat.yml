@@ -87,6 +87,18 @@ oro_behat_extension:
     Product Price Attributes Grid 1:
       selector: 'div[data-page-component-name="product-price-attributes-grid:1"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Product Price Attribute MSRP Form:
+      selector:
+        locator: '//div[@class="price-attributes-collection"]/div/div/label[text()="MSRP"]/../..'
+        type: xpath
+    Product Price Attribute Unit Each:
+      selector:
+        locator: '//td/span[text()="each"]'
+        type: xpath
+    Product Price Attribute Unit Item:
+      selector:
+        locator: '//td/span[text()="item"]'
+        type: xpath
     ProductPricesGrid:
       selector: 'div[data-page-component-name="product-prices-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid

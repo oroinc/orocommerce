@@ -73,6 +73,7 @@ class MultiShippingMethodProvider implements ShippingMethodProviderInterface
         return new MultiShippingMethod(
             self::MULTI_SHIPPING_METHOD_IDENTIFIER,
             $this->translator->trans('oro.shipping.multi_shipping_method.label'),
+            $this->translator->trans('oro.shipping.multi_shipping_method.label'),
             'bundles/oroshipping/img/multi-shipping-logo.png',
             true,
             $this->roundingService,

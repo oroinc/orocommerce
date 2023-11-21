@@ -11,11 +11,10 @@ use Oro\Bundle\ProductBundle\Event\DatagridLineItemsDataEvent;
  */
 class DatagridLineItemsDataPreloadListener
 {
-    /** @var PreloadingManager */
-    private $preloadingManager;
+    private PreloadingManager $preloadingManager;
 
     /** @var array */
-    private const FIELDS_FOR_SIMPLE = [
+    protected const FIELDS_FOR_SIMPLE = [
         'product' => [
             'category' => [
                 'highlightLowInventory' => [],
@@ -41,27 +40,44 @@ class DatagridLineItemsDataPreloadListener
             'names' => [],
             'unitPrecisions' => [],
         ],
+        'kitItemLineItems' => [],
     ];
 
     /** @var array */
-    private const FIELDS_FOR_KITS = [
+    protected const FIELDS_FOR_KITS = [
         'kitItemLineItems' => [
             'kitItem' => [
                 'labels' => [],
+                'productUnit' => [],
             ],
-            'product' => self::FIELDS_FOR_SIMPLE['product'],
+            'product' => [
+                'names' => [],
+                'images' => [
+                    'image' => [
+                        'digitalAsset' => [
+                            'titles' => [],
+                            'sourceFile' => [
+                                'digitalAsset' => [],
+                            ],
+                        ],
+                    ],
+                    'types' => [],
+                ],
+                'unitPrecisions' => [],
+            ],
+            'unit' => [],
         ],
     ] + self::FIELDS_FOR_SIMPLE;
 
     /** @var array */
-    private const FIELDS_FOR_CONFIGURABLE_WHEN_UNGROUPED = [
+    protected const FIELDS_FOR_CONFIGURABLE_WHEN_UNGROUPED = [
         'parentProduct' => [
             'names' => [],
         ],
     ] + self::FIELDS_FOR_SIMPLE;
 
     /** @var array */
-    private const FIELDS_FOR_CONFIGURABLE_WHEN_GROUPED = [
+    protected const FIELDS_FOR_CONFIGURABLE_WHEN_GROUPED = [
         'parentProduct' => [
             'names' => [],
             'unitPrecisions' => [],
@@ -101,11 +117,11 @@ class DatagridLineItemsDataPreloadListener
             }
         }
 
-        $this->preloadingManager->preloadInEntities($simpleLineItems, self::FIELDS_FOR_SIMPLE);
+        $this->preloadingManager->preloadInEntities($simpleLineItems, static::FIELDS_FOR_SIMPLE);
         $this->preloadingManager->preloadInEntities(
             $configurableLineItems,
-            $isGrouped ? self::FIELDS_FOR_CONFIGURABLE_WHEN_GROUPED : self::FIELDS_FOR_CONFIGURABLE_WHEN_UNGROUPED
+            $isGrouped ? static::FIELDS_FOR_CONFIGURABLE_WHEN_GROUPED : static::FIELDS_FOR_CONFIGURABLE_WHEN_UNGROUPED
         );
-        $this->preloadingManager->preloadInEntities($kitLineItems, self::FIELDS_FOR_KITS);
+        $this->preloadingManager->preloadInEntities($kitLineItems, static::FIELDS_FOR_KITS);
     }
 }

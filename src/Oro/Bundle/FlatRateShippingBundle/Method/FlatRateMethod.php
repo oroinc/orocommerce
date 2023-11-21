@@ -13,14 +13,16 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAwareInterface
 {
     private string $identifier;
+    private string $name;
     private string $label;
     private ?string $icon;
     private bool $enabled;
     private FlatRateMethodType $type;
 
-    public function __construct(string $identifier, string $label, ?string $icon, bool $enabled)
+    public function __construct(string $identifier, string $name, string $label, ?string $icon, bool $enabled)
     {
         $this->identifier = $identifier;
+        $this->name = $name;
         $this->label = $label;
         $this->icon = $icon;
         $this->enabled = $enabled;
@@ -49,6 +51,11 @@ class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAware
     public function isEnabled(): bool
     {
         return $this->enabled;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     /**

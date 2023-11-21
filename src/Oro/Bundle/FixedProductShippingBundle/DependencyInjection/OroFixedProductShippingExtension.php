@@ -19,5 +19,6 @@ class OroFixedProductShippingExtension extends Extension
         $loader->load('factories.yml');
         $loader->load('event_listeners.yml');
         $loader->load('form_types.yml');
+        $loader->load('controllers.yml');
     }
 }

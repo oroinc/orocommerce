@@ -87,6 +87,9 @@ class ShoppingListLineItemConverterTest extends TestCase
             new ArrayCollection([$regularCheckoutLineItem]),
         ];
 
+        $productKit = (new Product())
+            ->setType(Product::TYPE_KIT);
+
         $kitItemProduct1 = new Product();
         $kitItem1 = new ProductKitItem();
         $productUnitEach = (new ProductUnit())->setCode('each');
@@ -108,7 +111,7 @@ class ShoppingListLineItemConverterTest extends TestCase
             ->setSortOrder(22);
 
         $lineItemWithKitItemLineItems = (new LineItem())
-            ->setProduct($product)
+            ->setProduct($productKit)
             ->setUnit($productUnitItem)
             ->setNotes('sample notes')
             ->setQuantity(12.3456)

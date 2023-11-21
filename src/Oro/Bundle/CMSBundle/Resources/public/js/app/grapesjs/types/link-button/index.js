@@ -1,5 +1,6 @@
 import __ from 'orotranslation/js/translator';
 import BaseType from 'orocms/js/app/grapesjs/types/base-type';
+import LinkButtonTypeModel from './link-button-type-model';
 
 const LinkButtonType = BaseType.extend({
     parentType: 'link',
@@ -13,17 +14,7 @@ const LinkButtonType = BaseType.extend({
         order: 35
     },
 
-    modelProps: {
-        defaults: {
-            tagName: 'a',
-            classes: ['btn', 'btn--outlined'],
-            style: {},
-            components: [{
-                type: 'textnode',
-                content: __('oro.cms.wysiwyg.component.link_button.content')
-            }]
-        }
-    },
+    TypeModel: LinkButtonTypeModel,
 
     constructor: function LinkButtonTypeBuilder(options) {
         LinkButtonTypeBuilder.__super__.constructor.call(this, options);
