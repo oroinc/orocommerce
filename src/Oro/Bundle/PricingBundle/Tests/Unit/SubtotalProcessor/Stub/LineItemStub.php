@@ -4,16 +4,10 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 
-class LineItemStub implements PriceTypeAwareInterface, PriceAwareInterface, QuantityAwareInterface
+class LineItemStub implements PriceAwareInterface, QuantityAwareInterface
 {
-    /**
-     * @var int
-     */
-    protected $priceType = self::PRICE_TYPE_UNIT;
-
     /**
      * @var Price
      */
@@ -23,14 +17,6 @@ class LineItemStub implements PriceTypeAwareInterface, PriceAwareInterface, Quan
      * @var float
      */
     protected $quantity;
-
-    /**
-     * @return int
-     */
-    public function getPriceType()
-    {
-        return $this->priceType;
-    }
 
     /**
      * @param Price|null $price
@@ -49,14 +35,6 @@ class LineItemStub implements PriceTypeAwareInterface, PriceAwareInterface, Quan
     public function getPrice()
     {
         return $this->price;
-    }
-
-    /**
-     * @param int $priceType
-     */
-    public function setPriceType($priceType)
-    {
-        $this->priceType = $priceType;
     }
 
     /**
