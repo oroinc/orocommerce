@@ -41,6 +41,7 @@ styles:
         - 'bundles/oroproduct/default/scss/components/quick-order-add/quick-order-add.scss'
         - 'bundles/oroproduct/default/scss/components/product.scss'
         - 'bundles/oroproduct/default/scss/components/product-item.scss'
+        - 'bundles/oroproduct/default/scss/components/product-item-list-view.scss'
         - 'bundles/oroproduct/default/scss/components/product-list.scss'
         - 'bundles/oroproduct/default/scss/components/product-filters-root.scss'
         - 'bundles/oroproduct/default/scss/components/toggle-sidebar-btn.scss'

@@ -239,7 +239,7 @@ Feature: Product View Page Templates
   Scenario: "Product View Page Templates 1A" > Check simple product page with selected: Default template
     Given I open product with sku "gtsh_l" on the store frontend
     Then I should see "Green shirt L"
-    And I should see "Item #: gtsh_l"
+    And I should see "gtsh_l"
     And I should see the following prices on "Default Page":
       | Item | $10.00  |
       | Set  | $445.50 |
@@ -253,7 +253,7 @@ Feature: Product View Page Templates
   Scenario: "Product View Page Templates 1B" > Check configurable product page with selected: Default template
     Given I open product with sku "shirt_main" on the store frontend
     Then I should see "Shirt_1"
-    And I should see "Item #: shirt_main"
+    And I should see "shirt_main"
     And I should see the following options for "Color" select:
       | Green |
       | Red   |
@@ -278,7 +278,7 @@ Feature: Product View Page Templates
     When I operate as the Buyer
     And I open product with sku "gtsh_l" on the store frontend
     Then I should see "Green shirt L"
-    And I should see "Item #: gtsh_l"
+    And I should see "gtsh_l"
     And I should see the following prices on "Short Page":
       | Price | $10.00 / item |
     And I should not see "Remark Group"
@@ -288,7 +288,7 @@ Feature: Product View Page Templates
   Scenario: "Product View Page Templates 2B" > Check configurable product page with selected: Short page template
     Given I open product with sku "shirt_main" on the store frontend
     Then I should see "Shirt_1"
-    And I should see "Item #: shirt_main"
+    And I should see "shirt_main"
     And I should see the following options for "Color" select:
       | Green |
       | Red   |
@@ -312,7 +312,7 @@ Feature: Product View Page Templates
     When I operate as the Buyer
     And I open product with sku "gtsh_l" on the store frontend
     Then I should see "Green shirt L"
-    And I should see "Item #: gtsh_l"
+    And I should see "gtsh_l"
     And I should see the following prices on "Two Columns Page":
       | Listed Price: | [$10.00 / item, $445.50 / set] |
       | Your Price:   | $10.00 / item                  |
@@ -328,7 +328,7 @@ Feature: Product View Page Templates
     When I select "Green" from "Color"
     And I select "L" from "Size"
     Then I should see "Shirt_1"
-    And I should see "Item #: shirt_main"
+    And I should see "shirt_main"
     And I should see the following prices on "Two Columns Page":
       | Listed Price: | [$10.00 / item, $445.50 / set] |
       | Your Price:   | $10.00 / item                  |
@@ -350,7 +350,7 @@ Feature: Product View Page Templates
     When I operate as the Buyer
     And I open product with sku "gtsh_l" on the store frontend
     Then I should see "Green shirt L"
-    And I should see "Item #: gtsh_l"
+    And I should see "gtsh_l"
     And I should see the following prices on "List Page":
       | Price | $10.00 / item |
     And I should see "List Page" with "Remark group" containing data:
@@ -365,7 +365,7 @@ Feature: Product View Page Templates
     When I select "Green" from "Color"
     And I select "L" from "Size"
     Then I should see "Shirt_1"
-    And I should see "Item #: shirt_main"
+    And I should see "shirt_main"
     And I should see the following prices on "List Page":
       | Price | $10.00 / item |
     And I should see "List Page" with "Remark group" containing data:

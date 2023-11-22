@@ -3,8 +3,8 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPayPalBundle:PayPalExpressProductsWithTaxes.yml
 @behat-test-env
-Feature: Paypal payflow gateway express payments should not have tax line when price includes tax
-  In order to complete checkout with products which prices are already include tax
+Feature: Paypal payflow gateway express payments should have tax line with correct number
+  In order to complete checkout with products/shipping rates which prices are already include tax
   As a buyer
   I want to be able to see correct checkout total information on PayPal site
 
@@ -14,6 +14,7 @@ Feature: Paypal payflow gateway express payments should not have tax line when p
     And There are products in the system available for order
     And I enable configuration options:
       | oro_tax.product_prices_include_tax |
+      | oro_tax.shipping_rates_include_tax |
     And I set configuration property "oro_tax.use_as_base_by_default" to "destination"
     Then I login as AmandaRCole@example.org buyer
     And I am on the homepage
@@ -29,7 +30,4 @@ Feature: Paypal payflow gateway express payments should not have tax line when p
       | Tax      | $0.91   |
     And I should see "Total $13.00"
     When I click "Submit Order"
-    Then I should not see the following products before pay:
-      | NAME | DESCRIPTION |
-      | Tax  |  Tax |
     And I see the "Thank You" page with "Thank You For Your Purchase!" title

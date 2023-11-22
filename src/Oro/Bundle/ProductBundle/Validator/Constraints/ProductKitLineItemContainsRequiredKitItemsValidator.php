@@ -35,7 +35,7 @@ class ProductKitLineItemContainsRequiredKitItemsValidator extends ConstraintVali
             throw new UnexpectedTypeException($constraint, ProductKitLineItemContainsRequiredKitItems::class);
         }
 
-        if ($value === null || $value->getProduct() === null) {
+        if ($value?->getProduct()?->isKit() !== true) {
             return;
         }
 

@@ -77,6 +77,16 @@ export default [{
             name: __('oro.cms.wysiwyg.style_manager.properties.margin_left.name')
         }]
     }, {
+        property: 'margin-inline-start',
+        name: __('oro.cms.wysiwyg.style_manager.properties.margin_inline_start.name'),
+        type: 'number',
+        units: ['px', '%', 'em', 'rem', 'vh', 'vw']
+    }, {
+        property: 'margin-inline-end',
+        name: __('oro.cms.wysiwyg.style_manager.properties.margin_inline_end.name'),
+        type: 'number',
+        units: ['px', '%', 'em', 'rem', 'vh', 'vw']
+    }, {
         property: 'padding',
         name: __('oro.cms.wysiwyg.style_manager.properties.padding.name'),
         properties: [{
@@ -92,6 +102,16 @@ export default [{
             property: 'padding-left',
             name: __('oro.cms.wysiwyg.style_manager.properties.padding_left.name')
         }]
+    }, {
+        property: 'padding-inline-start',
+        name: __('oro.cms.wysiwyg.style_manager.properties.padding_inline_start.name'),
+        type: 'number',
+        units: ['px', '%', 'em', 'rem', 'vh', 'vw']
+    }, {
+        property: 'padding-inline-end',
+        name: __('oro.cms.wysiwyg.style_manager.properties.padding_inline_end.name'),
+        type: 'number',
+        units: ['px', '%', 'em', 'rem', 'vh', 'vw']
     }]
 }, {
     id: 'typography',
@@ -178,7 +198,8 @@ export default [{
 }, {
     id: 'decorations',
     open: false,
-    buildProps: ['opacity', 'background-color', 'border-radius', 'border', 'box-shadow', 'background'],
+    buildProps:
+        ['opacity', 'mix-blend-mode', 'background-color', 'border-radius', 'border', 'box-shadow', 'background'],
     properties: [{
         property: 'opacity',
         name: __('oro.cms.wysiwyg.style_manager.properties.opacity.name'),
@@ -187,6 +208,59 @@ export default [{
         step: 0.01,
         max: 1,
         min: 0
+    }, {
+        property: 'mix-blend-mode',
+        name: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.name'),
+        type: 'select',
+        options: [{
+            id: 'normal',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.normal')
+        }, {
+            id: 'multiply',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.multiply')
+        }, {
+            id: 'screen',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.screen')
+        }, {
+            id: 'overlay',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.overlay')
+        }, {
+            id: 'darken',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.darken')
+        }, {
+            id: 'lighten',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.lighten')
+        }, {
+            id: 'color-dodge',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.color_dodge')
+        }, {
+            id: 'color-burn',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.color_burn')
+        }, {
+            id: 'hard-light',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.hard_light')
+        }, {
+            id: 'soft-light',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.soft_light')
+        }, {
+            id: 'difference',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.difference')
+        }, {
+            id: 'exclusion',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.exclusion')
+        }, {
+            id: 'hue',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.hue')
+        }, {
+            id: 'saturation',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.saturation')
+        }, {
+            id: 'color',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.color')
+        }, {
+            id: 'luminosity',
+            label: __('oro.cms.wysiwyg.style_manager.properties.mix_blend_mode.options.luminosity')
+        }]
     }, {
         property: 'background-color',
         name: __('oro.cms.wysiwyg.style_manager.properties.background_color.name')

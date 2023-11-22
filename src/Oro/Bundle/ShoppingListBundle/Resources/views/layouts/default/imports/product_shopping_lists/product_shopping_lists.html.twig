@@ -30,30 +30,14 @@
 {% block __product_shopping_lists__shopping_lists_template_widget %}
     <% if (shoppingListsCount) { %>
         <div class="shopping-lists">
-            <div class="shopping-lists__content">
-                {{ block_widget(block) }}
-            </div>
+            {{ block_widget(block) }}
         </div>
     <% } %>
 {% endblock %}
 
-{% block __product_shopping_lists__shopping_lists_template_preview_widget %}
-    <div class="shopping-lists__content-wrapper">
-        <div class="shopping-lists__text">
-            <span class="shopping-lists__cart" aria-hidden="true"></span>
-            <span class="shopping-lists__phrase">
-            <% if (shoppingListsCount == 1) { %>
-                <%- _.__('oro.shoppinglist.actions.in_shopping_list') %>
-            <% } else { %>
-                <%- _.__('oro.shoppinglist.actions.in_shopping_lists') %>
-            <% } %>
-            </span>
-        </div>
-    </div>
-{% endblock %}
-
 {% block __product_shopping_lists__shopping_lists_popup_widget %}
     {% import '@OroFrontend/layouts/default/utils.html.twig' as utils %}
+    {% import '@OroFrontend/layouts/renderIcon.html.twig' as renderIcon %}
     {% set shoppingListsTemplate %}
         {% apply spaceless %}
             {{ block_widget(block) }}
@@ -77,12 +61,35 @@
                     configDefaultUnit: defaultUnitCode
                 }
             },
-            '~class': 'btn btn--outlined btn--size-small btn--text shopping-lists__area-trigger',
+            '~class': 'btn btn--outlined btn--size-small',
             'title': 'Edit'|trans,
             'aria-label': 'oro.frontend.shoppinglist.open_modal_btn.aria_label'|trans
         }) %}
 
-        <button {{ block('block_attributes') }}></button>
+        <button {{ block('block_attributes') }}>
+            {{ renderIcon.icon({name: 'edit-3', extraClass: 'theme-icon--small'}) }}
+            <span class="clip-text">
+                <% if (shoppingListsCount == 1) { %>
+                    <%- _.__('oro.shoppinglist.actions.in_shopping_list') %>
+                <% } else { %>
+                    <%- _.__('oro.shoppinglist.actions.in_shopping_lists', {
+                        shoppingListsCount: shoppingListsCount 
+                    }) %>
+                <% } %>
+            </span>
+        </button>
+    {% else %}
+        <div class="shopping-lists__text">
+            <span class="clip-text">
+                <% if (shoppingListsCount == 1) { %>
+                    <%- _.__('oro.shoppinglist.actions.in_shopping_list') %>
+                <% } else { %>
+                    <%- _.__('oro.shoppinglist.actions.in_shopping_lists', {
+                        shoppingListsCount: shoppingListsCount 
+                    }) %>
+                <% } %>
+            </span>
+        </div>
     {% endif %}
 {% endblock %}
 

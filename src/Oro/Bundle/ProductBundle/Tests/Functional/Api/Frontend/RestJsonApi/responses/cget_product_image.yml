@@ -29,7 +29,7 @@ data:
                     types:
                         - main
                 -
-                    maxWidth: 316
+                    maxWidth: 360
                     maxHeight: auto
                     dimension: product_large
                     types:
@@ -42,14 +42,14 @@ data:
                         - main
                         - additional
                 -
-                    maxWidth: 262
+                    maxWidth: 309
                     maxHeight: auto
                     dimension: product_medium
                     types:
                         - main
                 -
-                    maxWidth: 82
-                    maxHeight: 82
+                    maxWidth: 80
+                    maxHeight: 80
                     dimension: product_small
                     types:
                         - main
@@ -83,14 +83,14 @@ data:
                         - additional
                         - listing
                 -
-                    maxWidth: 82
-                    maxHeight: 82
+                    maxWidth: 80
+                    maxHeight: 80
                     dimension: product_small
                     types:
                         - additional
                         - listing
                 -
-                    maxWidth: 316
+                    maxWidth: 360
                     maxHeight: auto
                     dimension: product_large
                     types:
@@ -129,7 +129,7 @@ data:
                     types:
                         - main
                 -
-                    maxWidth: 316
+                    maxWidth: 360
                     maxHeight: auto
                     dimension: product_large
                     types:
@@ -143,14 +143,14 @@ data:
                         - main
                         - listing
                 -
-                    maxWidth: 262
+                    maxWidth: 309
                     maxHeight: auto
                     dimension: product_medium
                     types:
                         - main
                 -
-                    maxWidth: 82
-                    maxHeight: 82
+                    maxWidth: 80
+                    maxHeight: 80
                     dimension: product_small
                     types:
                         - main
@@ -182,8 +182,8 @@ data:
                     types:
                         - additional
                 -
-                    maxWidth: 82
-                    maxHeight: 82
+                    maxWidth: 80
+                    maxHeight: 80
                     dimension: product_small
                     types:
                         - additional

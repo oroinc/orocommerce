@@ -72,6 +72,29 @@ class CheckoutController extends AbstractController
                     'manageInventory' => [],
                     'maximumQuantityToOrder' => [],
                     'minimumQuantityToOrder' => [],
+                    'unitPrecisions' => [],
+                ],
+                'kitItemLineItems' => [
+                    'kitItem' => [
+                        'labels' => [],
+                        'productUnit' => [],
+                    ],
+                    'product' => [
+                        'names' => [],
+                        'images' => [
+                            'image' => [
+                                'digitalAsset' => [
+                                    'titles' => [],
+                                    'sourceFile' => [
+                                        'digitalAsset' => [],
+                                    ],
+                                ],
+                            ],
+                            'types' => [],
+                        ],
+                        'unitPrecisions' => [],
+                    ],
+                    'productUnit' => [],
                 ],
             ]
         );

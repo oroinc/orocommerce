@@ -1,0 +1,10 @@
+<div class="svg-icon-preview" title="<%- id %>">
+    <div class="svg-icon-preview__svg">
+        <svg class="theme-icon" role="none" aria-hidden="true">
+            <use xlink:href="/build/<%- themeName %>/svg-icons/theme-icons.svg?v=792e7957#<%- id %>"></use>
+        </svg>
+    </div>
+    <% if (showLabel) { %>
+    <div class="svg-icon-preview__name"><%- id %></div>
+    <% } %>
+</div>

@@ -23,10 +23,7 @@ class CheckoutFactoryDecoratorTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->checkoutFactory = $this->createMock(CheckoutFactoryInterface::class);
-        $this->promotionAware = $this->getMockBuilder(PromotionAwareEntityHelper::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['isCouponAware'])
-            ->getMock();
+        $this->promotionAware = $this->createMock(PromotionAwareEntityHelper::class);
 
         $this->factoryDecorator = new CheckoutFactoryDecorator($this->checkoutFactory, $this->promotionAware);
     }

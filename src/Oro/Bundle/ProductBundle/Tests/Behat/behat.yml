@@ -769,6 +769,9 @@ oro_behat_extension:
     Search Button:
       selector: 'button[name="oro_website_search_search_button"]'
 
+    Search Widget Input:
+      selector: '.search-widget__input'
+
     Search Autocomplete:
       selector: '.search-autocomplete'
 
@@ -920,7 +923,7 @@ oro_behat_extension:
       selector: '.product-list .product-item.grid-row'
 
     ProductFrontendRowSku:
-      selector: '.product-item__primary-content .product-item__sku-value'
+      selector: '.product-item .product-item__sku-value'
 
     Galery View Button:
       selector:

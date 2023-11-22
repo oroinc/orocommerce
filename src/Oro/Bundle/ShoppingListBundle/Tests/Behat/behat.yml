@@ -14,7 +14,7 @@ oro_behat_extension:
       selector: 'h1.page-title span.page-title__text'
 
     ShoppingListEdit:
-      selector: '.shopping-lists__area-trigger'
+      selector: '.shopping-lists button.btn'
 
     ShoppingListAdd:
       selector: '.add-to-shopping-list-button'
@@ -283,7 +283,7 @@ oro_behat_extension:
       selector: '.order-checkout-widget__container, .order-checkout-widget__table'
 
     In Shopping List:
-      selector: 'button.shopping-lists__area-trigger'
+      selector: '.shopping-lists button.btn'
 
     Add to Shopping List:
       selector: '.add-to-shopping-list-button:contains("Add to Shopping List")'

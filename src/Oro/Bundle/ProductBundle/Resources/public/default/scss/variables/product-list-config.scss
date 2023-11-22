@@ -1,10 +1,56 @@
 /* @theme: default; */
 
-$product-list-gallery-view-display: flex !default;
-$product-list-gallery-view-align-content: space-between !default;
-$product-list-gallery-view-flex-wrap: wrap !default;
-$product-list-gallery-view-offset: 30px -#{$product-item-gallery-view-offset-x} 0 !default;
+$product-list-gallery-view-display: grid !default;
+$product-list-gallery-view-gap: spacing('lg') !default;
+$product-list-gallery-view-grid-count: 1 !default;
+$product-list-gallery-view-grid-template-columns: repeat(
+    var(--product-list-count, #{$product-list-gallery-view-grid-count}), 1fr
+) !default;
+$product-list-gallery-view-offset: 30px 0 0 !default;
+
+$product-list-gallery-view-grid-count-map: (
+    (
+        'min-width': 674px,
+        'count': 2
+    ),
+    (
+        'min-width': 1032px,
+        'count': 3
+    ),
+    (
+        'min-width': 1366px,
+        'count': 4
+    ),
+    (
+        'min-width': 1864px,
+        'count': 5
+    )
+) !default;
+
+$product-list-list-view-display: grid !default;
+$product-list-list-view-gap: spacing('lg') !default;
+$product-list-list-view-padding-top: spacing('lg') !default;
+
+$product-list-no-image-view-display: grid !default;
+$product-list-no-image-view-gap: spacing('lg') !default;
+$product-list-no-image-view-padding-top: spacing('lg') !default;
+
 $product-list-no-image-view-offset-top: 15px !default;
+
+// desktop-small
+$product-list-gallery-view-desktop-small-grid-count: 4 !default;
+
+// desktop
+$product-list-gallery-view-desktop-grid-count: 5 !default;
+
+// tablet
+$product-list-gallery-view-tablet-grid-count: 3 !default;
+
+// mobile-big
+$product-list-gallery-view-mobile-big-grid-count: 2 !default;
+
+// mobile-landscape
+$product-list-gallery-view-mobile-landscape-grid-count: 1 !default;
 
 // mobile
 $product-list-gallery-view-offset-mobile: 20px 0 0 !default;

@@ -72,6 +72,7 @@ class FedexShippingMethodFactoryTest extends TestCase
 
     public function testCreate(): void
     {
+        $name = 'FedEx';
         $identifier = 'id';
         $label = 'label';
         $iconUri = 'icon';
@@ -86,6 +87,7 @@ class FedexShippingMethodFactoryTest extends TestCase
         $transport->addShippingService($services[1]);
 
         $channel = new Channel();
+        $channel->setName($name);
         $channel->setTransport($transport);
         $channel->setEnabled($enabled);
 
@@ -124,6 +126,7 @@ class FedexShippingMethodFactoryTest extends TestCase
             $transport,
             $types
         );
+        $expected->setName($channel->getName());
         self::assertEquals($expected, $this->factory->create($channel));
     }
 }

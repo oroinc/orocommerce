@@ -330,7 +330,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         );
 
         self::assertEquals(
-            ['productPriceAttributesPrices' => $templateHtml],
+            [$templateHtml],
             $scrollData[ScrollData::DATA_BLOCKS]['prices'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
         );
     }

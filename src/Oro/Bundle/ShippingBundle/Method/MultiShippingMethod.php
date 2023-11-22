@@ -11,6 +11,7 @@ use Oro\Bundle\ShippingBundle\Provider\MultiShippingCostProvider;
 class MultiShippingMethod implements ShippingMethodInterface, ShippingMethodIconAwareInterface
 {
     private string $identifier;
+    private string $name;
     private string $label;
     private string $icon;
     private bool $enabled;
@@ -18,6 +19,7 @@ class MultiShippingMethod implements ShippingMethodInterface, ShippingMethodIcon
 
     public function __construct(
         string $identifier,
+        string $name,
         string $label,
         string $icon,
         bool $enabled,
@@ -25,6 +27,7 @@ class MultiShippingMethod implements ShippingMethodInterface, ShippingMethodIcon
         MultiShippingCostProvider $shippingCostProvider
     ) {
         $this->identifier = $identifier;
+        $this->name = $name;
         $this->label = $label;
         $this->icon = $icon;
         $this->enabled = $enabled;
@@ -53,6 +56,11 @@ class MultiShippingMethod implements ShippingMethodInterface, ShippingMethodIcon
     public function getIdentifier(): string
     {
         return $this->identifier;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     /**

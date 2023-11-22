@@ -89,7 +89,7 @@
 
 {% block  __oro_product_grid__product_view_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__preview',
+        '~class': ' product-item__preview product-item__preview--{{ class_prefix }}',
         'href': product.view_link,
         'aria-label': 'oro.product.frontend.index.view_details_prefix'|trans ~ ' ' ~ product.name
     }) %}
@@ -117,6 +117,7 @@
 {% endblock %}
 
 {% block __oro_product_grid__product_popup_gallery_widget %}
+    {% import '@OroFrontend/layouts/renderIcon.html.twig' as renderIcon %}
     {% if product.hasImage %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' view-product-gallery',
@@ -125,7 +126,7 @@
             'aria-label': 'oro.product.images.zoom.label'|trans,
             'type': 'button'
         }) %}
-        <button {{ block('block_attributes') }}></button>
+        <button {{ block('block_attributes') }}>{{ renderIcon.icon({name: 'zoom-in'}) }}</button>
     {% endif %}
 {% endblock %}
 

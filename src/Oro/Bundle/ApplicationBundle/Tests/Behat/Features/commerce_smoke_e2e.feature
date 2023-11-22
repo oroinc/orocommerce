@@ -566,8 +566,7 @@ Feature: Commerce smoke e2e
     And should see "Green Box" for "Lenovo_Vibe_sku" product
     And should see "Update Shopping list" for "Lenovo_Vibe_sku" product
     When click "No Image View"
-    Then should see "View Details" for "Lenovo_Vibe_sku" product
-    And should not see "Product Image" for "Lenovo_Vibe_sku" product
+    And should see "Product Image" for "Lenovo_Vibe_sku" product
     And should see "Product Name" for "Lenovo_Vibe_sku" product
     And should see "Your Price: $100.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Listed Price: $100.00 / item" for "Lenovo_Vibe_sku" product

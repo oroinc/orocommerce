@@ -3,7 +3,6 @@ define(function(require) {
 
     const $ = require('jquery');
     const _ = require('underscore');
-    const __ = require('orotranslation/js/translator');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-row-cell.html');
     const SelectRowCell = require('oro/datagrid/cell/select-row-cell');
     const viewportManager = require('oroui/js/viewport-manager').default;
@@ -34,7 +33,7 @@ define(function(require) {
         checkboxSelector: '[data-role="select-row-cell"]',
 
         /** @property */
-        text: __('oro.product.grid.select_product'),
+        text: null,
 
         listen() {
             return {

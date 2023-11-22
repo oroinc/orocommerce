@@ -10,6 +10,9 @@ oro_behat_extension:
                 - Oro\Bundle\ShippingBundle\Tests\Behat\Context\FeatureContext
                 - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
                 - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
             paths:
                 - '@OroFixedProductShippingBundle/Tests/Behat/Features'
     elements:
@@ -37,6 +40,21 @@ oro_behat_extension:
                 mapping:
                     Shipping Cost EUR: 'oro_product[shippingCost][1][0][price]'
                     Shipping Cost USD: 'oro_product[shippingCost][1][1][price]'
+
+        Product Shipping Cost Sub Form:
+            selector:
+                locator: '//div[@class="fixed-product-shipping-cost"]/div/div/label[text()="Shipping Cost"]/../..'
+                type: xpath
+
+        Product Shipping Cost Unit Each:
+            selector:
+                locator: '//td/span[text()="each"]'
+                type: xpath
+
+        Product Shipping Cost Unit Item:
+            selector:
+                locator: '//td/span[text()="item"]'
+                type: xpath
 
         Shipping Cost Attribute Grid:
             selector: '.shipping-cost-attribute-view>div'

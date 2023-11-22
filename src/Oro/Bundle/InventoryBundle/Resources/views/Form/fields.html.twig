@@ -22,7 +22,7 @@
     {% if disabled %}
         <div class="notification--warning">
             {% import '@OroFrontend/layouts/renderIcon.html.twig' as renderIcon %}
-            {{ renderIcon.icon({id: 'alert-triangle', extraClass: 'theme-icon--small'}) }}
+            {{ renderIcon.icon({name: 'alert-triangle', extraClass: 'theme-icon--small'}) }}
             <span class="notification__text">{{ 'oro.inventory.availability_date.warning'|trans }}</span>
         </div>
     {% endif %}

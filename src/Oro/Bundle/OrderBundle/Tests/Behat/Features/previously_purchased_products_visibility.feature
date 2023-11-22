@@ -1,5 +1,6 @@
 @regression
 @feature-BB-9570
+@random-failed
 @fixture-OroOrderBundle:previously-purchased-visibility.yml
 Feature: Previously purchased products visibility
   As a store owner

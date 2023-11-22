@@ -42,13 +42,23 @@ Feature: Product attribute bigint
     Given I go to Products/ Products
     When I click "Edit" on row "SKU123" in grid
     And I fill "Product Form" with:
-      | BigIntField | 32167 |
+      | BigIntField | 9007199254740992 |
+    And I save form
+    Then I should see validation errors:
+      | BigIntField | This value should be between -9,007,199,254,740,991 and 9,007,199,254,740,991. |
+    When I fill "Product Form" with:
+      | BigIntField | -9007199254740992 |
+    And I save form
+    Then I should see validation errors:
+      | BigIntField | This value should be between -9,007,199,254,740,991 and 9,007,199,254,740,991. |
+    When I fill "Product Form" with:
+      | BigIntField | 9007199254740991 |
     And I save and close form
     Then I should see "Product has been saved" flash message
 
   Scenario: Check product grid search
     Given I login as AmandaRCole@example.org buyer
-    When I type "32167" in "search"
+    When I type "9007199254740991" in "search"
     And I click "Search Button"
     Then I should not see "SKU123" product
     And I should not see "SKU456" product
@@ -57,7 +67,7 @@ Feature: Product attribute bigint
     Given I click "NewCategory"
     And I should see "SKU123" product
     And I should see "SKU456" product
-    When I filter BigIntField as equals "32167"
+    When I filter BigIntField as equals "9007199254740991"
     Then I should see "SKU123" product
     And I should not see "SKU456" product
     And grid sorter should have "BigIntField" options

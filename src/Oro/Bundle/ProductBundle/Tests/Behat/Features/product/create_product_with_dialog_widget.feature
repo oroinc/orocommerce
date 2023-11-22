@@ -142,7 +142,7 @@ Feature: Create product with dialog widget
     Given I proceed as the Buyer
     When I am on the homepage
     And I click "Collection1"
-    Then I should see "Item #: 1GB81"
+    Then I should see "1GB81"
 
   Scenario: Select configurable product using select autocomplete
     Given I proceed as the Admin
@@ -157,4 +157,4 @@ Feature: Create product with dialog widget
     Given I proceed as the Buyer
     When I am on the homepage
     And I click "Collection1"
-    Then I should see "Item #: 1GB83"
+    Then I should see "1GB83"
