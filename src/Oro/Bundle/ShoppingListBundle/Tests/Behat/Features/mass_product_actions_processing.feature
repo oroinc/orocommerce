@@ -76,6 +76,7 @@ Feature: Mass Product Actions processing
     And I click "Header"
     And I click "Add to Shopping List of Amanda" in "ProductFrontendMassPanelInBottomSticky" element
     Then I should see "1 product was added" flash message
+    And click on "Flash Message Close Button"
     When I hover on "Shopping Cart"
     And I click "Shopping List of Amanda" on shopping list widget
     Then I should see following grid:

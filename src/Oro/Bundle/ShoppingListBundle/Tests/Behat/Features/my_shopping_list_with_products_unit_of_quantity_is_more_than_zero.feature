@@ -197,6 +197,7 @@ Feature: My Shopping List with products unit of quantity is more than zero
       | BB14 | Product 14 Note 14 text                                  | In Stock     | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
       | BB15 | Product 15 Note 15 text                                  | Out of Stock | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
       | BB16 | Product 16 Note 16 text                                  | In Stock     | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
+    And click on "Flash Message Close Button"
 
   Scenario: Check the unit of quantity for configurable product at my shopping list view page
     And I click "Account Dropdown"

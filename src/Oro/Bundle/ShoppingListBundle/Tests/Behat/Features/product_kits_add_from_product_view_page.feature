@@ -67,6 +67,7 @@ Feature: Product kits add from product view page
     And I fill in "Shopping List Name" with "Product Kit Shopping List"
     And I click "Create and Add"
     Then I should see 'Product kit has been added to \"Product Kit Shopping List\"' flash message
+    And click on "Flash Message Close Button"
     And I should see an "In Shopping List" element
 
   Scenario: Check "In Shopping List" dialog

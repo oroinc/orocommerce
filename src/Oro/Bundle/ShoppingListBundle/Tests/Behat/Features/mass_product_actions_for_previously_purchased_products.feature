@@ -47,6 +47,7 @@ Feature: Mass Product Actions for Previously purchased products
     And type "New Shopping List" in "Shopping List Name"
     When click "Create and Add"
     Then should see 'Shopping list "New Shopping List" was created successfully' flash message
+    And click on "Flash Message Close Button"
     When I hover on "Shopping Cart"
     And I click "New Shopping List" on shopping list widget
     Then I should see following grid containing rows:

@@ -33,6 +33,7 @@ Feature: Mass Product Actions shopping list limit
     When I type "First Shopping List" in "Shopping List Name"
     And click "Create and Add"
     Then I should see '1 product was added (view shopping list)' flash message
+    And click on "Flash Message Close Button"
     When I hover on "Shopping Cart"
     Then I should see "Open List"
 

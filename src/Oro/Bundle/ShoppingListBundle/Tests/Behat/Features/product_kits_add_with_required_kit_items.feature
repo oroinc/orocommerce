@@ -61,6 +61,7 @@ Feature: Product kits add with required kit items
       | Shopping List 1 Label         | Product Kit Shopping List |
       | Shopping List 1 Configuration | Base Unit[x 1] Product 1  |
     And I close ui dialog
+    And click on "Flash Message Close Button"
 
   Scenario: Check shopping list widget
     When I open shopping list widget

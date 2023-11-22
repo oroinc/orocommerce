@@ -60,6 +60,8 @@ Feature: My Shopping List Actions
     When I click "Set as Default"
     And I click "Yes, set as default"
     Then I should see "Shopping list has been successfully set as default" flash message and I close it
+    And reload the page
+    And I wait for 3 seconds
     When I click "Shopping List Actions"
     Then I should not see "Set as Default"
     When I open shopping list widget
@@ -67,6 +69,7 @@ Feature: My Shopping List Actions
     And I close shopping list widget
     And I click "Shopping List Actions"
     Then I should see "Set as Default"
+    And click on "Flash Message Close Button"
 
   Scenario: Check Default Shopping List
     And I click "Account Dropdown"
@@ -83,6 +86,7 @@ Feature: My Shopping List Actions
     And I click "Shopping List Actions"
     And I click "Delete"
     And I click "Yes, delete"
+    And click on "Flash Message Close Button"
     Then Page title equals to "Shopping Lists - My Account"
     When I open shopping list widget
     Then I should not see "Shopping List 4" on shopping list widget

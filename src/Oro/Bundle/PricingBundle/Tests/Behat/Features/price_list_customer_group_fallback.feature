@@ -77,6 +77,7 @@ Feature: Price List Customer Group fallback
     Then I should see "Product 1"
     And I should see "Your Price: <Expected Price> / item" for "PSKU1" product
     When I click "Add to Shopping List" for "PSKU1" product
+    And click on "Flash Message Close Button"
     And I open shopping list widget
     And I should see "1 item | <Expected Price>" in the "Shopping List Widget" element
     When I click "Shopping List" on shopping list widget

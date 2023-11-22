@@ -102,6 +102,7 @@ Feature: Product kits merge same configurations
     And I should see "Summary 1 Item"
     And I should see "Subtotal $402.00"
     And I should see "Total $402.00"
+    And click on "Flash Message Close Button"
 
   Scenario: Check shopping list widget
     When I open shopping list widget

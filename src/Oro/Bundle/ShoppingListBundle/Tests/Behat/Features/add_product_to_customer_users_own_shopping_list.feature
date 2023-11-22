@@ -78,6 +78,7 @@ Feature: Add Product to Customer User's Own Shopping List
     And I click "Delete"
     And I click "Yes, delete"
     Then should see "Shopping List deleted" flash message and I close it
+    And reload the page
 
   Scenario: To add a new product to shopping list in quick order form as the buyer
     Given I click "Quick Order Form"

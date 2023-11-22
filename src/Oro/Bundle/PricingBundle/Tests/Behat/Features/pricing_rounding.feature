@@ -79,6 +79,7 @@ Feature: Pricing rounding
     And should see "Your Price: $4.54 / item" for "Light" product
     And should see "Listed Price: $4.54 / item" for "Light" product
     And click "Add to Shopping List" for "Phone" product
+    And click on "Flash Message Close Button"
     When I hover on "Shopping Cart"
     And I click "Shopping List" on shopping list widget
     Then should see "Subtotal $7.45"
@@ -91,6 +92,7 @@ Feature: Pricing rounding
     And should see "New Front Shopping List"
     And click "NewCategory"
     When click "Add to New Front Shopping List" for "Light" product
+    And click on "Flash Message Close Button"
     And I hover on "Shopping Cart"
     And I click "New Front Shopping List" on shopping list widget
     Then should see "Subtotal $4.54"
@@ -249,6 +251,7 @@ Feature: Pricing rounding
     And should see "Your Price: $4.54 / item" for "Light" product
     And should see "Listed Price: $4.54 / item" for "Light" product
     And click "Add to Shopping List" for "Phone" product
+    And click on "Flash Message Close Button"
     When I hover on "Shopping Cart"
     And I click "Shopping List" on shopping list widget
     Then should see "Subtotal $7.5"
@@ -281,6 +284,7 @@ Feature: Pricing rounding
     And should see "New Front Shopping List"
     And click "NewCategory"
     When click "Add to New Front Shopping List" for "Light" product
+    And click on "Flash Message Close Button"
     And I hover on "Shopping Cart"
     And click "New Front Shopping List" on shopping list widget
     Then should see "Subtotal $4.5"
@@ -506,6 +510,7 @@ Feature: Pricing rounding
     And type "SKU789" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List" for "SKU789" product
+    And click on "Flash Message Close Button"
     And I hover on "Shopping Cart"
     And I click "Shopping List" on shopping list widget
     And I wait line items are initialized

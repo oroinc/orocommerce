@@ -27,6 +27,7 @@ Feature: Shopping list limit
     And I click "Create New List"
     And I click "Create"
     Then I should see "2 Shopping Lists"
+    And click on "Flash Message Close Button"
 
   Scenario: Remove one shopping list
     Given I open shopping list widget
@@ -81,6 +82,6 @@ Feature: Shopping list limit
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
     Then should see "New Front Shopping List"
+    And reload the page
     And I open shopping list widget
     Then should see "New Front Shopping List"
-

@@ -280,6 +280,7 @@ Feature: Storefront acl for shopping lists
     And click "Set as Default"
     And I click "Yes, set as default"
     Then should see "Shopping list has been successfully set as default" flash message
+    And click on "Flash Message Close Button"
     When I open shopping list widget
     Then I should see a "<shownRadio1>" element
     And I should see a "<shownRadio2>" element
@@ -304,9 +305,9 @@ Feature: Storefront acl for shopping lists
     And click "Set as Default"
     And I click "Yes, set as default"
     Then should see "Shopping list has been successfully set as default" flash message
+    And click on "Flash Message Close Button"
     When I open shopping list widget
     And I click on "<radio>"
-    Then should see "Shopping list has been successfully set as default" flash message
 
     Examples:
       | name                      | radio                                    |

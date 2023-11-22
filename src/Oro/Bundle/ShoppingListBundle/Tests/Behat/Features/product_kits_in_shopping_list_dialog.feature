@@ -188,6 +188,7 @@ Feature: Product kits in shopping list dialog
       | Notes                                  | Product Kit 1 Line Item 2 Notes Product Kit 1 Line Item 3 Notes Updated |
     When I close ui dialog
     And I close ui dialog
+    And click on "Flash Message Close Button"
 
   Scenario: Check shopping list widget
     When I open shopping list widget

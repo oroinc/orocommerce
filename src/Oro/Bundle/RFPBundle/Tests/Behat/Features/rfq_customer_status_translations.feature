@@ -44,6 +44,7 @@ Feature: RFQ customer status translations
       | Company       | Red Fox Tavern          |
       | PO Number     | Test RFQ                |
     And I click "Submit Request"
+    And click on "Flash Message Close Button"
     And I click "Account Dropdown"
     And I click "Requests For Quote"
     Then I should see following grid:
