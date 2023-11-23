@@ -5,6 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectNoConflictQueryExecutor;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -23,6 +24,7 @@ class CategoryResolvedCacheBuilder extends AbstractCategoryResolvedCacheBuilder 
     CategoryCaseCacheBuilderInterface
 {
     private ScopeManager $scopeManager;
+    /** @var InsertFromSelectNoConflictQueryExecutor  */
     private InsertFromSelectQueryExecutor $insertExecutor;
     private VisibilityChangeCategorySubtreeCacheBuilder $visibilityChangeCategorySubtreeCacheBuilder;
     private PositionChangeCategorySubtreeCacheBuilder $positionChangeCategorySubtreeCacheBuilder;
@@ -128,9 +130,9 @@ class CategoryResolvedCacheBuilder extends AbstractCategoryResolvedCacheBuilder 
         // clear table
         $resolvedRepository->clearTable();
 
-        if (!$scope) {
-            $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
-        }
+        // No need to use website scope here because the categories
+        // in the application do not belong to a specific website
+        $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
 
         // resolve static values
         $resolvedRepository->insertStaticValues($this->insertExecutor, $scope);
@@ -152,6 +154,8 @@ class CategoryResolvedCacheBuilder extends AbstractCategoryResolvedCacheBuilder 
                 $categoryIds[$resolvedVisibility][] = $categoryId;
             }
         }
+
+        $this->insertExecutor->setOnConflictIgnoredFields(['category', 'scope']);
 
         foreach ($categoryIds as $visibility => $ids) {
             $resolvedRepository->insertParentCategoryValues(
