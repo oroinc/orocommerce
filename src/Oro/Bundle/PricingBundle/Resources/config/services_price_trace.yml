@@ -56,7 +56,7 @@ services:
         tags:
             - { name: 'oro_pricing.debug.provider.price_list_assignment', 'priority': 100 }
 
-    Oro\Bundle\PricingBundle\Debug\Provider\ConfigListsAssignmentProvider:
+    Oro\Bundle\PricingBundle\Debug\Provider\ConfigPriceListsAssignmentProvider:
         arguments:
             - '@oro_config.manager'
             - '@oro_pricing.system_config_converter'

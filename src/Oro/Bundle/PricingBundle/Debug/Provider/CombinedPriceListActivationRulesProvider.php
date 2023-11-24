@@ -13,6 +13,11 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Get information about CPL activation rules and Full Chain CPL (contains all PLs).
+ *
+ * @internal This service is applicable for pricing debug purpose only.
+ */
 class CombinedPriceListActivationRulesProvider
 {
     public function __construct(
@@ -36,10 +41,9 @@ class CombinedPriceListActivationRulesProvider
         return $activationRuleRepo->hasActivationRules($priceList);
     }
 
-    public function getFullChainCpl(?Customer $customer, ?Website $website): ?CombinedPriceList
+    public function getFullChainCpl(?Customer $customer = null, ?Website $website = null): ?CombinedPriceList
     {
         if ($website) {
-            $customerGroup = null;
             if ($customer) {
                 $relation = $this->registry->getRepository(CombinedPriceListToCustomer::class)
                     ->getRelation($website, $customer);
@@ -48,8 +52,7 @@ class CombinedPriceListActivationRulesProvider
                 }
 
                 $customerGroup = $customer->getGroup();
-            }
-            if (!$customerGroup) {
+            } else {
                 $customerGroup = $this->customerUserRelationsProvider->getCustomerGroup();
             }
 

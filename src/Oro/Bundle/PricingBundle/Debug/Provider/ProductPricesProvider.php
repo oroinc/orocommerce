@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Debug\Provider;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\PhpUtils\ArrayUtil;
@@ -30,6 +31,7 @@ class ProductPricesProvider
             return [];
         }
 
+        /** @var ProductPriceDTO[] $priceDtos */
         $priceDtos = $this->registry->getRepository(CombinedProductPrice::class)->getPricesBatch(
             $this->shardManager,
             $priceList->getId(),

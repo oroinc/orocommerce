@@ -11,17 +11,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Schedule prices combination for a given list of Combined Price Lists.
+ *
+ * @internal Used to trigger CPL actualization by Price Debugging if needed
  */
 class ActualizeCombinedPriceListTopic extends AbstractTopic implements JobAwareTopicInterface
 {
     public const NAME = 'oro_pricing.price_lists.cpl.rebuild.list';
 
-    private CombinedPriceListProvider $combinedPriceListProvider;
-
     public function __construct(
-        CombinedPriceListProvider $combinedPriceListProvider
+        private CombinedPriceListProvider $combinedPriceListProvider
     ) {
-        $this->combinedPriceListProvider = $combinedPriceListProvider;
     }
 
     public static function getName(): string
@@ -38,12 +37,15 @@ class ActualizeCombinedPriceListTopic extends AbstractTopic implements JobAwareT
     {
         $resolver->define('cpl')
             ->info('Array of IDs of existing Combined Price Lists for which combined prices should be rebuilt.')
-            ->default([])
-            ->allowedTypes('int[]', 'string[]')
+            ->required()
+            ->allowedTypes('int[]')
             ->normalize(function (Options $options, $value): array {
                 $cpls = [];
                 foreach ($value as $cplId) {
-                    $cpls[] = $this->combinedPriceListProvider->getCombinedPriceListById($cplId);
+                    $cpl = $this->combinedPriceListProvider->getCombinedPriceListById($cplId);
+                    if ($cpl) {
+                        $cpls[] = $cpl;
+                    }
                 }
 
                 return $cpls;

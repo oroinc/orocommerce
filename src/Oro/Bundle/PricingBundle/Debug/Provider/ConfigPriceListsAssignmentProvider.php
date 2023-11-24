@@ -12,7 +12,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  *
  * @internal This service is applicable for pricing debug purpose only.
  */
-class ConfigListsAssignmentProvider implements PriceListsAssignmentProviderInterface
+class ConfigPriceListsAssignmentProvider implements PriceListsAssignmentProviderInterface
 {
     public function __construct(
         private ConfigManager $configManager,
