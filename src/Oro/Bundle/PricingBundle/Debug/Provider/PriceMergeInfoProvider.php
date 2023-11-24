@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Debug\Provider;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -30,6 +31,11 @@ class PriceMergeInfoProvider
         $this->providers[$strategy] = $provider;
     }
 
+    /**
+     * @param array|CombinedPriceListToPriceList[] $priceListRelations
+     * @param Product $product
+     * @return array
+     */
     public function getPriceMergingDetails(array $priceListRelations, Product $product): array
     {
         $selectedPriceIds = $this->getSelectedPriceIds($priceListRelations, $product);

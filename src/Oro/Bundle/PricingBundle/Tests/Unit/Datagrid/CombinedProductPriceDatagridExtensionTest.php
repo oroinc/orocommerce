@@ -4,16 +4,28 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
 use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmQueryConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Extension\Action\ActionExtension;
+use Oro\Bundle\DataGridBundle\Extension\Formatter\Configuration;
+use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
-use Oro\Bundle\PricingBundle\Datagrid\ProductPriceDatagridExtension;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Debug\Datagrid\CombinedProductPriceDatagridExtension;
+use Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -21,8 +33,25 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtensionTest
+class CombinedProductPriceDatagridExtensionTest extends TestCase
 {
+    use EntityTrait;
+
+    /** @var DebugProductPricesPriceListRequestHandler|\PHPUnit\Framework\MockObject\MockObject */
+    private $priceListRequestHandler;
+
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
+
+    /** @var SelectedFieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $selectedFieldsProvider;
+
+    /** @var DatagridConfiguration|\PHPUnit\Framework\MockObject\MockObject */
+    private $datagridConfiguration;
+
+    /** @var ParameterBag|\PHPUnit\Framework\MockObject\MockObject */
+    private $datagridParameters;
+
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
@@ -32,26 +61,95 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
-    /** @var ProductPriceDatagridExtension */
+    /** @var CombinedProductPriceDatagridExtension */
     protected $extension;
+    private string $supportedGridName;
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->priceListRequestHandler = $this->createMock(DebugProductPricesPriceListRequestHandler::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->selectedFieldsProvider = $this->createMock(SelectedFieldsProviderInterface::class);
+
+        $this->datagridConfiguration = $this->createMock(DatagridConfiguration::class);
+        $this->datagridParameters = $this->createMock(ParameterBag::class);
 
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
-        $this->extension = new ProductPriceDatagridExtension(
+        $this->extension = new CombinedProductPriceDatagridExtension(
             $this->priceListRequestHandler,
             $this->doctrineHelper,
             $this->selectedFieldsProvider,
             $this->translator,
             $this->authorizationChecker
         );
-        $this->supportedGridName = 'products-grid';
+        $this->supportedGridName = 'pricing-products-trace-grid';
         $this->extension->addSupportedGrid($this->supportedGridName);
+    }
+
+    public function testGetPriority(): void
+    {
+        self::assertEquals(10, $this->extension->getPriority());
+    }
+
+    public function testIsApplicable(): void
+    {
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('feature1', null)
+            ->willReturn(true);
+
+        $this->extension->setFeatureChecker($this->featureChecker);
+        $this->extension->addFeature('feature1');
+
+        $this->datagridParameters
+            ->expects(self::once())
+            ->method('get')
+            ->with(ParameterBag::DATAGRID_MODES_PARAMETER)
+            ->willReturn([]);
+
+        $this->datagridConfiguration
+            ->expects(self::once())
+            ->method('getName')
+            ->willReturn($this->supportedGridName);
+
+        $this->extension->setParameters($this->datagridParameters);
+        self::assertTrue($this->extension->isApplicable($this->datagridConfiguration));
+    }
+
+    public function testIsApplicableWhenAnotherDatagrid(): void
+    {
+        $this->datagridConfiguration
+            ->expects(self::once())
+            ->method('getName')
+            ->willReturn('not-supported');
+
+        $this->extension->setParameters($this->datagridParameters);
+        self::assertFalse($this->extension->isApplicable($this->datagridConfiguration));
+    }
+
+    public function testIsApplicableWhenAlreadyApplied(): void
+    {
+        $this->mockAuthorizationChecker(true);
+
+        $this->priceListRequestHandler
+            ->expects(self::once())
+            ->method('getPriceList')
+            ->willReturn(null);
+
+        $this->priceListRequestHandler
+            ->expects(self::never())
+            ->method('getPriceListSelectedCurrencies');
+
+        $this->datagridConfiguration
+            ->expects(self::never())
+            ->method('getName');
+
+        $this->extension->setParameters($this->datagridParameters);
+        $this->extension->processConfigs($this->datagridConfiguration);
+        self::assertFalse($this->extension->isApplicable($this->datagridConfiguration));
     }
 
     public function testIsApplicableWhenFeatureDisabled()
@@ -67,54 +165,22 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
         $this->assertFalse($this->extension->isApplicable($this->datagridConfiguration));
     }
 
-    public function testIsApplicable(): void
-    {
-        $this->featureChecker->expects($this->once())
-            ->method('isFeatureEnabled')
-            ->with('feature1', null)
-            ->willReturn(true);
-
-        $this->extension->setFeatureChecker($this->featureChecker);
-        $this->extension->addFeature('feature1');
-
-        parent::testIsApplicable();
-    }
-
-    public function testIsApplicableWhenAlreadyApplied(): void
-    {
-        $this->mockAuthorizationChecker(true);
-
-        parent::testIsApplicableWhenAlreadyApplied();
-    }
-
     private function mockAuthorizationChecker(bool $isViewGranted): void
     {
         $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
-            ->with('VIEW', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice')
+            ->with('VIEW', 'entity:' . ProductPrice::class)
             ->willReturn($isViewGranted);
-    }
-
-    public function testProcessConfigsWhenNoPriceListNoCurrencies(): void
-    {
-        $this->mockAuthorizationChecker(true);
-
-        parent::testProcessConfigsWhenNoPriceListNoCurrencies();
-    }
-
-    public function testProcessConfigsWhenNoCurrencies(): void
-    {
-        $this->mockAuthorizationChecker(true);
-
-        parent::testProcessConfigsWhenNoPriceListNoCurrencies();
     }
 
     public function testProcessConfigsWhenPermissionViewForbidden(): void
     {
         $this->mockAuthorizationChecker(false);
 
-        $this->datagridConfiguration->expects(self::never())
-            ->method('offsetAddToArrayByPath');
+        $this->datagridConfiguration->expects(self::once())
+            ->method('offsetAddToArrayByPath')
+            ->with(sprintf('[%s][%s]', Configuration::PROPERTIES_KEY, 'debug_link'));
+
         $this->extension->processConfigs($this->datagridConfiguration);
     }
 
@@ -133,14 +199,26 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
         $this->extension->processConfigs($this->datagridConfiguration);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     private function assertColumnsAddedToConfig(): void
     {
-        $priceList = $this->createMock(PriceList::class);
+        $priceList = $this->createMock(CombinedPriceList::class);
         $priceList->expects(self::any())
             ->method('getId')
             ->willReturn(1);
 
-        $this->mockPriceListCurrencies($priceList, ['USD']);
+        $this->priceListRequestHandler
+            ->expects(self::once())
+            ->method('getPriceList')
+            ->willReturn($priceList);
+
+        $this->priceListRequestHandler
+            ->expects(self::once())
+            ->method('getPriceListSelectedCurrencies')
+            ->with($priceList)
+            ->willReturn(['USD']);
 
         $this->doctrineHelper->expects(self::once())
             ->method('getEntityRepository')
@@ -171,7 +249,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
                 [
                     '[filters][columns]',
                     [
-                        'price_column_usd' => ['type' => 'product-price', 'data_name' => 'USD'],
+                        'price_column_usd' => ['type' => 'combined-product-price', 'data_name' => 'USD'],
                     ],
                 ],
                 [
@@ -208,6 +286,30 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
                     [
                         'price_column_usd_item' => ['data_name' => 'price_column_usd_item'],
                     ],
+                ],
+                [
+                    '[properties][debug_link]',
+                    [
+                        'type' => 'url',
+                        'route' => 'oro_pricing_price_product_debug_trace',
+                        'params' => ['id', 'website', 'customer']
+                    ]
+                ]
+            );
+        $this->datagridConfiguration->expects(self::any())
+            ->method('offsetSet')
+            ->with(
+                ActionExtension::ACTION_KEY,
+                [
+                    [
+                        'type' => 'navigate',
+                        'label' => 'oro.pricing.productprice.debug.trace.label',
+                        'translatable' => true,
+                        'rowAction' => true,
+                        'acl_resource' => 'oro_pricing_product_price_view',
+                        'link' => 'debug_link',
+                        'icon' => 'bug',
+                    ]
                 ]
             );
     }
@@ -377,12 +479,14 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
             ->with(PriceShardOutputResultModifier::HINT_PRICE_SHARD);
         $ormQueryConfiguration->expects(self::exactly(count($selectExpressions)))
             ->method('addSelect')
-            ->withConsecutive(...array_map(
-                function ($v) {
-                    return [$v];
-                },
-                $selectExpressions
-            ));
+            ->withConsecutive(
+                ...array_map(
+                    function ($v) {
+                        return [$v];
+                    },
+                    $selectExpressions
+                )
+            );
 
         $this->datagridConfiguration->expects(self::any())
             ->method('getOrmQuery')
@@ -394,14 +498,30 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
 
         $ormQueryConfiguration->expects(self::once())
             ->method('addLeftJoin')
-            ->with(ProductPrice::class, $selectedTable, Expr\Join::WITH, $joinExpression);
+            ->with(CombinedProductPrice::class, $selectedTable, Expr\Join::WITH, $joinExpression);
     }
 
     public function testVisitResultWhenNoRelevantPriceColumns(): void
     {
+        $this->priceListRequestHandler->expects($this->once())
+            ->method('getCustomer')
+            ->willReturn($this->getEntity(Customer::class, ['id' => 10]));
+
+        $this->priceListRequestHandler->expects($this->once())
+            ->method('getWebsite')
+            ->willReturn($this->getEntity(Website::class, ['id' => 100]));
+
         $resultsObject = $this->createMock(ResultsObject::class);
-        $resultsObject->expects(self::never())
-            ->method('getData');
+        $record = $this->createMock(ResultRecord::class);
+        $resultsObject->expects(self::once())
+            ->method('getData')
+            ->willReturn([$record]);
+        $record->expects($this->exactly(2))
+            ->method('setValue')
+            ->withConsecutive(
+                ['customer', 10],
+                ['website', 100]
+            );
 
         $this->extension->visitResult($this->datagridConfiguration, $resultsObject);
     }
@@ -414,6 +534,14 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
         $this->mockAuthorizationChecker(true);
 
         $this->assertColumnsAddedToConfig();
+
+        $this->priceListRequestHandler->expects($this->once())
+            ->method('getCustomer')
+            ->willReturn($this->getEntity(Customer::class, ['id' => 10]));
+
+        $this->priceListRequestHandler->expects($this->once())
+            ->method('getWebsite')
+            ->willReturn($this->getEntity(Website::class, ['id' => 100]));
 
         $this->selectedFieldsProvider->expects(self::once())
             ->method('getSelectedFields')
@@ -428,7 +556,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
         $this->extension->processConfigs($this->datagridConfiguration);
 
         $resultsObject = $this->createMock(ResultsObject::class);
-        $resultsObject->expects(self::once())
+        $resultsObject->expects(self::exactly(2))
             ->method('getData')
             ->willReturn([$record = $this->createMock(ResultRecord::class)]);
 
@@ -443,9 +571,13 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
             ->method('getValue')
             ->with($selectedField)
             ->willReturn($rawPrices);
-        $record->expects(self::once())
+        $record->expects(self::exactly(3))
             ->method('setValue')
-            ->with($selectedField, $unpackedPrices);
+            ->withConsecutive(
+                [$selectedField, $unpackedPrices],
+                ['customer', 10],
+                ['website', 100]
+            );
 
         $this->extension->visitResult($this->datagridConfiguration, $resultsObject);
     }
