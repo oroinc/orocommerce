@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\EntityBundle\ORM\InsertQueryExecutorInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
@@ -103,7 +103,7 @@ class CategoryRepository extends ServiceEntityRepository
             ->execute();
     }
 
-    public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor, Scope $scope)
+    public function insertStaticValues(InsertQueryExecutorInterface $insertExecutor, Scope $scope)
     {
         $visibilityCondition = sprintf(
             "CASE WHEN cv.visibility = '%s' THEN %s ELSE %s END",
@@ -132,13 +132,13 @@ class CategoryRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
+     * @param InsertQueryExecutorInterface $insertExecutor
      * @param array $categoryIds
      * @param int $visibility
      * @param Scope $scope
      */
     public function insertParentCategoryValues(
-        InsertFromSelectQueryExecutor $insertExecutor,
+        InsertQueryExecutorInterface $insertExecutor,
         array $categoryIds,
         $visibility,
         Scope $scope

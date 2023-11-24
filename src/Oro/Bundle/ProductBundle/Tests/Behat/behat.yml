@@ -769,6 +769,9 @@ oro_behat_extension:
     Search Button:
       selector: 'button[name="oro_website_search_search_button"]'
 
+    Search Widget Input:
+      selector: '.search-widget__input'
+
     Search Autocomplete:
       selector: '.search-autocomplete'
 
