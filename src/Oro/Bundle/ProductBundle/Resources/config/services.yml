@@ -2111,6 +2111,14 @@ services:
                 method: onDuplicateAfter
                 priority: -128
 
+    oro_product.event_listener.product_multi_fields_duplicate:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductMultiFieldsDuplicateListener
+        arguments:
+            - '@oro_entity_config.provider.entity'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter, priority: -200 }
+
     oro_product.service.product_collection_segment_manipulator:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionSegmentManipulator
         arguments:

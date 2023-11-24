@@ -34,6 +34,18 @@ class ProductStub extends Product
         return isset($this->values[$name]) ? $this->values[$name] : null;
     }
 
+    public function set(string $name, mixed $value): static
+    {
+        $this->__set($name, $value);
+
+        return $this;
+    }
+
+    public function get(string $name): mixed
+    {
+        return $this->__get($name);
+    }
+
     /**
      * @param string $name
      * @return bool
