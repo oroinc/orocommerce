@@ -403,6 +403,77 @@ oro_behat_extension:
             locator: 'textarea[id^="oro_product_field_wysiwyg"]'
             element: WysiwygField
 
+          Multiple Files Attribute:
+            type: xpath
+            locator: '//input[contains(@name,"multiple_files_attribute") and contains(@type,"file")]'
+          Multiple Images Attribute:
+            type: xpath
+            locator: '//input[contains(@name,"multiple_images_attribute") and contains(@type,"file")]'
+          Multiple Files Field:
+            type: xpath
+            locator: '//input[contains(@name,"multiple_files_field") and contains(@type,"file")]'
+          Multiple Images Field:
+            type: xpath
+            locator: '//input[contains(@name,"multiple_images_field") and contains(@type,"file")]'
+
+    Multiple Files DAM Attribute:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id, "multiple_files_dam_attribute")]//tr[contains(@data-content, "[0]")]//a[contains(text(), "Choose File")]'
+    Multiple Images DAM Attribute:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id, "multiple_images_dam_attribute")]//tr[contains(@data-content, "[0]")]//a[contains(text(), "Choose Image")]'
+    Multiple Files DAM Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id, "multiple_files_dam_field")]//tr[contains(@data-content, "[0]")]//a[contains(text(), "Choose File")]'
+    Multiple Images DAM Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id, "multiple_images_dam_field")]//tr[contains(@data-content, "[0]")]//a[contains(text(), "Choose Image")]'
+
+    Multiple Files Attribute Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-files-grid:multiple_files_attribute")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Images Attribute Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-images-grid:multiple_images_attribute")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Files Field Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-files-grid:multiple_files_field")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Images Field Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-images-grid:multiple_images_field")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Files DAM Attribute Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-files-grid:multiple_files_dam_attribute")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Images DAM Attribute Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-images-grid:multiple_images_dam_attribute")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Files DAM Field Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-files-grid:multiple_files_dam_field")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Images DAM Field Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-images-grid:multiple_images_dam_field")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
     NameEnglishUnitedStatesValue:
       selector:
         type: 'xpath'
