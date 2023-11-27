@@ -103,7 +103,7 @@ When creating a product, there are three types available: simple, kit, and confi
 have custom product attributes in the product attribute family specified and a result product variants can be added to a
 configurable product. A product variant is a simple product attached to a parent configurable product.
 
-To create a configurable product type must be specified in the **attributes** section of the product.
+To create a configurable product, the product type must be specified in the **attributes** section of the product.
 
 Example:
 
