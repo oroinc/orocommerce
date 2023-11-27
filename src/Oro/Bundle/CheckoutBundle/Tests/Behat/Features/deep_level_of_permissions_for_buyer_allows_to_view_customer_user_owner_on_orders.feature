@@ -13,7 +13,8 @@ Feature: Deep level of permissions for buyer allows to view customer user owner 
   Scenario: Checking that current permission wont let to see the Ordered By field
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Orders"
+    And I click "Account Dropdown"
+    And I click "Order History"
     And I shouldn't see "Ordered By" column in "Open Orders Grid"
 
   Scenario: Adding Corporate (DEEP level) permission to Buyer role
@@ -25,5 +26,6 @@ Feature: Deep level of permissions for buyer allows to view customer user owner 
       | Checkout | View:Сorporate (All Levels) |
     And I save and close form
     And I operate as the Buyer
-    And I click "Orders"
+    And I click "Account Dropdown"
+    And I click "Order History"
     And I should see "Ordered By" column in "Open Orders Grid"
