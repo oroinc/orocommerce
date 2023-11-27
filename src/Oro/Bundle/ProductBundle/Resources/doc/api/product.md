@@ -152,7 +152,7 @@ The simple product with custom attribute can now be linked to a configurable pro
 
 #### 6. Specify variants (for configurable products only)
 
-When adding a new configurable product you can the variants of that product. To be able to specify
+When adding a new configurable product you can specify the variants of that product. To be able to specify
 variants of a product first you have to add a configurable attribute for product entity and create the simple products
 that will be the variants of the configurable product. After these steps you can specify variants for a new configurable 
 product. Example:
