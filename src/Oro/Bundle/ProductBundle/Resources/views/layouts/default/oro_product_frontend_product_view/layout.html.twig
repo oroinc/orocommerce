@@ -32,9 +32,18 @@
 {% endblock %}
 
 {% block _product_view_microdata_container_widget %}
+
+    {% if matrixFormType is not defined %}
+        {% set matrixFormType = '' %}
+    {% endif %}
+
+    {% set isProductHasPrices = productPrices is defined and productPrices is not empty or
+        product is defined and product.prices is defined and matrixFormType == 'none' and product.prices is not empty
+    %}
+
     {% if
         microdataWithoutPricesDisabled == false or
-        productPrices is defined and productPrices is not empty
+        (not is_price_hidden(product) and isProductHasPrices == true)
     %}
         {% set attr = layout_attr_defaults(attr, {
             'itemscope': '',

@@ -1639,16 +1639,40 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Product Type Microdata Declaration:
-      selector: '[itemtype="http://schema.org/Product"]'
+      selector: '[itemtype$="://schema.org/Product"]'
+
+    Product Brand Microdata Declaration:
+      selector: '[itemtype$="://schema.org/Brand"]'
+
+    Product Price Microdata Declaration:
+      selector: '[itemtype$="://schema.org/Offer"]'
 
     Product Item View:
       selector: 'div.product-view'
 
-    SchemaOrg Brand Name:
-      selector: 'span[itemprop="brand"] meta[itemprop="name"]'
+    Product Details:
+      selector: 'div.product-view > div:nth-child(1)'
+
+    SchemaOrg SKU:
+      selector: '[itemprop="sku"]'
+
+    SchemaOrg Name:
+      selector: '[itemprop="name"]'
 
     SchemaOrg Description:
-      selector: 'meta[itemprop="description"]'
+      selector: '[itemprop="description"]'
+
+    SchemaOrg Image:
+      selector: '[itemprop="image"]'
+
+    SchemaOrg Brand Name:
+      selector: '[itemprop="brand"] [itemprop="name"]'
+
+    SchemaOrg Price Currency:
+      selector: '[itemprop="offers"] [itemprop="priceCurrency"]'
+
+    SchemaOrg Price:
+      selector: '[itemprop="offers"] [itemprop="price"]'
 
     Draggable Product1 Row:
       selector:
@@ -1855,6 +1879,7 @@ oro_behat_extension:
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\ProductImportExportContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\ProductMicrodataContext
         - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
         - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
         - Oro\Bundle\SEOBundle\Tests\Behat\Context\FeatureContext

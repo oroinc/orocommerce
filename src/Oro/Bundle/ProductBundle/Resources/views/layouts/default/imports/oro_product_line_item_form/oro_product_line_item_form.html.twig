@@ -155,7 +155,7 @@
     {% set isRenderable = (
         (
             is_configurable_product_type(product.type) and
-            matrixFormType == 'none'
+            matrixFormType|default('') == 'none'
         ) or
        is_kit_product_type(product.type)
     ) %}
