@@ -17,7 +17,7 @@
                  aria-haspopup="true" aria-expanded="false"
                  aria-label="{{ 'oro.frontendlocalization.select.label'|trans }}">
                 {{ selected_localization.titles|localized_value }}
-                {{ renderIcon.icon({id: 'chevron-down', extraClass: 'theme-icon--medium'}) }}
+                {{ renderIcon.icon({name: 'chevron-down'}) }}
             </div>
             {% set currentRoute = app.request.get('_route') %}
             {% set routeParameters = app.request.get('_route_params') %}

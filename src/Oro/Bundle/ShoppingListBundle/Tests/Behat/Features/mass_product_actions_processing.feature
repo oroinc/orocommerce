@@ -37,7 +37,7 @@ Feature: Mass Product Actions processing
   Scenario: "Create New shopping list" mass action on the category list view
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "All Products"
+    And I click "All Products" in hamburger menu
     And I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
     When I click "Catalog Switcher Toggle"
     And I click "Gallery View"
@@ -67,7 +67,7 @@ Feature: Mass Product Actions processing
 
   Scenario: "Add to Shopping List of Amanda" mass action on the category list view
     Given I proceed as the User
-    And I click "All Products"
+    And I click "All Products" in hamburger menu
     And I click "Search Button"
     And I check PSKU3 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU3" in frontend product grid:
@@ -88,7 +88,7 @@ Feature: Mass Product Actions processing
   Scenario: Should be possible to check mass action checkbox on All products page
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
-    When I click "All Products"
+    When I click "All Products" in hamburger menu
     And I check PSKU2 record in "Product Frontend Grid" grid
 
   Scenario: Show warning message when products are selected and trying to refresh the page

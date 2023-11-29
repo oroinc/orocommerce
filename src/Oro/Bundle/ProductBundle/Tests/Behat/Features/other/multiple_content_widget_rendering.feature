@@ -93,7 +93,7 @@ Feature: Multiple content widget rendering
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on the homepage
-    When I click "Multiple Content Widgets Page"
+    When I click "Multiple Content Widgets Page" in hamburger menu
     Then Page title equals to "Multiple Content Widgets Page"
     And I should see "Additional test data"
     And I should see "Product1"

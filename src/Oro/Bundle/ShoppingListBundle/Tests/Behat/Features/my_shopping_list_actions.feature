@@ -66,10 +66,9 @@ Feature: My Shopping List Actions
     Then I should not see "Set as Default"
     When I open shopping list widget
     And I click on "Shopping List Widget Set Current Radio 2"
-    And I close shopping list widget
+    And I click on empty space
     And I click "Shopping List Actions"
     Then I should see "Set as Default"
-    And click on "Flash Message Close Button"
 
   Scenario: Check Default Shopping List
     And I click "Account Dropdown"

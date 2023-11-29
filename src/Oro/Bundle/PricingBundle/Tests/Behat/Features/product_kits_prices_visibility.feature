@@ -59,7 +59,7 @@ Feature: Product kits prices visibility
     And I should see "FEATURED CATEGORIES"
     And should see "3 items" for "NewCategory" category
 
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     Then I should not see "Product Price Container" for "productkit1" product
     And should not see "$11.00" for "productkit1" product
 

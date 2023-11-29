@@ -113,7 +113,7 @@ Feature: Configurable image slider
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on the homepage
-    When I click "Image slider page"
+    When I click "Image slider page" in hamburger menu
     Then Page title equals to "Image slider page"
     And I should see "Slide text 1"
     And I should not see "Slide text 2"
@@ -124,7 +124,7 @@ Feature: Configurable image slider
     Then I should see "All Products"
 
   Scenario: Check second slide
-    Given I click "Image slider page"
+    Given I click "Image slider page" in hamburger menu
     And I should see "Slide text 1"
     And I should not see "Slide text 2"
     When I click "Second Dot On Image Slider"
@@ -141,14 +141,14 @@ Feature: Configurable image slider
 
   Scenario: Ensure sliders are still functional
     Given I proceed as the Buyer
-    When I click "Image slider page"
+    And I click "Image slider page" in hamburger menu
     Then Page title equals to "Image slider page"
     And I should see "Slide text 1"
     And I should not see "Slide text 2"
     And I should not see "All Products"
     When I click "First Image Slide"
     Then I should see "All Products"
-    When I click "Image slider page"
+    When I click "Image slider page" in hamburger menu
     Then I should see "Slide text 1"
     And I should not see "Slide text 2"
     When I click "Second Dot On Image Slider"

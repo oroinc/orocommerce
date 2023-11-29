@@ -21,7 +21,7 @@ Feature: Product catalog Filter Panel state
 
   Scenario: Check that Filter Panel is collapsed by default on front store
     Given I proceed as the Buyer
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     Then I should not see an "GridFilters" element
     And I click "Account Dropdown"
     And click "Users"
@@ -53,7 +53,7 @@ Feature: Product catalog Filter Panel state
 
   Scenario: Check that Filter Panel is expanded by default only for product catalog on front store
     Given I proceed as the Buyer
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     Then I should see an "GridFilters" element
     And I click "Account Dropdown"
     And click "Users"
@@ -61,7 +61,7 @@ Feature: Product catalog Filter Panel state
 
   Scenario: Check that Filter Panel state for product catalog is preserved from last usage
     Given I proceed as the Buyer
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     Then I should see an "GridFilters" element
     When I filter SKU as is equal to "SKU2"
     And I click "GridFiltersButton"

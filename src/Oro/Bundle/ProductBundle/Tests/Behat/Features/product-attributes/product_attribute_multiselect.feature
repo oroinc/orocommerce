@@ -92,7 +92,7 @@ Feature: Product attribute multiselect
     And I should not see "SKU456" product
 
   Scenario: Check product grid filter
-    Given I click "NewCategory"
+    Given I click "NewCategory" in hamburger menu
     And I should see "SKU123" product
     And I should see "SKU456" product
     And I click "Grid Filters Button"

@@ -44,7 +44,7 @@ Feature: Check title for category frontend pages
   Scenario: Check title, description and image on store front
     Given I proceed as the Buyer
     And I am on the homepage
-    When I click "Lighting Products"
+    When I click "Lighting Products" in hamburger menu
     Then Page title equals to "Lighting Products"
     And I should see "Long description:"
     And image "cat1 wysiwyg image" is loaded

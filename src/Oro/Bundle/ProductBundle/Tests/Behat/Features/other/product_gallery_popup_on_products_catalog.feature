@@ -47,7 +47,8 @@ Feature: Product Gallery Popup On Products Catalog
     Given I proceed as the User
     When I signed in as AmandaRCole@example.org on the store frontend
     And I am on the homepage
-    And I click "NewCategory"
+    And I click on "Main Menu Button"
+    And I click "NewCategory" in hamburger menu
     And I should see preview image with alt "Product1`\"'&йёщ®&reg;>" for "PSKU1" product
     And I should see picture for "PSKU1" product in the "ProductFrontendGrid"
     And I hover on "Product Item Preview"

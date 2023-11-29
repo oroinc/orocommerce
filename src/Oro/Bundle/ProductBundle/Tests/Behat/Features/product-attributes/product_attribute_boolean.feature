@@ -80,7 +80,7 @@ Feature: Product attribute boolean
   Scenario: Check product grid sorter
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     Then grid sorter should have "BooleanField" options
 
   @skip

@@ -140,8 +140,8 @@ Feature: Create product with dialog widget
 
   Scenario: Check simple product is shown in the front office
     Given I proceed as the Buyer
-    When I am on the homepage
-    And I click "Collection1"
+    And I signed in as AmandaRCole@example.org on the store frontend
+    And I click "Collection1" in hamburger menu
     Then I should see "1GB81"
 
   Scenario: Select configurable product using select autocomplete
@@ -155,6 +155,5 @@ Feature: Create product with dialog widget
 
   Scenario: Check configurable product is shown in the front office
     Given I proceed as the Buyer
-    When I am on the homepage
-    And I click "Collection1"
+    And I click "Collection1" in hamburger menu
     Then I should see "1GB83"

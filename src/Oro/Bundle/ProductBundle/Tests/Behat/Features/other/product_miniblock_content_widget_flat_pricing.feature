@@ -57,7 +57,7 @@ Feature: Product mini-block content widget flat pricing
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on the homepage
-    When I click "Product Mini-Block Page"
+    When I click "Product Mini-Block Page" in hamburger menu
     Then Page title equals to "Product Mini-Block Page"
     And I should see "Product1"
     And I should see "Your Price: $10.00 / item" for "PSKU1" product

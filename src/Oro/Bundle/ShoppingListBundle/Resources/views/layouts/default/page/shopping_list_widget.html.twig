@@ -22,7 +22,7 @@
     {% if showLabel is not defined %}
         {% set showLabel = showLabel|default(true) %}
     {% endif %}
-    {{ renderIcon.icon({id: 'shopping-list', extraClass: 'theme-icon--medium'}) }}
+    {{ renderIcon.icon({name: 'shopping-list'}) }}
     <span class="text-clip">
         {% set isShowDropdown = true %}
         {% if not is_one_shopping_list_enabled() %}
@@ -53,7 +53,7 @@
         {% endif %}
     </span>
     {% if isShowDropdown is same as(true) %}
-        {{ renderIcon.icon({id: 'chevron-down', extraClass: 'theme-icon--medium shopping-list-trigger__dropdown-icon hide-on-tablet'}) }}
+        {{ renderIcon.icon({name: 'chevron-down', extraClass: 'shopping-list-trigger__dropdown-icon hide-on-tablet'}) }}
     {% endif %}
     {{ block_widget(block) }}
 {% endblock %}
@@ -216,7 +216,7 @@
                 {% endif %}
                 <a href="{{ oro_shopping_list_frontend_url() }}" class="btn">
                     <span>{{ 'oro.frontend.shoppinglist.view.view_list.label'|trans }}</span>
-                    {{ renderIcon.icon({id: 'arrow-right'}) }}
+                    {{ renderIcon.icon({name: 'arrow-right'}) }}
                 </a>
             </div>
         </div>
@@ -295,7 +295,7 @@
                 }
             }) }}
         >
-            {{ renderIcon.icon({id: 'plus'}) }}
+            {{ renderIcon.icon({name: 'plus'}) }}
             {{ 'oro.frontend.shoppinglist.view.create_new_shopping_list.label'|trans }}
         </button>
     </div>

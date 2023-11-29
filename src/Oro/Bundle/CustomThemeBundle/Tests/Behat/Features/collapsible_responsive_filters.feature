@@ -24,7 +24,7 @@ Feature: Collapsible responsive filters
   Scenario: Check "Dropdown" filters mode (desktop)
     Given I proceed as the User
     When I am on homepage
-    And I click "NewCategory"
+    And I click "NewCategory" in hamburger menu
     And I should see an "Filter Dropdown Mode" element
     Then I should not see an "Filter Collapse Mode" element
 

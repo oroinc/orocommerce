@@ -73,7 +73,7 @@ Feature: Pricing rounding
     And Subtotals Calculation Precision in Sales Documents field should has 4 value
     And I proceed as the customer
     And I signed in as AmandaRCole@example.org on the store frontend
-    When click "NewCategory"
+    When click "NewCategory" in hamburger menu
     Then should see "Your Price: $7.45 / item" for "Phone" product
     And should see "Listed Price: $7.45 / item" for "Phone" product
     And should see "Your Price: $4.54 / item" for "Light" product
@@ -90,7 +90,7 @@ Feature: Pricing rounding
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
     And should see "New Front Shopping List"
-    And click "NewCategory"
+    And click "NewCategory" in hamburger menu
     When click "Add to New Front Shopping List" for "Light" product
     And click on "Flash Message Close Button"
     And I hover on "Shopping Cart"
@@ -245,7 +245,7 @@ Feature: Pricing rounding
     Then should see "Subtotal $4.5"
     And should see "Total $4.5"
 
-    When click "NewCategory"
+    When click "NewCategory" in hamburger menu
     Then should see "Your Price: $7.45 / item" for "Phone" product
     And should see "Listed Price: $7.45 / item" for "Phone" product
     And should see "Your Price: $4.54 / item" for "Light" product
@@ -282,7 +282,7 @@ Feature: Pricing rounding
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
     And should see "New Front Shopping List"
-    And click "NewCategory"
+    And click "NewCategory" in hamburger menu
     When click "Add to New Front Shopping List" for "Light" product
     And click on "Flash Message Close Button"
     And I hover on "Shopping Cart"

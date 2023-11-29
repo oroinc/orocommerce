@@ -34,7 +34,7 @@ Feature: Products grid frontend export
     Given I proceed as the Buyer
     When I click "Search Button"
     Then I should not see an "Frontend Product Grid Export Button" element
-    When I click "Category 1"
+    When I click "Category 1" in hamburger menu
     Then I should not see an "Frontend Product Grid Export Button" element
     
   Scenario: Checks that export button is not visible when no results
@@ -64,7 +64,7 @@ Feature: Products grid frontend export
       | Product 7 | PSKU7 | out_of_stock        |
 
   Scenario: Check category products export works as expected
-    When I click "Category 1"
+    When I click "Category 1" in hamburger menu
     And I click "Frontend Product Grid Export Button"
     Then I should see "The product data export has started. You will receive download instructions by email once the export is finished." flash message
     And email with Subject "Products export result is ready" containing the following was sent:

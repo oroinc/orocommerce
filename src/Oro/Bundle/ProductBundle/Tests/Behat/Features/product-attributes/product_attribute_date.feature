@@ -47,7 +47,7 @@ Feature: Product attribute date
 
   Scenario: Check product grid sorter
     Given I login as AmandaRCole@example.org buyer
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     Then grid sorter should have "DateField" options
 
   Scenario: Delete product attribute

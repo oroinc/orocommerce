@@ -17,7 +17,7 @@
              aria-haspopup="true" aria-expanded="false"
              aria-label="{{ 'oro.pricing.productprice.currency.label'|trans }}">
             {{- oro_currency_symbol(selected_currency) -}}
-            {{ renderIcon.icon({id: 'chevron-down', extraClass: 'theme-icon--medium'}) }}
+            {{ renderIcon.icon({name: 'chevron-down'}) }}
         </div>
 
         <div class="oro-toolbar__dropdown" role="menu" aria-labelledby="{{ togglerId }}">

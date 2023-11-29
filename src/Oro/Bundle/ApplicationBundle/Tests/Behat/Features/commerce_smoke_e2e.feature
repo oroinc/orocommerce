@@ -538,9 +538,9 @@ Feature: Commerce smoke e2e
   Scenario: Check Contact Us and About us pages, Products views, front filters, prices by not registered user
     Given I proceed as the User
     And I am on the homepage
-    When click "About"
+    When I click "About" in hamburger menu
     Then Page title equals to "About"
-    When click "Phones"
+    When click "Phones" in hamburger menu
     Then should see "All Products / Phones"
     And should see "View Details" for "Lenovo_Vibe_sku" product
     And should see "Product Image" for "Lenovo_Vibe_sku" product
@@ -576,9 +576,9 @@ Feature: Commerce smoke e2e
 
   Scenario: Check Contact Us and About us pages, Products views, correct price for the product for customer user and for customer group
     Given I signed in as AmandaRCole1@example.org on the store frontend
-    When click "About"
+    When click "About" in hamburger menu
     Then Page title equals to "About"
-    When click "Phones"
+    When click "Phones" in hamburger menu
     Then should see "All Products / Phones"
     And should see "View Details" for "Lenovo_Vibe_sku" product
     And should see "Product Image" for "Lenovo_Vibe_sku" product
@@ -595,7 +595,7 @@ Feature: Commerce smoke e2e
     And should not see "Green Box" for "Xiaomi_Redmi_3S_sku" product
     And should see "Your Price: $120.00 / item" for "Xiaomi_Redmi_3S_sku" product
     And should see "Listed Price: $120.00 / item" for "Xiaomi_Redmi_3S_sku" product
-    When click "Shirts"
+    When I click "Shirts" in hamburger menu
     Then should see "Add to Shopping List button" for "Shirt_Sku" product
     And should see "View Details" for "Shirt_Sku" product
     And should see "Product Image" for "Shirt_Sku" product
@@ -621,7 +621,7 @@ Feature: Commerce smoke e2e
     And I click "Account Dropdown"
     And click "Sign Out"
     And I signed in as BrandaJSanborn1@example.org on the store frontend
-    And click "Phones"
+    And click "Phones" in hamburger menu
     When fill line item with "Lenovo_Vibe_sku" in frontend product grid:
       |Quantity|10  |
     Then should see "Your Price: $90.00 / item" for "Lenovo_Vibe_sku" product
@@ -647,7 +647,7 @@ Feature: Commerce smoke e2e
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
     And should see "New Front Shopping List"
-    And click "Phones"
+    And click "Phones" hamburger menu
     When fill line item with "Lenovo_Vibe_sku" in frontend product grid:
       |Quantity|112 |
     And click "Add to New Front Shopping List" for "Lenovo_Vibe_sku" product
@@ -770,7 +770,7 @@ Feature: Commerce smoke e2e
 
   Scenario: Create RFQ, convert it to quote with edit and complete checkout by customer user
     Given I proceed as the User
-    And click "Phones"
+    And click "Phones" hamburger menu
     And fill "FrontendLineItemForm" with:
       |Quantity|10  |
     And I scroll to top
