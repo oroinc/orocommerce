@@ -113,6 +113,22 @@ data:
                     id: '<toString(@item->code)>'
     -
         type: productunitprecisions
+        id: '<toString(@product5_precision->id)>'
+        attributes:
+            precision: 1
+            conversionRate: 1
+            sell: true
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product5->id)>'
+            unit:
+                data:
+                    type: productunits
+                    id: '<toString(@item->code)>'
+    -
+        type: productunitprecisions
         id: '<toString(@configurable_product1_precision->id)>'
         attributes:
             precision: 0
@@ -139,22 +155,6 @@ data:
                 data:
                     type: products
                     id: '<toString(@configurable_product2->id)>'
-            unit:
-                data:
-                    type: productunits
-                    id: '<toString(@item->code)>'
-    -
-        type: productunitprecisions
-        id: '<toString(@configurable_product3_precision->id)>'
-        attributes:
-            precision: 0
-            conversionRate: 1
-            sell: true
-        relationships:
-            product:
-                data:
-                    type: products
-                    id: '<toString(@configurable_product3->id)>'
             unit:
                 data:
                     type: productunits

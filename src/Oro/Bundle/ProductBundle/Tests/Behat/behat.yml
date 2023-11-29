@@ -1905,6 +1905,7 @@ oro_behat_extension:
         - Oro\Bundle\EntityExtendBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\UIBundle\Tests\Behat\Context\BreadcrumbContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ConsoleContext
+        - Oro\Bundle\SearchBundle\Tests\Behat\Context\SearchContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'
@@ -1966,3 +1967,9 @@ oro_behat_extension:
         - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'
+
+  optional_listeners:
+    required_for_fixtures:
+      - 'oro_product.event_listener.search_product_kit'
+      - 'oro_product.event_listener.website_search_reindex_product_kit'
+      - 'oro_product.event_listener.website_search_product_preloading_index'
