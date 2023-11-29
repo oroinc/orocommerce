@@ -36,7 +36,6 @@ class PromotionExecutorTest extends FrontendWebTestCase
             [],
             self::generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
-        $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
             LoadOrderData::class,
