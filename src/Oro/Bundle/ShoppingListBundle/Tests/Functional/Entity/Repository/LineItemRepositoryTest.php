@@ -29,8 +29,6 @@ class LineItemRepositoryTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->client->useHashNavigation(true);
-
         $this->loadFixtures(
             [
                 LoadShoppingListLineItems::class,
