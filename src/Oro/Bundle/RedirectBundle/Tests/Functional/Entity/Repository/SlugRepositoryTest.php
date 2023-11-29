@@ -37,7 +37,6 @@ class SlugRepositoryTest extends WebTestCase
         );
         $this->loadFixtures([LoadSlugScopesData::class]);
 
-        $this->client->useHashNavigation(true);
         $this->repository = $this->getContainer()
             ->get('doctrine')
             ->getRepository(Slug::class);

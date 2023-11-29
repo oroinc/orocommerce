@@ -19,7 +19,6 @@ class AbsenceBootstrap3ClassesTest extends WebTestCase
     {
         $authHeader = $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW);
         $this->initClient([], $authHeader);
-        $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
             LoadFrontendProductData::class,

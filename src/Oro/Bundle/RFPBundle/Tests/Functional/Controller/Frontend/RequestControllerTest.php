@@ -36,30 +36,29 @@ class RequestControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->client->useHashNavigation(true);
 
-        $this->manager = $this->getContainer()->get('oro_workflow.manager');
+        $this->manager = self::getContainer()->get('oro_workflow.manager');
 
         $this->loadFixtures([
             LoadUserData::class,
             LoadRequestData::class,
-            LoadProductPrices::class
+            LoadProductPrices::class,
         ]);
     }
 
-    public function testGridForAnonymousUsers()
+    public function testGridForAnonymousUsers(): void
     {
         $response = $this->client->requestGrid(['gridName' => 'frontend-requests-grid'], [], true);
-        $this->assertSame($response->getStatusCode(), 302);
+        self::assertSame($response->getStatusCode(), 302);
     }
 
-    public function testIndexNotFoundForAnonymousUsers()
+    public function testIndexNotFoundForAnonymousUsers(): void
     {
         $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
     }
 
-    public function testIndexAccessDeniedForAnonymousUsers()
+    public function testIndexAccessDeniedForAnonymousUsers(): void
     {
         $configManager = self::getConfigManager();
         $configManager->set('oro_rfp.guest_rfp', true);
@@ -76,7 +75,7 @@ class RequestControllerTest extends WebTestCase
      * @dataProvider indexProvider
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function testIndex(array $inputData, array $expectedData, bool $activateFrontend = false)
+    public function testIndex(array $inputData, array $expectedData, bool $activateFrontend = false): void
     {
         if (!$activateFrontend) {
             $this->manager->deactivateWorkflow('b2b_rfq_frontoffice_default');
@@ -128,14 +127,14 @@ class RequestControllerTest extends WebTestCase
             $request = $this->getReference($row);
             $expectedIds[] = $request->getId();
 
-            $this->assertEquals($request->getPoNumber(), $testedData[$request->getId()]['poNumber']);
+            self::assertEquals($request->getPoNumber(), $testedData[$request->getId()]['poNumber']);
             if ($request->getShipUntil()) {
                 self::assertStringContainsString(
                     $request->getShipUntil()->format('Y-m-d'),
                     $testedData[$request->getId()]['shipUntil']
                 );
             } else {
-                $this->assertEquals($request->getShipUntil(), $testedData[$request->getId()]['shipUntil']);
+                self::assertEquals($request->getShipUntil(), $testedData[$request->getId()]['shipUntil']);
             }
         }
 
@@ -148,7 +147,7 @@ class RequestControllerTest extends WebTestCase
     /**
      * @dataProvider viewProvider
      */
-    public function testView(array $inputData, array $expectedData)
+    public function testView(array $inputData, array $expectedData): void
     {
         $this->loginUser($inputData['login']);
         /* @var Request $request */
@@ -195,7 +194,7 @@ class RequestControllerTest extends WebTestCase
     /**
      * @dataProvider actionsForDeletedRequestProvider
      */
-    public function testActionsForDeletedRequest(array $input, string $path, int $code)
+    public function testActionsForDeletedRequest(array $input, string $path, int $code): void
     {
         $this->loginUser($input['login']);
         /* @var Request $request */
@@ -203,7 +202,7 @@ class RequestControllerTest extends WebTestCase
 
         $this->client->request('GET', $this->getUrl($path, ['id' => $request->getId()]));
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), $code);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), $code);
     }
 
     /**
@@ -241,7 +240,7 @@ class RequestControllerTest extends WebTestCase
                         'delete' => false,
                     ],
                 ],
-                'activateFrontend' => true
+                'activateFrontend' => true,
             ],
             'customer1 user1 (only customer user requests)' => [
                 'input' => [
@@ -267,8 +266,8 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'delete' => false
-                    ]
+                        'delete' => false,
+                    ],
                 ],
             ],
             'customer1 user2 (all customer requests)' => [
@@ -299,8 +298,8 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'action_configuration' => [
                         'update' => false,
-                        'delete' => false
-                    ]
+                        'delete' => false,
+                    ],
                 ],
             ],
             'customer1 user3 (all customer requests and submittedTo)' => [
@@ -326,8 +325,8 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'action_configuration' => [
                         'update' => false,
-                        'delete' => false
-                    ]
+                        'delete' => false,
+                    ],
                 ],
             ],
             'customer2 user1 (only customer user requests)' => [
@@ -353,8 +352,8 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'delete' => false
-                    ]
+                        'delete' => false,
+                    ],
                 ],
             ],
             'customer2 user2 (all customer user requests and full permissions)' => [
@@ -366,7 +365,7 @@ class RequestControllerTest extends WebTestCase
                     'data' => [
                         LoadRequestData::REQUEST5,
                         LoadRequestData::REQUEST6,
-                        LoadRequestData::REQUEST13
+                        LoadRequestData::REQUEST13,
                     ],
                     'columns' => [
                         'id',
@@ -382,8 +381,8 @@ class RequestControllerTest extends WebTestCase
                         'customerStatusName',
                     ],
                     'action_configuration' => [
-                        'delete' => false
-                    ]
+                        'delete' => false,
+                    ],
                 ],
             ],
             'parent customer user1 (all requests)' => [
@@ -403,8 +402,8 @@ class RequestControllerTest extends WebTestCase
                         LoadRequestData::REQUEST10,
                         LoadRequestData::REQUEST11,
                         LoadRequestData::REQUEST12,
-                        LoadRequestData::REQUEST13
-                    ]
+                        LoadRequestData::REQUEST13,
+                    ],
                 ],
             ],
             'parent customer user2 (only customer user requests)' => [
@@ -416,7 +415,7 @@ class RequestControllerTest extends WebTestCase
                     'data' => [
                         LoadRequestData::REQUEST10,
                         LoadRequestData::REQUEST11,
-                        LoadRequestData::REQUEST12
+                        LoadRequestData::REQUEST12,
                     ],
                 ],
             ],
@@ -442,7 +441,7 @@ class RequestControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'columnsCount' => 9,
-                    'hideButtonEdit' => true
+                    'hideButtonEdit' => true,
                 ],
             ],
         ];
@@ -451,7 +450,7 @@ class RequestControllerTest extends WebTestCase
     /**
      * @dataProvider aclProvider
      */
-    public function testAcl(string $route, string $request, string $login, int $status)
+    public function testAcl(string $route, string $request, string $login, int $status): void
     {
         if ('' !== $login) {
             $this->loginUser($login);
@@ -481,49 +480,49 @@ class RequestControllerTest extends WebTestCase
                 'route' => 'oro_rfp_frontend_request_view',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => '',
-                'status' => 404
+                'status' => 404,
             ],
             'UPDATE (anonymous user)' => [
                 'route' => 'oro_rfp_frontend_request_update',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => '',
-                'status' => 404
+                'status' => 404,
             ],
             'VIEW (user from another customer)' => [
                 'route' => 'oro_rfp_frontend_request_view',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::ACCOUNT2_USER1,
-                'status' => 403
+                'status' => 403,
             ],
             'UPDATE (user from another customer)' => [
                 'route' => 'oro_rfp_frontend_request_update',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::ACCOUNT2_USER1,
-                'status' => 403
+                'status' => 403,
             ],
             'VIEW (user from parent customer : DEEP)' => [
                 'route' => 'oro_rfp_frontend_request_view',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::PARENT_ACCOUNT_USER1,
-                'status' => 200
+                'status' => 200,
             ],
             'UPDATE (user from parent customer : DEEP)' => [
                 'route' => 'oro_rfp_frontend_request_update',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::PARENT_ACCOUNT_USER1,
-                'status' => 403
+                'status' => 403,
             ],
             'VIEW (user from parent customer : LOCAL)' => [
                 'route' => 'oro_rfp_frontend_request_view',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::PARENT_ACCOUNT_USER2,
-                'status' => 403
+                'status' => 403,
             ],
             'UPDATE (user from parent customer : LOCAL)' => [
                 'route' => 'oro_rfp_frontend_request_update',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::PARENT_ACCOUNT_USER2,
-                'status' => 403
+                'status' => 403,
             ],
         ];
     }
@@ -536,15 +535,15 @@ class RequestControllerTest extends WebTestCase
                     'login' => LoadUserData::ACCOUNT1_USER1,
                 ],
                 'path' => 'oro_rfp_frontend_request_view',
-                'code' => 404
+                'code' => 404,
             ],
             'update action' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER1,
                 ],
                 'path' => 'oro_rfp_frontend_request_update',
-                'code' => 403
-            ]
+                'code' => 403,
+            ],
         ];
     }
 
@@ -570,7 +569,7 @@ class RequestControllerTest extends WebTestCase
     /**
      * @dataProvider createProvider
      */
-    public function testCreate(array $formData, array $expected)
+    public function testCreate(array $formData, array $expected): void
     {
         $this->loginUser(LoadUserData::ACCOUNT1_USER1);
 
@@ -582,7 +581,7 @@ class RequestControllerTest extends WebTestCase
         $productPrice = $this->getPriceByReference('product_price.1');
 
         $parameters = [
-            'oro_rfp_frontend_request' => $formData
+            'oro_rfp_frontend_request' => $formData,
         ];
         $parameters['oro_rfp_frontend_request']['_token'] = $crfToken;
         $parameters['oro_rfp_frontend_request']['requestProducts'] = [
@@ -594,11 +593,11 @@ class RequestControllerTest extends WebTestCase
                         'productUnit' => $productPrice->getUnit()->getCode(),
                         'price' => [
                             'value' => $productPrice->getPrice()->getValue(),
-                            'currency' => $productPrice->getPrice()->getCurrency()
-                        ]
-                    ]
-                ]
-            ]
+                            'currency' => $productPrice->getPrice()->getCurrency(),
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $this->client->followRedirects(true);
@@ -606,7 +605,7 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
 
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         self::assertStringContainsString('Request has been saved', $crawler->html());
 
         $this->assertContainsRequestData($result->getContent(), $expected);
@@ -634,8 +633,8 @@ class RequestControllerTest extends WebTestCase
                     'role' => self::ROLE,
                     'company' => self::COMPANY,
                     'note' => self::REQUEST,
-                    'poNumber' => self::PO_NUMBER
-                ]
+                    'poNumber' => self::PO_NUMBER,
+                ],
             ],
         ];
     }
@@ -643,7 +642,7 @@ class RequestControllerTest extends WebTestCase
     /**
      * @dataProvider createQueryInitDataProvider
      */
-    public function testCreateQueryInit(array $productItems, array $expectedData)
+    public function testCreateQueryInit(array $productItems, array $expectedData): void
     {
         $this->loginUser(LoadUserData::ACCOUNT1_USER1);
 
@@ -653,9 +652,12 @@ class RequestControllerTest extends WebTestCase
 
         $productItems = array_combine(array_map($productIdCallable, array_keys($productItems)), $productItems);
 
-        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create', [
-            'product_items' => $productItems,
-        ]));
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_rfp_frontend_request_create', [
+                'product_items' => $productItems,
+            ])
+        );
 
         $result = $this->client->getResponse();
         self::assertHtmlResponseStatusCodeEquals($result, 200);
@@ -665,25 +667,29 @@ class RequestControllerTest extends WebTestCase
         /** @var array $formRequestProducts */
         $formRequestProducts = $form->get('oro_rfp_frontend_request[requestProducts]');
 
-        $formRequestProducts = array_reduce($formRequestProducts, function (array $result, array $formRequestProduct) {
-            /** @var InputFormField $requestProduct */
-            $requestProduct = $formRequestProduct['product'];
-            $result[(string)$requestProduct->getValue()] = array_map(function (array $requestProductItem) {
-                /** @var InputFormField $quantity */
-                $quantity = $requestProductItem['quantity'];
-                /** @var InputFormField $unit */
-                $unit = $requestProductItem['productUnit'];
+        $formRequestProducts = array_reduce(
+            $formRequestProducts,
+            static function (array $result, array $formRequestProduct) {
+                /** @var InputFormField $requestProduct */
+                $requestProduct = $formRequestProduct['product'];
+                $result[(string)$requestProduct->getValue()] = array_map(static function (array $requestProductItem) {
+                    /** @var InputFormField $quantity */
+                    $quantity = $requestProductItem['quantity'];
+                    /** @var InputFormField $unit */
+                    $unit = $requestProductItem['productUnit'];
 
-                return [
-                    'unit' => $unit->getValue(),
-                    'quantity' => $quantity->getValue(),
-                ];
-            }, $formRequestProduct['requestProductItems']);
+                    return [
+                        'unit' => $unit->getValue(),
+                        'quantity' => $quantity->getValue(),
+                    ];
+                }, $formRequestProduct['requestProductItems']);
 
-            return $result;
-        }, []);
+                return $result;
+            },
+            []
+        );
         $expectedData = array_combine(array_map($productIdCallable, array_keys($expectedData)), $expectedData);
-        $this->assertEquals($expectedData, $formRequestProducts);
+        self::assertEquals($expectedData, $formRequestProducts);
     }
 
     public function createQueryInitDataProvider(): array
@@ -692,7 +698,7 @@ class RequestControllerTest extends WebTestCase
             [
                 'productLineItems' => [
                     'product-1' => [
-                        ['unit' => 'liter', 'quantity' => 10]
+                        ['unit' => 'liter', 'quantity' => 10],
                     ],
                     'product-2' => [
                         ['unit' => 'bottle', 'quantity' => 20],
@@ -701,13 +707,13 @@ class RequestControllerTest extends WebTestCase
                 ],
                 'expectedData' => [
                     'product-1' => [
-                        ['unit' => 'liter', 'quantity' => 10]
+                        ['unit' => 'liter', 'quantity' => 10],
                     ],
                     'product-2' => [
                         ['unit' => 'bottle', 'quantity' => 20],
                         ['unit' => 'box', 'quantity' => 2],
                     ],
-                ]
+                ],
             ],
             [
                 'productLineItems' => [
@@ -721,21 +727,21 @@ class RequestControllerTest extends WebTestCase
                 ],
                 'expectedData' => [
                     'product-1' => [
-                        ['unit' => 'liter', 'quantity' => 10]
+                        ['unit' => 'liter', 'quantity' => 10],
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $this->loginUser(LoadUserData::ACCOUNT2_USER1);
-        $this->getContainer()->get('oro_workflow.manager')->deactivateWorkflow('b2b_rfq_frontoffice_default');
+        self::getContainer()->get('oro_workflow.manager')->deactivateWorkflow('b2b_rfq_frontoffice_default');
 
         $id = $this->getReference(LoadRequestData::REQUEST6)->getId();
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_update', ['id' => $id]));
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $form = $crawler->selectButton('Submit Request')->form();
 
@@ -745,14 +751,14 @@ class RequestControllerTest extends WebTestCase
         $form['oro_rfp_frontend_request[poNumber]'] = LoadRequestData::PO_NUMBER . '_UPDATE';
         $form['oro_rfp_frontend_request[assignedCustomerUsers]'] = implode(',', [
             $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
-            $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
+            $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId(),
         ]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         self::assertStringContainsString('Request has been saved', $crawler->html());
 
         $this->assertContainsRequestData(
@@ -763,12 +769,12 @@ class RequestControllerTest extends WebTestCase
                 LoadRequestData::EMAIL . '_UPDATE',
                 LoadRequestData::PO_NUMBER . '_UPDATE',
                 $this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(),
-                $this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName()
+                $this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName(),
             ]
         );
     }
 
-    public function testViewDeleted()
+    public function testViewDeleted(): void
     {
         $this->loginUser(LoadUserData::ACCOUNT1_USER1);
 
@@ -777,7 +783,7 @@ class RequestControllerTest extends WebTestCase
         $id = $request->getId();
 
         $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_view', ['id' => $id]));
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $em = $this->getManager(Request::class);
         $request = $em->find(Request::class, $id);
@@ -789,7 +795,60 @@ class RequestControllerTest extends WebTestCase
         $em->flush($request);
 
         $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_view', ['id' => $id]));
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
+    }
+
+    public function testCreateWithValidationErrorShouldNotReturnRedundantData(): void
+    {
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
+        $form = $crawler->selectButton('Submit Request')->form();
+
+        $crfToken = $this->getCsrfToken('oro_rfp_frontend_request')->getValue();
+
+        $productPrice = $this->getPriceByReference('product_price.1');
+
+        $parameters = [
+            'oro_rfp_frontend_request' => [
+                'firstName' => LoadRequestData::FIRST_NAME,
+                'lastName' => LoadRequestData::LAST_NAME,
+                'email' => LoadRequestData::EMAIL,
+                'phone' => self::PHONE,
+                'role' => self::ROLE,
+                'company' => self::COMPANY,
+                'note' => self::REQUEST,
+                'poNumber' => self::PO_NUMBER,
+                'requestProducts' => [
+                    [
+                        'product' => $productPrice->getProduct()->getId(),
+                        'requestProductItems' => [
+                            [
+                                'quantity' => $productPrice->getQuantity(),
+                                'productUnit' => $productPrice->getUnit()->getCode(),
+                                'price' => [
+                                    'value' => 'invalid',
+                                    'currency' => $productPrice->getPrice()->getCurrency(),
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                '_token' => $crfToken,
+            ],
+        ];
+        $this->client->followRedirects(true);
+        // Hash navigation header is enabled on purpose here to get a JSON response.
+        $this->client->useHashNavigation(true);
+        $this->client->request($form->getMethod(), $form->getUri(), $parameters);
+
+        $result = $this->client->getResponse();
+
+        $jsonContent = self::getJsonResponseContent($result, 200);
+        self::assertCount(3, $jsonContent, 'JSON response contains more data than expected');
+        self::assertArrayHasKey('title', $jsonContent);
+        self::assertArrayHasKey('content', $jsonContent);
+        self::assertArrayHasKey('flashMessages', $jsonContent);
     }
 
     private function getEnumEntity(string $enumField, string $enumCode): AbstractEnumValue
@@ -801,7 +860,7 @@ class RequestControllerTest extends WebTestCase
 
     private function getManager(string $className): EntityManagerInterface
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass($className);
+        return self::getContainer()->get('doctrine')->getManagerForClass($className);
     }
 
     private function assertContainsRequestData(string $html, array $fields): void
