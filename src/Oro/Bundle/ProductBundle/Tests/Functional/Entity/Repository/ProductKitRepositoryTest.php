@@ -29,4 +29,38 @@ class ProductKitRepositoryTest extends WebTestCase
             $this->getReference('product-1')
         ));
     }
+
+    public function testGetProductKitsByProductIds(): void
+    {
+        $product2 = $this->getReference('product-2');
+        $kit2 = $this->getReference(LoadProductKitData::PRODUCT_KIT_2);
+        $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
+
+        $actual = $this->getRepository()->getProductKitsByProductIds([$product2->getId()]);
+        self::assertEquals([$kit2, $kit3], $actual);
+
+        $actual = $this->getRepository()->getProductKitsByProductIds([]);
+        self::assertEquals([], $actual);
+
+        $actual = $this->getRepository()->getProductKitsByProductIds([PHP_INT_MAX, PHP_INT_MAX-1]);
+        self::assertEquals([], $actual);
+    }
+
+    public function testGetProductKitIdsByProductIds(): void
+    {
+        $product2 = $this->getReference('product-2');
+        $kit2 = $this->getReference(LoadProductKitData::PRODUCT_KIT_2);
+        $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
+
+        $expected = [$kit2->getId(), $kit3->getId()];
+
+        $actual = $this->getRepository()->getProductKitIdsByProductIds([$product2->getId()]);
+        self::assertEquals($expected, $actual);
+
+        $actual = $this->getRepository()->getProductKitsByProductIds([]);
+        self::assertEquals([], $actual);
+
+        $actual = $this->getRepository()->getProductKitsByProductIds([999,1001]);
+        self::assertEquals([], $actual);
+    }
 }
