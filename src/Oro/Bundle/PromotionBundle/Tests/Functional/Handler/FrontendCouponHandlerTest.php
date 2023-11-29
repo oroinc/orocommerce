@@ -34,7 +34,6 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
             [],
             self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->client->useHashNavigation(true);
 
         parent::setUp();
         static::getContainer()->get('request_stack')

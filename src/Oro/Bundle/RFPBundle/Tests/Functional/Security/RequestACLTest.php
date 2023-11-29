@@ -162,7 +162,6 @@ class RequestACLTest extends WebTestCase
     protected function login($email, $password)
     {
         $this->initClient([], $this->generateBasicAuthHeader($email, $password));
-        $this->client->useHashNavigation(true);
         $this->client->request('GET', '/'); // any page to apply new user
     }
 

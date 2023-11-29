@@ -17,7 +17,6 @@ class CategoryPageTitleTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 LoadWebCatalogCategoryData::class,

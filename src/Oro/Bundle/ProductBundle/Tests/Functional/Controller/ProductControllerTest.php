@@ -650,6 +650,8 @@ class ProductControllerTest extends ProductHelperTestCase
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
+        $this->client->useHashNavigation(false);
+
         $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
         $this->assertEquals(3, $crawler->filter('.featured-product')->count());
