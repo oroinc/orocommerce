@@ -67,8 +67,7 @@ Feature: Check title for category frontend pages
     And filename of the image "cat1 wysiwyg image" is as remembered
 
   Scenario: Check title, description and image on store front in Zulu localization
-    Given I click "Localization Switcher"
-    When I select "Zulu" localization
+    When I click "Zulu"
     Then I should see "Zulu description:"
     And image "cat1 wysiwyg image" is loaded
     And filename of the image "cat1 wysiwyg image" is as remembered

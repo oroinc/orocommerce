@@ -17,8 +17,7 @@ Feature: Comma support for quantity on backend
     Then ProductQuantityField field should has 3 value
 
   Scenario: Check quantity decimal separator for different locale
-    Given I click "Localization Switcher"
-    And I select "German Localization" localization
+    Given I click "German Localization"
     And I click "NewCategory" in hamburger menu
     When I type "3," in "ProductQuantityField"
     Then ProductQuantityField field should has 3,0000 value

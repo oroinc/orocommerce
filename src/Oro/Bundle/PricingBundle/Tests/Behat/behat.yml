@@ -197,15 +197,31 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="price-list-product-prices-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
-    Currency Switcher:
+    Localization Switcher:
+      selector: 'button.localization-switcher'
+
+    Localization Switcher active item:
       selector:
         type: 'xpath'
-        locator: '//div[contains(@data-bound-component, "currency-switcher")]/ancestor::div[@class="oro-toolbar"]'
+        locator: '//div[contains(@class, "localization-switcher")]/span'
+
+    Localization Switcher Button:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@class, "localization-switcher")]/a'
+
+    Currency Switcher:
+      selector: 'button.currency-switcher'
+
+    Currency Switcher active item:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@class, "currency-switcher")]/span'
 
     Currency Switcher Button:
       selector:
         type: 'xpath'
-        locator: '//div[contains(@data-bound-component, "currency-switcher")]/ancestor::div[@class="oro-toolbar"]/div[@data-toggle="dropdown"]'
+        locator: '//div[contains(@class, "currency-switcher")]/a'
 
     Open Price Dropdown Button:
       selector:

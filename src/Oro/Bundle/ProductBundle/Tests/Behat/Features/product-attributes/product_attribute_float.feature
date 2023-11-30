@@ -96,8 +96,7 @@ Feature: Product attribute float
   Scenario: Check product attribute is formatted according to localization on front store
     When I click "View Details" for "SKU123" product
     Then I should see "-1.234,1234567891"
-    When I click "Localization Switcher"
-    And I select "English" localization
+    And I click "English"
     Then I should see "-1,234.1234567891"
 
   Scenario: Delete product attribute

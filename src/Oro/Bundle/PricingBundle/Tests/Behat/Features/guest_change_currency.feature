@@ -20,6 +20,6 @@ Feature: Guest Change Currency
 
   Scenario: Trying to change currency to EUR
     Given I am on homepage
-    Then I should see that "Currency Switcher Button" contains "$"
-    When I change currency in currency switcher to "Euro"
-    Then I should see that "Currency Switcher Button" contains "€"
+    Then I should see that "Currency Switcher active item" contains "$"
+    When I click "Euro"
+    Then I should see that "Currency Switcher active item" contains "€"

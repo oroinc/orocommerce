@@ -498,8 +498,7 @@ Feature: Quick order form
       | UNIT2 | item (lang1)                     |
 
   Scenario: Check unit names are localized in copy paste form
-    Given I click "Localization Switcher"
-    And I select "Zulu" localization
+    Given I click "Zulu"
     And I click "Quick Order Form"
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU2,1,item |

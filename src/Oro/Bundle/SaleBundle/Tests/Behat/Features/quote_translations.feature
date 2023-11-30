@@ -29,8 +29,7 @@ Feature: Quote translations
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
     And I am on the homepage
-    And I click "Localization Switcher"
-    And I select "Zulu" localization
+    And I click "Zulu"
     And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"

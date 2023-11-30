@@ -62,7 +62,7 @@ Feature: Product view shopping list
 
   Scenario: Check that product name is localized in shopping lists widget
     Given I click "Localization Switcher"
-    And I select "Localization 1" localization
+    And I click "Localization 1"
     And type "PSKU_LOCALIZED" in "search"
     And click "Search Button"
     And click "View Details" for "PSKU_LOCALIZED" product

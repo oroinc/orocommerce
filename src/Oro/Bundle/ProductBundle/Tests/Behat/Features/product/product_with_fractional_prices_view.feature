@@ -13,8 +13,7 @@ Feature: Product with fractional prices view
     And I enable the existing localizations
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on the homepage
-    And I click "Localization Switcher"
-    And I select "German Localization" localization
+    And I click "German Localization"
 
   Scenario: Search product by SKU
     When type "PSKU1" in "search"

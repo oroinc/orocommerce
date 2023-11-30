@@ -55,22 +55,20 @@ Feature: Shopping List Line Items With Unsaved Changes
     When I click on "Shopping List Line Item 1 Quantity"
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 3    |
-    And I click "Currency Switcher"
     And I click "Euro"
     Then should see "You have unsaved changes, are you sure you want to leave this page?" in confirmation dialogue
     And I click "Cancel" in confirmation dialogue
     And I click "Cancel"
-    And I should see exact "$" in the "Currency Switcher Button" element
+    And I should see exact "$(US Dollar)" in the "Currency Switcher active item" element
     And Page title equals to "List 2 - Shopping Lists - My Account"
 
   Scenario: Discard localization change with unsaved changed
     When I click on "Shopping List Line Item 1 Quantity"
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 3    |
-    And I click "Localization Switcher"
-    And I select "Zulu" localization
+    And I click "Zulu"
     Then should see "You have unsaved changes, are you sure you want to leave this page?" in confirmation dialogue
     And I click "Cancel" in confirmation dialogue
     And I click "Cancel"
-    And I should see exact "English (United States)" in the "Localization Switcher" element
+    Then I should see that "Localization Switcher active item" contains "English (United States)"
     And Page title equals to "List 2 - Shopping Lists - My Account"

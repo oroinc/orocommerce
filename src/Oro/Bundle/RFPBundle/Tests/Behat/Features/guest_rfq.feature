@@ -41,7 +41,6 @@ Feature: Guest RFQ
     When I click "Add to Shopping List" for "PSKU1" product
     And I follow "Shopping List" link within flash message "Product has been added to \"Shopping list\""
     And I hover on "Shopping List Widget"
-    And I wait for action
     And I should see "1 item N/A" in the "Shopping List Widget" element
     And I should see "$0.00" in the "Shopping List Widget" element
     And I click on empty space
@@ -126,7 +125,7 @@ Feature: Guest RFQ
     Given I proceed as the Buyer
     And I am on the homepage
     And I click "Localization Switcher"
-    And I select "Localization 1" localization
+    And I click "Localization 1"
     And I open shopping list widget
     And I click "Open List"
     And click "Request Quote"

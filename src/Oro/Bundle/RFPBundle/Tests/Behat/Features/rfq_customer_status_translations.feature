@@ -50,8 +50,7 @@ Feature: RFQ customer status translations
     Then I should see following grid:
       | PO Number | Status       |
       | Test RFQ  | Submitted_DE |
-    When I click "Localization Switcher"
-    And I select "English (United States)" localization
+    And I click "English (United States)"
     Then I should see following grid:
       | PO Number | Status    |
       | Test RFQ  | Submitted |

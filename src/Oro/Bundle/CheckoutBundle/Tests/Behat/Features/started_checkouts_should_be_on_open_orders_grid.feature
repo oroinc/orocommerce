@@ -7,7 +7,6 @@ Feature: Started checkouts should be on Open Orders Grid
 
   Scenario: See Open Orders with child Customer by frontend administrator.
     Given I signed in as NancyJSallee@example.org on the store frontend
-    And I wait for action
     When I click "Account Dropdown"
     And I click "Order History"
     Then I should see following records in "Open Orders Grid":
