@@ -124,6 +124,23 @@ class PriceMergeInfoProvider
         return true;
     }
 
+    public function getUsedUnitsAndCurrencies(array $priceMergeDetails): array
+    {
+        $result = [];
+        foreach ($priceMergeDetails as $pricesByCurrency) {
+            foreach ($pricesByCurrency as $currency => $pricesByUnit) {
+                foreach (array_keys($pricesByUnit) as $unit) {
+                    if (\in_array($currency, $result[$unit] ?? [])) {
+                        continue;
+                    }
+                    $result[$unit][] = $currency;
+                }
+            }
+        }
+
+        return $result;
+    }
+
     private function getSelectedPriceIds(array $priceListRelations, Product $product): array
     {
         $strategy = $this->configManager->get('oro_pricing.price_strategy');

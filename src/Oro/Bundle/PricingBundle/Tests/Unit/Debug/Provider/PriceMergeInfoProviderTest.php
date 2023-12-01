@@ -358,6 +358,65 @@ class PriceMergeInfoProviderTest extends TestCase
         ];
     }
 
+    public function testGetUsedUnitsAndCurrencies()
+    {
+        $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
+        $item = $this->getEntity(ProductUnit::class, ['code' => 'item']);
+        $each = $this->getEntity(ProductUnit::class, ['code' => 'each']);
+        $kg = $this->getEntity(ProductUnit::class, ['code' => 'kg']);
+
+        $priceMergeInfo = [
+            '1' => [
+                'USD' => [
+                    'item' => [
+                        [
+                            'price' => $this->createPrice($cpl, 10, 'USD', 1, $item),
+                            'is_selected' => true
+                        ]
+                    ],
+                    'each' => [
+                        [
+                            'price' => $this->createPrice($cpl, 10, 'USD', 1, $each),
+                            'is_selected' => true
+                        ]
+                    ],
+                ],
+                'EUR' => [
+                    'item' => [
+                        [
+                            'price' => $this->createPrice($cpl, 10, 'USD', 1, $each),
+                            'is_selected' => true
+                        ]
+                    ]
+                ]
+            ],
+            '2' => [
+                'USD' => [
+                    'item' => [
+                        [
+                            'price' => $this->createPrice($cpl, 11, 'USD', 1, $item),
+                            'is_selected' => true
+                        ]
+                    ],
+                    'kg' => [
+                        [
+                            'price' => $this->createPrice($cpl, 11, 'USD', 1, $kg),
+                            'is_selected' => true
+                        ]
+                    ]
+                ],
+            ]
+        ];
+
+        $expected = [
+            'item' => ['EUR', 'USD'],
+            'each' => ['USD'],
+            'kg' => ['USD']
+        ];
+
+        $this->assertEqualsCanonicalizing($expected, $this->provider->getUsedUnitsAndCurrencies($priceMergeInfo));
+    }
+
     protected function createPrice(
         CombinedPriceList $pl,
         float $value,
