@@ -21,7 +21,6 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
             [],
             self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->client->useHashNavigation(false);
 
         $this->loadFixtures(
             [

@@ -18,6 +18,10 @@
         } %}
 
         {% if is_configurable_product_type(product.type) %}
+            {% if matrixFormType is not defined %}
+                {% set matrixFormType = '' %}
+            {% endif %}
+
             {% if matrixFormType == 'popup' %}
                 {% set view = 'oroshoppinglist/js/app/views/matrix-grid-popup-button-view' %}
             {% elseif matrixFormType == 'inline' %}

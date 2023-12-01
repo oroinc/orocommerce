@@ -52,6 +52,9 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\ProductBundle\Event\DatagridKitItemLineItemsDataEvent` as the event for collecting product kit item line items data for the product line items storefront datagrids.
 * Added `\Oro\Bundle\ProductBundle\Filter\ComposedSkuStringFilter` for SKU filter on the product line items storefront datagrids to take into account product kit item line items SKUs during filtration.
 * Added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener` that switches status and inventory status of a product kit depending on its kit item products.
+* Added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\SearchProductKitListener` that schedule index operation for the product kit for the back-office.
+* Added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\WebsiteSearchReindexProductKitListener` that schedule index operation for the product kit for the storefront.
+* Added `\Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductPreloadingIndexerListener` that preload products with required data at the start of website reindex operation.
 * Disabled the ability to add a product kit to Quick Order Form via `\Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler::setNotAllowedProductTypes`.
 * Removed the `oro_product.popup_gallery_on_product_view` option from the system configuration.
 
@@ -117,6 +120,7 @@ The current file describes significant changes in the code that may affect the u
 * Decomposed `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface` into `\Oro\Bundle\ProductBundle\Model\ProductKitItemAwareInterface`.
 * Changed `\Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy` - added the possibility of postponing rows for missing product kits item products and fixed losing the related kitItems collections located deeper than 1st level.
 * Changed `\Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture` - added new simple and kit products.
+* Changed `\Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener` - to take into account product kits.
 
 #### SaleBundle
 * Changed `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\FirstOffers\FirstOffersQuoteToShippingLineItemConverter` and `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\SelectedOffers\SelectedOffersQuoteToShippingLineItemConverter` to make them work with the new shipping line item factory `\Oro\Bundle\SaleBundle\Quote\Shipping\Context\LineItem\Factory\ShippingLineItemFromQuoteProductDemandFactory`. 

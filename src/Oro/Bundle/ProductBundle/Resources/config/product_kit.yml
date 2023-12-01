@@ -21,3 +21,27 @@ services:
         class: Oro\Bundle\ProductBundle\ProductKit\Resolver\ProductKitInventoryStatusResolver
         arguments:
             - '@doctrine'
+
+    oro_product.event_listener.website_search_reindex_product_kit:
+        class: Oro\Bundle\ProductBundle\ProductKit\EventListener\WebsiteSearchReindexProductKitListener
+        arguments:
+            - '@oro_website.indexation_entities_container'
+            - '@event_dispatcher'
+            - '@doctrine'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: onClear }
+            - { name: kernel.event_listener, event: oro_website_search.reindexation_request, method: onReindexationRequest }
+
+    oro_product.event_listener.search_product_kit:
+        class: Oro\Bundle\ProductBundle\ProductKit\EventListener\SearchProductKitListener
+        arguments:
+            - '@oro_search.mapper'
+            - '@oro_search.async.indexer'
+            - '@doctrine'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
+            - { name: kernel.event_listener, event: oro_search.before_index_entities, method: beforeIndexEntities }
+            - { name: kernel.event_listener, event: oro_search.prepare_entity_map, method: prepareEntityMapEvent }

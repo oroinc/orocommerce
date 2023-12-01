@@ -2111,6 +2111,14 @@ services:
                 method: onDuplicateAfter
                 priority: -128
 
+    oro_product.event_listener.product_multi_fields_duplicate:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductMultiFieldsDuplicateListener
+        arguments:
+            - '@oro_entity_config.provider.entity'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter, priority: -200 }
+
     oro_product.service.product_collection_segment_manipulator:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionSegmentManipulator
         arguments:
@@ -2351,3 +2359,11 @@ services:
             - '@oro_product.formatter.product_unit_label'
         tags:
             - { name: validator.constraint_validator }
+
+    oro_product.event_listener.website_search_product_preloading_index:
+        class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductPreloadingIndexerListener'
+        arguments:
+            - '@oro_website_search.manager.website_context_manager'
+            - '@oro_entity.manager.preloading_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: 255 }

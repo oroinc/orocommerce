@@ -19,7 +19,6 @@ class AjaxCouponControllerTest extends WebTestCase
             [],
             self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
             LoadCouponData::class,
