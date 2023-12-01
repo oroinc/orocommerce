@@ -136,6 +136,7 @@ class DebugController extends AbstractController
             'product' => $product,
             'current_prices' => $currentPrices,
             'price_merging_details' => $priceMergeDetails,
+            'used_units_and_currencies' => $this->getUsedUnitsAndCurrencies($priceMergeDetails),
             'full_cpl_used_price_lists' => $usedPriceListsFullCpl ?: $usedPriceLists,
             'show_developers_info' => $showDevelopersInfo,
             'requires_price_actualization' => $isActualizationRequired
@@ -205,6 +206,11 @@ class DebugController extends AbstractController
     {
         return $this->get(PriceMergeInfoProvider::class)
             ->isMergedPricesSameToCurrentPrices($mergedPrices, $currentPrices);
+    }
+
+    private function getUsedUnitsAndCurrencies(array $priceMergeDetails): array
+    {
+        return $this->get(PriceMergeInfoProvider::class)->getUsedUnitsAndCurrencies($priceMergeDetails);
     }
 
     private function getCplUsedPriceLists(?CombinedPriceList $cpl): array
