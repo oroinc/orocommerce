@@ -144,7 +144,9 @@
                                                     <table class="price-list-prices">
                                                         {% set shownUnit = '' %}
                                                         {% set showCurrency = '' %}
-                                                        {% for price_data in price_merging_details[price_list.id] %}
+                                                        {% for prices_by_currency in price_merging_details[price_list.id] %}
+                                                        {% for prices_by_unit in prices_by_currency %}
+                                                        {% for price_data in prices_by_unit %}
                                                             {% set price = price_data.price %}
                                                             {% if shownUnit != price.productUnitCode %}
                                                                 {% set shownUnit = price.productUnitCode %}
@@ -167,6 +169,8 @@
                                                                     <div class="text-left">{{ price.price|oro_format_price }}</div>
                                                                 </td>
                                                             </tr>
+                                                        {% endfor %}
+                                                        {% endfor %}
                                                         {% endfor %}
                                                     </table>
                                                 {% else %}

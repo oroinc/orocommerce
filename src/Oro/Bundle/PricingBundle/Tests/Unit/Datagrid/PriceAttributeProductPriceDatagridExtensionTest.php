@@ -36,6 +36,7 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
             $this->selectedFieldsProvider,
             $this->aclHelper
         );
+        $this->supportedGridName = 'products-grid';
     }
 
     public function testProcessConfigsWhenNoAttributesWithCurrencies(): void

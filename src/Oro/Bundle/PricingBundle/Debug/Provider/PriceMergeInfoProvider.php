@@ -51,7 +51,21 @@ class PriceMergeInfoProvider
                 ['unit' => 'ASC', 'currency' => 'ASC', 'quantity' => 'ASC']
             );
             foreach ($prices as $price) {
-                $result[$priceList->getId()][] = [
+                $priceListId = $priceList->getId();
+                $currency = $price->getPrice()->getCurrency();
+                $unitCode = $price->getProductUnitCode();
+
+                if (!array_key_exists($priceListId, $result)) {
+                    $result[$priceListId] = [];
+                }
+                if (!array_key_exists($currency, $result[$priceListId])) {
+                    $result[$priceListId][$currency] = [];
+                }
+                if (!array_key_exists($unitCode, $result[$priceListId][$currency])) {
+                    $result[$priceListId][$currency][$unitCode] = [];
+                }
+
+                $result[$priceListId][$currency][$unitCode][] = [
                     'price' => $price,
                     'is_selected' => \in_array($price->getId(), $selectedPriceIds)
                 ];
@@ -64,19 +78,23 @@ class PriceMergeInfoProvider
     public function isMergedPricesSameToCurrentPrices(array $mergedPrices, array $currentPrices): bool
     {
         $calculatedPrices = [];
-        foreach ($mergedPrices as $priceRows) {
-            foreach ($priceRows as $priceRow) {
-                if (empty($priceRow['is_selected'])) {
-                    continue;
+        foreach ($mergedPrices as $priceRowsByCurrency) {
+            foreach ($priceRowsByCurrency as $currency => $priceRowsByUnit) {
+                foreach ($priceRowsByUnit as $unitCode => $priceRows) {
+                    foreach ($priceRows as $priceRow) {
+                        if (empty($priceRow['is_selected'])) {
+                            continue;
+                        }
+                        /** @var ProductPrice $priceData */
+                        $priceData = $priceRow['price'];
+                        $calculatedPrices[$currency][] = sprintf(
+                            '%s_%s_%s',
+                            $unitCode,
+                            (float)$priceData->getPrice()->getValue(),
+                            $priceData->getQuantity()
+                        );
+                    }
                 }
-                /** @var ProductPrice $priceData */
-                $priceData = $priceRow['price'];
-                $calculatedPrices[$priceData->getPrice()->getCurrency()][] = sprintf(
-                    '%s_%s_%s',
-                    $priceData->getProductUnitCode(),
-                    (float)$priceData->getPrice()->getValue(),
-                    $priceData->getQuantity()
-                );
             }
         }
 
