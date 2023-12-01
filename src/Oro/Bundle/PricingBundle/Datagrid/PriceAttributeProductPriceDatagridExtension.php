@@ -13,7 +13,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
@@ -27,7 +27,7 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
     /** @var bool */
     private $applied = false;
 
-    /** @var PriceListRequestHandler */
+    /** @var PriceListRequestHandlerInterface */
     private $priceListRequestHandler;
 
     /** @var DoctrineHelper */
@@ -43,7 +43,7 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
     private $enabledPriceColumns;
 
     public function __construct(
-        PriceListRequestHandler $priceListRequestHandler,
+        PriceListRequestHandlerInterface $priceListRequestHandler,
         DoctrineHelper $doctrineHelper,
         SelectedFieldsProviderInterface $selectedFieldsProvider,
         AclHelper $aclHelper

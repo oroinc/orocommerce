@@ -71,7 +71,11 @@ class PriceMergeInfoProviderTest extends TestCase
             ->willReturn('minimal');
 
         $price1 = $this->getEntity(ProductPrice::class, ['id' => 'id1']);
+        $price1->setPrice(Price::create(100, 'USD'));
+        $price1->setUnit($this->getEntity(ProductUnit::class, ['code' => 'item']));
         $price2 = $this->getEntity(ProductPrice::class, ['id' => 'id2']);
+        $price2->setPrice(Price::create(150, 'EUR'));
+        $price2->setUnit($this->getEntity(ProductUnit::class, ['code' => 'each']));
 
         $repo = $this->createMock(ProductPriceRepository::class);
         $repo->expects($this->once())
@@ -94,13 +98,22 @@ class PriceMergeInfoProviderTest extends TestCase
 
         $expected = [
             '2' => [
-                [
-                    'price' => $price1,
-                    'is_selected' => true
+
+                'USD' => [
+                    'item' => [
+                        [
+                            'price' => $price1,
+                            'is_selected' => true
+                        ]
+                    ]
                 ],
-                [
-                    'price' => $price2,
-                    'is_selected' => false
+                'EUR' => [
+                    'each' => [
+                        [
+                            'price' => $price2,
+                            'is_selected' => false
+                        ]
+                    ]
                 ],
             ]
         ];
@@ -129,13 +142,35 @@ class PriceMergeInfoProviderTest extends TestCase
         $each = $this->getEntity(ProductUnit::class, ['code' => 'each']);
 
         yield 'no_current_prices' => [
-            ['1' => [['price' => $this->createPrice($cpl, 10, 'USD', 1, $item), 'is_selected' => true]]],
+            [
+                '1' => [
+                    'USD' => [
+                        'item' => [
+                            [
+                                'price' => $this->createPrice($cpl, 10, 'USD', 1, $item),
+                                'is_selected' => true
+                            ]
+                        ]
+                    ]
+                ]
+            ],
             [],
             false
         ];
 
         yield 'no_selected_prices_empty_current' => [
-            ['1' => [['price' => $this->createPrice($cpl, 10, 'USD', 1, $item), 'is_selected' => false]]],
+            [
+                '1' => [
+                    'USD' => [
+                        'item' => [
+                            [
+                                'price' => $this->createPrice($cpl, 10, 'USD', 1, $item),
+                                'is_selected' => false
+                            ]
+                        ]
+                    ]
+                ]
+            ],
             [],
             true
         ];
@@ -153,31 +188,86 @@ class PriceMergeInfoProviderTest extends TestCase
         ];
 
         yield 'no_selected_prices_not_empty_current' => [
-            ['1' => [['price' => $this->createPrice($cpl, 10, 'USD', 1, $item), 'is_selected' => false]]],
+            [
+                '1' => [
+                    'USD' => [
+                        'item' => [
+                            [
+                                'price' => $this->createPrice($cpl, 10, 'USD', 1, $item),
+                                'is_selected' => false
+                            ]
+                        ]
+                    ]
+                ]
+            ],
             ['USD' => [['unitCode' => 'item', 'quantity' => 1, 'price' => Price::create(10, 'USD')]]],
             false
         ];
 
         yield 'different_unit' => [
-            ['1' => [['price' => $this->createPrice($cpl, 10, 'USD', 1, $each), 'is_selected' => true]]],
+            [
+                '1' => [
+                    'USD' => [
+                        'each' => [
+                            [
+                                'price' => $this->createPrice($cpl, 10, 'USD', 1, $each),
+                                'is_selected' => true
+                            ]
+                        ]
+                    ]
+                ]
+            ],
             ['USD' => [['unitCode' => 'item', 'quantity' => 1, 'price' => Price::create(10, 'USD')]]],
             false
         ];
 
         yield 'different_price' => [
-            ['1' => [['price' => $this->createPrice($cpl, 100, 'USD', 1, $item), 'is_selected' => true]]],
+            [
+                '1' => [
+                    'USD' => [
+                        'item' => [
+                            [
+                                'price' => $this->createPrice($cpl, 100, 'USD', 1, $item),
+                                'is_selected' => true
+                            ]
+                        ]
+                    ]
+                ]
+            ],
             ['USD' => [['unitCode' => 'item', 'quantity' => 1, 'price' => Price::create(10, 'USD')]]],
             false
         ];
 
         yield 'different_qty' => [
-            ['1' => [['price' => $this->createPrice($cpl, 10, 'USD', 10, $item), 'is_selected' => true]]],
+            [
+                '1' => [
+                    'USD' => [
+                        'item' => [
+                            [
+                                'price' => $this->createPrice($cpl, 10, 'USD', 10, $item),
+                                'is_selected' => true
+                            ]
+                        ]
+                    ]
+                ]
+            ],
             ['USD' => [['unitCode' => 'item', 'quantity' => 1, 'price' => Price::create(10, 'USD')]]],
             false
         ];
 
         yield 'different_currency' => [
-            ['1' => [['price' => $this->createPrice($cpl, 10, 'EUR', 1, $item), 'is_selected' => true]]],
+            [
+                '1' => [
+                    'EUR' => [
+                        'item' => [
+                            [
+                                'price' => $this->createPrice($cpl, 10, 'EUR', 1, $item),
+                                'is_selected' => true
+                            ]
+                        ]
+                    ]
+                ]
+            ],
             ['USD' => [['unitCode' => 'item', 'quantity' => 1, 'price' => Price::create(10, 'USD')]]],
             false
         ];
@@ -185,8 +275,18 @@ class PriceMergeInfoProviderTest extends TestCase
         yield 'different_number_of_merged' => [
             [
                 '1' => [
-                    ['price' => $this->createPrice($cpl, 10, 'USD', 1, $item), 'is_selected' => true],
-                    ['price' => $this->createPrice($cpl, 11, 'USD', 10, $item), 'is_selected' => true],
+                    'USD' => [
+                        'item' => [
+                            [
+                                'price' => $this->createPrice($cpl, 10, 'USD', 1, $item),
+                                'is_selected' => true
+                            ],
+                            [
+                                'price' => $this->createPrice($cpl, 11, 'USD', 10, $item),
+                                'is_selected' => true
+                            ]
+                        ]
+                    ]
                 ]
             ],
             ['USD' => [['unitCode' => 'item', 'quantity' => 1, 'price' => Price::create(10, 'USD')]]],
@@ -196,8 +296,18 @@ class PriceMergeInfoProviderTest extends TestCase
         yield 'different_number_of_current' => [
             [
                 '1' => [
-                    ['price' => $this->createPrice($cpl, 10, 'USD', 1, $item), 'is_selected' => true],
-                    ['price' => $this->createPrice($cpl, 11, 'USD', 10, $item), 'is_selected' => false],
+                    'USD' => [
+                        'item' => [
+                            [
+                                'price' => $this->createPrice($cpl, 10, 'USD', 1, $item),
+                                'is_selected' => true
+                            ],
+                            [
+                                'price' => $this->createPrice($cpl, 11, 'USD', 10, $item),
+                                'is_selected' => false
+                            ]
+                        ]
+                    ]
                 ]
             ],
             [
@@ -210,7 +320,18 @@ class PriceMergeInfoProviderTest extends TestCase
         ];
 
         yield 'same_prices' => [
-            ['1' => [['price' => $this->createPrice($cpl, 10, 'USD', 1, $item), 'is_selected' => true]]],
+            [
+                '1' => [
+                    'USD' => [
+                        'item' => [
+                            [
+                                'price' => $this->createPrice($cpl, 10, 'USD', 1, $item),
+                                'is_selected' => true
+                            ]
+                        ]
+                    ]
+                ]
+            ],
             ['USD' => [['unitCode' => 'item', 'quantity' => 1, 'price' => Price::create(10, 'USD')]]],
             true
         ];
@@ -218,8 +339,18 @@ class PriceMergeInfoProviderTest extends TestCase
         yield 'same_prices_2' => [
             [
                 '1' => [
-                    ['price' => $this->createPrice($cpl, 10, 'USD', 1, $item), 'is_selected' => true],
-                    ['price' => $this->createPrice($cpl, 11, 'USD', 10, $item), 'is_selected' => false],
+                    'USD' => [
+                        'item' => [
+                            [
+                                'price' => $this->createPrice($cpl, 10, 'USD', 1, $item),
+                                'is_selected' => true
+                            ],
+                            [
+                                'price' => $this->createPrice($cpl, 11, 'USD', 10, $item),
+                                'is_selected' => false
+                            ]
+                        ]
+                    ]
                 ]
             ],
             ['USD' => [['unitCode' => 'item', 'quantity' => 1, 'price' => Price::create(10, 'USD')]]],
