@@ -1,7 +1,7 @@
 aliases:
-    grapesjs$: grapesjs/dist/grapes
-    grapesjs-preset-webpage$: grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min
-    grapesjs-parser-postcss$: grapesjs-parser-postcss/dist/grapesjs-parser-postcss.min
+    grapesjs$: '@oroinc/grapesjs/dist/grapes'
+    grapesjs-preset-webpage$: '@oroinc/grapesjs-preset-webpage/dist/grapesjs-preset-webpage.min'
+    grapesjs-parser-postcss$: '@oroinc/grapesjs-parser-postcss/dist/grapesjs-parser-postcss.min'
     spectrum-colorpicker/spectrum$: spectrum-colorpicker/spectrum.css
     codemirror/lib/codemirror$: codemirror/lib/codemirror.css
     codemirror/theme/hopscotch$: codemirror/theme/hopscotch.css

@@ -61,9 +61,9 @@
     "prefer-stable": true,
     "extra": {
         "npm": {
-            "grapesjs": "0.16.30",
-            "grapesjs-preset-webpage": "0.1.11",
-            "grapesjs-parser-postcss": "0.1.1",
+            "@oroinc/grapesjs": "0.16.30-oro3",
+            "@oroinc/grapesjs-preset-webpage": "0.1.11-oro-1",
+            "@oroinc/grapesjs-parser-postcss": "0.1.1-oro1",
             "@oroinc/jquery-creditcardvalidator": "1.1",
             "@oroinc/elevatezoom": "3.0.81"
         },
