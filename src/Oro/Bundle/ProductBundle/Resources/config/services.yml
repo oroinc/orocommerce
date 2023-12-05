@@ -99,9 +99,11 @@ services:
 
     oro_product.form.autocomplete.brand.search_handler:
         parent: oro_form.autocomplete.search_handler
+        class: Oro\Bundle\ProductBundle\Autocomplete\BrandSearchHandler
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\Brand'
             - ['name']
+            - '@oro_entity.entity_name_resolver'
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\ProductBundle\Form\Type\BrandType }
 
@@ -547,6 +549,8 @@ services:
             - '@doctrine'
             - '@property_accessor'
             - '@oro_security.acl_helper'
+        calls:
+            - [setEntityNameResolver, ['@oro_entity.entity_name_resolver']]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_families }
 
@@ -1474,6 +1478,14 @@ services:
             - '@oro_datagrid.provider.selected_fields'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
+
+    oro_product.datagrid.event_listener.product_grid_attribute_family:
+        class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\AttributeFamilyColumnOnProductsListener'
+        arguments:
+            - '@oro_entity.entity_name_resolver'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
 
     oro_product.provider.catalog_context_url_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantContextUrlProvider
