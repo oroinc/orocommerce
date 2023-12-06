@@ -288,12 +288,12 @@ oro.pricing:
     pricelist_schedule:
         active.label: Enabled
         activity.label: Status
-        was_activated: Was activated on %date%.
-        was_deactivated: Was deactivated on %date%.
-        will_be_acitivated: Will become active on %date%.
-        will_be_deacitivated: Will be deactivated on %date%.
-        active_now: Is active now.
-        not_active_now: Is not active now.
+        was_activated: Was activated on
+        was_deactivated: Was deactivated on
+        will_be_acitivated: Will become active on
+        will_be_deacitivated: Will be deactivated on
+        active_now: Is active now
+        not_active_now: Is not active now
         active: Active
         inactive: Inactive
         disabled: Disabled
