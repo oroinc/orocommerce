@@ -1,3 +1,5 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
 {% set pageComponentOptions = {
     'websitesSelector': '#' ~ websites.vars.id,
     'customersSelector': '#' ~ customers.vars.id,
@@ -10,22 +12,14 @@
 {% form_theme showDetailedAssignmentInfo with '@OroPricing/Form/sidebar.html.twig' %}
 {% form_theme showDevelopersInfo with '@OroPricing/Form/sidebar.html.twig' %}
 
-{# TODO: Move me elsewhere #}
-<style>
-    .sidebar-items .date .datepicker-input {
-        width: 165px;
-    }
-    .sidebar-items .date .timepicker-input {
-        width: 100px;
-    }
-</style>
-
-<div class="sidebar-items"
-    data-page-component-module="oropricing/js/app/components/product-price-debug-sidebar-view-component"
-    data-page-component-options="{{ pageComponentOptions|json_encode }}">
-        <div class="websites">{{ form_row(websites) }}</div>
-        <p></p><div class="customers">{{ form_row(customers) }}</div>
-        <p></p><div class="date">{{ form_row(date) }}</div>
-        <p></p><div class="show-detailed-assignment-info">{{ form_row(showDetailedAssignmentInfo) }}</div>
-        <p></p><div class="show-developers-info">{{ form_row(showDevelopersInfo) }}</div>
+<div class="sidebar-items form-vertical"
+    {{ UI.renderPageComponentAttributes({
+        view: 'oropricing/js/app/views/product-price-debug-details-sidebar-view',
+        options: pageComponentOptions|json_encode
+    }) }}>
+    {% if websites is defined %}{{ form_row(websites) }}{% endif %}
+    {% if customers is defined %}{{ form_row(customers) }}{% endif %}
+    {% if date is defined %}{{ form_row(date) }}{% endif %}
+    {% if showDetailedAssignmentInfo is defined %}{{ form_row(showDetailedAssignmentInfo) }}{% endif %}
+    {% if showDevelopersInfo is defined %}{{ form_row(showDevelopersInfo) }}{% endif %}
 </div>

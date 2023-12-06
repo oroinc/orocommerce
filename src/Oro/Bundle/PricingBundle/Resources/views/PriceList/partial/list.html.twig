@@ -9,7 +9,7 @@
         <p>{{ 'oro.pricing.fallback.label'|trans }}: <strong>{{ fallback|trans }}</strong></p>
     </div>
     {% endif %}
-    <div class="clearfix">
+    <div class="clearfix grid-scrollable-container">
         {% if entities %}
             {% set scheduleLabels = {
                 wasActivatedLabel: 'oro.pricing.pricelist_schedule.was_activated',
