@@ -16,16 +16,16 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
     use MemoryCacheProviderAwareTestTrait;
 
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentMethodProvider;
+    protected $paymentMethodProvider;
 
     /** @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentMethodsConfigsRulesProvider;
+    protected $paymentMethodsConfigsRulesProvider;
 
     /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentContext;
+    protected $paymentContext;
 
     /** @var ApplicablePaymentMethodsProvider */
-    private $provider;
+    protected $provider;
 
     protected function setUp(): void
     {
@@ -102,7 +102,7 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
         $this->testGetApplicablePaymentMethods();
     }
 
-    private function getPaymentMethodsConfigsRule(array $configuredMethodTypes): PaymentMethodsConfigsRule
+    protected function getPaymentMethodsConfigsRule(array $configuredMethodTypes): PaymentMethodsConfigsRule
     {
         $methodConfigs = [];
         foreach ($configuredMethodTypes as $configuredMethodType) {
@@ -117,7 +117,7 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
         return $configsRule;
     }
 
-    private function getPaymentMethodConfig(string $configuredMethodType): PaymentMethodConfig
+    protected function getPaymentMethodConfig(string $configuredMethodType): PaymentMethodConfig
     {
         $methodConfig = $this->createMock(PaymentMethodConfig::class);
         $methodConfig->expects($this->exactly(2))
@@ -127,7 +127,7 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
         return $methodConfig;
     }
 
-    private function getPaymentMethod(string $methodType): PaymentMethodInterface
+    protected function getPaymentMethod(string $methodType): PaymentMethodInterface
     {
         $method = $this->createMock(PaymentMethodInterface::class);
         $method->expects($this->never())
