@@ -1531,12 +1531,22 @@ oro_behat_extension:
     MultipleFiles Field:
       selector:
         type: xpath
-        locator: '//h4[contains(., "MultipleFiles")]/parent::*'
+        locator: '//div[contains(@id,"MultipleFiles") and contains(@class,"file-collection")]/parent::*'
+
+    MultipleFiles Backoffice Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id,"grid-MultipleFiles")]/parent::*'
 
     MultipleImages Field:
       selector:
         type: xpath
-        locator: '//h4[contains(., "MultipleImages")]/parent::*'
+        locator: '//div[contains(@id,"MultipleImages") and contains(@class,"file-collection")]/parent::*'
+
+    MultipleImages Backoffice Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id,"grid-MultipleImages")]/parent::*'
 
     Drawing Storefront Field:
       selector:
