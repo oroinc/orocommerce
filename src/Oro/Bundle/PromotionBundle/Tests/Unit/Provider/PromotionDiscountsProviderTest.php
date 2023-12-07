@@ -9,36 +9,27 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Model\MultiShippingPromotionData;
 use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
 use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProvider;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub\DiscountStub;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class PromotionDiscountsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var PromotionProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PromotionProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $promotionProvider;
 
-    /**
-     * @var DiscountFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DiscountFactory|\PHPUnit\Framework\MockObject\MockObject */
     private $discountFactory;
 
-    /**
-     * @var MatchingProductsProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var MatchingProductsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $matchingProductsProvider;
 
-    /**
-     * @var PromotionDiscountsProvider
-     */
-    private $promotionDiscountsProvider;
+    /** @var PromotionDiscountsProvider */
+    private $discountsProvider;
 
     protected function setUp(): void
     {
@@ -46,66 +37,86 @@ class PromotionDiscountsProviderTest extends \PHPUnit\Framework\TestCase
         $this->discountFactory = $this->createMock(DiscountFactory::class);
         $this->matchingProductsProvider = $this->createMock(MatchingProductsProvider::class);
 
-        $this->promotionDiscountsProvider = new PromotionDiscountsProvider(
+        $this->discountsProvider = new PromotionDiscountsProvider(
             $this->promotionProvider,
             $this->discountFactory,
             $this->matchingProductsProvider
         );
     }
 
-    public function testGetDiscounts()
+    private function getSegment(int $id): Segment
     {
-        $lineItems = [new DiscountLineItem(), new DiscountLineItem()];
-        $context = (new DiscountContext())->setLineItems($lineItems);
+        $segment = new Segment();
+        ReflectionUtil::setId($segment, $id);
+
+        return $segment;
+    }
+
+    private function getPromotion(Segment $segment): Promotion
+    {
+        $promotion = new Promotion();
+        $promotion->setDiscountConfiguration(new DiscountConfiguration());
+        $promotion->setProductsSegment($segment);
+
+        return $promotion;
+    }
+
+    private function getMultiShippingPromotion(Segment $segment, array $lineItems): MultiShippingPromotionData
+    {
+        return new MultiShippingPromotionData($this->getPromotion($segment), $lineItems);
+    }
+
+    public function testGetDiscounts(): void
+    {
         $sourceEntity = new Order();
+        $lineItems = [new DiscountLineItem(), new DiscountLineItem()];
 
-        /** @var Segment $firstSegment */
-        $firstSegment = $this->getEntity(Segment::class, ['id' => 1]);
-        $firstPromotion = (new Promotion())
-            ->setDiscountConfiguration(new DiscountConfiguration())
-            ->setProductsSegment($firstSegment);
+        $context = new DiscountContext();
+        $context->setLineItems($lineItems);
 
-        /** @var Segment $secondSegment */
-        $secondSegment = $this->getEntity(Segment::class, ['id' => 2]);
-        $secondPromotion = (new Promotion())
-            ->setDiscountConfiguration(new DiscountConfiguration())
-            ->setProductsSegment($secondSegment);
+        $firstSegment = $this->getSegment(1);
+        $firstPromotion = $this->getPromotion($firstSegment);
 
-        $promotions = [$firstPromotion, $secondPromotion];
+        $secondSegment = $this->getSegment(2);
+        $secondPromotion = $this->getMultiShippingPromotion($secondSegment, [$lineItems[1]]);
 
-        $this->promotionProvider
-            ->expects($this->once())
+        $firstDiscount = new DiscountStub();
+        $secondDiscount = new DiscountStub();
+
+        $this->promotionProvider->expects(self::once())
             ->method('getPromotions')
             ->with($sourceEntity)
-            ->willReturn($promotions);
+            ->willReturn([$firstPromotion, $secondPromotion]);
 
-        $discounts = [new DiscountStub(), new DiscountStub()];
-
-        $this->discountFactory
-            ->expects($this->exactly(2))
+        $this->discountFactory->expects(self::exactly(2))
             ->method('create')
             ->withConsecutive(
                 [$firstPromotion->getDiscountConfiguration(), $firstPromotion],
                 [$secondPromotion->getDiscountConfiguration(), $secondPromotion]
             )
-            ->willReturnOnConsecutiveCalls(...$discounts);
+            ->willReturnOnConsecutiveCalls(
+                $firstDiscount,
+                $secondDiscount
+            );
 
         $firstMatchingProducts = [new Product()];
-        $secondMatchingProducts = [new Product(), new Product()];
-        $this->matchingProductsProvider
-            ->expects($this->exactly(2))
+        $secondMatchingProducts = [new Product()];
+        $this->matchingProductsProvider->expects(self::exactly(2))
             ->method('getMatchingProducts')
-            ->withConsecutive([$firstSegment, $lineItems], [$secondSegment, $lineItems])
-            ->willReturnOnConsecutiveCalls($firstMatchingProducts, $secondMatchingProducts);
+            ->withConsecutive(
+                [$firstSegment, $lineItems],
+                [$secondSegment, $secondPromotion->getLineItems()]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $firstMatchingProducts,
+                $secondMatchingProducts
+            );
 
-        $expectedDiscounts = [
-            (new DiscountStub())->setMatchingProducts($firstMatchingProducts),
-            (new DiscountStub())->setMatchingProducts($secondMatchingProducts)
-        ];
-
-        $this->assertEquals(
-            $expectedDiscounts,
-            $this->promotionDiscountsProvider->getDiscounts($sourceEntity, $context)
-        );
+        $result = $this->discountsProvider->getDiscounts($sourceEntity, $context);
+        self::assertCount(2, $result);
+        self::assertSame($firstDiscount, $result[0]);
+        self::assertSame($firstMatchingProducts, $result[0]->getMatchingProducts());
+        self::assertSame($secondDiscount, $result[1]);
+        self::assertSame($secondMatchingProducts, $result[1]->getMatchingProducts());
     }
 }

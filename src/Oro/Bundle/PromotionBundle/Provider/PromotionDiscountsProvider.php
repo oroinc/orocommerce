@@ -5,6 +5,8 @@ namespace Oro\Bundle\PromotionBundle\Provider;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
+use Oro\Bundle\PromotionBundle\Model\MultiShippingPromotionData;
 
 /**
  * Returns discounts for a given source entity and configures them with matching items.
@@ -37,27 +39,34 @@ class PromotionDiscountsProvider implements PromotionDiscountsProviderInterface
     }
 
     /**
-     * @param object $sourceEntity
-     * @param DiscountContextInterface $context
-     * @return DiscountInterface[]
+     * {@inheritDoc}
      */
     public function getDiscounts($sourceEntity, DiscountContextInterface $context): array
     {
         $discounts = [];
-
-        foreach ($this->promotionProvider->getPromotions($sourceEntity) as $promotion) {
-            $discount = $this->discountFactory->create($promotion->getDiscountConfiguration(), $promotion);
-
-            $discount->setMatchingProducts(
-                $this->matchingProductsProvider->getMatchingProducts(
-                    $promotion->getProductsSegment(),
-                    $context->getLineItems()
-                )
-            );
-
-            $discounts[] = $discount;
+        $promotions = $this->promotionProvider->getPromotions($sourceEntity);
+        foreach ($promotions as $promotion) {
+            $discounts[] = $this->createDiscount($promotion, $context);
         }
 
         return $discounts;
+    }
+
+    private function createDiscount(
+        PromotionDataInterface $promotion,
+        DiscountContextInterface $context
+    ): DiscountInterface {
+        $discount = $this->discountFactory->create($promotion->getDiscountConfiguration(), $promotion);
+        $discount->setMatchingProducts($this->getMatchingProducts($promotion, $context));
+
+        return $discount;
+    }
+
+    private function getMatchingProducts(PromotionDataInterface $promotion, DiscountContextInterface $context): array
+    {
+        return $this->matchingProductsProvider->getMatchingProducts(
+            $promotion->getProductsSegment(),
+            $promotion instanceof MultiShippingPromotionData ? $promotion->getLineItems() : $context->getLineItems()
+        );
     }
 }

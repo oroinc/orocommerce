@@ -206,6 +206,7 @@ services:
     oro_checkout.provider.main_order_promotion_discounts_provider_decorator:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\Promotion\MainOrderPromotionDiscountsProviderDecorator
         decorates: oro_promotion.provider.promotion_discounts_provider
+        decoration_priority: -100
         arguments:
             - '@.inner'
 

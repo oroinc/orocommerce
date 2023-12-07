@@ -74,6 +74,13 @@ services:
             - '@.inner'
             - '@oro_promotion.promotion.context_data_converter_registry'
 
+    oro_promotion.rule_filtration.multi_shipping_promotions_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\MultiShippingFiltrationService
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 5
+        arguments:
+            - '@.inner'
+
     oro_promotion.promotion_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionProvider
         public: false

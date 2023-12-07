@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider;
 
+use Oro\Bundle\CacheBundle\Tests\Unit\Provider\MemoryCacheProviderAwareTestTrait;
 use Oro\Bundle\CheckoutBundle\DataProvider\CheckoutDataProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
@@ -15,8 +16,6 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Component\Validator\ConstraintViolation;
@@ -27,21 +26,29 @@ use Symfony\Contracts\Cache\CacheInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class CheckoutDataProviderTest extends TestCase
+class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
 {
+    use MemoryCacheProviderAwareTestTrait;
+
     private const VALIDATION_GROUPS = [['Default', 'checkout_line_items_data']];
 
-    private ProductLineItemPriceProviderInterface|MockObject $productLineItemPriceProvider;
+    /** @var ProductLineItemPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $productLineItemPriceProvider;
 
-    private CheckoutDataProvider $provider;
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
 
-    private AuthorizationCheckerInterface|MockObject $authorizationChecker;
+    /** @var ResolvedProductVisibilityProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $resolvedProductVisibilityProvider;
 
-    private CheckoutValidationGroupsBySourceEntityProvider|MockObject $validationGroupsProvider;
+    /** @var CheckoutValidationGroupsBySourceEntityProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $validationGroupsProvider;
 
-    private ValidatorInterface|MockObject $validator;
+    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $validator;
 
-    private ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider;
+    /** @var CheckoutDataProvider */
+    private $provider;
 
     private array $processedValidationGroups = [];
 
@@ -49,10 +56,14 @@ class CheckoutDataProviderTest extends TestCase
     {
         $this->productLineItemPriceProvider = $this->createMock(ProductLineItemPriceProviderInterface::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
-        $productAvailabilityCache = $this->createMock(CacheInterface::class);
         $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
         $this->validationGroupsProvider = $this->createMock(CheckoutValidationGroupsBySourceEntityProvider::class);
         $this->validator = $this->createMock(ValidatorInterface::class);
+
+        $productAvailabilityCache = $this->createMock(CacheInterface::class);
+        $productAvailabilityCache->expects(self::any())
+            ->method('get')
+            ->willReturnCallback(fn (string $key, callable $callback) => $callback());
 
         $this->provider = new CheckoutDataProvider(
             $this->productLineItemPriceProvider,
@@ -62,12 +73,9 @@ class CheckoutDataProviderTest extends TestCase
             $this->validationGroupsProvider,
             $this->validator
         );
+        $this->setMemoryCacheProvider($this->provider);
 
         $this->processedValidationGroups = [new GroupSequence(self::VALIDATION_GROUPS)];
-
-        $productAvailabilityCache
-            ->method('get')
-            ->willReturnCallback(fn (string $key, callable $callback) => $callback());
     }
 
     /**
@@ -86,29 +94,52 @@ class CheckoutDataProviderTest extends TestCase
         ];
     }
 
+    public function testGetDataWhenDataAlreadyCached(): void
+    {
+        $checkout = new Checkout();
+
+        $this->resolvedProductVisibilityProvider->expects(self::never())
+            ->method(self::anything());
+
+        $this->productLineItemPriceProvider->expects(self::never())
+            ->method(self::anything());
+
+        $this->authorizationChecker->expects(self::never())
+            ->method(self::anything());
+
+        $this->validationGroupsProvider->expects(self::never())
+            ->method(self::anything());
+
+        $this->validator->expects(self::never())
+            ->method(self::anything());
+
+        $cachedData = [['productSku' => 'TEST']];
+
+        $this->mockMemoryCacheProvider($cachedData);
+
+        self::assertEquals($cachedData, $this->provider->getData($checkout));
+    }
+
     public function testGetDataWhenNoLineItems(): void
     {
         $checkout = new Checkout();
 
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::never())
+        $this->resolvedProductVisibilityProvider->expects(self::never())
             ->method(self::anything());
 
-        $this->productLineItemPriceProvider
-            ->expects(self::never())
+        $this->productLineItemPriceProvider->expects(self::never())
             ->method(self::anything());
 
-        $this->authorizationChecker
-            ->expects(self::never())
+        $this->authorizationChecker->expects(self::never())
             ->method(self::anything());
 
-        $this->validationGroupsProvider
-            ->expects(self::never())
+        $this->validationGroupsProvider->expects(self::never())
             ->method(self::anything());
 
-        $this->validator
-            ->expects(self::never())
+        $this->validator->expects(self::never())
             ->method(self::anything());
+
+        $this->mockMemoryCacheProvider();
 
         self::assertEquals([], $this->provider->getData($checkout));
     }
@@ -119,29 +150,26 @@ class CheckoutDataProviderTest extends TestCase
         $emptyLineItem = new CheckoutLineItem();
         $checkout->addLineItem($emptyLineItem);
 
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::never())
+        $this->resolvedProductVisibilityProvider->expects(self::never())
             ->method(self::anything());
 
-        $this->productLineItemPriceProvider
-            ->expects(self::never())
+        $this->productLineItemPriceProvider->expects(self::never())
             ->method(self::anything());
 
-        $this->authorizationChecker
-            ->expects(self::never())
+        $this->authorizationChecker->expects(self::never())
             ->method(self::anything());
 
-        $this->validationGroupsProvider
-            ->expects(self::once())
+        $this->validationGroupsProvider->expects(self::once())
             ->method('getValidationGroupsBySourceEntity')
             ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
             ->willReturn($this->processedValidationGroups);
 
-        $this->validator
-            ->expects(self::once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
+
+        $this->mockMemoryCacheProvider();
 
         self::assertEquals([
             [
@@ -171,29 +199,26 @@ class CheckoutDataProviderTest extends TestCase
             ->setFreeFormProduct('Sample free form product');
         $checkout->addLineItem($lineItemWithFreeFormProduct);
 
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::never())
+        $this->resolvedProductVisibilityProvider->expects(self::never())
             ->method(self::anything());
 
-        $this->productLineItemPriceProvider
-            ->expects(self::never())
+        $this->productLineItemPriceProvider->expects(self::never())
             ->method(self::anything());
 
-        $this->authorizationChecker
-            ->expects(self::never())
+        $this->authorizationChecker->expects(self::never())
             ->method(self::anything());
 
-        $this->validationGroupsProvider
-            ->expects(self::once())
+        $this->validationGroupsProvider->expects(self::once())
             ->method('getValidationGroupsBySourceEntity')
             ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
             ->willReturn($this->processedValidationGroups);
 
-        $this->validator
-            ->expects(self::once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
+
+        $this->mockMemoryCacheProvider();
 
         self::assertEquals([
             [
@@ -226,29 +251,26 @@ class CheckoutDataProviderTest extends TestCase
             ->setQuantity(3);
         $checkout->addLineItem($lineItemWithFreeFormProduct);
 
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::never())
+        $this->resolvedProductVisibilityProvider->expects(self::never())
             ->method(self::anything());
 
-        $this->productLineItemPriceProvider
-            ->expects(self::never())
+        $this->productLineItemPriceProvider->expects(self::never())
             ->method(self::anything());
 
-        $this->authorizationChecker
-            ->expects(self::never())
+        $this->authorizationChecker->expects(self::never())
             ->method(self::anything());
 
-        $this->validationGroupsProvider
-            ->expects(self::once())
+        $this->validationGroupsProvider->expects(self::once())
             ->method('getValidationGroupsBySourceEntity')
             ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
             ->willReturn($this->processedValidationGroups);
 
-        $this->validator
-            ->expects(self::once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
+
+        $this->mockMemoryCacheProvider();
 
         self::assertEquals([
             [
@@ -286,32 +308,29 @@ class CheckoutDataProviderTest extends TestCase
 
         $checkout->addLineItem($lineItemWithRegularProductWithFixedPrice);
 
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::once())
+        $this->resolvedProductVisibilityProvider->expects(self::once())
             ->method('prefetch')
             ->with([$product->getId()]);
 
-        $this->productLineItemPriceProvider
-            ->expects(self::never())
+        $this->productLineItemPriceProvider->expects(self::never())
             ->method(self::anything());
 
-        $this->authorizationChecker
-            ->expects(self::once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->with(BasicPermission::VIEW, $product)
             ->willReturn(true);
 
-        $this->validationGroupsProvider
-            ->expects(self::once())
+        $this->validationGroupsProvider->expects(self::once())
             ->method('getValidationGroupsBySourceEntity')
             ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
             ->willReturn($this->processedValidationGroups);
 
-        $this->validator
-            ->expects(self::once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
+
+        $this->mockMemoryCacheProvider();
 
         self::assertEquals([
             [
@@ -348,32 +367,29 @@ class CheckoutDataProviderTest extends TestCase
 
         $checkout->addLineItem($lineItemWithRegularProductWithFixedPrice);
 
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::once())
+        $this->resolvedProductVisibilityProvider->expects(self::once())
             ->method('prefetch')
             ->with([$product->getId()]);
 
-        $this->productLineItemPriceProvider
-            ->expects(self::never())
+        $this->productLineItemPriceProvider->expects(self::never())
             ->method(self::anything());
 
-        $this->authorizationChecker
-            ->expects(self::once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->with(BasicPermission::VIEW, $product)
             ->willReturn(true);
 
-        $this->validationGroupsProvider
-            ->expects(self::once())
+        $this->validationGroupsProvider->expects(self::once())
             ->method('getValidationGroupsBySourceEntity')
             ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
             ->willReturn($this->processedValidationGroups);
 
-        $this->validator
-            ->expects(self::once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
+
+        $this->mockMemoryCacheProvider();
 
         self::assertEquals([
             [
@@ -412,8 +428,7 @@ class CheckoutDataProviderTest extends TestCase
         $checkout->removeLineItem($lineItemWithRegularProductWithNotFixedPrice);
         $checkout->addLineItem($lineItemWithRegularProductWithNotFixedPrice);
 
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::once())
+        $this->resolvedProductVisibilityProvider->expects(self::once())
             ->method('prefetch')
             ->with([$product->getId()]);
 
@@ -422,31 +437,29 @@ class CheckoutDataProviderTest extends TestCase
             Price::create(123.4567, 'USD'),
             123.4567 * 3
         );
-        $this->productLineItemPriceProvider
-            ->expects(self::once())
+        $this->productLineItemPriceProvider->expects(self::once())
             ->method('getProductLineItemsPrices')
             ->with([1 => $lineItemWithRegularProductWithNotFixedPrice])
             ->willReturn([1 => $lineItemPrice]);
 
-        $this->authorizationChecker
-            ->expects(self::once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->with(BasicPermission::VIEW, $product)
             ->willReturn(true);
 
-        $this->validationGroupsProvider
-            ->expects(self::once())
+        $this->validationGroupsProvider->expects(self::once())
             ->method('getValidationGroupsBySourceEntity')
             ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
             ->willReturn($this->processedValidationGroups);
 
-        $this->validator
-            ->expects(self::once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
 
-        $expected = [
+        $this->mockMemoryCacheProvider();
+
+        self::assertEquals([
             [
                 'productSku' => $product->getSku(),
                 'comment' => null,
@@ -464,11 +477,7 @@ class CheckoutDataProviderTest extends TestCase
                 'checksum' => '',
                 'kitItemLineItems' => [],
             ],
-        ];
-        self::assertEquals($expected, $this->provider->getData($checkout));
-
-        // Checks local cache in AbstractCheckoutProvider::getData.
-        self::assertEquals($expected, $this->provider->getData($checkout));
+        ], $this->provider->getData($checkout));
     }
 
     public function testGetDataWhenRegularProductWithNotFixedPriceWhenNoPrice(): void
@@ -484,34 +493,31 @@ class CheckoutDataProviderTest extends TestCase
 
         $checkout->addLineItem($lineItemWithRegularProductWithNotFixedPrice);
 
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::once())
+        $this->resolvedProductVisibilityProvider->expects(self::once())
             ->method('prefetch')
             ->with([$product->getId()]);
 
-        $this->productLineItemPriceProvider
-            ->expects(self::once())
+        $this->productLineItemPriceProvider->expects(self::once())
             ->method('getProductLineItemsPrices')
             ->with([$lineItemWithRegularProductWithNotFixedPrice])
             ->willReturn([]);
 
-        $this->authorizationChecker
-            ->expects(self::once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->with(BasicPermission::VIEW, $product)
             ->willReturn(true);
 
-        $this->validationGroupsProvider
-            ->expects(self::once())
+        $this->validationGroupsProvider->expects(self::once())
             ->method('getValidationGroupsBySourceEntity')
             ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
             ->willReturn($this->processedValidationGroups);
 
-        $this->validator
-            ->expects(self::once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
+
+        $this->mockMemoryCacheProvider();
 
         self::assertEquals([
             [
@@ -549,27 +555,22 @@ class CheckoutDataProviderTest extends TestCase
 
         $checkout->addLineItem($lineItemWithRegularProductWithNotFixedPrice);
 
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::once())
+        $this->resolvedProductVisibilityProvider->expects(self::once())
             ->method('prefetch')
             ->with([$product->getId()]);
 
-        $this->productLineItemPriceProvider
-            ->expects(self::never())
+        $this->productLineItemPriceProvider->expects(self::never())
             ->method('getProductLineItemsPrices');
 
-        $this->authorizationChecker
-            ->expects(self::never())
+        $this->authorizationChecker->expects(self::never())
             ->method('isGranted');
 
-        $this->validationGroupsProvider
-            ->expects(self::once())
+        $this->validationGroupsProvider->expects(self::once())
             ->method('getValidationGroupsBySourceEntity')
             ->with(self::VALIDATION_GROUPS, $shoppingList)
             ->willReturn($this->processedValidationGroups);
 
-        $this->validator
-            ->expects(self::once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(
@@ -586,6 +587,8 @@ class CheckoutDataProviderTest extends TestCase
                     ]
                 )
             );
+
+        $this->mockMemoryCacheProvider();
 
         self::assertEquals([], $this->provider->getData($checkout));
     }
@@ -605,29 +608,24 @@ class CheckoutDataProviderTest extends TestCase
 
         $checkout->addLineItem($lineItemWithRegularProductWithNotFixedPrice);
 
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::once())
+        $this->resolvedProductVisibilityProvider->expects(self::once())
             ->method('prefetch')
             ->with([$product->getId()]);
 
-        $this->productLineItemPriceProvider
-            ->expects(self::never())
+        $this->productLineItemPriceProvider->expects(self::never())
             ->method('getProductLineItemsPrices');
 
-        $this->authorizationChecker
-            ->expects(self::once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->with(BasicPermission::VIEW, $product)
             ->willReturn(false);
 
-        $this->validationGroupsProvider
-            ->expects(self::once())
+        $this->validationGroupsProvider->expects(self::once())
             ->method('getValidationGroupsBySourceEntity')
             ->with(self::VALIDATION_GROUPS, $shoppingList)
             ->willReturn($this->processedValidationGroups);
 
-        $this->validator
-            ->expects(self::once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(
@@ -644,6 +642,8 @@ class CheckoutDataProviderTest extends TestCase
                     ]
                 )
             );
+
+        $this->mockMemoryCacheProvider();
 
         self::assertEquals([], $this->provider->getData($checkout));
     }
@@ -663,29 +663,24 @@ class CheckoutDataProviderTest extends TestCase
 
         $checkout->addLineItem($lineItemWithRegularProductWithNotFixedPrice);
 
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::once())
+        $this->resolvedProductVisibilityProvider->expects(self::once())
             ->method('prefetch')
             ->with([$product->getId()]);
 
-        $this->productLineItemPriceProvider
-            ->expects(self::never())
+        $this->productLineItemPriceProvider->expects(self::never())
             ->method('getProductLineItemsPrices');
 
-        $this->authorizationChecker
-            ->expects(self::once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->with(BasicPermission::VIEW, $product)
             ->willReturn(false);
 
-        $this->validationGroupsProvider
-            ->expects(self::once())
+        $this->validationGroupsProvider->expects(self::once())
             ->method('getValidationGroupsBySourceEntity')
             ->with(self::VALIDATION_GROUPS, $shoppingList)
             ->willReturn($this->processedValidationGroups);
 
-        $this->validator
-            ->expects(self::once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(
@@ -703,6 +698,8 @@ class CheckoutDataProviderTest extends TestCase
                 )
             );
 
+        $this->mockMemoryCacheProvider();
+
         self::assertEquals([], $this->provider->getData($checkout));
     }
 
@@ -719,32 +716,29 @@ class CheckoutDataProviderTest extends TestCase
 
         $checkout->addLineItem($lineItemWithRegularProductWithNotFixedPrice);
 
-        $this->resolvedProductVisibilityProvider
-            ->expects(self::once())
+        $this->resolvedProductVisibilityProvider->expects(self::once())
             ->method('prefetch')
             ->with([$product->getId()]);
 
-        $this->productLineItemPriceProvider
-            ->expects(self::never())
+        $this->productLineItemPriceProvider->expects(self::never())
             ->method('getProductLineItemsPrices');
 
-        $this->authorizationChecker
-            ->expects(self::once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->with(BasicPermission::VIEW, $product)
             ->willReturn(false);
 
-        $this->validationGroupsProvider
-            ->expects(self::once())
+        $this->validationGroupsProvider->expects(self::once())
             ->method('getValidationGroupsBySourceEntity')
             ->with(self::VALIDATION_GROUPS, $checkout->getSourceEntity())
             ->willReturn($this->processedValidationGroups);
 
-        $this->validator
-            ->expects(self::once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
+
+        $this->mockMemoryCacheProvider();
 
         self::assertEquals([], $this->provider->getData($checkout));
     }

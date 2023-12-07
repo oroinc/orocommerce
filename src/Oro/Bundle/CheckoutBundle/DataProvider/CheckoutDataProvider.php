@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\DataProvider;
 
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem;
@@ -25,13 +26,14 @@ use Symfony\Contracts\Cache\CacheInterface;
  */
 class CheckoutDataProvider extends AbstractCheckoutProvider
 {
+    use MemoryCacheProviderAwareTrait;
+
     private ProductLineItemPriceProviderInterface $productLineItemPriceProvider;
     private AuthorizationCheckerInterface $authorizationChecker;
     private CacheInterface $productAvailabilityCache;
     private ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider;
     private CheckoutValidationGroupsBySourceEntityProvider $validationGroupsProvider;
     private ValidatorInterface $validator;
-
     /** @var array<string|array<string>>  */
     private array $validationGroups = [['Default', 'checkout_line_items_data']];
 
@@ -57,6 +59,19 @@ class CheckoutDataProvider extends AbstractCheckoutProvider
     public function setValidationGroups(array $validationGroups): void
     {
         $this->validationGroups = $validationGroups;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getData($entity)
+    {
+        return $this->getMemoryCacheProvider()->get(
+            ['checkout' => $entity],
+            function () use ($entity) {
+                return $this->prepareData($entity);
+            }
+        );
     }
 
     /**

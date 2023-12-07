@@ -672,6 +672,8 @@ services:
             - '@oro_visibility.provider.resolved_product_visibility_provider'
             - '@oro_checkout.provider.checkout_validation_groups_by_source_entity'
             - '@validator'
+        calls:
+            - [setMemoryCacheProvider, ['@oro_checkout.data_provider.checkout.cache']]
         tags:
             -
                 name: checkout.data_provider.line_item
@@ -691,6 +693,9 @@ services:
         tags:
             - { name: oro_pricing.subtotal_provider, alias: oro.checkout.subtotals.checkout_subtotal }
             - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
+
+    oro_checkout.data_provider.checkout.cache:
+        parent: oro.cache.provider.memory_cache
 
     oro_checkout.provider.subtotal:
         class: 'Oro\Bundle\CheckoutBundle\Provider\SubtotalProvider'

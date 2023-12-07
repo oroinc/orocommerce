@@ -15,34 +15,22 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var DiscountContextConverterInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var DiscountContextConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $discountContextConverter;
 
-    /**
-     * @var StrategyProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var StrategyProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $discountStrategyProvider;
 
-    /**
-     * @var PromotionDiscountsProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PromotionDiscountsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $promotionDiscountsProvider;
 
-    /**
-     * @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
-    /**
-     * @var ObjectCacheKeyGenerator|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ObjectCacheKeyGenerator|\PHPUnit\Framework\MockObject\MockObject */
     private $objectCacheKeyGenerator;
 
-    /**
-     * @var PromotionExecutor
-     */
+    /** @var PromotionExecutor */
     private $executor;
 
     protected function setUp(): void
@@ -60,98 +48,103 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    private function injectCache(): void
+    {
+        $this->executor->setCache($this->cache);
+        $this->executor->setObjectCacheKeyGenerator($this->objectCacheKeyGenerator);
+    }
+
     public function testExecuteNoDiscounts(): void
     {
         $sourceEntity = new \stdClass();
         $discountContext = new DiscountContext();
 
-        $this->discountContextConverter->expects($this->once())
+        $this->discountContextConverter->expects(self::once())
             ->method('convert')
             ->with($sourceEntity)
             ->willReturn($discountContext);
 
-        $this->promotionDiscountsProvider->expects($this->once())
+        $this->promotionDiscountsProvider->expects(self::once())
             ->method('getDiscounts')
             ->with($sourceEntity, $discountContext)
             ->willReturn([]);
 
-        $this->discountStrategyProvider->expects($this->never())
+        $this->discountStrategyProvider->expects(self::never())
             ->method($this->anything());
 
-        $this->assertSame($discountContext, $this->executor->execute($sourceEntity));
+        self::assertSame($discountContext, $this->executor->execute($sourceEntity));
     }
 
-    public function testExecute(): void
+    public function testExecuteWhenDataNotCached(): void
     {
         $sourceEntity = new \stdClass();
         $discountContext = new DiscountContext();
+        $cacheKey = 'cache_key';
 
-        $cacheKey = md5(serialize($sourceEntity));
-        $this->objectCacheKeyGenerator->expects($this->once())
+        $this->objectCacheKeyGenerator->expects(self::once())
             ->method('generate')
             ->with($sourceEntity, 'promotion')
             ->willReturn($cacheKey);
-        $this->cache->expects($this->once())
+        $this->cache->expects(self::once())
             ->method('get')
             ->with($cacheKey)
             ->willReturnCallback(function ($cacheKey, $callback) {
-                $item = $this->createMock(ItemInterface::class);
-                return $callback($item);
+                return $callback($this->createMock(ItemInterface::class));
             });
 
         $this->injectCache();
 
-        $this->discountContextConverter->expects($this->once())
+        $this->discountContextConverter->expects(self::once())
             ->method('convert')
             ->with($sourceEntity)
             ->willReturn($discountContext);
 
         $discounts = [$this->createMock(DiscountInterface::class), $this->createMock(DiscountInterface::class)];
 
-        $this->promotionDiscountsProvider->expects($this->once())
+        $this->promotionDiscountsProvider->expects(self::once())
             ->method('getDiscounts')
             ->with($sourceEntity, $discountContext)
             ->willReturn($discounts);
 
         $strategy = $this->createMock(StrategyInterface::class);
-        $this->discountStrategyProvider->expects($this->once())
+        $this->discountStrategyProvider->expects(self::once())
             ->method('getActiveStrategy')
             ->willReturn($strategy);
 
         $modifiedContext = new DiscountContext();
-        $strategy->expects($this->once())
+        $strategy->expects(self::once())
             ->method('process')
             ->with($discountContext, $discounts)
             ->willReturn($modifiedContext);
 
-        $this->assertSame($modifiedContext, $this->executor->execute($sourceEntity));
+        self::assertSame($modifiedContext, $this->executor->execute($sourceEntity));
     }
 
-    public function testExecuteWithCache(): void
+    public function testExecuteWhenDataCached(): void
     {
         $sourceEntity = new \stdClass();
         $discountContext = new DiscountContext();
+        $cacheKey = 'cache_key';
 
-        $cacheKey = md5(serialize($sourceEntity));
-        $this->objectCacheKeyGenerator->expects($this->once())
+        $this->objectCacheKeyGenerator->expects(self::once())
             ->method('generate')
             ->with($sourceEntity, 'promotion')
             ->willReturn($cacheKey);
-        $this->cache->expects($this->once())
+        $this->cache->expects(self::once())
             ->method('get')
             ->with($cacheKey)
             ->willReturn($discountContext);
 
         $this->injectCache();
 
-        $this->discountContextConverter->expects($this->never())
+        $this->discountContextConverter->expects(self::never())
             ->method('convert');
-        $this->promotionDiscountsProvider->expects($this->never())
+        $this->promotionDiscountsProvider->expects(self::never())
             ->method('getDiscounts');
-        $this->discountStrategyProvider->expects($this->never())
+        $this->discountStrategyProvider->expects(self::never())
             ->method('getActiveStrategy');
 
-        $this->assertSame($discountContext, $this->executor->execute($sourceEntity));
+        self::assertSame($discountContext, $this->executor->execute($sourceEntity));
     }
 
     public function testExecuteWithoutCache(): void
@@ -159,61 +152,84 @@ class PromotionExecutorTest extends \PHPUnit\Framework\TestCase
         $sourceEntity = new \stdClass();
         $discountContext = new DiscountContext();
 
-        $this->objectCacheKeyGenerator->expects($this->never())
+        $this->objectCacheKeyGenerator->expects(self::never())
             ->method('generate');
-        $this->cache->expects($this->never())
+        $this->cache->expects(self::never())
             ->method('get');
 
-        $this->discountContextConverter->expects($this->once())
+        $this->discountContextConverter->expects(self::once())
             ->method('convert')
             ->with($sourceEntity)
             ->willReturn($discountContext);
 
         $discounts = [$this->createMock(DiscountInterface::class), $this->createMock(DiscountInterface::class)];
 
-        $this->promotionDiscountsProvider->expects($this->once())
+        $this->promotionDiscountsProvider->expects(self::once())
             ->method('getDiscounts')
             ->with($sourceEntity, $discountContext)
             ->willReturn($discounts);
 
         $strategy = $this->createMock(StrategyInterface::class);
-        $this->discountStrategyProvider->expects($this->once())
+        $this->discountStrategyProvider->expects(self::once())
             ->method('getActiveStrategy')
             ->willReturn($strategy);
 
         $modifiedContext = new DiscountContext();
-        $strategy->expects($this->once())
+        $strategy->expects(self::once())
             ->method('process')
             ->with($discountContext, $discounts)
             ->willReturn($modifiedContext);
 
-        $this->assertSame($modifiedContext, $this->executor->execute($sourceEntity));
+        self::assertSame($modifiedContext, $this->executor->execute($sourceEntity));
+    }
+
+    public function testExecuteWhenNoActiveStrategy(): void
+    {
+        $sourceEntity = new \stdClass();
+        $discountContext = new DiscountContext();
+
+        $this->objectCacheKeyGenerator->expects(self::never())
+            ->method('generate');
+        $this->cache->expects(self::never())
+            ->method('get');
+
+        $this->discountContextConverter->expects(self::once())
+            ->method('convert')
+            ->with($sourceEntity)
+            ->willReturn($discountContext);
+
+        $discounts = [$this->createMock(DiscountInterface::class), $this->createMock(DiscountInterface::class)];
+
+        $this->promotionDiscountsProvider->expects(self::once())
+            ->method('getDiscounts')
+            ->with($sourceEntity, $discountContext)
+            ->willReturn($discounts);
+
+        $this->discountStrategyProvider->expects(self::once())
+            ->method('getActiveStrategy')
+            ->willReturn(null);
+
+        self::assertSame($discountContext, $this->executor->execute($sourceEntity));
     }
 
     /**
-     * @dataProvider trueFalseDataProvider
+     * @dataProvider supportsDataProvider
      */
     public function testSupports(bool $result): void
     {
         $entity = new \stdClass();
-        $this->discountContextConverter->expects($this->once())
+        $this->discountContextConverter->expects(self::once())
             ->method('supports')
             ->willReturn($result);
 
-        $this->assertSame($result, $this->executor->supports($entity));
+        self::assertSame($result, $this->executor->supports($entity));
     }
 
-    public function trueFalseDataProvider(): array
+    public function supportsDataProvider(): array
     {
         return [
             [true],
             [false]
         ];
-    }
-
-    private function injectCache(): void
-    {
-        $this->executor->setCache($this->cache);
-        $this->executor->setObjectCacheKeyGenerator($this->objectCacheKeyGenerator);
     }
 }
