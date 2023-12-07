@@ -6,7 +6,8 @@
         {% include '@OroPricing/PriceList/partial/list.html.twig'
             with {
                 'fallback': fallback,
-                'entities': entities
+                'entities': entities,
+                'headLink': headLink|default(null)
             }
         %}
     {% else %}

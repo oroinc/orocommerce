@@ -112,14 +112,13 @@
                     {% for assignments in price_list_assignments %}
                         <h6 class="terms-title-divider">{{ assignments.section_title }}</h6>
                         {% set assignmentsContent %}
-                            {{ UI.link({
-                                'path': assignments.link,
-                                'label': assignments.link_title
-                            }) }}
-
                             {% include '@OroPricing/Customer/price_list_view.html.twig' with {
                                 'fallback': assignments.fallback,
-                                'priceLists': assignments.priceLists
+                                'priceLists': assignments.priceLists,
+                                'headLink': UI.link({
+                                    'path': assignments.link,
+                                    'label': assignments.link_title
+                                })
                             } %}
                         {% endset %}
                         {{ UI.renderHtmlProperty(null, assignmentsContent, null, null, {
