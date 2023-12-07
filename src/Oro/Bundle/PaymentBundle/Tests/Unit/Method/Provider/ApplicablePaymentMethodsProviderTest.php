@@ -18,35 +18,35 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $paymentMethodProviderMock;
+    protected $paymentMethodProvider;
 
     /**
      * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $paymentMethodsConfigsRulesProviderMock;
+    protected $paymentMethodsConfigsRulesProvider;
 
     /**
      * @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private $paymentContextMock;
+    protected $paymentContext;
 
     /**
      * @var ApplicablePaymentMethodsProvider
      */
-    private $provider;
+    protected $provider;
 
     protected function setUp(): void
     {
-        $this->paymentMethodProviderMock = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
 
-        $this->paymentMethodsConfigsRulesProviderMock = $this
+        $this->paymentMethodsConfigsRulesProvider = $this
             ->createMock(MethodsConfigsRulesByContextProviderInterface::class);
 
-        $this->paymentContextMock = $this->createMock(PaymentContextInterface::class);
+        $this->paymentContext = $this->createMock(PaymentContextInterface::class);
 
         $this->provider = new ApplicablePaymentMethodsProvider(
-            $this->paymentMethodProviderMock,
-            $this->paymentMethodsConfigsRulesProviderMock
+            $this->paymentMethodProvider,
+            $this->paymentMethodsConfigsRulesProvider
         );
     }
 
@@ -58,26 +58,26 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             $paymentMethods,
-            $this->provider->getApplicablePaymentMethods($this->paymentContextMock)
+            $this->provider->getApplicablePaymentMethods($this->paymentContext)
         );
     }
 
     public function testGetApplicablePaymentMethods()
     {
-        $configsRules[] = $this->createPaymentMethodsConfigsRuleMock(['SomeType']);
-        $configsRules[] = $this->createPaymentMethodsConfigsRuleMock(['PayPal', 'SomeOtherType']);
+        $configsRules[] = $this->getPaymentMethodsConfigsRule(['SomeType']);
+        $configsRules[] = $this->getPaymentMethodsConfigsRule(['PayPal', 'SomeOtherType']);
 
-        $this->paymentMethodsConfigsRulesProviderMock
+        $this->paymentMethodsConfigsRulesProvider
             ->expects($this->once())
             ->method('getPaymentMethodsConfigsRules')
-            ->with($this->paymentContextMock)
+            ->with($this->paymentContext)
             ->willReturn($configsRules);
 
-        $someTypeMethodMock = $this->createPaymentMethodMock('SomeType');
-        $payPalMethodMock = $this->createPaymentMethodMock('PayPal');
-        $someOtherTypeMethodMock = $this->createPaymentMethodMock('SomeOtherType');
+        $someTypeMethodMock = $this->getPaymentMethod('SomeType');
+        $payPalMethodMock = $this->getPaymentMethod('PayPal');
+        $someOtherTypeMethodMock = $this->getPaymentMethod('SomeOtherType');
 
-        $this->paymentMethodProviderMock
+        $this->paymentMethodProvider
             ->expects($this->any())
             ->method('hasPaymentMethod')
             ->willReturnMap([
@@ -86,7 +86,7 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
                 ['SomeOtherType', true],
             ]);
 
-        $this->paymentMethodProviderMock
+        $this->paymentMethodProvider
             ->expects($this->any())
             ->method('getPaymentMethod')
             ->willReturnMap([
@@ -101,7 +101,7 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
             'SomeOtherType' => $someOtherTypeMethodMock,
         ];
 
-        $paymentMethods = $this->provider->getApplicablePaymentMethods($this->paymentContextMock);
+        $paymentMethods = $this->provider->getApplicablePaymentMethods($this->paymentContext);
 
         $this->assertEquals($expectedPaymentMethodsMocks, $paymentMethods);
     }
@@ -119,7 +119,7 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
      *
      * @return PaymentMethodsConfigsRule|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function createPaymentMethodsConfigsRuleMock(array $configuredMethodTypes)
+    protected function getPaymentMethodsConfigsRule(array $configuredMethodTypes)
     {
         $methodConfigMocks = [];
         foreach ($configuredMethodTypes as $configuredMethodType) {
@@ -143,7 +143,7 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
      *
      * @return PaymentMethodConfig|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function createPaymentMethodConfigMock($configuredMethodType)
+    protected function createPaymentMethodConfigMock($configuredMethodType)
     {
         $methodConfigMock = $this->getMockBuilder(PaymentMethodConfig::class)
             ->disableOriginalConstructor()
@@ -162,7 +162,7 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
      *
      * @return PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function createPaymentMethodMock($methodType)
+    protected function getPaymentMethod($methodType)
     {
         /** @var PaymentMethodInterface|\PHPUnit\Framework\MockObject\MockObject $method */
         $method = $this->createMock(PaymentMethodInterface::class);

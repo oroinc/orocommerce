@@ -104,6 +104,16 @@ define(function(require) {
             this.$form.validate();
 
             if (this.$form.valid()) {
+                const eventData = {
+                    stopped: false,
+                    event: e
+                };
+
+                mediator.trigger('checkout:before-submit', eventData);
+                if (eventData.stopped) {
+                    return;
+                }
+
                 this.transit(e, {method: 'POST'});
             }
         },
