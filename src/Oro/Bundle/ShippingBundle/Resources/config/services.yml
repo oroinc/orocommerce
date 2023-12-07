@@ -561,6 +561,5 @@ services:
 
     oro_shipping.multi_shipping.cost_provider:
         class: Oro\Bundle\ShippingBundle\Provider\MultiShippingCostProvider
-        lazy: true
         arguments:
             - '@oro_checkout.provider.multi_shipping.single_line_item_shipping_price'

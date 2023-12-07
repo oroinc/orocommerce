@@ -10,7 +10,7 @@ use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
- * This class fills context with discounts' information for a given source entity using currently selected strategy.
+ * Fills context with discounts' information for a given source entity using currently selected strategy.
  */
 class PromotionExecutor
 {
@@ -42,12 +42,15 @@ class PromotionExecutor
 
     public function execute(object $sourceEntity): DiscountContextInterface
     {
-        if ($this->cache && $this->objectCacheKeyGenerator) {
-            $cacheKey = $this->objectCacheKeyGenerator->generate($sourceEntity, 'promotion');
-            return $this->cache->get($cacheKey, function () use ($sourceEntity) {
-                return $this->calculateDiscountContext($sourceEntity);
-            });
+        if (null !== $this->cache && null !== $this->objectCacheKeyGenerator) {
+            return $this->cache->get(
+                $this->objectCacheKeyGenerator->generate($sourceEntity, 'promotion'),
+                function () use ($sourceEntity) {
+                    return $this->calculateDiscountContext($sourceEntity);
+                }
+            );
         }
+
         return $this->calculateDiscountContext($sourceEntity);
     }
 
@@ -60,11 +63,13 @@ class PromotionExecutor
     {
         $discountContext = $this->discountContextConverter->convert($sourceEntity);
         $discounts = $this->promotionDiscountsProvider->getDiscounts($sourceEntity, $discountContext);
-
         if ($discounts) {
             $strategy = $this->discountStrategyProvider->getActiveStrategy();
-            $discountContext = $strategy->process($discountContext, $discounts);
+            if (null !== $strategy) {
+                $discountContext = $strategy->process($discountContext, $discounts);
+            }
         }
+
         return $discountContext;
     }
 }

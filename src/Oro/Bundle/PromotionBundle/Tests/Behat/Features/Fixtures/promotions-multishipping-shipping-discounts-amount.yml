@@ -1,0 +1,45 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    multiShippingFlatRateShippingDiscountLabel:
+        string: 'Shipping Discount'
+    multiShippingFlatRateShippingDiscountDescription:
+        string: 'Shipping Discount Description'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    multiShippingFlatRateShippingDiscountSegmentAllProducts:
+        name: 'Shipping Discount Products'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"value":0,"type":2}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    multiShippingFlatRateShippingDiscountDiscountConfiguration:
+        type: 'shipping'
+        options:
+            discount_type: 'amount'
+            discount_value: 1.0
+            discount_currency: 'USD'
+            shipping_options:
+                shipping_method: '<("flat_rate_".@flatRateIntegration->getId())>'
+                shipping_method_type: 'primary'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    multiShippingFlatRateShippingDiscountRule:
+        name: 'Shipping Discount'
+        enabled: true
+        sortOrder: 1
+        expression: 'subtotal \>= 20'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    multiShippingFlatRateShippingDiscount:
+        __calls:
+            - addLabel: ['@multiShippingFlatRateShippingDiscountLabel']
+            - addDescription: ['@multiShippingFlatRateShippingDiscountDescription']
+            - addScope: ['@default_scope']
+        productsSegment: '@multiShippingFlatRateShippingDiscountSegmentAllProducts'
+        rule: '@multiShippingFlatRateShippingDiscountRule'
+        discountConfiguration: '@multiShippingFlatRateShippingDiscountDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false
