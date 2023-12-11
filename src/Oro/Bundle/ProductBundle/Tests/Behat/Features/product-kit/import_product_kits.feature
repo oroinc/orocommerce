@@ -1,6 +1,7 @@
 @skip
 @feature-BB-21122
 @ticket-BB-22959
+@ticket-BB-22594
 @fixture-OroProductBundle:ProductKitsImportFixture.yml
 
 Feature: Import Product Kits
@@ -20,9 +21,9 @@ Feature: Import Product Kits
   Scenario: Check imported product kits
     Given I go to Products/Products
     Then I should see following grid:
-      | SKU       | Name    |
-      | PSKU_KIT2 | 0000124 |
-      | PSKU_KIT1 | 0000123 |
+      | SKU       | Name    | Status  |
+      | PSKU_KIT2 | 0000124 | Enabled |
+      | PSKU_KIT1 | 0000123 | Enabled |
     When click view "PSKU_KIT1" in grid
     Then I should see ",My, =Escaped= \"Kit\" 'Item' Optional No Minimum Quantity 1 Maximum Quantity 2 Unit Of Quantity set (fractional, 1 decimal digit) Products PSKU1 - Product 1 PSKU2 - Product 2 PSKU3 - Product 3" in the "Product Kit Item 1" element
     And I should see "Barcode Scanner Optional No Minimum Quantity 1 Maximum Quantity 1 Unit Of Quantity item (fractional, 1 decimal digit) Products PSKU2 - Product 2" in the "Product Kit Item 2" element
@@ -32,9 +33,9 @@ Feature: Import Product Kits
     Given I go to Products/Products
     When click view "PSKU_KIT2" in grid
     Then I should see product with:
-      | SKU            | PSKU_KIT2 |
-      | Name           | 0000124   |
-      | Type           | Kit       |
+      | SKU  | PSKU_KIT2 |
+      | Name | 0000124   |
+      | Type | Kit       |
     And I should see "Additional Card Reader(S) Optional Yes Minimum Quantity 1 Maximum Quantity N/A Unit Of Quantity item (fractional, 1 decimal digit) Products PSKU2 - Product 2" in the "Product Kit Item 1" element
     When I click "Kit Item 1 Toggler"
     Then records in "Kit Item 1 Products Grid" should be 1
@@ -52,13 +53,13 @@ Feature: Import Product Kits
   Scenario: Check updated product kit after import operation
     Given I go to Products/Products
     Then I should see following grid:
-      | SKU       | Name    |
-      | PSKU_KIT2 | 0000125 |
+      | SKU       | Name    | Status   |
+      | PSKU_KIT2 | 0000125 | Disabled |
     When click view "PSKU_KIT2" in grid
     Then I should see product with:
-      | SKU            | PSKU_KIT2 |
-      | Name           | 0000125   |
-      | Type           | Kit       |
+      | SKU  | PSKU_KIT2 |
+      | Name | 0000125   |
+      | Type | Kit       |
     And I should see "Additional Card Update Optional No Minimum Quantity 1 Maximum Quantity 2 Unit Of Quantity set (fractional, 1 decimal digit) Products PSKU1 - Product 1 PSKU2 - Product 2" in the "Product Kit Item 1" element
     When I click "Kit Item 1 Toggler"
     Then records in "Kit Item 1 Products Grid" should be 2
@@ -75,8 +76,42 @@ Feature: Import Product Kits
     Then Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
     When I go to Products/Products
     Then I should see following grid:
-      | SKU       | Name    |
-      | PSKU_KIT3 | 0000126 |
-      | PSKU5     | 0000127 |
+      | SKU       | Name    | Status  |
+      | PSKU_KIT3 | 0000126 | Enabled |
+      | PSKU5     | 0000127 | Enabled |
     When click view "PSKU_KIT3" in grid
     Then I should see "Card Optional No Minimum Quantity 1 Maximum Quantity 2 Unit Of Quantity item (fractional, 1 decimal digit) Products PSKU2 - Product 2 PSKU5 - 0000127" in the "Product Kit Item 1" element
+
+  Scenario: Check import product kits when all products from all required kit items available
+    Given I go to Products/Products
+    And I open "Products" import tab
+    And I download "Products" Data Template file with processor "oro_product_product_export_template"
+    And I fill product KitItems template divided by "\n" delimiter with data:
+      | Product Family.Code | Name.default.value | Description.default.value | SKU       | Status   | Type   | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | Kit Items                                                                                                                                                    |
+      | default_family      | 0000128            | Product Description 4     | PSKU_KIT4 | disabled | kit    | in_stock            | item                       | 1                          | label="Scanner",optional=false,products=PSKU2\|PSKU5,min_qty=1,max_qty=2,unit=item\nlabel="Card",optional=false,products=PSKU2,min_qty=1,max_qty=2,unit=item |
+    When I import file
+    Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
+    When I go to Products/Products
+    Then I should see following grid:
+      | SKU       | Name    | Status   |
+      | PSKU_KIT4 | 0000128 | Disabled |
+
+  Scenario: Check duplicate operation when all products from any of the required kit items unavailable
+    Given I go to Products/Products
+    When click edit "PSKU5" in grid
+    And I fill "ProductForm" with:
+      | Status | Disabled |
+    And I save and close form
+    Then I should see "Product has been saved" flash message
+    And I go to Products/Products
+    And I open "Products" import tab
+    And I download "Products" Data Template file with processor "oro_product_product_export_template"
+    And I fill product KitItems template divided by "\n" delimiter with data:
+      | Product Family.Code | Name.default.value | Description.default.value | SKU       | Status  | Type   | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | Kit Items                                                                                                                                                   |
+      | default_family      | 0000129            | Product Description 5     | PSKU_KIT5 | enabled | kit    | in_stock            | item                       | 1                          | label="Scanner",optional=true,products=PSKU2\|PSKU5,min_qty=1,max_qty=2,unit=item\nlabel="Card",optional=false,products=PSKU5,min_qty=1,max_qty=2,unit=item |
+    When I import file
+    Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
+    When I go to Products/Products
+    Then I should see following grid:
+      | SKU       | Name    | Status   |
+      | PSKU_KIT5 | 0000129 | Disabled |
