@@ -95,6 +95,7 @@ oro.cms:
         widget_type.label: Type
         layout.label: Layout
         settings.label: Settings
+        labels.label: Labels
         feature:
             label: Content Widgets
             description: Enables creating and managing content widgets, such an image slider, contact us form, product mini block, and a product segment.

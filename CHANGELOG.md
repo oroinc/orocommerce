@@ -54,6 +54,7 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener` that switches status and inventory status of a product kit depending on its kit item products.
 * Disabled the ability to add a product kit to Quick Order Form via `\Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler::setNotAllowedProductTypes`.
 * Removed the `oro_product.popup_gallery_on_product_view` option from the system configuration.
+* Added new options fields to `product_segment` content widget in `\Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType`.
 
 #### PaymentBundle
 * Added the new and only way to create a payment line items `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` - see `\Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactoryInterface`.
@@ -73,6 +74,9 @@ The current file describes significant changes in the code that may affect the u
 #### VisibilityBundle
 * Added `\Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityListener` and `\Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityPrefetchListener` for adding visibility data to the product line items storefront datagrids.
 * Added `is_visible_product` TWIG function for checking if a product is visible.
+
+#### CMSBundle
+* Added a new localizable `labels` field to `\Oro\Bundle\CMSBundle\Entity\ContentWidget`.
 
 ### Changed
 

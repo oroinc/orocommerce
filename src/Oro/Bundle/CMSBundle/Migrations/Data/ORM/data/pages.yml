@@ -655,6 +655,10 @@ homepage:
                     </div>
                 </div>
             </div>
-            <div class="grid-col-12">Featured products placeholder</div>
-            <div class="grid-col-12">New Arrivals placeholder</div>
+            <div data-title="Featured Products" data-type="product_segment" class="grid-col-12 content-widget content-placeholder">
+                {{ widget("featured-products") }}
+            </div>
+            <div data-title="New Arrivals" data-type="product_segment" class="grid-col-12 content-widget content-placeholder">
+                {{ widget("new-arrivals") }}
+            </div>
         </div>

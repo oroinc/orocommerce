@@ -51,6 +51,8 @@ Oro\Bundle\CMSBundle\Entity\ContentWidget:
                   max: 255
         organization:
             - NotBlank: ~
+        labels:
+            - Valid: ~
 
 Oro\Bundle\CMSBundle\Entity\ImageSlide:
     properties:

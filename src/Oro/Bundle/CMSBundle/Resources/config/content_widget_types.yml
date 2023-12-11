@@ -26,6 +26,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_cms_content_widget, method: onBeforeFlush }
 
+    oro_cms.event_listener.content_widget_labels_form:
+        class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetLabelsFormEventListener
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_cms_content_widget, method: onBeforeFlush }
+
     Oro\Bundle\CMSBundle\ContentWidget\TabbedContentWidgetType:
         arguments:
             - '@doctrine'

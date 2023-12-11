@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\CMSBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\LocaleBundle\Entity\FallbackTrait;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Component\Layout\ContextItemInterface;
@@ -48,19 +52,16 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
 {
     use DatesAwareTrait;
     use OrganizationAwareTrait;
+    use FallbackTrait;
 
     /**
-     * @var int
-     *
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    protected $id;
+    protected ?int $id = null;
 
     /**
-     * @var string
-     *
      * @ORM\Column(type="string", length=255, nullable=false)
      * @ConfigField(
      *      defaultValues={
@@ -70,11 +71,9 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
      *      }
      * )
      */
-    protected $name;
+    protected ?string $name = null;
 
     /**
-     * @var string
-     *
      * @ORM\Column(type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
@@ -84,18 +83,14 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
      *      }
      * )
      */
-    protected $description;
+    protected ?string $description = null;
 
     /**
-     * @var string
-     *
      * @ORM\Column(name="widget_type", type="string", length=255, nullable=false)
      */
-    protected $widgetType;
+    protected ?string $widgetType = null;
 
     /**
-     * @var string
-     *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @ConfigField(
      *      defaultValues={
@@ -105,11 +100,9 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
      *      }
      * )
      */
-    protected $layout;
+    protected ?string $layout = null;
 
     /**
-     * @var array
-     *
      * @ORM\Column(type = "array")
      * @ConfigField(
      *      defaultValues={
@@ -119,7 +112,39 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
      *      }
      * )
      */
-    protected $settings = [];
+    protected array $settings = [];
+
+    /**
+     * @var Collection<LocalizedFallbackValue>
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="oro_cms_content_widget_label",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="content_widget_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected Collection $labels;
+
+    public function __construct()
+    {
+        $this->labels = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -131,10 +156,6 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return ContentWidget
-     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -147,10 +168,6 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
         return $this->description;
     }
 
-    /**
-     * @param string|null $description
-     * @return ContentWidget
-     */
     public function setDescription(?string $description): self
     {
         $this->description = $description;
@@ -163,10 +180,6 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
         return $this->widgetType;
     }
 
-    /**
-     * @param string $widgetType
-     * @return ContentWidget
-     */
     public function setWidgetType(string $widgetType): self
     {
         $this->widgetType = $widgetType;
@@ -179,10 +192,6 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
         return $this->layout;
     }
 
-    /**
-     * @param string|null $layout
-     * @return ContentWidget
-     */
     public function setLayout(?string $layout): self
     {
         $this->layout = $layout;
@@ -195,13 +204,45 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
         return $this->settings;
     }
 
-    /**
-     * @param array $settings
-     * @return ContentWidget
-     */
     public function setSettings(array $settings): self
     {
         $this->settings = $settings;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<LocalizedFallbackValue>
+     */
+    public function getLabels(): Collection
+    {
+        return $this->labels;
+    }
+
+    public function getDefaultLabel(): ?LocalizedFallbackValue
+    {
+        return $this->getDefaultFallbackValue($this->labels);
+    }
+
+    public function setDefaultLabel(string $label): self
+    {
+        return $this->setDefaultFallbackValue($this->labels, $label);
+    }
+
+    public function addLabel(LocalizedFallbackValue $label): self
+    {
+        if (!$this->labels->contains($label)) {
+            $this->labels->add($label);
+        }
+
+        return $this;
+    }
+
+    public function removeLabel(LocalizedFallbackValue $label): self
+    {
+        if ($this->labels->contains($label)) {
+            $this->labels->removeElement($label);
+        }
 
         return $this;
     }

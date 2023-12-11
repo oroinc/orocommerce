@@ -176,6 +176,16 @@ oro_behat_extension:
         Content Widget Form:
             selector: 'form[name="oro_cms_content_widget"]'
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Default Label: 'oro_cms_content_widget[settings][labels][values][default]'
+                    Use Default: 'oro_cms_content_widget[settings][labels][values][localizations][1][use_fallback]'
+                    English (United States): 'oro_cms_content_widget[settings][labels][values][localizations][1][value]'
+
+        Content Widget Label Localization Form Fallbacks:
+            selector:
+                type: xpath
+                locator: '//label[text()="Label"]/ancestor::div[contains(@class, "control-group-oro_locale_localized_fallback_value_collection")]//button[contains(@class, "fallback-status")]'
 
         Slides:
             selector:
