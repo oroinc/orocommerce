@@ -57,12 +57,15 @@ class QuoteCheckoutShippingMethodsProvider implements CheckoutShippingMethodsPro
             return null;
         }
 
-        return $this->shippingConfiguredPriceProvider->getPrice(
+        $quotePriceDefault = new Price();
+        $quotePrice = $this->shippingConfiguredPriceProvider->getPrice(
             $checkout->getShippingMethod(),
             $checkout->getShippingMethodType(),
             $this->quoteShippingConfigurationFactory->createQuoteShippingConfig($quote),
             $this->checkoutShippingContextProvider->getContext($checkout)
         );
+
+        return $quotePrice ?? $quotePriceDefault;
     }
 
     private function extractQuoteFromCheckout(Checkout $checkout): ?Quote
