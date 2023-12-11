@@ -123,6 +123,7 @@ class TestEntityNameResolverDataLoader implements TestEntityNameResolverDataLoad
 
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function getExpectedEntityName(
         ReferenceRepository $repository,
@@ -131,7 +132,7 @@ class TestEntityNameResolverDataLoader implements TestEntityNameResolverDataLoad
         ?string $format,
         ?string $locale
     ): string {
-        if (Brand::class === $entityClass) {
+        if (Brand::class === $entityClass && 'brand' === $entityReference) {
             return 'Localization de_DE' === $locale
                 ? 'Test Brand (de_DE)'
                 : 'Test Brand';

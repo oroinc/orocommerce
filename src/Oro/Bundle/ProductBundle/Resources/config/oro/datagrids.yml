@@ -390,11 +390,6 @@ datagrids:
     products-grid:
         extends: products-select-grid-base
         extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
-        source:
-            query:
-                join:
-                    left:
-                        - { join: product.attributeFamily, alias: af }
         options:
             entity_pagination: true
         properties:
@@ -415,10 +410,6 @@ datagrids:
                     - id
                 direct_params:
                     entity: 'products'
-            attribute_family_localized:
-                type: localized_value
-                data_name: af.labels
-                allow_empty: true
         actions:
             view:
                 type:          navigate
@@ -461,9 +452,6 @@ datagrids:
                 images:
                     data_name: product.images
                     column_name: productImage
-                attributeFamily:
-                    data_name: product.attributeFamily
-                    column_name: attribute_family_localized
         columns:
             productImage:
                 label:         oro.product.image.label
@@ -485,10 +473,6 @@ datagrids:
                     validation_rules:
                         NotBlank: true
                 order:         3
-            attributeFamily:
-                label:         oro.product.attribute_family.label
-                data_name:     attribute_family_localized
-                order:         4
             inventoryStatusId:
                 inline_editing:
                     enable: true
@@ -515,19 +499,8 @@ datagrids:
                 order:         80
             updatedAt:
                 order:         90
-        sorters:
-            columns:
-                attributeFamily:
-                    data_name: product.attributeFamily
         filters:
             columns:
-                attributeFamily:
-                    data_name: product.attributeFamily
-                    type: choice-tree
-                    label: oro.product.attribute_family.label
-                    autocomplete_alias: oro_product_families
-                    renderedPropertyName: 'defaultLabel'
-                    className: 'Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily'
                 createdAt:
                     renderable: false
 

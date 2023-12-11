@@ -9,19 +9,13 @@ use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyRegistry;
 
 class StrategyProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var StrategyRegistry|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var StrategyRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $strategyRegistry;
 
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /**
-     * @var StrategyProvider
-     */
+    /** @var StrategyProvider */
     private $provider;
 
     protected function setUp(): void
@@ -35,21 +29,38 @@ class StrategyProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetActiveStrategy()
+    public function testGetActiveStrategy(): void
     {
         $alias = 'test';
         $strategy = $this->createMock(StrategyInterface::class);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
-            ->with(StrategyProvider::CONFIG_KEY)
+            ->with('oro_promotion.discount_strategy')
             ->willReturn($alias);
 
-        $this->strategyRegistry->expects($this->once())
+        $this->strategyRegistry->expects(self::once())
             ->method('getStrategyByAlias')
             ->with($alias)
             ->willReturn($strategy);
 
-        $this->assertSame($strategy, $this->provider->getActiveStrategy());
+        self::assertSame($strategy, $this->provider->getActiveStrategy());
+    }
+
+    public function testGetActiveStrategyWhenStrategyNotFound(): void
+    {
+        $alias = 'test';
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_promotion.discount_strategy')
+            ->willReturn($alias);
+
+        $this->strategyRegistry->expects(self::once())
+            ->method('getStrategyByAlias')
+            ->with($alias)
+            ->willReturn(null);
+
+        self::assertNull($this->provider->getActiveStrategy());
     }
 }
