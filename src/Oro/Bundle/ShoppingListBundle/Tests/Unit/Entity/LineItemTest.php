@@ -46,4 +46,17 @@ class LineItemTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame($visitor, $lineItem->getVisitor());
     }
+
+    public function testSetProductUnit(): void
+    {
+        $lineItem = new LineItem();
+
+        self::assertNull($lineItem->getProductUnit());
+
+        $unitItem = (new ProductUnit())->setCode('item');
+        $lineItem->setProductUnit($unitItem);
+
+        self::assertSame($unitItem, $lineItem->getProductUnit());
+        self::assertSame($unitItem->getCode(), $lineItem->getProductUnitCode());
+    }
 }

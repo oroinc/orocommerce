@@ -682,13 +682,13 @@ class OrderControllerTest extends WebTestCase
         return [
             [
                 'freeFormProduct' => 'Free form product',
-                'quantity' => 20,
+                'quantity' => 1,
                 'productUnit' => 'liter',
                 'price' => [
                     'value' => 200,
                     'currency' => 'USD'
                 ],
-                'priceType' => OrderLineItem::PRICE_TYPE_BUNDLED,
+                'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
                 'shipBy' => $date
             ],
             [
@@ -718,7 +718,7 @@ class OrderControllerTest extends WebTestCase
             [
                 'product' => '',
                 'freeFormProduct' => 'Free form product',
-                'quantity' => 20,
+                'quantity' => 1,
                 'productUnit' => 'liter',
                 'price' => [
                     'value' => 200,

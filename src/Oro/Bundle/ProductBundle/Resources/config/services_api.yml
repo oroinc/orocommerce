@@ -91,6 +91,7 @@ services:
             - { name: oro.api.processor, action: delete_list, group: initialize, requestType: frontend, priority: 250 }
             - { name: oro.api.processor, action: create, group: initialize, requestType: frontend, priority: 250 }
             - { name: oro.api.processor, action: update, group: initialize, requestType: frontend, priority: 250 }
+            - { name: oro.api.processor, action: update_list, group: initialize, requestType: frontend, priority: 250 }
             - { name: oro.api.processor, action: get_subresource, group: initialize, requestType: frontend, priority: 250 }
             - { name: oro.api.processor, action: delete_subresource, group: initialize, requestType: frontend, priority: 250 }
             - { name: oro.api.processor, action: add_subresource, group: initialize, requestType: frontend, priority: 250 }

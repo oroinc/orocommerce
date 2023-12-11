@@ -399,6 +399,18 @@ oro_behat_extension:
             type: 'css'
             locator: 'textarea[id^="oro_product_field_wysiwyg"]'
             class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
+          Multiple Files Attribute:
+            locator: '//input[starts-with(@name, "oro_product[multiple_files_attribute_") and contains(@name, "[file][file]")]'
+            type: xpath
+          Multiple Images Attribute:
+            locator: '//input[starts-with(@name, "oro_product[multiple_images_attribute_") and contains(@name, "[file][file]")]'
+            type: xpath
+          Multiple Files Field:
+            locator: '//input[starts-with(@name, "oro_product[multiple_files_field]") and contains(@name, "[file][file]")]'
+            type: xpath
+          Multiple Images Field:
+            locator: '//input[starts-with(@name, "oro_product[multiple_images_field]") and contains(@name, "[file][file]")]'
+            type: xpath
 
     NameEnglishUnitedStatesValue:
       selector:
@@ -1465,12 +1477,22 @@ oro_behat_extension:
     MultipleFiles Field:
       selector:
         type: xpath
-        locator: '//h4[contains(., "MultipleFiles")]/parent::*'
+        locator: '//div[contains(@id,"MultipleFiles") and contains(@class,"file-collection")]/parent::*'
+
+    MultipleFiles Backoffice Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id,"grid-MultipleFiles")]/parent::*'
 
     MultipleImages Field:
       selector:
         type: xpath
-        locator: '//h4[contains(., "MultipleImages")]/parent::*'
+        locator: '//div[contains(@id,"MultipleImages") and contains(@class,"file-collection")]/parent::*'
+
+    MultipleImages Backoffice Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id,"grid-MultipleImages")]/parent::*'
 
     Drawing Storefront Field:
       selector:
@@ -1588,6 +1610,58 @@ oro_behat_extension:
 
     SchemaOrg Description:
       selector: 'meta[itemprop="description"]'
+
+    Multiple Files DAM Attribute:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@id, "_multiple_files_dam_attribute")]//tr[contains(@data-content, "[0]")]//a[contains(text(), "Choose File")]'
+
+    Multiple Images DAM Attribute:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@id, "_multiple_images_dam_attribute")]//tr[contains(@data-content, "[0]")]//a[contains(text(), "Choose Image")]'
+
+    Multiple Files DAM Field:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@id, "_multiple_files_dam_field")]//tr[contains(@data-content, "[0]")]//a[contains(text(), "Choose File")]'
+
+    Multiple Images DAM Field:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@id, "_multiple_images_dam_field")]//tr[contains(@data-content, "[0]")]//a[contains(text(), "Choose Image")]'
+
+    Multiple Files Attribute Grid:
+      selector: 'div[data-page-component-name^="attachment-files-grid:multiple_files_attribute_"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Multiple Files Field Grid:
+      selector: 'div[data-page-component-name="attachment-files-grid:multiple_files_field"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Multiple Images Field Grid:
+      selector: 'div[data-page-component-name="attachment-images-grid:multiple_images_field"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Multiple Images Attribute Grid:
+      selector: 'div[data-page-component-name^="attachment-images-grid:multiple_images_attribute_"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Multiple Files DAM Attribute Grid:
+      selector: 'div[data-page-component-name^="attachment-files-grid:multiple_files_dam_attribute_"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Multiple Images DAM Attribute Grid:
+      selector: 'div[data-page-component-name^="attachment-images-grid:multiple_images_dam_attribute_"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Multiple Files DAM Field Grid:
+      selector: 'div[data-page-component-name="attachment-files-grid:multiple_files_dam_field"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Multiple Images DAM Field Grid:
+      selector: 'div[data-page-component-name="attachment-images-grid:multiple_images_dam_field"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
   pages:
     Product View:

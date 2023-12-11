@@ -136,3 +136,8 @@ oro_form:
                 blockquote:
                     attributes:
                         - cite
+
+oro_customer:
+    frontend_api:
+        non_authenticated_visitors_api_resources:
+            - Oro\Bundle\CMSBundle\Entity\Page

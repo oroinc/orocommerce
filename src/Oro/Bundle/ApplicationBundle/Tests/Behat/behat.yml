@@ -165,7 +165,9 @@ oro_behat_extension:
           Price for quantity: 'oro_pricing_price_list[priceRules][0][quantity]'
           Price for quantity expression: 'oro_pricing_price_list[priceRules][0][quantityExpression]'
           Price Unit: 'oro_pricing_price_list[priceRules][0][productUnitExpression]'
+          Price Unit Static: 'oro_pricing_price_list[priceRules][0][productUnit]'
           Price Currency: 'oro_pricing_price_list[priceRules][0][currencyExpression]'
+          Price Currency Static: 'oro_pricing_price_list[priceRules][0][currency]'
 
     Customer Form:
       selector: 'form[name="oro_customer_type"]'

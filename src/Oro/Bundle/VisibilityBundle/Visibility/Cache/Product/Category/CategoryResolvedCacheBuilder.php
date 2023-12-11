@@ -4,6 +4,8 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectNoConflictQueryExecutor;
+use Oro\Bundle\EntityBundle\ORM\InsertQueryExecutorInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
@@ -15,6 +17,9 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBu
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder;
 
+/**
+ * The category visibility cache builder.
+ */
 class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements CategoryCaseCacheBuilderInterface
 {
     /** @var VisibilityChangeCategorySubtreeCacheBuilder */
@@ -22,6 +27,9 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
 
     /** @var PositionChangeCategorySubtreeCacheBuilder */
     protected $positionChangeCategorySubtreeCacheBuilder;
+
+    /** @var InsertFromSelectNoConflictQueryExecutor */
+    protected $insertExecutor;
 
     public function setVisibilityChangeCategorySubtreeCacheBuilder(
         VisibilityChangeCategorySubtreeCacheBuilder $visibilityChangeCategorySubtreeCacheBuilder
@@ -33,6 +41,11 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
         PositionChangeCategorySubtreeCacheBuilder $positionChangeCategorySubtreeCacheBuilder
     ) {
         $this->positionChangeCategorySubtreeCacheBuilder = $positionChangeCategorySubtreeCacheBuilder;
+    }
+
+    public function setInsertExecutor(InsertQueryExecutorInterface $insertExecutor): void
+    {
+        $this->insertExecutor = $insertExecutor;
     }
 
     /**
@@ -124,9 +137,9 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
         // clear table
         $resolvedRepository->clearTable();
 
-        if (!$scope) {
-            $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
-        }
+        // No need to use website scope here because the categories
+        // in the application do not belong to a specific website
+        $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
 
         // resolve static values
         $resolvedRepository->insertStaticValues($this->insertExecutor, $scope);
@@ -145,6 +158,8 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
                 $categoryIds[$resolvedVisibility][] = $categoryId;
             }
         }
+
+        $this->insertExecutor->setOnConflictIgnoredFields(['category', 'scope']);
 
         foreach ($categoryIds as $visibility => $ids) {
             $resolvedRepository->insertParentCategoryValues(

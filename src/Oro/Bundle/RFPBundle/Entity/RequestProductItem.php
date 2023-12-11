@@ -6,8 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
-use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
  * RFP Request Product Item entity.
@@ -28,7 +27,7 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInterface
+class RequestProductItem implements ProductLineItemInterface
 {
     /**
      * @var int
@@ -268,6 +267,11 @@ class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInt
             return $product->getSku();
         }
 
+        return null;
+    }
+
+    public function getParentProduct()
+    {
         return null;
     }
 }

@@ -186,6 +186,7 @@ define(function(require) {
 
             this.$el
                 .on('change', this.options.productSelect, this.onProductChanged.bind(this))
+                .on('change', this.options.offersQuantitySelector, this.onOffersQuantitySelectorChange.bind(this))
                 .on('change', this.options.productReplacementSelect, this.onProductChanged.bind(this))
                 .on('change', this.options.typeSelect, this.onTypeChanged.bind(this))
                 .on('click', this.options.addNotesButton, this.onAddNotesClick.bind(this))
@@ -311,6 +312,10 @@ define(function(require) {
             const $quantitySelector = this.$el.find(this.options.offersQuantitySelector);
             $quantitySelector.trigger('change');
 
+            mediator.trigger(this.options.events.trigger);
+        },
+
+        onOffersQuantitySelectorChange: function(e) {
             mediator.trigger(this.options.events.trigger);
         },
 

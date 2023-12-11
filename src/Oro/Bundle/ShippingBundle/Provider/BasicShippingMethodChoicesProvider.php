@@ -41,11 +41,24 @@ class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProvide
                 if ($translate) {
                     $label = $this->translator->trans($label);
                 }
+                //cannot guarantee uniqueness of shipping name
+                //need to be sure that we wouldn't override exists one
+                if (array_key_exists($label, $result)) {
+                    $label .= $this->getShippingMethodIdLabel($method);
+                }
+
                 $result[$label] = $method->getIdentifier();
 
                 return $result;
             },
             []
         );
+    }
+
+    private function getShippingMethodIdLabel(ShippingMethodInterface $shippingMethod): string
+    {
+        //extract entity identifier flat_rate_4 => 4
+        $id = substr($shippingMethod->getIdentifier(), strrpos($shippingMethod->getIdentifier(), '_') + 1);
+        return " ($id)";
     }
 }

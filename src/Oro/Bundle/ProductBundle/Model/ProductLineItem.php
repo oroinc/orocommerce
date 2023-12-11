@@ -5,6 +5,9 @@ namespace Oro\Bundle\ProductBundle\Model;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
+/**
+ * Represents a product line item.
+ */
 class ProductLineItem implements ProductLineItemInterface
 {
     /**
@@ -66,6 +69,13 @@ class ProductLineItem implements ProductLineItemInterface
     public function setUnit(ProductUnit $unit)
     {
         $this->unit = $unit;
+        return $this;
+    }
+
+    public function setProductUnit(ProductUnit $unit): self
+    {
+        $this->unit = $unit;
+
         return $this;
     }
 

@@ -18,7 +18,6 @@ class EnsureProductEntityProxiesNotInitializedOnPlpTest extends FrontendWebTestC
             LoadCustomerUserData::AUTH_USER,
             LoadCustomerUserData::AUTH_PW
         ));
-        $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
             LoadFrontendProductData::class

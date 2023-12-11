@@ -12,7 +12,7 @@ class ProductForVisitorTest extends FrontendRestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->enableVisitor();
+        $this->initializeVisitor();
         $this->loadFixtures([
             LoadCustomerData::class,
             LoadCustomerUserRoles::class,
