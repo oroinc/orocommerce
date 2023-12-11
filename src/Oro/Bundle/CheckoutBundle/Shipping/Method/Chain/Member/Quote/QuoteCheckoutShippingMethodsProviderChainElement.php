@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Quote;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\AbstractCheckoutShippingMethodsProviderChainElement;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Quote\Shipping\Configuration\QuoteShippingConfigurationFactory;
@@ -95,11 +96,14 @@ class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
         $configuration = $this->quoteShippingConfigurationFactory->createQuoteShippingConfig($quote);
         $context = $this->checkoutShippingContextProvider->getContext($checkout);
 
-        return $this->shippingConfiguredPriceProvider->getPrice(
+        $quotePriceDefault = new Price();
+        $quotePrice = $this->shippingConfiguredPriceProvider->getPrice(
             $checkout->getShippingMethod(),
             $checkout->getShippingMethodType(),
             $configuration,
             $context
         );
+
+        return $quotePrice ?? $quotePriceDefault;
     }
 }

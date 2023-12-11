@@ -149,6 +149,11 @@ oro_behat_extension:
     First Product Quantity on Quote:
       selector: 'input[name="oro_sale_quote_demand[demandProducts][0][quantity]"]'
 
+    First Product Second Offer:
+      selector:
+        locator: '//input[@name="oro_sale_quote_demand[demandProducts][0][quoteProductOffer]" and @data-value="2"]'
+        type: xpath
+
     Quote Flat Rate:
       selector:
         locator: '//label[contains(text(),"Flat Rate")]'
