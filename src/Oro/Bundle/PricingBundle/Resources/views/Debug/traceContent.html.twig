@@ -59,15 +59,18 @@
                         rootClass: 'price-list-term attribute-item--mobile-full'
                     } %}
 
+                    {% set title = 'active' %}
                     {% if not price_list.schedules.isEmpty() %}
                         {% set options = options|merge({
                             tooltipHTML: UI.tooltip(cronSchedulIntervals.scheduleIntervalsInfo(price_list.schedules, scheduleLabels, false))
                         }) %}
+                        {% set title = 'oro.pricing.pricelist_schedule.' ~ (oro_cron_has_active_schedule(price_list.schedules) ? 'active_now' : 'not_active_now') %}
+                    {% endif %}
+                    {% if not price_list.active %}
+                        {% set title = 'oro.pricing.pricelist_schedule.disabled' %}
                     {% endif %}
 
                     <h6 class="terms-title-divider">{{ UI.entityViewLink(price_list, price_list.name, 'oro_pricing_price_list_view') }}</h6>
-
-                    {% set title = 'oro.pricing.pricelist_schedule.' ~ (oro_cron_has_active_schedule(price_list.schedules) ? 'active_now' : 'not_active_now') %}
 
                     {% if price_merging_details[price_list.id] is defined  %}
                         {% set pricesContent %}
