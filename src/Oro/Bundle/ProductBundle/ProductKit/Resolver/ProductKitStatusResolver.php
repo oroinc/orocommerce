@@ -11,7 +11,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 /**
  * Resolves and sets the current status for product kit using next rules
  * - Disable product kit if all products from any of the required kit items become unavailable.
- * - Enable product kit if all products from within every required kit items become available.
  *
  * Note: ONLY required product kit items taken into account
  */
@@ -37,7 +36,6 @@ class ProductKitStatusResolver
 
         foreach ($products as $product) {
             $productData = $data[$product->getId()] ?: [];
-            $product->setStatus(Product::STATUS_ENABLED);
             foreach ($productData as $datum) {
                 if (!in_array(Product::STATUS_ENABLED, $datum['status'])) {
                     $product->setStatus(Product::STATUS_DISABLED);

@@ -737,6 +737,27 @@ oro_behat_extension:
 
     Floating Error Message:
       selector: 'div.floating-error-message'
+
+    Product 2 Link:
+      selector:
+        locator: '//a[text()[contains(.,"Product 2")]]'
+        type: 'xpath'
+
+    Product 3 Link:
+      selector:
+        locator: '//a[text()[contains(.,"Product 3")]]'
+        type: 'xpath'
+
+    Configure Popup Product 2 Link:
+      selector:
+        locator: '//h3[contains(@class, "grid-line-items__title")]/a[text()[contains(.,"Product 2")]]'
+        type: 'xpath'
+
+    Configure Popup Product 3 Link:
+      selector:
+        locator: '//h3[contains(@class, "grid-line-items__title")]/a[text()[contains(.,"Product 3")]]'
+        type: 'xpath'
+
   suites:
     OroShoppingListBundle:
       contexts:
