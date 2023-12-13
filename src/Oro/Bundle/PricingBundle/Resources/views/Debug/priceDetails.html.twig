@@ -44,8 +44,13 @@
 {% if mergePricesCollection and mergePricesCollection|length > 0 %}
     {% block price_merge_details %}
         <div class="prices-collection prices-collection--divider">
-        {% for currency, mergePricesByUnit in mergePricesCollection %}
-            {% for unitCode, prices in mergePricesByUnit %}
+        {% for unitCode, currencies in used_units_and_currencies %}
+            {% for currency in currencies %}
+                {% if mergePricesCollection[currency][unitCode] is defined %}
+                {% set prices = mergePricesCollection[currency][unitCode] %}
+                {% else %}
+                    {% set prices = [] %}
+                {% endif %}
                 {% with {items: prices, unitCode: unitCode, currency: currency} %}
                     {{ block('price_merge_items') }}
                 {% endwith %}

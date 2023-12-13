@@ -74,7 +74,7 @@
 
                     {% if price_merging_details[price_list.id] is defined  %}
                         {% set pricesContent %}
-                            {% with {mergePricesCollection: price_merging_details[price_list.id]} %}
+                            {% with {mergePricesCollection: price_merging_details[price_list.id], used_units_and_currencies: used_units_and_currencies} %}
                                 {{ block('price_merge_details', '@OroPricing/Debug/priceDetails.html.twig') }}
                             {% endwith %}
                         {% endset %}
