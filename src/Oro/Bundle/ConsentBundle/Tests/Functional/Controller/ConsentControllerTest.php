@@ -57,7 +57,7 @@ class ConsentControllerTest extends WebTestCase
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
         $this->configManager->set(
             WebCatalogConfigChangeListener::WEB_CATALOG_CONFIGURATION_NAME,
-            $webCatalog
+            $webCatalog->getId()
         );
         $this->configManager->flush();
         $contentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2);
