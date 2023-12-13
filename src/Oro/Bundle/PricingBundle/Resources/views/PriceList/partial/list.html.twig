@@ -6,8 +6,8 @@
 
     {% if (headLink is defined and headLink) or (fallback is defined and fallback) %}
         <div class="list-head-container">
-            {% if headLink %}<div>{{ headLink }}</div>{% endif %}
-            {% if fallback %}<div>{{ 'oro.pricing.fallback.label'|trans }}: <strong>{{ fallback|trans }}</strong></div>{% endif %}
+            {% if headLink is defined and headLink %}<div>{{ headLink }}</div>{% endif %}
+            {% if fallback is defined and fallback %}<div>{{ 'oro.pricing.fallback.label'|trans }}: <strong>{{ fallback|trans }}</strong></div>{% endif %}
         </div>
     {% endif %}
 
