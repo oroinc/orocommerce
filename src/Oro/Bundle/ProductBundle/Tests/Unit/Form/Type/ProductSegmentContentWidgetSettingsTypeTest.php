@@ -59,6 +59,8 @@ class ProductSegmentContentWidgetSettingsTypeTest extends FormIntegrationTestCas
                 'minimum_items' => 3,
                 'use_slider_on_mobile' => false,
                 'show_add_button' => true,
+                'autoplay_speed' => 4000,
+                'arrows' => true,
             ],
             $form->getData()
         );
@@ -69,6 +71,12 @@ class ProductSegmentContentWidgetSettingsTypeTest extends FormIntegrationTestCas
             'minimum_items' => 15,
             'use_slider_on_mobile' => true,
             'show_add_button' => true,
+            'autoplay_speed' => 400,
+            'arrows' => true,
+            'enable_autoplay' => false,
+            'show_arrows_on_touchscreens' => false,
+            'show_dots' => false,
+            'enable_infinite_scroll' => true,
         ];
 
         $form->submit($submittedData);

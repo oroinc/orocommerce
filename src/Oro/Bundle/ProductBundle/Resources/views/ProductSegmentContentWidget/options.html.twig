@@ -10,6 +10,16 @@
     ) }}
 {% endif %}
 
+{% if defaultLabel is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.labels.singular_label'|trans,
+        defaultLabel|default('N/A'|trans),
+        null,
+        null,
+        {tooltipHTML: UI.tooltip('oro.product.content_widget_type.product_segment.options.labels.tooltip')}
+    ) }}
+{% endif %}
+
 {% if maximum_items is defined %}
     {{ UI.renderProperty(
         'oro.product.content_widget_type.product_segment.options.maximum_items.label'|trans,
@@ -49,5 +59,47 @@
         null,
         null,
         {tooltipHTML: UI.tooltip('oro.product.content_widget_type.product_segment.options.show_add_button.tooltip')}
+    ) }}
+{% endif %}
+
+{% if enable_autoplay is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.enable_autoplay.label'|trans,
+        enable_autoplay ? 'Yes'|trans : 'No'|trans
+    ) }}
+{% endif %}
+
+{% if autoplay_speed is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.autoplay_speed.label'|trans,
+        autoplay_speed
+    ) }}
+{% endif %}
+
+{% if arrows is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.arrows.label'|trans,
+        arrows ? 'Yes'|trans : 'No'|trans
+    ) }}
+{% endif %}
+
+{% if show_arrows_on_touchscreens is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.show_arrows_on_touchscreens.label'|trans,
+        show_arrows_on_touchscreens ? 'Yes'|trans : 'No'|trans
+    ) }}
+{% endif %}
+
+{% if show_dots is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.show_dots.label'|trans,
+        show_dots ? 'Yes'|trans : 'No'|trans
+    ) }}
+{% endif %}
+
+{% if enable_infinite_scroll is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.enable_infinite_scroll.label'|trans,
+        enable_infinite_scroll ? 'Yes'|trans : 'No'|trans
     ) }}
 {% endif %}

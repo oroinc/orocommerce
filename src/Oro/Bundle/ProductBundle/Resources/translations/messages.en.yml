@@ -999,6 +999,22 @@ oro:
                         value:
                             no: No
                             yes: Yes
+                    labels:
+                        label: Labels
+                        singular_label: Label
+                        tooltip: If provided, this label will be displayed above the list of the products.
+                    enable_autoplay:
+                        label: Enable Autoplay
+                    autoplay_speed:
+                        label: Autoplay Speed (Milliseconds)
+                    arrows:
+                        label: Show Arrows
+                    show_arrows_on_touchscreens:
+                        label: Show Arrows On Touchscreens
+                    show_dots:
+                        label: Show Dots
+                    enable_infinite_scroll:
+                        label: Enable Infinite Scroll
 
         feature:
             quick_order_form:
