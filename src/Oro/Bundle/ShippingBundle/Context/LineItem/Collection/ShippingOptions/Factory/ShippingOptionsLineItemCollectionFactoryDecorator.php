@@ -3,9 +3,12 @@
 namespace Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingOptions\Factory;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\LineItemBuilderByLineItemFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
@@ -84,13 +87,47 @@ class ShippingOptionsLineItemCollectionFactoryDecorator implements ShippingLineI
                 }
             }
 
-            $newShippingLineItems[] = $builder->getResult();
+            $newShippingLineItems[] = $this->processKitShippingOptions($builder->getResult(), $shippingOptsByCode);
         }
 
         $this->dimensionsUnits = [];
         $this->weightUnits = [];
 
         return $this->decoratedFactory->createShippingLineItemCollection($newShippingLineItems);
+    }
+
+    private function processKitShippingOptions(
+        ShippingLineItemInterface $shippingLineItem,
+        array $shippingOptsByCode
+    ): ShippingLineItemInterface {
+        if ($shippingLineItem->getProduct()?->isKit()) {
+            foreach ($shippingLineItem->getKitItemLineItems() as $kitItemLineItem) {
+                $product = $kitItemLineItem->getProduct();
+                $unitCode = $kitItemLineItem->getProductUnitCode();
+                if (!isset($shippingOptsByCode[$product?->getId()][$unitCode])) {
+                    continue;
+                }
+
+                $shippingOptions = $shippingOptsByCode[$product->getId()][$unitCode];
+
+                $kitItemLineItem->setWeight(
+                    Weight::create(
+                        $shippingOptions['weightValue'],
+                        $this->getWeightUnit($shippingOptions['weightUnit'])
+                    )
+                );
+                $kitItemLineItem->setDimensions(
+                    Dimensions::create(
+                        $shippingOptions['dimensionsLength'],
+                        $shippingOptions['dimensionsWidth'],
+                        $shippingOptions['dimensionsHeight'],
+                        $this->getDimensionsUnit($shippingOptions['dimensionsUnit'])
+                    )
+                );
+            }
+        }
+
+        return $shippingLineItem;
     }
 
     /**
@@ -115,6 +152,7 @@ class ShippingOptionsLineItemCollectionFactoryDecorator implements ShippingLineI
     {
         $result = [];
 
+        $shippingLineItems = array_merge($shippingLineItems, $this->getKitItemLineItems($shippingLineItems));
         foreach ($shippingLineItems as $shippingLineItem) {
             $product = $shippingLineItem->getProduct();
             $unit = $shippingLineItem->getProductUnit();
@@ -157,5 +195,22 @@ class ShippingOptionsLineItemCollectionFactoryDecorator implements ShippingLineI
         }
 
         return $this->weightUnits[$weightUnitCode];
+    }
+
+    /**
+     * @param ShippingLineItem[] $lineItems
+     *
+     * @return ShippingKitItemLineItem[]
+     */
+    private function getKitItemLineItems(array $lineItems): array
+    {
+        $kitLineItems = [];
+        foreach ($lineItems as $lineItem) {
+            if ($lineItem instanceof ProductKitItemLineItemsAwareInterface && $lineItem->getProduct()?->isKit()) {
+                $kitLineItems = array_merge($kitLineItems, $lineItem->getKitItemLineItems()->toArray());
+            }
+        }
+
+        return $kitLineItems;
     }
 }

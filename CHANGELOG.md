@@ -78,6 +78,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+#### UPSBundle
+* Changed `\Oro\Bundle\UPSBundle\Factory\PriceRequestFactory` to make it work with `\Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem` models.
+
 #### ProductBundle
 * Changed `\Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy` - added the possibility of postponing rows for missing product kits item products and fixed losing the related kitItems collections located deeper than 1st level.
 * Changed `\Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture` - added new simple and kit products.
@@ -107,6 +110,7 @@ The current file describes significant changes in the code that may affect the u
 * Changed `\Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\BasicShippingLineItemBuilder` to take into account `\Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem` entities.
 * Changed `\Oro\Bundle\ShippingBundle\Converter\Basic\ShippingContextToRulesValuesConverter` to take into account `\Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem` models.
 * Changed `\Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory` to make it work with `\Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem` models.
+* Changed `\Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem` to make it work with `\Oro\Bundle\ShippingBundle\Model\Dimensions` and `\Oro\Bundle\ShippingBundle\Model\Weight`.
 
 #### ShoppingListBundle
 * The datagrid on the shopping list page has been slightly redesigned. Excessive borders and offsets have been removed for desktop, tablet, and mobile versions. As a result, responsive behavior needs to be checked.

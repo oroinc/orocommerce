@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\UPSBundle\Factory;
 
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
@@ -147,9 +150,20 @@ class PriceRequestFactory
     protected function getAllItemsWeightArray(array $lineItems, $upsWeightUnit): array
     {
         $productsParamsByUnit = [];
+        $lineItems = array_merge($lineItems, $this->getKitItemLineItems($lineItems));
 
         foreach ($lineItems as $lineItem) {
-            $upsWeight = $this->getLineItemWeightByUnit($lineItem, $upsWeightUnit);
+            $upsWeight = match (true) {
+                $lineItem instanceof ShippingLineItemInterface =>
+                $this->getLineItemWeightByUnit($lineItem, $upsWeightUnit),
+                $lineItem instanceof ShippingKitItemLineItem =>
+                $this->getKitLineItemWeightByUnit($lineItem, $upsWeightUnit),
+            };
+
+            // Allow UPS delivery for cases when empty or not valid shipping options for kit product
+            if (!$upsWeight && $lineItem->getProduct()?->isKit()) {
+                continue;
+            }
 
             if (!$upsWeight) {
                 return [];
@@ -169,6 +183,26 @@ class PriceRequestFactory
      */
     protected function getLineItemWeightByUnit(ShippingLineItemInterface $lineItem, $weightUnit)
     {
+        return $this->geWeightByUnit($lineItem, $weightUnit);
+    }
+
+    /**
+     * @param string $weightUnit
+     *
+     * @deprecated since 5.1
+     */
+    protected function getKitLineItemWeightByUnit(ShippingKitItemLineItem $lineItem, $weightUnit): ?float
+    {
+        return $this->geWeightByUnit($lineItem, $weightUnit);
+    }
+
+    /**
+     * @param string $weightUnit
+     *
+     * @deprecated since 5.1
+     */
+    private function geWeightByUnit(ShippingLineItemInterface|ShippingKitItemLineItem $lineItem, $weightUnit): ?float
+    {
         $upsWeight = null;
         $lineItemWeight = $lineItem->getWeight();
 
@@ -183,5 +217,22 @@ class PriceRequestFactory
         }
 
         return $upsWeight;
+    }
+
+    /**
+     * @param ShippingLineItem[] $lineItems
+     *
+     * @return ShippingKitItemLineItem[]
+     */
+    private function getKitItemLineItems(array $lineItems): array
+    {
+        $kitLineItems = [];
+        foreach ($lineItems as $lineItem) {
+            if ($lineItem instanceof ProductKitItemLineItemsAwareInterface && $lineItem->getProduct()?->isKit()) {
+                $kitLineItems = array_merge($kitLineItems, $lineItem->getKitItemLineItems()->toArray());
+            }
+        }
+
+        return $kitLineItems;
     }
 }

@@ -1,24 +1,56 @@
 Oro\Bundle\ShippingBundle\Model\DimensionsValue:
-    dimensionsValue:
+    dimensionsValue1:
         length: 1
-        width: 1
-        height: 1
+        width: 4
+        height: 2
+    dimensionsValue2:
+        length: 2
+        width: 6
+        height: 3
+    dimensionsValue3:
+        length: 42
+        width: 85
+        height: 102
 
 Oro\Bundle\ShippingBundle\Model\Dimensions:
-    productDimensions:
+    productDimensions1:
         unit: '@meter'
-        value: '@dimensionsValue'
+        value: '@dimensionsValue1'
+    productDimensions2:
+        unit: '@meter'
+        value: '@dimensionsValue2'
+    productDimensions3:
+        unit: '@inch'
+        value: '@dimensionsValue3'
 
 Oro\Bundle\ShippingBundle\Model\Weight:
-    productWeight:
+    productWeight1:
         unit: '@kg'
         value: 7
+    productWeight2:
+        unit: '@kg'
+        value: 15
+    productWeight3:
+        unit: '@kg'
+        value: 32
 
 Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
-    productShippingOptions:
-        product: '@product'
+    productShippingOptions1:
+        product: '@product1'
         productUnit: '@item'
         freightClass: '@parcel'
-        weight: '@productWeight'
-        dimensions: '@productDimensions'
+        weight: '@productWeight1'
+        dimensions: '@productDimensions1'
+    productShippingOptions2:
+        product: '@product2'
+        productUnit: '@item'
+        freightClass: '@parcel'
+        weight: '@productWeight2'
+        dimensions: '@productDimensions2'
+    productShippingOptions3:
+        product: '@productKit'
+        productUnit: '@item'
+        freightClass: '@parcel'
+        weight: '@productWeight3'
+        dimensions: '@productDimensions3'
 
