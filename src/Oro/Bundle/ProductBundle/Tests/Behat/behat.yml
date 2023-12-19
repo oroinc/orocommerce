@@ -1726,6 +1726,9 @@ oro_behat_extension:
     Drop Zone Exclude from Collection:
       selector: '.drop-zones-menu [data-zone="excludeFromCollection"]'
 
+    Remove Product Shipping Options 1:
+      selector: '.product-shipping-options-collection tr:first-child .removeRow'
+
     Add Kit Item:
       selector: '.product-kit-control-group .add-list-item'
 

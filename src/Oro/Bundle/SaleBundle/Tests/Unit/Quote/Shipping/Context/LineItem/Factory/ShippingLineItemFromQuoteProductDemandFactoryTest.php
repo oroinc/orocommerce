@@ -17,6 +17,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Quote\Shipping\Context\LineItem\Factory\ShippingLineItemFromQuoteProductDemandFactory;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingKitItemLineItemFromProductKitItemLineItemFactory;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingLineItemFromProductLineItemFactory;
+use Oro\Bundle\ShippingBundle\Context\LineItem\ShippingLineItemOptionsModifier;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
@@ -70,9 +71,10 @@ class ShippingLineItemFromQuoteProductDemandFactoryTest extends TestCase
                 }
             );
 
+        $modifier = new ShippingLineItemOptionsModifier($managerRegistry);
         $this->factory = new ShippingLineItemFromQuoteProductDemandFactory(
-            $managerRegistry,
-            new ShippingKitItemLineItemFromProductKitItemLineItemFactory()
+            new ShippingKitItemLineItemFromProductKitItemLineItemFactory($modifier),
+            $modifier,
         );
     }
 
