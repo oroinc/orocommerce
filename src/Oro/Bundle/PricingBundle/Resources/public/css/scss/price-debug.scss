@@ -3,7 +3,7 @@
 .prices-collection {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, max-content));
-    grid-gap: $content-padding-medium * 2 $content-padding-medium * 4;
+    gap: $content-padding-medium * 2 $content-padding-medium * 4;
     flex-wrap: wrap;
 
     .product-price-unit {
@@ -13,6 +13,7 @@
 
     &--divider {
         overflow: hidden;
+        grid-template-columns: repeat(auto-fill, minmax(162px, calc(25% - #{$content-padding-medium * 8})));
         grid-column-gap: $content-padding-medium * 8;
     }
 }
@@ -42,9 +43,15 @@
                 font-weight: 700;
             }
         }
+
+        &-inner {
+            word-break: break-word;
+        }
     }
 
     &--divider {
+        justify-content: center;
+
         &:not(:first-of-type) {
             position: relative;
 
