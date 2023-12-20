@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DataProvider;
 
-use Oro\Bundle\CacheBundle\Tests\Unit\Provider\MemoryCacheProviderAwareTestTrait;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\CheckoutBundle\DataProvider\CheckoutDataProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
@@ -28,8 +28,6 @@ use Symfony\Contracts\Cache\CacheInterface;
  */
 class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use MemoryCacheProviderAwareTestTrait;
-
     private const VALIDATION_GROUPS = [['Default', 'checkout_line_items_data']];
 
     /** @var ProductLineItemPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -47,6 +45,9 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $validator;
 
+    /** @var MemoryCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $memoryCacheProvider;
+
     /** @var CheckoutDataProvider */
     private $provider;
 
@@ -59,6 +60,7 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
         $this->validationGroupsProvider = $this->createMock(CheckoutValidationGroupsBySourceEntityProvider::class);
         $this->validator = $this->createMock(ValidatorInterface::class);
+        $this->memoryCacheProvider = $this->createMock(MemoryCacheProviderInterface::class);
 
         $productAvailabilityCache = $this->createMock(CacheInterface::class);
         $productAvailabilityCache->expects(self::any())
@@ -71,9 +73,9 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
             $productAvailabilityCache,
             $this->resolvedProductVisibilityProvider,
             $this->validationGroupsProvider,
-            $this->validator
+            $this->validator,
+            $this->memoryCacheProvider
         );
-        $this->setMemoryCacheProvider($this->provider);
 
         $this->processedValidationGroups = [new GroupSequence(self::VALIDATION_GROUPS)];
     }
@@ -115,7 +117,11 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $cachedData = [['productSku' => 'TEST']];
 
-        $this->mockMemoryCacheProvider($cachedData);
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function () use ($cachedData) {
+                return $cachedData;
+            });
 
         self::assertEquals($cachedData, $this->provider->getData($checkout));
     }
@@ -139,7 +145,11 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->validator->expects(self::never())
             ->method(self::anything());
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
         self::assertEquals([], $this->provider->getData($checkout));
     }
@@ -169,7 +179,11 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
         self::assertEquals([
             [
@@ -218,7 +232,11 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
         self::assertEquals([
             [
@@ -270,7 +288,11 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
         self::assertEquals([
             [
@@ -330,7 +352,11 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
         self::assertEquals([
             [
@@ -389,7 +415,11 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
         self::assertEquals([
             [
@@ -457,7 +487,11 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
         self::assertEquals([
             [
@@ -517,7 +551,11 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
         self::assertEquals([
             [
@@ -588,7 +626,11 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
                 )
             );
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
         self::assertEquals([], $this->provider->getData($checkout));
     }
@@ -643,7 +685,11 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
                 )
             );
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
         self::assertEquals([], $this->provider->getData($checkout));
     }
@@ -698,7 +744,11 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
                 )
             );
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
         self::assertEquals([], $this->provider->getData($checkout));
     }
@@ -738,7 +788,11 @@ class CheckoutDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with($checkout->getLineItems(), null, $this->processedValidationGroups)
             ->willReturn(new ConstraintViolationList());
 
-        $this->mockMemoryCacheProvider();
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
 
         self::assertEquals([], $this->provider->getData($checkout));
     }

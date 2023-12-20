@@ -34,8 +34,7 @@ services:
             - '@oro_checkout.data_provider.converter.checkout_line_items'
             - '@oro_pricing.user_currency_manager'
             - '@oro_config.manager'
-        calls:
-            - [setMemoryCacheProvider, ['@oro_checkout.data_provider.manager.checkout_line_items.cache']]
+            - '@oro_checkout.data_provider.manager.checkout_line_items.cache'
 
     oro_checkout.data_provider.manager.checkout_line_items.cache:
         parent: oro.cache.provider.memory_cache
@@ -655,8 +654,7 @@ services:
             - '@oro_visibility.provider.resolved_product_visibility_provider'
             - '@oro_checkout.provider.checkout_validation_groups_by_source_entity'
             - '@validator'
-        calls:
-            - [setMemoryCacheProvider, ['@oro_checkout.data_provider.checkout.cache']]
+            - '@oro_checkout.data_provider.checkout.cache'
         tags:
             - { name: checkout.data_provider.line_item }
 
