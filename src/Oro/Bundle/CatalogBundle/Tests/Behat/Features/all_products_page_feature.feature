@@ -77,6 +77,7 @@ Feature: All products page feature
     And I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message and I close it
     When I click "Shopping List"
+    And I click "Close" in modal window
     And I should see "Product3`\"'&йёщ®&reg;>"
     Then I click "All Products" in hamburger menu
     # Filtering by full product name "Product3`\"'&йёщ®&reg;>" does not work on elasticsearch, see BB-19131

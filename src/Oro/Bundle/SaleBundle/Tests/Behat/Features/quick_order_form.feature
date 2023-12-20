@@ -8,7 +8,7 @@ Feature: Quick order form
 
   Scenario: Check quick order form field clearing
     Given I login as AmandaRCole@example.org buyer
-    And I click "Quick Order Form"
+    And I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | PSKU1 - Product1 |
     And I wait for products to load
@@ -30,7 +30,7 @@ Feature: Quick order form
       | SUBTOTAL1 | $10.00           |
 
   Scenario: Delete row button appears when row inputs have some value entered
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     Then I should not see an "Quick Order Form > DeleteRow1" element
     And I should not see an "Quick Order Form > DeleteRow2" element
     When I fill "Quick Order Form" with:

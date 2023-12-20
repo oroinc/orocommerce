@@ -26,9 +26,7 @@
     <span class="text-clip">
         {% set isShowDropdown = true %}
         {% if not is_one_shopping_list_enabled() %}
-            {% if shoppingLists|length > 0 %}
-                <span class="shopping-list-trigger__count">{{ shoppingLists|length }}</span>
-            {% endif %}
+            <span class="shopping-list-trigger__count">{{ shoppingLists|length }}</span>
             {% if showLabel %}
                 <span class="shopping-list-trigger__label hide-on-tablet">
                     {{- 'oro.frontend.shoppinglist.view.entity.label'|trans({'%count%': shoppingLists|length}) -}}
@@ -37,9 +35,14 @@
         {% else %}
             {% if (shoppingLists|length > 0) %}
                 {% set shoppingList = shoppingLists[0] %}
-                {{ 'oro.shoppinglist.default.label'|trans}}
+                {% if showLabel %}
+                    {{ 'oro.shoppinglist.default.label'|trans}}
+                {% endif %}
                 {% if shoppingList.lineItems|length > 0 %}
-                    <span aria-hidden="true">|</span> {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
+                    {% if showLabel %}
+                        <span aria-hidden="true">|</span>
+                    {% endif %}
+                    {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
                 {% endif %}
             {% else %}
                 {% set isShowDropdown = false %}
@@ -76,19 +79,21 @@
         }) %}
     {% endif %}
 
-    <div {{ block('block_attributes') }}>
-        <fieldset>
-            <legend class="sr-only">{{ 'oro.frontend.shoppinglist.fieldset_legend'|trans }}</legend>
-            {% for shoppingList in shoppingLists -%}
-                {% do block|merge_context({
-                    shoppingList: shoppingList,
-                    shoppingListProducts: shoppingListProducts,
-                    productLineItemsPrices: productLineItemsPricesByShoppingList[shoppingList.id]|default([])
-                }) %}
-                {{ block('container_widget') }}
-            {%- endfor %}
-        </fieldset>
-    </div>
+    {% if shoppingLists|length > 0 %}
+        <div {{ block('block_attributes') }}>
+            <fieldset>
+                <legend class="sr-only">{{ 'oro.frontend.shoppinglist.fieldset_legend'|trans }}</legend>
+                {% for shoppingList in shoppingLists -%}
+                    {% do block|merge_context({
+                        shoppingList: shoppingList,
+                        shoppingListProducts: shoppingListProducts,
+                        productLineItemsPrices: productLineItemsPricesByShoppingList[shoppingList.id]|default([])
+                    }) %}
+                    {{ block('container_widget') }}
+                {%- endfor %}
+            </fieldset>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block shopping_list_dropdown_item_widget %}

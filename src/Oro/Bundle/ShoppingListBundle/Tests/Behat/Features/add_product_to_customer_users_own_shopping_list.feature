@@ -57,7 +57,7 @@ Feature: Add Product to Customer User's Own Shopping List
   Scenario: Clear the buyer's shopping list at first
     Given I proceed as the Buyer
     And I signed in as NancyJSallee@example.org on the store frontend
-    Then I should not see "3 Shopping Lists"
+    Then I should not see "3" in the "Shopping List Widget" element
     When I open page with shopping list "Shopping List 2"
     And I click "Shopping List Actions"
     And I click "Delete"
@@ -81,7 +81,7 @@ Feature: Add Product to Customer User's Own Shopping List
     And reload the page
 
   Scenario: To add a new product to shopping list in quick order form as the buyer
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     Then I should not see "Add to Shopping List 3"
     When I type "BB04" in "SKU1" from "Quick Order Form"
     And I wait for products to load
@@ -140,7 +140,7 @@ Feature: Add Product to Customer User's Own Shopping List
       | BB04 | Configurable Product 1 Note 4 text | 4 item         |
 
   Scenario: To add a new product to shopping list in quick order form as the buyer with "Show All Lists In Shopping List Widgets" option on
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     Then I should see "Add to Shopping List 3"
     When I type "BB04" in "SKU1" from "Quick Order Form"
     And I wait for products to load

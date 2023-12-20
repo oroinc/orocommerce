@@ -16,4 +16,4 @@ Feature: Quick order form with anonymous user
       | Password      | AmandaRCole@example.org |
     And click "Sign In"
     Then I should see "Amanda Cole"
-    And should see "Quick Order Form"
+    And should see "Quick Order"

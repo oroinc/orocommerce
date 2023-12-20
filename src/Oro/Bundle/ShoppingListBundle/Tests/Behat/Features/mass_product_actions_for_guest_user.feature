@@ -59,6 +59,7 @@ Feature: Mass Product Actions for Guest user
       | Unit     | item |
     And I scroll to top
     And I click "Add to current Shopping List" in "ProductFrontendMassPanelInBottomSticky" element
+    And I click on "Flash Message Close Button"
     And I open shopping list widget
     And I should see "3 items $7.00" in the "Shopping List Widget" element
     And I should see "$21.00" in the "Shopping List Widget" element

@@ -26,13 +26,13 @@ Feature: Guest shopping list merging functionality
   Scenario: Check no customer shopping lists by default
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I should see "No Shopping Lists"
+    And I should see "0" in the "Shopping List Widget" element
     And I click "Account Dropdown"
     And I click "Sign Out"
 
   Scenario: Create shopping list as a guest
     Given I am on homepage
-    And I should see "No Shopping Lists"
+    And I should see "0" in the "Shopping List Widget" element
     And I should see "Shopping List"
     And type "PSKU1" in "search"
     And I click "Search Button"

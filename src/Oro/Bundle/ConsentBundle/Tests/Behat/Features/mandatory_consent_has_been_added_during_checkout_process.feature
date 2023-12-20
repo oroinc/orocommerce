@@ -78,7 +78,7 @@ Feature: Mandatory Consent has been added during Checkout process
   Scenario: Check mandatory consents on Checkout Page
     Given I proceed as the Buyer
     When I signed in as AmandaRCole@example.org on the store frontend
-    And click "Quick Order Form"
+    And click "Quick Order"
     And fill "Quick Order Form" with:
       | SKU1 | Lenovo_Vibe1_sku |
     And I wait for products to load

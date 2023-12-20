@@ -577,7 +577,7 @@ Feature: Consent management via Management Console UI
     When click "Yes, Decline"
     Then should see "Customer User profile updated" flash message and I close it
     And reload the page
-    And click "Quick Order Form"
+    And click "Quick Order"
     And fill "Quick Order Form" with:
       | SKU1 |Lenovo_Vibe1_sku|
     And I wait for products to load
@@ -697,7 +697,7 @@ Feature: Consent management via Management Console UI
     And I click "Yes, Decline"
     And I should see "Customer User profile updated" flash message and I close it
     And reload the page
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 |Lenovo_Vibe1_sku|
     And I wait for products to load

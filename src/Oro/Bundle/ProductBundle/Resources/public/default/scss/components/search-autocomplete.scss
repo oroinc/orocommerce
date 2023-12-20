@@ -154,13 +154,24 @@
 @include breakpoint('tablet') {
     .search-autocomplete {
         margin-bottom: $search-autocomplete-tablet-offset-bottom;
-        position: $search-autocomplete-tablet-position;
 
         &__content {
             min-width: $search-autocomplete-content-tablet-min-width;
             border: $search-autocomplete-content-tablet-border;
             padding: $search-autocomplete-content-tablet-inner-offset;
             box-shadow: $search-autocomplete-content-tablet-box-shadow;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .search-autocomplete {
+        top: 100%;
+        left: 0;
+        right: 0;
+
+        &__item {
+            margin: 0;
         }
     }
 }

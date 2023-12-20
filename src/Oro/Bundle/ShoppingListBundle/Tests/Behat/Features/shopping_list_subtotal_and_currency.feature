@@ -29,7 +29,7 @@ Feature: Shopping list subtotal and currency
     And I open shopping list widget
     And I click "Create New List"
     When I click "Create"
-    Then I should see "3 Shopping Lists"
+    Then I should see "3" in the "Shopping List Widget" element
     And I type "BB04" in "search"
     And I click "Search Button"
     Then I should see "Add to Shopping List"

@@ -71,7 +71,7 @@ Feature: Price List Customer Group fallback
 
     When I proceed as the Buyer
     And I signed in as <CustomerUserEmail> on the store frontend
-    And I should see "No Shopping Lists"
+    And I should see "0" in the "Shopping List Widget" element
     When type "PSKU1" in "search"
     And I click "Search Button"
     Then I should see "Product 1"
@@ -119,7 +119,7 @@ Feature: Price List Customer Group fallback
 
     When I proceed as the Buyer
     And I signed in as <CustomerUserEmail> on the store frontend
-    And I should see "No Shopping Lists"
+    And I should see "0" in the "Shopping List Widget" element
     When type "PSKU1" in "search"
     And I click "Search Button"
     Then I should see "Product 1"

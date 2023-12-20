@@ -604,7 +604,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Close" in modal window
     Then I should not see an "Matrix Grid Popup" element
     # Check opening popup matrix form doesn't create empty shopping list
-    And I should see "No Shopping Lists"
+    And I should see "0" in the "Shopping List Widget" element
     And I click "Add to Shopping List" for "CNFB" product
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |

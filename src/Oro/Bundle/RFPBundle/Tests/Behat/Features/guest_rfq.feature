@@ -34,7 +34,7 @@ Feature: Guest RFQ
   Scenario: Create RFQ from shopping list
     Given I proceed as the Buyer
     And I am on the homepage
-    And I should see "No Shopping Lists"
+    And I should see "0" in the "Shopping List Widget" element
     When type "PSKU1" in "search"
     And I click "Search Button"
     Then I should see "Product1"

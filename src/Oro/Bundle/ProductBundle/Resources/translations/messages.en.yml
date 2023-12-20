@@ -5,6 +5,8 @@ oro:
                 title: '{0} All Products|[1,Inf] Search Results for "%text%"'
             search_in_category:
                 title: '{0} All Products in %category%|[1,Inf] Search Results for "%text%" in %category%'
+        search_widget:
+            cancel: 'Cancel'
         entity_label: Product
         entity_plural_label: Products
         entity_grid_all_view_label: All %entity_plural_label%

@@ -26,6 +26,10 @@
 
         &__dropdown-footer {
             padding: 0 spacing('base') spacing('base');
+
+            &:only-child {
+                padding-top: spacing('base');
+            }
         }
     }
 

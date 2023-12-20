@@ -102,7 +102,7 @@ Feature: Guest Shopping Lists
   Scenario: Empty shopping list shouldn't be created automatically for unauthorized user
     Given I proceed as the User
     And I am on homepage
-    And I should see "No Shopping Lists"
+    And I should see "0" in the "Shopping List Widget" element
 
   Scenario: Enable "Create Guest Shopping Lists Immediately"
     Given I proceed as the Admin
@@ -119,7 +119,7 @@ Feature: Guest Shopping Lists
 
   Scenario: Add empty matrices to the shopping Shopping List
     When I click "Add to Shopping List"
-    Then should see 'Shopping list "Shopping List" was updated successfully' flash message
+    Then I should see 'Shopping list "Shopping List" was updated successfully' flash message and I close it
     When I open shopping list widget
     And I click "Open List"
     Then I should see following grid:
@@ -173,6 +173,7 @@ Feature: Guest Shopping Lists
   Scenario: Check added products available in Guest Shopping List
     Given I click "Shopping List"
     Then  I should see "Control Product"
+    And I click on "Flash Message Close Button"
     And  I should see "Product3"
     And I should not see following buttons:
       | Delete        |

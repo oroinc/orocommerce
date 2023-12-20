@@ -104,6 +104,7 @@ Feature: Single page checkout with consents
     And I click "Search Button"
     And I click "View Details" for "SKU123" product
     And I click "Add to Shopping List"
+    And I click on "Flash Message Close Button"
     When I open shopping list widget
     And I click "Open List"
     And I scroll to top

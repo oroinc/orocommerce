@@ -38,6 +38,9 @@ $main-menu-outer-container-desktop-display: null;
 $main-menu-outer-container-desktop-justify-content: null;
 
 $main-menu-outer-desktop-display: null;
+
+$main-menu-stacked-btn-colors: get-color('text', 'primary') !default;
+
 // Tablet
 
 $main-menu-tablet-border: 1px solid get-color('additional-old', 'light') !default;
