@@ -2260,6 +2260,7 @@ services:
 
     oro_product.delete_handler_extension.product:
         class: Oro\Bundle\ProductBundle\Handler\ProductDeleteHandlerExtension
+        deprecated: '%service_id% is deprecated since 5.1, use oro_product.acl.product_voter instead'
         parent: oro_entity.delete_handler_extension
         arguments:
             - '@oro_product.provider.product_kits_by_product'

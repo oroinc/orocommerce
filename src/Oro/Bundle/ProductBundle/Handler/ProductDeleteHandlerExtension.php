@@ -9,6 +9,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Delete handler extension for Product entity.
+ * @deprecated since 5.1, use {@see ProductVoter} instead
  */
 class ProductDeleteHandlerExtension extends AbstractEntityDeleteHandlerExtension
 {
