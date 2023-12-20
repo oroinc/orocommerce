@@ -2231,15 +2231,6 @@ services:
         tags:
             - { name: doctrine.repository_service }
 
-    oro_product.delete_handler_extension.product:
-        class: Oro\Bundle\ProductBundle\Handler\ProductDeleteHandlerExtension
-        parent: oro_entity.delete_handler_extension
-        arguments:
-            - '@oro_product.provider.product_kits_by_product'
-            - '@translator'
-        tags:
-            - { name: oro_entity.delete_handler_extension, entity: Oro\Bundle\ProductBundle\Entity\Product }
-
     oro_product.delete_handler_extension.product_kit_item:
         class: Oro\Bundle\ProductBundle\Handler\ProductKitItemDeleteHandlerExtension
         parent: oro_entity.delete_handler_extension

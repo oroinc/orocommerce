@@ -45,3 +45,13 @@ services:
             - { name: doctrine.event_listener, event: onClear }
             - { name: kernel.event_listener, event: oro_search.before_index_entities, method: beforeIndexEntities }
             - { name: kernel.event_listener, event: oro_search.prepare_entity_map, method: prepareEntityMapEvent }
+
+    oro_product.acl.product_voter:
+        class: Oro\Bundle\ProductBundle\Acl\Voter\ProductVoter
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_product.provider.product_kits_by_product'
+        calls:
+            - [ setClassName, [ 'Oro\Bundle\ProductBundle\Entity\Product' ] ]
+        tags:
+            - { name: security.voter }
