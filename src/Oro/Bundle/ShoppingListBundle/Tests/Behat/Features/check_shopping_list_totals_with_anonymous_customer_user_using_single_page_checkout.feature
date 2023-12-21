@@ -23,7 +23,7 @@ Feature: Check shopping list totals with anonymous customer user using single pa
     And fill in "Shopping List Limit" with "1"
     And uncheck "Use default" for "Enable Guest Shopping List" field
     And check "Enable Guest Shopping List"
-    And save setting
+    And I save setting
     Then I should see "Configuration saved" flash message
 
   Scenario: Enable guest checkout setting
