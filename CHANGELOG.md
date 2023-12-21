@@ -79,6 +79,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+#### UPSBundle
+* Changed `\Oro\Bundle\UPSBundle\Factory\PriceRequestFactory` to make it work with `\Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface` models.
+
 #### CheckoutBundle
 * Changed `\Oro\Bundle\CheckoutBundle\Converter\ShoppingListLineItemConverter`, `\Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter`, `\Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShoppingListLineItemDiffMapper` to take into account `\Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem` entities.
 * Changed `\Oro\Bundle\CheckoutBundle\Datagrid\FrontendLineItemsGridExtension`, `\Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider`, `\Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider` to take into account checkout line item checksum.
@@ -131,6 +134,7 @@ The current file describes significant changes in the code that may affect the u
 * Changed `\Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface` to make it work with `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem` instead of the removed `\Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface` and `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface`.
 * Changed `\Oro\Bundle\ShippingBundle\Converter\Basic\ShippingContextToRulesValuesConverter` to take into account `\Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem` models.
 * Changed `\Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory` to make it work with `\Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem` models.
+* Changed `\Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem` to make it work with `\Oro\Bundle\ShippingBundle\Model\Dimensions` and `\Oro\Bundle\ShippingBundle\Model\Weight`.
 
 #### ShoppingListBundle
 * Made use of `\Symfony\Component\Validator\Constraints\GroupSequence` in `\Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController` when creating/updating a product kit line item.

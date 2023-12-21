@@ -9,4 +9,4 @@ layout:
         - '@move':
             id: product_view_additional_container
             parentId: product_view_container
-    conditions: '!context["is_mobile"] && context["product_type"] != "kit"'
+    conditions: '!context["is_mobile"]'

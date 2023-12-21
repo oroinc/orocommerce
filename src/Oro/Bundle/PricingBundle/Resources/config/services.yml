@@ -119,8 +119,7 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.product_price_criteria_data_extractor'
             - '@oro_pricing.provider.product_price_by_matching_criteria'
-        calls:
-            - [setMemoryCacheProvider, ['@oro_pricing.provider.product_price.cache']]
+            - '@oro_pricing.provider.product_price.cache'
 
     Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface:
         alias: 'oro_pricing.provider.product_price'

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\DataProvider;
 
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem;
@@ -25,14 +25,13 @@ use Symfony\Contracts\Cache\CacheInterface;
  */
 class CheckoutDataProvider implements CheckoutDataProviderInterface
 {
-    use MemoryCacheProviderAwareTrait;
-
     private ProductLineItemPriceProviderInterface $productLineItemPriceProvider;
     private AuthorizationCheckerInterface $authorizationChecker;
     private CacheInterface $productAvailabilityCache;
     private ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider;
     private CheckoutValidationGroupsBySourceEntityProvider $validationGroupsProvider;
     private ValidatorInterface $validator;
+    private MemoryCacheProviderInterface $memoryCacheProvider;
     /** @var array<string|array<string>>  */
     private array $validationGroups = [['Default', 'checkout_line_items_data']];
 
@@ -42,7 +41,8 @@ class CheckoutDataProvider implements CheckoutDataProviderInterface
         CacheInterface $productAvailabilityCache,
         ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider,
         CheckoutValidationGroupsBySourceEntityProvider $checkoutValidationGroupsBySourceEntityProvider,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        MemoryCacheProviderInterface $memoryCacheProvider
     ) {
         $this->productLineItemPriceProvider = $productLineItemPriceProvider;
         $this->authorizationChecker = $authorizationChecker;
@@ -50,6 +50,7 @@ class CheckoutDataProvider implements CheckoutDataProviderInterface
         $this->resolvedProductVisibilityProvider = $resolvedProductVisibilityProvider;
         $this->validationGroupsProvider = $checkoutValidationGroupsBySourceEntityProvider;
         $this->validator = $validator;
+        $this->memoryCacheProvider = $memoryCacheProvider;
     }
 
     /**
@@ -73,7 +74,7 @@ class CheckoutDataProvider implements CheckoutDataProviderInterface
      */
     public function getData(object $entity): array
     {
-        return $this->getMemoryCacheProvider()->get(
+        return $this->memoryCacheProvider->get(
             ['checkout' => $entity],
             function () use ($entity) {
                 return $this->prepareData($entity);
