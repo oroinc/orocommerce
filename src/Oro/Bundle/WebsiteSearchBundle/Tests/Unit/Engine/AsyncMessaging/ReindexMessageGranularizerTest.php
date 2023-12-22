@@ -182,16 +182,16 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
                         ]
                     ],
                     [
-                        'class'   => ['Product2'],
+                        'class'   => ['Product1'],
                         'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => self::IDS_FROM_REPOSITORY,
                         ]
                     ],
                     [
-                        'class'   => ['Product1'],
+                        'class'   => ['Product2'],
                         'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => self::IDS_FROM_REPOSITORY,
                         ]
                     ],
@@ -227,7 +227,21 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
                     [
                         'class'   => ['Product'],
                         'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(1, 100),
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
                             AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(101, 200),
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(101, 200),
                         ]
                     ],
@@ -241,7 +255,21 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
                     [
                         'class'   => ['Product'],
                         'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(201, 300),
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
                             AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(301, 400),
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(301, 400),
                         ]
                     ],
@@ -250,34 +278,6 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
                         'context' => [
                             AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(401, 500),
-                        ]
-                    ],
-                    [
-                        'class'   => ['Product'],
-                        'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(1, 100),
-                        ]
-                    ],
-                    [
-                        'class'   => ['Product'],
-                        'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(101, 200),
-                        ]
-                    ],
-                    [
-                        'class'   => ['Product'],
-                        'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(201, 300),
-                        ]
-                    ],
-                    [
-                        'class'   => ['Product'],
-                        'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(301, 400),
                         ]
                     ],
                     [
