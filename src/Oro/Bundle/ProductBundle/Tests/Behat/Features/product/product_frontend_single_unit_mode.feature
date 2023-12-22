@@ -1,5 +1,6 @@
 @ticket-BB-13658
 @ticket-BB-16335
+@ticket-BB-22546
 @fixture-OroProductBundle:product_frontend_single_unit_mode.yml
 
 Feature: Product frontend single unit mode
@@ -106,9 +107,66 @@ Feature: Product frontend single unit mode
     And I should see "Your Price: $30.00 / set" for "PSKU3" product
     And I should see "Your Price: $40.00 / item" for "PSKU4" product
 
+  Scenario: Check if price is displayed correctly for existing product kit on view page
+    Given I type "PSKU_KIT1" in "search"
+    And I click "Search Button"
+    And I click "View Details" for "PSKU_KIT1" product
+    When I click "Configure and Add to Shopping List"
+    Then I should see "Product Kit Dialog" with elements:
+      | Price | Price as configured: $30.00 |
+    And I should see "set" for "Product Kit Line Item Totals Form Unit" select
+    And I should see "each" for "Product Kit Line Item Totals Form Unit" select
+    And I should not see "item" for "Product Kit Line Item Totals Form Unit" select
+    And I close ui dialog
+
+  @skip
+# Unskip after enabling product kit
+  Scenario: Create new product kit with Single Unit mode
+    Given I proceed as the Admin
+    When I go to Products/ Products
+    And click "Create Product"
+    And fill form with:
+      | Type | Kit |
+    And click "Continue"
+    And fill "Create Product Form" with:
+      | SKU    | PSKU_KIT2      |
+      | Name   | PSKU_KIT2 Name |
+      | Status | Enable         |
+    And I fill "ProductKitForm" with:
+      | Kit Item 1 Label            | Kit Item 1 |
+      | Kit Item 1 Sort Order       | 1          |
+      | Kit Item 1 Minimum Quantity | 1          |
+      | Kit Item 1 Maximum Quantity | 2          |
+    And I click "Add Product" in "Product Kit Item 1" element
+    And I click on PSKU4 in grid "KitItemProductsAddGrid"
+    And click "AddPrice"
+    And fill "Product Price Form" with:
+      | Price List | Default Price List |
+      | Quantity   | 1                  |
+      | Value      | 50                 |
+      | Currency   | $                  |
+    And I save and close form
+    Then I should see "Product has been saved" flash message
+
+  @skip
+# Unskip after enabling product kit
+  Scenario: Check if price is displayed correctly for new product kit on view page
+    Given I proceed as the Buyer
+    And I reload the page
+    And I type "PSKU_KIT2" in "search"
+    When I click "Search Button"
+    And I click "View Details" for "PSKU_KIT2" product
+    And I click "Configure and Add to Shopping List"
+    Then I should see "Product Kit Dialog" with elements:
+      | Price | Price as configured: $90.00 |
+    And I should see "item" for "Product Kit Line Item Totals Form Unit" select
+    And I should not see "set" for "Product Kit Line Item Totals Form Unit" select
+    And I should not see "each" for "Product Kit Line Item Totals Form Unit" select
+    And I close ui dialog
+
   Scenario: As guest user verify that prices are correctly displayed in "List page" layout view
     When I click "Sign Out"
-    When I type "PSKU2" in "search"
+    And I type "PSKU2" in "search"
     And click "Search Button"
     And I click "View Details" for "PSKU2" product
     Then I should see "Listed Price: $20.00 / each"

@@ -17,6 +17,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -41,12 +42,16 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
 
     private FormFieldsMapProvider|MockObject $fieldsMapProvider;
 
+    private ProductUnitFieldsSettingsInterface|MockObject $unitFieldsSettings;
+
     private array $fieldsMap;
 
     protected function setUp(): void
     {
         $this->fieldsMapProvider = $this->createMock(FormFieldsMapProvider::class);
+        $this->unitFieldsSettings = $this->createMock(ProductUnitFieldsSettingsInterface::class);
         $this->type = new ProductKitItemType($this->fieldsMapProvider);
+        $this->type->setUnitFieldsSettings($this->unitFieldsSettings);
 
         $translator = $this->createMock(TranslatorInterface::class);
         $bypassCallback = static fn ($value) => $value;
@@ -131,6 +136,17 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
      */
     public function testBuildFormWithoutData(): void
     {
+        $choices = [
+            $this->createMock(ProductUnit::class),
+            $this->createMock(ProductUnit::class),
+        ];
+
+        $this->unitFieldsSettings
+            ->expects(self::once())
+            ->method('getAvailablePrimaryUnitChoices')
+            ->with(null)
+            ->willReturn($choices);
+
         $form = $this->factory->create(ProductKitItemType::class);
 
         $this->assertFormContainsField('labels', $form);
@@ -143,6 +159,7 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
 
         $this->assertFormOptionEqual(ProductKitItem::class, 'data_class', $form);
         $this->assertFormOptionEqual(null, 'kit_item', $form->get('kitItemProducts'));
+        $this->assertFormOptionEqual($choices, 'choices', $form->get('productUnit'));
 
         $formView = $form->createView();
         self::assertEquals(
@@ -167,6 +184,18 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
 
     public function testBuildFormWithData(): void
     {
+        $choices = [
+            $this->createMock(ProductUnit::class),
+            $this->createMock(ProductUnit::class),
+            $this->createMock(ProductUnit::class),
+        ];
+
+        $this->unitFieldsSettings
+            ->expects(self::once())
+            ->method('getAvailablePrimaryUnitChoices')
+            ->with(null)
+            ->willReturn($choices);
+
         $product1 = (new ProductStub())->setSku('SKU1');
         $productKitItemProduct1 = (new ProductKitItemProduct())->setProduct($product1);
         $productUnit = (new ProductUnit())
@@ -182,6 +211,7 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
 
         $form = $this->factory->create(ProductKitItemType::class, $productKitItem);
 
+        $this->assertFormOptionEqual($choices, 'choices', $form->get('productUnit'));
         $this->assertFormOptionEqual(ProductKitItem::class, 'data_class', $form);
         $this->assertEquals(
             $productKitItem,
@@ -210,6 +240,17 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
 
     public function testSubmitWhenEmptyInitialData(): void
     {
+        $choices = [
+            $this->createMock(ProductUnit::class),
+            $this->createMock(ProductUnit::class),
+        ];
+
+        $this->unitFieldsSettings
+            ->expects(self::once())
+            ->method('getAvailablePrimaryUnitChoices')
+            ->with(null)
+            ->willReturn($choices);
+
         $form = $this->factory->create(ProductKitItemType::class);
 
         self::assertNull($form->getData());
@@ -237,6 +278,7 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
         ]);
 
         $this->assertFormIsValid($form);
+        $this->assertFormOptionEqual($choices, 'choices', $form->get('productUnit'));
 
         $expected = (new ProductKitItem())
             ->addLabel((new ProductKitItemLabel())->setString('Sample Label'))
@@ -252,6 +294,17 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
 
     public function testSubmitWhenNotEmptyInitialData(): void
     {
+        $choices = [
+            $this->createMock(ProductUnit::class),
+            $this->createMock(ProductUnit::class),
+        ];
+
+        $this->unitFieldsSettings
+            ->expects(self::once())
+            ->method('getAvailablePrimaryUnitChoices')
+            ->with(null)
+            ->willReturn($choices);
+
         $product1 = (new ProductStub())->setSku('SKU1');
         $productKitItemProduct1 = (new ProductKitItemProduct())->setProduct($product1);
         $productUnitItem = (new ProductUnit())
@@ -269,6 +322,7 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(ProductKitItemType::class, $initialProductKitItem);
 
         self::assertSame($initialProductKitItem, $form->getData());
+        $this->assertFormOptionEqual($choices, 'choices', $form->get('productUnit'));
 
         $product2 = (new ProductStub())->setSku('SKU1');
         $productKitItemProduct2 = (new ProductKitItemProduct())->setProduct($product2);
@@ -294,6 +348,7 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
         ]);
 
         $this->assertFormIsValid($form);
+        $this->assertFormOptionEqual($choices, 'choices', $form->get('productUnit'));
 
         $expected = (new ProductKitItem())
             ->addLabel((new ProductKitItemLabel())->setString('Sample Label Updated'))

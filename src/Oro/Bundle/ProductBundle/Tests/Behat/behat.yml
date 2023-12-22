@@ -1854,6 +1854,11 @@ oro_behat_extension:
         type: xpath
         locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"0")]//*[contains(concat(" ",normalize-space(@class)," ")," product-kit-item__title ")]'
 
+    Kit Item 1 Product Unit:
+      selector:
+        type: xpath
+        locator: '//select[@name="oro_product[kitItems][0][productUnit]"]'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
