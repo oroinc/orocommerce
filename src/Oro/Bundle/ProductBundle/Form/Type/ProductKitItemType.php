@@ -8,10 +8,11 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel;
+use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -24,26 +25,21 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class ProductKitItemType extends AbstractType
 {
-    private FormFieldsMapProvider $fieldsMapProvider;
-
-    public function __construct(FormFieldsMapProvider $fieldsMapProvider)
-    {
-        $this->fieldsMapProvider = $fieldsMapProvider;
+    public function __construct(
+        private FormFieldsMapProvider $fieldsMapProvider,
+        private ProductUnitFieldsSettingsInterface $unitFieldsSettings,
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add(
-                'labels',
-                LocalizedFallbackValueCollectionType::class,
-                [
-                    'label' => 'oro.product.productkititem.labels.label',
-                    'required' => true,
-                    'value_class' => ProductKitItemLabel::class,
-                    'entry_options' => ['constraints' => [new NotBlank(), new Length(['max' => 255])]]
-                ]
-            )
+            ->add('labels', LocalizedFallbackValueCollectionType::class, [
+                'label' => 'oro.product.productkititem.labels.label',
+                'required' => true,
+                'value_class' => ProductKitItemLabel::class,
+                'entry_options' => ['constraints' => [new NotBlank(), new Length(['max' => 255])]]
+            ])
             ->add('sortOrder', IntegerType::class, [
                 'label' => 'oro.product.productkititem.sort_order.label',
                 'required' => false,
@@ -61,20 +57,29 @@ class ProductKitItemType extends AbstractType
                 'label' => 'oro.product.productkititem.maximum_quantity.label',
                 'required' => false,
                 'useInputTypeNumberValueFormat' => true,
-            ])
+            ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
+    }
+
+    public function onPreSetData(FormEvent $event): void
+    {
+        /** @var ProductKitItem $data */
+        $data = $event->getData();
+        $form = $event->getForm();
+
+        $form
             ->add('productUnit', ProductUnitSelectType::class, [
                 'label' => 'oro.product.productkititem.product_unit.label',
                 'required' => true,
-            ]);
-
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (PreSetDataEvent $event) {
-            $event->getForm()->add('kitItemProducts', ProductKitItemProductsType::class, [
+                'choices' => $this->unitFieldsSettings->getAvailablePrimaryUnitChoices($data?->getProductKit()),
+            ])
+            ->add('kitItemProducts', ProductKitItemProductsType::class, [
                 'label' => 'oro.product.productkititem.products.label',
                 'required' => true,
                 'by_reference' => false,
-                'kit_item' => $event->getData(),
+                'kit_item' => $data,
             ]);
-        });
     }
 
     public function finishView(FormView $view, FormInterface $form, array $options): void

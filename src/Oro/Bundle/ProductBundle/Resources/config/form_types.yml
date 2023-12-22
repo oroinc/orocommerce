@@ -237,7 +237,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension'
         arguments:
             - 'unit'
-            - "@oro_product.visibility.product_unit_fields_settings"
+            - '@oro_product.visibility.product_unit_fields_settings'
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType' }
 
@@ -297,6 +297,7 @@ services:
         class: Oro\Bundle\ProductBundle\Form\Type\ProductKitItemType
         arguments:
             - '@oro_form.provider.form_fields_map'
+            - '@oro_product.visibility.product_unit_fields_settings'
         tags:
             - { name: form.type }
 
