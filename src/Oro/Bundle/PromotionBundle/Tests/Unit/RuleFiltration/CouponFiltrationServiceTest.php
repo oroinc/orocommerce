@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\RuleFiltration;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
@@ -13,186 +12,202 @@ use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class CouponFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $filtrationService;
+    private $baseFiltrationService;
 
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
+    private $doctrine;
 
     /** @var CouponFiltrationService */
-    private $couponFiltrationService;
+    private $filtrationService;
 
     protected function setUp(): void
     {
-        $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->couponFiltrationService = new CouponFiltrationService($this->filtrationService, $this->registry);
+        $this->baseFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+
+        $this->filtrationService = new CouponFiltrationService($this->baseFiltrationService, $this->doctrine);
     }
 
-    public function testGetFilteredRuleOwnersWithNotPromotionDataInterfaceRuleOwners()
+    private function getPromotion(int $id, bool $useCoupons): Promotion
     {
-        $ruleOwners = [new \stdClass()];
-        $context = [];
+        $promotion = new Promotion();
+        ReflectionUtil::setId($promotion, $id);
+        $promotion->setUseCoupons($useCoupons);
 
-        $this->filtrationService->expects($this->once())
-            ->method('getFilteredRuleOwners')
-            ->with([], $context)
-            ->willReturnCallback(function ($ruleOwners) {
-                return $ruleOwners;
-            });
-
-        $this->registry->expects($this->never())
-            ->method('getManagerForClass');
-
-        self::assertEmpty($this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context));
+        return $promotion;
     }
 
-    public function testGetFilteredRuleOwnersWithNoAppliedCouponsAndRuleOwnerUsesCoupons()
+    private function getCoupon(string $code): Coupon
     {
-        $appliedPromotion = (new Promotion())->setUseCoupons(true);
-        $ruleOwners = [$appliedPromotion];
-        $context = [];
+        $coupon = new Coupon();
+        $coupon->setCode($code);
 
-        $this->filtrationService->expects($this->once())
-            ->method('getFilteredRuleOwners')
-            ->with([], $context)
-            ->willReturnCallback(function ($ruleOwners) {
-                return $ruleOwners;
-            });
-
-        $this->registry->expects($this->never())
-            ->method('getManagerForClass');
-
-        self::assertEmpty($this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context));
+        return $coupon;
     }
 
-    public function testGetFilteredRuleOwnersWithNoAppliedCouponsAndRuleOwnerNotUsesCoupons()
+    private function getAppliedPromotion(Coupon $coupon): AppliedPromotionData
     {
-        $appliedPromotion = (new Promotion())->setUseCoupons(false);
-        $ruleOwners = [$appliedPromotion];
-        $context = [];
+        $appliedPromotion = new AppliedPromotionData();
+        $appliedPromotion->setUseCoupons(true);
+        $appliedPromotion->addCoupon($coupon);
 
-        $this->filtrationService->expects($this->once())
-            ->method('getFilteredRuleOwners')
-            ->with([$appliedPromotion], $context)
-            ->willReturnCallback(function ($ruleOwners) {
-                return $ruleOwners;
-            });
+        return $appliedPromotion;
+    }
 
-        $this->registry->expects($this->never())
-            ->method('getManagerForClass');
+    public function testShouldBeSkippable(): void
+    {
+        $ruleOwners = [$this->createMock(RuleOwnerInterface::class)];
 
-        self::assertEquals(
-            [$appliedPromotion],
-            $this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context)
+        $this->baseFiltrationService->expects(self::never())
+            ->method('getFilteredRuleOwners');
+
+        self::assertSame(
+            $ruleOwners,
+            $this->filtrationService->getFilteredRuleOwners(
+                $ruleOwners,
+                ['skip_filters' => [CouponFiltrationService::class => true]]
+            )
         );
     }
 
-    public function testGetFilteredPromotionsWithAppliedCoupons()
+    public function testGetFilteredRuleOwnersWithNotPromotionDataInterfaceRuleOwners(): void
     {
-        $appliedPromotionWithCoupon = $this->getEntity(Promotion::class, ['useCoupons' => true, 'id' => 5]);
-        $appliedPromotionWithoutCoupon = $this->getEntity(Promotion::class, ['useCoupons' => true, 'id' => 7]);
+        $ruleOwners = [new \stdClass()];
+        $context = ['key' => 'val'];
+
+        $this->baseFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->with([], $context)
+            ->willReturn([]);
+
+        $this->doctrine->expects(self::never())
+            ->method('getRepository');
+
+        self::assertSame([], $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context));
+    }
+
+    public function testGetFilteredRuleOwnersWithNoAppliedCouponsAndRuleOwnerUsesCoupons(): void
+    {
+        $ruleOwners = [$this->getPromotion(5, true)];
+        $context = ['key' => 'val'];
+
+        $this->baseFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->with([], $context)
+            ->willReturn([]);
+
+        $this->doctrine->expects(self::never())
+            ->method('getRepository');
+
+        self::assertSame([], $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context));
+    }
+
+    public function testGetFilteredRuleOwnersWithNoAppliedCouponsAndRuleOwnerNotUsesCoupons(): void
+    {
+        $ruleOwners = [$this->getPromotion(5, false)];
+        $context = ['key' => 'val'];
+
+        $this->baseFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->with($ruleOwners, $context)
+            ->willReturn($ruleOwners);
+
+        $this->doctrine->expects(self::never())
+            ->method('getRepository');
+
+        self::assertSame(
+            $ruleOwners,
+            $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)
+        );
+    }
+
+    public function testGetFilteredPromotionsWithAppliedCoupons(): void
+    {
+        $appliedPromotionWithCoupon = $this->getPromotion(5, true);
+        $appliedPromotionWithoutCoupon = $this->getPromotion(7, true);
         $ruleOwners = [$appliedPromotionWithCoupon, $appliedPromotionWithoutCoupon];
 
-        $appliedCoupons = [(new Coupon())->setCode('XYZ')];
+        $appliedCoupons = [$this->getCoupon('XYZ'), $this->getCoupon('123')];
         $context = [ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection($appliedCoupons)];
 
-        $this->filtrationService->expects($this->once())
+        $this->baseFiltrationService->expects(self::exactly(2))
             ->method('getFilteredRuleOwners')
             ->with([$appliedPromotionWithCoupon], $context)
-            ->willReturnCallback(function ($ruleOwners) {
-                return $ruleOwners;
-            });
+            ->willReturn([$appliedPromotionWithCoupon]);
 
         $repository = $this->createMock(CouponRepository::class);
-        $repository->expects($this->once())
+        $repository->expects(self::once())
             ->method('getPromotionsWithMatchedCoupons')
-            ->with([$appliedPromotionWithCoupon, $appliedPromotionWithoutCoupon], ['XYZ'])
+            ->with(
+                [$appliedPromotionWithCoupon->getId(), $appliedPromotionWithoutCoupon->getId()],
+                ['123', 'XYZ']
+            )
             ->willReturn([5]);
 
-        $entityManager = $this->createMock(EntityManager::class);
-
-        $entityManager->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getRepository')
             ->with(Coupon::class)
             ->willReturn($repository);
 
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(Coupon::class)
-            ->willReturn($entityManager);
-
         self::assertEquals(
             [$appliedPromotionWithCoupon],
-            $this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context)
+            $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)
+        );
+        // test memory cache
+        self::assertEquals(
+            [$appliedPromotionWithCoupon],
+            $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)
         );
     }
 
-    public function testGetFilteredPromotionsDataWithAppliedCoupons()
+    public function testGetFilteredPromotionsDataWithAppliedCoupons(): void
     {
-        $appliedCoupon = (new Coupon())->setCode('XYZ');
-        $removedCoupon = (new Coupon())->setCode('Removed');
+        $appliedCoupon = $this->getCoupon('XYZ');
+        $removedCoupon = $this->getCoupon('Removed');
 
-        $promotionWithCoupon = (new AppliedPromotionData())->setUseCoupons(true)->addCoupon($appliedCoupon);
-        $promotionWithRemovedCoupon = (new AppliedPromotionData())->setUseCoupons(true)->addCoupon($removedCoupon);
+        $promotionWithCoupon = $this->getAppliedPromotion($appliedCoupon);
+        $promotionWithRemovedCoupon = $this->getAppliedPromotion($removedCoupon);
         $ruleOwners = [$promotionWithCoupon, $promotionWithRemovedCoupon];
 
         $context = [ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection([$appliedCoupon])];
 
-        $this->filtrationService->expects($this->once())
+        $this->baseFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
             ->with([$promotionWithCoupon], $context)
-            ->willReturnCallback(function ($ruleOwners) {
-                return $ruleOwners;
-            });
+            ->willReturn([$promotionWithCoupon]);
 
-        $this->registry->expects($this->never())
-            ->method('getManagerForClass');
+        $this->doctrine->expects(self::never())
+            ->method('getRepository');
 
         self::assertEquals(
             [$promotionWithCoupon],
-            $this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context)
+            $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)
         );
     }
 
-    public function testGetFilteredPromotionsDataAndCheckThatCouponIsUsedOnce()
+    public function testGetFilteredPromotionsDataAndCheckThatCouponIsUsedOnce(): void
     {
-        $appliedCoupon = (new Coupon())->setCode('XYZ');
-        $appliedPromotion = (new AppliedPromotionData())->setUseCoupons(true)->addCoupon($appliedCoupon);
+        $appliedCoupon = $this->getCoupon('XYZ');
+        $ruleOwners = [$this->getAppliedPromotion($appliedCoupon)];
 
         $context = [ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection([$appliedCoupon])];
 
-        $this->filtrationService->expects($this->once())
+        $this->baseFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
-            ->with([$appliedPromotion], $context)
-            ->willReturnCallback(function ($ruleOwners) {
-                return $ruleOwners;
-            });
+            ->with($ruleOwners, $context)
+            ->willReturn($ruleOwners);
 
-        $this->registry->expects($this->never())
-            ->method('getManagerForClass');
+        $this->doctrine->expects(self::never())
+            ->method('getRepository');
 
-        self::assertEquals(
-            [$appliedPromotion],
-            $this->couponFiltrationService->getFilteredRuleOwners([$appliedPromotion], $context)
-        );
-    }
-
-    public function testFilterIsSkippable()
-    {
-        $this->filtrationService->expects($this->never())
-            ->method('getFilteredRuleOwners');
-
-        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
-        $this->couponFiltrationService->getFilteredRuleOwners(
-            [$ruleOwner],
-            ['skip_filters' => [get_class($this->couponFiltrationService) => true]]
+        self::assertSame(
+            $ruleOwners,
+            $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)
         );
     }
 }
