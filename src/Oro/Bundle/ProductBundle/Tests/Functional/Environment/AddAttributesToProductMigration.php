@@ -5,8 +5,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Environment;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -17,16 +17,7 @@ use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
  */
 class AddAttributesToProductMigration implements Migration, ExtendExtensionAwareInterface
 {
-    /** @var ExtendExtension */
-    private $extendExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
+    use ExtendExtensionAwareTrait;
 
     /**
      * {@inheritdoc}

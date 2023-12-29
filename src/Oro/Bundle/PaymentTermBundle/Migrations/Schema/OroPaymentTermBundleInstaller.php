@@ -2,25 +2,24 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Migrations\Schema;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendNameGeneratorAwareTrait;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\NameGeneratorAwareInterface;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\MigrationBundle\Tools\DbIdentifierNameGenerator;
 use Oro\Bundle\NoteBundle\Migration\UpdateNoteAssociationKindQuery;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTrait;
@@ -35,28 +34,12 @@ class OroPaymentTermBundleInstaller implements
     ExtendExtensionAwareInterface
 {
     use PaymentTermExtensionAwareTrait;
+    use DatabasePlatformAwareTrait;
+    use RenameExtensionAwareTrait;
+    use ActivityExtensionAwareTrait;
+    use ExtendNameGeneratorAwareTrait;
+    use ExtendExtensionAwareTrait;
     use UpdateExtendRelationTrait;
-
-    /** @var AbstractPlatform */
-    protected $platform;
-
-    /** @var RenameExtension */
-    protected $renameExtension;
-
-    /**
-     * @var ActivityExtension
-     */
-    protected $activityExtension;
-
-    /**
-     * @var ExtendExtension
-     */
-    protected $extendExtension;
-
-    /**
-     * @var ExtendDbIdentifierNameGenerator
-     */
-    protected $nameGenerator;
 
     /**
      * Table name for PaymentTerm
@@ -69,22 +52,6 @@ class OroPaymentTermBundleInstaller implements
     public function getMigrationVersion()
     {
         return 'v1_4';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDatabasePlatform(AbstractPlatform $platform)
-    {
-        $this->platform = $platform;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
     }
 
     /**
@@ -272,29 +239,5 @@ QUERY;
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNameGenerator(DbIdentifierNameGenerator $nameGenerator)
-    {
-        $this->nameGenerator = $nameGenerator;
     }
 }

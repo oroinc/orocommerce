@@ -2,26 +2,13 @@
 
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_10;
 
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 use Psr\Log\LoggerInterface;
 
-abstract class UpdateCategoryIdsInProductsAbstract extends ParametrizedMigrationQuery implements
-    ExtendExtensionAwareInterface
+abstract class UpdateCategoryIdsInProductsAbstract extends ParametrizedMigrationQuery
 {
-    /**
-     * @var ExtendExtension
-     */
-    private $extendExtension;
-
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
     /**
      * {@inheritdoc}
      */

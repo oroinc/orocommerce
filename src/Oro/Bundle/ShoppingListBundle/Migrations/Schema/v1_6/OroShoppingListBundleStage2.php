@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroShoppingListBundleStage2 implements Migration, OrderedMigrationInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -38,9 +38,7 @@ class OroShoppingListBundleStage2 implements Migration, OrderedMigrationInterfac
     }
 
     /**
-     * Get the order of this migration
-     *
-     * @return integer
+     * {@inheritDoc}
      */
     public function getOrder()
     {

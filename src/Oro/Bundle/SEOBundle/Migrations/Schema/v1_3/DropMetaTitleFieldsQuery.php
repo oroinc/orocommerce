@@ -2,60 +2,25 @@
 
 namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_3;
 
-use Doctrine\DBAL\Connection;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
-use Oro\Bundle\MigrationBundle\Migration\Extension\NameGeneratorAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\MigrationQuery;
-use Oro\Bundle\MigrationBundle\Tools\DbIdentifierNameGenerator;
 use Psr\Log\LoggerInterface;
 
-class DropMetaTitleFieldsQuery implements
-    MigrationQuery,
-    ConnectionAwareInterface,
-    NameGeneratorAwareInterface
+class DropMetaTitleFieldsQuery implements MigrationQuery, ConnectionAwareInterface
 {
-    /**
-     * @var Connection
-     */
-    protected $connection;
+    use ConnectionAwareTrait;
 
-    /**
-     * @var ExtendDbIdentifierNameGenerator
-     */
-    protected $nameGenerator;
+    private string $className;
+    private ExtendDbIdentifierNameGenerator $nameGenerator;
 
-    /**
-     * @var string
-     */
-    protected $className;
-
-    /**
-     * @param string $className
-     * @param DbIdentifierNameGenerator $nameGenerator
-     */
-    public function __construct($className, DbIdentifierNameGenerator $nameGenerator)
+    public function __construct(string $className, ExtendDbIdentifierNameGenerator $nameGenerator)
     {
         $this->nameGenerator = $nameGenerator;
         $this->className = $className;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNameGenerator(DbIdentifierNameGenerator $nameGenerator)
-    {
-        $this->nameGenerator = $nameGenerator;
     }
 
     /**
@@ -77,11 +42,7 @@ class DropMetaTitleFieldsQuery implements
         $this->doExecute($logger);
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
-     */
-    protected function doExecute(LoggerInterface $logger, $dryRun = false)
+    private function doExecute(LoggerInterface $logger, bool $dryRun = false): void
     {
         $query = sprintf(
             'DELETE FROM oro_fallback_localization_val WHERE id IN (SELECT localizedfallbackvalue_id FROM %s);',

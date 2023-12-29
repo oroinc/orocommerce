@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\ScopeBundle\Migrations\Schema\OroScopeBundleInstaller;
@@ -39,14 +38,6 @@ class OroVisibilityBundleInstaller implements Installation
     public function getMigrationVersion()
     {
         return 'v1_2';
-    }
-
-    /**
-     * Sets the ExtendExtension
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
     }
 
     /**

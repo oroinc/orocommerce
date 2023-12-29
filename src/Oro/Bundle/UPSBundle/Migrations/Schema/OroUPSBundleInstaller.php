@@ -7,22 +7,11 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\UPSBundle\Migrations\Schema\v1_2\UpdatePasswordMigrationQuery;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * @inheritDoc
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
+    use ContainerAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -34,7 +23,6 @@ class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
 
     /**
      * {@inheritdoc}
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)
     {

@@ -5,10 +5,10 @@ namespace Oro\Bridge\CalendarCommerce\Migrations\Schema;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bridge\CalendarCommerce\Migrations\Schema\v1_0\OroCalendarCommerceBridgeBundle as CommerceBridgeBundle_v1_0;
 use Oro\Bridge\CalendarCommerce\Migrations\Schema\v1_1\OroCalendarCommerceBridgeBundle as CommerceBridgeBundle_v1_1;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -17,27 +17,8 @@ class OroCalendarCommerceBridgeBundleInstaller implements
     ActivityExtensionAwareInterface,
     RenameExtensionAwareInterface
 {
-    /** @var ActivityExtension */
-    protected $activityExtension;
-
-    /** @var RenameExtension */
-    protected $renameExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
+    use ActivityExtensionAwareTrait;
+    use RenameExtensionAwareTrait;
 
     /**
      * {@inheritdoc}

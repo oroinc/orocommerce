@@ -3,12 +3,12 @@
 namespace Oro\Bundle\WebCatalogBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareTrait;
 use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
 use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareTrait;
 
@@ -24,33 +24,9 @@ class OroWebCatalogBundleInstaller implements
     SlugExtensionAwareInterface,
     ScopeExtensionAwareInterface
 {
+    use ActivityExtensionAwareTrait;
+    use SlugExtensionAwareTrait;
     use ScopeExtensionAwareTrait;
-
-    /**
-     * @var SlugExtension
-     */
-    protected $slugExtension;
-
-    /**
-     * @var ActivityExtension
-     */
-    protected $activityExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSlugExtension(SlugExtension $extension)
-    {
-        $this->slugExtension = $extension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
 
     /**
      * {@inheritdoc}

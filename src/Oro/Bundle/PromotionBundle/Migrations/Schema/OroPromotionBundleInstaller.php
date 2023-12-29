@@ -3,11 +3,11 @@
 namespace Oro\Bundle\PromotionBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -21,15 +21,8 @@ class OroPromotionBundleInstaller implements
     ActivityExtensionAwareInterface,
     ExtendExtensionAwareInterface
 {
-    /**
-     * @var ActivityExtension
-     */
-    private $activityExtension;
-
-    /**
-     * @var ExtendExtension
-     */
-    private $extendExtension;
+    use ActivityExtensionAwareTrait;
+    use ExtendExtensionAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -37,22 +30,6 @@ class OroPromotionBundleInstaller implements
     public function getMigrationVersion()
     {
         return 'v1_7';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
     }
 
     /**

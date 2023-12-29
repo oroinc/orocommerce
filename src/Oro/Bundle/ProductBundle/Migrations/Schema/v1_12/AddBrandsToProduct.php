@@ -3,44 +3,23 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_12;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, ExtendExtensionAwareInterface
 {
+    use SlugExtensionAwareTrait;
+    use ExtendExtensionAwareTrait;
+
     const PRODUCT_TABLE_NAME = 'oro_product';
     const BRAND_TABLE_NAME = 'oro_brand';
-
-    /** @var ExtendExtension */
-    protected $extendExtension;
-
-    /**
-     * @inheritdoc
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * @var SlugExtension
-     */
-    protected $slugExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSlugExtension(SlugExtension $extension)
-    {
-        $this->slugExtension = $extension;
-    }
 
     /**
      * {@inheritdoc}

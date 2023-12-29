@@ -3,29 +3,18 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroCatalogBundle implements Migration, RenameExtensionAwareInterface
 {
+    use RenameExtensionAwareTrait;
+
     const ORO_B2B_CATALOG_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
     const ORO_B2B_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME = 'orob2b_category_def_prod_opts';
     const ORO_B2B_PRODUCT_UNIT_TABLE_NAME = 'orob2b_product_unit';
-
-    /**
-     * @var RenameExtension
-     */
-    protected $renameExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
 
     /**
      * {@inheritdoc}

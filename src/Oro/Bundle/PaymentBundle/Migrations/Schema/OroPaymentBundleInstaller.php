@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PaymentBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\PaymentBundle\Migrations\Schema\v1_6\OroPaymentBundle;
@@ -14,10 +14,7 @@ use Oro\Bundle\PaymentBundle\Migrations\Schema\v1_6\OroPaymentBundle;
  */
 class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
-    /**
-     * @var ActivityExtension
-     */
-    protected $activityExtension;
+    use ActivityExtensionAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -290,13 +287,5 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-    }
-
-    /**
-     * Sets the ActivityExtension
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
     }
 }

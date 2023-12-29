@@ -84,9 +84,7 @@ class OroPricingBundleStage2 implements
     }
 
     /**
-     * Get the order of this migration
-     *
-     * @return integer
+     * {@inheritDoc}
      */
     public function getOrder()
     {

@@ -10,8 +10,8 @@ use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\Migration\AddFallbackRelationTrait;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -21,19 +21,7 @@ use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
 {
     use AddFallbackRelationTrait;
-
-    /**
-     * @var ExtendExtension
-     */
-    protected $extendExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
+    use ExtendExtensionAwareTrait;
 
     /**
      * {@inheritdoc}

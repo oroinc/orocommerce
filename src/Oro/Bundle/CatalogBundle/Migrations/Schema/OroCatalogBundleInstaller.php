@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\CommerceMenuBundle\Migrations\Schema\OroCommerceMenuBundleInstaller;
@@ -12,14 +12,14 @@ use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
-use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareTrait;
 
 /**
  * Handles all migrations logic executed during installation.
@@ -33,7 +33,10 @@ class OroCatalogBundleInstaller implements
     ExtendExtensionAwareInterface,
     SlugExtensionAwareInterface
 {
+    use ActivityExtensionAwareTrait;
     use AttachmentExtensionAwareTrait;
+    use ExtendExtensionAwareTrait;
+    use SlugExtensionAwareTrait;
 
     const ORO_CATALOG_CATEGORY_TABLE_NAME = 'oro_catalog_category';
     const ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME = 'oro_category_def_prod_opts';
@@ -49,49 +52,12 @@ class OroCatalogBundleInstaller implements
         'image/svg+xml'
     ];
 
-    /** @var ActivityExtension */
-    protected $activityExtension;
-
-    /**
-     * @var ExtendExtension
-     */
-    protected $extendExtension;
-
-    /**
-     * @var SlugExtension
-     */
-    protected $slugExtension;
-
     /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
         return 'v1_21';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSlugExtension(SlugExtension $extension)
-    {
-        $this->slugExtension = $extension;
     }
 
     /**

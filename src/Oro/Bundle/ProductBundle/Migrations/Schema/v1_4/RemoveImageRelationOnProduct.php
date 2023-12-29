@@ -4,8 +4,8 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToOneRelationQuery;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -15,23 +15,12 @@ class RemoveImageRelationOnProduct implements
     OrderedMigrationInterface,
     ExtendExtensionAwareInterface
 {
+    use ExtendExtensionAwareTrait;
+
     const PRODUCT_TABLE_NAME = 'orob2b_product';
     const PRODUCT_IMAGE_FIELD_NAME = 'image_id';
     const PRODUCT_IMAGE_FK_NAME = 'fk_orob2b_product_image_id';
     const PRODUCT_IMAGE_ASSOCCIATION_NAME = 'image';
-
-    /**
-     * @var ExtendExtension
-     */
-    protected $extendExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
 
     /**
      * {@inheritdoc}

@@ -5,27 +5,16 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_11;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroProductBundle implements Migration, ExtendExtensionAwareInterface
 {
+    use ExtendExtensionAwareTrait;
+
     const PRODUCT_TABLE_NAME = 'oro_product';
-
-    /**
-     * @var ExtendExtension
-     */
-    private $extendExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
 
     /**
      * {@inheritdoc}

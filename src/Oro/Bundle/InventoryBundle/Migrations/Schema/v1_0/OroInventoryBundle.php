@@ -3,8 +3,8 @@
 namespace Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
@@ -13,11 +13,11 @@ use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Migration\AddFallbackRelationTrait;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -30,7 +30,10 @@ class OroInventoryBundle implements
     ActivityExtensionAwareInterface
 {
     use MigrationConstraintTrait;
+    use ExtendExtensionAwareTrait;
+    use RenameExtensionAwareTrait;
     use AddFallbackRelationTrait;
+    use ActivityExtensionAwareTrait;
 
     const INVENTORY_LEVEL_TABLE_NAME = 'oro_inventory_level';
     const OLD_WAREHOUSE_INVENTORY_TABLE = 'oro_warehouse_inventory_lev';
@@ -47,19 +50,8 @@ class OroInventoryBundle implements
     const ORDER_WAREHOUSE_ASSOCIATION = 'warehouse';
     const ORDER_WAREHOUSE_ASSOCIATION_COLUMN = 'warehouse_id';
 
-    /** @var  ActivityExtension */
-    protected $activityExtension;
-
-    /** @var ExtendExtension */
-    protected $extendExtension;
-
     /**
-     * @var RenameExtension
-     */
-    private $renameExtension;
-
-    /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getMigrationVersion()
     {
@@ -68,30 +60,6 @@ class OroInventoryBundle implements
 
     /**
      * {@inheritDoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
-
-    /**
-     * @inheritDoc
      */
     public function up(Schema $schema, QueryBag $queries)
     {

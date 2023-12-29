@@ -3,18 +3,15 @@
 namespace Oro\Bundle\PaymentBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\PaymentBundle\Migrations\Schema\v1_6\OroPaymentBundle as BaseOroPaymentBundle;
 
 class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
 {
-    /**
-     * @var ActivityExtension
-     */
-    protected $activityExtension;
+    use ActivityExtensionAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -26,13 +23,5 @@ class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
             'oro_note',
             BaseOroPaymentBundle::PAYMENT_METHOD_CONFIG_RULE_TABLE
         );
-    }
-
-    /**
-     * Sets the ActivityExtension
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
     }
 }

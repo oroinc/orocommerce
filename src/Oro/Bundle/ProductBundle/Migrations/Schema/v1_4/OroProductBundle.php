@@ -6,14 +6,14 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class OroProductBundle implements
     Migration,
@@ -22,6 +22,8 @@ class OroProductBundle implements
     AttachmentExtensionAwareInterface,
     ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+    use RenameExtensionAwareTrait;
     use AttachmentExtensionAwareTrait;
 
     const PRODUCT_TABLE_NAME = 'orob2b_product';
@@ -30,32 +32,6 @@ class OroProductBundle implements
     const PRODUCT_IMAGE_TYPE_TABLE_NAME = 'orob2b_product_image_type';
     const PRODUCT_IMAGE_FIELD_NAME = 'image_id';
     const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var RenameExtension
-     */
-    protected $renameExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
 
     /**
      * {@inheritdoc}

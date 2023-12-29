@@ -7,11 +7,11 @@ use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
-use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtension;
 use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtensionAwareInterface;
+use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -20,33 +20,14 @@ class OroFrontendTestFrameworkBundleInstaller implements
     ExtendExtensionAwareInterface,
     SerializedFieldsExtensionAwareInterface
 {
+    use ExtendExtensionAwareTrait;
+    use SerializedFieldsExtensionAwareTrait;
+
     const VARIANT_FIELD_NAME = 'test_variant_field';
     const VARIANT_FIELD_CODE = 'variant_field_code';
 
     const MULTIENUM_FIELD_NAME = 'multienum_field';
     const MULTIENUM_FIELD_CODE = 'multienum_code';
-
-    /** @var ExtendExtension */
-    private $extendExtension;
-
-    /** @var SerializedFieldsExtension */
-    private $serializedFieldsExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSerializedFieldsExtension(SerializedFieldsExtension $serializedFieldsExtension)
-    {
-        $this->serializedFieldsExtension = $serializedFieldsExtension;
-    }
 
     /**
      * {@inheritdoc}

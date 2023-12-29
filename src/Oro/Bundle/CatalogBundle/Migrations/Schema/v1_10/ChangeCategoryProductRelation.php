@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_10;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
@@ -11,10 +9,12 @@ use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -27,35 +27,9 @@ class ChangeCategoryProductRelation implements
     ExtendExtensionAwareInterface,
     DatabasePlatformAwareInterface
 {
-    /**
-     * @var ExtendExtension
-     */
-    private $extendExtension;
-
-    /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
-     * @var AbstractPlatform
-     */
-    private $platform;
-
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
-
-    public function setDatabasePlatform(AbstractPlatform $platform)
-    {
-        $this->platform = $platform;
-    }
+    use DatabasePlatformAwareTrait;
+    use ConnectionAwareTrait;
+    use ExtendExtensionAwareTrait;
 
     /**
      * {@inheritdoc}

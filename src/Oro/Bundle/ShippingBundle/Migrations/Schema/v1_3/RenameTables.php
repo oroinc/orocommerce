@@ -4,8 +4,8 @@ namespace Oro\Bundle\ShippingBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -13,6 +13,8 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
+    use RenameExtensionAwareTrait;
+
     /** @internal */
     const SHIPPING_RULE_METHOD_CONFIG_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig';
 
@@ -22,11 +24,8 @@ class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedM
     /** @internal */
     const SHIPPING_RULE_DESTINATION_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination';
 
-    /** @var RenameExtension */
-    private $renameExtension;
-
     /**
-     * @return int
+     * {@inheritDoc}
      */
     public function getOrder()
     {
@@ -34,15 +33,7 @@ class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedM
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

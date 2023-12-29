@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ShippingBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -14,10 +14,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class OroShippingBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
-    /**
-     * @var ActivityExtension
-     */
-    protected $activityExtension;
+    use ActivityExtensionAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -343,13 +340,5 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
     }
 }

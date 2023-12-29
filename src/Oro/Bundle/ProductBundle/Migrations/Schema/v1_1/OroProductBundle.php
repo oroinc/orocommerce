@@ -5,29 +5,18 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_1;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveEnumFieldQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroProductBundle implements Migration, ExtendExtensionAwareInterface, OrderedMigrationInterface
 {
+    use ExtendExtensionAwareTrait;
+
     const PRODUCT_VARIANT_LINK_TABLE_NAME = 'orob2b_product_variant_link';
     const PRODUCT_TABLE_NAME = 'orob2b_product';
-
-    /**
-     * @var ExtendExtension
-     */
-    protected $extendExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
 
     /**
      * {@inheritdoc}

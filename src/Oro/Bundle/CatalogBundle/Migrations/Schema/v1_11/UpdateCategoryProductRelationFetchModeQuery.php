@@ -5,8 +5,8 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_11;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
-use Oro\Bundle\EntityConfigBundle\EntityConfig\ConfigurationHandler;
 use Oro\Bundle\EntityConfigBundle\Migration\ConfigurationHandlerAwareInterface;
+use Oro\Bundle\EntityConfigBundle\Migration\ConfigurationHandlerAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -17,7 +17,7 @@ use Psr\Log\LoggerInterface;
 class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQuery implements
     ConfigurationHandlerAwareInterface
 {
-    protected ConfigurationHandler $configurationHandler;
+    use ConfigurationHandlerAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -25,14 +25,6 @@ class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQ
     public function getDescription()
     {
         return 'Add fetch mode `extra_lazy` to OneToMany relation between Category and Product entities';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfigurationHandler(ConfigurationHandler $configurationHandler): void
-    {
-        $this->configurationHandler = $configurationHandler;
     }
 
     /**

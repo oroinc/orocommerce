@@ -15,8 +15,8 @@ use Oro\Bundle\EntityBundle\Migration\AddFallbackRelationTrait;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
@@ -24,8 +24,8 @@ use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\UpdateEntityConfigExtendCl
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\UpdateFallbackEntitySystemOptionConfig;
 use Oro\Bundle\InventoryBundle\Model\Inventory;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -41,6 +41,8 @@ use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareInterface, RenameExtensionAwareInterface
 {
     use MigrationConstraintTrait;
+    use ExtendExtensionAwareTrait;
+    use RenameExtensionAwareTrait;
     use AddFallbackRelationTrait;
 
     const INVENTORY_LEVEL_TABLE_NAME = 'oro_inventory_level';
@@ -58,32 +60,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     const ORDER_WAREHOUSE_ASSOCIATION = 'warehouse';
     const ORDER_WAREHOUSE_ASSOCIATION_COLUMN = 'warehouse_id';
 
-    /** @var ExtendExtension */
-    protected $extendExtension;
-
     /**
-     * @var RenameExtension
-     */
-    private $renameExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
-
-    /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

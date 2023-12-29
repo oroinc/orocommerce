@@ -4,31 +4,22 @@ namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroSEOBundle implements Migration, ExtendExtensionAwareInterface
 {
+    use ExtendExtensionAwareTrait;
+
     const PRODUCT_TABLE_NAME = 'orob2b_product';
     const CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
     const LANDING_PAGE_TABLE_NAME = 'orob2b_cms_page';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
 
-    /** @var ExtendExtension */
-    protected $extendExtension;
-
     /**
-     * @inheritdoc
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

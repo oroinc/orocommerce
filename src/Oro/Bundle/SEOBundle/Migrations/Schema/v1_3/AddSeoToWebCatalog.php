@@ -4,28 +4,17 @@ namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class AddSeoToWebCatalog implements Migration, ExtendExtensionAwareInterface
 {
+    use ExtendExtensionAwareTrait;
+
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
     const WEB_CATALOG_NODE_TABLE_NAME = 'oro_web_catalog_content_node';
-
-    /**
-     * @var ExtendExtension
-     */
-    protected $extendExtension;
-
-    /**
-     * @inheritdoc
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
 
     /**
      * {@inheritdoc}

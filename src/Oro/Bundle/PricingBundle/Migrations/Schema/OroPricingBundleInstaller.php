@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -17,15 +17,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
-    protected ActivityExtension $activityExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
+    use ActivityExtensionAwareTrait;
 
     /**
      * {@inheritdoc}

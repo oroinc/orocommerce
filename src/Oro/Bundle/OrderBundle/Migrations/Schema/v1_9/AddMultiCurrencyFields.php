@@ -6,6 +6,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\SqlMigrationQuery;
@@ -14,18 +15,7 @@ class AddMultiCurrencyFields implements
     Migration,
     RenameExtensionAwareInterface
 {
-    /**
-     * @var RenameExtension
-     */
-    protected $renameExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
+    use RenameExtensionAwareTrait;
 
     /**
      * {@inheritdoc}

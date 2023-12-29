@@ -4,13 +4,15 @@ namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class AddMetaTitleFields implements Migration, ExtendExtensionAwareInterface
 {
+    use ExtendExtensionAwareTrait;
+
     const PRODUCT_TABLE_NAME = 'oro_product';
     const CATEGORY_TABLE_NAME = 'oro_catalog_category';
     const LANDING_PAGE_TABLE_NAME = 'oro_cms_page';
@@ -20,20 +22,7 @@ class AddMetaTitleFields implements Migration, ExtendExtensionAwareInterface
     const METAINFORMATION_TITLES = 'metaTitles';
 
     /**
-     * @var ExtendExtension
-     */
-    protected $extendExtension;
-
-    /**
-     * @inheritdoc
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

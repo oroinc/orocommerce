@@ -10,13 +10,13 @@ use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareTrait;
 
 /**
  * Creates all tables required for CMSBundle.
@@ -28,7 +28,9 @@ class OroCMSBundleInstaller implements
     ExtendExtensionAwareInterface,
     SlugExtensionAwareInterface
 {
+    use ExtendExtensionAwareTrait;
     use AttachmentExtensionAwareTrait;
+    use SlugExtensionAwareTrait;
 
     const CMS_LOGIN_PAGE_TABLE = 'oro_cms_login_page';
     const MAX_LOGO_IMAGE_SIZE_IN_MB = 10;
@@ -39,17 +41,7 @@ class OroCMSBundleInstaller implements
     const MAX_CONTENT_TEMPLATE_PREVIEW_IMAGE_SIZE_IN_MB = 10;
 
     /**
-     * @var ExtendExtension
-     */
-    protected $extendExtension;
-
-    /**
-     * @var SlugExtension
-     */
-    protected $slugExtension;
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getMigrationVersion()
     {
@@ -57,21 +49,8 @@ class OroCMSBundleInstaller implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSlugExtension(SlugExtension $extension)
-    {
-        $this->slugExtension = $extension;
-    }
-
     public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/

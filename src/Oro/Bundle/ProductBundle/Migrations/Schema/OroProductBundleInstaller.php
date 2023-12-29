@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
@@ -13,12 +13,12 @@ use Oro\Bundle\EntityBundle\Migration\AddFallbackRelationTrait;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -34,7 +34,10 @@ class OroProductBundleInstaller implements
     AttachmentExtensionAwareInterface,
     SlugExtensionAwareInterface
 {
+    use ExtendExtensionAwareTrait;
+    use ActivityExtensionAwareTrait;
     use AttachmentExtensionAwareTrait;
+    use SlugExtensionAwareTrait;
     use AddFallbackRelationTrait;
 
     const PRODUCT_TABLE_NAME = 'oro_product';
@@ -55,41 +58,6 @@ class OroProductBundleInstaller implements
     public const PRODUCT_COLLECTION_SORT_ORDER_TABLE_NAME = 'oro_product_collection_sort_order';
 
     public const PRODUCT_WEBSITE_REINDEX_REQUEST_ITEM = 'oro_prod_webs_reindex_req_item';
-
-    /** @var ExtendExtension */
-    protected $extendExtension;
-
-    /** @var  ActivityExtension */
-    protected $activityExtension;
-
-    /**
-     * @var SlugExtension
-     */
-    protected $slugExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSlugExtension(SlugExtension $extension)
-    {
-        $this->slugExtension = $extension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
 
     /**
      * {@inheritdoc}

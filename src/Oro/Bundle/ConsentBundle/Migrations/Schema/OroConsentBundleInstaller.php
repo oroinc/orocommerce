@@ -8,28 +8,18 @@ use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-/** Bundle install migrations */
 class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
+    use ExtendExtensionAwareTrait;
+
     const CONSENT_TABLE_NAME = 'oro_consent';
     const CONSENT_NAME_TABLE_NAME = 'oro_consent_name';
     const CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME = 'oro_consent_acceptance';
-
-    /** @var ExtendExtension */
-    private $extendExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
 
     /**
      * {@inheritdoc}

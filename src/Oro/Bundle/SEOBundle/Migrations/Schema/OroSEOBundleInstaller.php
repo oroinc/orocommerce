@@ -4,8 +4,8 @@ namespace Oro\Bundle\SEOBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -14,6 +14,8 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
+    use ExtendExtensionAwareTrait;
+
     const PRODUCT_TABLE_NAME = 'oro_product';
     const CATEGORY_TABLE_NAME = 'oro_catalog_category';
     const LANDING_PAGE_TABLE_NAME = 'oro_cms_page';
@@ -25,19 +27,8 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     const METAINFORMATION_DESCRIPTIONS = 'metaDescriptions';
     const METAINFORMATION_KEYWORDS = 'metaKeywords';
 
-    /** @var ExtendExtension */
-    protected $extendExtension;
-
     /**
-     * @inheritdoc
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function getMigrationVersion()
     {
@@ -45,7 +36,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

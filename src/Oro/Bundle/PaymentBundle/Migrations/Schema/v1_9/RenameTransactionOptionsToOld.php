@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PaymentBundle\Migrations\Schema\v1_9;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -14,18 +14,7 @@ class RenameTransactionOptionsToOld implements
     OrderedMigrationInterface,
     RenameExtensionAwareInterface
 {
-    /**
-     * @var RenameExtension
-     */
-    protected $renameExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
+    use RenameExtensionAwareTrait;
 
     /**
      * {@inheritdoc}
