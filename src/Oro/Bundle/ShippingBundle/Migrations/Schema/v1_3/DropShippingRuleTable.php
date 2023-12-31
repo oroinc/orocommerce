@@ -5,35 +5,32 @@ namespace Oro\Bundle\ShippingBundle\Migrations\Schema\v1_3;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManagerAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManagerAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class DropShippingRuleTable implements
     Migration,
     OrderedMigrationInterface,
     ActivityExtensionAwareInterface,
-    ContainerAwareInterface
+    ExtendOptionsManagerAwareInterface
 {
     use MigrationConstraintTrait;
     use ActivityExtensionAwareTrait;
-    use ContainerAwareTrait;
+    use ExtendOptionsManagerAwareTrait;
 
-    const SHIPPING_RULE_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRule';
-    const SHIPPING_RULE_TABLE = 'oro_shipping_rule';
-    const NOTE_TABLE = 'oro_note';
-    const NOTE_NO_SHIPPING_RULE_ENTITY_CLASS_COLUMN_NAME = '_ac74095a';
-    const NOTE_NO_SHIPPING_RULE_ENTITY_CLASS_OBJECT_NAME = 'oro_note!_ac74095a';
-    const NOTE_ASSOCIATION_COLUMN_BEFORE_UPDATE = 'shipping_rule_7b77295b_id';
-    const NOTE_ASSOCIATION_COLUMN_AFTER_UPDATE = 'shipping_rule_fd89fead_id';
+    private const NOTE_NO_SHIPPING_RULE_ENTITY_CLASS_COLUMN_NAME = '_ac74095a';
+    private const NOTE_NO_SHIPPING_RULE_ENTITY_CLASS_OBJECT_NAME = 'oro_note!_ac74095a';
+    private const NOTE_ASSOCIATION_COLUMN_BEFORE_UPDATE = 'shipping_rule_7b77295b_id';
+    private const NOTE_ASSOCIATION_COLUMN_AFTER_UPDATE = 'shipping_rule_fd89fead_id';
 
     /**
      * {@inheritDoc}
      */
-    public function getOrder()
+    public function getOrder(): int
     {
         return 40;
     }
@@ -41,23 +38,23 @@ class DropShippingRuleTable implements
     /**
      * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         $this->removeOptionsFromExtendOptionManager();
         $this->removeNotesAssociation($schema);
-        $schema->dropTable(self::SHIPPING_RULE_TABLE);
+        $schema->dropTable('oro_shipping_rule');
     }
 
-    private function removeNotesAssociation(Schema $schema)
+    private function removeNotesAssociation(Schema $schema): void
     {
-        $notes = $schema->getTable(self::NOTE_TABLE);
+        $notes = $schema->getTable('oro_note');
 
         if ($notes->hasColumn(self::NOTE_ASSOCIATION_COLUMN_BEFORE_UPDATE)) {
-            $this->dropForeignKeyAndColumn($schema, self::NOTE_TABLE, self::NOTE_ASSOCIATION_COLUMN_BEFORE_UPDATE);
+            $this->dropForeignKeyAndColumn($schema, 'oro_note', self::NOTE_ASSOCIATION_COLUMN_BEFORE_UPDATE);
         }
 
         if ($notes->hasColumn(self::NOTE_ASSOCIATION_COLUMN_AFTER_UPDATE)) {
-            $this->dropForeignKeyAndColumn($schema, self::NOTE_TABLE, self::NOTE_ASSOCIATION_COLUMN_AFTER_UPDATE);
+            $this->dropForeignKeyAndColumn($schema, 'oro_note', self::NOTE_ASSOCIATION_COLUMN_AFTER_UPDATE);
         }
 
         $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', 'oro_shipping_rule');
@@ -66,23 +63,19 @@ class DropShippingRuleTable implements
         }
     }
 
-    protected function removeOptionsFromExtendOptionManager()
+    protected function removeOptionsFromExtendOptionManager(): void
     {
-        $optionManager = $this->container->get('oro_entity_extend.migration.options_manager');
-        $options = $optionManager->getExtendOptions();
-        $optionManager->removeTableOptions(self::SHIPPING_RULE_TABLE);
+        $options = $this->extendOptionsManager->getExtendOptions();
+        $this->extendOptionsManager->removeTableOptions('oro_shipping_rule');
         if (isset($options[self::NOTE_NO_SHIPPING_RULE_ENTITY_CLASS_OBJECT_NAME])) {
-            $optionManager->removeColumnOptions(self::NOTE_TABLE, self::NOTE_NO_SHIPPING_RULE_ENTITY_CLASS_COLUMN_NAME);
+            $this->extendOptionsManager->removeColumnOptions(
+                'oro_note',
+                self::NOTE_NO_SHIPPING_RULE_ENTITY_CLASS_COLUMN_NAME
+            );
         }
     }
 
-    /**
-     * @param Schema $schema
-     * @param string $tableName
-     * @param string $relationColumn
-     * @throws \Doctrine\DBAL\Schema\SchemaException
-     */
-    private function dropForeignKeyAndColumn(Schema $schema, $tableName, $relationColumn)
+    private function dropForeignKeyAndColumn(Schema $schema, string $tableName, string $relationColumn): void
     {
         $table = $schema->getTable($tableName);
         $foreignKey = $this->getConstraintName($table, $relationColumn);

@@ -8,53 +8,47 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManagerAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManagerAwareTrait;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Set Orphan Removal for SEO meta fields.
  */
-class UpdateMetaFieldsOrphanRemovalConfig implements Migration, ContainerAwareInterface
+class UpdateMetaFieldsOrphanRemovalConfig implements Migration, ExtendOptionsManagerAwareInterface
 {
-    use ContainerAwareTrait;
-
-    private const CLASS_NAMES = [
-        Product::class => 'oro_product',
-        Category::class => 'oro_catalog_category',
-        Page::class => 'oro_cms_page',
-        ContentNode::class => 'oro_web_catalog_content_node',
-        Brand::class => 'oro_brand'
-    ];
-
-    private const SEO_FIELD_NAMES = [
-        'metaDescriptions',
-        'metaKeywords',
-        'metaTitles',
-    ];
+    use ExtendOptionsManagerAwareTrait;
 
     /**
      * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $this->updateEntityFieldsConfig($queries);
-    }
-
-    private function updateEntityFieldsConfig(QueryBag $queries): void
-    {
-        $extendOptionsManager = $this->container->get('oro_entity_extend.migration.options_manager');
-
-        foreach (self::CLASS_NAMES as $className => $tableName) {
-            foreach (self::SEO_FIELD_NAMES as $fieldName) {
+        $classNames = [
+            Product::class => 'oro_product',
+            Category::class => 'oro_catalog_category',
+            Page::class => 'oro_cms_page',
+            ContentNode::class => 'oro_web_catalog_content_node',
+            Brand::class => 'oro_brand'
+        ];
+        $seoFieldNames = [
+            'metaDescriptions',
+            'metaKeywords',
+            'metaTitles'
+        ];
+        foreach ($classNames as $className => $tableName) {
+            foreach ($seoFieldNames as $fieldName) {
                 // Works in case when the affected relation does not yet exist.
-                $extendOptionsManager
-                    ->mergeColumnOptions($tableName, $fieldName, ['extend' => ['orphanRemoval' => true]]);
+                $this->extendOptionsManager->mergeColumnOptions(
+                    $tableName,
+                    $fieldName,
+                    ['extend' => ['orphanRemoval' => true]]
+                );
 
                 // Works in case when the affected field already exists.
                 $queries->addQuery(
