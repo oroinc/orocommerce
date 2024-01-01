@@ -23,26 +23,29 @@ class OroFrontendTestFrameworkBundleInstaller implements
     use ExtendExtensionAwareTrait;
     use SerializedFieldsExtensionAwareTrait;
 
-    const VARIANT_FIELD_NAME = 'test_variant_field';
-    const VARIANT_FIELD_CODE = 'variant_field_code';
-
-    const MULTIENUM_FIELD_NAME = 'multienum_field';
-    const MULTIENUM_FIELD_CODE = 'multienum_code';
+    /**
+     * {@inheritDoc}
+     */
+    public function getMigrationVersion(): string
+    {
+        return 'v1_0';
+    }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createTestWebCatalog($schema);
         $this->createTestContentNode($schema);
         $this->createTestContentVariant($schema);
+
         $this->addVariantFieldToProduct($schema);
         $this->addWYSIWYGFieldToProduct($schema);
         $this->addWYSIWYGSerializedAttributeToProduct($schema);
     }
 
-    private function createTestContentVariant(Schema $schema)
+    private function createTestContentVariant(Schema $schema): void
     {
         $table = $schema->createTable('oro_test_content_variant');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -51,6 +54,7 @@ class OroFrontendTestFrameworkBundleInstaller implements
         $table->addColumn('product_collection_segment', 'integer', ['notnull' => false]);
         $table->addColumn('node', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
+
         $table->addForeignKeyConstraint('oro_product', ['product_page_product'], ['id']);
         $table->addForeignKeyConstraint('oro_catalog_category', ['category_page_category'], ['id']);
         $table->addForeignKeyConstraint(
@@ -62,31 +66,24 @@ class OroFrontendTestFrameworkBundleInstaller implements
         $table->addForeignKeyConstraint('oro_test_content_node', ['node'], ['id'], ['onDelete' => 'CASCADE']);
     }
 
-    private function createTestContentNode(Schema $schema)
+    private function createTestContentNode(Schema $schema): void
     {
         $table = $schema->createTable('oro_test_content_node');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('web_catalog', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
+
         $table->addForeignKeyConstraint('oro_test_web_catalog', ['web_catalog'], ['id']);
     }
 
-    private function createTestWebCatalog(Schema $schema)
+    private function createTestWebCatalog(Schema $schema): void
     {
         $table = $schema->createTable('oro_test_web_catalog');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationVersion()
-    {
-        return 'v1_0';
-    }
-
-    private function addVariantFieldToProduct(Schema $schema)
+    private function addVariantFieldToProduct(Schema $schema): void
     {
         if ($schema->hasTable('oro_product')) {
             $table = $schema->getTable('oro_product');
@@ -94,8 +91,8 @@ class OroFrontendTestFrameworkBundleInstaller implements
             $this->extendExtension->addEnumField(
                 $schema,
                 $table,
-                self::VARIANT_FIELD_NAME,
-                self::VARIANT_FIELD_CODE,
+                'test_variant_field',
+                'variant_field_code',
                 false,
                 false,
                 [
@@ -109,8 +106,8 @@ class OroFrontendTestFrameworkBundleInstaller implements
             $this->extendExtension->addEnumField(
                 $schema,
                 $table,
-                self::MULTIENUM_FIELD_NAME,
-                self::MULTIENUM_FIELD_CODE,
+                'multienum_field',
+                'multienum_code',
                 true,
                 false,
                 [
@@ -123,11 +120,10 @@ class OroFrontendTestFrameworkBundleInstaller implements
         }
     }
 
-    private function addWYSIWYGFieldToProduct(Schema $schema)
+    private function addWYSIWYGFieldToProduct(Schema $schema): void
     {
         if ($schema->hasTable('oro_product')) {
             $table = $schema->getTable('oro_product');
-
             $table->addColumn(
                 'wysiwyg',
                 'wysiwyg',
@@ -144,7 +140,6 @@ class OroFrontendTestFrameworkBundleInstaller implements
                     ]
                 ]
             );
-
             $table->addColumn(
                 'wysiwyg_style',
                 'wysiwyg_style',
@@ -160,7 +155,6 @@ class OroFrontendTestFrameworkBundleInstaller implements
                     ]
                 ]
             );
-
             $table->addColumn(
                 'wysiwyg_properties',
                 'wysiwyg_properties',
@@ -179,7 +173,7 @@ class OroFrontendTestFrameworkBundleInstaller implements
         }
     }
 
-    private function addWYSIWYGSerializedAttributeToProduct(Schema $schema)
+    private function addWYSIWYGSerializedAttributeToProduct(Schema $schema): void
     {
         if (!$schema->hasTable('oro_product')) {
             return;

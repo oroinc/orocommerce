@@ -13,36 +13,22 @@ class AddSeoToWebCatalog implements Migration, ExtendExtensionAwareInterface
 {
     use ExtendExtensionAwareTrait;
 
-    const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
-    const WEB_CATALOG_NODE_TABLE_NAME = 'oro_web_catalog_content_node';
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        if ($schema->hasTable(self::WEB_CATALOG_NODE_TABLE_NAME)) {
-            $this->addMetaInformationToWebCatalogNode($schema);
+        if ($schema->hasTable('oro_web_catalog_content_node')) {
+            $this->addMetaInformationField($schema, 'oro_web_catalog_content_node', 'metaDescriptions');
+            $this->addMetaInformationField($schema, 'oro_web_catalog_content_node', 'metaKeywords');
         }
-    }
-
-    private function addMetaInformationToWebCatalogNode(Schema $schema)
-    {
-        $this->addMetaInformationField($schema, self::WEB_CATALOG_NODE_TABLE_NAME, 'metaDescriptions');
-        $this->addMetaInformationField($schema, self::WEB_CATALOG_NODE_TABLE_NAME, 'metaKeywords');
     }
 
     /**
      * Add a many-to-many relation between a given table and the table corresponding to the
      * LocalizedFallbackValue entity, with the given relation name.
-     *
-     * @param Schema $schema
-     * @param string $ownerTable
-     * @param string $relationName
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    private function addMetaInformationField(Schema $schema, $ownerTable, $relationName)
+    private function addMetaInformationField(Schema $schema, string $ownerTable, string $relationName): void
     {
         $targetTable = $schema->getTable($ownerTable);
 
@@ -57,7 +43,7 @@ class AddSeoToWebCatalog implements Migration, ExtendExtensionAwareInterface
             $schema,
             $targetTable,
             $relationName,
-            self::FALLBACK_LOCALE_VALUE_TABLE_NAME,
+            'oro_fallback_localization_val',
             $targetTitleColumnNames,
             $targetDetailedColumnNames,
             $targetGridColumnNames,

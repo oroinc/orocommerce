@@ -13,8 +13,6 @@ class OroCalendarCommerceBridgeBundle implements Migration, ActivityExtensionAwa
 {
     use ActivityExtensionAwareTrait;
 
-    const CALENDAR_EVENT_TABLE = 'oro_calendar_event';
-
     /**
      * {@inheritdoc}
      */
@@ -23,13 +21,10 @@ class OroCalendarCommerceBridgeBundle implements Migration, ActivityExtensionAwa
         self::addCalendarActivityAssociations($schema, $this->activityExtension);
     }
 
-    /**
-     * Enable activities
-     */
     public static function addCalendarActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
     {
         // no create associations only if calendar bundle is installed
-        if ($schema->hasTable(self::CALENDAR_EVENT_TABLE)) {
+        if ($schema->hasTable('oro_calendar_event')) {
             $legacyAssocTables = [
                 'oro_customer_user' => 'orob2b_account_user',
                 'oro_order' => 'orob2b_order',
@@ -43,19 +38,17 @@ class OroCalendarCommerceBridgeBundle implements Migration, ActivityExtensionAwa
                 'oro_rfp_request',
                 'oro_sale_quote',
             ];
-
             foreach ($associationTables as $tableName) {
                 if (!$schema->hasTable($tableName)) {
                     $tableName = $legacyAssocTables[$tableName];
                 }
 
                 $associationTableName = $activityExtension->getAssociationTableName(
-                    self::CALENDAR_EVENT_TABLE,
+                    'oro_calendar_event',
                     $tableName
                 );
-
                 if (!$schema->hasTable($associationTableName)) {
-                    $activityExtension->addActivityAssociation($schema, self::CALENDAR_EVENT_TABLE, $tableName);
+                    $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', $tableName);
                 }
             }
         }

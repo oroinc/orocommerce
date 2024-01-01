@@ -4,7 +4,6 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_10;
 
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
-use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 use Psr\Log\LoggerInterface;
 
 abstract class UpdateCategoryIdsInProductsAbstract extends ParametrizedMigrationQuery
@@ -34,11 +33,7 @@ abstract class UpdateCategoryIdsInProductsAbstract extends ParametrizedMigration
      */
     public function doExecute(LoggerInterface $logger, $dryRun = false)
     {
-        $query = sprintf(
-            $this->getQuery(),
-            OroProductBundleInstaller::PRODUCT_TABLE_NAME,
-            'category_id'
-        );
+        $query = sprintf($this->getQuery(), 'oro_product', 'category_id');
 
         $this->executeQuery($logger, $dryRun, $query);
     }
@@ -48,7 +43,6 @@ abstract class UpdateCategoryIdsInProductsAbstract extends ParametrizedMigration
      * @param bool $dryRun
      * @param string $query
      * @param array $params
-     * @throws \Doctrine\DBAL\DBALException
      */
     protected function executeQuery(LoggerInterface $logger, $dryRun, $query, $params = [])
     {

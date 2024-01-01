@@ -19,17 +19,17 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
     use ExtendExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_14';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
         $this->createOroCheckoutSourceTable($schema);
@@ -51,7 +51,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
     /**
      * Create oro_checkout_source table
      */
-    protected function createOroCheckoutSourceTable(Schema $schema)
+    private function createOroCheckoutSourceTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_checkout_source');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -62,7 +62,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
     /**
      * Create oro_checkout table
      */
-    protected function createOroCheckoutTable(Schema $schema)
+    private function createOroCheckoutTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_checkout');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -97,17 +97,17 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         $table->addColumn('deleted', 'boolean', ['default' => false]);
         $table->addColumn('completed', 'boolean', ['default' => false]);
         $table->addColumn('completed_data', 'json_array', ['comment' => '(DC2Type:json_array)']);
+        $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['billing_address_id'], 'uniq_checkout_bill_addr');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_checkout_shipp_addr');
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');
         $table->addUniqueIndex(['registered_customer_user_id'], 'UNIQ_C040FD5916A5A0D');
-        $table->setPrimaryKey(['id']);
     }
 
     /**
      * Add oro_checkout foreign keys.
      */
-    protected function addOroCheckoutForeignKeys(Schema $schema)
+    private function addOroCheckoutForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_checkout');
         $table->addForeignKeyConstraint(
@@ -166,12 +166,12 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         );
     }
 
-    protected function createCheckoutWorkflowStateTable(Schema $schema)
+    private function createCheckoutWorkflowStateTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_checkout_workflow_state');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('token', 'string', ['length' => 255]);
-        $table->addColumn('entity_id', 'integer', []);
+        $table->addColumn('entity_id', 'integer');
         $table->addColumn('entity_class', 'string', ['length' => 255]);
         $table->addColumn('state_data', 'array', ['comment' => '(DC2Type:array)']);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
@@ -183,11 +183,11 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
     /**
      * Create oro_checkout_subtotal table
      */
-    protected function createOroCheckoutSubtotalTable(Schema $schema)
+    private function createOroCheckoutSubtotalTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_checkout_subtotal');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('checkout_id', 'integer', []);
+        $table->addColumn('checkout_id', 'integer');
         $table->addColumn('currency', 'string', ['length' => 255]);
         $table->addColumn(
             'value',
@@ -196,16 +196,16 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         );
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => false]);
         $table->addColumn('price_list_id', 'integer', ['notnull' => false]);
-        $table->addColumn('is_valid', 'boolean', []);
+        $table->addColumn('is_valid', 'boolean');
+        $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['checkout_id', 'currency'], 'unique_checkout_currency');
         $table->addIndex(['is_valid'], 'idx_checkout_subtotal_valid');
-        $table->setPrimaryKey(['id']);
     }
 
     /**
      * Create oro_checkout_line_item table
      */
-    protected function createOroCheckoutLineItemTable(Schema $schema)
+    private function createOroCheckoutLineItemTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_checkout_line_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -223,10 +223,10 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('price_type', 'integer', []);
-        $table->addColumn('from_external_source', 'boolean', []);
+        $table->addColumn('price_type', 'integer');
+        $table->addColumn('from_external_source', 'boolean');
         $table->addColumn('comment', 'text', ['notnull' => false]);
-        $table->addColumn('is_price_fixed', 'boolean', []);
+        $table->addColumn('is_price_fixed', 'boolean');
         $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('shipping_estimate_amount', 'money', [
@@ -242,7 +242,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
     /**
      * Add oro_checkout_line_item foreign keys.
      */
-    protected function addOroCheckoutLineItemForeignKeys(Schema $schema)
+    private function addOroCheckoutLineItemForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_checkout_line_item');
         $table->addForeignKeyConstraint(
@@ -274,7 +274,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
     /**
      * Add oro_checkout_subtotal foreign keys.
      */
-    protected function addOroCheckoutSubtotalForeignKeys(Schema $schema)
+    private function addOroCheckoutSubtotalForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_checkout_subtotal');
         $table->addForeignKeyConstraint(
@@ -297,7 +297,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         );
     }
 
-    protected function addOrderCheckoutSource(Schema $schema)
+    private function addOrderCheckoutSource(Schema $schema): void
     {
         if (class_exists('Oro\Bundle\OrderBundle\Entity\Order')) {
             $this->extendExtension->addManyToOneRelation(

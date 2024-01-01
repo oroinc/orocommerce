@@ -5,7 +5,6 @@ namespace Oro\Bundle\InventoryBundle\Migrations\Schema\v1_2;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
-use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\Migration\AddFallbackRelationTrait;
@@ -16,7 +15,6 @@ use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 
 class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
 {
@@ -24,9 +22,9 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
     use ExtendExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         $this->addUpcomingFieldToProduct($schema);
         $this->addUpcomingFieldToCategory($schema);
@@ -34,12 +32,12 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
         $this->addAvailabilityDateToCategory($schema);
     }
 
-    protected function addUpcomingFieldToProduct(Schema $schema)
+    private function addUpcomingFieldToProduct(Schema $schema): void
     {
         $this->addFallbackRelation(
             $schema,
             $this->extendExtension,
-            OroProductBundleInstaller::PRODUCT_TABLE_NAME,
+            'oro_product',
             UpcomingProductProvider::IS_UPCOMING,
             'oro.inventory.is_upcoming.label',
             [
@@ -51,12 +49,12 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
         );
     }
 
-    protected function addUpcomingFieldToCategory(Schema $schema)
+    private function addUpcomingFieldToCategory(Schema $schema): void
     {
         $this->addFallbackRelation(
             $schema,
             $this->extendExtension,
-            OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME,
+            'oro_catalog_category',
             UpcomingProductProvider::IS_UPCOMING,
             'oro.inventory.is_upcoming.label',
             [
@@ -68,9 +66,9 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
         );
     }
 
-    protected function addAvailabilityDateToProduct(Schema $schema)
+    private function addAvailabilityDateToProduct(Schema $schema): void
     {
-        $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('oro_product');
         $table->addColumn(
             'availability_date',
             'datetime',
@@ -94,9 +92,9 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
         );
     }
 
-    protected function addAvailabilityDateToCategory(Schema $schema)
+    private function addAvailabilityDateToCategory(Schema $schema): void
     {
-        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
+        $table = $schema->getTable('oro_catalog_category');
         $table->addColumn(
             'availability_date',
             'datetime',

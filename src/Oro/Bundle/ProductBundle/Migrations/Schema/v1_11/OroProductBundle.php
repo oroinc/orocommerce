@@ -14,14 +14,12 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface
 {
     use ExtendExtensionAwareTrait;
 
-    const PRODUCT_TABLE_NAME = 'oro_product';
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('oro_product');
         $table->addColumn('is_featured', 'boolean', ['default' => false]);
 
         $this->createRelationToSegmentFromContentVariant($schema);

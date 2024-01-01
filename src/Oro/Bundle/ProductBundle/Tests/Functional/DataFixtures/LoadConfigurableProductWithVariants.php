@@ -8,7 +8,6 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Schema\OroFrontendTestFrameworkBundleInstaller;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -60,7 +59,7 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
     public function load(ObjectManager $manager)
     {
         $configurableProduct = $this->createProduct($manager, self::CONFIGURABLE_SKU, Product::TYPE_CONFIGURABLE);
-        $configurableProduct->setVariantFields([OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_NAME]);
+        $configurableProduct->setVariantFields(['test_variant_field']);
 
         $this->setReference(self::CONFIGURABLE_SKU, $configurableProduct);
 
@@ -135,18 +134,14 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
         $product->addName($defaultName);
 
         if ($variantName) {
-            $variantClassName = ExtendHelper::buildEnumValueClassName(
-                OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_CODE
-            );
+            $variantClassName = ExtendHelper::buildEnumValueClassName('variant_field_code');
             $variantEnumRepository = $manager->getRepository($variantClassName);
             $variantEnum = $variantEnumRepository->findOneBy(['name' => $variantName]);
             $product->setTestVariantField($variantEnum);
         }
 
         if ($multiEnumCodes) {
-            $multiEnumClassName = ExtendHelper::buildEnumValueClassName(
-                OroFrontendTestFrameworkBundleInstaller::MULTIENUM_FIELD_CODE
-            );
+            $multiEnumClassName = ExtendHelper::buildEnumValueClassName('multienum_code');
             $multiEnumRepository = $manager->getRepository($multiEnumClassName);
             foreach ($multiEnumCodes as $code) {
                 $multiEnumValue = $multiEnumRepository->find($code);

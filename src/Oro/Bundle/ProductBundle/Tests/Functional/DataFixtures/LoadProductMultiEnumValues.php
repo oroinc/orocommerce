@@ -7,7 +7,6 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Fixture\AbstractEnumFixture;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Schema\OroFrontendTestFrameworkBundleInstaller;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\MakeProductAttributesTrait;
@@ -35,7 +34,7 @@ class LoadProductMultiEnumValues extends AbstractEnumFixture implements Containe
      */
     protected function getEnumCode()
     {
-        return OroFrontendTestFrameworkBundleInstaller::MULTIENUM_FIELD_CODE;
+        return 'multienum_code';
     }
 
     /**
@@ -45,12 +44,7 @@ class LoadProductMultiEnumValues extends AbstractEnumFixture implements Containe
     {
         parent::load($manager);
 
-        $this->makeProductAttributes(
-            [
-                OroFrontendTestFrameworkBundleInstaller::MULTIENUM_FIELD_NAME => []
-            ],
-            ExtendScope::OWNER_CUSTOM
-        );
+        $this->makeProductAttributes(['multienum_field' => []], ExtendScope::OWNER_CUSTOM);
 
         $defaultFamily = $manager->getRepository(AttributeFamily::class)
             ->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
@@ -60,10 +54,7 @@ class LoadProductMultiEnumValues extends AbstractEnumFixture implements Containe
         $attributeGroup = $defaultFamily->getAttributeGroup(LoadProductDefaultAttributeFamilyData::GENERAL_GROUP_CODE);
 
         $configManager = $this->getConfigManager();
-        $variantField = $configManager->getConfigFieldModel(
-            Product::class,
-            OroFrontendTestFrameworkBundleInstaller::MULTIENUM_FIELD_NAME
-        );
+        $variantField = $configManager->getConfigFieldModel(Product::class, 'multienum_field');
 
         $attributeGroupRelation = new AttributeGroupRelation();
         $attributeGroupRelation->setEntityConfigFieldId($variantField->getId());

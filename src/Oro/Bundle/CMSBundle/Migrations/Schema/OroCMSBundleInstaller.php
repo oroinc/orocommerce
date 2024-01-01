@@ -19,7 +19,6 @@ use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareTrait;
 
 /**
- * Creates all tables required for CMSBundle.
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class OroCMSBundleInstaller implements
@@ -32,18 +31,10 @@ class OroCMSBundleInstaller implements
     use AttachmentExtensionAwareTrait;
     use SlugExtensionAwareTrait;
 
-    const CMS_LOGIN_PAGE_TABLE = 'oro_cms_login_page';
-    const MAX_LOGO_IMAGE_SIZE_IN_MB = 10;
-    const MAX_BACKGROUND_IMAGE_SIZE_IN_MB = 10;
-    const MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB = 10;
-    const MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB = 10;
-    const MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB = 10;
-    const MAX_CONTENT_TEMPLATE_PREVIEW_IMAGE_SIZE_IN_MB = 10;
-
     /**
      * {@inheritDoc}
      */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_13_2';
     }
@@ -92,10 +83,9 @@ class OroCMSBundleInstaller implements
         $this->addLocalizedFallbackValueFields($schema);
     }
 
-    protected function createOroCmsContentTemplateTable(Schema $schema): void
+    private function createOroCmsContentTemplateTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_cms_content_template');
-
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('enabled', 'boolean', ['default' => true]);
@@ -103,19 +93,18 @@ class OroCMSBundleInstaller implements
         $table->addColumn('updated_at', 'datetime');
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
 
         $this->attachmentExtension->addImageRelation(
             $schema,
             'oro_cms_content_template',
             'previewImage',
             ['attachment' => ['acl_protected' => true, 'use_dam' => false]],
-            self::MAX_CONTENT_TEMPLATE_PREVIEW_IMAGE_SIZE_IN_MB
+            10
         );
-
-        $table->setPrimaryKey(['id']);
     }
 
-    protected function addWysiwygEditorToContentTemplate(Schema $schema): void
+    private function addWysiwygEditorToContentTemplate(Schema $schema): void
     {
         $table = $schema->getTable('oro_cms_content_template');
 
@@ -142,7 +131,7 @@ class OroCMSBundleInstaller implements
         );
     }
 
-    protected function addForeignKeysToContentTemplate(Schema $schema): void
+    private function addForeignKeysToContentTemplate(Schema $schema): void
     {
         $table = $schema->getTable('oro_cms_content_template');
 
@@ -164,7 +153,7 @@ class OroCMSBundleInstaller implements
     /**
      * Create oro_cms_page table
      */
-    protected function createOroCmsPageTable(Schema $schema)
+    private function createOroCmsPageTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_cms_page');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -194,8 +183,8 @@ class OroCMSBundleInstaller implements
                 ],
             ]
         );
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
         $table->addColumn('draft_project_id', 'integer', ['notnull' => false]);
         $table->addColumn('draft_source_id', 'integer', ['notnull' => false]);
         $table->addColumn('draft_uuid', 'guid', ['notnull' => false]);
@@ -209,7 +198,7 @@ class OroCMSBundleInstaller implements
     /**
      * Add oro_cms_page foreign keys.
      */
-    protected function addOroCmsPageForeignKeys(Schema $schema)
+    private function addOroCmsPageForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_cms_page');
         $table->addForeignKeyConstraint(
@@ -241,9 +230,9 @@ class OroCMSBundleInstaller implements
     /**
      * Create oro_cms_login_page table
      */
-    protected function createOroCmsLoginPageTable(Schema $schema)
+    private function createOroCmsLoginPageTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::CMS_LOGIN_PAGE_TABLE);
+        $table = $schema->createTable('oro_cms_login_page');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('top_content', 'text', ['notnull' => false]);
         $table->addColumn('bottom_content', 'text', ['notnull' => false]);
@@ -251,31 +240,17 @@ class OroCMSBundleInstaller implements
         $table->setPrimaryKey(['id']);
     }
 
-    protected function addOroCmsLoginPageImageAssociations(Schema $schema)
+    private function addOroCmsLoginPageImageAssociations(Schema $schema): void
     {
         $options['attachment']['acl_protected'] = false;
-
-        $this->attachmentExtension->addImageRelation(
-            $schema,
-            self::CMS_LOGIN_PAGE_TABLE,
-            'logoImage',
-            $options,
-            self::MAX_LOGO_IMAGE_SIZE_IN_MB
-        );
-
-        $this->attachmentExtension->addImageRelation(
-            $schema,
-            self::CMS_LOGIN_PAGE_TABLE,
-            'backgroundImage',
-            $options,
-            self::MAX_BACKGROUND_IMAGE_SIZE_IN_MB
-        );
+        $this->attachmentExtension->addImageRelation($schema, 'oro_cms_login_page', 'logoImage', $options, 10);
+        $this->attachmentExtension->addImageRelation($schema, 'oro_cms_login_page', 'backgroundImage', $options, 10);
     }
 
     /**
      * Create oro_cms_page_slug table
      */
-    protected function createOroCmsPageSlugTable(Schema $schema)
+    private function createOroCmsPageSlugTable(Schema $schema): void
     {
         $this->slugExtension->addSlugs(
             $schema,
@@ -288,7 +263,7 @@ class OroCMSBundleInstaller implements
     /**
      * Create oro_cms_page_slug_prototype table
      */
-    protected function createOroCmsPageSlugPrototypeTable(Schema $schema)
+    private function createOroCmsPageSlugPrototypeTable(Schema $schema): void
     {
         $this->slugExtension->addLocalizedSlugPrototypes(
             $schema,
@@ -301,11 +276,11 @@ class OroCMSBundleInstaller implements
     /**
      * Create oro_cms_page_title table
      */
-    protected function createOroCmsPageTitleTable(Schema $schema)
+    private function createOroCmsPageTitleTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_cms_page_title');
-        $table->addColumn('page_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addColumn('page_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['page_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id']);
     }
@@ -313,7 +288,7 @@ class OroCMSBundleInstaller implements
     /**
      * Add oro_cms_page_title foreign keys.
      */
-    protected function addOroCmsPageTitleForeignKeys(Schema $schema)
+    private function addOroCmsPageTitleForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_cms_page_title');
         $table->addForeignKeyConstraint(
@@ -330,7 +305,7 @@ class OroCMSBundleInstaller implements
         );
     }
 
-    public function addContentVariantTypes(Schema $schema)
+    private function addContentVariantTypes(Schema $schema): void
     {
         if ($schema->hasTable('oro_web_catalog_variant')) {
             $table = $schema->getTable('oro_web_catalog_variant');
@@ -367,7 +342,7 @@ class OroCMSBundleInstaller implements
     /**
      * Create `oro_cms_content_block` table
      */
-    public function createOroCmsContentBlockTable(Schema $schema)
+    private function createOroCmsContentBlockTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_cms_content_block');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -375,8 +350,8 @@ class OroCMSBundleInstaller implements
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('alias', 'string', ['notnull' => true, 'length' => 100]);
         $table->addColumn('enabled', 'boolean', ['default' => true]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['alias']);
     }
@@ -384,11 +359,11 @@ class OroCMSBundleInstaller implements
     /**
      * Create `oro_cms_content_block_title` table
      */
-    protected function createOroCmsContentBlockTitleTable(Schema $schema)
+    private function createOroCmsContentBlockTitleTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_cms_content_block_title');
-        $table->addColumn('content_block_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addColumn('content_block_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['content_block_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id']);
     }
@@ -396,11 +371,11 @@ class OroCMSBundleInstaller implements
     /**
      * Create `oro_cms_content_block_scope` table
      */
-    protected function createOroCmsContentBlockScopeTable(Schema $schema)
+    private function createOroCmsContentBlockScopeTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_cms_content_block_scope');
-        $table->addColumn('content_block_id', 'integer', []);
-        $table->addColumn('scope_id', 'integer', []);
+        $table->addColumn('content_block_id', 'integer');
+        $table->addColumn('scope_id', 'integer');
         $table->setPrimaryKey(['content_block_id', 'scope_id']);
     }
 
@@ -419,8 +394,8 @@ class OroCMSBundleInstaller implements
         $table->addColumn('widget_type', 'string', ['length' => 255]);
         $table->addColumn('layout', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('settings', 'array');
-        $table->addUniqueIndex(['organization_id', 'name'], 'uidx_oro_cms_content_widget');
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['organization_id', 'name'], 'uidx_oro_cms_content_widget');
     }
 
     /**
@@ -434,11 +409,11 @@ class OroCMSBundleInstaller implements
         $table->addColumn('entity_class', 'string', ['length' => 255]);
         $table->addColumn('entity_id', 'integer');
         $table->addColumn('entity_field', 'string', ['notnull' => false, 'length' => 50]);
+        $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
             ['entity_class', 'entity_id', 'entity_field', 'content_widget_id'],
             'uidx_oro_cms_content_widget_usage'
         );
-        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -461,21 +436,21 @@ class OroCMSBundleInstaller implements
             'oro_cms_image_slide',
             'mainImage',
             ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
-            self::MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB
+            10
         );
         $this->attachmentExtension->addImageRelation(
             $schema,
             'oro_cms_image_slide',
             'mediumImage',
             ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
-            self::MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB
+            10
         );
         $this->attachmentExtension->addImageRelation(
             $schema,
             'oro_cms_image_slide',
             'smallImage',
             ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
-            self::MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB
+            10
         );
 
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
@@ -533,7 +508,7 @@ class OroCMSBundleInstaller implements
     /**
      * Add `oro_cms_content_block_title` foreign keys.
      */
-    protected function addOroCmsContentBlockTitleForeignKeys(Schema $schema)
+    private function addOroCmsContentBlockTitleForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_cms_content_block_title');
         $table->addForeignKeyConstraint(
@@ -553,7 +528,7 @@ class OroCMSBundleInstaller implements
     /**
      * Add `oro_cms_content_block_scope` foreign keys.
      */
-    protected function addOroCmsContentBlockScopeForeignKeys(Schema $schema)
+    private function addOroCmsContentBlockScopeForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_cms_content_block_scope');
         $table->addForeignKeyConstraint(
@@ -573,7 +548,7 @@ class OroCMSBundleInstaller implements
     /**
      * Add oro_cms_content_block foreign keys.
      */
-    protected function addOrganizationForeignKeys(Schema $schema)
+    private function addOrganizationForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_cms_content_block');
         $table->addForeignKeyConstraint(
@@ -593,7 +568,7 @@ class OroCMSBundleInstaller implements
     /**
      * Create oro_cms_text_content_variant table
      */
-    protected function createOroCmsTextContentVariantTable(Schema $schema)
+    private function createOroCmsTextContentVariantTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_cms_text_content_variant');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -608,18 +583,18 @@ class OroCMSBundleInstaller implements
     /**
      * Create oro_cms_txt_cont_variant_scope table
      */
-    protected function createOroCmsTextContentVariantScopeTable(Schema $schema)
+    private function createOroCmsTextContentVariantScopeTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_cms_txt_cont_variant_scope');
-        $table->addColumn('variant_id', 'integer', []);
-        $table->addColumn('scope_id', 'integer', []);
+        $table->addColumn('variant_id', 'integer');
+        $table->addColumn('scope_id', 'integer');
         $table->setPrimaryKey(['variant_id', 'scope_id']);
     }
 
     /**
      * Add oro_cms_text_content_variant foreign keys.
      */
-    protected function addOroCmsTextContentVariantForeignKeys(Schema $schema)
+    private function addOroCmsTextContentVariantForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_cms_text_content_variant');
         $table->addForeignKeyConstraint(
@@ -633,7 +608,7 @@ class OroCMSBundleInstaller implements
     /**
      * Add oro_cms_txt_cont_variant_scope foreign keys.
      */
-    protected function addOroCmsTextContentVariantScopeForeignKeys(Schema $schema)
+    private function addOroCmsTextContentVariantScopeForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_cms_txt_cont_variant_scope');
         $table->addForeignKeyConstraint(
@@ -698,10 +673,7 @@ class OroCMSBundleInstaller implements
     private function createTabbedContentItemTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_cms_tabbed_content_item');
-
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->setPrimaryKey(['id']);
-
         $table->addColumn('content_widget_id', 'integer');
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('title', 'string', ['length' => 255]);
@@ -727,8 +699,9 @@ class OroCMSBundleInstaller implements
                 ],
             ]
         );
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
+        $table->setPrimaryKey(['id']);
     }
 
     private function addTabbedContentItemForeignKeys(Schema $schema): void

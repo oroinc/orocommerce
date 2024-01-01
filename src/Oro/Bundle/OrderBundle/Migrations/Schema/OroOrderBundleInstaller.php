@@ -30,19 +30,17 @@ class OroOrderBundleInstaller implements
     use ExtendExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_17';
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @throws \Doctrine\DBAL\Schema\SchemaException
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
         $this->createOroOrderTable($schema);
@@ -58,7 +56,6 @@ class OroOrderBundleInstaller implements
         $this->addOroOrderLineItemForeignKeys($schema);
         $this->addOroOrderProductKitItemLineItemForeignKeys($schema);
         $this->addOroOrderDiscountForeignKeys($schema);
-
         $this->addOroOrderShippingTrackingForeignKeys($schema);
 
         $this->addOrderInternalStatusField($schema);
@@ -69,7 +66,7 @@ class OroOrderBundleInstaller implements
     /**
      * Create oro_order table
      */
-    protected function createOroOrderTable(Schema $schema)
+    private function createOroOrderTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_order');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -144,7 +141,7 @@ class OroOrderBundleInstaller implements
         $table->addColumn('source_entity_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_entity_identifier', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['created_at'], 'oro_order_created_at_index', []);
+        $table->addIndex(['created_at'], 'oro_order_created_at_index');
         $table->addUniqueIndex(['identifier'], 'uniq_oro_order_identifier');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_c036ff904d4cff2b');
         $table->addUniqueIndex(['billing_address_id'], 'uniq_c036ff9079d0c0e4');
@@ -157,7 +154,7 @@ class OroOrderBundleInstaller implements
     /**
      * Create oro_order_address table
      */
-    protected function createOroOrderAddressTable(Schema $schema)
+    private function createOroOrderAddressTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_order_address');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -187,7 +184,7 @@ class OroOrderBundleInstaller implements
     /**
      * Create oro_order_discount table
      */
-    protected function createOroOrderDiscountTable(Schema $schema)
+    private function createOroOrderDiscountTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_order_discount');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -204,14 +201,14 @@ class OroOrderBundleInstaller implements
             'money',
             ['notnull' => true, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
-        $table->addIndex(['order_id'], 'IDX_F9A53B6A8D9F6D38', []);
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['order_id'], 'IDX_F9A53B6A8D9F6D38');
     }
 
     /**
      * Create oro_order_line_item table
      */
-    protected function createOroOrderLineItemTable(Schema $schema)
+    private function createOroOrderLineItemTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_order_line_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -231,9 +228,9 @@ class OroOrderBundleInstaller implements
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('price_type', 'integer', []);
+        $table->addColumn('price_type', 'integer');
         $table->addColumn('ship_by', 'date', ['notnull' => false, 'comment' => '(DC2Type:date)']);
-        $table->addColumn('from_external_source', 'boolean', []);
+        $table->addColumn('from_external_source', 'boolean');
         $table->addColumn('comment', 'text', ['notnull' => false]);
         $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
@@ -245,15 +242,15 @@ class OroOrderBundleInstaller implements
         ]);
         $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['product_id'], 'idx_de9136094584665a', []);
-        $table->addIndex(['product_unit_id'], 'idx_de91360929646bbd', []);
-        $table->addIndex(['order_id'], 'idx_de9136098d9f6d38', []);
+        $table->addIndex(['product_id'], 'idx_de9136094584665a');
+        $table->addIndex(['product_unit_id'], 'idx_de91360929646bbd');
+        $table->addIndex(['order_id'], 'idx_de9136098d9f6d38');
     }
 
     /**
      * Create oro_order_shipping_tracking table
      */
-    protected function createOroOrderShippingTrackingTable(Schema $schema)
+    private function createOroOrderShippingTrackingTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_order_shipping_tracking');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -265,10 +262,8 @@ class OroOrderBundleInstaller implements
 
     /**
      * Add oro_order foreign keys.
-     *
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    protected function addOroOrderForeignKeys(Schema $schema)
+    private function addOroOrderForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_order');
         $table->addForeignKeyConstraint(
@@ -323,10 +318,8 @@ class OroOrderBundleInstaller implements
 
     /**
      * Add oro_order_address foreign keys.
-     *
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    protected function addOroOrderAddressForeignKeys(Schema $schema)
+    private function addOroOrderAddressForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_order_address');
         $table->addForeignKeyConstraint(
@@ -357,10 +350,8 @@ class OroOrderBundleInstaller implements
 
     /**
      * Add oro_order_line_item foreign keys.
-     *
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    protected function addOroOrderLineItemForeignKeys(Schema $schema)
+    private function addOroOrderLineItemForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_order_line_item');
         $table->addForeignKeyConstraint(
@@ -391,10 +382,8 @@ class OroOrderBundleInstaller implements
 
     /**
      * Add oro_order_discount foreign keys.
-     *
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    protected function addOroOrderDiscountForeignKeys(Schema $schema)
+    private function addOroOrderDiscountForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_order_discount');
         $table->addForeignKeyConstraint(
@@ -407,10 +396,8 @@ class OroOrderBundleInstaller implements
 
     /**
      * Add oro_order_shipping_tracking foreign keys.
-     *
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    protected function addOroOrderShippingTrackingForeignKeys(Schema $schema)
+    private function addOroOrderShippingTrackingForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_order_shipping_tracking');
         $table->addForeignKeyConstraint(
@@ -421,7 +408,7 @@ class OroOrderBundleInstaller implements
         );
     }
 
-    protected function addOrderInternalStatusField(Schema $schema)
+    private function addOrderInternalStatusField(Schema $schema): void
     {
         $internalStatusOptions = new OroOptions();
         $internalStatusOptions->set('enum', 'immutable_codes', LoadOrderInternalStatuses::getDataKeys());

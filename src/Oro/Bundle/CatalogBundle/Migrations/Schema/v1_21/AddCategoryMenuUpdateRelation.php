@@ -3,8 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_21;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
-use Oro\Bundle\CommerceMenuBundle\Migrations\Schema\OroCommerceMenuBundleInstaller;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -18,23 +16,15 @@ class AddCategoryMenuUpdateRelation implements Migration, ExtendExtensionAwareIn
     use ExtendExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $this->addCategoryProductRelation($schema);
-    }
-
-    protected function addCategoryProductRelation(Schema $schema): void
-    {
-        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
-        $targetTable = $schema->getTable(OroCommerceMenuBundleInstaller::ORO_COMMERCE_MENU_UPDATE_TABLE_NAME);
-
         $this->extendExtension->addManyToOneRelation(
             $schema,
-            $targetTable,
+            $schema->getTable('oro_commerce_menu_upd'),
             'category',
-            $table,
+            $schema->getTable('oro_catalog_category'),
             'id',
             [
                 ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,

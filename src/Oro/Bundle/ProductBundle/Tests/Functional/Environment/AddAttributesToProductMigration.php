@@ -10,7 +10,6 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 
 /**
  * This migration add attributes to Product entity to use in functional tests.
@@ -20,9 +19,9 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
     use ExtendExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         $productTable = $schema->getTable('oro_product');
         if ($productTable->hasColumn('testAttrEnum_id')) {
@@ -45,12 +44,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         $this->addNamesConflictingEnumAttributes($schema, $productTable);
     }
 
-    /**
-     * @param array $options
-     *
-     * @return array
-     */
-    private function getAttributeOptions(array $options)
+    private function getAttributeOptions(array $options): array
     {
         return array_merge_recursive(
             [
@@ -71,7 +65,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    private function addEnumAttribute(Schema $schema, Table $table)
+    private function addEnumAttribute(Schema $schema, Table $table): void
     {
         $this->extendExtension->addEnumField(
             $schema,
@@ -87,7 +81,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    private function addMultiEnumAttribute(Schema $schema, Table $table)
+    private function addMultiEnumAttribute(Schema $schema, Table $table): void
     {
         $this->extendExtension->addEnumField(
             $schema,
@@ -102,7 +96,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    private function addManyToOneAttribute(Schema $schema, Table $table)
+    private function addManyToOneAttribute(Schema $schema, Table $table): void
     {
         $this->extendExtension->addManyToOneRelation(
             $schema,
@@ -117,7 +111,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    private function addManyToOneAttributeWithIdentifiedFieldAsTitle(Schema $schema, Table $table)
+    private function addManyToOneAttributeWithIdentifiedFieldAsTitle(Schema $schema, Table $table): void
     {
         $this->extendExtension->addManyToOneRelation(
             $schema,
@@ -145,7 +139,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    private function addManyToManyAttribute(Schema $schema, Table $table)
+    private function addManyToManyAttribute(Schema $schema, Table $table): void
     {
         $this->extendExtension->addManyToManyRelation(
             $schema,
@@ -161,7 +155,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    private function addManyToManyAttributeWithIdentifiedFieldAsTitle(Schema $schema, Table $table)
+    private function addManyToManyAttributeWithIdentifiedFieldAsTitle(Schema $schema, Table $table): void
     {
         $this->extendExtension->addManyToManyRelation(
             $schema,
@@ -177,7 +171,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    private function addInvisibleAttribute(Table $table)
+    private function addInvisibleAttribute(Table $table): void
     {
         $table->addColumn(
             'testAttrInvisible',
@@ -191,7 +185,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    private function addBooleanAttribute(Table $table)
+    private function addBooleanAttribute(Table $table): void
     {
         $table->addColumn(
             'testAttrBoolean',
@@ -204,7 +198,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    private function addStringAttribute(Table $table)
+    private function addStringAttribute(Table $table): void
     {
         $table->addColumn(
             'testAttrString',
@@ -217,7 +211,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    private function addIntegerAttribute(Table $table)
+    private function addIntegerAttribute(Table $table): void
     {
         $table->addColumn(
             'testAttrInteger',
@@ -231,7 +225,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    private function addFloatAttribute(Table $table)
+    private function addFloatAttribute(Table $table): void
     {
         $table->addColumn(
             'testAttrFloat',
@@ -245,7 +239,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    private function addDateTimeAttribute(Table $table)
+    private function addDateTimeAttribute(Table $table): void
     {
         $table->addColumn(
             'testAttrDateTime',
@@ -258,7 +252,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    private function addMoneyAttribute(Table $table)
+    private function addMoneyAttribute(Table $table): void
     {
         $table->addColumn(
             'testAttrMoney',
@@ -271,11 +265,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
         );
     }
 
-    /**
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\DBAL\Schema\SchemaException
-     */
-    private function addNamesConflictingEnumAttributes(Schema $schema, Table $table)
+    private function addNamesConflictingEnumAttributes(Schema $schema, Table $table): void
     {
         $this->extendExtension->addEnumField(
             $schema,
@@ -309,14 +299,8 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
     /**
      * Add a many-to-many relation between a given table and the table corresponding to the
      * LocalizedFallbackValue entity, with the given relation name.
-     *
-     * @param Schema $schema
-     * @param string $ownerTable
-     * @param string $relationName
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    private function addLocalizedAttribute($schema, $ownerTable, $relationName)
+    private function addLocalizedAttribute(Schema $schema, string $ownerTable, string $relationName): void
     {
         $targetTable = $schema->getTable($ownerTable);
 
@@ -331,7 +315,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
             $schema,
             $targetTable,
             $relationName,
-            OroProductBundleInstaller::FALLBACK_LOCALE_VALUE_TABLE_NAME,
+            'oro_fallback_localization_val',
             $targetTitleColumnNames,
             $targetDetailedColumnNames,
             $targetGridColumnNames,

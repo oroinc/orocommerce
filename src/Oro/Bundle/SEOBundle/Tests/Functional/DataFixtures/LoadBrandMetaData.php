@@ -8,7 +8,6 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadBrandData;
-use Oro\Bundle\SEOBundle\Migrations\Schema\OroSEOBundleInstaller;
 
 class LoadBrandMetaData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -20,9 +19,9 @@ class LoadBrandMetaData extends AbstractFixture implements DependentFixtureInter
 
     public static array $metadata = [
         LoadBrandData::BRAND_1 => [
-            OroSEOBundleInstaller::METAINFORMATION_TITLES => self::META_TITLES,
-            OroSEOBundleInstaller::METAINFORMATION_DESCRIPTIONS => self::META_DESCRIPTIONS,
-            OroSEOBundleInstaller::METAINFORMATION_KEYWORDS => self::META_KEYWORDS,
+            'metaTitles' => self::META_TITLES,
+            'metaDescriptions' => self::META_DESCRIPTIONS,
+            'metaKeywords' => self::META_KEYWORDS,
         ]
     ];
 

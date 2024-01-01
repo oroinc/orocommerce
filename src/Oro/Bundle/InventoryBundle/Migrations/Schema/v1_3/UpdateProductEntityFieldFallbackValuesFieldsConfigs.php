@@ -10,7 +10,6 @@ use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManagerAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 
 class UpdateProductEntityFieldFallbackValuesFieldsConfigs implements Migration, ExtendOptionsManagerAwareInterface
 {
@@ -40,17 +39,10 @@ class UpdateProductEntityFieldFallbackValuesFieldsConfigs implements Migration, 
                 new UpdateEntityConfigIndexFieldValueQuery(Product::class, $fieldName, 'importexport', 'full', true)
             );
 
-            $options = $this->extendOptionsManager->getColumnOptions(
-                OroProductBundleInstaller::PRODUCT_TABLE_NAME,
-                $fieldName
-            );
+            $options = $this->extendOptionsManager->getColumnOptions('oro_product', $fieldName);
             if ($options && empty($options['importexport']['full'])) {
                 $options['importexport']['full'] = true;
-                $this->extendOptionsManager->setColumnOptions(
-                    OroProductBundleInstaller::PRODUCT_TABLE_NAME,
-                    $fieldName,
-                    $options
-                );
+                $this->extendOptionsManager->setColumnOptions('oro_product', $fieldName, $options);
             }
         }
     }

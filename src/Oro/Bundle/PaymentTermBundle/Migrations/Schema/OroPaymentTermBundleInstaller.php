@@ -5,7 +5,6 @@ namespace Oro\Bundle\PaymentTermBundle\Migrations\Schema;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Schema\SchemaException;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
@@ -42,30 +41,25 @@ class OroPaymentTermBundleInstaller implements
     use UpdateExtendRelationTrait;
 
     /**
-     * Table name for PaymentTerm
+     * {@inheritDoc}
      */
-    const TABLE_NAME = 'oro_payment_term';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_4';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createOroPaymentTermTransportLabelTable($schema);
-        $this->addOroPaymentTermTransportLabelForeignKeys($schema);
-
         $this->createOroPaymentTermShortLabelTable($schema);
+
+        $this->addOroPaymentTermTransportLabelForeignKeys($schema);
         $this->addOroPaymentTermShortLabelForeignKeys($schema);
 
-        if ($schema->hasTable(self::TABLE_NAME)) {
+        if ($schema->hasTable('oro_payment_term')) {
             $this->migrate($schema, $queries);
 
             return;
@@ -73,7 +67,7 @@ class OroPaymentTermBundleInstaller implements
 
         $this->createOroPaymentTermTable($schema);
 
-        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_payment_term');
 
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer', [
             'importexport' => [
@@ -87,25 +81,22 @@ class OroPaymentTermBundleInstaller implements
     /**
      * Create table for PaymentTerm entity
      */
-    protected function createOroPaymentTermTable(Schema $schema)
+    private function createOroPaymentTermTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::TABLE_NAME);
+        $table = $schema->createTable('oro_payment_term');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('label', 'string');
         $table->setPrimaryKey(['id']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function migrate(Schema $schema, QueryBag $queries)
+    private function migrate(Schema $schema, QueryBag $queries): void
     {
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer');
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer_group');
 
         $this->migrateRelations($schema, $queries);
 
-        $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', self::TABLE_NAME);
+        $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', 'oro_payment_term');
         if (!$schema->hasTable($associationTableName)) {
             $updateNoteAssociationKindQuery = new UpdateNoteAssociationKindQuery(
                 $schema,
@@ -122,7 +113,7 @@ class OroPaymentTermBundleInstaller implements
         }
     }
 
-    protected function migrateRelations(Schema $schema, QueryBag $queries)
+    private function migrateRelations(Schema $schema, QueryBag $queries): void
     {
         if ($this->platform instanceof MySqlPlatform) {
             $queryAccount = <<<QUERY
@@ -173,34 +164,27 @@ QUERY;
         }
     }
 
-    private function createOroPaymentTermTransportLabelTable(Schema $schema)
+    private function createOroPaymentTermTransportLabelTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_payment_term_trans_label');
-
-        $table->addColumn('transport_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
-
+        $table->addColumn('transport_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
-        $table->addIndex(['transport_id'], 'oro_payment_term_trans_label_transport_id', []);
-        $table->addUniqueIndex(['localized_value_id'], 'oro_payment_term_trans_label_localized_value_id', []);
+        $table->addIndex(['transport_id'], 'oro_payment_term_trans_label_transport_id');
+        $table->addUniqueIndex(['localized_value_id'], 'oro_payment_term_trans_label_localized_value_id');
     }
 
-    private function createOroPaymentTermShortLabelTable(Schema $schema)
+    private function createOroPaymentTermShortLabelTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_payment_term_short_label');
-
-        $table->addColumn('transport_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
-
+        $table->addColumn('transport_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
-        $table->addIndex(['transport_id'], 'oro_payment_term_short_label_transport_id', []);
-        $table->addUniqueIndex(['localized_value_id'], 'oro_payment_term_short_label_localized_value_id', []);
+        $table->addIndex(['transport_id'], 'oro_payment_term_short_label_transport_id');
+        $table->addUniqueIndex(['localized_value_id'], 'oro_payment_term_short_label_localized_value_id');
     }
 
-    /**
-     * @throws SchemaException
-     */
-    private function addOroPaymentTermTransportLabelForeignKeys(Schema $schema)
+    private function addOroPaymentTermTransportLabelForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_payment_term_trans_label');
 
@@ -219,10 +203,7 @@ QUERY;
         );
     }
 
-    /**
-     * @throws SchemaException
-     */
-    private function addOroPaymentTermShortLabelForeignKeys(Schema $schema)
+    private function addOroPaymentTermShortLabelForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_payment_term_short_label');
 

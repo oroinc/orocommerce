@@ -9,7 +9,6 @@ use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManagerAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManagerAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\SEOBundle\Migrations\Schema\OroSEOBundleInstaller;
 
 /**
  * Changes order of SEO fields for category export.
@@ -23,7 +22,7 @@ class OrderCategoryExportSeoFields implements Migration, ExtendOptionsManagerAwa
      */
     public function up(Schema $schema, QueryBag $queries): void
     {
-        $table = $schema->getTable(OroSEOBundleInstaller::CATEGORY_TABLE_NAME);
+        $table = $schema->getTable('oro_catalog_category');
 
         $fields = [
             'metaTitles',

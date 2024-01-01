@@ -4,7 +4,6 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_14;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManagerAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManagerAwareTrait;
@@ -23,14 +22,8 @@ class ExcludeFieldsFromExport implements Migration, ExtendOptionsManagerAwareInt
      */
     public function up(Schema $schema, QueryBag $queries): void
     {
-        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
-
-        $excludeFields = [
-            'products',
-            'smallImage',
-            'largeImage',
-        ];
-
+        $table = $schema->getTable('oro_catalog_category');
+        $excludeFields = ['products', 'smallImage', 'largeImage'];
         foreach ($excludeFields as $name) {
             // Works in case when the affected relation does not yet exist.
             $this->extendOptionsManager->mergeColumnOptions(

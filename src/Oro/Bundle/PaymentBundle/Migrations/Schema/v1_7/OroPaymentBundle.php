@@ -7,21 +7,16 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterfac
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\PaymentBundle\Migrations\Schema\v1_6\OroPaymentBundle as BaseOroPaymentBundle;
 
 class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
 {
     use ActivityExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $this->activityExtension->addActivityAssociation(
-            $schema,
-            'oro_note',
-            BaseOroPaymentBundle::PAYMENT_METHOD_CONFIG_RULE_TABLE
-        );
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_payment_mtds_cfgs_rl');
     }
 }

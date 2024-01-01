@@ -21,17 +21,17 @@ class OroCalendarCommerceBridgeBundleInstaller implements
     use RenameExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_1';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         CommerceBridgeBundle_v1_0::addCalendarActivityAssociations($schema, $this->activityExtension);
         CommerceBridgeBundle_v1_1::renameActivityTables($schema, $queries, $this->renameExtension);
