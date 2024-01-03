@@ -522,6 +522,23 @@ class DebugProductPricesPriceListRequestHandlerTest extends \PHPUnit\Framework\T
         self::assertEquals($expected, $this->handler->getSelectedDate());
     }
 
+    public function testGetIncorrectSelectedDate()
+    {
+        $paramValue = 'undefined';
+
+        $this->requestStack->expects(self::any())
+            ->method('getMainRequest')
+            ->willReturn($this->request);
+
+        $this->request->expects(self::atLeastOnce())
+            ->method('get')
+            ->willReturnMap([
+                [DebugProductPricesPriceListRequestHandler::DATE_KEY, null, $paramValue],
+            ]);
+
+        self::assertNull($this->handler->getSelectedDate());
+    }
+
     public function testGetShowDetailedAssignmentInfoWithoutRequest(): void
     {
         $this->requestStack->expects($this->once())

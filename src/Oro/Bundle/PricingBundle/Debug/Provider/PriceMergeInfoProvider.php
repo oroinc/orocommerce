@@ -4,6 +4,8 @@ namespace Oro\Bundle\PricingBundle\Debug\Provider;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListBuildActivity;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -75,7 +77,49 @@ class PriceMergeInfoProvider
         return $result;
     }
 
-    public function isMergedPricesSameToCurrentPrices(array $mergedPrices, array $currentPrices): bool
+    public function getUsedUnitsAndCurrencies(array $priceMergeDetails): array
+    {
+        $result = [];
+        foreach ($priceMergeDetails as $pricesByCurrency) {
+            foreach ($pricesByCurrency as $currency => $pricesByUnit) {
+                foreach (array_keys($pricesByUnit) as $unit) {
+                    if (\in_array($currency, $result[$unit] ?? [])) {
+                        continue;
+                    }
+                    $result[$unit][] = $currency;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    public function isActualizationRequired(
+        ?CombinedPriceList $cpl,
+        ?CombinedPriceList $currentActiveCpl,
+        array $priceMergeDetails,
+        array $currentPrices
+    ): bool {
+        $isActualizationRequired = false;
+        if ($cpl && $cpl->getId() === $currentActiveCpl?->getId()) {
+            $isActualizationRequired = !$this->isMergedPricesSameToCurrentPrices(
+                $priceMergeDetails,
+                $currentPrices
+            );
+
+            if ($isActualizationRequired) {
+                $isBuilding = $this->registry->getRepository(CombinedPriceListBuildActivity::class)
+                    ->findBy(['combinedPriceList' => $currentActiveCpl]);
+                if ($isBuilding) {
+                    $isActualizationRequired = false;
+                }
+            }
+        }
+
+        return $isActualizationRequired;
+    }
+
+    private function isMergedPricesSameToCurrentPrices(array $mergedPrices, array $currentPrices): bool
     {
         $calculatedPrices = [];
         foreach ($mergedPrices as $priceRowsByCurrency) {
@@ -122,23 +166,6 @@ class PriceMergeInfoProvider
         }
 
         return true;
-    }
-
-    public function getUsedUnitsAndCurrencies(array $priceMergeDetails): array
-    {
-        $result = [];
-        foreach ($priceMergeDetails as $pricesByCurrency) {
-            foreach ($pricesByCurrency as $currency => $pricesByUnit) {
-                foreach (array_keys($pricesByUnit) as $unit) {
-                    if (\in_array($currency, $result[$unit] ?? [])) {
-                        continue;
-                    }
-                    $result[$unit][] = $currency;
-                }
-            }
-        }
-
-        return $result;
     }
 
     private function getSelectedPriceIds(array $priceListRelations, Product $product): array

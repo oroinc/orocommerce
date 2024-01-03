@@ -1,17 +1,25 @@
 {% set pricing_strategy = oro_config_value('oro_pricing.price_strategy') %}
+{% if scope is not defined %}
+    {% set scope = {} %}
+{% endif %}
 
 {% if feature_enabled('oro_price_lists_combined') %}
     {% import '@OroUI/macros.html.twig' as UI %}
     {% import '@OroCron/macros.html.twig' as cronSchedulIntervals %}
 
-    {% if (headLink is defined and headLink) or (fallback is defined and fallback) %}
-        <div class="list-head-container">
-            {% if headLink is defined and headLink %}<div>{{ headLink }}</div>{% endif %}
-            {% if fallback is defined and fallback %}<div>{{ 'oro.pricing.fallback.label'|trans }}: <strong>{{ fallback|trans }}</strong></div>{% endif %}
-        </div>
-    {% endif %}
+    <div class="list-head-container-wrapper">
+        {% if (headLink is defined and headLink) or (fallback is defined and fallback) %}
+            <div class="list-head-container">
+                {% if headLink is defined and headLink %}<div>{{ headLink }}</div>{% endif %}
+                {% if fallback is defined and fallback %}<div>{{ 'oro.pricing.fallback.label'|trans }}: <strong>{{ fallback|trans }}</strong>
+                    {% if fallbackEntityTitle is defined and fallbackEntityTitle %}({{ fallbackEntityTitle }}){% endif %}</div>
+                {% endif %}
+            </div>
+        {% endif %}
+        {% placeholder assigned_price_lists_additional_links with scope %}
+    </div>
 
-    <div class="clearfix grid-scrollable-container">
+    <div class="clearfix-oro grid-scrollable-container">
         {% if entities %}
             {% set scheduleLabels = {
                 wasActivatedLabel: 'oro.pricing.pricelist_schedule.was_activated',

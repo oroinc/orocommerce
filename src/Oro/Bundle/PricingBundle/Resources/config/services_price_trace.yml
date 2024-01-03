@@ -28,12 +28,19 @@ services:
         arguments:
             - !tagged_iterator oro_pricing.debug.provider.price_list_assignment
 
+    Oro\Bundle\PricingBundle\Debug\Provider\SidebarFormProvider:
+        arguments:
+            - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
+            - '@Oro\Bundle\PricingBundle\Debug\Provider\CombinedPriceListActivationRulesProvider'
+            - '@form.factory'
+
     Oro\Bundle\PricingBundle\Debug\Provider\CustomerPriceListsAssignmentProvider:
         arguments:
             - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
             - '@doctrine'
             - '@translator'
             - '@router'
+            - '@security.authorization_checker'
         tags:
             - { name: 'oro_pricing.debug.provider.price_list_assignment', 'priority': 300}
 
@@ -44,6 +51,7 @@ services:
             - '@translator'
             - '@router'
             - '@oro_customer.provider.customer_user_relations_provider'
+            - '@security.authorization_checker'
         tags:
             - { name: 'oro_pricing.debug.provider.price_list_assignment', 'priority': 200 }
 
@@ -52,7 +60,6 @@ services:
             - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
             - '@doctrine'
             - '@translator'
-            - '@router'
         tags:
             - { name: 'oro_pricing.debug.provider.price_list_assignment', 'priority': 100 }
 

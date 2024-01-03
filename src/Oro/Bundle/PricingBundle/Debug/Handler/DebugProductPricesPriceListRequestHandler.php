@@ -51,6 +51,16 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
 
     public function getPriceList(): ?CombinedPriceList
     {
+        $rule = $this->getCplActivationRule();
+        if ($rule) {
+            return $rule->getCombinedPriceList();
+        }
+
+        return $this->getCurrentActivePriceList();
+    }
+
+    public function getCplActivationRule(): ?CombinedPriceListActivationRule
+    {
         $date = $this->getSelectedDate();
 
         if ($date) {
@@ -58,14 +68,12 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
 
             if ($fullCpl) {
                 $activationRuleRepo = $this->registry->getRepository(CombinedPriceListActivationRule::class);
-                $newRule = $activationRuleRepo->getActualRuleByCpl($fullCpl, $date);
-                if ($newRule) {
-                    return $newRule->getCombinedPriceList();
-                }
+
+                return $activationRuleRepo->getActualRuleByCpl($fullCpl, $date);
             }
         }
 
-        return $this->getCurrentActivePriceList();
+        return null;
     }
 
     public function getCurrentActivePriceList(): ?CombinedPriceList
@@ -166,7 +174,11 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
             return null;
         }
 
-        return new \DateTime($date, new \DateTimeZone('UTC'));
+        try {
+            return new \DateTime($date, new \DateTimeZone('UTC'));
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public function getShowDetailedAssignmentInfo(): bool

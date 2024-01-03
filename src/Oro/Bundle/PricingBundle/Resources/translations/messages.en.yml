@@ -222,30 +222,35 @@ oro.pricing:
         version.label: Version
         price_input.aria_label: 'Product Price'
         debug:
-            page_title: 'Product Prices Debug'
+            page_title: 'Price Calculation Details'
             currencies.label: 'Currencies'
             show_tier_prices.label: 'Show Tier Prices'
-            trace.label: 'Debug Prices'
-            show_for_date.label: 'Show for Date'
+            trace.label: 'View Price Calculation Details'
+            show_for_date.label: 'Date'
             general.label: 'General'
             pricing_strategy.label: 'Pricing Strategy'
-            current_prices.label: 'Current Merged Prices'
-            no_prices.label: 'No Prices'
-            not_used_prices.message: 'Prices from this Price List were not used'
-            price_list_assignment_info.label: 'Customer Price Lists Assignment Info'
+            current_prices:
+                label: 'Customer Prices'
+                tooltip: 'Click to highlight prices in Price Merge Details.<br/>Click again to turn off highlighting.'
+            no_prices.label: 'No prices'
+            no_prices_for_date.label: 'No prices available on %date%. Automatic price calculation is scheduled to start on %calculation_start_date%'
+            not_used_prices.message: 'Prices from this price list are not used'
+            not_used_prices_for_date.message: 'Prices from this price list are not used on %date%'
+            price_list_assignment_info.label: 'Price List Assignment'
             price_list_used_chain.label: 'Active CPL Price Lists Chain'
             full_price_list_used_chain.label: 'Full Chain CPL Price Lists Chain'
-            show_detailed_assignment_info.label: 'Show Detailed Assignment Info'
-            show_developers_info.label: 'Show Developers Info'
+            show_detailed_assignment_info.label: 'Show Price List Assignment'
+            show_developers_info.label: 'Show Information for Developers'
             price_merge_details.label: 'Price Merge Details'
-            no_prices.message: 'No prices'
+            merge_allowed.label: 'Merge allowed'
+            merge_not_allowed.label: 'Merge not allowed'
             combined_price_list.label: 'Active CPL ID'
             full_combined_price_list.label: 'Full Chain CPL ID'
             cpl_activation_rules.label: 'Combined Price List Activation Rules'
             dev_info_general.label: General
-            dev_info.label: 'Developers Info'
-            actualize.label: 'Actualize Prices'
-            planned_for_actualization.message: 'Combined Price List was scheduled for actualization'
+            dev_info.label: 'Information for Developers'
+            recalculate_action.label: 'Recalculate Prices'
+            planned_for_recalculation.message: 'Combined Price List was scheduled for recalculation'
 
     combinedproductprice:
         entity_label: 'Combined Product Price'
@@ -306,7 +311,7 @@ oro.pricing:
         shortcut_new_price_list.description: Create new price list item
         shortcut_price_lists.description: Show list of existing price lists
         shortcut_price_attribute_price_lists.description: Show list of existing price attributes
-        product_price_debug.description: Show product prices debug information.
+        product_price_debug.description: Show product prices calculation details.
 
     sections:
         general: General
@@ -415,8 +420,8 @@ oro.pricing:
     acl:
         action:
             debug_prices:
-                label: Debug prices
-                description: Allows user to access pricing debug functionality
+                label: Price Calculation Details
+                description: Allows user to access price calculation details
 
     frontend:
         pricelist:

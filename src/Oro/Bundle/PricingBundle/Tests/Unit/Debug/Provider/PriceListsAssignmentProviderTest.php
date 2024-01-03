@@ -46,6 +46,6 @@ class PriceListsAssignmentProviderTest extends TestCase
 
         $provider = new PriceListsAssignmentProvider([$provider1, $provider2, $provider3, $provider4]);
 
-        $this->assertEquals([$assignments3], $provider->getPriceListAssignments());
+        $this->assertEquals([$assignments2, $assignments3], $provider->getPriceListAssignments());
     }
 }

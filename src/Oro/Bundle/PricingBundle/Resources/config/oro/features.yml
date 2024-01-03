@@ -50,7 +50,7 @@ features:
             - 'oro_price_lists'
         commands:
             - 'oro:cron:price-lists:schedule'
-            - 'oro:price-lists:recalculate'
+            - 'oro:price-lists:schedule-recalculate'
         configuration:
             - 'oro_pricing.default_price_lists'
             - 'oro_pricing.price_calculation_precision'
@@ -59,6 +59,20 @@ features:
         mq_topics:
             - 'oro_pricing.price_lists.cpl.resolve_prices'
             - 'oro_pricing.price_lists.cpl.resolve_currencies'
+            - 'oro_pricing.price_lists.cpl.rebuild.list'
+            - 'oro_pricing.price_lists.cpl.rebuild.single'
+            - 'oro_pricing.price_lists.cpl.mass_rebuild'
+            - 'oro_pricing.price_lists.cpl.rebuild'
+            - 'oro_pricing.price_lists.cpl.resolve_prices_by_version'
+            - 'oro_pricing.price_lists.run_cpl_post_processing_steps'
+        routes:
+            - 'oro_pricing_price_product_debug_index'
+            - 'oro_pricing_price_product_debug_sidebar'
+            - 'oro_pricing_price_product_debug_sidebar_view'
+            - 'oro_pricing_price_product_debug_trace'
+            - 'oro_pricing_price_product_debug_currency_list'
+        navigation_items:
+            - application_menu.sales_tab.pricing_product_price_debug
 
     price_attributes:
         label: oro.pricing.feature.price_attributes.label

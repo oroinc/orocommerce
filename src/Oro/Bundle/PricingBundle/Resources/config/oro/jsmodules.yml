@@ -22,6 +22,7 @@ dynamic-imports:
         - oropricing/js/app/views/quantity-switcher
         - oropricing/js/app/views/product-price-debug-sidebar-view
         - oropricing/js/app/views/product-price-debug-details-sidebar-view
+        - oropricing/js/app/views/product-price-debug-trace-page-view
 map:
     '*':
         oro/filter/price-attribute-product-price-filter: oro/filter/product-price-filter

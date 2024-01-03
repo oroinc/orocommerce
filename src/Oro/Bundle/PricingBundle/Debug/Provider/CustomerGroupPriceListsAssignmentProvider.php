@@ -9,6 +9,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -23,7 +24,8 @@ class CustomerGroupPriceListsAssignmentProvider implements PriceListsAssignmentP
         private ManagerRegistry $registry,
         private TranslatorInterface $translator,
         private UrlGeneratorInterface $urlGenerator,
-        private CustomerUserRelationsProvider $relationsProvider
+        private CustomerUserRelationsProvider $relationsProvider,
+        private AuthorizationCheckerInterface $authorizationChecker
     ) {
     }
 
@@ -69,16 +71,23 @@ class CustomerGroupPriceListsAssignmentProvider implements PriceListsAssignmentP
             ? $fallbackChoices[$fallbackEntity->getFallback()]
             : $fallbackChoices[PriceListCustomerGroupFallback::WEBSITE];
 
-        return [
-            'section_title' => $this->translator->trans('oro.customer.customergroup.entity_label'),
-            'link' => $this->urlGenerator->generate(
+        $isCurrentOnly = $fallbackEntity?->getFallback() === PriceListCustomerGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY;
+        $link = null;
+        if ($this->authorizationChecker->isGranted('VIEW', $customerGroup)) {
+            $link = $this->urlGenerator->generate(
                 'oro_customer_customer_group_view',
                 ['id' => $customerGroup->getId()]
-            ),
+            );
+        }
+
+        return [
+            'section_title' => $this->translator->trans('oro.customer.customergroup.entity_label'),
+            'link' => $link,
             'link_title' => $customerGroup->getName(),
             'fallback' => $fallback,
-            'priceLists' => $priceLists,
-            'stop' => $fallbackEntity?->getFallback() === PriceListCustomerGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY
+            'fallback_entity_title' => $isCurrentOnly ? null : $website->getName(),
+            'price_lists' => $priceLists,
+            'stop' => $isCurrentOnly
         ];
     }
 }

@@ -1,9 +1,15 @@
 {% import '@OroUI/macros.html.twig' as UI %}
 
 {% set pageComponentOptions = {
-    'websitesSelector': '#' ~ websites.vars.id,
     'customersSelector': '#' ~ customers.vars.id
 } %}
+
+{% if websites is defined %}
+    {% set pageComponentOptions = pageComponentOptions|merge({
+        'websitesSelector': '#' ~ websites.vars.id
+    }) %}
+{% endif %}
+
 {% if currencies is defined %}
     {% set pageComponentOptions = pageComponentOptions|merge({
         'currenciesSelector': '#' ~ currencies.vars.id

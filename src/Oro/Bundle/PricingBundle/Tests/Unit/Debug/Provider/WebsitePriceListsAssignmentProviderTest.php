@@ -16,7 +16,6 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WebsitePriceListsAssignmentProviderTest extends TestCase
@@ -26,7 +25,6 @@ class WebsitePriceListsAssignmentProviderTest extends TestCase
     private DebugProductPricesPriceListRequestHandler|MockObject $requestHandler;
     private ManagerRegistry|MockObject $registry;
     private TranslatorInterface|MockObject $translator;
-    private UrlGeneratorInterface|MockObject $urlGenerator;
 
     private WebsitePriceListsAssignmentProvider $provider;
 
@@ -35,13 +33,11 @@ class WebsitePriceListsAssignmentProviderTest extends TestCase
         $this->requestHandler = $this->createMock(DebugProductPricesPriceListRequestHandler::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
 
         $this->provider = new WebsitePriceListsAssignmentProvider(
             $this->requestHandler,
             $this->registry,
-            $this->translator,
-            $this->urlGenerator
+            $this->translator
         );
     }
 
@@ -51,6 +47,7 @@ class WebsitePriceListsAssignmentProviderTest extends TestCase
     public function testGetPriceListAssignments(
         ?PriceListWebsiteFallback $fallbackEntity,
         string $expectedFallback,
+        ?string $expectedFallbackTitle,
         bool $expectedStop
     ) {
         $website = $this->getEntity(Website::class, ['id' => 10]);
@@ -98,20 +95,13 @@ class WebsitePriceListsAssignmentProviderTest extends TestCase
             ->method('trans')
             ->willReturnCallback(fn ($str) => $str . ' TR');
 
-        $this->urlGenerator->expects($this->once())
-            ->method('generate')
-            ->with(
-                'oro_multiwebsite_view',
-                ['id' => 10]
-            )
-            ->willReturn('/view-url');
-
         $expected = [
             'section_title' => 'oro.website.entity_label TR',
-            'link' => '/view-url',
+            'link' => null,
             'link_title' => 'Test Name',
             'fallback' => $expectedFallback,
-            'priceLists' => $relations,
+            'fallback_entity_title' => $expectedFallbackTitle,
+            'price_lists' => $relations,
             'stop' => $expectedStop
         ];
 
@@ -124,17 +114,20 @@ class WebsitePriceListsAssignmentProviderTest extends TestCase
             [
                 null,
                 'oro.pricing.fallback.config.label',
+                'oro.config.module_label TR',
                 false
             ],
             [
                 (new PriceListWebsiteFallback())->setFallback(PriceListWebsiteFallback::CONFIG),
                 'oro.pricing.fallback.config.label',
+                'oro.config.module_label TR',
                 false
             ],
             [
                 (new PriceListWebsiteFallback())
                     ->setFallback(PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY),
                 'oro.pricing.fallback.current_website_only.label',
+                null,
                 true
             ]
         ];

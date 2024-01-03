@@ -2,24 +2,19 @@
 
 namespace Oro\Bundle\PricingBundle\Debug\Controller;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-use Oro\Bundle\MultiWebsiteBundle\Form\Type\WebsiteSelectType;
 use Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Debug\Provider\CombinedPriceListActivationRulesProvider;
 use Oro\Bundle\PricingBundle\Debug\Provider\PriceListsAssignmentProvider;
 use Oro\Bundle\PricingBundle\Debug\Provider\PriceMergeInfoProvider;
 use Oro\Bundle\PricingBundle\Debug\Provider\ProductPricesProvider;
+use Oro\Bundle\PricingBundle\Debug\Provider\SidebarFormProvider;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListBuildActivity;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Intl\Currencies;
 use Symfony\Component\Routing\Annotation\Route;
@@ -63,18 +58,7 @@ class DebugController extends AbstractController
      */
     public function sidebarAction()
     {
-        $sidebarData = [];
-
-        $currenciesForm = $this->createCurrenciesForm();
-        if ($currenciesForm) {
-            $sidebarData['currencies'] = $currenciesForm->createView();
-        }
-        $sidebarData['showTierPrices'] = $this->createShowTierPricesForm()->createView();
-
-        $sidebarData['websites'] = $this->createWebsiteForm()->createView();
-        $sidebarData['customers'] = $this->createCustomersForm()->createView();
-
-        return $sidebarData;
+        return $this->get(SidebarFormProvider::class)->getIndexPageSidebarFormElements();
     }
 
     /**
@@ -85,17 +69,7 @@ class DebugController extends AbstractController
      */
     public function sidebarViewAction(Product $product)
     {
-        $sidebarData = [
-            'product' => $product
-        ];
-
-        $sidebarData['websites'] = $this->createWebsiteForm()->createView();
-        $sidebarData['customers'] = $this->createCustomersForm()->createView();
-        $sidebarData['date'] = $this->createDateForm()->createView();
-        $sidebarData['showDetailedAssignmentInfo'] = $this->createShowDetailedAssignmentInfoForm()->createView();
-        $sidebarData['showDevelopersInfo'] = $this->createShowDevelopersInfoForm()->createView();
-
-        return $sidebarData;
+        return $this->get(SidebarFormProvider::class)->getViewPageSidebarFormElements($product);
     }
 
     /**
@@ -134,12 +108,16 @@ class DebugController extends AbstractController
         $data = [
             'current_active_cpl' => $currentActiveCpl,
             'product' => $product,
-            'current_prices' => $currentPrices,
+            'current_prices' => $this->prepareCurrentPrices($currentPrices),
             'price_merging_details' => $priceMergeDetails,
             'used_units_and_currencies' => $this->getUsedUnitsAndCurrencies($priceMergeDetails),
             'full_cpl_used_price_lists' => $usedPriceListsFullCpl ?: $usedPriceLists,
             'show_developers_info' => $showDevelopersInfo,
-            'requires_price_actualization' => $isActualizationRequired
+            'requires_price_actualization' => $isActualizationRequired,
+            'customer' => $this->getPriceListHandler()->getCustomer(),
+            'calculation_start_date' => $this->getCalculationStartDate(),
+            'view_date' =>
+                $this->getPriceListHandler()->getSelectedDate() ?: new \DateTime('now', new \DateTimeZone('UTC'))
         ];
 
         if ($this->getPriceListHandler()->getShowDetailedAssignmentInfo()) {
@@ -202,12 +180,6 @@ class DebugController extends AbstractController
         return $this->get(PriceMergeInfoProvider::class)->getPriceMergingDetails($usedPriceLists, $product);
     }
 
-    private function isMergedPricesSameToCurrentPrices(array $mergedPrices, array $currentPrices): bool
-    {
-        return $this->get(PriceMergeInfoProvider::class)
-            ->isMergedPricesSameToCurrentPrices($mergedPrices, $currentPrices);
-    }
-
     private function getUsedUnitsAndCurrencies(array $priceMergeDetails): array
     {
         return $this->get(PriceMergeInfoProvider::class)->getUsedUnitsAndCurrencies($priceMergeDetails);
@@ -222,122 +194,7 @@ class DebugController extends AbstractController
         return $this->getDoctrine()->getRepository(CombinedPriceListToPriceList::class)->getPriceListRelations($cpl);
     }
 
-    protected function createCurrenciesForm(): ?FormInterface
-    {
-        $availableCurrencies = $this->getPriceListCurrencies();
-        $selectedCurrencies = $this->getPriceListHandler()
-            ->getPriceListSelectedCurrencies($this->getPriceListHandler()->getPriceList());
-
-        if (count($availableCurrencies) <= 1) {
-            return null;
-        }
-
-        return $this->createForm(
-            CurrencySelectionType::class,
-            null,
-            [
-                'label' => 'oro.pricing.productprice.debug.currencies.label',
-                'expanded' => true,
-                'compact' => true,
-                'multiple' => true,
-                'csrf_protection' => false,
-                'required' => false,
-                'currencies_list' => $availableCurrencies,
-                'data' => $selectedCurrencies,
-            ]
-        );
-    }
-
-    protected function createShowTierPricesForm(): FormInterface
-    {
-        return $this->createForm(
-            CheckboxType::class,
-            null,
-            [
-                'label' => 'oro.pricing.productprice.debug.show_tier_prices.label',
-                'required' => false,
-                'data' => $this->getPriceListHandler()->getShowTierPrices(),
-            ]
-        );
-    }
-
-    protected function createShowDetailedAssignmentInfoForm(): FormInterface
-    {
-        return $this->createForm(
-            CheckboxType::class,
-            null,
-            [
-                'label' => 'oro.pricing.productprice.debug.show_detailed_assignment_info.label',
-                'required' => false,
-                'data' => $this->getPriceListHandler()->getShowDetailedAssignmentInfo(),
-            ]
-        );
-    }
-
-    protected function createShowDevelopersInfoForm(): FormInterface
-    {
-        return $this->createForm(
-            CheckboxType::class,
-            null,
-            [
-                'label' => 'oro.pricing.productprice.debug.show_developers_info.label',
-                'required' => false,
-                'data' => $this->getPriceListHandler()->getShowDevelopersInfo(),
-            ]
-        );
-    }
-
-    protected function createWebsiteForm(): FormInterface
-    {
-        $website = $this->getPriceListHandler()->getWebsite();
-
-        return $this->createForm(
-            WebsiteSelectType::class,
-            $website,
-            [
-                'label' => 'oro.website.entity_label',
-                'required' => false,
-                'empty_data' => $website,
-                'create_enabled' => false
-            ]
-        );
-    }
-
-    protected function createCustomersForm(): FormInterface
-    {
-        $customer = $this->getPriceListHandler()->getCustomer();
-
-        return $this->createForm(
-            CustomerSelectType::class,
-            $customer,
-            [
-                'label' => 'oro.customer.entity_label',
-                'required' => false,
-                'empty_data' => $customer,
-                'create_enabled' => false
-            ]
-        );
-    }
-
-    protected function createDateForm(): FormInterface
-    {
-        $date = $this->getPriceListHandler()->getSelectedDate();
-
-        return $this->createForm(
-            OroDateTimeType::class,
-            $date,
-            [
-                'label' => 'oro.pricing.productprice.debug.show_for_date.label',
-                'required' => false,
-                'empty_data' => $date
-            ]
-        );
-    }
-
-    /**
-     * @return DebugProductPricesPriceListRequestHandler
-     */
-    protected function getPriceListHandler()
+    private function getPriceListHandler(): DebugProductPricesPriceListRequestHandler
     {
         return $this->get(DebugProductPricesPriceListRequestHandler::class);
     }
@@ -356,23 +213,35 @@ class DebugController extends AbstractController
         array $priceMergeDetails,
         array $currentPrices
     ): bool {
-        $isActualizationRequired = false;
-        if ($cpl && $cpl->getId() === $currentActiveCpl?->getId()) {
-            $isActualizationRequired = !$this->isMergedPricesSameToCurrentPrices(
-                $priceMergeDetails,
-                $currentPrices
-            );
+        return $this->get(PriceMergeInfoProvider::class)
+            ->isActualizationRequired($cpl, $currentActiveCpl, $priceMergeDetails, $currentPrices);
+    }
 
-            if ($isActualizationRequired) {
-                $isBuilding = $this->getDoctrine()->getRepository(CombinedPriceListBuildActivity::class)
-                    ->findBy(['combinedPriceList' => $currentActiveCpl]);
-                if ($isBuilding) {
-                    $isActualizationRequired = false;
-                }
+    private function prepareCurrentPrices(array $currentPrices): array
+    {
+        $result = [];
+        foreach ($currentPrices as $currency => $pricesByCurrency) {
+            foreach ($pricesByCurrency as $price) {
+                $result[$currency][$price['unitCode']][] = $price;
             }
         }
 
-        return $isActualizationRequired;
+        return $result;
+    }
+
+    private function getCalculationStartDate(): ?\DateTime
+    {
+        $activationRule = $this->getPriceListHandler()->getCplActivationRule();
+        if ($activationRule && $activationRule->getActivateAt()) {
+            $offsetHours = $this->container->get(ConfigManager::class)
+                ->get('oro_pricing.offset_of_processing_cpl_prices');
+            $startCalculationDate = clone $activationRule->getActivateAt();
+            $startCalculationDate->modify('-' . $offsetHours . ' hours');
+
+            return $startCalculationDate;
+        }
+
+        return null;
     }
 
     /**
@@ -388,7 +257,9 @@ class DebugController extends AbstractController
                 PriceListsAssignmentProvider::class,
                 ProductPricesProvider::class,
                 PriceMergeInfoProvider::class,
-                CombinedPriceListActivationRulesProvider::class
+                CombinedPriceListActivationRulesProvider::class,
+                ConfigManager::class,
+                SidebarFormProvider::class
             ]
         );
     }

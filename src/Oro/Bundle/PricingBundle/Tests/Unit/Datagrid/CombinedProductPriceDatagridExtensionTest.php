@@ -308,7 +308,7 @@ class CombinedProductPriceDatagridExtensionTest extends TestCase
                         'rowAction' => true,
                         'acl_resource' => 'oro_pricing_product_price_view',
                         'link' => 'debug_link',
-                        'icon' => 'bug',
+                        'icon' => 'eye',
                     ]
                 ]
             );
