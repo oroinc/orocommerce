@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
@@ -17,6 +18,11 @@ class CombinedPriceListActivationStatusHandlerTest extends \PHPUnit\Framework\Te
     private $registry;
 
     /**
+     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $configManager;
+
+    /**
      * @var CombinedPriceListActivationStatusHandler
      */
     private $helper;
@@ -24,8 +30,11 @@ class CombinedPriceListActivationStatusHandlerTest extends \PHPUnit\Framework\Te
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+
         $this->helper = new CombinedPriceListActivationStatusHandler(
-            $this->registry
+            $this->registry,
+            $this->configManager
         );
     }
 

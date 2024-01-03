@@ -10,7 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  *
  * @internal This service is applicable for pricing debug purpose only.
  */
-class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandlerInterface
+class DebugProductPricesPriceListRequestHandler extends PriceListRequestHandler
 {
     public const CUSTOMER_KEY = 'customer';
     public const WEBSITE_KEY = 'website';

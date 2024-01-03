@@ -15,7 +15,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
@@ -36,7 +36,7 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
     /** @var bool */
     private $applied = false;
 
-    /** @var PriceListRequestHandlerInterface */
+    /** @var PriceListRequestHandler */
     private $priceListRequestHandler;
 
     /** @var DoctrineHelper */
@@ -59,7 +59,7 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
     private array $supportedGrids = [];
 
     public function __construct(
-        PriceListRequestHandlerInterface $priceListRequestHandler,
+        PriceListRequestHandler $priceListRequestHandler,
         DoctrineHelper $doctrineHelper,
         SelectedFieldsProviderInterface $selectedFieldsProvider,
         TranslatorInterface $translator,

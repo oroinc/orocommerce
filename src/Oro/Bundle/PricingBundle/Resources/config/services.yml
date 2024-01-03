@@ -1228,6 +1228,7 @@ services:
         class: Oro\Bundle\PricingBundle\Model\CombinedPriceListActivationStatusHandler
         arguments:
             - '@doctrine'
+            - '@oro_config.manager'
         tags:
             - { name: combined_price_list_status_handler, priority: 10 }
 

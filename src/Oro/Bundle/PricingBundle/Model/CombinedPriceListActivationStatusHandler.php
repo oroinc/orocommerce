@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
@@ -17,10 +18,17 @@ class CombinedPriceListActivationStatusHandler implements CombinedPriceListStatu
      */
     private $registry;
 
+    /**
+     * @var ConfigManager
+     */
+    private $configManager;
+
     public function __construct(
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
+        ConfigManager $configManager
     ) {
         $this->registry = $registry;
+        $this->configManager = $configManager;
     }
 
     public function isReadyForBuild(CombinedPriceList $cpl): bool

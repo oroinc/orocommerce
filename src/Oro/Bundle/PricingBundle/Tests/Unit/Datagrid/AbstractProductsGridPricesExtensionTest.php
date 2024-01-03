@@ -8,11 +8,11 @@ use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 abstract class AbstractProductsGridPricesExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PriceListRequestHandlerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var PriceListRequestHandler|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceListRequestHandler;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
@@ -34,7 +34,7 @@ abstract class AbstractProductsGridPricesExtensionTest extends \PHPUnit\Framewor
 
     protected function setUp(): void
     {
-        $this->priceListRequestHandler = $this->createMock(PriceListRequestHandlerInterface::class);
+        $this->priceListRequestHandler = $this->createMock(PriceListRequestHandler::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->selectedFieldsProvider = $this->createMock(SelectedFieldsProviderInterface::class);
 
