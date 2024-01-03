@@ -3,8 +3,8 @@
 namespace Oro\Bundle\SaleBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -16,19 +16,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroSaleBundle implements Migration, AttachmentExtensionAwareInterface, ActivityExtensionAwareInterface
 {
     use AttachmentExtensionAwareTrait;
-
-    /**
-     * @var ActivityExtension
-     */
-    protected $activityExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
+    use ActivityExtensionAwareTrait;
 
     /**
      * {@inheritdoc}

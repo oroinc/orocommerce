@@ -51,6 +51,13 @@ class WebsiteSearchReindexProductKitListenerTest extends WebTestCase
         self::reindexProductData();
     }
 
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+        self::clearIndex(Product::class, [WebsiteIdPlaceholder::NAME => self::getDefaultWebsiteId()]);
+        self::clearTestData(Product::class);
+    }
+
     public function testChangedProductKitItemLabel(): void
     {
         $kit1 = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);

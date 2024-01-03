@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
@@ -18,6 +19,7 @@ class ProductSelectGridTest extends WebTestCase
 
     /** @var Client */
     protected $client;
+    private AbstractPlatform $platform;
 
     protected function setUp(): void
     {
@@ -25,9 +27,7 @@ class ProductSelectGridTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->loadFixtures([
-            LoadFrontendProductData::class
-        ]);
+        $this->loadFixtures([LoadFrontendProductData::class]);
         $this->platform = $this->getContainer()->get('doctrine')->getManager()->getConnection()->getDatabasePlatform();
     }
 

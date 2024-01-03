@@ -5,23 +5,13 @@ namespace Oro\Bridge\CalendarCommerce\Migrations\Schema\v1_0;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroCalendarCommerceBridgeBundle implements Migration, ActivityExtensionAwareInterface
 {
-    const CALENDAR_EVENT_TABLE = 'oro_calendar_event';
-
-    /** @var ActivityExtension */
-    protected $activityExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
+    use ActivityExtensionAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -31,13 +21,10 @@ class OroCalendarCommerceBridgeBundle implements Migration, ActivityExtensionAwa
         self::addCalendarActivityAssociations($schema, $this->activityExtension);
     }
 
-    /**
-     * Enable activities
-     */
     public static function addCalendarActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
     {
         // no create associations only if calendar bundle is installed
-        if ($schema->hasTable(self::CALENDAR_EVENT_TABLE)) {
+        if ($schema->hasTable('oro_calendar_event')) {
             $legacyAssocTables = [
                 'oro_customer_user' => 'orob2b_account_user',
                 'oro_order' => 'orob2b_order',
@@ -51,19 +38,17 @@ class OroCalendarCommerceBridgeBundle implements Migration, ActivityExtensionAwa
                 'oro_rfp_request',
                 'oro_sale_quote',
             ];
-
             foreach ($associationTables as $tableName) {
                 if (!$schema->hasTable($tableName)) {
                     $tableName = $legacyAssocTables[$tableName];
                 }
 
                 $associationTableName = $activityExtension->getAssociationTableName(
-                    self::CALENDAR_EVENT_TABLE,
+                    'oro_calendar_event',
                     $tableName
                 );
-
                 if (!$schema->hasTable($associationTableName)) {
-                    $activityExtension->addActivityAssociation($schema, self::CALENDAR_EVENT_TABLE, $tableName);
+                    $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', $tableName);
                 }
             }
         }

@@ -2,26 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_3;
 
-use Doctrine\DBAL\Connection;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\MigrationQuery;
 use Psr\Log\LoggerInterface;
 
 class FillMinimalPrices implements MigrationQuery, ConnectionAwareInterface
 {
-    /**
-     * @var Connection
-     */
-    protected $connection;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
+    use ConnectionAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -42,12 +31,7 @@ class FillMinimalPrices implements MigrationQuery, ConnectionAwareInterface
         $this->doExecute($logger);
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    protected function doExecute(LoggerInterface $logger, $dryRun = false)
+    private function doExecute(LoggerInterface $logger, bool $dryRun = false): void
     {
         //GROUP BY is required in case of same prices for one product
         $query = 'INSERT INTO orob2b_price_product_minimal'

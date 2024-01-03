@@ -3,20 +3,12 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_13;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class UpdateRelatedProductsTableStage2 implements
-    Migration,
-    RenameExtensionAwareInterface,
-    OrderedMigrationInterface
+class UpdateRelatedProductsTableStage2 implements Migration, OrderedMigrationInterface
 {
-    /** @var RenameExtension */
-    private $renameExtension;
-
     /**
      * {@inheritdoc}
      */
@@ -39,14 +31,6 @@ class UpdateRelatedProductsTableStage2 implements
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
     }
 
     /**

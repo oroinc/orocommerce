@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Search;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\ORM\Query;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListForDefaultWebsite;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -22,26 +22,19 @@ class ProductRepositoryTest extends WebTestCase
     use MysqlVersionCheckTrait;
     use ConfigManagerAwareTestTrait;
 
-    /** @var ConfigManager */
-    private $configManager;
-
-    /** @var string */
-    private $configKey;
-
-    /** @var bool */
-    private $originalConfigValue;
+    private ConfigManager $configManager;
+    private string $configKey;
+    private bool $originalConfigValue;
+    private AbstractPlatform $platform;
 
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->getContainer()->get('request_stack')->push(Request::create(''));
 
-        $this->loadFixtures([
-            LoadFrontendProductData::class,
-            LoadCombinedPriceListForDefaultWebsite::class
-        ]);
+        $this->loadFixtures([LoadFrontendProductData::class]);
 
-        $this->configManager = self::getConfigManager('global');
+        $this->configManager = self::getConfigManager();
 
         $this->configKey = Configuration::getConfigKeyByName(Configuration::ALLOW_PARTIAL_PRODUCT_SEARCH);
         $this->originalConfigValue = $this->configManager->get($this->configKey);

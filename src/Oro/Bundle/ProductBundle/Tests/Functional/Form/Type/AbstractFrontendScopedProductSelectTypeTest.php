@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql\MysqlVersionCheckTrait;
 
 abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScopedProductSelectTypeTest
 {
     use MysqlVersionCheckTrait;
+
+    private AbstractPlatform $platform;
 
     protected function setUp(): void
     {

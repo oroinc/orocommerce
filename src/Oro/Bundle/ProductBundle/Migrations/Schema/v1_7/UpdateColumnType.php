@@ -10,19 +10,19 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class UpdateColumnType implements Migration, OrderedMigrationInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function getOrder(): int
     {
-        $table = $schema->getTable(AddColumnTypeToProduct::PRODUCT_TABLE_NAME);
-        $table->getColumn('type')->setNotnull(true);
+        return 30;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getOrder()
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        return 30;
+        $table = $schema->getTable('oro_product');
+        $table->getColumn('type')->setNotnull(true);
     }
 }

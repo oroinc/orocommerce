@@ -4,8 +4,8 @@ namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -14,59 +14,25 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class OroSEOBrands implements Migration, ExtendExtensionAwareInterface
 {
-    const BRAND_TABLE_NAME = 'oro_brand';
-    const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
-
-    const METAINFORMATION_TITLES = 'metaTitles';
-    const METAINFORMATION_DESCRIPTIONS = 'metaDescriptions';
-    const METAINFORMATION_KEYWORDS = 'metaKeywords';
-
-    /** @var ExtendExtension */
-    protected $extendExtension;
-
-    /**
-     * @inheritdoc
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
+    use ExtendExtensionAwareTrait;
 
     /**
      * {@inheritdoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $this->addMetaInformation($schema, self::BRAND_TABLE_NAME);
-    }
-
-    /**
-     * Adds metaDescription and metaKeywords relations to entitiy.
-     *
-     * @param Schema $schema
-     * @param string $ownerTable
-     */
-    private function addMetaInformation(Schema $schema, $ownerTable)
-    {
-        if ($schema->hasTable($ownerTable)) {
-            $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_TITLES);
-            $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_DESCRIPTIONS);
-            $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_KEYWORDS);
+        if ($schema->hasTable('oro_brand')) {
+            $this->addMetaInformationField($schema, 'oro_brand', 'metaTitles');
+            $this->addMetaInformationField($schema, 'oro_brand', 'metaDescriptions');
+            $this->addMetaInformationField($schema, 'oro_brand', 'metaKeywords');
         }
     }
 
     /**
      * Add a many-to-many relation between a given table and the table corresponding to the
      * LocalizedFallbackValue entity, with the given relation name.
-     *
-     * @param Schema $schema
-     * @param string $ownerTable
-     * @param string $relationName
-     * @param bool $isString
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    private function addMetaInformationField(Schema $schema, $ownerTable, $relationName, $isString = false)
+    private function addMetaInformationField(Schema $schema, string $ownerTable, string $relationName): void
     {
         $targetTable = $schema->getTable($ownerTable);
 
@@ -81,7 +47,7 @@ class OroSEOBrands implements Migration, ExtendExtensionAwareInterface
             $schema,
             $targetTable,
             $relationName,
-            self::FALLBACK_LOCALE_VALUE_TABLE_NAME,
+            'oro_fallback_localization_val',
             $targetTitleColumnNames,
             $targetDetailedColumnNames,
             $targetGridColumnNames,
@@ -95,7 +61,7 @@ class OroSEOBrands implements Migration, ExtendExtensionAwareInterface
                 'view' => ['is_displayable' => false],
                 'importexport' => [
                     'excluded' => false,
-                    'fallback_field' => $isString ? 'string' : 'text',
+                    'fallback_field' => 'text'
                 ],
             ]
         );

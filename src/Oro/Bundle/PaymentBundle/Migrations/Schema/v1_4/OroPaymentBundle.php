@@ -6,20 +6,16 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\FrontendBundle\Migration\UpdateClassNamesQuery;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationTrait;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroPaymentBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
+    use RenameExtensionAwareTrait;
     use UpdateExtendRelationTrait;
-
-    /**
-     * @var RenameExtension
-     */
-    private $renameExtension;
 
     /**
      * {@inheritdoc}
@@ -61,21 +57,10 @@ class OroPaymentBundle implements Migration, RenameExtensionAwareInterface, Orde
     }
 
     /**
-     * Should be executed before:
-     * @see \Oro\Bundle\PaymentBundle\Migrations\Schema\v1_4\MigrateNotes
-     *
      * {@inheritdoc}
      */
     public function getOrder()
     {
         return 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
     }
 }

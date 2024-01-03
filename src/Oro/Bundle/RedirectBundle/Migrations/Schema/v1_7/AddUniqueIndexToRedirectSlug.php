@@ -13,7 +13,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class AddUniqueIndexToRedirectSlug implements Migration, OrderedMigrationInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -29,6 +29,9 @@ class AddUniqueIndexToRedirectSlug implements Migration, OrderedMigrationInterfa
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getOrder()
     {
         return 10;
