@@ -9,6 +9,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadScopeCustomerGroupDemoData;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductKitDemoData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -16,6 +17,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * The base class for fixtures that load product visibilities demo data.
+ */
 abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
@@ -40,6 +44,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     {
         return [
             LoadProductDemoData::class,
+            LoadProductKitDemoData::class,
             LoadScopeCustomerGroupDemoData::class,
             LoadCategoryVisibilityDemoData::class,
         ];
