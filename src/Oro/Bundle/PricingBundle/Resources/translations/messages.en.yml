@@ -231,7 +231,7 @@ oro.pricing:
             pricing_strategy.label: 'Pricing Strategy'
             current_prices:
                 label: 'Customer Prices'
-                tooltip: 'Click to highlight prices in Price Merge Details.<br/>Click again to turn off highlighting.'
+                tooltip: 'Click to highlight prices in Price Merge Details.<br>Click again to turn off highlighting.'
             no_prices.label: 'No prices'
             no_prices_for_date.label: 'No prices available on %date%. Automatic price calculation is scheduled to start on %calculation_start_date%'
             not_used_prices.message: 'Prices from this price list are not used'
