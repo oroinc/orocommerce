@@ -64,7 +64,8 @@ class ShoppingListTotalManager
     public function setSubtotals(array $shoppingLists, $doFlush = true)
     {
         $currency = $this->currencyManager->getUserCurrency();
-        $customerUser = $this->customerUserProvider->getLoggedUser();
+        $customerUser = $this->customerUserProvider->getLoggedUser(true);
+
         foreach ($shoppingLists as $shoppingList) {
             $isShoppingListOwner = $customerUser === $shoppingList->getCustomerUser();
             # By default, we display the totals of the owner of the shopping list.
