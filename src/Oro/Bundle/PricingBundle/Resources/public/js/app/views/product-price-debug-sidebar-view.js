@@ -57,12 +57,20 @@ const ProductPriceDebugSidebarView = BaseView.extend({
     loadingMaskView: null,
 
     events() {
-        return {
-            [`change ${this.websitesSelector}`]: 'onPriceListChange',
+        const events = {
             [`change ${this.customersSelector}`]: 'onPriceListChange',
-            [`change ${this.currenciesSelector}`]: 'onCurrenciesChange',
             [`change ${this.showTierPricesSelector}`]: 'onShowTierPricesChange'
         };
+
+        if (this.websitesSelector) {
+            events[`change ${this.websitesSelector}`] = 'onPriceListChange';
+        }
+
+        if (this.currenciesSelector) {
+            events[`change ${this.currenciesSelector}`] = 'onCurrenciesChange';
+        }
+
+        return events;
     },
 
     /**
@@ -122,11 +130,14 @@ const ProductPriceDebugSidebarView = BaseView.extend({
         }
 
         const params = {
-            website: this.$(this.websitesSelector).val(),
             customer: this.$(this.customersSelector).val(),
             priceCurrencies: currencies,
             showTierPrices: this.$(this.showTierPricesSelector).prop('checked')
         };
+
+        if (this.websitesSelector) {
+            params['website'] = this.$(this.websitesSelector).val();
+        }
 
         mediator.trigger(
             'grid-sidebar:change:' + this.sidebarAlias,
@@ -135,6 +146,10 @@ const ProductPriceDebugSidebarView = BaseView.extend({
     },
 
     _saveCurrenciesState() {
+        if (!this.currenciesSelector) {
+            return [];
+        }
+
         const currencies = [];
 
         _.each(this.$(`${this.currenciesSelector} input`), input => {

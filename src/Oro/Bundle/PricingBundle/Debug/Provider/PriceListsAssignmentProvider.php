@@ -26,7 +26,7 @@ class PriceListsAssignmentProvider implements PriceListsAssignmentProviderInterf
 
         foreach ($this->providers as $provider) {
             $levelAssignments = $provider->getPriceListAssignments();
-            if ($levelAssignments && !empty($levelAssignments['priceLists'])) {
+            if ($levelAssignments) {
                 $assignments[] = $levelAssignments;
             }
             if (!empty($levelAssignments['stop'])) {

@@ -9,6 +9,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\EventListener\CustomerFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
+use Symfony\Component\HttpFoundation\Request;
 
 class CustomerFormViewListenerTest extends AbstractCustomerFormViewListenerTest
 {

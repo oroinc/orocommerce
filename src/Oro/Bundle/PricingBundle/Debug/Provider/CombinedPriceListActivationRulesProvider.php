@@ -34,8 +34,12 @@ class CombinedPriceListActivationRulesProvider
         return $activationRuleRepo->findBy(['fullChainPriceList' => $priceList], ['expireAt' => 'ASC']);
     }
 
-    public function hasActivationRules(CombinedPriceList $priceList): bool
+    public function hasActivationRules(?CombinedPriceList $priceList): bool
     {
+        if (!$priceList) {
+            return false;
+        }
+
         $activationRuleRepo = $this->registry->getRepository(CombinedPriceListActivationRule::class);
 
         return $activationRuleRepo->hasActivationRules($priceList);

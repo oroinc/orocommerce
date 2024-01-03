@@ -34,9 +34,10 @@ class ConfigPriceListsAssignmentProvider implements PriceListsAssignmentProvider
                 'oro_config_configuration_system',
                 ['activeGroup' => 'commerce', 'activeSubGroup' => 'pricing']
             ),
-            'link_title' => $this->translator->trans('oro.config.menu.system_configuration.label'),
+            'link_title' => $this->translator->trans('oro.config.module_label'),
             'fallback' => null,
-            'priceLists' => $priceLists,
+            'fallback_entity_title' => null,
+            'price_lists' => $priceLists,
             'stop' => false
         ];
     }

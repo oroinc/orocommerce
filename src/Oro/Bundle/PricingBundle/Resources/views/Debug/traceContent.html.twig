@@ -10,26 +10,43 @@
 } %}
 
 <div class="layout-content">
-    <div class="layout-content scrollable-container">
+    <div class="layout-content scrollable-container"
+         data-page-component-module="oroui/js/app/components/view-component"
+         data-page-component-options="{{ {
+             view: 'oropricing/js/app/views/product-price-debug-trace-page-view'
+         }|json_encode }}"
+    >
         {% block content_data %}
             {% import '@OroUI/macros.html.twig' as UI %}
 
             {% set pricesTable %}
                 {% if current_prices is empty %}
-                    {{ 'oro.pricing.productprice.debug.no_prices.label'|trans }}
+                    {% if not calculation_start_date %}
+                        {{ 'oro.pricing.productprice.debug.no_prices.label'|trans }}
+                    {% else %}
+                        {{ 'oro.pricing.productprice.debug.no_prices_for_date.label'|trans({
+                            '%date%': view_date|oro_format_datetime,
+                            '%calculation_start_date%': calculation_start_date|oro_format_datetime
+                        }) }}
+                    {% endif %}
                 {% else %}
-                    <div class="prices-collection">
-                        {% for currency, prices in current_prices %}
-                            {% with {value: prices} %}
-                                {{ block("price_details", "@OroPricing/Debug/priceDetails.html.twig") }}
-                            {% endwith %}
-                        {% endfor %}
-                    </div>
+                    {% with {prices: current_prices, used_units_and_currencies: used_units_and_currencies} %}
+                        {{ block("price_details", "@OroPricing/Debug/priceDetails.html.twig") }}
+                    {% endwith %}
                 {% endif %}
             {% endset %}
-            {% set pricing_strategy_name = ('oro.pricing.system_configuration.fields.strategy_type.choices.' ~ oro_config_value('oro_pricing.price_strategy'))|trans %}
+
+            {% set merge_strategy = oro_config_value('oro_pricing.price_strategy') %}
+            {% set pricing_strategy_name = ('oro.pricing.system_configuration.fields.strategy_type.choices.' ~ merge_strategy)|trans %}
 
             {% set generalSection %}
+                {% if customer is defined and customer %}
+                    {{ UI.renderHtmlProperty(
+                        'oro.customer.entity_label'|trans,
+                        UI.entityViewLink(customer, customer.name, 'oro_customer_customer_view')
+                    ) }}
+                {% endif %}
+
                 {{ UI.renderHtmlProperty(
                     'oro.product.entity_label'|trans,
                     UI.entityViewLink(product, product.defaultName.string, 'oro_product_view')
@@ -44,7 +61,8 @@
                     })
                 ) }}
                 {{ UI.renderHtmlProperty('oro.pricing.productprice.debug.current_prices.label'|trans, pricesTable, null, null, {
-                    'rootClass': 'attribute-item--mobile-full'
+                    'rootClass': 'attribute-item--mobile-full',
+                    'tooltipHTML': UI.tooltip('oro.pricing.productprice.debug.current_prices.tooltip'|trans)
                 }) }}
             {% endset %}
 
@@ -70,7 +88,7 @@
                         {% set title = 'oro.pricing.pricelist_schedule.disabled' %}
                     {% endif %}
 
-                    <h6 class="terms-title-divider">{{ UI.entityViewLink(price_list, price_list.name, 'oro_pricing_price_list_view') }}</h6>
+                    <h6 class="terms-title-divider">{{ loop.index }}. {{ UI.entityViewLink(price_list, price_list.name, 'oro_pricing_price_list_view') }}</h6>
 
                     {% if price_merging_details[price_list.id] is defined  %}
                         {% set pricesContent %}
@@ -82,12 +100,29 @@
                         {% set pricesContent %}
                             <div class="alert alert-info alert--compact" role="alert">
                                 <span class="fa-info alert-icon" aria-hidden="true"></span>
-                                {{ 'oro.pricing.productprice.debug.not_used_prices.message'|trans }}
+
+                                {% if price_list.schedules.isEmpty() %}
+                                    {{ 'oro.pricing.productprice.debug.not_used_prices.message'|trans }}
+                                {% else %}
+                                    {{ 'oro.pricing.productprice.debug.not_used_prices_for_date.message'|trans({'%date%': view_date|oro_format_datetime}) }}
+                                {% endif %}
                             </div>
                         {% endset %}
                     {% endif %}
 
-                    {{ UI.renderHtmlProperty(title|trans, pricesContent, null, null, options) }}
+                    {% set propertyTitle %}
+                        {{ title|trans }}
+                        {% if merge_strategy == 'merge_by_priority' %}
+                            {% if used_price_list_relation.mergeAllowed %}
+                                {% set merge_title = 'oro.pricing.productprice.debug.merge_allowed.label' %}
+                            {% else %}
+                                {% set merge_title = 'oro.pricing.productprice.debug.merge_not_allowed.label' %}
+                            {% endif %}
+                            <span class="price-list-term-name--allowed">{{ merge_title|trans }}</span>
+                        {% endif %}
+                    {% endset %}
+
+                    {{ UI.renderHtmlProperty(propertyTitle, pricesContent, null, null, options) }}
                 {% endfor %}
             {% endset %}
 
@@ -117,11 +152,9 @@
                         {% set assignmentsContent %}
                             {% include '@OroPricing/Customer/price_list_view.html.twig' with {
                                 'fallback': assignments.fallback,
-                                'priceLists': assignments.priceLists,
-                                'headLink': UI.link({
-                                    'path': assignments.link,
-                                    'label': assignments.link_title
-                                })
+                                'fallbackEntityTitle': assignments.fallback_entity_title,
+                                'priceLists': assignments.price_lists,
+                                'headLink': assignments.link ? UI.link({'path': assignments.link,'label': assignments.link_title}): assignments.link_title
                             } %}
                         {% endset %}
                         {{ UI.renderHtmlProperty(null, assignmentsContent, null, null, {
@@ -170,7 +203,7 @@
                                     <th scope="col">{{ 'oro.pricing.productprice.debug.combined_price_list.label'|trans }}</th>
                                     <th scope="col">{{ 'oro.cron.schedule_interval.active_at.label'|trans }}</th>
                                     <th scope="col">{{ 'oro.cron.schedule_interval.deactivate_at.label'|trans }}</th>
-                                    <th scope="col">{{ 'oro.cron.schedule_interval.active_now'|trans }}</th>
+                                    <th scope="col">{{ 'oro.cron.schedule_interval.active_now'|trans|trim('.') }}</th>
                                 </tr>
                                 </thead>
                                 {% for cpl_activation_rule in cpl_activation_rules %}

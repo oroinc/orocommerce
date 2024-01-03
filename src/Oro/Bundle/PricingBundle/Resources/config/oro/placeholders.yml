@@ -9,6 +9,9 @@ placeholders:
         oro_product_quick_add_collection_after:
             items:
                 price_templates: ~
+        assigned_price_lists_additional_links:
+            items:
+                view_price_calculation_details: ~
 
     items:
         product_sidebar_prices_config_selector:
@@ -17,3 +20,8 @@ placeholders:
             template: '@@OroPricing/Product/subtotal.html.twig'
         price_templates:
             template: '@@OroPricing/Product/price_templates.html.twig'
+        view_price_calculation_details:
+            acl: 'oro_pricing_product_price_debug'
+            applicable:
+                - '@oro_ui.placeholder.filter->isInstanceOf($entity$, Oro\Bundle\CustomerBundle\Entity\Customer)'
+            template: '@@OroPricing/Debug/view_details_link.html.twig'

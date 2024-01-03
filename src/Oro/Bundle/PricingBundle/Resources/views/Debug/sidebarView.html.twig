@@ -1,13 +1,18 @@
 {% import '@OroUI/macros.html.twig' as UI %}
 
 {% set pageComponentOptions = {
-    'websitesSelector': '#' ~ websites.vars.id,
     'customersSelector': '#' ~ customers.vars.id,
     'dateSelector': '#hidden_' ~ date.vars.id,
     'showDevelopersInfoSelector': '#' ~ showDevelopersInfo.vars.id,
     'showDetailedAssignmentInfoSelector': '#' ~ showDetailedAssignmentInfo.vars.id,
     'productId': product.id
 } %}
+
+{% if websites is defined %}
+    {% set pageComponentOptions = pageComponentOptions|merge({
+        'websitesSelector': '#' ~ websites.vars.id
+    }) %}
+{% endif %}
 
 {% form_theme showDetailedAssignmentInfo with '@OroPricing/Form/sidebar.html.twig' %}
 {% form_theme showDevelopersInfo with '@OroPricing/Form/sidebar.html.twig' %}

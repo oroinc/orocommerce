@@ -7,7 +7,6 @@ use Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHan
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -20,8 +19,7 @@ class WebsitePriceListsAssignmentProvider implements PriceListsAssignmentProvide
     public function __construct(
         private DebugProductPricesPriceListRequestHandler $requestHandler,
         private ManagerRegistry $registry,
-        private TranslatorInterface $translator,
-        private UrlGeneratorInterface $urlGenerator
+        private TranslatorInterface $translator
     ) {
     }
 
@@ -50,13 +48,16 @@ class WebsitePriceListsAssignmentProvider implements PriceListsAssignmentProvide
             ? $fallbackChoices[$fallbackEntity->getFallback()]
             : $fallbackChoices[PriceListWebsiteFallback::CONFIG];
 
+        $isCurrentOnly = $fallbackEntity?->getFallback() === PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY;
+
         return [
             'section_title' => $this->translator->trans('oro.website.entity_label'),
-            'link' => $this->urlGenerator->generate('oro_multiwebsite_view', ['id' => $website->getId()]),
+            'link' => null,
             'link_title' => $website->getName(),
             'fallback' => $fallback,
-            'priceLists' => $priceLists,
-            'stop' => $fallbackEntity?->getFallback() === PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY
+            'fallback_entity_title' => $isCurrentOnly ? null : $this->translator->trans('oro.config.module_label'),
+            'price_lists' => $priceLists,
+            'stop' => $isCurrentOnly
         ];
     }
 }

@@ -8,6 +8,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -21,7 +22,8 @@ class CustomerPriceListsAssignmentProvider implements PriceListsAssignmentProvid
         private DebugProductPricesPriceListRequestHandler $requestHandler,
         private ManagerRegistry $registry,
         private TranslatorInterface $translator,
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
+        private AuthorizationCheckerInterface $authorizationChecker
     ) {
     }
 
@@ -61,13 +63,20 @@ class CustomerPriceListsAssignmentProvider implements PriceListsAssignmentProvid
             ? $fallbackChoices[$fallbackEntity->getFallback()]
             : $fallbackChoices[PriceListCustomerFallback::ACCOUNT_GROUP];
 
+        $isCurrentOnly = $fallbackEntity?->getFallback() === PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY;
+        $link = null;
+        if ($this->authorizationChecker->isGranted('VIEW', $customer)) {
+            $link = $this->urlGenerator->generate('oro_customer_customer_view', ['id' => $customer->getId()]);
+        }
+
         return [
             'section_title' => $this->translator->trans('oro.customer.customer.entity_label'),
-            'link' => $this->urlGenerator->generate('oro_customer_customer_view', ['id' => $customer->getId()]),
+            'link' => $link,
             'link_title' => $customer->getName(),
             'fallback' => $fallback,
-            'priceLists' => $priceLists,
-            'stop' => $fallbackEntity?->getFallback() === PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY
+            'fallback_entity_title' => $isCurrentOnly ? null : $customer->getGroup()?->getName(),
+            'price_lists' => $priceLists,
+            'stop' => $isCurrentOnly
         ];
     }
 }

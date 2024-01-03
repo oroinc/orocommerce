@@ -79,9 +79,10 @@ class ConfigPriceListsAssignmentProviderTest extends TestCase
         $expected = [
             'section_title' => 'oro.config.menu.system_configuration.label TR',
             'link' => '/system-config-url',
-            'link_title' => 'oro.config.menu.system_configuration.label TR',
+            'link_title' => 'oro.config.module_label TR',
             'fallback' => null,
-            'priceLists' => $convertedRelations,
+            'fallback_entity_title' => null,
+            'price_lists' => $convertedRelations,
             'stop' => false
         ];
 
