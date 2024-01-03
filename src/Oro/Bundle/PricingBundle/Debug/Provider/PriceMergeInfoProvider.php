@@ -119,6 +119,9 @@ class PriceMergeInfoProvider
         return $isActualizationRequired;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     private function isMergedPricesSameToCurrentPrices(array $mergedPrices, array $currentPrices): bool
     {
         $calculatedPrices = [];
