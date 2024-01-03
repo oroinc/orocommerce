@@ -71,7 +71,7 @@
 
                 {% for used_price_list_relation in full_cpl_used_price_lists %}
                     {% set price_list = used_price_list_relation.priceList %}
-                    {% set title = 'oro.pricing.pricelist_schedule.not_active_now' %}
+                    {% set title = 'oro.pricing.productprice.debug.pricelist_schedule.not_active_now' %}
                     {% set options = {
                         termClass: 'price-list-term-name',
                         rootClass: 'price-list-term attribute-item--mobile-full'
@@ -82,7 +82,7 @@
                         {% set options = options|merge({
                             tooltipHTML: UI.tooltip(cronSchedulIntervals.scheduleIntervalsInfo(price_list.schedules, scheduleLabels))
                         }) %}
-                        {% set title = 'oro.pricing.pricelist_schedule.' ~ (oro_cron_has_active_schedule(price_list.schedules) ? 'active_now' : 'not_active_now') %}
+                        {% set title = 'oro.pricing.productprice.debug.pricelist_schedule.' ~ (oro_cron_has_active_schedule(price_list.schedules) ? 'active_now' : 'not_active_now') %}
                     {% endif %}
                     {% if not price_list.active %}
                         {% set title = 'oro.pricing.pricelist_schedule.disabled' %}
