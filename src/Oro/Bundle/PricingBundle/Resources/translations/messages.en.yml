@@ -251,6 +251,13 @@ oro.pricing:
             dev_info.label: 'Information for Developers'
             recalculate_action.label: 'Recalculate Prices'
             planned_for_recalculation.message: 'Combined Price List was scheduled for recalculation'
+            pricelist_schedule:
+                was_activated: 'Was activated on <strong>%date%</strong>'
+                was_deactivated: 'Was deactivated on <strong>%date%</strong>'
+                will_be_acitivated: 'Will become active on <strong>%date%</strong>'
+                will_be_deacitivated: 'Will be deactivated on <strong>%date%</strong>'
+                active_now: 'Is active now'
+                not_active_now: 'Is not active now'
 
     combinedproductprice:
         entity_label: 'Combined Product Price'
@@ -293,12 +300,12 @@ oro.pricing:
     pricelist_schedule:
         active.label: Enabled
         activity.label: Status
-        was_activated: Was activated on
-        was_deactivated: Was deactivated on
-        will_be_acitivated: Will become active on
-        will_be_deacitivated: Will be deactivated on
-        active_now: Is active now
-        not_active_now: Is not active now
+        was_activated: Was activated on %date%.
+        was_deactivated: Was deactivated on %date%.
+        will_be_acitivated: Will become active on %date%.
+        will_be_deacitivated: Will be deactivated on %date%.
+        active_now: Is active now.
+        not_active_now: Is not active now.
         active: Active
         inactive: Inactive
         disabled: Disabled

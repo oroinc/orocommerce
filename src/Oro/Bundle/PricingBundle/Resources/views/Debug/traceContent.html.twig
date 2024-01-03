@@ -1,12 +1,12 @@
 {% import '@OroUI/macros.html.twig' as UI %}
 
 {% set scheduleLabels = {
-    wasActivated: 'oro.pricing.pricelist_schedule.was_activated',
-    activeNow: 'oro.pricing.pricelist_schedule.active_now',
-    notActiveNow: 'oro.pricing.pricelist_schedule.not_active_now',
-    willBeActivated: 'oro.pricing.pricelist_schedule.will_be_acitivated',
-    wasDeactivated: 'oro.pricing.pricelist_schedule.was_deactivated',
-    willBeDeactivated: 'oro.pricing.pricelist_schedule.will_be_deacitivated'
+    wasActivated: 'oro.pricing.productprice.debug.pricelist_schedule.was_activated',
+    activeNow: 'oro.pricing.productprice.debug.pricelist_schedule.active_now',
+    notActiveNow: 'oro.pricing.productprice.debug.pricelist_schedule.not_active_now',
+    willBeActivated: 'oro.pricing.productprice.debug.pricelist_schedule.will_be_acitivated',
+    wasDeactivated: 'oro.pricing.productprice.debug.pricelist_schedule.was_deactivated',
+    willBeDeactivated: 'oro.pricing.productprice.debug.pricelist_schedule.will_be_deacitivated'
 } %}
 
 <div class="layout-content">
@@ -80,7 +80,7 @@
                     {% set title = 'active' %}
                     {% if not price_list.schedules.isEmpty() %}
                         {% set options = options|merge({
-                            tooltipHTML: UI.tooltip(cronSchedulIntervals.scheduleIntervalsInfo(price_list.schedules, scheduleLabels, false))
+                            tooltipHTML: UI.tooltip(cronSchedulIntervals.scheduleIntervalsInfo(price_list.schedules, scheduleLabels))
                         }) %}
                         {% set title = 'oro.pricing.pricelist_schedule.' ~ (oro_cron_has_active_schedule(price_list.schedules) ? 'active_now' : 'not_active_now') %}
                     {% endif %}
@@ -203,7 +203,7 @@
                                     <th scope="col">{{ 'oro.pricing.productprice.debug.combined_price_list.label'|trans }}</th>
                                     <th scope="col">{{ 'oro.cron.schedule_interval.active_at.label'|trans }}</th>
                                     <th scope="col">{{ 'oro.cron.schedule_interval.deactivate_at.label'|trans }}</th>
-                                    <th scope="col">{{ 'oro.cron.schedule_interval.active_now'|trans|trim('.') }}</th>
+                                    <th scope="col">{{ 'oro.pricing.productprice.debug.pricelist_schedule.active_now'|trans }}</th>
                                 </tr>
                                 </thead>
                                 {% for cpl_activation_rule in cpl_activation_rules %}
