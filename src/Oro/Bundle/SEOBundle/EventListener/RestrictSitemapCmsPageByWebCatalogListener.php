@@ -12,6 +12,7 @@ use Oro\Bundle\SEOBundle\Sitemap\Provider\CmsPageSitemapRestrictionProvider;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Component\Website\WebsiteInterface;
 
 /**
  * Listener for restricting sitemap building for cms pages
@@ -27,7 +28,7 @@ class RestrictSitemapCmsPageByWebCatalogListener
 
     public function restrictQueryBuilder(RestrictSitemapEntitiesEvent $event): void
     {
-        if ($this->provider->isRestrictionActive($event->getWebsite())) {
+        if ($this->isRestrictionActive($event->getWebsite())) {
             $this->restrict($event);
         }
     }
@@ -55,7 +56,7 @@ class RestrictSitemapCmsPageByWebCatalogListener
         $webCatalogRestriction = $webCatalogEntitiesQueryBuilder->getDQL();
         if ($this->provider->isRestrictedToPagesBelongToWebCatalogOnly($website)) {
             $qb->andWhere($qb->expr()->exists($webCatalogRestriction));
-        } else {
+        } elseif ($this->provider->isRestrictedToPagesNotBelongToWebCatalogOnly($website)) {
             $qb->andWhere($qb->expr()->not($qb->expr()->exists($webCatalogRestriction)));
         }
 
@@ -94,5 +95,13 @@ class RestrictSitemapCmsPageByWebCatalogListener
         $this->scopeQueryBuilderModifier->applyScopeCriteria($subQb, 'scopes');
 
         return $subQb;
+    }
+
+    private function isRestrictionActive(WebsiteInterface $website = null): bool
+    {
+        return $this->provider->isRestrictionActive($website) && (
+            $this->provider->isRestrictedToPagesBelongToWebCatalogOnly($website) ||
+            $this->provider->isRestrictedToPagesNotBelongToWebCatalogOnly($website)
+        );
     }
 }
