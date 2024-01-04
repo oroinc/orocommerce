@@ -10,19 +10,18 @@ class LoadShoppingListLineItems extends AbstractShoppingListLineItemsFixture
 {
     use UserUtilityTrait;
 
-    const LINE_ITEM_1 = 'shopping_list_line_item.1';
-    const LINE_ITEM_2 = 'shopping_list_line_item.2';
-    const LINE_ITEM_3 = 'shopping_list_line_item.3';
-    const LINE_ITEM_4 = 'shopping_list_line_item.4';
-    const LINE_ITEM_5 = 'shopping_list_line_item.5';
-    const LINE_ITEM_7 = 'shopping_list_line_item.7';
-    const LINE_ITEM_8 = 'shopping_list_line_item.8';
-    const LINE_ITEM_9 = 'shopping_list_line_item.9';
-    const LINE_ITEM_10 = 'shopping_list_lin_item.10';
-    const LINE_ITEM_11 = 'shopping_list_lin_item.11';
+    public const LINE_ITEM_1 = 'shopping_list_line_item.1';
+    public const LINE_ITEM_2 = 'shopping_list_line_item.2';
+    public const LINE_ITEM_3 = 'shopping_list_line_item.3';
+    public const LINE_ITEM_4 = 'shopping_list_line_item.4';
+    public const LINE_ITEM_5 = 'shopping_list_line_item.5';
+    public const LINE_ITEM_7 = 'shopping_list_line_item.7';
+    public const LINE_ITEM_8 = 'shopping_list_line_item.8';
+    public const LINE_ITEM_9 = 'shopping_list_line_item.9';
+    public const LINE_ITEM_10 = 'shopping_list_lin_item.10';
+    public const LINE_ITEM_11 = 'shopping_list_lin_item.11';
 
-    /** @var array */
-    protected static $lineItems = [
+    protected static array $lineItems = [
         self::LINE_ITEM_1 => [
             'product' => LoadProductData::PRODUCT_1,
             'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
@@ -88,9 +87,9 @@ class LoadShoppingListLineItems extends AbstractShoppingListLineItemsFixture
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadProductUnitPrecisions::class,

@@ -3,28 +3,24 @@
 namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
-class LoadRequestData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
+class LoadRequestData extends AbstractFixture implements DependentFixtureInterface
 {
-    const QUOTE1                    = 'sale.quote.1';
+    public const QUOTE1 = 'sale.quote.1';
 
-    const REQUEST_WITH_QUOTE        = 'request.with.quote';
-    const REQUEST_WITHOUT_QUOTE     = 'request.without.quote';
-    const REQUEST_WITHOUT_QUOTE_OLD = 'request.without.quote.old';
+    public const REQUEST_WITH_QUOTE = 'request.with.quote';
+    public const REQUEST_WITHOUT_QUOTE = 'request.without.quote';
+    public const REQUEST_WITHOUT_QUOTE_OLD = 'request.without.quote.old';
 
-    const FIRST_NAME                = 'Grzegorz';
-    const LAST_NAME                 = 'Brzeczyszczykiewicz';
-    const EMAIL                     = 'test_request@example.com';
-    const PO_NUMBER                 = 'CA1234USD';
+    public const FIRST_NAME = 'Grzegorz';
+    public const LAST_NAME = 'Brzeczyszczykiewicz';
+    public const EMAIL = 'test_request@example.com';
+    public const PO_NUMBER = 'CA1234USD';
 
-    /**
-     * @var array
-     */
-    protected $requests = [
+    private array $requests = [
         self::REQUEST_WITH_QUOTE => [
             'first_name' => self::FIRST_NAME,
             'last_name' => self::LAST_NAME,
@@ -55,19 +51,17 @@ class LoadRequestData extends AbstractFixture implements FixtureInterface, Depen
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return [
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
-        ];
+        return [LoadUserData::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         foreach ($this->requests as $key => $rawRequest) {
             $days = $rawRequest['note'] === self::REQUEST_WITHOUT_QUOTE_OLD ? 5 : 1;

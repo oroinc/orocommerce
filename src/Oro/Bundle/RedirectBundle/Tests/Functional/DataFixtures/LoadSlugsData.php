@@ -14,24 +14,35 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
 {
-    const SLUG_URL_ANONYMOUS = '/slug/anonymous';
-    const SLUG_URL_USER = '/slug/customer';
-    const SLUG_URL_PAGE = '/slug/page';
-    const SLUG_URL_PAGE_2 = '/slug/page2';
-    const SLUG_URL_LOCALIZATION_1 = '/slug/en/page';
-    const SLUG_URL_LOCALIZATION_2 = '/slug/es/page';
-    const SLUG_TEST_URL = '/slug/first';
-    const SLUG_TEST_REFERENCE = 'reference:/slug/first';
-    const SLUG_TEST_ONLY = '__test-only__';
-    const PAGE_3_DEFAULT = '/localized-slug/en/page3';
-    const PAGE_3_LOCALIZED_EN_CA = '/localized-slug/en_ca/page3';
+    public const SLUG_URL_ANONYMOUS = '/slug/anonymous';
+    public const SLUG_URL_USER = '/slug/customer';
+    public const SLUG_URL_PAGE = '/slug/page';
+    public const SLUG_URL_PAGE_2 = '/slug/page2';
+    public const SLUG_URL_LOCALIZATION_1 = '/slug/en/page';
+    public const SLUG_URL_LOCALIZATION_2 = '/slug/es/page';
+    public const SLUG_TEST_URL = '/slug/first';
+    public const SLUG_TEST_REFERENCE = 'reference:/slug/first';
+    public const SLUG_TEST_ONLY = '__test-only__';
+    public const PAGE_3_DEFAULT = '/localized-slug/en/page3';
+    public const PAGE_3_LOCALIZED_EN_CA = '/localized-slug/en_ca/page3';
 
-    protected ?Organization $organization = null;
+    private ?Organization $organization = null;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function getDependencies()
+    {
+        return [
+            LoadPageData::class,
+            LoadLocalizationData::class
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager): void
     {
         /** @var Page $page */
         $page = $this->getReference(LoadPageData::PAGE_1);
@@ -101,23 +112,14 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string $url
-     * @param string $routeName
-     * @param array $routeParameters
-     * @param null|string $reference
-     * @param null|Localization $localization
-     * @return Slug
-     */
-    protected function createSlug(
+    private function createSlug(
         ObjectManager $manager,
-        $url,
-        $routeName,
+        string $url,
+        string $routeName,
         array $routeParameters,
-        $reference = null,
+        string $reference = null,
         Localization $localization = null
-    ) {
+    ): Slug {
         $slug = new Slug();
         $slug->setUrl($url);
         $slug->setRouteName($routeName);
@@ -137,27 +139,12 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         return $slug;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @return Organization
-     */
-    protected function getOrganization(ObjectManager $manager)
+    private function getOrganization(ObjectManager $manager): Organization
     {
         if (null === $this->organization) {
-            $this->organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+            $this->organization = $manager->getRepository(Organization::class)->getFirst();
         }
 
         return $this->organization;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            LoadPageData::class,
-            LoadLocalizationData::class
-        ];
     }
 }

@@ -21,30 +21,29 @@ class LoadUserData extends AbstractFixture
 {
     use SetRolePermissionsTrait;
 
-    const USER1 = 'sale-user1';
-    const USER2 = 'sale-user2';
+    public const USER1 = 'sale-user1';
+    public const USER2 = 'sale-user2';
 
-    const ROLE1 = 'sale-role1';
-    const ROLE2 = 'sale-role2';
-    const ROLE3 = 'sale-role3';
-    const ROLE4 = 'sale-role4';
-    const ROLE5 = 'sale-role5';
-    const ROLE6 = 'sale-role6';
-    const ROLE7 = 'sale-role7';
+    public const ROLE1 = 'sale-role1';
+    public const ROLE2 = 'sale-role2';
+    public const ROLE3 = 'sale-role3';
+    public const ROLE4 = 'sale-role4';
+    public const ROLE5 = 'sale-role5';
+    public const ROLE6 = 'sale-role6';
+    public const ROLE7 = 'sale-role7';
 
-    const PARENT_ACCOUNT = 'sale-parent-customer';
-    const ACCOUNT1 = 'sale-customer1';
-    const ACCOUNT2 = 'sale-customer2';
+    public const PARENT_ACCOUNT = 'sale-parent-customer';
+    public const ACCOUNT1 = 'sale-customer1';
+    public const ACCOUNT2 = 'sale-customer2';
 
-    const ACCOUNT1_USER1    = 'sale-customer1-user1@example.com';
-    const ACCOUNT1_USER2    = 'sale-customer1-user2@example.com';
-    const ACCOUNT1_USER3    = 'sale-customer1-user3@example.com';
-    const ACCOUNT2_USER1    = 'sale-customer2-user1@example.com';
-    const PARENT_ACCOUNT_USER1    = 'sale-parent-customer-user1@example.com';
-    const PARENT_ACCOUNT_USER2    = 'sale-parent-customer-user2@example.com';
+    public const ACCOUNT1_USER1 = 'sale-customer1-user1@example.com';
+    public const ACCOUNT1_USER2 = 'sale-customer1-user2@example.com';
+    public const ACCOUNT1_USER3 = 'sale-customer1-user3@example.com';
+    public const ACCOUNT2_USER1= 'sale-customer2-user1@example.com';
+    public const PARENT_ACCOUNT_USER1 = 'sale-parent-customer-user1@example.com';
+    public const PARENT_ACCOUNT_USER2 = 'sale-parent-customer-user2@example.com';
 
-    /** @var array */
-    private $roles = [
+    private array $roles = [
         self::ROLE1 => [
             [
                 'class' => Quote::class,
@@ -113,8 +112,7 @@ class LoadUserData extends AbstractFixture
         ],
     ];
 
-    /** @var array */
-    private $customers = [
+    private array $customers = [
         [
             'name' => self::PARENT_ACCOUNT,
         ],
@@ -128,15 +126,14 @@ class LoadUserData extends AbstractFixture
         ],
     ];
 
-    /** @var array */
-    private $customerUsers = [
+    private array $customerUsers = [
         [
             'email'     => self::ACCOUNT1_USER1,
             'firstname' => 'User1FN',
             'lastname'  => 'User1LN',
             'password'  => self::ACCOUNT1_USER1,
-            'customer'   => self::ACCOUNT1,
-            'userRoles'     => [
+            'customer'  => self::ACCOUNT1,
+            'userRoles' => [
                 self::ROLE1,
                 self::ROLE4,
             ],
@@ -146,8 +143,8 @@ class LoadUserData extends AbstractFixture
             'firstname' => 'User2FN',
             'lastname'  => 'User2LN',
             'password'  => self::ACCOUNT1_USER2,
-            'customer'   => self::ACCOUNT1,
-            'userRoles'     => [
+            'customer'  => self::ACCOUNT1,
+            'userRoles' => [
                 self::ROLE2,
                 self::ROLE7,
             ],
@@ -157,8 +154,8 @@ class LoadUserData extends AbstractFixture
             'firstname' => 'User3FN',
             'lastname'  => 'User3LN',
             'password'  => self::ACCOUNT1_USER3,
-            'customer'   => self::ACCOUNT1,
-            'userRoles'     => [
+            'customer'  => self::ACCOUNT1,
+            'userRoles' => [
                 self::ROLE3,
                 self::ROLE5,
                 self::ROLE7,
@@ -169,8 +166,8 @@ class LoadUserData extends AbstractFixture
             'firstname' => 'User1FN',
             'lastname'  => 'User1LN',
             'password'  => self::ACCOUNT2_USER1,
-            'customer'   => self::ACCOUNT2,
-            'userRoles'     => [
+            'customer'  => self::ACCOUNT2,
+            'userRoles' => [
                 self::ROLE1,
             ],
         ],
@@ -179,8 +176,8 @@ class LoadUserData extends AbstractFixture
             'firstname' => 'ParentUser1FN',
             'lastname'  => 'ParentUser1LN',
             'password'  => self::PARENT_ACCOUNT_USER1,
-            'customer'   => self::PARENT_ACCOUNT,
-            'userRoles'     => [
+            'customer'  => self::PARENT_ACCOUNT,
+            'userRoles' => [
                 self::ROLE6
             ],
         ],
@@ -189,15 +186,14 @@ class LoadUserData extends AbstractFixture
             'firstname' => 'ParentUser2FN',
             'lastname'  => 'ParentUser2LN',
             'password'  => self::PARENT_ACCOUNT_USER2,
-            'customer'   => self::PARENT_ACCOUNT,
-            'userRoles'     => [
+            'customer'  => self::PARENT_ACCOUNT,
+            'userRoles' => [
                 self::ROLE2,
             ],
         ],
     ];
 
-    /** @var array */
-    private $users = [
+    private array $users = [
         [
             'email'     => 'sale-user1@example.com',
             'username'  => self::USER1,
@@ -215,9 +211,9 @@ class LoadUserData extends AbstractFixture
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->loadUsers($manager);
         $this->loadRoles($manager);
@@ -225,7 +221,7 @@ class LoadUserData extends AbstractFixture
         $this->loadCustomerUsers($manager);
     }
 
-    private function loadRoles(ObjectManager $manager)
+    private function loadRoles(ObjectManager $manager): void
     {
         /* @var AclManager $aclManager */
         $aclManager = $this->container->get('oro_security.acl.manager');
@@ -249,17 +245,16 @@ class LoadUserData extends AbstractFixture
         $aclManager->flush();
     }
 
-    private function loadCustomers(ObjectManager $manager)
+    private function loadCustomers(ObjectManager $manager): void
     {
-        $defaultUser    = $this->getUser($manager);
-        $organization   = $defaultUser->getOrganization();
+        $defaultUser = $this->getUser($manager);
+        $organization = $defaultUser->getOrganization();
 
         foreach ($this->customers as $item) {
             $customer = new Customer();
             $customer
                 ->setName($item['name'])
-                ->setOrganization($organization)
-            ;
+                ->setOrganization($organization);
             if (isset($item['parent'])) {
                 $customer->setParent($this->getReference($item['parent']));
             }
@@ -271,7 +266,7 @@ class LoadUserData extends AbstractFixture
         $manager->flush();
     }
 
-    private function loadCustomerUsers(ObjectManager $manager)
+    private function loadCustomerUsers(ObjectManager $manager): void
     {
         /* @var CustomerUserManager $userManager */
         $userManager = $this->container->get('oro_customer_user.manager');
@@ -306,7 +301,7 @@ class LoadUserData extends AbstractFixture
         }
     }
 
-    private function loadUsers(ObjectManager $manager)
+    private function loadUsers(ObjectManager $manager): void
     {
         /* @var UserManager $userManager */
         $userManager = $this->container->get('oro_user.manager');
@@ -338,18 +333,12 @@ class LoadUserData extends AbstractFixture
         }
     }
 
-    /**
-     * @param AclManager       $aclManager
-     * @param CustomerUserRole $role
-     * @param string           $oidDescriptor
-     * @param string[]         $permissions
-     */
     private function setRolePermissions(
         AclManager $aclManager,
         CustomerUserRole $role,
         string $oidDescriptor,
         array $permissions
-    ) {
+    ): void {
         /* @var ChainOwnershipMetadataProvider $chainMetadataProvider */
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
         $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);

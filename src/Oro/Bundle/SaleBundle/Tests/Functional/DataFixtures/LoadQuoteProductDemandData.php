@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
@@ -12,20 +11,17 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
-class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
+class LoadQuoteProductDemandData extends AbstractFixture implements DependentFixtureInterface
 {
-    const SELECTED_OFFER_1 = 'selected.offer.1';
-    const SELECTED_OFFER_2 = 'selected.offer.2';
-    const SELECTED_OFFER_3 = 'selected.offer.3';
+    public const SELECTED_OFFER_1 = 'selected.offer.1';
+    public const SELECTED_OFFER_2 = 'selected.offer.2';
+    public const SELECTED_OFFER_3 = 'selected.offer.3';
 
-    const QUOTE_DEMAND_1 = 'quote.demand.1';
-    const QUOTE_DEMAND_2 = 'quote.demand.2';
-    const QUOTE_DEMAND_3 = 'quote.demand.3';
+    public const QUOTE_DEMAND_1 = 'quote.demand.1';
+    public const QUOTE_DEMAND_2 = 'quote.demand.2';
+    public const QUOTE_DEMAND_3 = 'quote.demand.3';
 
-    /**
-     * @var array
-     */
-    public static $items = [
+    public static array $items = [
         self::SELECTED_OFFER_1 => [
             'quoteDemandReference' => self::QUOTE_DEMAND_1,
             'quote' => LoadQuoteData::QUOTE1,
@@ -62,9 +58,9 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadCustomerUserData::class,
@@ -74,9 +70,9 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
     }
 
     /**
-     * Load data fixtures with the passed EntityManager
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         foreach (self::$items as $key => $item) {
             /** @var Quote $quote */

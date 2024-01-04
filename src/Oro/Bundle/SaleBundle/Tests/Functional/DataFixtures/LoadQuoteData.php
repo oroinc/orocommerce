@@ -3,8 +3,6 @@
 namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -17,41 +15,38 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class LoadQuoteData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
+class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
 {
-    const QUOTE1 = 'sale.quote.1';
-    const QUOTE2 = 'sale.quote.2';
-    const QUOTE3 = 'sale.quote.3';
-    const QUOTE4 = 'sale.quote.4';
-    const QUOTE5 = 'sale.quote.5';
-    const QUOTE6 = 'sale.quote.6';
-    const QUOTE7 = 'sale.quote.7';
-    const QUOTE8 = 'sale.quote.8';
-    const QUOTE9 = 'sale.quote.9';
-    const QUOTE10 = 'sale.quote.10';
-    const QUOTE11 = 'sale.quote.11';
-    const QUOTE12 = 'sale.quote.12';
-    const QUOTE13 = 'sale.quote.13';
-    const QUOTE_DRAFT = 'sale.quote.draft';
-    const QUOTE_PRICE_CHANGED = 'sale.quote.price_changed';
+    public const QUOTE1 = 'sale.quote.1';
+    public const QUOTE2 = 'sale.quote.2';
+    public const QUOTE3 = 'sale.quote.3';
+    public const QUOTE4 = 'sale.quote.4';
+    public const QUOTE5 = 'sale.quote.5';
+    public const QUOTE6 = 'sale.quote.6';
+    public const QUOTE7 = 'sale.quote.7';
+    public const QUOTE8 = 'sale.quote.8';
+    public const QUOTE9 = 'sale.quote.9';
+    public const QUOTE10 = 'sale.quote.10';
+    public const QUOTE11 = 'sale.quote.11';
+    public const QUOTE12 = 'sale.quote.12';
+    public const QUOTE13 = 'sale.quote.13';
+    public const QUOTE_DRAFT = 'sale.quote.draft';
+    public const QUOTE_PRICE_CHANGED = 'sale.quote.price_changed';
 
-    const PRODUCT1  = 'product-1';
-    const PRODUCT2  = 'product-2';
+    public const PRODUCT1 = 'product-1';
+    public const PRODUCT2 = 'product-2';
 
-    const UNIT1     = 'product_unit.liter';
-    const UNIT2     = 'product_unit.bottle';
-    const UNIT3     = 'product_unit.box';
+    public const UNIT1 = 'product_unit.liter';
+    public const UNIT2 = 'product_unit.bottle';
+    public const UNIT3 = 'product_unit.box';
 
-    const CURRENCY1 = 'USD';
-    const CURRENCY2 = 'EUR';
+    public const CURRENCY1 = 'USD';
+    public const CURRENCY2 = 'EUR';
 
-    const PRICE1 = 1.00;
-    const PRICE2 = 2.00;
+    public const PRICE1 = 1.00;
+    public const PRICE2 = 2.00;
 
-    /**
-     * @var array
-     */
-    public static $items = [
+    public static array $items = [
         self::QUOTE1 => [
             'qid'       => self::QUOTE1,
             'internal_status' => 'draft',
@@ -242,22 +237,17 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         ],
     ];
 
-    /**
-     * @param string $quoteFieldName
-     * @param string $quoteFieldValue
-     * @return array
-     */
-    public static function getQuotesFor($quoteFieldName, $quoteFieldValue)
+    public static function getQuotesFor(string $quoteFieldName, string $quoteFieldValue): array
     {
         return array_filter(self::$items, function ($item) use ($quoteFieldName, $quoteFieldValue) {
-            return array_key_exists($quoteFieldName, $item) && $item[$quoteFieldName] == $quoteFieldValue;
+            return \array_key_exists($quoteFieldName, $item) && $item[$quoteFieldName] == $quoteFieldValue;
         });
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadUserData::class,
@@ -269,9 +259,9 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $user = $this->getUser($manager);
         /** @var Website $website */
@@ -280,7 +270,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         $paymentTermAssociationProvider = $this->container->get('oro_payment_term.provider.payment_term_association');
 
         foreach (self::$items as $item) {
-            $poNumber = 'CA' . mt_rand(1000, 9999) . 'USD';
+            $poNumber = 'CA' . random_int(1000, 9999) . 'USD';
 
             $quote = new Quote();
             $quote
@@ -337,13 +327,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Quote $quote
-     * @param string $sku
-     * @param array $items
-     */
-    protected function addQuoteProduct(ObjectManager $manager, Quote $quote, $sku, $items)
+    private function addQuoteProduct(ObjectManager $manager, Quote $quote, string $sku, array $items): void
     {
         $product = new QuoteProduct();
 
@@ -359,8 +343,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                 ->setAllowIncrements($item['allow_increments'])
                 ->setQuantity($item['quantity'])
                 ->setPriceType($item['priceType'])
-                ->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']))
-            ;
+                ->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']));
 
             if ($this->hasReference($item['unit'])) {
                 $productOffer->setProductUnit($this->getReference($item['unit']));
@@ -381,27 +364,17 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         $quote->addQuoteProduct($product);
     }
 
-    /**
-     * @param EntityManager $manager
-     * @param string $enumField
-     * @param string $enumCode
-     * @return AbstractEnumValue
-     */
-    protected function getEnumEntity(EntityManager $manager, $enumField, $enumCode)
+    private function getEnumEntity(ObjectManager $manager, string $enumField, string $enumCode): AbstractEnumValue
     {
-        $className = ExtendHelper::buildEnumValueClassName($enumField);
-
-        return $manager->getReference($className, $enumCode);
+        return $manager->getReference(ExtendHelper::buildEnumValueClassName($enumField), $enumCode);
     }
 
-    /**
-     * @param array $item
-     * @return \DateTime|null
-     */
-    protected function getValidUntil(array $item)
+    private function getValidUntil(array $item): ?\DateTime
     {
-        return array_key_exists('validUntil', $item)
-            ? ($item['validUntil'] ? new \DateTime($item['validUntil']) : null)
-            : new \DateTime('+10 day');
+        if (\array_key_exists('validUntil', $item)) {
+            return $item['validUntil'] ? new \DateTime($item['validUntil']) : null;
+        }
+
+        return new \DateTime('+10 day');
     }
 }
