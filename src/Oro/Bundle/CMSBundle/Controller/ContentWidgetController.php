@@ -41,19 +41,19 @@ class ContentWidgetController extends AbstractController
      * @Acl(
      *      id="oro_cms_content_widget_view",
      *      type="entity",
-     *      class="OroCMSBundle:ContentWidget",
+     *      class="Oro\Bundle\CMSBundle\Entity\ContentWidget",
      *      permission="VIEW"
      * )
      */
     public function viewAction(ContentWidget $contentWidget): array
     {
-        $contentWidgetType = $this->get(ContentWidgetTypeRegistry::class)
+        $contentWidgetType = $this->container->get(ContentWidgetTypeRegistry::class)
             ->getWidgetType($contentWidget->getWidgetType());
 
         $additionalBlocks = [];
         if (null !== $contentWidgetType) {
-            $twig = $this->get('twig');
-            $frontendEmulator = $this->get(FrontendEmulator::class);
+            $twig = $this->container->get('twig');
+            $frontendEmulator = $this->container->get(FrontendEmulator::class);
             $frontendEmulator->startFrontendRequestEmulation();
             try {
                 $additionalBlocks = $contentWidgetType->getBackOfficeViewSubBlocks($contentWidget, $twig);
@@ -62,7 +62,7 @@ class ContentWidgetController extends AbstractController
             }
         }
 
-        $translator = $this->get(TranslatorInterface::class);
+        $translator = $this->container->get(TranslatorInterface::class);
         foreach ($additionalBlocks as &$additionalBlock) {
             $additionalBlock['title'] = isset($additionalBlock['title'])
                 ? $translator->trans((string) $additionalBlock['title'])
@@ -82,7 +82,7 @@ class ContentWidgetController extends AbstractController
      * @Acl(
      *      id="oro_cms_content_widget_create",
      *      type="entity",
-     *      class="OroCMSBundle:ContentWidget",
+     *      class="Oro\Bundle\CMSBundle\Entity\ContentWidget",
      *      permission="CREATE"
      * )
      *
@@ -99,7 +99,7 @@ class ContentWidgetController extends AbstractController
      * @Acl(
      *      id="oro_cms_content_widget_update",
      *      type="entity",
-     *      class="OroCMSBundle:ContentWidget",
+     *      class="Oro\Bundle\CMSBundle\Entity\ContentWidget",
      *      permission="EDIT"
      * )
      *
@@ -117,13 +117,14 @@ class ContentWidgetController extends AbstractController
      */
     protected function update(ContentWidget $contentWidget)
     {
-        return $this->get(UpdateHandlerFacade::class)
+        return $this->container->get(UpdateHandlerFacade::class)
             ->update(
                 $contentWidget,
                 $this->createForm(ContentWidgetType::class, $contentWidget),
-                $this->get(TranslatorInterface::class)->trans('oro.cms.controller.contentwidget.saved.message'),
+                $this->container->get(TranslatorInterface::class)
+                    ->trans('oro.cms.controller.contentwidget.saved.message'),
                 null,
-                $this->get(ContentWidgetHandler::class),
+                $this->container->get(ContentWidgetHandler::class),
                 function (ContentWidget $contentWidget, FormInterface $form, Request $request) {
                     $updateMarker = $request->get(ContentWidgetHandler::UPDATE_MARKER, false);
                     if ($updateMarker) {
@@ -131,7 +132,8 @@ class ContentWidgetController extends AbstractController
                     }
 
                     $contentWidgetType = $contentWidget->getWidgetType()
-                        ? $this->get(ContentWidgetTypeRegistry::class)->getWidgetType($contentWidget->getWidgetType())
+                        ? $this->container->get(ContentWidgetTypeRegistry::class)
+                            ->getWidgetType($contentWidget->getWidgetType())
                         : null;
 
                     return [

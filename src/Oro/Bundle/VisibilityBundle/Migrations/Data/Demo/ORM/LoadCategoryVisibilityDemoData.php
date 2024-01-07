@@ -103,7 +103,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
      */
     protected function getScopeCustomer(ObjectManager $manager, $id)
     {
-        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['id' => $id]);
+        return $manager->getRepository(Scope::class)->findOneBy(['id' => $id]);
     }
     /**
      * @param ObjectManager $manager
@@ -112,7 +112,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
      */
     protected function getScopeCustomerGroup(ObjectManager $manager, $id)
     {
-        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['id' => $id]);
+        return $manager->getRepository(Scope::class)->findOneBy(['id' => $id]);
     }
     /**
      * @param Category $category

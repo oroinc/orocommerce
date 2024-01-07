@@ -4,6 +4,9 @@ namespace Oro\Bundle\RedirectBundle\Routing;
 
 use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Routing\Router as BaseRouter;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
+use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 
 /**
  * Extends the router to work with the storefront slugs.
@@ -37,7 +40,7 @@ class Router extends BaseRouter
     /**
      * {@inheritdoc}
      */
-    public function getGenerator()
+    public function getGenerator(): UrlGeneratorInterface
     {
         if ($this->urlDecisionMaker->matches($this->context->getPathInfo())) {
             if (!$this->generator instanceof SluggableUrlGenerator) {
@@ -55,7 +58,7 @@ class Router extends BaseRouter
     /**
      * {@inheritdoc}
      */
-    public function getMatcher()
+    public function getMatcher(): UrlMatcherInterface|RequestMatcherInterface
     {
         if ($this->urlDecisionMaker->matches($this->context->getPathInfo())) {
             if (!$this->matcher instanceof SlugUrlMatcher) {

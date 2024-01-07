@@ -72,8 +72,7 @@ You can limit the reindexation to a specific field group with the <info>--field-
   <info>php %command.full_name% --field-group=<fieldGroup></info>
 
 You can limit the reindexation to a specific entity with the <info>--class</info> option.
-Both the FQCN (Oro\Bundle\UserBundle\Entity\User) and short (OroUserBundle:User)
-class names are accepted:
+The FQCN (Oro\Bundle\UserBundle\Entity\User) class names are accepted:
 
   <info>php %command.full_name% --class=<entity></info>
 

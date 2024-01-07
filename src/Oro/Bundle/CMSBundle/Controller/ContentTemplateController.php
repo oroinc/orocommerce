@@ -28,7 +28,7 @@ class ContentTemplateController extends AbstractController
      * @Acl(
      *     id="oro_cms_content_template_view",
      *     type="entity",
-     *     class="OroCMSBundle:ContentTemplate",
+     *     class="Oro\Bundle\CMSBundle\Entity\ContentTemplate",
      *     permission="VIEW"
      * )
      */
@@ -69,7 +69,7 @@ class ContentTemplateController extends AbstractController
      * @Acl(
      *      id="oro_cms_content_template_create",
      *      type="entity",
-     *      class="OroCMSBundle:ContentTemplate",
+     *      class="Oro\Bundle\CMSBundle\Entity\ContentTemplate",
      *      permission="CREATE"
      * )
      * @throws \Psr\Container\ContainerExceptionInterface
@@ -86,7 +86,7 @@ class ContentTemplateController extends AbstractController
      * @Acl(
      *      id="oro_cms_content_template_update",
      *      type="entity",
-     *      class="OroCMSBundle:ContentTemplate",
+     *      class="Oro\Bundle\CMSBundle\Entity\ContentTemplate",
      *      permission="EDIT"
      * )
      * @throws \Psr\Container\ContainerExceptionInterface

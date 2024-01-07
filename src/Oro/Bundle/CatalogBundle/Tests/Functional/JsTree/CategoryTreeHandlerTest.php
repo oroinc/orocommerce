@@ -6,6 +6,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
@@ -283,10 +284,12 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
         $organization = $container->get('doctrine')
             ->getRepository(Organization::class)
             ->getFirst();
+        $user = $container->get('doctrine')
+            ->getRepository(User::class)
+            ->findOneByUsername('admin');
 
         $adminToken = new UsernamePasswordOrganizationToken(
-            'admin',
-            'admin',
+            $user,
             'key',
             $organization
         );

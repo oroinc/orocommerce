@@ -126,7 +126,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
             return $this->getReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION);
         }
 
-        return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        return $manager->getRepository(Organization::class)->getFirst();
     }
 
     private function getFlatRateIdentifier(Channel $channel): string

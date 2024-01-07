@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Api\Rest;
 
+use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -36,7 +37,7 @@ class InlineEditProductController extends AbstractFOSRestController
         }
 
         $redirectGenerationStrategy =
-            $this->get('oro_config.manager')->get('oro_redirect.redirect_generation_strategy');
+            $this->container->get('oro_config.manager')->get('oro_redirect.redirect_generation_strategy');
 
         switch ($redirectGenerationStrategy) {
             case Configuration::STRATEGY_ASK:
@@ -51,13 +52,13 @@ class InlineEditProductController extends AbstractFOSRestController
         }
 
         $productName = $this->container->get('oro_ui.html_tag_helper')->stripTags($productName);
-        $slug = $this->get('oro_entity_config.slug.generator')->slugify($productName);
+        $slug = $this->container->get('oro_entity_config.slug.generator')->slugify($productName);
 
         $product->setDefaultName($productName);
         $product->setDefaultSlugPrototype($slug);
         $product->getSlugPrototypesWithRedirect()->setCreateRedirect($createRedirect);
 
-        $this->getDoctrine()->getManagerForClass(Product::class)->flush();
+        $this->container->get('doctrine')->getManagerForClass(Product::class)->flush();
 
         return parent::handleView($this->view(['productName' => $productName], Response::HTTP_OK));
     }
@@ -78,7 +79,7 @@ class InlineEditProductController extends AbstractFOSRestController
         }
 
         /** @var AbstractEnumValue $inventoryStatus */
-        $inventoryStatus = $this->getDoctrine()
+        $inventoryStatus = $this->container->get('doctrine')
             ->getRepository(ExtendHelper::buildEnumValueClassName('prod_inventory_status'))
             ->find($inventoryStatusId);
 
@@ -87,7 +88,7 @@ class InlineEditProductController extends AbstractFOSRestController
         }
 
         $product->setInventoryStatus($inventoryStatus);
-        $this->getDoctrine()->getManagerForClass(Product::class)->flush();
+        $this->container->get('doctrine')->getManagerForClass(Product::class)->flush();
 
         return parent::handleView($this->view([], Response::HTTP_OK));
     }
@@ -100,6 +101,7 @@ class InlineEditProductController extends AbstractFOSRestController
                 'oro_ui.html_tag_helper' => HtmlTagHelper::class,
                 'oro_entity_config.slug.generator' => SlugGenerator::class,
                 'oro_config.manager' => ConfigManager::class,
+                'doctrine' => ManagerRegistry::class,
             ]
         );
     }

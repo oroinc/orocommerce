@@ -5,7 +5,11 @@ namespace Oro\Bundle\SEOBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
+/**
+ * Loads category demo meta data
+ */
 class LoadCategoryDemoMetaData extends AbstractFixture implements DependentFixtureInterface
 {
     use LoadDemoMetaDataTrait;
@@ -15,7 +19,7 @@ class LoadCategoryDemoMetaData extends AbstractFixture implements DependentFixtu
      */
     public function load(ObjectManager $manager)
     {
-        $repository = $manager->getRepository('OroCatalogBundle:Category');
+        $repository = $manager->getRepository(Category::class);
 
         $this->addMetaFieldsData($manager, $repository->findAll());
 

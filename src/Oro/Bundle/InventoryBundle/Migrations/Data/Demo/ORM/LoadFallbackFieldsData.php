@@ -45,7 +45,7 @@ class LoadFallbackFieldsData extends AbstractEntityReferenceFixture implements D
     public function load(ObjectManager $manager)
     {
         /** @var CategoryRepository $categoryRepository */
-        $categoryRepository = $manager->getRepository('OroCatalogBundle:Category');
+        $categoryRepository = $manager->getRepository(Category::class);
 
         /** @var Category[] $categories */
         $categories = $categoryRepository->findAll();
@@ -54,7 +54,7 @@ class LoadFallbackFieldsData extends AbstractEntityReferenceFixture implements D
         }
 
         /** @var Product[] $products */
-        $products = $manager->getRepository('OroProductBundle:Product')->findAll();
+        $products = $manager->getRepository(Product::class)->findAll();
         foreach ($products as $product) {
             $category = $categoryRepository->findOneByProduct($product);
             if ($category) {

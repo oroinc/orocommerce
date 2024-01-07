@@ -207,7 +207,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
         $organization = $this->registry
             ->getRepository(Organization::class)
             ->getFirst();
-        $token = new UsernamePasswordOrganizationToken($user, false, 'key', $organization, $user->getUserRoles());
+        $token = new UsernamePasswordOrganizationToken($user, 'key', $organization, $user->getUserRoles());
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
         $action = $this->client->getContainer()->get('oro_action.action.run_action_group');
         $action->initialize($data['options']);

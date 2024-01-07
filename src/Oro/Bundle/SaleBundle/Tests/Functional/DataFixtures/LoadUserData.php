@@ -329,7 +329,7 @@ class LoadUserData extends AbstractFixture
                 ->setEnabled(true);
             $userManager->updateUser($user);
 
-            $this->setReference($user->getUsername(), $user);
+            $this->setReference($user->getUserIdentifier(), $user);
         }
     }
 

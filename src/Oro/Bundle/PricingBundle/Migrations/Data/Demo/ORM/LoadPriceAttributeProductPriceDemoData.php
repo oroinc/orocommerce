@@ -85,7 +85,7 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
     protected function getPriceAttribute(EntityManagerInterface $manager, $name): ?PriceAttributePriceList
     {
         if (!array_key_exists($name, $this->priceLists)) {
-            $this->priceLists[$name] = $manager->getRepository('OroPricingBundle:PriceAttributePriceList')
+            $this->priceLists[$name] = $manager->getRepository(PriceAttributePriceList::class)
                 ->findOneBy(['name' => $name]);
         }
 

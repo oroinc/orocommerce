@@ -16,8 +16,6 @@ class RFPListenerTest extends WebTestCase
 
         $this->getContainer()->get('security.token_storage')->setToken(
             new AnonymousCustomerUserToken(
-                '',
-                [],
                 new CustomerVisitor()
             )
         );

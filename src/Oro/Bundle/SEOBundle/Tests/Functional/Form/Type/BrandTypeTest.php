@@ -9,8 +9,10 @@ use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Form\Type\BrandType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\UserBundle\Entity\AbstractUser;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class BrandTypeTest extends WebTestCase
@@ -27,9 +29,14 @@ class BrandTypeTest extends WebTestCase
         $this->type->setDataClass(self::DATA_CLASS);
 
         $this->initClient();
+        $token = new UsernamePasswordToken($this->createMock(AbstractUser::class), 'key');
+        $this->getContainer()->get('security.token_storage')->setToken($token);
 
         $this->formFactory = $this->getContainer()->get('form.factory');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
+
+        // Emulate request processing
+        $this->emulateRequest();
 
         parent::setUp();
     }

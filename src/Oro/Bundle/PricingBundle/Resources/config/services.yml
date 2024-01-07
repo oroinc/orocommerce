@@ -1586,7 +1586,7 @@ services:
         class: Oro\Bundle\PricingBundle\EventListener\PriceListViewListener
         arguments:
             - '@oro_pricing.notification_alert_manager'
-            - '@session.flash_bag'
+            - '@request_stack'
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.price-list-view, method: onPriceListView }

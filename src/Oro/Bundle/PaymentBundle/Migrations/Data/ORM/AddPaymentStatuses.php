@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 /**
  * Selects PaymentTransaction.entityClass,
  * then use Repository of selected class
- * then updates OroPaymentBundle:PaymentStatus table with selected data
+ * then updates Oro\Bundle\PaymentBundle\Entity\PaymentStatus table with selected data
  */
 class AddPaymentStatuses extends AbstractFixture implements ContainerAwareInterface
 {
@@ -59,13 +59,13 @@ class AddPaymentStatuses extends AbstractFixture implements ContainerAwareInterf
             ->select('DISTINCT o')
             ->from($className, 'o')
             ->innerJoin(
-                'OroPaymentBundle:PaymentTransaction',
+                PaymentTransaction::class,
                 'transaction',
                 'WITH',
                 'o.id = transaction.entityIdentifier AND transaction.entityClass = :className'
             )
             ->leftJoin(
-                'OroPaymentBundle:PaymentStatus',
+                PaymentStatus::class,
                 'status',
                 'WITH',
                 'o.id = status.entityIdentifier AND status.entityClass = :className'

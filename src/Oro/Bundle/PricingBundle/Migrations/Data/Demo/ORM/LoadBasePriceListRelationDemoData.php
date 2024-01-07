@@ -65,7 +65,7 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
     protected function getWebsites(EntityManagerInterface $manager): array
     {
         if (!$this->websites) {
-            $this->websites = $manager->getRepository('OroWebsiteBundle:Website')->findAll();
+            $this->websites = $manager->getRepository(Website::class)->findAll();
         }
 
         return $this->websites;
@@ -74,7 +74,7 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
     protected function getPriceLists(EntityManagerInterface $manager): array
     {
         if (!$this->priceLists) {
-            $this->priceLists = $manager->getRepository('OroPricingBundle:PriceList')->findAll();
+            $this->priceLists = $manager->getRepository(PriceList::class)->findAll();
         }
 
         return $this->priceLists;

@@ -18,8 +18,10 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -73,7 +75,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
         $organization = $user->getOrganization();
         $customers = $this->getCustomers($manager);
         $website = $this->container->get('doctrine')
-            ->getRepository('OroWebsiteBundle:Website')
+            ->getRepository(Website::class)
             ->findOneBy(['name' => 'Default']);
         $currencies = $this->getCurrencies();
 
@@ -127,7 +129,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected function getCustomers(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroCustomerBundle:Customer')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository(Customer::class)->findBy([], null, 10));
     }
 
     /**
@@ -256,7 +258,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected function getProducts(ObjectManager $manager)
     {
-        $products = $manager->getRepository('OroProductBundle:Product')->findBy([], null, 10);
+        $products = $manager->getRepository(Product::class)->findBy([], null, 10);
 
         if (!count($products)) {
             throw new \LogicException('There are no products in system');
@@ -271,7 +273,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected function getRequests(ObjectManager $manager)
     {
-        $requests = $manager->getRepository('OroRFPBundle:Request')->findBy([], null, 10);
+        $requests = $manager->getRepository(RFPRequest::class)->findBy([], null, 10);
 
         if (!count($requests)) {
             throw new \LogicException('There are no RFPRequests in system');
@@ -286,14 +288,14 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected function getUser(ObjectManager $manager)
     {
-        $role = $manager->getRepository('OroUserBundle:Role')
+        $role = $manager->getRepository(Role::class)
             ->findOneBy(['role' => LoadRolesData::ROLE_ADMINISTRATOR]);
 
         if (!$role) {
             throw new \RuntimeException(sprintf('%s role should exist.', LoadRolesData::ROLE_ADMINISTRATOR));
         }
 
-        $user = $manager->getRepository('OroUserBundle:Role')->getFirstMatchedUser($role);
+        $user = $manager->getRepository(Role::class)->getFirstMatchedUser($role);
 
         if (!$user) {
             throw new \RuntimeException(
@@ -313,7 +315,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
         static $productUnits = null;
 
         if (null === $productUnits) {
-            $productUnits = $manager->getRepository('OroProductBundle:ProductUnit')->findBy([], null, 10);
+            $productUnits = $manager->getRepository(ProductUnit::class)->findBy([], null, 10);
         }
 
         return $productUnits;

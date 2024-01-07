@@ -5,13 +5,11 @@ Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory:
             - Length:
                 min: 1
                 max: 1024
-                allowEmptyString: false
         normalizedSearchTermHash:
             - NotBlank: ~
             - Length:
                 min: 32
                 max: 32
-                allowEmptyString: false
         resultType:
             - NotBlank: ~
             - Length:

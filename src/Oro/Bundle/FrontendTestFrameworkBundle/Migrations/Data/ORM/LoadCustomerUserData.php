@@ -6,9 +6,12 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\LoadUserData;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -49,11 +52,11 @@ class LoadCustomerUserData extends AbstractFixture implements ContainerAwareInte
         $userManager = $this->container->get('oro_customer_user.manager');
 
         $organization = $manager
-            ->getRepository('OroOrganizationBundle:Organization')
+            ->getRepository(Organization::class)
             ->getFirst();
 
         $user = $manager
-            ->getRepository('OroUserBundle:User')
+            ->getRepository(User::class)
             ->findOneBy([]);
 
         /** @var CustomerUser $entity */
@@ -61,8 +64,8 @@ class LoadCustomerUserData extends AbstractFixture implements ContainerAwareInte
 
         $role = $this->container
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:CustomerUserRole')
-            ->getRepository('OroCustomerBundle:CustomerUserRole')
+            ->getManagerForClass(CustomerUserRole::class)
+            ->getRepository(CustomerUserRole::class)
             ->findOneBy(['role' => 'ROLE_FRONTEND_ADMINISTRATOR']);
 
         $entity

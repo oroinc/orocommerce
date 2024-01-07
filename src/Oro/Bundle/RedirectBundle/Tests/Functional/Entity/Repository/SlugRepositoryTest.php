@@ -16,6 +16,7 @@ use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -46,8 +47,7 @@ class SlugRepositoryTest extends WebTestCase
             ->getRepository(Organization::class)
             ->getFirst();
         $token = new UsernamePasswordOrganizationToken(
-            LoadCustomerUserData::AUTH_USER,
-            'admin',
+            $this->createMock(AbstractUser::class),
             'key',
             $organization
         );

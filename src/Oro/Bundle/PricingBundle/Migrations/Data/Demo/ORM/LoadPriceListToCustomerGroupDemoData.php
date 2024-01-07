@@ -52,7 +52,7 @@ class LoadPriceListToCustomerGroupDemoData extends LoadBasePriceListRelationDemo
 
     protected function getCustomerGroupByName(EntityManagerInterface $manager, string $name): CustomerGroup
     {
-        $website = $manager->getRepository('OroCustomerBundle:CustomerGroup')->findOneBy(['name' => $name]);
+        $website = $manager->getRepository(CustomerGroup::class)->findOneBy(['name' => $name]);
 
         if (!$website) {
             throw new \LogicException(sprintf('There is no customer group with name "%s" .', $name));

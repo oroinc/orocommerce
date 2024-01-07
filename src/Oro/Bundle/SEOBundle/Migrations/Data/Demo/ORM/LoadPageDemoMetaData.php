@@ -5,7 +5,11 @@ namespace Oro\Bundle\SEOBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CMSBundle\Entity\Page;
 
+/**
+ * Loads page demo meta data
+ */
 class LoadPageDemoMetaData extends AbstractFixture implements DependentFixtureInterface
 {
     use LoadDemoMetaDataTrait;
@@ -15,7 +19,7 @@ class LoadPageDemoMetaData extends AbstractFixture implements DependentFixtureIn
      */
     public function load(ObjectManager $manager)
     {
-        $repository = $manager->getRepository('OroCMSBundle:Page');
+        $repository = $manager->getRepository(Page::class);
 
         $this->addMetaFieldsData($manager, $repository->findAll());
 

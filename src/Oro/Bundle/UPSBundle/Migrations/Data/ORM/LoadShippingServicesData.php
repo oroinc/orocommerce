@@ -11,6 +11,9 @@ use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads shipping services data
+ */
 class LoadShippingServicesData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     /**
@@ -52,7 +55,7 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
      */
     public function load(ObjectManager $manager)
     {
-        $this->countryRepository = $manager->getRepository('OroAddressBundle:Country');
+        $this->countryRepository = $manager->getRepository(Country::class);
         $this->loadSpecifiedCountryServices($manager);
         $this->loadEUCountriesServices($manager);
         $this->loadUnspecifiedCountryServices($manager);

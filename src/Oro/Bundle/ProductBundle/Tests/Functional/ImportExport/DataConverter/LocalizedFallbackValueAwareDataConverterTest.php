@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
 class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 {
@@ -110,7 +111,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         $this->loadFixtures([LoadLocalizationData::class, LoadOrganization::class]);
 
         $organization = $this->getReference('organization');
-        $token = new UsernamePasswordOrganizationToken('user', 'password', 'key', $organization);
+        $token = new UsernamePasswordOrganizationToken($this->createMock(AbstractUser::class), 'key', $organization);
         $this->getContainer()->get('security.token_storage')->setToken($token);
 
         $this->converter = new LocalizedFallbackValueAwareDataConverter(

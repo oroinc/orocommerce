@@ -35,8 +35,8 @@ class CategoryProductsController extends AbstractController
     {
         $form = $this->createForm(CategoryProductsType::class);
         $handler = new CategoryHandler(
-            $this->get(ManagerRegistry::class)->getManagerForClass(Category::class),
-            $this->get(EventDispatcherInterface::class)
+            $this->container->get(ManagerRegistry::class)->getManagerForClass(Category::class),
+            $this->container->get(EventDispatcherInterface::class)
         );
 
         if ($handler->process($category, $form, $request)) {
@@ -68,7 +68,7 @@ class CategoryProductsController extends AbstractController
      */
     public function manageSortOrderWidgetAction(Category $category, Request $request): array
     {
-        return $this
+        return $this->container
             ->get(GridController::class)
             ->widgetAction($request, 'category-products-widget-grid');
     }

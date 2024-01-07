@@ -10,7 +10,7 @@ class VisibilityChoiceFilterTest extends WebTestCase
 {
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadFilterProductVisibilityData::class]);
     }

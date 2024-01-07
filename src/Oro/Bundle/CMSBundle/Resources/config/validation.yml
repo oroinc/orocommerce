@@ -64,7 +64,6 @@ Oro\Bundle\CMSBundle\Entity\ImageSlide:
             - Length:
                 min: 1
                 max: 255
-                allowEmptyString: false
             - Oro\Bundle\SecurityBundle\Validator\Constraints\NotDangerousProtocol:
                 message: oro.cms.image_slider.url.not_dangerous_protocol.message
         displayInSameWindow:
@@ -74,7 +73,6 @@ Oro\Bundle\CMSBundle\Entity\ImageSlide:
             - Length:
                 min: 1
                 max: 255
-                allowEmptyString: false
         textAlignment:
             - NotBlank: ~
             - Choice:
@@ -113,7 +111,6 @@ Oro\Bundle\CMSBundle\Entity\TabbedContentItem:
             - Length:
                 min: 1
                 max: 255
-                allowEmptyString: false
         content:
             - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
             - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~
@@ -135,7 +132,6 @@ Oro\Bundle\CMSBundle\Entity\ContentTemplate:
             - Length:
                 min: 1
                 max: 255
-                allowEmptyString: false
         content:
             - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
             - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~

@@ -68,7 +68,7 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
 
     private function getPriceAttribute(EntityManagerInterface $manager): PriceAttributePriceList
     {
-        return $manager->getRepository('OroPricingBundle:PriceAttributePriceList')
+        return $manager->getRepository(PriceAttributePriceList::class)
             ->findOneBy(['name' => LoadPriceAttributePriceListData::SHIPPING_COST_NAME]);
     }
 }

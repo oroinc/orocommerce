@@ -90,7 +90,7 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
      */
     protected function getOrganization(ObjectManager $manager)
     {
-        return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        return $manager->getRepository(Organization::class)->getFirst();
     }
 
     /**

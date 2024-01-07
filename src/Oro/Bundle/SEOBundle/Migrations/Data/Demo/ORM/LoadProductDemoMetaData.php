@@ -5,7 +5,11 @@ namespace Oro\Bundle\SEOBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Loads product demo meta data
+ */
 class LoadProductDemoMetaData extends AbstractFixture implements DependentFixtureInterface
 {
     use LoadDemoMetaDataTrait;
@@ -15,7 +19,7 @@ class LoadProductDemoMetaData extends AbstractFixture implements DependentFixtur
      */
     public function load(ObjectManager $manager)
     {
-        $repository = $manager->getRepository('OroProductBundle:Product');
+        $repository = $manager->getRepository(Product::class);
 
         $this->addMetaFieldsData($manager, $repository->findAll());
 

@@ -48,6 +48,7 @@ class RequestControllerTest extends WebTestCase
 
     public function testGridForAnonymousUsers(): void
     {
+        $this->markTestSkipped('Authentication of anonymous users is not supported.');
         $response = $this->client->requestGrid(['gridName' => 'frontend-requests-grid'], [], true);
         self::assertSame($response->getStatusCode(), 302);
     }

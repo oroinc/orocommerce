@@ -17,7 +17,7 @@ use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Website search engine repository for OroProductBundle:Product entity
+ * Website search engine repository for Oro\Bundle\ProductBundle\Entity\Product entity
  * This repository encapsulates Product related operations
  */
 class ProductRepository extends WebsiteSearchRepository

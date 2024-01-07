@@ -29,7 +29,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
 
     protected function setUp(): void
     {
-        $this->initClient();
+        $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
     }
 

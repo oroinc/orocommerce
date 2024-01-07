@@ -44,7 +44,7 @@ class AttributeFamilyChangesListener
             return;
         }
 
-        $uow = $eventArgs->getEntityManager()->getUnitOfWork();
+        $uow = $eventArgs->getObjectManager()->getUnitOfWork();
 
         $this->changedAttributeFamilies = array_merge(
             $this->analizeScheduledEntity($uow->getScheduledEntityInsertions(), true),

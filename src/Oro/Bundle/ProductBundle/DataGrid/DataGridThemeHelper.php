@@ -43,7 +43,7 @@ class DataGridThemeHelper
         }
 
         $viewName = $this->defaultView;
-        $gridParams = $request->query->get($gridName);
+        $gridParams = $request->query->all($gridName);
         if (\is_array($gridParams) && \array_key_exists(self::GRID_THEME_PARAM_NAME, $gridParams)) {
             $gridViewName = $gridParams[self::GRID_THEME_PARAM_NAME];
             if (\in_array($gridViewName, $this->views, true)) {

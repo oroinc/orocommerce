@@ -44,7 +44,7 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
     {
         $paymentTransactionProvider = $this->container->get('oro_payment.provider.payment_transaction');
 
-        $orders = $this->container->get('doctrine')->getRepository('OroOrderBundle:Order')->findAll();
+        $orders = $this->container->get('doctrine')->getRepository(Order::class)->findAll();
 
         /** @var Order[] $orders */
         foreach ($orders as $order) {

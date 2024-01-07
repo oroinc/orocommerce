@@ -119,9 +119,9 @@ class ProductRepository extends ServiceEntityRepository
     {
         $qb = $this->_em->createQueryBuilder()
             ->select('imageFile as image, IDENTITY(pi.product) as product_id')
-            ->from('OroAttachmentBundle:File', 'imageFile')
+            ->from(File::class, 'imageFile')
             ->join(
-                'OroProductBundle:ProductImage',
+                ProductImage::class,
                 'pi',
                 Expr\Join::WITH,
                 'imageFile.id = pi.image'

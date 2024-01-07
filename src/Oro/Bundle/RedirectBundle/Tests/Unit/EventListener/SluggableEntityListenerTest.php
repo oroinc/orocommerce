@@ -59,7 +59,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $entity = $this->createMock(SluggableInterface::class);
         $args->expects(self::once())
-            ->method('getEntity')
+            ->method('getObject')
             ->willReturn($entity);
 
         $this->configManager->expects(self::once())
@@ -88,7 +88,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $entity = new \stdClass();
         $args->expects(self::once())
-            ->method('getEntity')
+            ->method('getObject')
             ->willReturn($entity);
 
         // assertions
@@ -105,7 +105,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
     {
         $args = $this->createMock(LifecycleEventArgs::class);
         $args->expects(self::never())
-            ->method('getEntity');
+            ->method('getObject');
         $this->configManager->expects(self::never())
             ->method('get');
         $this->messageFactory->expects(self::never())
@@ -134,7 +134,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getId')
             ->willReturn($entityId);
         $args->expects(self::once())
-            ->method('getEntity')
+            ->method('getObject')
             ->willReturn($entity);
 
         $this->configManager->expects(self::once())
@@ -164,7 +164,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $entity = $this->getEntity(Page::class, ['id' => 1, 'draftUuid' => 42]);
         $args->expects(self::once())
-            ->method('getEntity')
+            ->method('getObject')
             ->willReturn($entity);
 
         // assertions
@@ -216,7 +216,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getUnitOfWork')
             ->willReturn($uow);
         $event->expects(self::any())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($em);
         $uow->expects(self::any())
             ->method('getScheduledEntityInsertions')
@@ -257,7 +257,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getUnitOfWork')
             ->willReturn($uow);
         $event->expects(self::any())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($em);
 
         $entity = $this->createMock(SluggableInterface::class);
@@ -383,7 +383,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
     {
         $event = $this->createMock(OnFlushEventArgs::class);
         $event->expects(self::never())
-            ->method('getEntityManager');
+            ->method('getObjectManager');
         $this->configManager->expects(self::never())
             ->method('get');
         $this->messageFactory->expects(self::never())
@@ -566,7 +566,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
             ->method('getUnitOfWork')
             ->willReturn($uow);
         $event->expects(self::any())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($em);
         $uow->expects(self::any())
             ->method('getScheduledEntityUpdates')

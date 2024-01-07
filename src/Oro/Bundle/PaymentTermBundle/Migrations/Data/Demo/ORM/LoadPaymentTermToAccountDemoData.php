@@ -5,10 +5,15 @@ namespace Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerRepository;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads payment term to account demo data
+ */
 class LoadPaymentTermToAccountDemoData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
@@ -46,8 +51,8 @@ class LoadPaymentTermToAccountDemoData extends AbstractFixture implements
 
         $accessor = $this->container->get('oro_payment_term.provider.payment_term_association');
 
-        /** @var \Oro\Bundle\CustomerBundle\Entity\Repository\CustomerRepository $accountRepository */
-        $accountRepository = $doctrine->getRepository('OroCustomerBundle:Customer');
+        /** @var CustomerRepository $accountRepository */
+        $accountRepository = $doctrine->getRepository(Customer::class);
 
         $paymentTermsAll  = $this->getLoadedPaymentTerms();
         $accountsIterator = $accountRepository->getBatchIterator();

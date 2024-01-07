@@ -14,6 +14,9 @@ use Oro\Bundle\SegmentBundle\Migrations\Data\ORM\LoadSegmentTypes;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads featured products segment demo data
+ */
 class LoadFeaturedProductsSegmentData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
@@ -114,7 +117,7 @@ class LoadFeaturedProductsSegmentData extends AbstractFixture implements
      */
     private function getOrganization(ObjectManager $manager)
     {
-        return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        return $manager->getRepository(Organization::class)->getFirst();
     }
 
     /**

@@ -20,7 +20,7 @@ class ProductAvailabilityCacheListener
 
     public function onFlush(OnFlushEventArgs $args): void
     {
-        $unitOfWork = $args->getEntityManager()->getUnitOfWork();
+        $unitOfWork = $args->getObjectManager()->getUnitOfWork();
         $entities = array_merge(
             $unitOfWork->getScheduledEntityInsertions(),
             $unitOfWork->getScheduledEntityUpdates(),

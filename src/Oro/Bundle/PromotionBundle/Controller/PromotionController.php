@@ -27,7 +27,7 @@ class PromotionController extends AbstractController
      * @Acl(
      *      id="oro_promotion_view",
      *      type="entity",
-     *      class="OroPromotionBundle:Promotion",
+     *      class="Oro\Bundle\PromotionBundle\Entity\Promotion",
      *      permission="VIEW"
      * )
      * @param Promotion $promotion
@@ -35,12 +35,12 @@ class PromotionController extends AbstractController
      */
     public function viewAction(Promotion $promotion)
     {
-        $definitionParts = $this->get(ProductCollectionDefinitionConverter::class)
+        $definitionParts = $this->container->get(ProductCollectionDefinitionConverter::class)
             ->getDefinitionParts($promotion->getProductsSegment()->getDefinition());
 
         return [
             'entity' => $promotion,
-            'scopeEntities' => $this->get(ScopeManager::class)->getScopeEntities('promotion'),
+            'scopeEntities' => $this->container->get(ScopeManager::class)->getScopeEntities('promotion'),
             'segmentId' => $promotion->getProductsSegment()->getId(),
             'segmentDefinition' => $definitionParts[ProductCollectionDefinitionConverter::DEFINITION_KEY],
             'includedProducts' => $definitionParts[ProductCollectionDefinitionConverter::INCLUDED_FILTER_KEY],
@@ -69,7 +69,7 @@ class PromotionController extends AbstractController
      * @Acl(
      *      id="oro_promotion_create",
      *      type="entity",
-     *      class="OroPromotionBundle:Promotion",
+     *      class="Oro\Bundle\PromotionBundle\Entity\Promotion",
      *      permission="CREATE"
      * )
      *
@@ -89,7 +89,7 @@ class PromotionController extends AbstractController
      * @Acl(
      *      id="oro_promotion_update",
      *      type="entity",
-     *      class="OroPromotionBundle:Promotion",
+     *      class="Oro\Bundle\PromotionBundle\Entity\Promotion",
      *      permission="EDIT"
      * )
      *
@@ -111,10 +111,10 @@ class PromotionController extends AbstractController
     {
         $form = $this->createForm(PromotionType::class, $promotion);
 
-        $result = $this->get(UpdateHandlerFacade::class)->update(
+        $result = $this->container->get(UpdateHandlerFacade::class)->update(
             $promotion,
             $form,
-            $this->get(TranslatorInterface::class)->trans('oro.promotion.controller.saved.message'),
+            $this->container->get(TranslatorInterface::class)->trans('oro.promotion.controller.saved.message'),
             $request
         );
 

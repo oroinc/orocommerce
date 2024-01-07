@@ -151,7 +151,7 @@ class ProductController extends AbstractController
      */
     protected function getPriceListHandler()
     {
-        return $this->get(PriceListRequestHandlerInterface::class);
+        return $this->container->get(PriceListRequestHandlerInterface::class);
     }
 
     protected function isPriceListsEnabled(): bool

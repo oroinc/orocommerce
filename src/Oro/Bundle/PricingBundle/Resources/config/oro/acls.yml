@@ -1,6 +1,6 @@
 acls:
     oro_pricing_product_price_view:
         type: entity
-        class: OroPricingBundle:ProductPrice
+        class: Oro\Bundle\PricingBundle\Entity\ProductPrice
         permission: VIEW
         bindings: ~

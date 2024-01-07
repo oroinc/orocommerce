@@ -27,7 +27,7 @@ class ConsentSelectTypeTest extends \PHPUnit\Framework\TestCase
             ->method('setDefaults')
             ->with($this->isType('array'))
             ->willReturnCallback(
-                function (array $options) {
+                function (array $options) use ($resolver) {
                     $this->assertArrayHasKey('autocomplete_alias', $options);
                     $this->assertEquals('oro_consent_list', $options['autocomplete_alias']);
 
@@ -45,6 +45,8 @@ class ConsentSelectTypeTest extends \PHPUnit\Framework\TestCase
                         ['placeholder' => 'oro.consent.form.choose_consent'],
                         $options['configs']
                     );
+
+                    return $resolver;
                 }
             );
 

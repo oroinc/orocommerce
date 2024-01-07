@@ -22,7 +22,7 @@ class SearchResultPreviewController extends AbstractController
     public function previewAction(SearchResultHistory $historyEntry)
     {
         return new RedirectResponse(
-            $this->get(WebsiteUrlResolver::class)
+            $this->container->get(WebsiteUrlResolver::class)
                 ->getWebsitePath(
                     'oro_product_frontend_product_search',
                     [

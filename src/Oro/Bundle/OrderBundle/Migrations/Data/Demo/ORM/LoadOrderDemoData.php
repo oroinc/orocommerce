@@ -99,7 +99,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         $headers = fgetcsv($handler, 1000, ',');
 
         /** @var EntityRepository $userRepository */
-        $userRepository = $manager->getRepository('OroUserBundle:User');
+        $userRepository = $manager->getRepository(User::class);
 
         /** @var User $user */
         $user = $userRepository->findOneBy([]);
@@ -237,13 +237,13 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
      */
     protected function getCustomerUser(ObjectManager $manager, $isGuest = false)
     {
-        return $manager->getRepository('OroCustomerBundle:CustomerUser')->findOneBy(['isGuest' => $isGuest]);
+        return $manager->getRepository(CustomerUser::class)->findOneBy(['isGuest' => $isGuest]);
     }
 
     protected function getCountryByIso2Code(EntityManagerInterface $manager, string $iso2Code): ?Country
     {
         if (!array_key_exists($iso2Code, $this->countries)) {
-            $this->countries[$iso2Code] = $manager->getReference('OroAddressBundle:Country', $iso2Code);
+            $this->countries[$iso2Code] = $manager->getReference(Country::class, $iso2Code);
         }
 
         return $this->countries[$iso2Code];
@@ -252,7 +252,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     protected function getRegionByIso2Code(EntityManagerInterface $manager, string $code): ?Region
     {
         if (!array_key_exists($code, $this->regions)) {
-            $this->regions[$code] = $manager->getReference('OroAddressBundle:Region', $code);
+            $this->regions[$code] = $manager->getReference(Region::class, $code);
         }
 
         return $this->regions[$code];
@@ -261,7 +261,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     protected function getPaymentTerm(EntityManagerInterface $manager, string $label): PaymentTerm
     {
         if (!array_key_exists($label, $this->paymentTerms)) {
-            $this->paymentTerms[$label] = $manager->getRepository('OroPaymentTermBundle:PaymentTerm')
+            $this->paymentTerms[$label] = $manager->getRepository(PaymentTerm::class)
                 ->findOneBy(['label' => $label]);
         }
 
@@ -271,7 +271,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     protected function getWebsite(EntityManagerInterface $manager, string $name): Website
     {
         if (!array_key_exists($name, $this->websites)) {
-            $this->websites[$name] = $manager->getRepository('OroWebsiteBundle:Website')
+            $this->websites[$name] = $manager->getRepository(Website::class)
                 ->findOneBy(['name' => $name]);
         }
 

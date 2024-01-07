@@ -39,7 +39,7 @@ class LoadCustomerBuyerRoles extends LoadCustomerUserRoles
         $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
         foreach ($roleData as $roleName => $roleConfigData) {
-            $role = $manager->getRepository('OroCustomerBundle:CustomerUserRole')
+            $role = $manager->getRepository(CustomerUserRole::class)
                 ->findOneBy([
                     'role' => sprintf('%s%s', CustomerUserRole::PREFIX_ROLE, $roleName),
                     'organization' => $organization

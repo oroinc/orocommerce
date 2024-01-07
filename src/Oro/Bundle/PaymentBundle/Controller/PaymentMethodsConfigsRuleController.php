@@ -52,7 +52,7 @@ class PaymentMethodsConfigsRuleController extends AbstractController
      *     id="oro_payment_methods_configs_rule_create",
      *     type="entity",
      *     permission="CREATE",
-     *     class="OroPaymentBundle:PaymentMethodsConfigsRule"
+     *     class="Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule"
      * )
      *
      * @param Request $request
@@ -69,7 +69,7 @@ class PaymentMethodsConfigsRuleController extends AbstractController
      * @Acl(
      *      id="oro_payment_methods_configs_rule_view",
      *      type="entity",
-     *      class="OroPaymentBundle:PaymentMethodsConfigsRule",
+     *      class="Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule",
      *      permission="VIEW"
      * )
      *
@@ -91,7 +91,7 @@ class PaymentMethodsConfigsRuleController extends AbstractController
      *     id="oro_payment_methods_configs_rule_update",
      *     type="entity",
      *     permission="EDIT",
-     *     class="OroPaymentBundle:PaymentMethodsConfigsRule"
+     *     class="Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule"
      * )
      * @param Request $request
      * @param PaymentMethodsConfigsRule $entity
@@ -111,13 +111,13 @@ class PaymentMethodsConfigsRuleController extends AbstractController
     protected function update(PaymentMethodsConfigsRule $entity, Request $request)
     {
         $form = $this->createForm(PaymentMethodsConfigsRuleType::class);
-        if ($this->get(PaymentMethodsConfigsRuleHandler::class)->process($form, $entity)) {
+        if ($this->container->get(PaymentMethodsConfigsRuleHandler::class)->process($form, $entity)) {
             $request->getSession()->getFlashBag()->add(
                 'success',
-                $this->get(TranslatorInterface::class)->trans('oro.payment.controller.rule.saved.message')
+                $this->container->get(TranslatorInterface::class)->trans('oro.payment.controller.rule.saved.message')
             );
 
-            return $this->get(Router::class)->redirect($entity);
+            return $this->container->get(Router::class)->redirect($entity);
         }
 
         if ($request->get(PaymentMethodsConfigsRuleHandler::UPDATE_FLAG, false)) {
@@ -139,7 +139,7 @@ class PaymentMethodsConfigsRuleController extends AbstractController
      *     id="oro_payment_methods_configs_update",
      *     type="entity",
      *     permission="EDIT",
-     *     class="OroPaymentBundle:PaymentMethodsConfigsRule"
+     *     class="Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule"
      * )
      * @CsrfProtection()
      *
@@ -151,7 +151,7 @@ class PaymentMethodsConfigsRuleController extends AbstractController
      */
     public function markMassAction($gridName, $actionName, Request $request)
     {
-        $massActionDispatcher = $this->get(MassActionDispatcher::class);
+        $massActionDispatcher = $this->container->get(MassActionDispatcher::class);
 
         $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
 

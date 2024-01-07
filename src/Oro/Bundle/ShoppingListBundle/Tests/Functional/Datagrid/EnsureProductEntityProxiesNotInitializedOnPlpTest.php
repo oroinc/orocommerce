@@ -8,7 +8,6 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
-use Symfony\Component\HttpFoundation\Request;
 
 class EnsureProductEntityProxiesNotInitializedOnPlpTest extends FrontendWebTestCase
 {
@@ -26,8 +25,8 @@ class EnsureProductEntityProxiesNotInitializedOnPlpTest extends FrontendWebTestC
         $this->getEntityManager()->clear();
 
         $this->updateCustomerUserSecurityToken(LoadCustomerUserData::AUTH_USER);
-        // a request needed for emulation a storefront request
-        self::getContainer()->get('request_stack')->push(Request::create(''));
+        // A request needed for emulation a storefront request
+        $this->emulateRequest();
     }
 
     private function getEntityManager(): EntityManagerInterface

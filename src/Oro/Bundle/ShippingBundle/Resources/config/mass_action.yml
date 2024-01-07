@@ -24,6 +24,6 @@ services:
         public: true
         arguments:
             - 'oro.shipping.datagrid.status.success_message'
-            - 'OroShippingBundle:ShippingMethodsConfigsRule'
+            - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
             - '@doctrine.orm.entity_manager'
             - '@translator'

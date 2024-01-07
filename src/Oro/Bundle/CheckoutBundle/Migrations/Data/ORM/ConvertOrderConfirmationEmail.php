@@ -72,7 +72,7 @@ class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements Depe
             return null;
         }
 
-        return $manager->getRepository('OroEmailBundle:EmailTemplate')->findOneBy([
+        return $manager->getRepository(EmailTemplate::class)->findOneBy([
             'name' => $template['params']['name'],
             'entityName' => Order::class,
             'content' => $template['content']

@@ -20,6 +20,9 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads payment rule integration demo data
+ */
 class LoadPaymentRuleIntegrationData extends AbstractFixture implements ContainerAwareInterface
 {
     const PAYMENT_TERM_INTEGRATION_CHANNEL_REFERENCE = 'payment_term_integration_channel';
@@ -113,7 +116,7 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
             return $this->getReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION);
         }
 
-        return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        return $manager->getRepository(Organization::class)->getFirst();
     }
 
     /**

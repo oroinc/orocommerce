@@ -30,7 +30,7 @@ class CategoryListener
 
     public function postPersist(Category $category, LifecycleEventArgs $event)
     {
-        $entityManager = $event->getEntityManager();
+        $entityManager = $event->getObjectManager();
 
         // Handles parent category materialized path.
         $parentCategory = $category->getParentCategory();
@@ -70,7 +70,7 @@ class CategoryListener
      */
     public function onFlush(OnFlushEventArgs $event)
     {
-        $entityManager = $event->getEntityManager();
+        $entityManager = $event->getObjectManager();
         $metadataFactory = $entityManager->getMetadataFactory();
 
         /** @var CategoryRepository $categoryRepository */

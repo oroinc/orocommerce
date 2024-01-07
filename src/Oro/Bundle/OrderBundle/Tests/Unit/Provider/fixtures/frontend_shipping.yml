@@ -6,6 +6,7 @@ frontend_shipping_not_granted:
         - ['VIEW;entity:CustomerUserOrderClass', null, false]
         - [oro_order_address_shipping_allow_manual_backend, null, false]
         - [oro_order_address_shipping_customer_user_use_any_backend, null, false]
+        - [oro_order_address_shipping_allow_manual, null, false]
     hasCustomerAddresses: ~
     hasCustomerUserAddresses: ~
     hasEntity: ~
@@ -19,6 +20,7 @@ frontend_shipping_view_customer_user_granted:
         - ['VIEW;entity:CustomerOrderClass', null, false]
         - ['VIEW;entity:CustomerUserOrderClass', null, true]
         - [oro_order_address_shipping_customer_user_use_any, null, false]
+        - [oro_order_address_shipping_allow_manual, null, false]
     hasCustomerAddresses: ~
     hasCustomerUserAddresses: ~
     hasEntity: ~
@@ -32,6 +34,7 @@ frontend_shipping_use_customer_user_granted:
         - ['VIEW;entity:CustomerOrderClass', null, false]
         - ['VIEW;entity:CustomerUserOrderClass', null, false]
         - [oro_order_address_shipping_customer_user_use_any, null, true]
+        - [oro_order_address_shipping_allow_manual, null, false]
     hasCustomerAddresses: ~
     hasCustomerUserAddresses: ~
     hasEntity: ~
@@ -45,6 +48,7 @@ frontend_shipping_customer_user_address_granted:
         - ['VIEW;entity:CustomerOrderClass', null, false]
         - ['VIEW;entity:CustomerUserOrderClass', null, true]
         - [oro_order_address_shipping_customer_user_use_any, null, true]
+        - [oro_order_address_shipping_allow_manual, null, false]
     hasCustomerAddresses: ~
     hasCustomerUserAddresses: ~
     hasEntity: ~
@@ -58,6 +62,7 @@ frontend_shipping_customer_user_address_granted_with_entity:
         - ['VIEW;entity:CustomerOrderClass', null, false]
         - ['VIEW;entity:CustomerUserOrderClass', null, true]
         - [oro_order_address_shipping_customer_user_use_any, null, true]
+        - [oro_order_address_shipping_allow_manual, null, false]
     hasCustomerAddresses: ~
     hasCustomerUserAddresses: ~
     hasEntity: true
@@ -71,6 +76,7 @@ frontend_shipping_customer_user_address_granted_with_entity_and_address:
         - ['VIEW;entity:CustomerOrderClass', null, false]
         - ['VIEW;entity:CustomerUserOrderClass', null, true]
         - [oro_order_address_shipping_customer_user_use_any, null, true]
+        - [oro_order_address_shipping_allow_manual, null, false]
     hasCustomerAddresses: ~
     hasCustomerUserAddresses: true
     hasEntity: true
@@ -97,6 +103,7 @@ frontend_shipping_customer_not_granted:
     isGranted:
         - ['VIEW;entity:CustomerOrderClass', null, true]
         - ['VIEW;entity:CustomerUserOrderClass', null, false]
+        - [oro_order_address_shipping_allow_manual, null, false]
     hasCustomerAddresses: ~
     hasCustomerUserAddresses: ~
     hasEntity: ~
@@ -109,6 +116,7 @@ frontend_shipping_customer_without_entity:
     isGranted:
         - ['VIEW;entity:CustomerOrderClass', null, true]
         - ['VIEW;entity:CustomerUserOrderClass', null, false]
+        - [oro_order_address_shipping_allow_manual, null, false]
     hasCustomerAddresses: ~
     hasCustomerUserAddresses: ~
     hasEntity: ~
@@ -121,6 +129,7 @@ frontend_shipping_customer_with_entity:
     isGranted:
         - ['VIEW;entity:CustomerOrderClass', null, true]
         - ['VIEW;entity:CustomerUserOrderClass', null, false]
+        - [oro_order_address_shipping_allow_manual, null, false]
     hasCustomerAddresses: ~
     hasCustomerUserAddresses: ~
     hasEntity: true
@@ -133,6 +142,7 @@ frontend_shipping_customer_with_entity_and_addresses:
     isGranted:
         - ['VIEW;entity:CustomerOrderClass', null, true]
         - ['VIEW;entity:CustomerUserOrderClass', null, false]
+        - [oro_order_address_shipping_allow_manual, null, false]
     hasCustomerAddresses: true
     hasCustomerUserAddresses: ~
     hasEntity: true

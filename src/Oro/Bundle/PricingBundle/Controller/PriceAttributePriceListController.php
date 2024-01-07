@@ -36,7 +36,7 @@ class PriceAttributePriceListController extends AbstractController
      * @Acl(
      *      id="oro_pricing_price_attribute_price_list_view",
      *      type="entity",
-     *      class="OroPricingBundle:PriceAttributePriceList",
+     *      class="Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList",
      *      permission="VIEW"
      * )
      */
@@ -53,7 +53,7 @@ class PriceAttributePriceListController extends AbstractController
      * @Acl(
      *      id="oro_pricing_price_attribute_price_list_create",
      *      type="entity",
-     *      class="OroPricingBundle:PriceAttributePriceList",
+     *      class="Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList",
      *      permission="CREATE"
      * )
      */
@@ -68,7 +68,7 @@ class PriceAttributePriceListController extends AbstractController
      * @Acl(
      *      id="oro_pricing_price_attribute_price_list_update",
      *      type="entity",
-     *      class="OroPricingBundle:PriceAttributePriceList",
+     *      class="Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList",
      *      permission="EDIT"
      * )
      */
@@ -79,10 +79,10 @@ class PriceAttributePriceListController extends AbstractController
 
     protected function update(PriceAttributePriceList $priceAttribute): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $priceAttribute,
             $this->createForm(PriceAttributePriceListType::class, $priceAttribute),
-            $this->get(TranslatorInterface::class)->trans(
+            $this->container->get(TranslatorInterface::class)->trans(
                 'oro.pricing.controller.price_attribute_price_list.saved.message'
             )
         );

@@ -79,7 +79,7 @@ class LoadPriceListToCustomerDemoData extends LoadBasePriceListRelationDemoData
     protected function getCustomerRepository(EntityManagerInterface $manager): EntityRepository
     {
         if ($this->customerRepository === null) {
-            $this->customerRepository = $manager->getRepository('OroCustomerBundle:Customer');
+            $this->customerRepository = $manager->getRepository(Customer::class);
         }
 
         return $this->customerRepository;

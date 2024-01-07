@@ -91,7 +91,7 @@ class ProductShippingOptionsTest extends RestJsonApiTestCase
         $this->assertResponseContainsValidationError(
             [
                 'title'  => 'form constraint',
-                'detail' => 'This value is not valid.',
+                'detail' => 'Please enter a number.',
                 'source' => ['pointer' => '/data/attributes/weightValue']
             ],
             $response
@@ -112,7 +112,7 @@ class ProductShippingOptionsTest extends RestJsonApiTestCase
         $this->assertResponseContainsValidationError(
             [
                 'title'  => 'form constraint',
-                'detail' => 'This value is not valid.',
+                'detail' => 'Please enter a number.',
                 'source' => ['pointer' => '/data/attributes/dimensionsLength']
             ],
             $response
@@ -131,7 +131,7 @@ class ProductShippingOptionsTest extends RestJsonApiTestCase
         $this->assertResponseContainsValidationError(
             [
                 'title'  => 'form constraint',
-                'detail' => 'This value is not valid.',
+                'detail' => 'Please enter a number.',
                 'source' => ['pointer' => '/data/attributes/dimensionsWidth']
             ],
             $response
@@ -150,7 +150,7 @@ class ProductShippingOptionsTest extends RestJsonApiTestCase
         $this->assertResponseContainsValidationError(
             [
                 'title'  => 'form constraint',
-                'detail' => 'This value is not valid.',
+                'detail' => 'Please enter a number.',
                 'source' => ['pointer' => '/data/attributes/dimensionsHeight']
             ],
             $response

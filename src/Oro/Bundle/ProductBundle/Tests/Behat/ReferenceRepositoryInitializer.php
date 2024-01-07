@@ -80,7 +80,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         Collection $referenceRepository
     ): void {
         /** @var TranslationKeyRepository $repository */
-        $repository = $doctrine->getManager()->getRepository('OroTranslationBundle:TranslationKey');
+        $repository = $doctrine->getManager()->getRepository(TranslationKey::class);
         $qb = $repository->createQueryBuilder('tk');
         $qb->orWhere($qb->expr()->like('tk.key', $qb->expr()->literal('oro.product_unit.%')))
             ->orWhere($qb->expr()->like('tk.key', $qb->expr()->literal('oro.product.product_unit.%')));

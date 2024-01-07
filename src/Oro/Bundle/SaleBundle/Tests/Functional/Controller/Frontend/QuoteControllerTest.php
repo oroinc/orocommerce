@@ -731,7 +731,7 @@ class QuoteControllerTest extends WebTestCase
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
 
         $response = $this->client->requestGrid(['gridName' => 'frontend-quotes-grid'], [], true);
-        self::assertSame($response->getStatusCode(), 302);
+        self::assertSame(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
     public function testActualQuantityNotEqualToOfferedValidation(): void
