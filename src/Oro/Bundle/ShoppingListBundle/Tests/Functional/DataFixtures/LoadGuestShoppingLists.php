@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
@@ -19,9 +20,7 @@ class LoadGuestShoppingLists extends AbstractFixture implements DependentFixture
      */
     public function getDependencies(): array
     {
-        return [
-            LoadCustomerVisitors::class
-        ];
+        return [LoadCustomerVisitors::class];
     }
 
     /**
@@ -31,29 +30,22 @@ class LoadGuestShoppingLists extends AbstractFixture implements DependentFixture
     {
         $this->createShoppingList(
             $manager,
-            $this->getCustomerVisitor(LoadCustomerVisitors::CUSTOMER_VISITOR),
+            $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR),
             self::GUEST_SHOPPING_LIST_1
         );
-
         $this->createShoppingList(
             $manager,
-            $this->getCustomerVisitor(LoadCustomerVisitors::CUSTOMER_VISITOR_EXPIRED),
+            $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR_EXPIRED),
             self::GUEST_SHOPPING_LIST_2
         );
-
         $manager->flush();
-    }
-
-    private function getCustomerVisitor(string $reference): CustomerVisitor
-    {
-        return $this->getReference($reference);
     }
 
     private function createShoppingList(
         ObjectManager $manager,
         CustomerVisitor $anonymous,
         string $reference
-    ): ShoppingList {
+    ): void {
         $website = $this->getDefaultWebsite($manager);
 
         $shoppingList = new ShoppingList();
@@ -67,8 +59,6 @@ class LoadGuestShoppingLists extends AbstractFixture implements DependentFixture
         $this->addReference($reference, $shoppingList);
 
         $anonymous->addShoppingList($shoppingList);
-
-        return $shoppingList;
     }
 
     private function getDefaultWebsite(ObjectManager $manager): Website

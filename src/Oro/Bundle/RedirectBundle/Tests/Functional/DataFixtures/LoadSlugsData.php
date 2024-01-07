@@ -9,8 +9,8 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -26,17 +26,12 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
     public const PAGE_3_DEFAULT = '/localized-slug/en/page3';
     public const PAGE_3_LOCALIZED_EN_CA = '/localized-slug/en_ca/page3';
 
-    private ?Organization $organization = null;
-
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return [
-            LoadPageData::class,
-            LoadLocalizationData::class
-        ];
+        return [LoadPageData::class, LoadLocalizationData::class, LoadOrganization::class];
     }
 
     /**
@@ -51,8 +46,12 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         /** @var Page $page3 */
         $page3 = $this->getReference(LoadPageData::PAGE_3);
 
-        $anonymousSlug = $this
-            ->createSlug($manager, self::SLUG_URL_ANONYMOUS, 'oro_cms_frontend_page_view', ['id' => $page->getId()]);
+        $anonymousSlug = $this->createSlug(
+            $manager,
+            self::SLUG_URL_ANONYMOUS,
+            'oro_cms_frontend_page_view',
+            ['id' => $page->getId()]
+        );
         $anonymousSlug->setSlugPrototype('anonymous');
         $page->addSlug($anonymousSlug);
 
@@ -124,7 +123,7 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         $slug->setUrl($url);
         $slug->setRouteName($routeName);
         $slug->setRouteParameters($routeParameters);
-        $slug->setOrganization($this->getOrganization($manager));
+        $slug->setOrganization($this->getReference(LoadOrganization::ORGANIZATION));
 
         if (null !== $localization) {
             $slug->setLocalization($localization);
@@ -137,14 +136,5 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         $this->addReference($url, $slug);
 
         return $slug;
-    }
-
-    private function getOrganization(ObjectManager $manager): Organization
-    {
-        if (null === $this->organization) {
-            $this->organization = $manager->getRepository(Organization::class)->getFirst();
-        }
-
-        return $this->organization;
     }
 }

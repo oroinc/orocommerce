@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -70,29 +71,25 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             $date->modify(sprintf('-%d days', $days));
 
             $request = new Request();
-            $request
-                ->setFirstName($rawRequest['first_name'])
-                ->setLastName($rawRequest['last_name'])
-                ->setEmail($rawRequest['email'])
-                ->setPhone($rawRequest['phone'])
-                ->setCompany($rawRequest['company'])
-                ->setRole($rawRequest['role'])
-                ->setNote($rawRequest['note'])
-                ->setCreatedAt($date);
+            $request->setFirstName($rawRequest['first_name']);
+            $request->setLastName($rawRequest['last_name']);
+            $request->setEmail($rawRequest['email']);
+            $request->setPhone($rawRequest['phone']);
+            $request->setCompany($rawRequest['company']);
+            $request->setRole($rawRequest['role']);
+            $request->setNote($rawRequest['note']);
+            $request->setCreatedAt($date);
 
             $manager->persist($request);
-
             $this->addReference($key, $request);
         }
 
         $quote = new Quote();
-        $quote
-            ->setQid(self::QUOTE1)
-            ->setRequest($this->getReference(self::REQUEST_WITH_QUOTE));
-
+        $quote->setQid(self::QUOTE1);
+        $quote->setRequest($this->getReference(self::REQUEST_WITH_QUOTE));
         $manager->persist($quote);
-        $manager->flush();
-
         $this->addReference(self::QUOTE1, $quote);
+
+        $manager->flush();
     }
 }

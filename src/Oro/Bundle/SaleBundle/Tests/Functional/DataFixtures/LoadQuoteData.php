@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -13,10 +14,16 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecis
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
+class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
+    use ContainerAwareTrait;
+
     public const QUOTE1 = 'sale.quote.1';
     public const QUOTE2 = 'sale.quote.2';
     public const QUOTE3 = 'sale.quote.3';
@@ -255,6 +262,7 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
             LoadCustomerAddresses::class,
             LoadProductUnitPrecisions::class,
             LoadPaymentTermData::class,
+            LoadUser::class
         ];
     }
 
@@ -263,7 +271,8 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager): void
     {
-        $user = $this->getUser($manager);
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
         /** @var Website $website */
         $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
 

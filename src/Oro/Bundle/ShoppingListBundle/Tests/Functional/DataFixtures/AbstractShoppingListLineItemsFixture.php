@@ -2,14 +2,20 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture implements DependentFixtureInterface
+abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture implements
+    ContainerAwareInterface,
+    DependentFixtureInterface
 {
+    use ContainerAwareTrait;
     use UserUtilityTrait;
 
     protected static array $lineItems = [];

@@ -4,8 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\JsTree;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
@@ -13,15 +13,15 @@ use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getFixtures(): array
     {
-        return [LoadCategoryData::class];
+        return [LoadCategoryData::class, LoadUser::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getHandlerId(): string
     {
@@ -260,7 +260,7 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function getActualNodeHierarchy(int $entityId, int $parentId, int $position): array
     {
@@ -277,23 +277,11 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
         }, []);
     }
 
-    private function setAdminToken()
+    private function setAdminToken(): void
     {
-        $container = self::getContainer();
-        /** @var Organization $organization */
-        $organization = $container->get('doctrine')
-            ->getRepository(Organization::class)
-            ->getFirst();
-        $user = $container->get('doctrine')
-            ->getRepository(User::class)
-            ->findOneByUsername('admin');
-
-        $adminToken = new UsernamePasswordOrganizationToken(
-            $user,
-            'key',
-            $organization
-        );
-
-        $container->get('security.token_storage')->setToken($adminToken);
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
+        self::getContainer()->get('security.token_storage')
+            ->setToken(new UsernamePasswordOrganizationToken($user, 'key', $user->getOrganization()));
     }
 }

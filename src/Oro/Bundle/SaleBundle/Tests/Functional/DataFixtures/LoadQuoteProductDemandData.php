@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
@@ -21,7 +22,7 @@ class LoadQuoteProductDemandData extends AbstractFixture implements DependentFix
     public const QUOTE_DEMAND_2 = 'quote.demand.2';
     public const QUOTE_DEMAND_3 = 'quote.demand.3';
 
-    public static array $items = [
+    private static array $items = [
         self::SELECTED_OFFER_1 => [
             'quoteDemandReference' => self::QUOTE_DEMAND_1,
             'quote' => LoadQuoteData::QUOTE1,
@@ -65,7 +66,7 @@ class LoadQuoteProductDemandData extends AbstractFixture implements DependentFix
         return [
             LoadCustomerUserData::class,
             LoadCustomers::class,
-            LoadQuoteProductOfferData::class,
+            LoadQuoteProductOfferData::class
         ];
     }
 
@@ -78,14 +79,15 @@ class LoadQuoteProductDemandData extends AbstractFixture implements DependentFix
             /** @var Quote $quote */
             $quote = $this->getReference($item['quote']);
             $quoteDemand = new QuoteDemand();
-            $quoteDemand->setQuote($quote)
-                ->setCustomer($this->getReference($item['customer']))
-                ->setCustomerUser($this->getReference($item['customerUser']))
-                ->setSubtotal($item['subtotal'])
-                ->setTotal($item['total'])
-                ->setTotalCurrency($item['currency']);
+            $quoteDemand->setQuote($quote);
+            $quoteDemand->setCustomer($this->getReference($item['customer']));
+            $quoteDemand->setCustomerUser($this->getReference($item['customerUser']));
+            $quoteDemand->setSubtotal($item['subtotal']);
+            $quoteDemand->setTotal($item['total']);
+            $quoteDemand->setTotalCurrency($item['currency']);
             $manager->persist($quoteDemand);
             $this->setReference($item['quoteDemandReference'], $quoteDemand);
+
             /** @var QuoteProductOffer $offer */
             $offer = $this->getReference($item['offer']);
             $selectedOffer = new QuoteProductDemand($quoteDemand, $offer, $item['quantity']);

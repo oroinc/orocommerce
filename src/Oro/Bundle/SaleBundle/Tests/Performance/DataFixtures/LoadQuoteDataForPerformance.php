@@ -2,15 +2,18 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Performance\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\AbstractFixture;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddresses;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
+use Oro\Bundle\UserBundle\Entity\User;
 
-class LoadQuoteDataForPerformance extends AbstractFixture
+class LoadQuoteDataForPerformance extends AbstractFixture implements DependentFixtureInterface
 {
     /** Total quotes will be NUMBER_OF_QUOTE_GROUPS * count(LoadQuoteData::$items) */
     public const NUMBER_OF_QUOTE_GROUPS = 10000;
@@ -40,7 +43,8 @@ class LoadQuoteDataForPerformance extends AbstractFixture
             LoadUserData::class,
             LoadCustomerUserAddresses::class,
             LoadCustomerAddresses::class,
-            LoadProductUnitPrecisions::class
+            LoadProductUnitPrecisions::class,
+            LoadUser::class
         ];
     }
 
@@ -49,7 +53,8 @@ class LoadQuoteDataForPerformance extends AbstractFixture
      */
     public function load(ObjectManager $manager): void
     {
-        $user = $this->getUser($manager);
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
         $insertQuoteBaseSql = $this->getUpdateQuotesBaseSql();
 
         $params = [];
