@@ -242,7 +242,7 @@ HELP
             $result = range($range[0], $range[1]);
         } else {
             $result = $this->getLastEntityId($className);
-            $result = range(1, $result);
+            $result = range(1, $result ?? $chunkSize);
         }
 
         if (null !== $chunkSize) {
