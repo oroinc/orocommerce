@@ -6,33 +6,29 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Migrations\Data\Demo\ORM\LoadPageDemoData;
 
 /**
- * Loads page demo meta data
+ * Loads SEO localized fields for CMS pages.
  */
 class LoadPageDemoMetaData extends AbstractFixture implements DependentFixtureInterface
 {
     use LoadDemoMetaDataTrait;
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function getDependencies(): array
     {
-        $repository = $manager->getRepository(Page::class);
-
-        $this->addMetaFieldsData($manager, $repository->findAll());
-
-        $manager->flush();
+        return [LoadPageDemoData::class];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function load(ObjectManager $manager): void
     {
-        return [
-            'Oro\Bundle\CMSBundle\Migrations\Data\Demo\ORM\LoadPageDemoData',
-        ];
+        $this->addMetaFieldsData($manager, $manager->getRepository(Page::class)->findAll());
+        $manager->flush();
     }
 }

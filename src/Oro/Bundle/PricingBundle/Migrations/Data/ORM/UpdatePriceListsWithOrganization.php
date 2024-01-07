@@ -25,7 +25,15 @@ class UpdatePriceListsWithOrganization extends UpdateWithOrganization implements
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function getDependencies(): array
+    {
+        return [LoadOrganizationAndBusinessUnitData::class];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager): void
     {
         // the fixture should be applied only during update.
         if (!$this->container->get(ApplicationState::class)->isInstalled()) {
@@ -39,15 +47,7 @@ class UpdatePriceListsWithOrganization extends UpdateWithOrganization implements
         $this->container->get('oro_search.async.indexer')->reindex(PriceList::class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getDependencies()
-    {
-        return [LoadOrganizationAndBusinessUnitData::class];
-    }
-
-    private function addDefaultPriceListsToOrganizations(ObjectManager $manager)
+    private function addDefaultPriceListsToOrganizations(ObjectManager $manager): void
     {
         $repo = $manager->getRepository(Organization::class);
         $firstOrgId = $repo->getFirst()->getId();

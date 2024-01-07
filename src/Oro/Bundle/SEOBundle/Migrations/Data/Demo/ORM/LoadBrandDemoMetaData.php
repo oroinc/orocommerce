@@ -9,31 +9,26 @@ use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadBrandDemoData;
 
 /**
- * Loads brand demo meta data
+ * Loads SEO localized fields for brands.
  */
 class LoadBrandDemoMetaData extends AbstractFixture implements DependentFixtureInterface
 {
     use LoadDemoMetaDataTrait;
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function getDependencies(): array
     {
-        $repository = $manager->getRepository(Brand::class);
-
-        $this->addMetaFieldsData($manager, $repository->findAll());
-
-        $manager->flush();
+        return [LoadBrandDemoData::class];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function load(ObjectManager $manager): void
     {
-        return [
-            LoadBrandDemoData::class,
-        ];
+        $this->addMetaFieldsData($manager, $manager->getRepository(Brand::class)->findAll());
+        $manager->flush();
     }
 }

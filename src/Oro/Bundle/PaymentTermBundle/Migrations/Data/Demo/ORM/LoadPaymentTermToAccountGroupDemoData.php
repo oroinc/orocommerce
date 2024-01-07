@@ -6,54 +6,40 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Loads payment term to account group demo data
+ * Loads payment terms for all customer groups.
  */
 class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
     use PaymentTermDemoMigrationTrait;
-
-    /** @var ContainerInterface */
-    protected $container;
+    use ContainerAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
-            'Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData',
+            LoadPaymentTermDemoData::class,
+            LoadCustomerGroupDemoData::class
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function load(ObjectManager $manager): void
     {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ObjectManager $manager)
-    {
-        $doctrine = $this->container->get('doctrine');
         $accessor = $this->container->get('oro_payment_term.provider.payment_term_association');
-
         $paymentTermsAll = $this->getLoadedPaymentTerms();
-        $accountGroups = $doctrine->getRepository(CustomerGroup::class)->findAll();
-
+        $accountGroups = $manager->getRepository(CustomerGroup::class)->findAll();
         foreach ($accountGroups as $accountGroup) {
-            /** @var PaymentTerm $paymentTerm */
             $paymentTerm = $paymentTermsAll[array_rand($paymentTermsAll)];
             $accessor->setPaymentTerm($accountGroup, $paymentTerm);
         }

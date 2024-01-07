@@ -6,6 +6,7 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Migrations\Data\ORM\AbstractEmailFixture;
 use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
+use Oro\Bundle\RFPBundle\Entity\Request;
 
 /**
  * Loads email templates for RFP entity.
@@ -13,9 +14,9 @@ use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
 class LoadEmailTemplates extends AbstractEmailFixture implements VersionedFixtureInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function findExistingTemplate(ObjectManager $manager, array $template)
+    protected function findExistingTemplate(ObjectManager $manager, array $template): ?EmailTemplate
     {
         if (empty($template['params']['name'])) {
             return null;
@@ -23,14 +24,14 @@ class LoadEmailTemplates extends AbstractEmailFixture implements VersionedFixtur
 
         return $manager->getRepository(EmailTemplate::class)->findOneBy([
             'name' => $template['params']['name'],
-            'entityName' => 'Oro\Bundle\RFPBundle\Entity\Request',
+            'entityName' => Request::class
         ]);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getEmailsDir()
+    public function getEmailsDir(): string
     {
         return $this->container
             ->get('kernel')
@@ -38,9 +39,9 @@ class LoadEmailTemplates extends AbstractEmailFixture implements VersionedFixtur
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return '1.0';
     }

@@ -15,9 +15,17 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 class ConvertRFQRequestConfirmationEmail extends AbstractEmailFixture implements DependentFixtureInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getEmailsDir()
+    public function getDependencies(): array
+    {
+        return [LoadEmailTemplates::class];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getEmailsDir(): string
     {
         return $this->container
             ->get('kernel')
@@ -25,17 +33,9 @@ class ConvertRFQRequestConfirmationEmail extends AbstractEmailFixture implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
-    {
-        return [LoadEmailTemplates::class];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function loadTemplate(ObjectManager $manager, $fileName, array $file)
+    protected function loadTemplate(ObjectManager $manager, $fileName, array $file): void
     {
         if ($fileName !== 'confirmation') {
             return;
@@ -53,17 +53,17 @@ class ConvertRFQRequestConfirmationEmail extends AbstractEmailFixture implements
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
-    protected function updateExistingTemplate(EmailTemplate $emailTemplate, array $template)
+    protected function updateExistingTemplate(EmailTemplate $emailTemplate, array $template): void
     {
         $emailTemplate->setContent($template['content']);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function findExistingTemplate(ObjectManager $manager, array $template)
+    protected function findExistingTemplate(ObjectManager $manager, array $template): ?EmailTemplate
     {
         if (!isset($template['params']['name'])
             || !isset($template['content'])
@@ -77,12 +77,7 @@ class ConvertRFQRequestConfirmationEmail extends AbstractEmailFixture implements
         ]);
     }
 
-    /**
-     * Return path to old email templates
-     *
-     * @return string
-     */
-    private function getPreviousEmailsDir()
+    private function getPreviousEmailsDir(): string
     {
         return $this->container
             ->get('kernel')

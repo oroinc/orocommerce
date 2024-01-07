@@ -20,7 +20,7 @@ class LoadCustomerBuyerRoles extends LoadCustomerUserRoles
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         if (!$this->container->get(ApplicationState::class)->isInstalled()) {
             return;
@@ -60,14 +60,7 @@ class LoadCustomerBuyerRoles extends LoadCustomerUserRoles
         $aclManager->flush();
     }
 
-    /**
-     * @param array      $permissions
-     * @param AclManager $aclManager
-     * @param SID        $sid
-     *
-     * @return boolean
-     */
-    protected function roleHasEntries(array $permissions, AclManager $aclManager, SID $sid)
+    private function roleHasEntries(array $permissions, AclManager $aclManager, SID $sid): bool
     {
         foreach ($permissions as $permission => $acls) {
             $oid = $aclManager->getOid(str_replace('|', ':', $permission));

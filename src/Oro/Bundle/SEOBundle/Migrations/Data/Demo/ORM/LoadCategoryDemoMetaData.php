@@ -6,33 +6,29 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData;
 
 /**
- * Loads category demo meta data
+ * Loads SEO localized fields for categories.
  */
 class LoadCategoryDemoMetaData extends AbstractFixture implements DependentFixtureInterface
 {
     use LoadDemoMetaDataTrait;
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function getDependencies(): array
     {
-        $repository = $manager->getRepository(Category::class);
-
-        $this->addMetaFieldsData($manager, $repository->findAll());
-
-        $manager->flush();
+        return [LoadCategoryDemoData::class];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function load(ObjectManager $manager): void
     {
-        return [
-            'Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData',
-        ];
+        $this->addMetaFieldsData($manager, $manager->getRepository(Category::class)->findAll());
+        $manager->flush();
     }
 }

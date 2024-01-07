@@ -9,11 +9,11 @@ use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 
 /**
- * Abstract class for loading weight units and freight classes
+ * The base class for fixtures that load product units and freight classes.
  */
 abstract class AbstractUnitsAndFreightClassesFixture extends AbstractFixture
 {
-    protected function addUpdateWeightUnits(ObjectManager $manager, array $weightUnits)
+    protected function addUpdateWeightUnits(ObjectManager $manager, array $weightUnits): void
     {
         $repository = $manager->getRepository(WeightUnit::class);
         foreach ($weightUnits as $unit) {
@@ -27,7 +27,7 @@ abstract class AbstractUnitsAndFreightClassesFixture extends AbstractFixture
         }
     }
 
-    protected function addUpdateLengthUnits(ObjectManager $manager, array $lengthUnits)
+    protected function addUpdateLengthUnits(ObjectManager $manager, array $lengthUnits): void
     {
         $repository = $manager->getRepository(LengthUnit::class);
         foreach ($lengthUnits as $unit) {
@@ -41,7 +41,7 @@ abstract class AbstractUnitsAndFreightClassesFixture extends AbstractFixture
         }
     }
 
-    protected function addUpdateFreightClasses(ObjectManager $manager, array $freightClasses)
+    protected function addUpdateFreightClasses(ObjectManager $manager, array $freightClasses): void
     {
         $repository = $manager->getRepository(FreightClass::class);
         foreach ($freightClasses as $unit) {
