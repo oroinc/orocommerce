@@ -237,15 +237,15 @@ oro.pricing:
             not_used_prices.message: 'Prices from this price list are not used'
             not_used_prices_for_date.message: 'Prices from this price list are not used on %date%'
             price_list_assignment_info.label: 'Price List Assignment'
-            price_list_used_chain.label: 'Active CPL Price Lists Chain'
-            full_price_list_used_chain.label: 'Full Chain CPL Price Lists Chain'
+            price_list_used_chain.label: 'Active CPL Price Lists'
+            full_price_list_used_chain.label: 'Full CPL Price Lists'
             show_detailed_assignment_info.label: 'Show Price List Assignment'
             show_developers_info.label: 'Show Information for Developers'
             price_merge_details.label: 'Price Merge Details'
             merge_allowed.label: 'Merge allowed'
             merge_not_allowed.label: 'Merge not allowed'
             combined_price_list.label: 'Active CPL ID'
-            full_combined_price_list.label: 'Full Chain CPL ID'
+            full_combined_price_list.label: 'Full CPL ID'
             cpl_activation_rules.label: 'Combined Price List Activation Rules'
             dev_info_general.label: General
             dev_info.label: 'Information for Developers'
@@ -257,7 +257,7 @@ oro.pricing:
                 will_be_acitivated: 'Will become active on <strong>%date%</strong>'
                 will_be_deacitivated: 'Will be deactivated on <strong>%date%</strong>'
                 active_now: 'Is active now'
-                not_active_now: 'Is not active now'
+                not_active_now: 'Is inactive now'
 
     combinedproductprice:
         entity_label: 'Combined Product Price'
