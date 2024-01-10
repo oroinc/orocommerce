@@ -873,7 +873,7 @@ oro_behat_extension:
       selector: '[data-role="search-container"] .input'
 
     ProductFrontendGridMassActionSearchInDropdown:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction .dropdown-menu [data-role="search-container"] .input'
+      selector: '.sticky.sticky--bottom .datagrid-massaction .dropdown-menu [data-role="search-container"] .input'
 
     ProductFrontendGridMassActionSearchInDialog:
       selector: '[role="dialog"] [data-role="search-container"] .input'
@@ -885,22 +885,22 @@ oro_behat_extension:
       selector: '.dropdown-item[data-label]:first-child'
 
     ProductFrontendMassAddPanelInBottomSticky:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .dropup .action'
+      selector: '.sticky.sticky--bottom .dropup .action'
 
     ProductFrontendMassOpenInDropdown:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .dropdown-toggle'
+      selector: '.sticky.sticky--bottom .dropdown-toggle'
 
     ProductFrontendMassOpenInDialog:
-      selector: '[data-sticky-name="bottom-sticky-panel"] [data-fullscreen-trigger]'
+      selector: '.sticky.sticky--bottom [data-fullscreen-trigger]'
 
     ProductFrontendMassClosePanel:
-      selector: '[data-sticky-name="bottom-sticky-panel"] [data-undo-selection]'
+      selector: '.sticky.sticky--bottom [data-undo-selection]'
 
     ProductFrontendMassPanelInBottomSticky:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction'
+      selector: '.sticky.sticky--bottom .datagrid-massaction'
 
     ProductFrontendMassMenuInBottomSticky:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction .dropdown-menu'
+      selector: '.sticky.sticky--bottom .datagrid-massaction .dropdown-menu'
 
     ProductFrontendGridRow:
       selector: '.grid-row'

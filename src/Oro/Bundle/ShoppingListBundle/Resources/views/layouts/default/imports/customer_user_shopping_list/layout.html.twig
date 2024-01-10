@@ -136,15 +136,8 @@
 
 {% block __customer_user_shopping_list__checkout_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' responsive-order-layout order-checkout-widget order-checkout-widget--offset-none ',
-        'data-sticky-target': 'top-sticky-panel',
-        'data-sticky': {
-            isSticky: true,
-            affixed: true,
-            autoWidth: false,
-            moveToPanel: false,
-            viewport: 'responsive-shopping-list-grid-overflow'
-        }
+        '~class': ' responsive-order-layout order-checkout-widget order-checkout-widget--offset-none sticky sticky--top',
+        'data-sticky': ''
     }) %}
 
     <div {{ block('block_attributes') }}>

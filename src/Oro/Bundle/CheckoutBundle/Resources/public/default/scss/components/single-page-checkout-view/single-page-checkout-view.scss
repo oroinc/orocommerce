@@ -55,15 +55,17 @@
         }
 
         &-header {
-            position: relative;
+            --sticky-position-top-offset: var(--sticky-page-header-element-offset-top, 0);
+
             display: flex;
             width: 100%;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
 
-            &.has-offset:not(.in-sticky) {
-                margin: $checkout-head-margin;
+            &.in-sticky {
+                background: $checkout-view-sticky-titles-background;
+                z-index: $checkout-view-sticky-titles-z-index;
             }
         }
     }
