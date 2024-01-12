@@ -175,7 +175,11 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
                 [
                     '[sorters][columns]',
                     [
-                        'price_column_usd' => ['data_name' => 'price_column_usd'],
+                        'price_column_usd' => [
+                            'data_name' => 'MIN(price_column_usd_table.value)',
+                            'apply_callback' => function () {
+                            }
+                        ]
                     ],
                 ],
                 // Column, filter, sorter configs for price for currency and unit pair.
@@ -204,7 +208,11 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
                 [
                     '[sorters][columns]',
                     [
-                        'price_column_usd_item' => ['data_name' => 'price_column_usd_item'],
+                        'price_column_usd_item' => [
+                            'data_name' => 'MIN(price_column_usd_item_table.value)',
+                            'apply_callback' => function () {
+                            }
+                        ],
                     ],
                 ]
             );

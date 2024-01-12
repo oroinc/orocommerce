@@ -535,6 +535,16 @@ services:
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: product-price }
 
+    oro_pricing.filter.product_price_attribute:
+        class: 'Oro\Bundle\PricingBundle\Filter\ProductPriceAttributeFilter'
+        public: false
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+            - '@oro_product.formatter.product_unit_label'
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: product-price-attribute }
+
     oro_pricing.filter.price_lists:
         class: 'Oro\Bundle\PricingBundle\Filter\PriceListsFilter'
         public: false

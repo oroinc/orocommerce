@@ -22,7 +22,8 @@ class PriceAttributePriceListRepository extends BasePriceListRepository
             ->select(
                 'price_attribute_price_list.id',
                 'price_attribute_price_list.name',
-                'price_attribute_currency.currency'
+                'price_attribute_currency.currency',
+                'price_attribute_price_list.fieldName'
             );
         $qb->innerJoin(
             PriceAttributeCurrency::class,
