@@ -66,6 +66,16 @@ trusted_data:
             addEqExpr:
                 fieldName: true
                 parameterName: true
+        Oro\Bundle\PricingBundle\Filter\ProductPriceAttributeFilter:
+            addEqExpr:
+                fieldName: true
+                parameterName: true
+        Oro\Bundle\PricingBundle\Datagrid\PriceAttributeProductPriceDatagridExtension:
+            addColumnToConfig:
+                sortKey: true
+        Oro\Bundle\PricingBundle\Datagrid\ProductPriceDatagridExtension:
+            addColumnToConfig:
+                sortKey: true
         Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter:
             convert:
                 limitationDql: true

@@ -6,6 +6,7 @@ use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
@@ -123,7 +124,8 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
                 $config,
                 $columnName,
                 $currencyIsoCode,
-                $attributeWithCurrency['name']
+                $attributeWithCurrency['name'],
+                $attributeWithCurrency['fieldName']
             );
         }
 
@@ -160,7 +162,8 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
         DatagridConfiguration $config,
         string $columnName,
         string $currencyIsoCode,
-        string $priceAttributeName
+        string $priceAttributeName,
+        string $priceAttributeFieldName
     ): void {
         $columnConfig = [
             'label' => sprintf('%s (%s)', $priceAttributeName, $currencyIsoCode),
@@ -169,11 +172,33 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
             'frontend_type' => 'html',
             'renderable' => true,
         ];
-        $filterConfig = ['type' => 'price-attribute-product-price', 'data_name' => $currencyIsoCode];
+        $filterConfig = [
+            'type' => 'product-price-attribute',
+            'data_name' => $currencyIsoCode,
+            'attribute_name' => $priceAttributeFieldName
+        ];
+
+        $alias = $this->getJoinAlias($columnName);
 
         $config->offsetAddToArrayByPath('[columns]', [$columnName => $columnConfig]);
         $config->offsetAddToArrayByPath('[filters][columns]', [$columnName => $filterConfig]);
-        $config->offsetAddToArrayByPath('[sorters][columns]', [$columnName => ['data_name' => $columnName]]);
+        // For sorting, utilize the same algorithm as on the front, irrespective of the unit
+        $config->offsetAddToArrayByPath(
+            '[sorters][columns]',
+            [
+                $columnName => [
+                    'data_name' => QueryBuilderUtil::sprintf('MIN(%s.value)', $alias),
+                    'apply_callback' => function (OrmDatasource $datasource, $sortKey, $direction) use ($alias) {
+                        if ($sortKey) {
+                            $qb = $datasource->getQueryBuilder();
+                            if (\in_array($alias, $qb->getAllAliases(), true)) {
+                                $qb->addOrderBy($sortKey, QueryBuilderUtil::getSortOrder($direction));
+                            }
+                        }
+                    },
+                ],
+            ]
+        );
     }
 
     /**
