@@ -48,11 +48,7 @@ class EnsureProductEntityProxiesNotInitializedOnPlpTest extends FrontendWebTestC
 
     public function testProductEntityProxiesNotInitializedOnFrontendProductSearchGrid(): void
     {
-        $grid = $this->getDatagridManager()->getDatagrid('frontend-product-search-grid');
-        $grid->getMetadata();
-
-        // fetches grid data involving all listeners and extensions
-        $grid->getData();
+        $this->client->requestFrontendGrid('frontend-product-search-grid');
 
         $identityMap = $this->getEntityManager()->getUnitOfWork()->getIdentityMap();
         self::assertArrayHasKey(Product::class, $identityMap);
