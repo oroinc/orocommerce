@@ -28,7 +28,7 @@
 {% endblock %}
 
 {% block __oro_product_price__product_price_hint_trigger_widget %}
-    {% import '@OroFrontend/layouts/renderIcon.html.twig' as renderIcon %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% if product is defined %}
         {% set attr = layout_attr_defaults(attr, {
             'aria-label': 'oro.pricing.view_all_prices_extended'|trans({
