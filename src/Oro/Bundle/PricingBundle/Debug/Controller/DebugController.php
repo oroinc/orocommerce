@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Debug\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler;
@@ -58,7 +59,7 @@ class DebugController extends AbstractController
      */
     public function sidebarAction()
     {
-        return $this->get(SidebarFormProvider::class)->getIndexPageSidebarFormElements();
+        return $this->container->get(SidebarFormProvider::class)->getIndexPageSidebarFormElements();
     }
 
     /**
@@ -69,7 +70,7 @@ class DebugController extends AbstractController
      */
     public function sidebarViewAction(Product $product)
     {
-        return $this->get(SidebarFormProvider::class)->getViewPageSidebarFormElements($product);
+        return $this->container->get(SidebarFormProvider::class)->getViewPageSidebarFormElements($product);
     }
 
     /**
@@ -143,7 +144,7 @@ class DebugController extends AbstractController
      */
     public function getPriceListCurrencyListAction()
     {
-        $currencyNames = Currencies::getNames($this->get(LocaleSettings::class)->getLocale());
+        $currencyNames = Currencies::getNames($this->container->get(LocaleSettings::class)->getLocale());
         $currencies = array_intersect_key($currencyNames, array_fill_keys($this->getPriceListCurrencies(), null));
 
         ksort($currencies);
@@ -157,7 +158,7 @@ class DebugController extends AbstractController
             return [];
         }
 
-        $provider = $this->get(CombinedPriceListActivationRulesProvider::class);
+        $provider = $this->container->get(CombinedPriceListActivationRulesProvider::class);
         if (!$provider->hasActivationRules($priceList)) {
             return [];
         }
@@ -167,22 +168,22 @@ class DebugController extends AbstractController
 
     private function getPriceListAssignments(): ?array
     {
-        return $this->get(PriceListsAssignmentProvider::class)->getPriceListAssignments();
+        return $this->container->get(PriceListsAssignmentProvider::class)->getPriceListAssignments();
     }
 
     private function getCurrentPrices(Product $product): array
     {
-        return $this->get(ProductPricesProvider::class)->getCurrentPrices($product);
+        return $this->container->get(ProductPricesProvider::class)->getCurrentPrices($product);
     }
 
     private function getPriceMergingDetails(array $usedPriceLists, Product $product): array
     {
-        return $this->get(PriceMergeInfoProvider::class)->getPriceMergingDetails($usedPriceLists, $product);
+        return $this->container->get(PriceMergeInfoProvider::class)->getPriceMergingDetails($usedPriceLists, $product);
     }
 
     private function getUsedUnitsAndCurrencies(array $priceMergeDetails): array
     {
-        return $this->get(PriceMergeInfoProvider::class)->getUsedUnitsAndCurrencies($priceMergeDetails);
+        return $this->container->get(PriceMergeInfoProvider::class)->getUsedUnitsAndCurrencies($priceMergeDetails);
     }
 
     private function getCplUsedPriceLists(?CombinedPriceList $cpl): array
@@ -191,12 +192,14 @@ class DebugController extends AbstractController
             return [];
         }
 
-        return $this->getDoctrine()->getRepository(CombinedPriceListToPriceList::class)->getPriceListRelations($cpl);
+        return $this->container->get(ManagerRegistry::class)
+            ->getRepository(CombinedPriceListToPriceList::class)
+            ->getPriceListRelations($cpl);
     }
 
     private function getPriceListHandler(): DebugProductPricesPriceListRequestHandler
     {
-        return $this->get(DebugProductPricesPriceListRequestHandler::class);
+        return $this->container->get(DebugProductPricesPriceListRequestHandler::class);
     }
 
     private function getPriceListCurrencies(): array
@@ -213,7 +216,7 @@ class DebugController extends AbstractController
         array $priceMergeDetails,
         array $currentPrices
     ): bool {
-        return $this->get(PriceMergeInfoProvider::class)
+        return $this->container->get(PriceMergeInfoProvider::class)
             ->isActualizationRequired($cpl, $currentActiveCpl, $priceMergeDetails, $currentPrices);
     }
 
@@ -259,7 +262,8 @@ class DebugController extends AbstractController
                 PriceMergeInfoProvider::class,
                 CombinedPriceListActivationRulesProvider::class,
                 ConfigManager::class,
-                SidebarFormProvider::class
+                SidebarFormProvider::class,
+                ManagerRegistry::class
             ]
         );
     }
