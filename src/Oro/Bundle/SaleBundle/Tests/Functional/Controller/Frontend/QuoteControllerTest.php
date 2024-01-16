@@ -730,8 +730,12 @@ class QuoteControllerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
 
-        $response = $this->client->requestGrid(['gridName' => 'frontend-quotes-grid'], [], true);
-        self::assertSame($response->getStatusCode(), 302);
+        $response = $this->client->requestFrontendGrid(
+            ['gridName' => 'frontend-quotes-grid'],
+            [],
+            true,
+        );
+        self::assertSame(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
     public function testActualQuantityNotEqualToOfferedValidation(): void

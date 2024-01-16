@@ -31,7 +31,7 @@ class AjaxEntityTotalsController extends AbstractController
     public function getEntityTotalsAction($entityClassName, $entityId)
     {
         try {
-            $totalRequestHandler = $this->get(RequestHandler::class);
+            $totalRequestHandler = $this->container->get(RequestHandler::class);
             $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId);
         } catch (EntityNotFoundException $e) {
             return new JsonResponse('', Response::HTTP_NOT_FOUND);
@@ -59,7 +59,7 @@ class AjaxEntityTotalsController extends AbstractController
     public function recalculateTotalsAction(Request $request, $entityClassName, $entityId)
     {
         try {
-            $totalRequestHandler = $this->get(RequestHandler::class);
+            $totalRequestHandler = $this->container->get(RequestHandler::class);
             $totals = $totalRequestHandler->recalculateTotals($entityClassName, $entityId, $request);
         } catch (EntityNotFoundException $e) {
             return new JsonResponse('', Response::HTTP_NOT_FOUND);

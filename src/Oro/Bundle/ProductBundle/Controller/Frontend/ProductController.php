@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Layout\AttributeRenderRegistry;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
@@ -39,7 +40,7 @@ class ProductController extends AbstractController
     {
         return [
             'entity_class' => Product::class,
-            'theme_name' => $this->get(DataGridThemeHelper::class)
+            'theme_name' => $this->container->get(DataGridThemeHelper::class)
                 ->getTheme('frontend-product-search-grid'),
             'grid_config' => [
                 'frontend-product-search-grid'
@@ -61,7 +62,7 @@ class ProductController extends AbstractController
     {
         return [
             'entity_class' => Product::class,
-            'theme_name' => $this->get(DataGridThemeHelper::class)
+            'theme_name' => $this->container->get(DataGridThemeHelper::class)
                 ->getTheme('frontend-product-search-grid'),
             'grid_config' => [
                 'frontend-product-search-grid'
@@ -86,7 +87,7 @@ class ProductController extends AbstractController
         $searchString = trim($request->get('search'));
         $searchSessionId = trim($request->get('search_id'));
 
-        $autocompleteData = $this->get(ProductAutocompleteProvider::class)
+        $autocompleteData = $this->container->get(ProductAutocompleteProvider::class)
             ->getAutocompleteData($searchString, $searchSessionId);
 
         return new JsonResponse($autocompleteData);
@@ -100,7 +101,7 @@ class ProductController extends AbstractController
      * @Acl(
      *      id="oro_product_frontend_view",
      *      type="entity",
-     *      class="OroProductBundle:Product",
+     *      class="Oro\Bundle\ProductBundle\Entity\Product",
      *      permission="VIEW",
      *      group_name="commerce"
      * )
@@ -122,7 +123,7 @@ class ProductController extends AbstractController
             && $product->isConfigurable()
             && $this->isSimpleFormAvailable($product)
         ) {
-            $productAvailabilityProvider = $this->get(ProductVariantAvailabilityProvider::class);
+            $productAvailabilityProvider = $this->container->get(ProductVariantAvailabilityProvider::class);
             $simpleProduct = $productAvailabilityProvider->getSimpleProductByVariantFields($product, [], false);
             $data['chosenProductVariant'] = $this->getChosenProductVariantFromRequest($request, $product);
             if ($simpleProduct) {
@@ -135,13 +136,13 @@ class ProductController extends AbstractController
         $parentProduct = null;
         $parentProductId = $request->get('parentProductId');
         if ($parentProductId) {
-            $parentProduct = $this->getDoctrine()->getRepository(Product::class)->find($parentProductId);
+            $parentProduct = $this->container->get('doctrine')->getRepository(Product::class)->find($parentProductId);
         }
 
-        $pageTemplate = $this->get(PageTemplateProvider::class)
+        $pageTemplate = $this->container->get(PageTemplateProvider::class)
             ->getPageTemplate($parentProduct ?? $product, 'oro_product_frontend_product_view');
 
-        $this->get(AttributeRenderRegistry::class)->setAttributeRendered(
+        $this->container->get(AttributeRenderRegistry::class)->setAttributeRendered(
             $product->getAttributeFamily(),
             PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES
         );
@@ -167,6 +168,7 @@ class ProductController extends AbstractController
             ProductAutocompleteProvider::class,
             ProductViewFormAvailabilityProvider::class,
             ConfigManager::class,
+            'doctrine' => ManagerRegistry::class,
         ]);
     }
 
@@ -176,9 +178,9 @@ class ProductController extends AbstractController
         $variantProductId = $request->get('variantProductId');
         if ($variantProductId) {
             /** @var EntityManagerInterface $em */
-            $em = $this->get('doctrine')->getManagerForClass(Product::class);
+            $em = $this->container->get('doctrine')->getManagerForClass(Product::class);
             $variantProductId = (int)$variantProductId;
-            $simpleProductIds = $this->get(ProductVariantAvailabilityProvider::class)
+            $simpleProductIds = $this->container->get(ProductVariantAvailabilityProvider::class)
                 ->getSimpleProductIdsByConfigurable([$product->getId()]);
             foreach ($simpleProductIds as $simpleProductId) {
                 if ($simpleProductId === $variantProductId) {
@@ -193,6 +195,6 @@ class ProductController extends AbstractController
 
     private function isSimpleFormAvailable(Product $product): bool
     {
-        return $this->get(ProductViewFormAvailabilityProvider::class)->isSimpleFormAvailable($product);
+        return $this->container->get(ProductViewFormAvailabilityProvider::class)->isSimpleFormAvailable($product);
     }
 }

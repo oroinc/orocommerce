@@ -352,7 +352,7 @@ services:
     oro_checkout.workflow_state.handler.checkout_error:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler'
         arguments:
-            - '@session.flash_bag'
+            - '@request_stack'
 
     oro_checkout.workflow.manager.b2b_flow_checkout:
         parent: oro_workflow.abstract.workflow_aware_manager

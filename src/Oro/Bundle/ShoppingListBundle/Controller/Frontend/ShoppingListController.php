@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\DataGridBundle\Controller\GridController;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
@@ -32,11 +33,11 @@ class ShoppingListController extends AbstractController
     public function viewAction(ShoppingList $shoppingList = null): array
     {
         if (!$shoppingList) {
-            $shoppingList = $this->get(CurrentShoppingListManager::class)->getCurrent();
+            $shoppingList = $this->container->get(CurrentShoppingListManager::class)->getCurrent();
         }
 
         if ($shoppingList) {
-            $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+            $this->container->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
         }
 
         return [
@@ -73,11 +74,11 @@ class ShoppingListController extends AbstractController
     public function updateAction(ShoppingList $shoppingList = null): array
     {
         if (!$shoppingList) {
-            $shoppingList = $this->get(CurrentShoppingListManager::class)->getCurrent();
+            $shoppingList = $this->container->get(CurrentShoppingListManager::class)->getCurrent();
         }
 
         if ($shoppingList) {
-            $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+            $this->container->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
         }
 
         return [
@@ -139,14 +140,14 @@ class ShoppingListController extends AbstractController
      * @Acl(
      *      id="oro_shopping_list_frontend_create",
      *      type="entity",
-     *      class="OroShoppingListBundle:ShoppingList",
+     *      class="Oro\Bundle\ShoppingListBundle\Entity\ShoppingList",
      *      permission="CREATE",
      *      group_name="commerce"
      * )
      */
     public function createAction(Request $request): array|Response
     {
-        $shoppingList = $this->get(ShoppingListManager::class)->create();
+        $shoppingList = $this->container->get(ShoppingListManager::class)->create();
 
         $response = $this->create($request, $shoppingList);
         if ($response instanceof Response) {
@@ -165,14 +166,15 @@ class ShoppingListController extends AbstractController
     protected function create(Request $request, ShoppingList $shoppingList): array|Response
     {
         $handler = new ShoppingListHandler(
-            $this->get(CurrentShoppingListManager::class),
-            $this->getDoctrine()
+            $this->container->get(CurrentShoppingListManager::class),
+            $this->container->get('doctrine')
         );
 
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $shoppingList,
             $this->createForm(ShoppingListType::class, $shoppingList),
-            $this->get(TranslatorInterface::class)->trans('oro.shoppinglist.controller.shopping_list.saved.message'),
+            $this->container->get(TranslatorInterface::class)
+                ->trans('oro.shoppinglist.controller.shopping_list.saved.message'),
             $request,
             $handler
         );
@@ -187,7 +189,8 @@ class ShoppingListController extends AbstractController
             CurrentShoppingListManager::class,
             ShoppingListManager::class,
             TranslatorInterface::class,
-            UpdateHandlerFacade::class
+            UpdateHandlerFacade::class,
+            'doctrine' => ManagerRegistry::class
         ]);
     }
 }

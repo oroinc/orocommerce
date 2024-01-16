@@ -24,6 +24,6 @@ services:
         public: true
         arguments:
             - 'oro.payment.datagrid.status.success_message'
-            - 'OroPaymentBundle:PaymentMethodsConfigsRule'
+            - 'Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule'
             - '@doctrine.orm.entity_manager'
             - '@translator'

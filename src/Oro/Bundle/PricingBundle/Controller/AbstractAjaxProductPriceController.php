@@ -26,18 +26,18 @@ abstract class AbstractAjaxProductPriceController extends AbstractController
      */
     public function getProductPricesByCustomer(Request $request)
     {
-        $scopeCriteria = $this->get(ProductPriceScopeCriteriaRequestHandler::class)
+        $scopeCriteria = $this->container->get(ProductPriceScopeCriteriaRequestHandler::class)
             ->getPriceScopeCriteria();
 
         $currency = $request->get('currency');
         if (null === $currency) {
-            $currencies = $this->get(CurrencyProviderInterface::class)->getCurrencyList();
+            $currencies = $this->container->get(CurrencyProviderInterface::class)->getCurrencyList();
         } else {
             $currencies = [$currency];
         }
 
         return new JsonResponse(
-            $this->get(ProductPriceProviderInterface::class)
+            $this->container->get(ProductPriceProviderInterface::class)
                 ->getPricesByScopeCriteriaAndProducts(
                     $scopeCriteria,
                     $this->getRequestProducts($request),
@@ -49,7 +49,7 @@ abstract class AbstractAjaxProductPriceController extends AbstractController
     protected function getRequestProducts(Request $request): array
     {
         $productIds = $request->get('product_ids', []);
-        $doctrineHelper = $this->get(DoctrineHelper::class);
+        $doctrineHelper = $this->container->get(DoctrineHelper::class);
         return array_map(
             function ($productId) use ($doctrineHelper) {
                 return $doctrineHelper->getEntityReference(Product::class, $productId);

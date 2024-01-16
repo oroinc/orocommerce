@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\FixedProductShippingBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FixedProductShippingBundle\Migrations\Data\ORM\LoadPriceAttributePriceListData;
@@ -16,7 +15,7 @@ use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\AbstractLoadProductPriceDe
 class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDemoData
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager): void
     {
@@ -49,10 +48,9 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
 
     protected function getProducts(): \Iterator
     {
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
-
-        if (is_array($filePath)) {
+        $filePath = $this->getFileLocator()
+            ->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+        if (\is_array($filePath)) {
             $filePath = current($filePath);
         }
 
@@ -66,9 +64,9 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
         fclose($handler);
     }
 
-    private function getPriceAttribute(EntityManagerInterface $manager): PriceAttributePriceList
+    private function getPriceAttribute(ObjectManager $manager): PriceAttributePriceList
     {
-        return $manager->getRepository('OroPricingBundle:PriceAttributePriceList')
+        return $manager->getRepository(PriceAttributePriceList::class)
             ->findOneBy(['name' => LoadPriceAttributePriceListData::SHIPPING_COST_NAME]);
     }
 }

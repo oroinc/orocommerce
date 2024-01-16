@@ -201,7 +201,7 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     protected function getProductShippingOptionsObjectManager()
     {
-        return $this->registry->getManagerForClass('OroShippingBundle:ProductShippingOptions');
+        return $this->registry->getManagerForClass(ProductShippingOptions::class);
     }
 
     /**
@@ -210,7 +210,7 @@ class ProductFormExtension extends AbstractTypeExtension
     protected function getProductShippingOptionsRepository()
     {
         return $this->getProductShippingOptionsObjectManager()
-            ->getRepository('OroShippingBundle:ProductShippingOptions');
+            ->getRepository(ProductShippingOptions::class);
     }
 
     /**

@@ -39,8 +39,8 @@ class OrderController extends AbstractController
             $offers[] = $itemOffers;
         }
 
-        $this->get(ProductDataStorage::class)->set($data);
-        $this->get(OffersDataStorage::class)->set($offers);
+        $this->container->get(ProductDataStorage::class)->set($data);
+        $this->container->get(OffersDataStorage::class)->set($offers);
 
         return $this->redirectToRoute('oro_order_create', [ProductDataStorage::STORAGE_KEY => true]);
     }

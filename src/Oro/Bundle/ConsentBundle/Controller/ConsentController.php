@@ -41,7 +41,7 @@ class ConsentController extends AbstractController
      * @Acl(
      *      id="oro_consent_create",
      *      type="entity",
-     *      class="OroConsentBundle:Consent",
+     *      class="Oro\Bundle\ConsentBundle\Entity\Consent",
      *      permission="CREATE"
      * )
      * @param Request $request
@@ -50,7 +50,7 @@ class ConsentController extends AbstractController
      */
     public function createAction(Request $request)
     {
-        $createMessage = $this->get(TranslatorInterface::class)->trans('oro.consent.form.messages.created');
+        $createMessage = $this->container->get(TranslatorInterface::class)->trans('oro.consent.form.messages.created');
 
         return $this->update(new Consent(), $request, $createMessage);
     }
@@ -63,7 +63,7 @@ class ConsentController extends AbstractController
      * @Acl(
      *      id="oro_consent_update",
      *      type="entity",
-     *      class="OroConsentBundle:Consent",
+     *      class="Oro\Bundle\ConsentBundle\Entity\Consent",
      *      permission="EDIT"
      * )
      *
@@ -74,7 +74,7 @@ class ConsentController extends AbstractController
      */
     public function updateAction(Consent $consent, Request $request)
     {
-        $updateMessage = $this->get(TranslatorInterface::class)->trans('oro.consent.form.messages.saved');
+        $updateMessage = $this->container->get(TranslatorInterface::class)->trans('oro.consent.form.messages.saved');
 
         return $this->update($consent, $request, $updateMessage);
     }
@@ -88,7 +88,7 @@ class ConsentController extends AbstractController
      */
     protected function update(Consent $consent, Request $request, $message = '')
     {
-        $updateHandler = $this->get(UpdateHandlerFacade::class);
+        $updateHandler = $this->container->get(UpdateHandlerFacade::class);
 
         return $updateHandler->update(
             $consent,
@@ -105,7 +105,7 @@ class ConsentController extends AbstractController
      * @Acl(
      *      id="oro_consent_view",
      *      type="entity",
-     *      class="OroConsentBundle:Consent",
+     *      class="Oro\Bundle\ConsentBundle\Entity\Consent",
      *      permission="VIEW"
      * )
      *

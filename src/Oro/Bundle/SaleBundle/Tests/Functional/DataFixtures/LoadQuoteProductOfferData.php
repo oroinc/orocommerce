@@ -2,22 +2,19 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
-class LoadQuoteProductOfferData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
+class LoadQuoteProductOfferData extends AbstractFixture implements DependentFixtureInterface
 {
-    const QUOTE_PRODUCT_OFFER_1 = 'quote.product.offer.1';
-    const QUOTE_PRODUCT_OFFER_2 = 'quote.product.offer.2';
+    public const QUOTE_PRODUCT_OFFER_1 = 'quote.product.offer.1';
+    public const QUOTE_PRODUCT_OFFER_2 = 'quote.product.offer.2';
 
-    /**
-     * @var array
-     */
-    public static $items = [
+    private static array $items = [
         self::QUOTE_PRODUCT_OFFER_1 => [
             'allowIncrements' => true,
             'amount' => 100,
@@ -37,19 +34,17 @@ class LoadQuoteProductOfferData extends AbstractFixture implements FixtureInterf
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return [
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
-        ];
+        return [LoadQuoteData::class];
     }
 
     /**
-     * Load data fixtures with the passed EntityManager
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         foreach (self::$items as $key => $item) {
             $offer = new QuoteProductOffer();

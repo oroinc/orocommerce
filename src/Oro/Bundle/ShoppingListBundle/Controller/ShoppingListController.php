@@ -21,7 +21,7 @@ class ShoppingListController extends AbstractController
      * @Acl(
      *      id="oro_shopping_list_view",
      *      type="entity",
-     *      class="OroShoppingListBundle:ShoppingList",
+     *      class="Oro\Bundle\ShoppingListBundle\Entity\ShoppingList",
      *      permission="VIEW"
      * )
      *
@@ -33,7 +33,8 @@ class ShoppingListController extends AbstractController
     {
         return [
             'entity' => $shoppingList,
-            'totals' => $this->get(TotalProcessorProvider::class)->getTotalWithSubtotalsAsArray($shoppingList)
+            'totals' => $this->container->get(TotalProcessorProvider::class)
+                ->getTotalWithSubtotalsAsArray($shoppingList)
         ];
     }
 

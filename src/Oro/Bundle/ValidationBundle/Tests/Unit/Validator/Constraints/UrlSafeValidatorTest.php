@@ -41,6 +41,7 @@ class UrlSafeValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation($constraint->message)
             ->setParameter('{{ value }}', '"' . $value . '"')
+            ->setParameter('{{ pattern }}', $constraint->pattern)
             ->setCode(UrlSafe::REGEX_FAILED_ERROR)
             ->assertRaised();
     }

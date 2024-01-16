@@ -4,6 +4,7 @@ namespace Oro\Bundle\UPSBundle\EventListener;
 
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeRemovalEventDispatcherInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
@@ -46,9 +47,9 @@ class UPSTransportEntityListener
         $services = $transport->getApplicableShippingServices();
         $deletedServices = $services->getDeleteDiff();
         if (0 !== count($deletedServices)) {
-            $entityManager = $args->getEntityManager();
+            $entityManager = $args->getObjectManager();
             $channel = $entityManager
-                ->getRepository('OroIntegrationBundle:Channel')
+                ->getRepository(Channel::class)
                 ->findOneBy(['type' => ChannelType::TYPE, 'transport' => $transport->getId()]);
 
             if (null !== $channel) {

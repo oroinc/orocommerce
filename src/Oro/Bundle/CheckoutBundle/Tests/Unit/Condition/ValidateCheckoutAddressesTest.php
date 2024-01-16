@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -110,7 +111,7 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
         $this->condition->initialize(['checkout' =>  $checkout]);
         $this->validator->expects($this->once())
             ->method('validate')
-            ->willReturn(['error']);
+            ->willReturn(ConstraintViolationList::createFromMessage('error'));
         $this->assertEquals(false, $this->condition->evaluate([]));
     }
 
@@ -123,7 +124,7 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
         $this->condition->initialize(['checkout' =>  $checkout]);
         $this->validator->expects($this->once())
             ->method('validate')
-            ->willReturn([]);
+            ->willReturn(new ConstraintViolationList());
         $this->assertEquals(true, $this->condition->evaluate([]));
     }
 
@@ -136,7 +137,7 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
         $this->condition->initialize(['checkout' =>  $checkout]);
         $this->validator->expects($this->once())
             ->method('validate')
-            ->willReturn([]);
+            ->willReturn(new ConstraintViolationList());
         $this->assertEquals(false, $this->condition->evaluate([]));
     }
 
@@ -151,7 +152,7 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
         $this->condition->initialize(['checkout' =>  $checkout]);
         $this->validator->expects($this->exactly(2))
             ->method('validate')
-            ->willReturn(['error']);
+            ->willReturn(ConstraintViolationList::createFromMessage('error'));
         $this->assertEquals(false, $this->condition->evaluate([]));
     }
 
@@ -165,7 +166,10 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
         $this->condition->initialize(['checkout' =>  $checkout]);
         $this->validator->expects($this->exactly(2))
             ->method('validate')
-            ->willReturnOnConsecutiveCalls([], ['error']);
+            ->willReturnOnConsecutiveCalls(
+                new ConstraintViolationList(),
+                ConstraintViolationList::createFromMessage('error')
+            );
         $this->assertEquals(false, $this->condition->evaluate([]));
     }
 
@@ -179,7 +183,7 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
         $this->condition->initialize(['checkout' =>  $checkout]);
         $this->validator->expects($this->exactly(2))
             ->method('validate')
-            ->willReturnOnConsecutiveCalls([], []);
+            ->willReturn(new ConstraintViolationList());
         $this->assertEquals(true, $this->condition->evaluate([]));
     }
 }

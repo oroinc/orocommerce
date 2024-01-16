@@ -35,13 +35,13 @@ class AjaxProductController extends AbstractController
     public function productNamesBySkusAction(Request $request)
     {
         $names = [];
-        $skus  = (array)$request->request->get('skus');
+        $skus = $request->request->all('skus') ? $request->request->all('skus') : [];
 
         if (0 === count($skus)) {
             return new JsonResponse($names);
         }
 
-        $searchQuery = $this->get(ProductRepository::class)->getFilterSkuQuery($skus);
+        $searchQuery = $this->container->get(ProductRepository::class)->getFilterSkuQuery($skus);
 
         // Configurable products require additional option selection that is not implemented yet.
         // Thus we need to hide configurable products.
@@ -74,7 +74,7 @@ class AjaxProductController extends AbstractController
      */
     public function productImagesByIdAction(Request $request, int $id)
     {
-        $productImagesURLsProvider = $this->get(ProductImagesURLsProvider::class);
+        $productImagesURLsProvider = $this->container->get(ProductImagesURLsProvider::class);
         $filtersNames = $this->getFiltersNames($request);
         $images = $productImagesURLsProvider->getFilteredImagesByProductId($id, $filtersNames);
 
@@ -94,7 +94,7 @@ class AjaxProductController extends AbstractController
      */
     public function setProductFiltersSidebarStateAction(Request $request)
     {
-        $this->get(UserProductFiltersSidebarStateManager::class)
+        $this->container->get(UserProductFiltersSidebarStateManager::class)
             ->setCurrentProductFiltersSidebarState($request->get('sidebarExpanded', false));
 
         return new JsonResponse();

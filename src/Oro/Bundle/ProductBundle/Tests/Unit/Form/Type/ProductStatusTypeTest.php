@@ -51,20 +51,23 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
     public function testChoices()
     {
         $form = $this->factory->create(ProductStatusType::class);
-        $availableProductStatuses = $this->productStatusProvider->getAvailableProductStatuses();
-
-        $choices = [];
-        foreach ($availableProductStatuses as $label => $value) {
-            $choices[] = new ChoiceView($value, $value, $label);
-        }
 
         $this->assertEquals(
-            $choices,
-            $form->createView()->vars['choices']
+            [new ChoiceView(Product::STATUS_DISABLED, Product::STATUS_DISABLED, 'Disabled')],
+            $form->createView()->vars['preferred_choices']
         );
 
         $this->assertEquals(
-            Product::STATUS_DISABLED,
+            [1 => new ChoiceView(Product::STATUS_ENABLED, Product::STATUS_ENABLED, 'Enabled')],
+            $form->createView()->vars['choices']
+        );
+
+        $this->assertFalse(
+            $form->getConfig()->getOptions()['duplicate_preferred_choices']
+        );
+
+        $this->assertEquals(
+            [Product::STATUS_DISABLED],
             $form->getConfig()->getOptions()['preferred_choices']
         );
     }

@@ -35,7 +35,7 @@ class WebCatalogSelectTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with($this->isType('array'))
             ->willReturnCallback(
-                function (array $options) {
+                function (array $options) use ($resolver) {
                     $this->assertArrayHasKey('autocomplete_alias', $options);
                     $this->assertArrayHasKey('create_form_route', $options);
                     $this->assertArrayHasKey('configs', $options);
@@ -47,6 +47,8 @@ class WebCatalogSelectTypeTest extends FormIntegrationTestCase
                         ],
                         $options['configs']
                     );
+
+                    return $resolver;
                 }
             );
 

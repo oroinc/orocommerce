@@ -203,7 +203,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         $this->assertFalse($form->isValid());
         $this->assertTrue($form->isSynchronized());
         $error = $errors->current();
-        $this->assertEquals('This value is not valid.', $error->getMessage());
+        $this->assertEquals('The selected choice is invalid.', $error->getMessage());
         $this->assertEquals(['{{ value }}' => 'CAD'], $error->getMessageParameters());
     }
 

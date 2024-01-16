@@ -115,7 +115,7 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
         $lineItems = $this->matrixGridOrderManager->convertMatrixIntoLineItems(
             $form->getData(),
             $product,
-            $request->request->get('matrix_collection', [])
+            $request->request->all('matrix_collection')
         );
 
         foreach ($lineItems as $lineItem) {

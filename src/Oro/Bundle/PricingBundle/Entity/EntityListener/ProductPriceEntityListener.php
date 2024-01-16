@@ -23,7 +23,7 @@ class ProductPriceEntityListener extends BaseProductPriceEntityListener
     {
         /** @var ProductPrice  $price */
         $args = $event->getEventArgs();
-        $price = $args->getEntity();
+        $price = $args->getObject();
 
         if ($args->getEntityChangeSet()) {
             $this->preUpdate($price, $args);

@@ -50,7 +50,6 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
 
         return new UsernamePasswordOrganizationToken(
             $user,
-            false,
             'k',
             $user->getOrganization(),
             $user->getUserRoles()

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Controller\Frontend;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
@@ -32,7 +33,7 @@ class QuoteController extends AbstractController
      * @Acl(
      *      id="oro_sale_quote_frontend_view",
      *      type="entity",
-     *      class="OroSaleBundle:Quote",
+     *      class="Oro\Bundle\SaleBundle\Entity\Quote",
      *      permission="VIEW",
      *      group_name="commerce"
      * )
@@ -46,7 +47,7 @@ class QuoteController extends AbstractController
         if (!$quote->isAcceptable()) {
             $this->addFlash(
                 'notice',
-                $this->get(TranslatorInterface::class)->trans('oro.sale.controller.quote.expired.message')
+                $this->container->get(TranslatorInterface::class)->trans('oro.sale.controller.quote.expired.message')
             );
         }
 
@@ -75,7 +76,7 @@ class QuoteController extends AbstractController
      */
     public function guestAccessAction(Quote $quote): array
     {
-        $accessProvider = $this->get(GuestQuoteAccessProviderInterface::class);
+        $accessProvider = $this->container->get(GuestQuoteAccessProviderInterface::class);
         if (!$accessProvider->isGranted($quote)) {
             throw $this->createNotFoundException();
         }
@@ -83,7 +84,7 @@ class QuoteController extends AbstractController
         if (!$quote->isAcceptable()) {
             $this->addFlash(
                 'notice',
-                $this->get(TranslatorInterface::class)->trans('oro.sale.controller.quote.expired.message')
+                $this->container->get(TranslatorInterface::class)->trans('oro.sale.controller.quote.expired.message')
             );
         }
 
@@ -98,7 +99,7 @@ class QuoteController extends AbstractController
      * @Acl(
      *      id="oro_sale_quote_frontend_index",
      *      type="entity",
-     *      class="OroSaleBundle:Quote",
+     *      class="Oro\Bundle\SaleBundle\Entity\Quote",
      *      permission="VIEW",
      *      group_name="commerce"
      * )
@@ -118,7 +119,7 @@ class QuoteController extends AbstractController
      * @Acl(
      *      id="oro_sale_quote_demand_frontend_view",
      *      type="entity",
-     *      class="OroSaleBundle:QuoteDemand",
+     *      class="Oro\Bundle\SaleBundle\Entity\QuoteDemand",
      *      permission="VIEW",
      *      group_name="commerce"
      * )
@@ -132,7 +133,7 @@ class QuoteController extends AbstractController
         $quote = $quoteDemand->getQuote();
 
         if (!$quote->isAcceptable()) {
-            $this->get(FlashMessageHelper::class)
+            $this->container->get(FlashMessageHelper::class)
                 ->addFlashMessage(
                     'info',
                     'oro.frontend.sale.message.quote.not_available',
@@ -146,12 +147,12 @@ class QuoteController extends AbstractController
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $actionGroup = $this->get(ActionGroupRegistry::class)
+                $actionGroup = $this->container->get(ActionGroupRegistry::class)
                     ->findByName('oro_sale_frontend_quote_accept_and_submit_to_order');
                 if ($actionGroup) {
                     $actionData = $actionGroup->execute(new ActionData(['data' => $quoteDemand]));
 
-                    $this->getDoctrine()->getManagerForClass(QuoteDemand::class)->flush();
+                    $this->container->get('doctrine')->getManagerForClass(QuoteDemand::class)->flush();
 
                     $redirectUrl = $actionData->getRedirectUrl();
                     if ($redirectUrl) {
@@ -204,7 +205,7 @@ class QuoteController extends AbstractController
      */
     protected function getSubtotalsCalculator()
     {
-        return $this->get(QuoteDemandSubtotalsCalculatorInterface::class);
+        return $this->container->get(QuoteDemandSubtotalsCalculatorInterface::class);
     }
 
     /**
@@ -219,7 +220,8 @@ class QuoteController extends AbstractController
                 ActionGroupRegistry::class,
                 GuestQuoteAccessProviderInterface::class,
                 FlashMessageHelper::class,
-                QuoteDemandSubtotalsCalculatorInterface::class
+                QuoteDemandSubtotalsCalculatorInterface::class,
+                'doctrine' => ManagerRegistry::class
             ]
         );
     }

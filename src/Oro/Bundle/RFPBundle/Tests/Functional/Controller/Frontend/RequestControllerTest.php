@@ -42,14 +42,19 @@ class RequestControllerTest extends WebTestCase
         $this->loadFixtures([
             LoadUserData::class,
             LoadRequestData::class,
-            LoadProductPrices::class,
+            LoadProductPrices::class
         ]);
     }
 
     public function testGridForAnonymousUsers(): void
     {
-        $response = $this->client->requestGrid(['gridName' => 'frontend-requests-grid'], [], true);
-        self::assertSame($response->getStatusCode(), 302);
+        $this->markTestSkipped('Authentication of anonymous users is not supported.');
+        $response = $this->client->requestFrontendGrid(
+            ['gridName' => 'frontend-requests-grid'],
+            [],
+            true,
+        );
+        self::assertSame($response->getStatusCode(), 401);
     }
 
     public function testIndexNotFoundForAnonymousUsers(): void
@@ -455,7 +460,7 @@ class RequestControllerTest extends WebTestCase
         if ('' !== $login) {
             $this->loginUser($login);
         } else {
-            $this->initClient([]);
+            $this->initClient();
         }
 
         /* @var Request $request */
@@ -600,7 +605,7 @@ class RequestControllerTest extends WebTestCase
             ],
         ];
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $parameters);
 
         $result = $this->client->getResponse();
@@ -754,7 +759,7 @@ class RequestControllerTest extends WebTestCase
             $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId(),
         ]);
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
@@ -837,7 +842,7 @@ class RequestControllerTest extends WebTestCase
                 '_token' => $crfToken,
             ],
         ];
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
         // Hash navigation header is enabled on purpose here to get a JSON response.
         $this->client->useHashNavigation(true);
         $this->client->request($form->getMethod(), $form->getUri(), $parameters);

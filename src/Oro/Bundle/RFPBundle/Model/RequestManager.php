@@ -14,6 +14,9 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
+/**
+ * Simplifies request creation and filling with data.
+ */
 class RequestManager
 {
     /** @var TokenAccessorInterface */
@@ -106,7 +109,7 @@ class RequestManager
     protected function getProducts(array $ids)
     {
         $products = $this->doctrineHelper
-            ->getEntityRepositoryForClass('OroProductBundle:Product')
+            ->getEntityRepositoryForClass(Product::class)
             ->findBy(['id' => $ids]);
         return array_reduce($products, function ($result, Product $product) {
             $result[$product->getId()] = $product;
@@ -122,7 +125,7 @@ class RequestManager
     protected function getUnits(array $productIds, array $codes)
     {
         /** @var ProductUnitRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepositoryForClass('OroProductBundle:ProductUnit');
+        $repository = $this->doctrineHelper->getEntityRepositoryForClass(ProductUnit::class);
         return $repository->getProductsUnitsByCodes($productIds, $codes);
     }
 }

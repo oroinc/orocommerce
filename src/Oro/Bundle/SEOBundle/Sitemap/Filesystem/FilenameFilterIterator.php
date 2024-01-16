@@ -13,7 +13,7 @@ class FilenameFilterIterator extends MultiplePcreFilterIterator
     /**
      * {@inheritDoc}
      */
-    public function accept()
+    public function accept(): bool
     {
         return $this->isAccepted(pathinfo($this->current(), PATHINFO_BASENAME));
     }
@@ -21,7 +21,7 @@ class FilenameFilterIterator extends MultiplePcreFilterIterator
     /**
      * {@inheritDoc}
      */
-    protected function toRegex(string $str)
+    protected function toRegex(string $str): string
     {
         return $this->isRegex($str) ? $str : Glob::toRegex($str);
     }

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Migrations\Data\ORM\AbstractEmailFixture;
@@ -12,20 +11,20 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  * Added html tag around twig tags
  * Allows to edit text from WYSIWYG editor and does not break the twig template
  */
-class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements DependentFixtureInterface
+class ConvertOrderConfirmationEmail extends AbstractEmailFixture
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [UpdateOrderConfirmationEmailTemplate::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getEmailsDir()
+    public function getEmailsDir(): string
     {
         return $this->container
             ->get('kernel')
@@ -33,9 +32,9 @@ class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements Depe
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function loadTemplate(ObjectManager $manager, $fileName, array $file)
+    protected function loadTemplate(ObjectManager $manager, $fileName, array $file): void
     {
         if ($fileName !== 'order_confirmation') {
             return;
@@ -54,17 +53,17 @@ class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements Depe
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
-    protected function updateExistingTemplate(EmailTemplate $emailTemplate, array $template)
+    protected function updateExistingTemplate(EmailTemplate $emailTemplate, array $template): void
     {
         $emailTemplate->setContent($template['content']);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function findExistingTemplate(ObjectManager $manager, array $template)
+    protected function findExistingTemplate(ObjectManager $manager, array $template): ?EmailTemplate
     {
         if (!isset($template['params']['name'])
             || !isset($template['content'])
@@ -72,19 +71,14 @@ class ConvertOrderConfirmationEmail extends AbstractEmailFixture implements Depe
             return null;
         }
 
-        return $manager->getRepository('OroEmailBundle:EmailTemplate')->findOneBy([
+        return $manager->getRepository(EmailTemplate::class)->findOneBy([
             'name' => $template['params']['name'],
             'entityName' => Order::class,
             'content' => $template['content']
         ]);
     }
 
-    /**
-     * Return path to old email templates
-     *
-     * @return string
-     */
-    private function getPreviousEmailsDir()
+    private function getPreviousEmailsDir(): string
     {
         return $this->container
             ->get('kernel')

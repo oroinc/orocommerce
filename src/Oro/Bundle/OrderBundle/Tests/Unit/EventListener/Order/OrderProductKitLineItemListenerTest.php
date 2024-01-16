@@ -34,7 +34,7 @@ class OrderProductKitLineItemListenerTest extends TestCase
         $form
             ->expects(self::once())
             ->method('get')
-            ->willReturn([]);
+            ->willReturn($form);
         $order = new Order();
         $event = new OrderEvent($form, $order);
 
@@ -52,7 +52,7 @@ class OrderProductKitLineItemListenerTest extends TestCase
         $form
             ->expects(self::once())
             ->method('get')
-            ->willReturn([$lineItemForm]);
+            ->willReturn($lineItemForm);
         $order = new Order();
         $event = new OrderEvent($form, $order);
 
@@ -72,9 +72,12 @@ class OrderProductKitLineItemListenerTest extends TestCase
             ->expects(self::once())
             ->method('getData')
             ->willReturn($lineItem);
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('get')
+            ->with('lineItems')
+            ->willReturn($lineItemForm);
+        $lineItemForm->expects(self::once())
+            ->method('all')
             ->willReturn([$lineItemForm]);
         $order = new Order();
         $event = new OrderEvent($form, $order);
@@ -96,9 +99,12 @@ class OrderProductKitLineItemListenerTest extends TestCase
             ->expects(self::once())
             ->method('getData')
             ->willReturn($lineItem);
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('get')
+            ->with('lineItems')
+            ->willReturn($lineItemForm);
+        $lineItemForm->expects(self::once())
+            ->method('all')
             ->willReturn([$lineItemForm]);
         $order = new Order();
         $event = new OrderEvent($form, $order);
@@ -114,9 +120,12 @@ class OrderProductKitLineItemListenerTest extends TestCase
     {
         $form = $this->createMock(FormInterface::class);
         $lineItemForm = $this->createMock(FormInterface::class);
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('get')
+            ->with('lineItems')
+            ->willReturn($lineItemForm);
+        $lineItemForm->expects(self::once())
+            ->method('all')
             ->willReturn([$lineItemForm]);
         $order = new Order();
         $event = new OrderEvent($form, $order);

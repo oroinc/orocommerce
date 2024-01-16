@@ -36,7 +36,7 @@ class CustomerTaxCodeController extends AbstractController
      * @Acl(
      *      id="oro_tax_customer_tax_code_view",
      *      type="entity",
-     *      class="OroTaxBundle:CustomerTaxCode",
+     *      class="Oro\Bundle\TaxBundle\Entity\CustomerTaxCode",
      *      permission="VIEW"
      * )
      */
@@ -53,7 +53,7 @@ class CustomerTaxCodeController extends AbstractController
      * @Acl(
      *      id="oro_tax_customer_tax_code_create",
      *      type="entity",
-     *      class="OroTaxBundle:CustomerTaxCode",
+     *      class="Oro\Bundle\TaxBundle\Entity\CustomerTaxCode",
      *      permission="CREATE"
      * )
      */
@@ -68,7 +68,7 @@ class CustomerTaxCodeController extends AbstractController
      * @Acl(
      *      id="oro_tax_customer_tax_code_update",
      *      type="entity",
-     *      class="OroTaxBundle:CustomerTaxCode",
+     *      class="Oro\Bundle\TaxBundle\Entity\CustomerTaxCode",
      *      permission="EDIT"
      * )
      */
@@ -79,10 +79,11 @@ class CustomerTaxCodeController extends AbstractController
 
     protected function update(CustomerTaxCode $customerTaxCode): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $customerTaxCode,
             $this->createForm(CustomerTaxCodeType::class, $customerTaxCode),
-            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.customer_tax_code.saved.message')
+            $this->container->get(TranslatorInterface::class)
+                ->trans('oro.tax.controller.customer_tax_code.saved.message')
         );
     }
 

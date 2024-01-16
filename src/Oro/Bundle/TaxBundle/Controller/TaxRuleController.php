@@ -36,7 +36,7 @@ class TaxRuleController extends AbstractController
      * @Acl(
      *      id="oro_tax_rule_view",
      *      type="entity",
-     *      class="OroTaxBundle:TaxRule",
+     *      class="Oro\Bundle\TaxBundle\Entity\TaxRule",
      *      permission="VIEW"
      * )
      */
@@ -53,7 +53,7 @@ class TaxRuleController extends AbstractController
      * @Acl(
      *      id="oro_tax_rule_create",
      *      type="entity",
-     *      class="OroTaxBundle:TaxRule",
+     *      class="Oro\Bundle\TaxBundle\Entity\TaxRule",
      *      permission="CREATE"
      * )
      */
@@ -68,7 +68,7 @@ class TaxRuleController extends AbstractController
      * @Acl(
      *      id="oro_tax_rule_update",
      *      type="entity",
-     *      class="OroTaxBundle:TaxRule",
+     *      class="Oro\Bundle\TaxBundle\Entity\TaxRule",
      *      permission="EDIT"
      * )
      */
@@ -79,10 +79,10 @@ class TaxRuleController extends AbstractController
 
     protected function update(TaxRule $taxRule): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $taxRule,
             $this->createForm(TaxRuleType::class, $taxRule),
-            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.taxrule.saved.message')
+            $this->container->get(TranslatorInterface::class)->trans('oro.tax.controller.taxrule.saved.message')
         );
     }
 

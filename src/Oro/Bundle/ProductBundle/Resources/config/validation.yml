@@ -23,7 +23,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Length:
                 min: 3
                 max: 255
-                allowEmptyString: false
             - Oro\Bundle\ProductBundle\Validator\Constraints\SkuRegex: ~
         unitPrecisions:
             - Count:

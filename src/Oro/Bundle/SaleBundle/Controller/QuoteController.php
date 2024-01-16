@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
@@ -37,7 +38,7 @@ class QuoteController extends AbstractController
      * @Acl(
      *      id="oro_sale_quote_view",
      *      type="entity",
-     *      class="OroSaleBundle:Quote",
+     *      class="Oro\Bundle\SaleBundle\Entity\Quote",
      *      permission="VIEW"
      * )
      * @ParamConverter("quote", options={"repository_method" = "getQuote"})
@@ -73,7 +74,7 @@ class QuoteController extends AbstractController
      *     id="oro_sale_quote_create",
      *     type="entity",
      *     permission="CREATE",
-     *     class="OroSaleBundle:Quote"
+     *     class="Oro\Bundle\SaleBundle\Entity\Quote"
      * )
      *
      * @param Request $request
@@ -106,7 +107,9 @@ class QuoteController extends AbstractController
         $quote = new Quote();
         $quote->setCustomer($customer);
 
-        $saveAndReturnActionFormTemplateDataProvider = $this->get(SaveAndReturnActionFormTemplateDataProvider::class);
+        $saveAndReturnActionFormTemplateDataProvider = $this->container->get(
+            SaveAndReturnActionFormTemplateDataProvider::class
+        );
         $saveAndReturnActionFormTemplateDataProvider
             ->setSaveFormActionRoute(
                 'oro_sale_quote_create_for_customer',
@@ -148,7 +151,9 @@ class QuoteController extends AbstractController
         $quote->setCustomerUser($customerUser);
         $quote->setCustomer($customerUser->getCustomer());
 
-        $saveAndReturnActionFormTemplateDataProvider = $this->get(SaveAndReturnActionFormTemplateDataProvider::class);
+        $saveAndReturnActionFormTemplateDataProvider = $this->container->get(
+            SaveAndReturnActionFormTemplateDataProvider::class
+        );
         $saveAndReturnActionFormTemplateDataProvider
             ->setSaveFormActionRoute(
                 'oro_sale_quote_create_for_customer_user',
@@ -174,7 +179,7 @@ class QuoteController extends AbstractController
      *     id="oro_sale_quote_update",
      *     type="entity",
      *     permission="EDIT",
-     *     class="OroSaleBundle:Quote"
+     *     class="Oro\Bundle\SaleBundle\Entity\Quote"
      * )
      * @ParamConverter("quote", options={"repository_method" = "getQuote"})
      *
@@ -213,14 +218,14 @@ class QuoteController extends AbstractController
         Request $request,
         FormTemplateDataProviderInterface|null $resultProvider = null
     ) {
-        $formTemplateDataProviderComposite = $this->get(FormTemplateDataProviderComposite::class)
+        $formTemplateDataProviderComposite = $this->container->get(FormTemplateDataProviderComposite::class)
             ->addFormTemplateDataProviders('quote_update')
             ->addFormTemplateDataProviders($resultProvider);
 
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $quote,
             QuoteType::class,
-            $this->get(TranslatorInterface::class)->trans('oro.sale.controller.quote.saved.message'),
+            $this->container->get(TranslatorInterface::class)->trans('oro.sale.controller.quote.saved.message'),
             $request,
             null,
             $formTemplateDataProviderComposite
@@ -249,10 +254,10 @@ class QuoteController extends AbstractController
         $this->createForm(QuoteType::class, $quote);
 
         if (!$quote->getWebsite()) {
-            $quote->setWebsite($this->get(WebsiteManager::class)->getDefaultWebsite());
+            $quote->setWebsite($this->container->get(WebsiteManager::class)->getDefaultWebsite());
         }
 
-        $em = $this->get('doctrine')->getManagerForClass(Quote::class);
+        $em = $this->container->get(ManagerRegistry::class)->getManagerForClass(Quote::class);
 
         $em->persist($quote);
         $em->flush();
@@ -275,7 +280,7 @@ class QuoteController extends AbstractController
         $updateResponse = $this->update($quote, $request);
 
         /** @var ReturnRouteDataStorage $redirectStorage */
-        $redirectStorage = $this->get(ReturnRouteDataStorage::class);
+        $redirectStorage = $this->container->get(ReturnRouteDataStorage::class);
         $routeToRedirectBack = $redirectStorage->get();
 
         if ($this->isRequestHandledSuccessfully($updateResponse)) {
@@ -318,6 +323,7 @@ class QuoteController extends AbstractController
                 ReturnRouteDataStorage::class,
                 SaveAndReturnActionFormTemplateDataProvider::class,
                 FormTemplateDataProviderComposite::class,
+                ManagerRegistry::class,
             ]
         );
     }

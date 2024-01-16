@@ -19,6 +19,7 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
 
         parent::setUp();
 
+        $this->initClient();
         $this->configScopeName = 'website';
         $this->configScopeIdentifier = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
         $this->platform = $this->getContainer()->get('doctrine')->getManager()->getConnection()->getDatabasePlatform();

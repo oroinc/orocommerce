@@ -24,7 +24,7 @@ class ProductController extends AbstractController
      */
     public function sidebarAction()
     {
-        $catalogRequestHandler = $this->get(RequestProductHandler::class);
+        $catalogRequestHandler = $this->container->get(RequestProductHandler::class);
 
         $includeSubcategoriesForm = $this->createForm(
             CheckboxType::class,
@@ -46,7 +46,7 @@ class ProductController extends AbstractController
             ]
         );
 
-        $masterCatalogRoot = $this->get(MasterCatalogRootProvider::class)
+        $masterCatalogRoot = $this->container->get(MasterCatalogRootProvider::class)
             ->getMasterCatalogRoot();
 
         return [

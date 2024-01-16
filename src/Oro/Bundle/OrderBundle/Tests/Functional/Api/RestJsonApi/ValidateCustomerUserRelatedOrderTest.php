@@ -38,7 +38,7 @@ class ValidateCustomerUserRelatedOrderTest extends RestJsonApiTestCase
 
         self::getContainer()->get('oro_user.manager')->updateUser($user);
 
-        $token = new UsernamePasswordOrganizationToken($user, $user->getUsername(), 'main', $user->getOrganization());
+        $token = new UsernamePasswordOrganizationToken($user, 'main', $user->getOrganization());
         self::getContainer()->get('security.token_storage')->setToken($token);
 
         $this->updateRolePermissions(

@@ -35,7 +35,7 @@ class CallbackController extends AbstractController
         $event = new CallbackReturnEvent($request->request->all() + $request->query->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get(CallbackHandler::class)->handle($event);
+        return $this->container->get(CallbackHandler::class)->handle($event);
     }
 
     /**
@@ -55,7 +55,7 @@ class CallbackController extends AbstractController
         $event = new CallbackErrorEvent($request->request->all() + $request->query->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get(CallbackHandler::class)->handle($event);
+        return $this->container->get(CallbackHandler::class)->handle($event);
     }
 
     /**
@@ -78,7 +78,7 @@ class CallbackController extends AbstractController
         $event = new CallbackNotifyEvent($request->request->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get(CallbackHandler::class)->handle($event);
+        return $this->container->get(CallbackHandler::class)->handle($event);
     }
 
     /**

@@ -27,7 +27,7 @@ class BrandController extends AbstractController
      * @Acl(
      *      id="oro_product_brand_view",
      *      type="entity",
-     *      class="OroProductBundle:Brand",
+     *      class="Oro\Bundle\ProductBundle\Entity\Brand",
      *      permission="VIEW"
      * )
      * @return array
@@ -45,7 +45,7 @@ class BrandController extends AbstractController
      * @Acl(
      *      id="oro_product_brand_create",
      *      type="entity",
-     *      class="OroProductBundle:Brand",
+     *      class="Oro\Bundle\ProductBundle\Entity\Brand",
      *      permission="CREATE"
      * )
      * @param Request $request
@@ -62,7 +62,7 @@ class BrandController extends AbstractController
      * @Acl(
      *      id="oro_product_brand_update",
      *      type="entity",
-     *      class="OroProductBundle:Brand",
+     *      class="Oro\Bundle\ProductBundle\Entity\Brand",
      *      permission="EDIT"
      * )
      * @param Brand   $brand
@@ -81,10 +81,10 @@ class BrandController extends AbstractController
      */
     protected function update(Brand $brand, Request $request)
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $brand,
             $this->createForm(BrandType::class, $brand),
-            $this->get(TranslatorInterface::class)->trans('oro.product.brand.form.update.messages.saved'),
+            $this->container->get(TranslatorInterface::class)->trans('oro.product.brand.form.update.messages.saved'),
             $request,
             null
         );
@@ -100,7 +100,7 @@ class BrandController extends AbstractController
      */
     public function getChangedSlugsAction(Brand $brand)
     {
-        return new JsonResponse($this->get(ChangedSlugsHelper::class)
+        return new JsonResponse($this->container->get(ChangedSlugsHelper::class)
             ->getChangedSlugsData($brand, BrandType::class));
     }
 

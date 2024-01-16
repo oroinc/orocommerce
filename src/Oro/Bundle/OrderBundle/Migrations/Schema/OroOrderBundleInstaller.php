@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Migrations\Schema;
 
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
@@ -10,8 +11,11 @@ use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrai
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\MigrationBundle\Migration\SqlMigrationQuery;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Migrations\Data\ORM\LoadOrderInternalStatuses;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
@@ -19,11 +23,13 @@ use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTr
 
 class OroOrderBundleInstaller implements
     Installation,
+    DatabasePlatformAwareInterface,
     AttachmentExtensionAwareInterface,
     ActivityExtensionAwareInterface,
     PaymentTermExtensionAwareInterface,
     ExtendExtensionAwareInterface
 {
+    use DatabasePlatformAwareTrait;
     use AttachmentExtensionAwareTrait;
     use ActivityExtensionAwareTrait;
     use PaymentTermExtensionAwareTrait;
@@ -34,7 +40,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_17';
+        return 'v1_18';
     }
 
     /**
@@ -43,7 +49,7 @@ class OroOrderBundleInstaller implements
     public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
-        $this->createOroOrderTable($schema);
+        $this->createOroOrderTable($schema, $queries);
         $this->createOroOrderAddressTable($schema);
         $this->createOroOrderLineItemTable($schema);
         $this->createOroOrderProductKitItemLineItemTable($schema);
@@ -66,7 +72,7 @@ class OroOrderBundleInstaller implements
     /**
      * Create oro_order table
      */
-    private function createOroOrderTable(Schema $schema): void
+    private function createOroOrderTable(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->createTable('oro_order');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -149,6 +155,15 @@ class OroOrderBundleInstaller implements
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', $table->getName());
         $this->attachmentExtension->addAttachmentAssociation($schema, $table->getName());
         $this->activityExtension->addActivityAssociation($schema, 'oro_email', $table->getName());
+
+        if ($this->platform instanceof PostgreSqlPlatform) {
+            $queries->addPostQuery(new SqlMigrationQuery(
+                'CREATE INDEX idx_order_identifier_ci ON oro_order (LOWER(identifier))'
+            ));
+            $queries->addPostQuery(new SqlMigrationQuery(
+                'CREATE INDEX idx_order_po_number_ci ON oro_order (LOWER(po_number))'
+            ));
+        }
     }
 
     /**

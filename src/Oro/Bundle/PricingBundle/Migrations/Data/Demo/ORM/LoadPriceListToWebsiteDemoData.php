@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
@@ -13,20 +12,26 @@ use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 class LoadPriceListToWebsiteDemoData extends LoadBasePriceListRelationDemoData
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function getDependencies(): array
     {
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroPricingBundle/Migrations/Data/Demo/ORM/data/price_lists_to_website.csv');
+        return [LoadWebsiteData::class, LoadPriceListDemoData::class];
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager): void
+    {
+        $filePath = $this->getFileLocator()
+            ->locate('@OroPricingBundle/Migrations/Data/Demo/ORM/data/price_lists_to_website.csv');
         if (is_array($filePath)) {
             $filePath = current($filePath);
         }
 
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
-        /** @var EntityManager $manager */
         $website = $this->getWebsiteByName($manager, LoadWebsiteData::DEFAULT_WEBSITE_NAME);
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -43,13 +48,5 @@ class LoadPriceListToWebsiteDemoData extends LoadBasePriceListRelationDemoData
         fclose($handler);
 
         $manager->flush();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [LoadWebsiteData::class, LoadPriceListDemoData::class];
     }
 }

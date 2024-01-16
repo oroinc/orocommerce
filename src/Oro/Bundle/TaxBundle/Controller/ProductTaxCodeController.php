@@ -36,7 +36,7 @@ class ProductTaxCodeController extends AbstractController
      * @Acl(
      *      id="oro_tax_product_tax_code_view",
      *      type="entity",
-     *      class="OroTaxBundle:ProductTaxCode",
+     *      class="Oro\Bundle\TaxBundle\Entity\ProductTaxCode",
      *      permission="VIEW"
      * )
      */
@@ -53,7 +53,7 @@ class ProductTaxCodeController extends AbstractController
      * @Acl(
      *      id="oro_tax_product_tax_code_create",
      *      type="entity",
-     *      class="OroTaxBundle:ProductTaxCode",
+     *      class="Oro\Bundle\TaxBundle\Entity\ProductTaxCode",
      *      permission="CREATE"
      * )
      */
@@ -68,7 +68,7 @@ class ProductTaxCodeController extends AbstractController
      * @Acl(
      *      id="oro_tax_product_tax_code_update",
      *      type="entity",
-     *      class="OroTaxBundle:ProductTaxCode",
+     *      class="Oro\Bundle\TaxBundle\Entity\ProductTaxCode",
      *      permission="EDIT"
      * )
      */
@@ -79,10 +79,11 @@ class ProductTaxCodeController extends AbstractController
 
     protected function update(ProductTaxCode $productTaxCode): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $productTaxCode,
             $this->createForm(ProductTaxCodeType::class, $productTaxCode),
-            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.product_tax_code.saved.message')
+            $this->container->get(TranslatorInterface::class)
+                ->trans('oro.tax.controller.product_tax_code.saved.message')
         );
     }
 

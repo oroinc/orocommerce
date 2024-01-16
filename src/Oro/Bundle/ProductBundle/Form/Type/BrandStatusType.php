@@ -8,6 +8,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for Brand status
+ */
 class BrandStatusType extends AbstractType
 {
     const NAME = 'oro_brand_status';
@@ -29,7 +32,8 @@ class BrandStatusType extends AbstractType
     {
         $resolver->setDefaults([
             'choices' => $this->brandStatusProvider->getAvailableBrandStatuses(),
-            'preferred_choices' => Brand::STATUS_DISABLED
+            'preferred_choices' => [Brand::STATUS_DISABLED],
+            'duplicate_preferred_choices' => false
         ]);
     }
 

@@ -148,7 +148,6 @@ class ShoppingListRepositoryTest extends WebTestCase
     {
         return new UsernamePasswordOrganizationToken(
             $customerUser,
-            false,
             'k',
             $customerUser->getOrganization(),
             $customerUser->getUserRoles()

@@ -6,7 +6,7 @@ use Oro\Bundle\RedirectBundle\Security\RememberMeSlugRequestFactory;
 use Oro\Bundle\RedirectBundle\Security\SlugRequestFactoryInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Http\RememberMe\RememberMeServicesInterface;
+use Symfony\Component\Security\Http\RememberMe\ResponseListener;
 
 class RememberMeSlugRequestFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -35,7 +35,7 @@ class RememberMeSlugRequestFactoryTest extends \PHPUnit\Framework\TestCase
 
         $slugRequest = $this->factory->createSlugRequest($request);
         self::assertSame($createdSlugRequest, $slugRequest);
-        self::assertFalse($slugRequest->attributes->has(RememberMeServicesInterface::COOKIE_ATTR_NAME));
+        self::assertFalse($slugRequest->attributes->has(ResponseListener::COOKIE_ATTR_NAME));
         self::assertCount(0, $slugRequest->cookies->all());
     }
 
@@ -43,7 +43,7 @@ class RememberMeSlugRequestFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $rememberMeCookie = Cookie::create('TESTRM', 'test_value');
         $request = Request::create('/slug');
-        $request->attributes->set(RememberMeServicesInterface::COOKIE_ATTR_NAME, $rememberMeCookie);
+        $request->attributes->set(ResponseListener::COOKIE_ATTR_NAME, $rememberMeCookie);
         $createdSlugRequest = Request::create('/resolved/slug');
 
         $this->innerFactory->expects(self::once())
@@ -55,7 +55,7 @@ class RememberMeSlugRequestFactoryTest extends \PHPUnit\Framework\TestCase
         self::assertSame($createdSlugRequest, $slugRequest);
         self::assertSame(
             $rememberMeCookie,
-            $slugRequest->attributes->get(RememberMeServicesInterface::COOKIE_ATTR_NAME)
+            $slugRequest->attributes->get(ResponseListener::COOKIE_ATTR_NAME)
         );
         self::assertEquals(
             $rememberMeCookie->getValue(),
@@ -73,7 +73,7 @@ class RememberMeSlugRequestFactoryTest extends \PHPUnit\Framework\TestCase
             ->with(self::identicalTo($request), self::identicalTo($slugRequest));
 
         $this->factory->updateMainRequest($request, $slugRequest);
-        self::assertFalse($slugRequest->attributes->has(RememberMeServicesInterface::COOKIE_ATTR_NAME));
+        self::assertFalse($slugRequest->attributes->has(ResponseListener::COOKIE_ATTR_NAME));
         self::assertCount(0, $slugRequest->cookies->all());
     }
 
@@ -82,7 +82,7 @@ class RememberMeSlugRequestFactoryTest extends \PHPUnit\Framework\TestCase
         $rememberMeCookie = Cookie::create('TESTRM', 'test_value');
         $request = Request::create('/slug');
         $slugRequest = Request::create('/resolved/slug');
-        $slugRequest->attributes->set(RememberMeServicesInterface::COOKIE_ATTR_NAME, $rememberMeCookie);
+        $slugRequest->attributes->set(ResponseListener::COOKIE_ATTR_NAME, $rememberMeCookie);
 
         $this->innerFactory->expects(self::once())
             ->method('updateMainRequest')
@@ -91,7 +91,7 @@ class RememberMeSlugRequestFactoryTest extends \PHPUnit\Framework\TestCase
         $this->factory->updateMainRequest($request, $slugRequest);
         self::assertSame(
             $rememberMeCookie,
-            $request->attributes->get(RememberMeServicesInterface::COOKIE_ATTR_NAME)
+            $request->attributes->get(ResponseListener::COOKIE_ATTR_NAME)
         );
         self::assertEquals(
             $rememberMeCookie->getValue(),

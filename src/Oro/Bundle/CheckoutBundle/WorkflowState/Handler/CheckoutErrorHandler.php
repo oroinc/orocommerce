@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\WorkflowState\Handler;
 
 use Oro\Bundle\WorkflowBundle\Validator\Constraints\TransitionIsAllowed;
 use Symfony\Component\Form\FormErrorIterator;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\ConstraintViolation;
 
 /**
@@ -15,12 +15,11 @@ class CheckoutErrorHandler
 {
     const WORKFLOW_STATE_MESSAGE = 'oro.checkout.workflow.condition.content_of_order_was_changed.message';
 
-    /** @var FlashBagInterface */
-    protected $flashBag;
+    protected RequestStack $requestStack;
 
-    public function __construct(FlashBagInterface $flashBag)
+    public function __construct(RequestStack $requestStack)
     {
-        $this->flashBag = $flashBag;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -96,12 +95,12 @@ class CheckoutErrorHandler
      */
     protected function addUniqueWarningMessage($message)
     {
-        $messages = $this->flashBag->peek('warning');
+        $messages = $this->requestStack?->getSession()?->getFlashBag()->peek('warning');
 
         $filteredMessages = array_filter($messages, static fn ($value) => $value === $message);
 
         if (count($filteredMessages) === 0) {
-            $this->flashBag->add('warning', $message);
+            $this->requestStack?->getSession()?->getFlashBag()->add('warning', $message);
         }
     }
 }

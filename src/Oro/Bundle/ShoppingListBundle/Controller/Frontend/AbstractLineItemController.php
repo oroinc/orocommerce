@@ -27,7 +27,7 @@ abstract class AbstractLineItemController extends AbstractController
 
     protected function getProductResponseData(Product $product): array
     {
-        $productShoppingLists = $this->get(ProductShoppingListsDataProvider::class)
+        $productShoppingLists = $this->container->get(ProductShoppingListsDataProvider::class)
             ->getProductUnitsQuantity($product->getId());
 
         return [
@@ -46,10 +46,10 @@ abstract class AbstractLineItemController extends AbstractController
 
     protected function getSuccessMessage(ShoppingList $shoppingList, string $translationKey): string
     {
-        $link = $this->get(ShoppingListUrlProvider::class)->getFrontendUrl($shoppingList);
+        $link = $this->container->get(ShoppingListUrlProvider::class)->getFrontendUrl($shoppingList);
         $label = htmlspecialchars($shoppingList->getLabel());
 
-        return $this->get(TranslatorInterface::class)->trans(
+        return $this->container->get(TranslatorInterface::class)->trans(
             $translationKey,
             ['%shoppinglist%' => sprintf('<a href="%s">%s</a>', $link, $label)]
         );

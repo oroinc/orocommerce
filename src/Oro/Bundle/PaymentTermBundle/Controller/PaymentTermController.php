@@ -24,7 +24,7 @@ class PaymentTermController extends AbstractController
      * @Acl(
      *      id="oro_payment_term_view",
      *      type="entity",
-     *      class="OroPaymentTermBundle:PaymentTerm",
+     *      class="Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm",
      *      permission="VIEW"
      * )
      */
@@ -55,7 +55,7 @@ class PaymentTermController extends AbstractController
      * @Acl(
      *      id="oro_payment_term_create",
      *      type="entity",
-     *      class="OroPaymentTermBundle:PaymentTerm",
+     *      class="Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm",
      *      permission="CREATE"
      * )
      */
@@ -72,7 +72,7 @@ class PaymentTermController extends AbstractController
      * @Acl(
      *      id="oro_payment_term_update",
      *      type="entity",
-     *      class="OroPaymentTermBundle:PaymentTerm",
+     *      class="Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm",
      *      permission="EDIT"
      * )
      */
@@ -97,10 +97,11 @@ class PaymentTermController extends AbstractController
     {
         $form = $this->createForm(PaymentTermType::class, $paymentTerm);
 
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $paymentTerm,
             $form,
-            $this->get(TranslatorInterface::class)->trans('oro.paymentterm.controller.paymentterm.saved.message')
+            $this->container->get(TranslatorInterface::class)
+                ->trans('oro.paymentterm.controller.paymentterm.saved.message')
         );
     }
 

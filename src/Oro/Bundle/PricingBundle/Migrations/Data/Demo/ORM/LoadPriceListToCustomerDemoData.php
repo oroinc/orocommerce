@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
@@ -15,32 +12,29 @@ use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
  */
 class LoadPriceListToCustomerDemoData extends LoadBasePriceListRelationDemoData
 {
-    /**
-     * @var EntityRepository
-     */
-    protected $customerRepository;
+    private array $customers = [];
 
     /**
-     * @var Customer[]
+     * {@inheritDoc}
      */
-    protected $customers = [];
-
-    /**
-     * {@inheritdoc}
-     * @param EntityManager $manager
-     */
-    public function load(ObjectManager $manager)
+    public function getDependencies(): array
     {
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroPricingBundle/Migrations/Data/Demo/ORM/data/price_lists_to_customer.csv');
+        return array_merge(parent::getDependencies(), [LoadWebsiteData::class]);
+    }
 
-        if (is_array($filePath)) {
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager): void
+    {
+        $filePath = $this->getFileLocator()
+            ->locate('@OroPricingBundle/Migrations/Data/Demo/ORM/data/price_lists_to_customer.csv');
+        if (\is_array($filePath)) {
             $filePath = current($filePath);
         }
 
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
-        /** @var EntityManager $manager */
         $website = $this->getWebsiteByName($manager, LoadWebsiteData::DEFAULT_WEBSITE_NAME);
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -62,11 +56,10 @@ class LoadPriceListToCustomerDemoData extends LoadBasePriceListRelationDemoData
         $manager->flush();
     }
 
-    protected function getCustomerByName(EntityManagerInterface $manager, string $name): Customer
+    private function getCustomerByName(ObjectManager $manager, string $name): Customer
     {
-        if (!array_key_exists($name, $this->customers)) {
-            $customer = $this->getCustomerRepository($manager)->findOneBy(['name' => $name]);
-
+        if (!\array_key_exists($name, $this->customers)) {
+            $customer = $manager->getRepository(Customer::class)->findOneBy(['name' => $name]);
             if (!$customer) {
                 throw new \LogicException(sprintf('There is no customer with name "%s" .', $name));
             }
@@ -74,22 +67,5 @@ class LoadPriceListToCustomerDemoData extends LoadBasePriceListRelationDemoData
         }
 
         return $this->customers[$name];
-    }
-
-    protected function getCustomerRepository(EntityManagerInterface $manager): EntityRepository
-    {
-        if ($this->customerRepository === null) {
-            $this->customerRepository = $manager->getRepository('OroCustomerBundle:Customer');
-        }
-
-        return $this->customerRepository;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return array_merge(parent::getDependencies(), [LoadWebsiteData::class]);
     }
 }

@@ -31,7 +31,7 @@ class WysiwygContentController extends AbstractController
             throw new BadRequestHttpException('FieldName field is required.');
         }
 
-        $errors = $this->get(WYSIWYGContentChecker::class)
+        $errors = $this->container->get(WYSIWYGContentChecker::class)
             ->check((string)$request->get('content'), $className, $fieldName);
 
         return new JsonResponse(['success' => !$errors, 'errors' => $errors]);
@@ -47,7 +47,7 @@ class WysiwygContentController extends AbstractController
         $code = Response::HTTP_OK;
 
         try {
-            $content = $this->get(DigitalAssetTwigTagsConverter::class)
+            $content = $this->container->get(DigitalAssetTwigTagsConverter::class)
                 ->convertToUrls($content);
         } catch (\Exception $e) {
             $success = false;

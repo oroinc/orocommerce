@@ -46,7 +46,7 @@ class CategoryRepository extends ServiceEntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('category.id')
-            ->from('OroCatalogBundle:Category', 'category')
+            ->from(Category::class, 'category')
             ->orderBy('category.id');
 
         $terms = [$this->getCategoryVisibilityResolvedTerm($qb, $configValue)];
@@ -70,7 +70,7 @@ class CategoryRepository extends ServiceEntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('category.id')
-            ->from('OroCatalogBundle:Category', 'category')
+            ->from(Category::class, 'category')
             ->leftJoin(
                 'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved',
                 'cvr',
@@ -120,7 +120,7 @@ class CategoryRepository extends ServiceEntityRepository
                 (string)CategoryVisibilityResolved::SOURCE_STATIC,
                 (string)$scope->getId()
             )
-            ->from('OroVisibilityBundle:Visibility\CategoryVisibility', 'cv')
+            ->from(CategoryVisibility::class, 'cv')
             ->where('cv.visibility != :config')
             ->setParameter('config', CategoryVisibility::CONFIG);
 
@@ -161,8 +161,8 @@ class CategoryRepository extends ServiceEntityRepository
                 $sourceCondition,
                 (string)$scope->getId()
             )
-            ->from('OroCatalogBundle:Category', 'c')
-            ->leftJoin('OroVisibilityBundle:Visibility\CategoryVisibility', 'cv', 'WITH', 'cv.category = c')
+            ->from(Category::class, 'c')
+            ->leftJoin(CategoryVisibility::class, 'cv', 'WITH', 'cv.category = c')
             ->andWhere('cv.visibility IS NULL')     // parent category fallback
             ->andWhere('c.id IN (:categoryIds)');   // specific category IDs
 
@@ -186,9 +186,9 @@ class CategoryRepository extends ServiceEntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
 
         $qb->select('COALESCE(cvr.visibility, '. $qb->expr()->literal($configFallback).')')
-            ->from('OroCatalogBundle:Category', 'category')
+            ->from(Category::class, 'category')
             ->leftJoin(
-                'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
+                CategoryVisibilityResolved::class,
                 'cvr',
                 Join::WITH,
                 $qb->expr()->eq('cvr.category', 'category')
@@ -210,7 +210,7 @@ class CategoryRepository extends ServiceEntityRepository
         }
 
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->update('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved', 'cvr')
+        $qb->update(CategoryVisibilityResolved::class, 'cvr')
             ->set('cvr.visibility', ':visibility')
             ->andWhere($qb->expr()->in('IDENTITY(cvr.category)', ':categoryIds'))
             ->setParameter('categoryIds', $categoryIds)

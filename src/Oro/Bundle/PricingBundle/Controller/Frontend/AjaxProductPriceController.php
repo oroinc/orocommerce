@@ -34,7 +34,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     {
         $currency = $request->get('currency');
         $result = false;
-        $userCurrencyManager = $this->get(UserCurrencyManager::class);
+        $userCurrencyManager = $this->container->get(UserCurrencyManager::class);
         if (in_array($currency, $userCurrencyManager->getAvailableCurrencies(), true)) {
             $userCurrencyManager->saveSelectedCurrency($currency);
             $result = true;
