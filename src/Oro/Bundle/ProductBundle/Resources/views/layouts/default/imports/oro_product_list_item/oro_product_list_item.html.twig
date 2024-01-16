@@ -132,7 +132,7 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_popup_gallery_widget %}
-    {% import '@OroFrontend/layouts/renderIcon.html.twig' as renderIcon %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% if product.hasImage %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' view-product-gallery',
