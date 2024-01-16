@@ -21,6 +21,16 @@ api:
                 totalDiscountsAmount:
                     form_options:
                         mapped: false
+            filters:
+                fields:
+                    identifier:
+                        allow_array: true
+                        options:
+                            case_insensitive: true
+                    poNumber:
+                        allow_array: true
+                        options:
+                            case_insensitive: true
             actions:
                 create:
                     form_options:

@@ -6,7 +6,7 @@ dynamic-imports:
     commons:
         - oropricing/js/validator/unique-product-prices
     orodatagrid:
-        - oro/filter/price-attribute-product-price-filter
+        - oro/filter/product-price-attribute-filter
         - oro/filter/combined-product-price-filter
         - oro/filter/product-price-filter
     orosale:
@@ -25,5 +25,5 @@ dynamic-imports:
         - oropricing/js/app/views/product-price-debug-trace-page-view
 map:
     '*':
-        oro/filter/price-attribute-product-price-filter: oro/filter/product-price-filter
+        oro/filter/product-price-attribute-filter: oro/filter/product-price-filter
         oro/filter/combined-product-price-filter: oro/filter/product-price-filter

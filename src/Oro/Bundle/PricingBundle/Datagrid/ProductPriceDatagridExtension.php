@@ -6,6 +6,7 @@ use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
@@ -228,9 +229,27 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         $columnConfig = $this->createPriceColumnConfig($currencyIsoCode, $unitCode);
         $filterConfig = $this->createPriceFilterConfig($columnName, $currencyIsoCode, $unitCode);
 
+        $alias = $this->getJoinAlias($columnName);
+
         $config->offsetAddToArrayByPath('[columns]', [$columnName => $columnConfig]);
         $config->offsetAddToArrayByPath('[filters][columns]', [$columnName => $filterConfig]);
-        $config->offsetAddToArrayByPath('[sorters][columns]', [$columnName => ['data_name' => $columnName]]);
+        // For sorting, utilize the same algorithm as on the front, irrespective of the unit
+        $config->offsetAddToArrayByPath(
+            '[sorters][columns]',
+            [
+                $columnName => [
+                    'data_name' => QueryBuilderUtil::sprintf('MIN(%s.value)', $alias),
+                    'apply_callback' => function (OrmDatasource $datasource, $sortKey, $direction) use ($alias) {
+                        if ($sortKey) {
+                            $qb = $datasource->getQueryBuilder();
+                            if (\in_array($alias, $qb->getAllAliases(), true)) {
+                                $qb->addOrderBy($sortKey, QueryBuilderUtil::getSortOrder($direction));
+                            }
+                        }
+                    },
+                ],
+            ]
+        );
 
         return array_unique([$columnName, $filterConfig['data_name']]);
     }
@@ -377,16 +396,21 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         foreach (explode(';', $rawPrices) as $rawPrice) {
             [$priceValue, $quantity, $unitCode] = explode('|', $rawPrice);
             $price = Price::create($priceValue, $currencyIsoCode);
-            $prices[] = [
+            $prices[$unitCode][] = [
                 'price' => $price,
                 'unitCode' => $unitCode,
                 'quantity' => $quantity,
             ];
         }
 
-        ArrayUtil::sortBy($prices, false, 'quantity');
+        if (!$prices) {
+            return [];
+        }
+        foreach ($prices as &$pricesPerUnit) {
+            ArrayUtil::sortBy($pricesPerUnit, false, 'quantity');
+        }
 
-        return $prices;
+        return array_merge(...array_values($prices));
     }
 
     private function isGrantedToViewPriceFields(): bool

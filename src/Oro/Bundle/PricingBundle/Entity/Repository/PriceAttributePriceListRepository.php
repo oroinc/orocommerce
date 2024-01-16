@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeCurrency;
 
 /**
  * Entity repository for PriceAttributePriceList entity
@@ -21,10 +22,11 @@ class PriceAttributePriceListRepository extends BasePriceListRepository
             ->select(
                 'price_attribute_price_list.id',
                 'price_attribute_price_list.name',
-                'price_attribute_currency.currency'
+                'price_attribute_currency.currency',
+                'price_attribute_price_list.fieldName'
             );
         $qb->innerJoin(
-            'OroPricingBundle:PriceAttributeCurrency',
+            PriceAttributeCurrency::class,
             'price_attribute_currency',
             Join::WITH,
             $qb->expr()->eq('price_attribute_currency.priceList', 'price_attribute_price_list')
