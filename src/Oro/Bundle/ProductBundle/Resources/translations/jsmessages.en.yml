@@ -188,6 +188,10 @@ oro:
                     success_message: The product data export has started. You will receive download instructions by email once the export is finished.
             actions_panel:
                 action_postfix: 'Default'
+            datagrid:
+                toolbar_sorting:
+                    label: Sort by
+
 
         dialog:
             quick_add.confirm:
