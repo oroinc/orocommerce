@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block localization_switcher_widget %}
-    {% import '@OroFrontend/layouts/renderIcon.html.twig' as renderIcon %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% if localizations|length == 2 %}
         {% set currentRoute = app.request.get('_route') %}
         {% set routeParameters = app.request.get('_route_params') %}

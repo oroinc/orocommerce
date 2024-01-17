@@ -18,7 +18,7 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_dropdown_widget %}
-    {% import '@OroFrontend/layouts/renderIcon.html.twig' as renderIcon %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% if showLabel is not defined %}
         {% set showLabel = showLabel|default(true) %}
     {% endif %}
@@ -97,7 +97,7 @@
 {% endblock %}
 
 {% block shopping_list_dropdown_item_widget %}
-    {% import '@OroFrontend/layouts/renderIcon.html.twig' as renderIcon %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
 
     {% if not is_one_shopping_list_enabled() %}
         {% set currentClass = 'checked' %}
@@ -285,7 +285,7 @@
 
 {% block shopping_list_dropdown_create_widget %}
     {% import '@OroUI/macros.html.twig' as UI %}
-    {% import '@OroFrontend/layouts/renderIcon.html.twig' as renderIcon %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     <div class="header-row__dropdown-footer">
         <button
             type="button"
