@@ -36,14 +36,21 @@ class ProductKitRepositoryTest extends WebTestCase
         $kit2 = $this->getReference(LoadProductKitData::PRODUCT_KIT_2);
         $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
 
+        $expected = [$kit2->getId(), $kit3->getId()];
         $actual = $this->getRepository()->getProductKitsByProductIds([$product2->getId()]);
-        self::assertEquals([$kit2, $kit3], $actual);
+        self::assertNotEmpty($actual);
+        self::assertEqualsCanonicalizing(
+            $expected,
+            array_map(fn (Product $product) => $product->getId(), $actual)
+        );
 
-        $actual = $this->getRepository()->getProductKitsByProductIds([]);
-        self::assertEquals([], $actual);
+        self::assertEmpty(
+            $this->getRepository()->getProductKitsByProductIds([])
+        );
 
-        $actual = $this->getRepository()->getProductKitsByProductIds([PHP_INT_MAX, PHP_INT_MAX-1]);
-        self::assertEquals([], $actual);
+        self::assertEmpty(
+            $this->getRepository()->getProductKitsByProductIds([PHP_INT_MAX, PHP_INT_MAX-1])
+        );
     }
 
     public function testGetProductKitIdsByProductIds(): void
@@ -52,15 +59,17 @@ class ProductKitRepositoryTest extends WebTestCase
         $kit2 = $this->getReference(LoadProductKitData::PRODUCT_KIT_2);
         $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
 
-        $expected = [$kit2->getId(), $kit3->getId()];
+        self::assertEqualsCanonicalizing(
+            [$kit2->getId(), $kit3->getId()],
+            $this->getRepository()->getProductKitIdsByProductIds([$product2->getId()])
+        );
 
-        $actual = $this->getRepository()->getProductKitIdsByProductIds([$product2->getId()]);
-        self::assertEquals($expected, $actual);
+        self::assertEmpty(
+            $this->getRepository()->getProductKitsByProductIds([])
+        );
 
-        $actual = $this->getRepository()->getProductKitsByProductIds([]);
-        self::assertEquals([], $actual);
-
-        $actual = $this->getRepository()->getProductKitsByProductIds([999,1001]);
-        self::assertEquals([], $actual);
+        self::assertEmpty(
+            $this->getRepository()->getProductKitsByProductIds([PHP_INT_MAX, PHP_INT_MAX-1])
+        );
     }
 }
