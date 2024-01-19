@@ -73,6 +73,9 @@
                             {% endif %}
                         {% endif %}
                     {% else %}
+                        {% set unitAttr = layout_attr_defaults(unitAttr, {
+                            '~class': ' invisible'
+                        }) %}
                         {{ form_widget(form.unit, {attr: unitAttr}) }}
                     {% endif %}
                 {% else %}

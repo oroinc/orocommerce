@@ -236,6 +236,7 @@ oro_behat_extension:
           Unit:
             type: css
             locator: 'select[name="oro_product_frontend_line_item[unit]"]'
+            element: ProductUnitSelector
 
     Configurable Product Form:
       selector: 'form[id^="oro_product_product_variant_frontend_variant_field"]'

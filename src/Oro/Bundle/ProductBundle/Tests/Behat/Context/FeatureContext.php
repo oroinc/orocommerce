@@ -690,6 +690,24 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
+     * @codingStandardsIgnoreStart
+     * Example: I should see product unit selector as "single" for product with SKU "SKU1"
+     * @Then /^(?:|I )should see product unit selector as "(?P<selectorType>[^"]*)" for product with SKU "(?P<SKU>[^"]*)"$/
+     * @codingStandardsIgnoreEnd
+     */
+    public function shouldSeeForProductUnit($selectorType, $sku)
+    {
+        $productItem = $this->findProductItem($sku);
+
+        self::assertTrue($productItem->isVisible());
+
+        $unitSelector = $productItem->getElement('ProductUnitSelector');
+
+        self::assertTrue($unitSelector->isVisible());
+        self::assertEquals($selectorType, $unitSelector->getSelectorType());
+    }
+
+    /**
      * Example: I should see "This product will be available later" for "SKU123" product on shopping list
      * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product on shopping list$/
      */

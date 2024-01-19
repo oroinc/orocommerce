@@ -89,5 +89,4 @@ Feature: Check configurable product with no matrix form
     When I click "Catalog Switcher Toggle"
     And I click "Gallery View"
     And I should see "ProductLineItemForm" element inside "ProductFrontendRow" element
-    And I should not see "FrontendProductViewQuantityField" element inside "ProductLineItemForm" element
-    Then I should not see "ProductUnitSelect" element inside "ProductLineItemForm" element
+    Then I should not see "QuantityWithUnit" element inside "ProductLineItemForm" element

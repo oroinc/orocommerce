@@ -44,6 +44,7 @@ Feature: Mass Product Actions processing
     Then I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
     When I click "Catalog Switcher Toggle"
     And I click "No Image View"
+    And I click "Close" if present
     And I check PSKU1 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU1" in frontend product grid:
       | Quantity | 10   |
