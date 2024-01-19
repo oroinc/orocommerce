@@ -68,10 +68,10 @@ class ReindexMessageGranularizer
             }
         }
 
-        foreach ($websites as $website) {
-            foreach ($entities as $entity) {
-                $chunks = $this->getChunksOfIds($entity, $entityIds);
-                foreach ($chunks as $chunk) {
+        foreach ($entities as $entity) {
+            $chunks = $this->getChunksOfIds($entity, $entityIds);
+            foreach ($chunks as $chunk) {
+                foreach ($websites as $website) {
                     $itemContext = [];
                     $itemContext = $this->setContextEntityIds($itemContext, $chunk);
                     $itemContext = $this->setContextWebsiteIds($itemContext, [$website]);

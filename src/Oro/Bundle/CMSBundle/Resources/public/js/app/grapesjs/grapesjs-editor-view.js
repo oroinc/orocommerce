@@ -925,8 +925,8 @@ const GrapesjsEditorView = BaseView.extend({
         this.enabled = true;
         Promise.all(this.editorRenderPromises).then(() => {
             this.renderStart = false;
-            this.builder.trigger('editor:rendered');
             this.subview('loadingMask').hide();
+            this.builder.trigger('editor:rendered');
         }).catch(error => console.error(error));
     },
 

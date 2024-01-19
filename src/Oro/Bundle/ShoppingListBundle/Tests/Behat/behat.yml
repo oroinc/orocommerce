@@ -586,5 +586,7 @@ oro_behat_extension:
         - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
+        - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\PricingBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'
