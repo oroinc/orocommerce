@@ -1,0 +1,12 @@
+/* @theme: default; */
+
+.promotional-block {
+    color: $promotional-block-color;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+
+    &:hover {
+        color: $promotional-block-hover-color;
+    }
+}
