@@ -54,6 +54,19 @@ Feature: Promotions Grid With Promotions ACL Enabled
     When click "Duplicate"
     Then should see "Promotion has been duplicated" flash message
 
+  Scenario: Set Promotion Assign permission to None and check edit promotion from grid
+    Given I go to System/User Management/Roles
+    And I click edit Administrator in grid
+    And select following permissions:
+      | Promotion | Assign:None |
+    When I save and close form
+    Then I should see "Role saved" flash message
+    When I go to Marketing/Promotions/Promotions
+    And I should see "Sample promotion" in grid
+    And I click edit "Sample promotion" in grid
+    Then I should see "Promotions / Sample promotion"
+    And I should not see "Owner"
+
   Scenario: Check the promotion is visible in the grid
     Given I login as "Promotions1@example.org" user
     And go to Marketing/Promotions/Promotions
