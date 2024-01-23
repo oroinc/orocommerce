@@ -69,6 +69,7 @@
             {% set priceMergeDetailsSection %}
                 {% import '@OroCron/macros.html.twig' as cronSchedulIntervals %}
 
+                {% set rendered_price_lists = [] %}
                 {% for used_price_list_relation in full_cpl_used_price_lists %}
                     {% set price_list = used_price_list_relation.priceList %}
                     {% set title = 'oro.pricing.productprice.debug.pricelist_schedule.not_active_now' %}
@@ -92,7 +93,11 @@
 
                     {% if price_merging_details[price_list.id] is defined  %}
                         {% set pricesContent %}
-                            {% with {mergePricesCollection: price_merging_details[price_list.id], used_units_and_currencies: used_units_and_currencies} %}
+                            {% with {
+                                mergePricesCollection: price_merging_details[price_list.id],
+                                used_units_and_currencies: used_units_and_currencies,
+                                skipSelected: price_list.id in rendered_price_lists
+                            } %}
                                 {{ block('price_merge_details', '@OroPricing/Debug/priceDetails.html.twig') }}
                             {% endwith %}
                         {% endset %}
@@ -123,6 +128,8 @@
                     {% endset %}
 
                     {{ UI.renderHtmlProperty(propertyTitle, pricesContent, null, null, options) }}
+
+                    {% set rendered_price_lists = rendered_price_lists|merge([price_list.id]) %}
                 {% endfor %}
             {% endset %}
 

@@ -48,7 +48,12 @@ class PriceMergeInfoProviderTest extends TestCase
         $product = $this->getEntity(Product::class, ['id' => 1]);
         $pl = $this->getEntity(PriceList::class, ['id' => 2]);
 
+        // Relation added 2 times to check that prices are not duplicated
         $relations = [
+            (new CombinedPriceListToPriceList())
+                ->setPriceList($pl)
+                ->setMergeAllowed(false)
+                ->setSortOrder(1),
             (new CombinedPriceListToPriceList())
                 ->setPriceList($pl)
                 ->setMergeAllowed(false)
