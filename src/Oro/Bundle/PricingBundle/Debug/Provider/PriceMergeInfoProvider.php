@@ -44,8 +44,15 @@ class PriceMergeInfoProvider
 
         $priceRepo = $this->registry->getRepository(ProductPrice::class);
         $result = [];
+        $processedPriceLists = [];
         foreach ($priceListRelations as $priceListRelation) {
             $priceList = $priceListRelation->getPriceList();
+            if (!empty($processedPriceLists[$priceList->getId()])) {
+                continue;
+            }
+
+            $processedPriceLists[$priceList->getId()] = true;
+
             $prices = $priceRepo->findByPriceList(
                 $this->shardManager,
                 $priceList,

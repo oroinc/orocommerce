@@ -34,8 +34,13 @@
         {% if items|length > 0 %}
             <div class="price-details-items">
             {% for item in items %}
+                {% if skipSelected %}
+                    {% set isSelected = false %}
+                {%  else %}
+                    {% set isSelected = item.is_selected %}
+                {% endif %}
                 {% with {
-                    is_selected: item.is_selected,
+                    is_selected: isSelected,
                     quantity: item.price.quantity,
                     price: item.price.price,
                     price_id: item.price.quantity ~ '-' ~ unitCode ~ '-' ~ currency
@@ -64,7 +69,7 @@
             {% else %}
                 {% set prices = [] %}
             {% endif %}
-            {% with {items: prices, unitCode: unitCode, currency: currency} %}
+            {% with {items: prices, unitCode: unitCode, currency: currency, skipSelected: skipSelected|default(false)} %}
                 {{ block('price_merge_items') }}
             {% endwith %}
         {% endfor %}
