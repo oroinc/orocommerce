@@ -1114,27 +1114,27 @@ oro_behat_extension:
     New Arrivals Block:
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="New Arrivals"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/div/h2[text()="New Arrivals"]/../../div[2]'
 
     Featured Products Block:
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Featured Products"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/div/h2[text()="Featured Products"]/../../div[2]'
 
     Top Selling Items Block:
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Top Selling Items"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/div/h2[text()="Top Selling Items"]/../../div[2]'
 
     Related Products Block:
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Related Products"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/div/h2[text()="Related Products"]/../../div[2]'
 
     Upsell Products Block:
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Up-sell Products"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/div/h2[text()="Up-sell Products"]/../../div[2]'
 
     EmbeddedProduct:
       selector: 'div.product-item'
@@ -1482,8 +1482,11 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(@class, "product-view-attribute") and contains(., "MultipleFiles")]/parent::div'
 
-    Product Segment Content Widget Slider Next:
-      selector: 'div[data-page-component-name="segment-product-list-0"] button.slick-next'
+    Product Segment Content Widget Slider Control1:
+      selector: 'div[data-type="product_segment"] button[aria-controls="slick-slide01"]'
+
+    Product Segment Content Widget Slider Control2:
+      selector: 'div[data-type="product_segment"] button[aria-controls="slick-slide02"]'
 
     Import Choose File Link:
       selector: ".import-widget-content .tab-pane.active .input-widget-file"

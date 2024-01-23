@@ -1568,7 +1568,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     {
         $section = $this->getSession()->getPage()->find(
             'xpath',
-            sprintf('//h2[contains(.,"%s")]/..', $sectionName)
+            sprintf('//h2[contains(.,"%s")]/../..', $sectionName)
         );
         self::assertNotEmpty($section, sprintf('Section "%s" not found on page', $sectionName));
 

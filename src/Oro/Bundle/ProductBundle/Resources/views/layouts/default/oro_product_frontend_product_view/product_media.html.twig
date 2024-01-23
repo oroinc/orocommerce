@@ -31,6 +31,7 @@
 {% endblock %}
 
 {% block _product_view_media_gallery_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set zoomOptions = {
@@ -51,6 +52,22 @@
         draggable: true
     } %}
 
+    {% set prevArrow %}
+        <div class="slick-btn-wrapper slick-arrow-prev">
+            <button type="button" class="slick-arrow-btn" aria-label="{{ 'oro.product.frontend.gallery.prev'|trans }}">
+                {{ renderIcon.icon({name: oro_is_rtl_mode() ? 'chevron-right' : 'chevron-left', extraClass: 'theme-icon--medium'})}}
+            </button>
+        </div>
+    {% endset %}
+
+    {% set nextArrow %}
+        <div class="slick-btn-wrapper slick-arrow-next">
+            <button type="button" class="slick-arrow-btn"  aria-label="{{ 'oro.product.frontend.gallery.next'|trans }}">
+                {{ renderIcon.icon({name: oro_is_rtl_mode() ? 'chevron-left' : 'chevron-right', extraClass: 'theme-icon--medium'})}}
+            </button>
+        </div>
+    {% endset %}
+
     {% set navListOptions = {
         slidesToShow: 4,
         slidesToScroll: 1,
@@ -58,7 +75,18 @@
         focusOnSelect: true,
         infinite: false,
         arrows: true,
-        draggable: true
+        draggable: true,
+        prevArrow: prevArrow,
+        nextArrow: nextArrow,
+        responsive: [
+            {
+                breakpoint: 992,
+                settings: {
+                    slidesToShow: 5,
+                    arrows: false,
+                }
+            },
+        ],
     } %}
 
 

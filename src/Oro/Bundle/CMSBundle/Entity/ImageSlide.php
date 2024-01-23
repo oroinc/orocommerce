@@ -33,12 +33,30 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
  *          }
  *     }
  * )
- * @method null|File getMainImage()
- * @method ImageSlide setMainImage(File $image)
+ * @method null|File getExtraLargeImage()
+ * @method ImageSlide setExtraLargeImage(File $image)
+ * @method null|File getExtraLargeImage2x()
+ * @method ImageSlide setExtraLargeImage2x(File $image)
+ * @method null|File getExtraLargeImage3x()
+ * @method ImageSlide setExtraLargeImage3x(File $image)
+ * @method null|File getLargeImage()
+ * @method ImageSlide setLargeImage(File $image)
+ * @method null|File getLargeImage2x()
+ * @method ImageSlide setLargeImage2x(File $image)
+ * @method null|File getLargeImage3x()
+ * @method ImageSlide setLargeImage3x(File $image)
  * @method null|File getMediumImage()
  * @method ImageSlide setMediumImage(File $image)
+ * @method null|File getMediumImage2x()
+ * @method ImageSlide setMediumImage2x(File $image)
+ * @method null|File getMediumImage3x()
+ * @method ImageSlide setMediumImage3x(File $image)
  * @method null|File getSmallImage()
  * @method ImageSlide setSmallImage(File $image)
+ * @method null|File getSmallImage2x()
+ * @method ImageSlide setSmallImage2x(File $image)
+ * @method null|File getSmallImage3x()
+ * @method ImageSlide setSmallImage3x(File $image)
  * @mixin OroCMSBundle_Entity_ImageSlide
  */
 class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
@@ -125,7 +143,7 @@ class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="title", type="string", length=255, nullable=false)
+     * @ORM\Column(name="alt_image_text", type="string", length=255, nullable=false)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -134,7 +152,7 @@ class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
      *      }
      * )
      */
-    protected $title;
+    protected $altImageText;
 
     /**
      * @var string
@@ -163,6 +181,18 @@ class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
      * )
      */
     protected $textAlignment = self::TEXT_ALIGNMENT_CENTER;
+
+    /**
+     * @ORM\Column(name="header", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected ?string $header = null;
 
     public function getId(): ?int
     {
@@ -233,18 +263,19 @@ class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
         return $this;
     }
 
-    public function getTitle(): ?string
+    public function getAltImageText(): ?string
     {
-        return $this->title;
+        return $this->altImageText;
     }
 
     /**
-     * @param null|string $title
+     * @param null|string $altImageText
+     *
      * @return $this
      */
-    public function setTitle(?string $title): self
+    public function setAltImageText(?string $altImageText): self
     {
-        $this->title = $title;
+        $this->altImageText = $altImageText;
 
         return $this;
     }
@@ -277,6 +308,18 @@ class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
     public function setTextAlignment(?string $textAlignment): self
     {
         $this->textAlignment = $textAlignment;
+
+        return $this;
+    }
+
+    public function getHeader(): ?string
+    {
+        return $this->header;
+    }
+
+    public function setHeader(?string $header): self
+    {
+        $this->header = $header;
 
         return $this;
     }

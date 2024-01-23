@@ -48,8 +48,13 @@ class LoadImageSliderImageCache extends AbstractFixture implements DependentFixt
         $imageDir = $locator->locate('@OroCMSBundle/Migrations/Data/ORM/data/promo-slider');
         $imageDir = is_array($imageDir) ? current($imageDir) : $imageDir;
 
+        $getters = array_map(
+            fn (string $imageType) => sprintf('get%s', ucfirst($imageType)),
+            LoadImageSlider::IMAGE_TYPES
+        );
+
         foreach ($imageSlides as $imageSlide) {
-            foreach (['getMainImage', 'getMediumImage', 'getSmallImage'] as $getter) {
+            foreach ($getters as $getter) {
                 $file = $imageSlide->$getter();
                 if (!$file) {
                     continue;

@@ -55,6 +55,8 @@ Oro\Bundle\CMSBundle\Entity\ContentWidget:
             - Valid: ~
 
 Oro\Bundle\CMSBundle\Entity\ImageSlide:
+    constraints:
+        - Oro\Bundle\CMSBundle\Validator\Constraints\HasAtLeastOneSizeImage: ~
     properties:
         contentWidget:
             - NotBlank: ~
@@ -71,7 +73,7 @@ Oro\Bundle\CMSBundle\Entity\ImageSlide:
                 message: oro.cms.image_slider.url.not_dangerous_protocol.message
         displayInSameWindow:
             - Type: boolean
-        title:
+        altImageText:
             - NotBlank: ~
             - Length:
                 min: 1
@@ -90,10 +92,12 @@ Oro\Bundle\CMSBundle\Entity\ImageSlide:
                     - bottom_left
                     - bottom_center
                     - bottom_right
-        mainImage:
-            - NotBlank: ~
         organization:
             - NotBlank: ~
+        header:
+            - Length:
+                  min: 1
+                  max: 255
 
 Oro\Bundle\CMSBundle\Entity\TextContentVariant:
     properties:

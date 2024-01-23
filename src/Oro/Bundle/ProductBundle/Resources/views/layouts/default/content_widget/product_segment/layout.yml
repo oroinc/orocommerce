@@ -40,5 +40,5 @@ layout:
             optionValue: '=data["locale"].getLocalizedValue(data["labels"])'
         - '@setOption':
             id: products
-            optionName: slider_options
+            optionName: default_slider_options
             optionValue: '=data["slider_options"]'
