@@ -270,7 +270,7 @@ oro_behat_extension:
         locator: '//a[contains(@href,"list-view")]'
         type: xpath
 
-    No Image View:
+    Compact View:
       selector:
         locator: '//a[contains(@href,"no-image-view")]'
         type: xpath

@@ -39,11 +39,9 @@ Feature: Mass Product Actions processing
     And I signed in as AmandaRCole@example.org on the store frontend
     And I click "All Products"
     And I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
-    When I click "Catalog Switcher Toggle"
     And I click "Gallery View"
     Then I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
-    When I click "Catalog Switcher Toggle"
-    And I click "No Image View"
+    And I click "Compact View"
     And I click "Close" if present
     And I check PSKU1 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU1" in frontend product grid:
@@ -92,7 +90,6 @@ Feature: Mass Product Actions processing
     And I check PSKU2 record in "Product Frontend Grid" grid
 
   Scenario: Show warning message when products are selected and trying to refresh the page
-    When I click "Catalog Switcher Toggle"
     And I click "List View"
     And I accept alert
     Then I should see PSKU2 unchecked record in "Product Frontend Grid"

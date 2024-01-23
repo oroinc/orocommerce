@@ -20,11 +20,9 @@ Feature: Mass Product Actions for Guest user
     When I type "rtsh_m" in "search"
     And I click "Search Button"
     Then I should not see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I click "Catalog Switcher Toggle"
     And I click "Gallery View"
     Then I should not see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I click "Catalog Switcher Toggle"
-    And I click "No Image View"
+    And I click "Compact View"
     Then I should not see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
 
   Scenario: Mass actions are enabled for Guest when Guest Shopping List feature is enabled
@@ -42,10 +40,8 @@ Feature: Mass Product Actions for Guest user
     When I type "rtsh_m" in "search"
     And I click "Search Button"
     Then I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I click "Catalog Switcher Toggle"
     And I click "Gallery View"
     Then I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
-    When I click "Catalog Switcher Toggle"
     And I click "List View"
     Then I should see mass action checkbox in row with rtsh_m content for "Product Frontend Grid"
 

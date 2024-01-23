@@ -50,12 +50,11 @@ Feature: Highlighting new products
     When I click "NewCategory"
     Then should see "New Arrival Sticker" for "PSKU1" product
     And should not see "New Arrival Sticker" for "PSKU2" product
-    When I click "Catalog Switcher Toggle"
+    And I wait for action
     And I click "Gallery View"
     Then should see "New Arrival Sticker" for "PSKU1" product
     And should not see "New Arrival Sticker" for "PSKU2" product
-    When I click "Catalog Switcher Toggle"
-    And I click "No Image View"
+    And I click "Compact View"
     Then should see "New Arrival Sticker" for "PSKU1" product
     And should not see "New Arrival Sticker" for "PSKU2" product
 
@@ -63,16 +62,13 @@ Feature: Highlighting new products
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     And I click "NewCategory"
-    When I click "Catalog Switcher Toggle"
     And I click "List View"
     Then should see "New Arrival Sticker" for "PSKU1" product
     And should not see "New Arrival Sticker" for "PSKU2" product
-    When I click "Catalog Switcher Toggle"
     And I click "Gallery View"
     Then should see "New Arrival Sticker" for "PSKU1" product
     And should not see "New Arrival Sticker" for "PSKU2" product
-    When I click "Catalog Switcher Toggle"
-    And I click "No Image View"
+    And I click "Compact View"
     Then should see "New Arrival Sticker" for "PSKU1" product
     And should not see "New Arrival Sticker" for "PSKU2" product
 
@@ -86,7 +82,6 @@ Feature: Highlighting new products
     And submit form
     Then I should see "Configuration saved" flash message
     And I proceed as the User
-    And I click "Catalog Switcher Toggle"
     And I click "List View"
     When click "View Details" for "PSKU1" product
     Then I should see an "New Arrival Sticker" element
@@ -123,26 +118,20 @@ Feature: Highlighting new products
     Given I proceed as the User
     And I am on the homepage
     When I click "NewCategory"
-    And I click "Catalog Switcher Toggle"
     And I click "List View"
     Then should not see "New Arrival Sticker" for "PSKU1" product
-    When I click "Catalog Switcher Toggle"
     And I click "Gallery View"
     Then should not see "New Arrival Sticker" for "PSKU1" product
-    When I click "Catalog Switcher Toggle"
-    And I click "No Image View"
+    And I click "Compact View"
     Then should not see "New Arrival Sticker" for "PSKU1" product
 
   Scenario: New Arrival Sticker for loged user (UnAssign)
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     And I click "NewCategory"
-    When I click "Catalog Switcher Toggle"
     And I click "List View"
     Then should not see "New Arrival Sticker" for "PSKU1" product
-    When I click "Catalog Switcher Toggle"
     And I click "Gallery View"
     Then should not see "New Arrival Sticker" for "PSKU1" product
-    When I click "Catalog Switcher Toggle"
-    And I click "No Image View"
+    And I click "Compact View"
     Then should not see "New Arrival Sticker" for "PSKU1" product

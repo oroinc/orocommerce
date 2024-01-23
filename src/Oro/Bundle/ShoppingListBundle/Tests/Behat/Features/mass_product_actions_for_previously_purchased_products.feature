@@ -30,10 +30,8 @@ Feature: Mass Product Actions for Previously purchased products
     And I click "Previously Purchased"
     Then page has "Previously Purchased" header
     And I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
-    When I click "Catalog Switcher Toggle"
-    And I click "No Image View"
+    And I click "Compact View"
     Then I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
-    When I click "Catalog Switcher Toggle"
     And I click "Gallery View"
     And I check PSKU1 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU1" in frontend product grid:
