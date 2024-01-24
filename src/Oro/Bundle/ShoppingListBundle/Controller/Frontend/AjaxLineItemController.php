@@ -58,6 +58,10 @@ class AjaxLineItemController extends AbstractLineItemController
         $currentShoppingListManager = $this->get(CurrentShoppingListManager::class);
         $shoppingList = $currentShoppingListManager->getForCurrentUser($request->get('shoppingListId'), true);
 
+        if (!$shoppingList) {
+            throw $this->createNotFoundException();
+        }
+
         if (!$this->get(AuthorizationCheckerInterface::class)->isGranted('EDIT', $shoppingList)) {
             throw $this->createAccessDeniedException();
         }
