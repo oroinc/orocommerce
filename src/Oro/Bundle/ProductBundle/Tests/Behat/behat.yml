@@ -817,6 +817,10 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="frontend-catalog-allproducts-grid"], div[data-page-component-name="frontend-product-search-grid"], div[data-page-component-name="order-products-previously-purchased-grid"]'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid
 
+    ProductFrontendGridToolbarPaginator:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductFrontendGridToolbarPaginator
+      selector: '.visible-items-counter'
+
     ProductFrontendGridFilters:
       selector: 'div[data-page-component-name="frontend-product-search-grid"] div.filter-box'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters

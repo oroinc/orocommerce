@@ -23,7 +23,8 @@
         '~class': ' datagrid-toolbar__panel',
         'data-role': 'filter-container'
     }) %}
-    <div {{ block('block_attributes') }}></div>
+
+    <div{{ block('block_attributes') }}></div>
 {% endblock %}
 
 {% block __oro_product_grid__datagrid_toolbar_pagination_widget %}
@@ -62,12 +63,15 @@
 {% endblock %}
 
 {% block _product_mass_actions_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': 'datagrid-tool product-action-area',
-        'data-mass-actions-container': '',
-    }) %}
+    {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
+    {% if toolbarPosition == 'top' %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': 'datagrid-tool product-action-area',
+            'data-mass-actions-container': '',
+        }) %}
 
-    <div {{ block('block_attributes') }}></div>
+        <div {{ block('block_attributes') }}></div>
+    {% endif %}
 {% endblock %}
 
 {% block _product_mass_actions_sticky_container_widget %}
@@ -97,8 +101,19 @@
         class: attr.class|default('') ~ " datagrid-tool display-options"
     }) %}
     {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
-
     {% if toolbarPosition != 'bottom' %}
+        {% set gridName = block.vars['datagrid'].name %}
+        {% set catalogSwitcherId = 'catalog-switcher-'|uniqid %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-page-component-module': 'oroproduct/js/app/components/catalog-switch-component',
+            'data-page-component-options': {
+                'parameterName': gridName
+            },
+            'data-server-render': '',
+            'id': catalogSwitcherId,
+            class: attr.class|default('') ~ " datagrid-tool display-options"
+        }) %}
+
         <div{{ block('block_attributes') }}>
             {% set row_view_key = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::GRID_THEME_PARAM_NAME') %}
             {% set url_prefix = app.request.baseUrl ~ app.request.pathInfo %}

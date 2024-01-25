@@ -18,7 +18,6 @@ layout:
         - '@move':
               id: product_datagrid_toolbar_actions
               parentId: product_datagrid_toolbar_leftside_container
-              siblingId: product_datagrid_toolbar_sorting
               prepend: true
 
         - '@move':

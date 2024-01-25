@@ -10,7 +10,7 @@ class FrontendProductGrid extends Grid
         'GridRow' => 'ProductFrontendGridRow',
         'GridRowStrict' => 'ProductFrontendGridRow',
         'GridTable' => 'ProductFrontendGridTable',
-        'GridToolbarPaginator' => 'FrontendGridToolbarPaginator',
+        'GridToolbarPaginator' => 'ProductFrontendGridToolbarPaginator',
         'MassActionHeadCheckbox' => 'ProductFrontendMassActionHeadCheckbox',
         'MassActionButton' => 'ProductFrontendMassActionButton',
         'GridMassActionMenu' => 'ProductFrontendGridMassActionMenu',

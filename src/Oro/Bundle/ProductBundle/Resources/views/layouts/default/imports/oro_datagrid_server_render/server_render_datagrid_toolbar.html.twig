@@ -16,58 +16,78 @@
 {% block __datagrid_toolbar__datagrid_toolbar_leftside_container_widget %}
     {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
 
-    {% if toolbarPosition != 'bottom' %}
-        <div class="datagrid-toolbar__start" data-section="left-side">
-            {{ block_widget(block) }}
-        </div>
+    <div class="datagrid-toolbar__start" data-section="left-side">
+        {% for child in block -%}
+            {% if child.vars.visible %}
+                {{ block_widget(child, {attr: {'data-grid-toolbar': toolbarPosition}}) }}
+            {% endif %}
+        {%- endfor %}
+    </div>
+{% endblock %}
+
+{% block __datagrid_toolbar__datagrid_toolbar_pagination_info_widget %}
+    {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
+
+    {% if toolbarPosition == 'bottom' %}
+        <div data-grid-pagination-info class="datagrid-toolbar-pagination-info"></div>
     {% endif %}
 {% endblock %}
 
 {% block __datagrid_toolbar__datagrid_toolbar_rightside_container_widget %}
     {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
-
-    {% if toolbarPosition != 'bottom' %}
         <div class="datagrid-toolbar__end" data-section="right-side">
-            {{ block_widget(block) }}
+            {% for child in block -%}
+                {% if child.vars.visible %}
+                    {{ block_widget(child, {attr: {'data-grid-toolbar': toolbarPosition}}) }}
+                {% endif %}
+            {%- endfor %}
         </div>
-    {% endif %}
 {% endblock %}
 
 {% block __oro_datagrid_server_render__datagrid_toolbar_pagination_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
-    <div{{ block('block_attributes') }}>
-        {% set metadata = oro_datagrid_metadata(datagrid) %}
-        {% set data = oro_datagrid_data(datagrid) %}
+    {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
+    {% if toolbarPosition == 'bottom' %}
+        <div{{ block('block_attributes') }}>
+            {% set metadata = oro_datagrid_metadata(datagrid) %}
+            {% set data = oro_datagrid_data(datagrid) %}
 
-        {% set totalRecords = data.options.totalRecords is defined ? data.options.totalRecords : 0 %}
-        {% set pageSize = metadata.state.pageSize %}
-        {% set currentPage = metadata.state.currentPage %}
-        {% set totalPages = pageSize == 0 ? 1 : (totalRecords / pageSize)|round %}
+            {% set totalRecords = data.options.totalRecords is defined ? data.options.totalRecords : 0 %}
+            {% set pageSize = metadata.state.pageSize %}
+            {% set currentPage = metadata.state.currentPage %}
+            {% set totalPages = pageSize == 0 ? 1 : (totalRecords / pageSize)|round %}
 
-        <div class="oro-pagination__pager">
-            <a role="button" href="{% if currentPage <= 1 %}#{% else %}{{ oro_datagrid_get_page_url(datagrid, currentPage - 1) }}{% endif %}"
-               class="oro-pagination-arrow oro-pagination__prev{% if currentPage <= 1 %} disabled{% endif %}"
-               data-grid-pagination-trigger data-grid-pagination-direction="prev"
-               aria-label="{{ "oro.datagrid.pagination.prev.aria_label"|trans }}">
-                {{ renderIcon.icon({name: 'chevron-left', extraClass: 'oro-pagination__icon theme-icon--medium'}) }}
-            </a>
-
-            <input type="text" class="input oro-pagination__input" aria-label="{{ "oro.datagrid.pagination.input.aria_label"|trans }}" value="{{ currentPage }}"
-                   data-grid-pagination-trigger-input/>
-
-            <span class="oro-pagination__total">
-                {% set totalPagesWithAMarkup = '<span data-grid-pagination-pages>' ~ totalPages ~ '</span>' %}
-                {{ "oro.datagrid.pagination.totalPages"|trans({'%totalPages%': totalPagesWithAMarkup})|raw }}
-            </span>
-
-            <a role="button" href="{% if currentPage >= totalPages %}#{% else %}{{ oro_datagrid_get_page_url(datagrid, currentPage + 1) }}{% endif %}"
-               class="oro-pagination-arrow oro-pagination__next{% if currentPage >= totalPages %} disabled{% endif %}"
-               data-grid-pagination-trigger data-grid-pagination-direction="next"
-               aria-label="{{ "oro.datagrid.pagination.next.aria_label"|trans }}">
-                {{ renderIcon.icon({name: 'chevron-right', extraClass: 'oro-pagination__icon theme-icon--medium'}) }}
-            </a>
+            <div class="oro-pagination__pager">
+                <a
+                    role="button" href="{% if currentPage <= 1 %}#{% else %}{{ oro_datagrid_get_page_url(datagrid, currentPage - 1) }}{% endif %}"
+                    class="oro-pagination-arrow oro-pagination__prev{% if currentPage <= 1 %} disabled{% endif %}"
+                    data-grid-pagination-trigger data-grid-pagination-direction="prev"
+                    aria-label="{{ "oro.datagrid.pagination.prev.aria_label"|trans }}"
+                >
+                    {{ renderIcon.icon({name: 'chevron-left', extraClass: 'oro-pagination__icon theme-icon--medium'}) }}
+                </a>
+                <input
+                    type="text"
+                    class="input oro-pagination__input"
+                    aria-label="{{ "oro.datagrid.pagination.input.aria_label"|trans }}"
+                    value="{{ currentPage }}"
+                    data-grid-pagination-trigger-input
+                />
+                <span class="oro-pagination__total">
+                    {% set totalPagesWithAMarkup = '<span data-grid-pagination-pages>' ~ totalPages ~ '</span>' %}
+                    {{ "oro.datagrid.pagination.totalPages"|trans({'%totalPages%': totalPagesWithAMarkup})|raw }}
+                </span>
+                <a
+                    role="button" href="{% if currentPage >= totalPages %}#{% else %}{{ oro_datagrid_get_page_url(datagrid, currentPage + 1) }}{% endif %}"
+                    class="oro-pagination-arrow oro-pagination__next{% if currentPage >= totalPages %} disabled{% endif %}"
+                    data-grid-pagination-trigger data-grid-pagination-direction="next"
+                    aria-label="{{ "oro.datagrid.pagination.next.aria_label"|trans }}"
+                >
+                    {{ renderIcon.icon({name: 'chevron-right', extraClass: 'oro-pagination__icon theme-icon--medium'}) }}
+                </a>
+            </div>
         </div>
-    </div>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_datagrid_server_render__datagrid_toolbar_page_size_widget %}
@@ -76,7 +96,7 @@
     {% set pageSize = metadata.options.toolbarOptions.pageSize %}
     {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
 
-    {% if pageSize.hide == false and pageSize.items|length > 0 and toolbarPosition != 'bottom' %}
+    {% if pageSize.hide == false and pageSize.items|length > 0 and toolbarPosition == 'bottom' %}
         <div{{ block('block_attributes') }}>
             <div class="page-size">
                 {% set labelId = 'datagrid-toolbar-label-'|uniqid %}
@@ -95,5 +115,28 @@
                 </div>
             </div>
         </div>
+    {% endif %}
+{% endblock %}
+
+{% block __datagrid_toolbar__datagrid_toolbar_actions_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' datagrid-tool actions-panel-container'
+    }) %}
+    {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
+
+    {% if toolbarPosition != 'bottom' %}
+        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block __datagrid_toolbar__datagrid_items_counter_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " datagrid-tool oro-items-counter",
+        'data-grid-items-counter': ''
+    }) %}
+    {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
+
+    {% if toolbarPosition != 'bottom' %}
+        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
     {% endif %}
 {% endblock %}
