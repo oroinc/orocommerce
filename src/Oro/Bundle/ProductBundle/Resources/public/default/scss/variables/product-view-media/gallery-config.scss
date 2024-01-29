@@ -30,7 +30,7 @@ $product-view-media-gallery-slick-slide-item-border: 1px solid get-var-color('ne
 $product-view-media-gallery-slick-slide-current-item-border: 2px solid get-var-color('primary', 'main') !default;
 
 $product-view-media-gallery-nav-loading-url: get-color('additional-old', 'ultra')
-    url('#{$global-url}/orofrontend/default/images/loader.gif') no-repeat center center !default;
+    url('#{$global-url}/orofrontend/default/images/loader.svg') no-repeat center center !default;
 
 $product-view-media-gallery-nav-tab-content-max-width: $product-view-media-gallery-tab-content-max-width -
     $product-view-media-gallery-nav-arrow-width * 2 !default;
