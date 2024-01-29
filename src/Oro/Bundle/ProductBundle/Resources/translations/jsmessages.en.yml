@@ -188,6 +188,8 @@ oro:
                     success_message: The product data export has started. You will receive download instructions by email once the export is finished.
             actions_panel:
                 action_postfix: 'Default'
+                discard_selection: 'Discard Selection'
+                selected_view: '{{ count }} selected'
             datagrid:
                 toolbar_sorting:
                     label: Sort by
@@ -221,7 +223,7 @@ oro:
         frontend_importexport:
             product_data_export:
                 success_message: The product data export has started. You will receive download instructions by email once the export is finished.
-                
+
         product_kit:
             confirmation:
                 title: 'Delete Product'

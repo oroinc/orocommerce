@@ -168,10 +168,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
             'data_identifier' => 'product.id',
             'frontend_type' => 'add-products-mass',
             'handler' => 'oro_shopping_list.mass_action.add_products_handler',
-            'is_current' => false,
-            'launcherOptions' => [
-                'iconClassName' => 'fa-shopping-cart'
-            ]
+            'is_current' => false
         ], $options);
     }
 

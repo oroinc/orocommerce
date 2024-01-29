@@ -30,7 +30,6 @@ styles:
         - 'bundles/oroproduct/default/scss/variables/filter-controls-config.scss'
         - 'bundles/oroproduct/default/scss/variables/toggle-sidebar-btn-config.scss'
         - 'bundles/oroproduct/default/scss/variables/product-sticker-config.scss'
-        - 'bundles/oroproduct/default/scss/variables/product-action-config.scss'
         - 'bundles/oroproduct/default/scss/variables/oro-more-info-toggler-config.scss'
         - 'bundles/oroproduct/default/scss/variables/visible-items-counter-config.scss'
 

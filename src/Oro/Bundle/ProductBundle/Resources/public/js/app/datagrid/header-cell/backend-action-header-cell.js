@@ -12,6 +12,7 @@ define(function(require, exports, module) {
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
     const ActionsPanel = require('oroproduct/js/app/datagrid/backend-actions-panel');
     const FullscreenPopupView = require('orofrontend/default/js/app/views/fullscreen-popup-view');
+    const oroui = _.macros('oroui');
     const config = require('module-config').default(module.id);
 
     const shoppingListAddAction = config.shoppingListAddAction || {
@@ -25,10 +26,7 @@ define(function(require, exports, module) {
         route: 'oro_shopping_list_add_products_massaction',
         route_parameters: {},
         frontend_handle: 'ajax',
-        confirmation: false,
-        launcherOptions: {
-            iconClassName: 'fa-shopping-cart'
-        }
+        confirmation: false
     };
     const modes = {
         GROUP: 'Group',
@@ -146,6 +144,7 @@ define(function(require, exports, module) {
         _doActivate: function(selectState) {
             try {
                 this[`_doActivate${this.renderMode}`](selectState);
+                this._renderSelectedItemsView(selectState);
             } catch (e) {
                 throw e;
             }
@@ -209,6 +208,12 @@ define(function(require, exports, module) {
             }
         },
 
+        _renderSelectedItemsView(selectState) {
+            this.$('.product-selected-counter').text(
+                `${__('oro.product.frontend.actions_panel.selected_view', {count: selectState.get('rows').length})}`
+            );
+        },
+
         _renderAsGroupDropdown() {
             const panel = this.subview('actionsPanel');
             const togglerId = _.uniqueId('dropdown-');
@@ -230,11 +235,12 @@ define(function(require, exports, module) {
                 const $dropdownToggle = $('<button></button>', {
                     'id': togglerId,
                     'type': 'button',
-                    'class': 'btn btn--outlined dropdown-toggle',
+                    'class': 'btn btn--inverse btn--icon dropdown-toggle',
                     'aria-label': __('oro.product.frontend.choose_action'),
                     'data-toggle': 'dropdown',
                     'data-placement': 'top-end'
                 });
+                $dropdownToggle.html(oroui.renderIcon({name: 'chevron-up'}));
 
                 panel.$el.children().wrapAll($('<div></div>', {
                     'class': 'dropdown-menu',
@@ -244,7 +250,7 @@ define(function(require, exports, module) {
                 $dropdownToggle.prependTo(panel.$el);
 
                 $mainLuncher
-                    .addClass('btn btn--full btn--outlined')
+                    .addClass('btn btn--inverse')
                     .removeClass('disabled')
                     .prependTo(panel.$el);
             } else {
@@ -275,22 +281,24 @@ define(function(require, exports, module) {
 
         _renderAsGroup() {
             const panel = this.subview('actionsPanel');
-            const extraClasses = 'btn-group--full dropup';
+            const extraClasses = 'btn-group--full action-group dropup';
 
             this.getActionContainer().append(
                 panel.renderMainLauncher().$el
             );
             panel.launchers.forEach(launcher => {
-                launcher.$el.addClass('btn btn--full btn--outlined btn--size-small');
+                launcher.$el.addClass('btn btn--inverse btn--full');
             });
             panel.$el.addClass(extraClasses);
             if (panel.actions.length > 1) {
-                panel.$el.append($('<button></button>', {
+                const $dropdownToggle = $('<button></button>', {
                     'type': 'button',
-                    'class': 'btn btn--outlined btn--size-small dropdown-toggle',
+                    'class': 'btn btn--inverse btn--icon dropdown-toggle',
                     'data-fullscreen-trigger': '',
                     'aria-label': __('oro.product.frontend.choose_action')
-                }));
+                });
+                panel.$el.append($dropdownToggle);
+                $dropdownToggle.html(oroui.renderIcon({name: 'chevron-up'}));
             }
 
             this._replaceablePanelClasses = `${extraClasses} show`;
