@@ -1,5 +1,8 @@
 {% block  __datagrid_toolbar__datagrid_toolbar_leftside_container_widget %}
     <div class="datagrid-toolbar__start" data-section="left-side">
+        <% if (toolbarPosition === 'top') { %>
+            <div class="actions-panel" data-grid-extra-actions-panel></div>
+        <% } %>
         {{ block_widget(block) }}
     </div>
 {% endblock %}

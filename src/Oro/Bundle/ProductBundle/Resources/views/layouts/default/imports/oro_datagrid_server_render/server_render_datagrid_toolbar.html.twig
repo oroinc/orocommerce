@@ -17,6 +17,9 @@
     {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
 
     <div class="datagrid-toolbar__start" data-section="left-side">
+        {% if toolbarPosition == 'top' %}
+            <div class="actions-panel" data-grid-extra-actions-panel></div>
+        {% endif %}
         {% for child in block -%}
             {% if child.vars.visible %}
                 {{ block_widget(child, {attr: {'data-grid-toolbar': toolbarPosition}}) }}

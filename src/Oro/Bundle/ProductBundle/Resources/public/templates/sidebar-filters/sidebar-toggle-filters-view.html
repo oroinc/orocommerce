@@ -1,3 +1,10 @@
+<% let oroui = _.macros('oroui') %>
 <button class="<%- className %>" type="button" title="<%- _.__(title) %>">
-    <span class="<%- icon %>" aria-hidden="true"></span>
+    <%= oroui.renderIcon({
+        name: icon,
+        class: 'theme-icon theme-icon--medium'
+    }) %>
+    <% if (obj.text) { %>
+        <%- _.__(text) %>
+    <% } %>
 </button>

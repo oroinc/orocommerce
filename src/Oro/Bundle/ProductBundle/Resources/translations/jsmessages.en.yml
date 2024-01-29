@@ -35,6 +35,7 @@ oro:
         sidebar_filters:
             title: Filter By
             button:
+                text: Filter
                 title:
                     collapse: 'Collapse Filters'
                     expand: 'Expand Filters'
