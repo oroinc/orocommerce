@@ -1988,6 +1988,14 @@ services:
             - { name: oro_featuretogle.voter }
             - { name: oro_featuretogle.feature, feature: attachment_original_filenames }
 
+    # Component added back for theme layout BC from version 5.0
+    oro_checkout.layout.extension.product_seo_context_configurator:
+        class: Oro\Bundle\ProductBundle\Layout\Extension\ProductSEOContextConfigurator
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.context_configurator }
+
     oro_product.datagrid.provider.product_variants_selected_fields_provider:
         class: Oro\Bundle\ProductBundle\DataGrid\Provider\ProductVariantsSelectedFieldsProvider
         arguments:

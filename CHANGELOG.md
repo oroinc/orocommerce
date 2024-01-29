@@ -59,6 +59,7 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductPreloadingIndexerListener` that preload products with required data at the start of website reindex operation.
 * Disabled the ability to add a product kit to Quick Order Form via `\Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler::setNotAllowedProductTypes`.
 * Removed the `oro_product.popup_gallery_on_product_view` option from the system configuration.
+* Restored the is_optimized field in quick add forms (for compatibility to older layout themes), but the optimized version is forced. Consider refactoring your templates which rely on this field.
 
 #### PaymentBundle
 * Added the new and only way to create a payment line items `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` - see `\Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactoryInterface`.

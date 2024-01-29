@@ -325,3 +325,9 @@ services:
             - '@doctrine.orm.entity_manager'
             - 'Oro\Bundle\ProductBundle\Entity\Product'
             - 'id'
+
+    # Component added back for theme layout BC from version 5.0
+    oro_product.form.type.extension.is_optimized_quick_add:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\IsOptimizedQuickAddTypeExtension'
+        tags:
+            - { name: form.type_extension }

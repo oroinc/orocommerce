@@ -506,3 +506,10 @@ services:
         tags:
             - { name: monolog.logger, channel: oro_cms }
 
+    # Component added back for theme layout BC from version 5.0
+    oro_cms.layout_context_configurator.is_updated_after_507:
+        class: Oro\Bundle\CMSBundle\Layout\ContextConfigurator\IsUpdatedAfter507ContextConfigurator
+        arguments:
+            - '@oro_config.global'
+        tags:
+            - { name: layout.context_configurator }
