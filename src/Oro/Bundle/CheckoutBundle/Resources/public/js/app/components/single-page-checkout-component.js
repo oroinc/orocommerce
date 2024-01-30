@@ -3,6 +3,7 @@ define(function(require) {
 
     const $ = require('jquery');
     const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
     const mediator = require('oroui/js/mediator');
     const LayoutSubtreeManager = require('oroui/js/layout-subtree-manager');
     const BaseComponent = require('oroui/js/app/components/base/component');
@@ -39,6 +40,8 @@ define(function(require) {
          */
         jqXHR: null,
 
+        loadingCheckoutMessage: null,
+
         /**
          * @inheritdoc
          */
@@ -58,10 +61,24 @@ define(function(require) {
                 entityId: this.options.entityId
             });
 
+            $(window).on(`beforeunload${this.eventNamespace()}`, this.onWindowUnload.bind(this));
             this.formView.on('after-check-form', this.onAfterCheckForm.bind(this));
             this.formView.on('submit-form', this.onSubmit.bind(this));
 
             SinglePageCheckoutComponent.__super__.initialize.call(this, this.options);
+        },
+
+        eventNamespace() {
+            return '.' + this.name;
+        },
+
+        onWindowUnload(event) {
+            if (this.loadingCheckoutMessage) {
+                event.preventDefault();
+                event.returnValue = true;
+
+                return true;
+            }
         },
 
         /**
@@ -84,6 +101,7 @@ define(function(require) {
          */
         onSubmit: function(data) {
             mediator.execute('showLoading');
+            this.showCheckoutLoadingMessage();
 
             const url = this.options.transitionUrl +
                 (-1 !== _.indexOf(this.options.transitionUrl, '?') ? '&' : '?') +
@@ -95,13 +113,16 @@ define(function(require) {
                 data: data
             })
                 .done(this.onSuccess.bind(this))
-                .fail(function() {
+                .fail(() => {
                     mediator.execute('hideLoading');
                     mediator.execute('showFlashMessage', 'error', 'Could not perform transition');
+                    this.hideCheckoutLoadingMessage();
                 });
         },
 
         onSuccess: function(response) {
+            this.hideCheckoutLoadingMessage();
+
             if (response.hasOwnProperty('responseData')) {
                 const eventData = {stopped: false, responseData: response.responseData};
                 mediator.trigger('checkout:place-order:response', eventData);
@@ -268,6 +289,32 @@ define(function(require) {
         },
 
         /**
+         * Show message over the loading mask
+         */
+        showCheckoutLoadingMessage() {
+            this.loadingCheckoutMessage = mediator.execute(
+                'showFlashMessage',
+                'warning',
+                __('oro.checkout.please_wait_message'),
+                {
+                    container: document.body,
+                    hideCloseButton: true,
+                    namespace: 'single-page-checkout'
+                }
+            );
+
+            $(`[data-messenger-namespace="${this.loadingCheckoutMessage.namespace}"]`)
+                .addClass('notification-flash--single-page-checkout');
+        },
+
+        hideCheckoutLoadingMessage() {
+            if (this.loadingCheckoutMessage) {
+                this.loadingCheckoutMessage.close();
+                this.loadingCheckoutMessage = null;
+            }
+        },
+
+        /**
          * @inheritdoc
          */
         dispose: function() {
@@ -279,6 +326,8 @@ define(function(require) {
                 this.formView.dispose();
                 delete this.formView;
             }
+
+            $(window).off(this.eventNamespace());
 
             SinglePageCheckoutComponent.__super__.dispose.call(this);
         }
