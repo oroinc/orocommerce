@@ -34,7 +34,7 @@ Feature: Previously purchased products
     When I follow "Account"
     And I click "Previously Purchased"
     Then page has "Previously Purchased" header
-    And I should see "My Account / Previously Purchased"
+    And I should see "My Account Previously Purchased"
     Then I should see "Product 1"
     And I should see "Product 2"
     And I should see "Recency (Newest first)"

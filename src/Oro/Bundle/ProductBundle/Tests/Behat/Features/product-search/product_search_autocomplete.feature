@@ -62,7 +62,7 @@ Feature: Product search autocomplete
     Then I should see "Search Form Field" element focused
     And I should see "Search Autocomplete Item Selected" element with text "Product2" inside "Search Autocomplete" element
     When I press "Enter" key on "Search Form Field" element
-    And I should see "All Products / Product2"
+    And I should see "All Products Product2"
 
   Scenario: Check the search autocomplete navigation by ArrowUp key
     When I type "Product" in "search"
@@ -100,4 +100,4 @@ Feature: Product search autocomplete
     And number of records in "Product Frontend Grid" should be 3
     And I type "PSKU3" in "search"
     And I click "Search Autocomplete Product"
-    Then I should see "All Products / Product3"
+    Then I should see "All Products Product3"
