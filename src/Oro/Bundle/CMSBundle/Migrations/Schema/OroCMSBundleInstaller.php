@@ -19,7 +19,6 @@ use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareTrait;
 
 /**
- * Creates all tables required for CMSBundle.
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class OroCMSBundleInstaller implements
@@ -32,20 +31,12 @@ class OroCMSBundleInstaller implements
     use AttachmentExtensionAwareTrait;
     use SlugExtensionAwareTrait;
 
-    const CMS_LOGIN_PAGE_TABLE = 'oro_cms_login_page';
-    const MAX_LOGO_IMAGE_SIZE_IN_MB = 10;
-    const MAX_BACKGROUND_IMAGE_SIZE_IN_MB = 10;
-    const MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB = 10;
-    const MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB = 10;
-    const MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB = 10;
-    const MAX_CONTENT_TEMPLATE_PREVIEW_IMAGE_SIZE_IN_MB = 10;
-
     /**
      * {@inheritdoc}
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_14';
+        return 'v1_14_1';
     }
 
     /**
@@ -111,7 +102,7 @@ class OroCMSBundleInstaller implements
             'oro_cms_content_template',
             'previewImage',
             ['attachment' => ['acl_protected' => true, 'use_dam' => false]],
-            self::MAX_CONTENT_TEMPLATE_PREVIEW_IMAGE_SIZE_IN_MB
+            10
         );
     }
 
@@ -243,7 +234,7 @@ class OroCMSBundleInstaller implements
      */
     private function createOroCmsLoginPageTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::CMS_LOGIN_PAGE_TABLE);
+        $table = $schema->createTable('oro_cms_login_page');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('top_content', 'text', ['notnull' => false]);
         $table->addColumn('bottom_content', 'text', ['notnull' => false]);
@@ -254,22 +245,8 @@ class OroCMSBundleInstaller implements
     private function addOroCmsLoginPageImageAssociations(Schema $schema): void
     {
         $options['attachment']['acl_protected'] = false;
-
-        $this->attachmentExtension->addImageRelation(
-            $schema,
-            self::CMS_LOGIN_PAGE_TABLE,
-            'logoImage',
-            $options,
-            self::MAX_LOGO_IMAGE_SIZE_IN_MB
-        );
-
-        $this->attachmentExtension->addImageRelation(
-            $schema,
-            self::CMS_LOGIN_PAGE_TABLE,
-            'backgroundImage',
-            $options,
-            self::MAX_BACKGROUND_IMAGE_SIZE_IN_MB
-        );
+        $this->attachmentExtension->addImageRelation($schema, 'oro_cms_login_page', 'logoImage', $options, 10);
+        $this->attachmentExtension->addImageRelation($schema, 'oro_cms_login_page', 'backgroundImage', $options, 10);
     }
 
     /**
@@ -452,31 +429,23 @@ class OroCMSBundleInstaller implements
         $table->addColumn('slide_order', 'integer', ['default' => 0]);
         $table->addColumn('url', 'string', ['length' => 255]);
         $table->addColumn('display_in_same_window', 'boolean', ['default' => true]);
-        $table->addColumn('title', 'string', ['length' => 255]);
+        $table->addColumn('alt_image_text', 'string', ['length' => 255]);
+        $table->addColumn('header', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('text', 'text', ['notnull' => false]);
         $table->addColumn('text_alignment', 'string', ['length' => 20, 'default' => ImageSlide::TEXT_ALIGNMENT_CENTER]);
 
-        $this->attachmentExtension->addImageRelation(
-            $schema,
-            'oro_cms_image_slide',
-            'mainImage',
-            ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
-            self::MAX_IMAGE_SLIDE_MAIN_IMAGE_SIZE_IN_MB
-        );
-        $this->attachmentExtension->addImageRelation(
-            $schema,
-            'oro_cms_image_slide',
-            'mediumImage',
-            ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
-            self::MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB
-        );
-        $this->attachmentExtension->addImageRelation(
-            $schema,
-            'oro_cms_image_slide',
-            'smallImage',
-            ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
-            self::MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB
-        );
+        $this->addSlideImageRelation($schema, 'extraLargeImage');
+        $this->addSlideImageRelation($schema, 'extraLargeImage2x');
+        $this->addSlideImageRelation($schema, 'extraLargeImage3x');
+        $this->addSlideImageRelation($schema, 'largeImage');
+        $this->addSlideImageRelation($schema, 'largeImage2x');
+        $this->addSlideImageRelation($schema, 'largeImage3x');
+        $this->addSlideImageRelation($schema, 'mediumImage');
+        $this->addSlideImageRelation($schema, 'mediumImage2x');
+        $this->addSlideImageRelation($schema, 'mediumImage3x');
+        $this->addSlideImageRelation($schema, 'smallImage');
+        $this->addSlideImageRelation($schema, 'smallImage2x');
+        $this->addSlideImageRelation($schema, 'smallImage3x');
 
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
@@ -743,6 +712,17 @@ class OroCMSBundleInstaller implements
             ['organization_id'],
             ['id'],
             ['onDelete' => 'SET NULL']
+        );
+    }
+
+    public function addSlideImageRelation(Schema $schema, string $sourceColumnName): void
+    {
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            'oro_cms_image_slide',
+            $sourceColumnName,
+            ['attachment' => ['acl_protected' => false, 'use_dam' => true]],
+            10
         );
     }
 

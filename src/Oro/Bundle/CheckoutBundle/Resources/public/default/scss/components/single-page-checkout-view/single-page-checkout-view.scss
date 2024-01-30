@@ -214,13 +214,13 @@
 
 .alert.notification-flash--single-page-checkout {
     position: fixed;
-    top: $offset-y;
-    left: $offset-x-m;
-    right: $offset-x-m;
+    top: spacing('base');
+    left: spacing('base');
+    right: spacing('base');
 
     z-index: z('popup') + 101;
 
-    max-width: calc(#{$page-area-container-max-width} - #{$offset-x});
+    max-width: calc(#{$page-area-container-max-width} - #{spacing('base')});
 
     margin: auto;
 }

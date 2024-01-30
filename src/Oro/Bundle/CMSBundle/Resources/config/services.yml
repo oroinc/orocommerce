@@ -520,6 +520,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp, priority: -100 }
             - { name: kernel.event_listener, event: oro_migration.pre_up, method: onPreUp }
+
     # Component added back for theme layout BC from version 5.0
     oro_cms.layout_context_configurator.is_updated_after_507:
         class: Oro\Bundle\CMSBundle\Layout\ContextConfigurator\IsUpdatedAfter507ContextConfigurator
