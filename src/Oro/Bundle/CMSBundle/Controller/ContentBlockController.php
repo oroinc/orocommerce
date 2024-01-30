@@ -37,13 +37,13 @@ class ContentBlockController extends AbstractController
      * @Acl(
      *      id="oro_cms_content_block_view",
      *      type="entity",
-     *      class="OroCMSBundle:ContentBlock",
+     *      class="Oro\Bundle\CMSBundle\Entity\ContentBlock",
      *      permission="VIEW"
      * )
      */
     public function viewAction(ContentBlock $contentBlock): array
     {
-        $scopeEntities = $this->get(ScopeManager::class)->getScopeEntities('cms_content_block');
+        $scopeEntities = $this->container->get(ScopeManager::class)->getScopeEntities('cms_content_block');
 
         return [
             'entity' => $contentBlock,
@@ -57,7 +57,7 @@ class ContentBlockController extends AbstractController
      * @Acl(
      *      id="oro_cms_content_block_create",
      *      type="entity",
-     *      class="OroCMSBundle:ContentBlock",
+     *      class="Oro\Bundle\CMSBundle\Entity\ContentBlock",
      *      permission="CREATE"
      * )
      */
@@ -74,7 +74,7 @@ class ContentBlockController extends AbstractController
      * @Acl(
      *      id="oro_cms_content_block_update",
      *      type="entity",
-     *      class="OroCMSBundle:ContentBlock",
+     *      class="Oro\Bundle\CMSBundle\Entity\ContentBlock",
      *      permission="EDIT"
      * )
      */
@@ -87,10 +87,10 @@ class ContentBlockController extends AbstractController
     {
         $form = $this->createForm(ContentBlockType::class, $contentBlock);
 
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $contentBlock,
             $form,
-            $this->get(TranslatorInterface::class)->trans('oro.cms.controller.contentblock.saved.message')
+            $this->container->get(TranslatorInterface::class)->trans('oro.cms.controller.contentblock.saved.message')
         );
     }
 

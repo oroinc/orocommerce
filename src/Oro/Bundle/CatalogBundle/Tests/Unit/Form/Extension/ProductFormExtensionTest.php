@@ -219,8 +219,8 @@ class ProductFormExtensionTest extends TestCase
         $mainForm = $this->createMock(FormInterface::class);
         $mainForm->expects($this->any())
             ->method('has')
-            ->with(true)
-            ->willReturn($categoryForm);
+            ->with('category')
+            ->willReturn(true);
         $mainForm->expects($this->any())
             ->method('get')
             ->with('category')

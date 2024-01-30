@@ -9,6 +9,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\EventListener\CustomerFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class CustomerFormViewListenerTest extends AbstractCustomerFormViewListenerTest
 {
@@ -44,7 +45,7 @@ class CustomerFormViewListenerTest extends AbstractCustomerFormViewListenerTest
     }
 
     /**
-     * @return PriceListToCustomer[]|\PHPUnit\Framework\MockObject\MockObject[]
+     * @return PriceListToCustomer[]|MockObject[]
      */
     protected function setRepositoryExpectations()
     {
@@ -84,8 +85,8 @@ class CustomerFormViewListenerTest extends AbstractCustomerFormViewListenerTest
         $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityRepository')
             ->willReturnMap([
-                ['OroPricingBundle:PriceListToCustomer', $priceToCustomerRepository],
-                ['OroPricingBundle:PriceListCustomerFallback', $fallbackRepository],
+                [PriceListToCustomer::class, $priceToCustomerRepository],
+                [PriceListCustomerFallback::class, $fallbackRepository],
             ]);
 
         return [$priceListToCustomer1, $priceListToCustomer2];

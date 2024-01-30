@@ -37,7 +37,7 @@ Feature: Product view page breadcrumbs webcatalog
     Given I am on homepage
     And I click "Headlamps"
     When I click "View Details" for "PSKU1" product
-    Then I should see "Lighting Products / Headlamps / 220 Lumen Rechargeable Headlamp"
+    Then I should see "Lighting Products Headlamps 220 Lumen Rechargeable Headlamp"
     When I follow "Lighting Products"
     Then I should be on homepage
     When I click "Product page as Content Node"
@@ -46,4 +46,4 @@ Feature: Product view page breadcrumbs webcatalog
     When I follow "Lighting Products"
     And I click on "Headlamps category"
     And I click "View Details" for "PSKU1" product
-    Then I should see "All Products / Headlamps / 220 Lumen Rechargeable Headlamp"
+    Then I should see "All Products Headlamps 220 Lumen Rechargeable Headlamp"

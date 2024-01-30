@@ -29,7 +29,7 @@ class RestrictSitemapProductSlugByLocaleListener
 
             $case = <<<CASE
                 (SELECT count(existp.id)
-                FROM OroProductBundle:Product existp
+                FROM Oro\Bundle\ProductBundle\Entity\Product existp
                 LEFT JOIN existp.slugs exists
                 LEFT JOIN exists.localization existl
                 WHERE existp = entityAlias AND existl IN (:ids)) < :localeCounts

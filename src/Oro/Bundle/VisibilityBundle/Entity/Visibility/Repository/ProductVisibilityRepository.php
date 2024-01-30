@@ -8,6 +8,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 
+/**
+ * Repository for ProductVisibility entity
+ */
 class ProductVisibilityRepository extends AbstractProductVisibilityRepository
 {
     /**
@@ -27,9 +30,9 @@ class ProductVisibilityRepository extends AbstractProductVisibilityRepository
                     (string)$qb->expr()->literal(ProductVisibility::CONFIG)
                 ]
             )
-            ->from('OroProductBundle:Product', 'product')
+            ->from(Product::class, 'product')
             ->leftJoin(
-                'OroVisibilityBundle:Visibility\ProductVisibility',
+                ProductVisibility::class,
                 'productVisibility',
                 Join::WITH,
                 $qb->expr()->andX(
@@ -47,7 +50,7 @@ class ProductVisibilityRepository extends AbstractProductVisibilityRepository
         }
 
         $insertExecutor->execute(
-            'OroVisibilityBundle:Visibility\ProductVisibility',
+            ProductVisibility::class,
             ['product', 'scope', 'visibility'],
             $qb
         );

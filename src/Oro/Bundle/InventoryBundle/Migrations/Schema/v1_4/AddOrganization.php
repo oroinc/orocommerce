@@ -3,7 +3,6 @@
 namespace Oro\Bundle\InventoryBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\InventoryBundle\Migrations\Schema\OroInventoryBundleInstaller;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -15,9 +14,9 @@ class AddOrganization implements Migration
     /**
      * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $table = $schema->getTable(OroInventoryBundleInstaller::INVENTORY_LEVEL_TABLE_NAME);
+        $table = $schema->getTable('oro_inventory_level');
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),

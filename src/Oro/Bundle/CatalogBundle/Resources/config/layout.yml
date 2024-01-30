@@ -7,6 +7,15 @@ services:
         tags:
              - { name: layout.block_type, alias: category }
 
+    # Component added back for theme layout BC from version 5.0
+    oro_catalog.layout.block_type.category_tree:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{categories: {required: true}, max_size: {default: null}}]]
+            - [setName, ['category_list']]
+        tags:
+            - { name: layout.block_type, alias: category_list }
+
     oro_catalog.layout.data_provider.category:
         class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider'
         public: true
@@ -16,8 +25,23 @@ services:
             - '@oro_catalog.provider.category_tree_provider'
             - '@oro_security.token_accessor'
             - '@oro_catalog.provider.master_catalog_root'
+            - '@oro_catalog.layout.data_provider.category_bc_adapter' # # Component added back for theme layout BC from version 5.0
         tags:
             - { name: layout.data_provider, alias: category }
+
+    # Component added back for theme layout BC from version 5.0 - backward compatibility adapter added while migrating
+    oro_catalog.layout.data_provider.category_bc_adapter:
+        class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProviderBCAdapter'
+        public: true
+        arguments:
+            - '@oro_catalog.handler.request_product'
+            - '@doctrine'
+            - '@oro_catalog.provider.category_tree_provider'
+            - '@oro_security.token_accessor'
+            - '@oro_locale.helper.localization'
+            - '@oro_catalog.provider.master_catalog_root'
+        calls:
+            - [setCache, ['@oro_catalog.layout.data_provider.category.cache', 3600]]
 
     oro_catalog.layout.data_provider.category.cache:
         parent: oro.data.cache

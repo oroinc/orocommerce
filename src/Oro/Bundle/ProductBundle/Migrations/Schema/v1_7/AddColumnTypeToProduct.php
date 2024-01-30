@@ -9,22 +9,20 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class AddColumnTypeToProduct implements Migration, OrderedMigrationInterface
 {
-    const PRODUCT_TABLE_NAME = 'oro_product';
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function getOrder(): int
     {
-        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
-        $table->addColumn('type', 'string', ['length' => 32, 'notnull' => false]);
+        return 10;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getOrder()
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        return 10;
+        $schema->getTable('oro_product')
+            ->addColumn('type', 'string', ['length' => 32, 'notnull' => false]);
     }
 }

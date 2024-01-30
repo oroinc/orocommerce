@@ -510,7 +510,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 'expectedErrors' => [
                     [
                         'title' => 'form constraint',
-                        'detail' => 'This value is not valid.',
+                        'detail' => 'Please enter a number.',
                         'source' => ['pointer' => '/data/attributes/quantity'],
                     ],
                 ],
@@ -560,7 +560,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 'expectedErrors' => [
                     [
                         'title' => 'form constraint',
-                        'detail' => 'This value is not valid.',
+                        'detail' => 'Please enter an integer.',
                         'source' => ['pointer' => '/data/attributes/sortOrder'],
                     ],
                 ],

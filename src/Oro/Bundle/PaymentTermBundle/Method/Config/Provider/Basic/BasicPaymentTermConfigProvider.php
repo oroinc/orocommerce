@@ -8,6 +8,9 @@ use Oro\Bundle\PaymentTermBundle\Method\Config\Factory\Settings\PaymentTermConfi
 use Oro\Bundle\PaymentTermBundle\Method\Config\Provider\PaymentTermConfigProviderInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Provides payment method configs for all enabled payment term integrations
+ */
 class BasicPaymentTermConfigProvider implements PaymentTermConfigProviderInterface
 {
     /**
@@ -81,8 +84,8 @@ class BasicPaymentTermConfigProvider implements PaymentTermConfigProviderInterfa
     protected function getEnabledIntegrationSettings()
     {
         try {
-            return $this->doctrine->getManagerForClass('OroPaymentTermBundle:PaymentTermSettings')
-                ->getRepository('OroPaymentTermBundle:PaymentTermSettings')
+            return $this->doctrine->getManagerForClass(PaymentTermSettings::class)
+                ->getRepository(PaymentTermSettings::class)
                 ->findWithEnabledChannel();
         } catch (\UnexpectedValueException $e) {
             $this->logger->critical($e->getMessage());

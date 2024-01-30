@@ -36,7 +36,7 @@ class TaxJurisdictionController extends AbstractController
      * @Acl(
      *      id="oro_tax_jurisdiction_view",
      *      type="entity",
-     *      class="OroTaxBundle:TaxJurisdiction",
+     *      class="Oro\Bundle\TaxBundle\Entity\TaxJurisdiction",
      *      permission="VIEW"
      * )
      */
@@ -53,7 +53,7 @@ class TaxJurisdictionController extends AbstractController
      * @Acl(
      *      id="oro_tax_jurisdiction_create",
      *      type="entity",
-     *      class="OroTaxBundle:TaxJurisdiction",
+     *      class="Oro\Bundle\TaxBundle\Entity\TaxJurisdiction",
      *      permission="CREATE"
      * )
      */
@@ -68,7 +68,7 @@ class TaxJurisdictionController extends AbstractController
      * @Acl(
      *      id="oro_tax_jurisdiction_update",
      *      type="entity",
-     *      class="OroTaxBundle:TaxJurisdiction",
+     *      class="Oro\Bundle\TaxBundle\Entity\TaxJurisdiction",
      *      permission="EDIT"
      * )
      */
@@ -79,10 +79,11 @@ class TaxJurisdictionController extends AbstractController
 
     protected function update(TaxJurisdiction $taxJurisdiction): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $taxJurisdiction,
             $this->createForm(TaxJurisdictionType::class, $taxJurisdiction),
-            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.tax_jurisdiction.saved.message')
+            $this->container->get(TranslatorInterface::class)
+                ->trans('oro.tax.controller.tax_jurisdiction.saved.message')
         );
     }
 

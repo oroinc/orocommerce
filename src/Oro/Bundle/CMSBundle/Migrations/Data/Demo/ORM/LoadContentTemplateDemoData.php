@@ -222,14 +222,11 @@ class LoadContentTemplateDemoData implements
 
     private function setSecurityContext(User $user, Organization $organization): void
     {
-        $tokenStorage = $this->container->get('security.token_storage');
-        $token = new UsernamePasswordOrganizationToken(
+        $this->container->get('security.token_storage')->setToken(new UsernamePasswordOrganizationToken(
             $user,
-            $user->getUsername(),
             'main',
             $organization,
             $user->getUserRoles()
-        );
-        $tokenStorage->setToken($token);
+        ));
     }
 }

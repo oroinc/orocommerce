@@ -6,7 +6,7 @@ use Oro\Bundle\NotificationBundle\NotificationAlert\NotificationAlertManager;
 use Oro\Bundle\PricingBundle\Async\PriceListCalculationNotificationAlert;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -16,16 +16,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PriceListViewListener
 {
     private NotificationAlertManager $notificationAlertManager;
-    private FlashBagInterface $flashBag;
+    private RequestStack $requestStack;
     private TranslatorInterface $translator;
 
     public function __construct(
         NotificationAlertManager $notificationAlertManager,
-        FlashBagInterface $flashBag,
+        RequestStack $requestStack,
         TranslatorInterface $translator
     ) {
         $this->notificationAlertManager = $notificationAlertManager;
-        $this->flashBag = $flashBag;
+        $this->requestStack = $requestStack;
         $this->translator = $translator;
     }
 
@@ -38,7 +38,7 @@ class PriceListViewListener
         $priceList = $event->getEntity();
 
         if (!$priceList->isActual()) {
-            $this->flashBag->add(
+            $this->requestStack?->getSession()?->getFlashBag()->add(
                 'warning',
                 $this->translator->trans('oro.pricing.pricelist.not_actual.recalculation')
             );
@@ -49,7 +49,7 @@ class PriceListViewListener
             $priceList->getId()
         );
         if ($hasPriceRuleBuildAlert) {
-            $this->flashBag->add(
+            $this->requestStack?->getSession()?->getFlashBag()->add(
                 'error',
                 $this->translator->trans('oro.pricing.notification.price_list.error.price_rule_build')
             );
@@ -60,7 +60,7 @@ class PriceListViewListener
             $priceList->getId()
         );
         if ($hasAssignedProductsBuildAlert) {
-            $this->flashBag->add(
+            $this->requestStack?->getSession()?->getFlashBag()->add(
                 'error',
                 $this->translator->trans('oro.pricing.notification.price_list.error.product_assignment_build')
             );

@@ -22,7 +22,10 @@ class UrlParameterHelper
         array_walk_recursive(
             $data,
             static function (&$value) {
-                if (is_numeric($value) && (mb_strlen((string) $value) === mb_strlen((string) (0 + $value)))) {
+                if (is_numeric($value) &&
+                    mb_strlen((string) $value) === mb_strlen((string) (0 + $value)) &&
+                    (string) $value === (string) (0 + $value)
+                ) {
                     // if a string and numeric, will return int or float
                     $value += 0;
                 }

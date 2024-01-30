@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_5;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
@@ -24,20 +24,12 @@ class OroPricingBundle implements
     RenameExtensionAwareInterface,
     OrderedMigrationInterface
 {
+    use DatabasePlatformAwareTrait;
+    use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
 
     /**
-     * @var AbstractPlatform
-     */
-    private $platform;
-
-    /**
-     * @var RenameExtension
-     */
-    private $renameExtension;
-
-    /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -512,29 +504,10 @@ class OroPricingBundle implements
     }
 
     /**
-     * Should be executed before:
-     * @see \Oro\Bundle\PricingBundle\Migrations\Schema\v1_5\MigrateNotes
-     *
      * {@inheritdoc}
      */
     public function getOrder()
     {
         return 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDatabasePlatform(AbstractPlatform $platform)
-    {
-        $this->platform = $platform;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
     }
 }

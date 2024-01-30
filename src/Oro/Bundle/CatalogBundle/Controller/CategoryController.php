@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
@@ -34,7 +35,7 @@ class CategoryController extends AbstractController
      * @Acl(
      *      id="oro_catalog_category_create",
      *      type="entity",
-     *      class="OroCatalogBundle:Category",
+     *      class="Oro\Bundle\CatalogBundle\Entity\Category",
      *      permission="CREATE"
      * )
      */
@@ -52,7 +53,7 @@ class CategoryController extends AbstractController
      * @Acl(
      *      id="oro_catalog_category_update",
      *      type="entity",
-     *      class="OroCatalogBundle:Category",
+     *      class="Oro\Bundle\CatalogBundle\Entity\Category",
      *      permission="EDIT"
      * )
      */
@@ -67,13 +68,13 @@ class CategoryController extends AbstractController
      * @Acl(
      *      id="oro_catalog_category_view",
      *      type="entity",
-     *      class="OroCatalogBundle:Category",
+     *      class="Oro\Bundle\CatalogBundle\Entity\Category",
      *      permission="VIEW"
      * )
      */
     public function indexAction(): array
     {
-        return ['rootCategory' => $this->get(MasterCatalogRootProvider::class)->getMasterCatalogRoot()];
+        return ['rootCategory' => $this->container->get(MasterCatalogRootProvider::class)->getMasterCatalogRoot()];
     }
 
     /**
@@ -82,15 +83,15 @@ class CategoryController extends AbstractController
      * @Acl(
      *      id="oro_catalog_category_update",
      *      type="entity",
-     *      class="OroCatalogBundle:Category",
+     *      class="Oro\Bundle\CatalogBundle\Entity\Category",
      *      permission="EDIT"
      * )
      */
     public function moveAction(Request $request): array
     {
-        $handler = $this->get(CategoryTreeHandler::class);
+        $handler = $this->container->get(CategoryTreeHandler::class);
 
-        $root = $this->get(MasterCatalogRootProvider::class)->getMasterCatalogRoot();
+        $root = $this->container->get(MasterCatalogRootProvider::class)->getMasterCatalogRoot();
         $treeItems = $handler->getTreeItemList($root, true);
 
         $collection = new TreeCollection();
@@ -133,7 +134,7 @@ class CategoryController extends AbstractController
      * @Acl(
      *      id="oro_catalog_category_view",
      *      type="entity",
-     *      class="OroCatalogBundle:Category",
+     *      class="Oro\Bundle\CatalogBundle\Entity\Category",
      *      permission="VIEW"
      * )
      */
@@ -146,21 +147,21 @@ class CategoryController extends AbstractController
     {
         $form = $this->createForm(CategoryType::class, $category);
         $handler = new CategoryHandler(
-            $this->getDoctrine()->getManagerForClass('OroCatalogBundle:Category'),
-            $this->get(EventDispatcherInterface::class)
+            $this->container->get('doctrine')->getManagerForClass(Category::class),
+            $this->container->get(EventDispatcherInterface::class)
         );
 
-        $result = $this->get(UpdateHandlerFacade::class)->update(
+        $result = $this->container->get(UpdateHandlerFacade::class)->update(
             $category,
             $form,
-            $this->get(TranslatorInterface::class)->trans('oro.catalog.controller.category.saved.message'),
+            $this->container->get(TranslatorInterface::class)->trans('oro.catalog.controller.category.saved.message'),
             $request,
             $handler,
-            $this->get(CategoryFormTemplateDataProvider::class)
+            $this->container->get(CategoryFormTemplateDataProvider::class)
         );
 
         if (is_array($result)) {
-            $result['rootCategory'] = $this->get(MasterCatalogRootProvider::class)
+            $result['rootCategory'] = $this->container->get(MasterCatalogRootProvider::class)
                 ->getMasterCatalogRoot();
         }
 
@@ -174,7 +175,7 @@ class CategoryController extends AbstractController
     public function getChangedSlugsAction(Category $category): JsonResponse
     {
         return new JsonResponse(
-            $this->get(ChangedSlugsHelper::class)
+            $this->container->get(ChangedSlugsHelper::class)
                 ->getChangedSlugsData($category, CategoryType::class)
         );
     }
@@ -192,6 +193,7 @@ class CategoryController extends AbstractController
             TranslatorInterface::class,
             UpdateHandlerFacade::class,
             CategoryFormTemplateDataProvider::class,
+            'doctrine' => ManagerRegistry::class,
         ]);
     }
 }

@@ -1,19 +1,20 @@
 /* @theme: default; */
 
-$embedded-products-btn-arrow-width: 36px !default;
-$embedded-products-item-count-desktop: 4 !default;
-$embedded-products-slider-arrow-top: 18% !default;
+$embedded-products-item-count: 5 !default;
 
-// desktop
-$embedded-products-item-image-height-desktop: 249px !default;
-$embedded-products-slider-arrow-top-desktop: ($embedded-products-item-image-height-desktop * .5) -
-    ($embedded-list-slider-btn-arrow-height * .5) !default;
+// Tablet big
+$embedded-products-item-count-tablet-big: 4 !default;
 
-// tablet-small
-$embedded-products-item-width-count-tablet-small: 3 !default;
+// Tablet
+$embedded-products-item-count-tablet: 3 !default;
 
-// mobile-big
-$embedded-products-item-count-mobile-big: 2 !default;
+// Mobile big
+$embedded-products-item-width-count-mobile-big: 2 !default;
+$embedded-products-item-offset-mobile-big: 90px !default;
 
 // mobile-landscape
 $embedded-products-item-count-mobile-landscape: 1 !default;
+$embedded-products-item-offset-mobile-landscape: 160px !default;
+
+// Mobile
+$embedded-products-item-count-mobile: 26px !default;

@@ -3,27 +3,23 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
-use Oro\Bundle\CommerceMenuBundle\Migrations\Schema\OroCommerceMenuBundleInstaller;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
-use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareTrait;
 
 /**
- * Handles all migrations logic executed during installation.
- *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class OroCatalogBundleInstaller implements
@@ -33,71 +29,23 @@ class OroCatalogBundleInstaller implements
     ExtendExtensionAwareInterface,
     SlugExtensionAwareInterface
 {
+    use ActivityExtensionAwareTrait;
     use AttachmentExtensionAwareTrait;
-
-    const ORO_CATALOG_CATEGORY_TABLE_NAME = 'oro_catalog_category';
-    const ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME = 'oro_category_def_prod_opts';
-    const ORO_PRODUCT_TABLE_NAME = 'oro_product';
-    const ORO_PRODUCT_UNIT_TABLE_NAME = 'oro_product_unit';
-    const MAX_CATEGORY_IMAGE_SIZE_IN_MB = 10;
-    const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
-    const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
-    const MIME_TYPES = [
-        'image/gif',
-        'image/jpeg',
-        'image/png',
-        'image/svg+xml'
-    ];
-
-    /** @var ActivityExtension */
-    protected $activityExtension;
+    use ExtendExtensionAwareTrait;
+    use SlugExtensionAwareTrait;
 
     /**
-     * @var ExtendExtension
+     * {@inheritDoc}
      */
-    protected $extendExtension;
-
-    /**
-     * @var SlugExtension
-     */
-    protected $slugExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_21';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSlugExtension(SlugExtension $extension)
-    {
-        $this->slugExtension = $extension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
         $this->createOroCatalogCategoryTable($schema);
@@ -114,8 +62,9 @@ class OroCatalogBundleInstaller implements
         $this->addOroCatalogCategoryShortDescriptionForeignKeys($schema);
         $this->addOroCatalogCategoryLongDescriptionForeignKeys($schema);
         $this->addOroCategoryDefaultProductOptionsForeignKeys($schema);
-        $this->addCategoryImageAssociation($schema, 'largeImage', self::MIME_TYPES);
-        $this->addCategoryImageAssociation($schema, 'smallImage', self::MIME_TYPES);
+
+        $this->addCategoryImageAssociation($schema, 'largeImage');
+        $this->addCategoryImageAssociation($schema, 'smallImage');
 
         $this->addCategoryProductRelation($schema);
         $this->addCategoryMenuUpdateRelation($schema);
@@ -128,7 +77,7 @@ class OroCatalogBundleInstaller implements
     /**
      * Create oro_catalog_category table
      */
-    protected function createOroCatalogCategoryTable(Schema $schema)
+    private function createOroCatalogCategoryTable(Schema $schema): void
     {
         $importExportOptions = [
             OroOptions::KEY => [
@@ -150,14 +99,14 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['default_product_options_id']);
-        $table->addIndex(['title'], 'idx_oro_category_default_title', []);
-        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::ORO_CATALOG_CATEGORY_TABLE_NAME);
+        $table->addIndex(['title'], 'idx_oro_category_default_title');
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_catalog_category');
     }
 
     /**
      * Create oro_catalog_cat_title table
      */
-    protected function createOroCatalogCategoryTitleTable(Schema $schema)
+    private function createOroCatalogCategoryTitleTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_catalog_cat_title');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -166,13 +115,13 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
         $table->addColumn('string', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['fallback'], 'idx_cat_cat_title_fallback', []);
-        $table->addIndex(['string'], 'idx_cat_cat_title_string', []);
+        $table->addIndex(['fallback'], 'idx_cat_cat_title_fallback');
+        $table->addIndex(['string'], 'idx_cat_cat_title_string');
     }
 
-    protected function createOroCategoryDefaultProductOptionsTable(Schema $schema)
+    private function createOroCategoryDefaultProductOptionsTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME);
+        $table = $schema->createTable('oro_category_def_prod_opts');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('product_unit_precision', 'integer', ['notnull' => false]);
@@ -182,7 +131,7 @@ class OroCatalogBundleInstaller implements
     /**
      * Create oro_catalog_cat_slug table
      */
-    protected function createOroCategorySlugTable(Schema $schema)
+    private function createOroCategorySlugTable(Schema $schema): void
     {
         $this->slugExtension->addSlugs(
             $schema,
@@ -195,7 +144,7 @@ class OroCatalogBundleInstaller implements
     /**
      * Create oro_catalog_cat_slug_prototype table
      */
-    protected function createOroCategorySlugPrototypeTable(Schema $schema)
+    private function createOroCategorySlugPrototypeTable(Schema $schema): void
     {
         $this->slugExtension->addLocalizedSlugPrototypes(
             $schema,
@@ -208,7 +157,7 @@ class OroCatalogBundleInstaller implements
     /**
      * Add oro_catalog_category foreign keys.
      */
-    protected function addOroCatalogCategoryForeignKeys(Schema $schema)
+    private function addOroCatalogCategoryForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_catalog_category');
         $table->addForeignKeyConstraint(
@@ -218,7 +167,7 @@ class OroCatalogBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME),
+            $schema->getTable('oro_category_def_prod_opts'),
             ['default_product_options_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -235,7 +184,7 @@ class OroCatalogBundleInstaller implements
     /**
      * Add oro_catalog_cat_title foreign keys.
      */
-    protected function addOroCatalogCategoryTitleForeignKeys(Schema $schema)
+    private function addOroCatalogCategoryTitleForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_catalog_cat_title');
         $table->addForeignKeyConstraint(
@@ -255,7 +204,7 @@ class OroCatalogBundleInstaller implements
     /**
      * Create oro_catalog_cat_s_descr table
      */
-    protected function createOroCatalogCategoryShortDescriptionTable(Schema $schema)
+    private function createOroCatalogCategoryShortDescriptionTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_catalog_cat_s_descr');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -264,13 +213,13 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
         $table->addColumn('text', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['fallback'], 'idx_cat_cat_s_descr_fallback', []);
+        $table->addIndex(['fallback'], 'idx_cat_cat_s_descr_fallback');
     }
 
     /**
      * Create oro_catalog_cat_l_descr table
      */
-    protected function createOroCatalogCategoryLongDescriptionTable(Schema $schema)
+    private function createOroCatalogCategoryLongDescriptionTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_catalog_cat_l_descr');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -281,13 +230,13 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('wysiwyg_style', 'wysiwyg_style', ['notnull' => false]);
         $table->addColumn('wysiwyg_properties', 'wysiwyg_properties', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['fallback'], 'idx_cat_cat_l_descr_fallback', []);
+        $table->addIndex(['fallback'], 'idx_cat_cat_l_descr_fallback');
     }
 
     /**
      * Add oro_catalog_cat_s_descr foreign keys.
      */
-    protected function addOroCatalogCategoryShortDescriptionForeignKeys(Schema $schema)
+    private function addOroCatalogCategoryShortDescriptionForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_catalog_cat_s_descr');
         $table->addForeignKeyConstraint(
@@ -307,7 +256,7 @@ class OroCatalogBundleInstaller implements
     /**
      * Add oro_catalog_cat_l_descr foreign keys.
      */
-    protected function addOroCatalogCategoryLongDescriptionForeignKeys(Schema $schema)
+    private function addOroCatalogCategoryLongDescriptionForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_catalog_cat_l_descr');
         $table->addForeignKeyConstraint(
@@ -324,27 +273,22 @@ class OroCatalogBundleInstaller implements
         );
     }
 
-    protected function addOroCategoryDefaultProductOptionsForeignKeys(Schema $schema)
+    private function addOroCategoryDefaultProductOptionsForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME);
+        $table = $schema->getTable('oro_category_def_prod_opts');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_PRODUCT_UNIT_TABLE_NAME),
+            $schema->getTable('oro_product_unit'),
             ['product_unit_code'],
             ['code'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
-    /**
-     * @param Schema $schema
-     * @param string $fieldName
-     * @param array  $mimeTypes
-     */
-    public function addCategoryImageAssociation(Schema $schema, $fieldName, array $mimeTypes = [])
+    private function addCategoryImageAssociation(Schema $schema, string $fieldName): void
     {
         $this->attachmentExtension->addImageRelation(
             $schema,
-            self::ORO_CATALOG_CATEGORY_TABLE_NAME,
+            'oro_catalog_category',
             $fieldName,
             [
                 'attachment' => [
@@ -352,14 +296,14 @@ class OroCatalogBundleInstaller implements
                 ],
                 'importexport' => ['excluded' => true],
             ],
-            self::MAX_CATEGORY_IMAGE_SIZE_IN_MB,
-            self::THUMBNAIL_WIDTH_SIZE_IN_PX,
-            self::THUMBNAIL_HEIGHT_SIZE_IN_PX,
-            $mimeTypes
+            10,
+            100,
+            100,
+            ['image/gif', 'image/jpeg', 'image/png', 'image/svg+xml']
         );
     }
 
-    public function addContentVariantTypes(Schema $schema)
+    private function addContentVariantTypes(Schema $schema): void
     {
         if ($schema->hasTable('oro_web_catalog_variant')) {
             $table = $schema->getTable('oro_web_catalog_variant');
@@ -416,10 +360,10 @@ class OroCatalogBundleInstaller implements
         }
     }
 
-    protected function addCategoryProductRelation(Schema $schema)
+    private function addCategoryProductRelation(Schema $schema): void
     {
-        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
-        $targetTable = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('oro_catalog_category');
+        $targetTable = $schema->getTable('oro_product');
 
         $this->extendExtension->addManyToOneRelation(
             $schema,
@@ -473,9 +417,9 @@ class OroCatalogBundleInstaller implements
     /**
      * Adds category_sort_order field to oro_product table & related extended field
      */
-    protected function createProductCategorySortOrder(Schema $schema): void
+    private function createProductCategorySortOrder(Schema $schema): void
     {
-        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('oro_product');
         if (!$table->hasColumn('category_sort_order')) {
             $table->addColumn('category_sort_order', 'float', [
                 'notnull' => false,
@@ -493,10 +437,10 @@ class OroCatalogBundleInstaller implements
         }
     }
 
-    protected function addCategoryMenuUpdateRelation(Schema $schema): void
+    private function addCategoryMenuUpdateRelation(Schema $schema): void
     {
-        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
-        $targetTable = $schema->getTable(OroCommerceMenuBundleInstaller::ORO_COMMERCE_MENU_UPDATE_TABLE_NAME);
+        $table = $schema->getTable('oro_catalog_category');
+        $targetTable = $schema->getTable('oro_commerce_menu_upd');
 
         $this->extendExtension->addManyToOneRelation(
             $schema,

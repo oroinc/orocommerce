@@ -1,0 +1,248 @@
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
+    all_customers:
+        name: 'All Customers'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        group: '@all_customers'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        firstName: 'AmandaMu'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer'
+        organization: '@organization'
+        userRoles: [ '@buyer' ]
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    brandName:
+        string: 'ACME Default'
+    brandRelatedName:
+        string: 'ACME Related'
+    brandUpsellName:
+        string: 'ACME Upsell'
+
+Oro\Bundle\ProductBundle\Entity\Brand:
+    brand:
+        owner: '@business_unit'
+        organization: '@organization'
+        __calls:
+            -   addName: [ '@brandName' ]
+    brandRelated:
+        owner: '@business_unit'
+        organization: '@organization'
+        __calls:
+            -   addName: [ '@brandRelatedName' ]
+    brandUpsell:
+        owner: '@business_unit'
+        organization: '@organization'
+        __calls:
+            -   addName: [ '@brandUpsellName' ]
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product_kit1:
+        sku: 'productkit1'
+        type: 'kit'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            -   addName: [ '@product_kit1_name' ]
+            -   addDescription: [ '@product_kit1_description' ]
+            -   addKitItem: [ '@product_kit1_item1' ]
+            -   addKitItem: [ '@product_kit1_item2' ]
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+        inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@product_kit1_precision1'
+        unitPrecisions: [ '@product_kit1_precision1' ]
+        newArrival: true
+        brand: '@brand'
+    simple_product{1..3}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'simpleproduct<sprintf("%02d", $current)>'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@simple_product_precision<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            -   addName: [ '@simple_product_name<current()>' ]
+            -   addDescription: [ '@simple_product_description<current()>' ]
+        newArrival: true
+        brand: '@brand'
+    related_product{1..3}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'relatedproduct<sprintf("%02d", $current)>'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@related_product_precision<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            -   addName: [ '@related_product_name<current()>' ]
+            -   addDescription: [ '@related_product_description<current()>' ]
+        newArrival: true
+        brand: '@brandRelated'
+    upsell_product{1..3}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'upsellproduct<sprintf("%02d", $current)>'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@upsell_product_precision<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            -   addName: [ '@upsell_product_name<current()>' ]
+            -   addDescription: [ '@upsell_product_description<current()>' ]
+        newArrival: true
+        brand: '@brandUpsell'
+        
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product_kit1_precision1:
+        unit: '@piece'
+        precision: '0'
+    simple_product_precision{1..3}:
+        unit: '@piece'
+        precision: '0'
+    related_product_precision{1..3}:
+        unit: '@piece'
+        precision: '0'
+    upsell_product_precision{1..3}:
+        unit: '@piece'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product_kit1_name:
+        string: 'ProductTheKit Parent'
+    simple_product_name{1..3}:
+        string: 'ProductTheKit Child <current()>'
+    related_product_name{1..3}:
+        string: 'Related <current()>'
+    upsell_product_name{1..3}:
+        string: 'Upsell <current()>'
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
+    product_kit1_description:
+        wysiwyg: 'Product Kit Description'
+    simple_product_description{1..3}:
+        wysiwyg: 'Simple Product Description<current()>'
+    related_product_description{1..3}:
+        wysiwyg: 'Related Product Description<current()>'
+    upsell_product_description{1..3}:
+        wysiwyg: 'Upsell Product Description<current()>'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    product_kit1_item1:
+        optional: false
+        sortOrder: 2
+        minimumQuantity: 1
+        maximumQuantity: 10
+        productUnit: '@piece'
+        __calls:
+            -   addLabel: [ '@product_kit1_item1_label' ]
+            -   addKitItemProduct: [ '@product_kit1_item1_product1' ]
+            -   addKitItemProduct: [ '@product_kit1_item1_product2' ]
+    product_kit1_item2:
+        optional: true
+        sortOrder: 1
+        minimumQuantity: 0
+        maximumQuantity: 5
+        productUnit: '@piece'
+        __calls:
+            -   addLabel: [ '@product_kit1_item2_label' ]
+            -   addKitItemProduct: [ '@product_kit1_item2_product3' ]
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
+    product_kit1_item1_label:
+        string: 'Base Unit'
+    product_kit1_item2_label:
+        string: 'Barcode Scanner'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    product_kit1_item1_product1:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product1'
+        sortOrder: 2
+        productUnitPrecision: '@product_kit1_precision1'
+    product_kit1_item1_product2:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product2'
+        sortOrder: 3
+        productUnitPrecision: '@product_kit1_precision1'
+    product_kit1_item2_product3:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product3'
+        sortOrder: 2
+        productUnitPrecision: '@product_kit1_precision1'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite:
+        pricelist: '@defaultPriceList'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        customer: '@customer'
+        pricelist: '@defaultPriceList'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price_product_kit1:
+        product: '@product_kit1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 10
+    price_simple_product{1..3}:
+        product: '@simple_product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 31
+    price_related_product{1..3}:
+        product: '@related_product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 41
+    price_upsell_product{1..3}:
+        product: '@upsell_product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 51
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelationDefaultPriceListToProductKit1:
+        product: '@product_kit1'
+        priceList: '@defaultPriceList'
+    priceRelationDefaultPriceListToProduct{1..3}:
+        product: '@simple_product<current()>'
+        priceList: '@defaultPriceList'
+    priceRelationDefaultPriceListToRelatedProduct{1..3}:
+        product: '@related_product<current()>'
+        priceList: '@defaultPriceList'
+    priceRelationDefaultPriceListToUpsellProduct{1..3}:
+        product: '@upsell_product<current()>'
+        priceList: '@defaultPriceList'

@@ -858,6 +858,9 @@ oro:
                 action:
                     product:
                         view.aria_label: 'View %name% product'
+            gallery:
+                prev: 'Previous image'
+                next: 'Next image'
 
         export:
             inventory_status_only: "Inventory statuses only"
@@ -1003,7 +1006,7 @@ oro:
                         label: Labels
                         singular_label: Label
                         tooltip: If provided, this label will be displayed above the list of the products.
-                    enable_autoplay:
+                    autoplay:
                         label: Enable Autoplay
                     autoplay_speed:
                         label: Autoplay Speed (Milliseconds)
@@ -1011,9 +1014,9 @@ oro:
                         label: Show Arrows
                     show_arrows_on_touchscreens:
                         label: Show Arrows On Touchscreens
-                    show_dots:
+                    dots:
                         label: Show Dots
-                    enable_infinite_scroll:
+                    infinite:
                         label: Enable Infinite Scroll
 
         feature:

@@ -9,6 +9,7 @@
 {% endblock %}
 
 {% block _featured_categories_widget %}
+    {% set embedded_list_slider_id = 'embedded_list_slider-'|uniqid %}
     <div class="embedded-list">
         {% if use_slider %}
             {% set attr = layout_attr_defaults(attr, {
@@ -32,13 +33,12 @@
                 'data-name': 'embedded-list-item'
             }) %}
         {% endif %}
-
-        {% if label is defined %}
-            <h2 class="embedded-list__label">
-                <span class="embedded-list__label-inner">{{ label|trans }}</span>
-            </h2>
-        {% endif %}
-
+        <div class="embedded-list__title">
+            {% if label is defined %}
+                <h2 class="embedded-list__label">{{ label|trans }}</h2>
+            {% endif %}
+            <div id="{{embedded_list_slider_id}}" class="embedded-list__slick-arrow-holder"></div>
+        </div>
         <div {{ block('block_attributes') }}>
             {% set attr = item_attr %}
             {% for item in items|slice(0, 8) %}

@@ -7,8 +7,8 @@ use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -17,23 +17,20 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
-    /**
-     * @var ExtendExtension
-     */
-    protected $extendExtension;
+    use ExtendExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_10';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
         $this->createOroTaxTable($schema);
@@ -59,15 +56,15 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     /**
      * Create oro_tax table
      */
-    protected function createOroTaxTable(Schema $schema)
+    private function createOroTaxTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_tax');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('description', 'text', ['notnull' => false]);
         $table->addColumn('rate', 'percent', ['comment' => '(DC2Type:percent)']);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['code'], 'UNIQ_E132B24377153098');
     }
@@ -75,14 +72,14 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     /**
      * Create oro_tax_customer_tax_code table
      */
-    protected function createOroTaxCustomerTaxCodeTable(Schema $schema)
+    private function createOroTaxCustomerTaxCodeTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_tax_customer_tax_code');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('description', 'text', ['notnull' => false]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
@@ -92,14 +89,14 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     /**
      * Create oro_tax_jurisdiction table
      */
-    protected function createOroTaxJurisdictionTable(Schema $schema)
+    private function createOroTaxJurisdictionTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_tax_jurisdiction');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('description', 'text', ['notnull' => false]);
         $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
@@ -110,11 +107,11 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     /**
      * Create oro_tax_prod_tax_code_prod table
      */
-    protected function createOroTaxProdTaxCodeProdTable(Schema $schema)
+    private function createOroTaxProdTaxCodeProdTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_tax_prod_tax_code_prod');
-        $table->addColumn('product_tax_code_id', 'integer', []);
-        $table->addColumn('product_id', 'integer', []);
+        $table->addColumn('product_tax_code_id', 'integer');
+        $table->addColumn('product_id', 'integer');
         $table->setPrimaryKey(['product_tax_code_id', 'product_id']);
         $table->addUniqueIndex(['product_id'], 'UNIQ_3CF9D1FA4584665A');
     }
@@ -122,14 +119,14 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     /**
      * Create oro_tax_product_tax_code table
      */
-    protected function createOroTaxProductTaxCodeTable(Schema $schema)
+    private function createOroTaxProductTaxCodeTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_tax_product_tax_code');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('description', 'text', ['notnull' => false]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['code','organization_id'], 'oro_product_tax_code_organization_unique_index');
@@ -138,7 +135,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     /**
      * Create oro_tax_rule table
      */
-    protected function createOroTaxRuleTable(Schema $schema)
+    private function createOroTaxRuleTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_tax_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -147,8 +144,8 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
         $table->addColumn('product_tax_code_id', 'integer', ['notnull' => false]);
         $table->addColumn('tax_id', 'integer', ['notnull' => false]);
         $table->addColumn('description', 'text', ['notnull' => false]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
@@ -156,30 +153,30 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     /**
      * Create oro_tax_zip_code table
      */
-    protected function createOroTaxZipCodeTable(Schema $schema)
+    private function createOroTaxZipCodeTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_tax_zip_code');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('tax_jurisdiction_id', 'integer', []);
+        $table->addColumn('tax_jurisdiction_id', 'integer');
         $table->addColumn('zip_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('zip_range_start', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('zip_range_end', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
         $table->setPrimaryKey(['id']);
     }
 
     /**
      * Create oro_tax_value table
      */
-    protected function createOroTaxValueTable(Schema $schema)
+    private function createOroTaxValueTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_tax_value');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('result', 'json_array', ['comment' => '(DC2Type:json_array)']);
         $table->addColumn('entity_class', 'string', ['length' => 255]);
         $table->addColumn('entity_id', 'integer', ['notnull' => false]);
-        $table->addColumn('address', 'text', []);
+        $table->addColumn('address', 'text');
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
@@ -189,7 +186,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     /**
      * Add oro_tax_jurisdiction foreign keys.
      */
-    protected function addOroTaxJurisdictionForeignKeys(Schema $schema)
+    private function addOroTaxJurisdictionForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_tax_jurisdiction');
         $table->addForeignKeyConstraint(
@@ -209,7 +206,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     /**
      * Add oro_tax_prod_tax_code_prod foreign keys.
      */
-    protected function addOroTaxProdTaxCodeProdForeignKeys(Schema $schema)
+    private function addOroTaxProdTaxCodeProdForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_tax_prod_tax_code_prod');
         $table->addForeignKeyConstraint(
@@ -229,7 +226,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     /**
      * Add oro_tax_rule foreign keys.
      */
-    protected function addOroTaxRuleForeignKeys(Schema $schema)
+    private function addOroTaxRuleForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_tax_rule');
         $table->addForeignKeyConstraint(
@@ -267,7 +264,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     /**
      * Add oro_tax_zip_code foreign keys.
      */
-    protected function addOroTaxZipCodeForeignKeys(Schema $schema)
+    private function addOroTaxZipCodeForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_tax_zip_code');
         $table->addForeignKeyConstraint(
@@ -281,7 +278,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     /**
      * Add oro_tax_customer_tax_code foreign keys.
      */
-    protected function addOroCustomerTaxCodeForeignKeys(Schema $schema)
+    private function addOroCustomerTaxCodeForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_tax_customer_tax_code');
         $table->addForeignKeyConstraint(
@@ -309,15 +306,7 @@ class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterfa
         );
     }
 
-    /**
-     * Sets the ExtendExtension
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    protected function addCustomerExtendFields(Schema $schema)
+    private function addCustomerExtendFields(Schema $schema): void
     {
         $this->extendExtension->addManyToOneRelation(
             $schema,

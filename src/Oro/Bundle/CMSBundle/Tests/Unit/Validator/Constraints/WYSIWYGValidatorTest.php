@@ -173,9 +173,9 @@ class WYSIWYGValidatorTest extends ConstraintValidatorTestCase
         $this->buildViolation($constraint->message)
             ->setParameter(
                 '{{ errorsList }}',
-                '- Unrecognized <div> tag removed (near <div><h1>Hello World!</h1...);' . "\n"
-                . '- Unrecognized <h1> tag removed (near <h1>Hello World!</h1></di...);' . "\n"
-                . '- Unrecognized </h1> tag removed (near </h1></div>...);' . "\n"
+                '- Unrecognized <div> tag removed (near <div><h1>Hello World!</h1...);' . PHP_EOL
+                . '- Unrecognized <h1> tag removed (near <h1>Hello World!</h1></di...);' . PHP_EOL
+                . '- Unrecognized </h1> tag removed (near </h1></div>...);' . PHP_EOL
                 . '- Unrecognized </div> tag removed (near </div>...)'
             )
             ->atPath($propertyPath)

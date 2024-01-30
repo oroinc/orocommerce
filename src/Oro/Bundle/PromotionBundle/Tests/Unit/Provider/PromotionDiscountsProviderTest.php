@@ -9,6 +9,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Model\MultiShippingPromotionData;
 use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
 use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProvider;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
@@ -60,6 +61,11 @@ class PromotionDiscountsProviderTest extends \PHPUnit\Framework\TestCase
         return $promotion;
     }
 
+    private function getMultiShippingPromotion(Segment $segment, array $lineItems): MultiShippingPromotionData
+    {
+        return new MultiShippingPromotionData($this->getPromotion($segment), $lineItems);
+    }
+
     public function testGetDiscounts(): void
     {
         $sourceEntity = new Order();
@@ -72,7 +78,7 @@ class PromotionDiscountsProviderTest extends \PHPUnit\Framework\TestCase
         $firstPromotion = $this->getPromotion($firstSegment);
 
         $secondSegment = $this->getSegment(2);
-        $secondPromotion = $this->getPromotion($secondSegment);
+        $secondPromotion = $this->getMultiShippingPromotion($secondSegment, [$lineItems[1]]);
 
         $firstDiscount = new DiscountStub();
         $secondDiscount = new DiscountStub();
@@ -94,12 +100,12 @@ class PromotionDiscountsProviderTest extends \PHPUnit\Framework\TestCase
             );
 
         $firstMatchingProducts = [new Product()];
-        $secondMatchingProducts = [new Product(), new Product()];
+        $secondMatchingProducts = [new Product()];
         $this->matchingProductsProvider->expects(self::exactly(2))
             ->method('getMatchingProducts')
             ->withConsecutive(
                 [$firstSegment, $lineItems],
-                [$secondSegment, $lineItems]
+                [$secondSegment, $secondPromotion->getLineItems()]
             )
             ->willReturnOnConsecutiveCalls(
                 $firstMatchingProducts,

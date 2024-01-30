@@ -3,13 +3,15 @@
 namespace Oro\Bundle\PaymentBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
 {
+    use ActivityExtensionAwareTrait;
+
     /**
      * Table name for PaymentTerm
      */
@@ -18,11 +20,6 @@ class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
     const PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE = 'orob2b_payment_term_to_acc_grp';
     const ACCOUNT_TABLE                       = 'orob2b_account';
     const ACCOUNT_GROUP_TABLE                 = 'orob2b_account_group';
-
-    /**
-     * @var ActivityExtension
-     */
-    protected $activityExtension;
 
     /**
      * {@inheritdoc}
@@ -103,13 +100,5 @@ class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
-    }
-
-    /**
-     * Sets the ActivityExtension
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
     }
 }

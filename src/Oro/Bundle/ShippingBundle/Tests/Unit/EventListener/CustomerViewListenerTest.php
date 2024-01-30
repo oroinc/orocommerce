@@ -10,6 +10,8 @@ use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\EventListener\FormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -19,24 +21,24 @@ use Twig\Environment;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
+class CustomerViewListenerTest extends TestCase
 {
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var TranslatorInterface|MockObject */
     protected $translator;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var DoctrineHelper|MockObject */
     protected $doctrineHelper;
 
-    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Environment|MockObject */
     protected $env;
 
-    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Request|MockObject */
     protected $request;
 
-    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var RequestStack|MockObject */
     protected $requestStack;
 
-    /** @var FieldAclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var FieldAclHelper|MockObject */
     private $fieldAclHelper;
 
     /** @var FormViewListener */
@@ -123,7 +125,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroProductBundle:Product', 42)
+            ->with(Product::class, 42)
             ->willReturn(null);
 
         $this->doctrineHelper->expects($this->never())
@@ -153,7 +155,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroProductBundle:Product', 47)
+            ->with(Product::class, 47)
             ->willReturn($product);
 
         $productShippingOptionsRepository = $this->createMock(EntityRepository::class);
@@ -164,7 +166,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
-            ->with('OroShippingBundle:ProductShippingOptions')
+            ->with(ProductShippingOptions::class)
             ->willReturn($productShippingOptionsRepository);
 
         $this->env->expects($this->never())
@@ -194,7 +196,7 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroProductBundle:Product', 47)
+            ->with(Product::class, 47)
             ->willReturn($product);
 
         $productShippingOptionsRepository = $this->createMock(EntityRepository::class);
@@ -211,12 +213,12 @@ class CustomerViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
-            ->with('OroShippingBundle:ProductShippingOptions')
+            ->with(ProductShippingOptions::class)
             ->willReturn($productShippingOptionsRepository);
 
         $renderedHtml = 'rendered_html';
 
-        /** @var Environment|\PHPUnit\Framework\MockObject\MockObject $twig */
+        /** @var Environment|MockObject $twig */
         $this->env->expects($this->any())
             ->method('render')
             ->with(

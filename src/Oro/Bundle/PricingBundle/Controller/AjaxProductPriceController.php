@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -48,7 +49,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      * @Acl(
      *      id="oro_pricing_product_price_update",
      *      type="entity",
-     *      class="OroPricingBundle:ProductPrice",
+     *      class="Oro\Bundle\PricingBundle\Entity\ProductPrice",
      *      permission="EDIT"
      * )
      * @param Request $request
@@ -56,10 +57,11 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      */
     public function updateAction(Request $request)
     {
-        $priceList = $this->getDoctrine()->getRepository(PriceList::class)->find($request->get('priceList'));
-        $prices = $this->getDoctrine()->getRepository(ProductPrice::class)
+        $priceList = $this->container->get('doctrine')->getRepository(PriceList::class)
+            ->find($request->get('priceList'));
+        $prices = $this->container->get('doctrine')->getRepository(ProductPrice::class)
             ->findByPriceList(
-                $this->get(ShardManager::class),
+                $this->container->get(ShardManager::class),
                 $priceList,
                 ['id' => $request->get('id')]
             );
@@ -68,8 +70,8 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
 
         $this->denyAccessUnlessGranted('EDIT', $productPrice);
 
-        $handler = $this->get(UpdateHandlerFacade::class);
-        $priceHandler = $this->get(ProductPriceHandler::class);
+        $handler = $this->container->get(UpdateHandlerFacade::class);
+        $priceHandler = $this->container->get(ProductPriceHandler::class);
         return $handler->update(
             $productPrice,
             PriceListProductPriceType::class,
@@ -86,11 +88,11 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      *      name="oro_product_price_delete",
      *      methods={"DELETE"}
      * )
-     * @ParamConverter("priceList", class="OroPricingBundle:PriceList", options={"id" = "priceListId"})
+     * @ParamConverter("priceList", class="Oro\Bundle\PricingBundle\Entity\PriceList", options={"id" = "priceListId"})
      * @Acl(
      *      id="oro_pricing_product_price_delete",
      *      type="entity",
-     *      class="OroPricingBundle:ProductPrice",
+     *      class="Oro\Bundle\PricingBundle\Entity\ProductPrice",
      *      permission="DELETE"
      * )
      * @CsrfProtection()
@@ -100,11 +102,11 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function deleteAction(Request $request, PriceList $priceList, $productPriceId)
     {
         /** @var ProductPriceRepository $priceRepository */
-        $priceRepository = $this->getDoctrine()->getRepository(ProductPrice::class);
+        $priceRepository = $this->container->get('doctrine')->getRepository(ProductPrice::class);
         /** @var ProductPrice $productPrice */
         $productPrice = $priceRepository
             ->findByPriceList(
-                $this->get(ShardManager::class),
+                $this->container->get(ShardManager::class),
                 $priceList,
                 ['id' => $productPriceId]
             );
@@ -115,7 +117,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
             $code = JsonResponse::HTTP_NOT_FOUND;
         } else {
             try {
-                $priceManager = $this->get(PriceManager::class);
+                $priceManager = $this->container->get(PriceManager::class);
                 $priceManager->remove($productPrice[0]);
                 $priceManager->flush();
             } catch (\Exception $e) {
@@ -127,7 +129,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $response = [
             'successful' => $code === JsonResponse::HTTP_OK,
             'message' => $message,
-            'refreshGrid' => $this->get(ContextHelper::class)->getActionData()->getRefreshGrid(),
+            'refreshGrid' => $this->container->get(ContextHelper::class)->getActionData()->getRefreshGrid(),
             'flashMessages' => $request->getSession()->getFlashBag()->all()
         ];
 
@@ -148,6 +150,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
                 ProductPriceScopeCriteriaRequestHandler::class,
                 PriceManager::class,
                 ContextHelper::class,
+                'doctrine' => ManagerRegistry::class,
             ]
         );
     }

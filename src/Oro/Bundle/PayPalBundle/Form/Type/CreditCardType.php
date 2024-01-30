@@ -54,7 +54,7 @@ class CreditCardType extends AbstractType
                 'constraints' => [
                     new Integer(),
                     new NotBlank(),
-                    new Length(['min' => '12', 'max' => '19', 'allowEmptyString' => false]),
+                    new Length(['min' => '12', 'max' => '19']),
                 ],
             ]
         )->add(
@@ -95,7 +95,7 @@ class CreditCardType extends AbstractType
                     'constraints' => [
                         new Integer(['message' => 'oro.payment.number.error']),
                         new NotBlank(),
-                        new Length(['min' => 3, 'max' => 4, 'allowEmptyString' => false]),
+                        new Length(['min' => 3, 'max' => 4]),
                     ],
                     'attr' => [
                         'data-card-cvv' => true,

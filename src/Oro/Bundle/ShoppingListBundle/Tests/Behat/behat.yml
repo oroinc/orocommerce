@@ -736,8 +736,34 @@ oro_behat_extension:
     Shopping List 3 Kit Line Item Delete Button:
       selector: 'tr:nth-child(3) td.action-cell a[title="Delete"]'
 
+    Product Kit Line Item Totals Form Unit:
+      selector:
+        type: xpath
+        locator: '//select[@name="oro_product_kit_line_item[unit]"]'
+
     Floating Error Message:
       selector: 'div.floating-error-message'
+
+    Product 2 Link:
+      selector:
+        locator: '//a[text()[contains(.,"Product 2")]]'
+        type: 'xpath'
+
+    Product 3 Link:
+      selector:
+        locator: '//a[text()[contains(.,"Product 3")]]'
+        type: 'xpath'
+
+    Configure Popup Product 2 Link:
+      selector:
+        locator: '//h3[contains(@class, "grid-line-items__title")]/a[text()[contains(.,"Product 2")]]'
+        type: 'xpath'
+
+    Configure Popup Product 3 Link:
+      selector:
+        locator: '//h3[contains(@class, "grid-line-items__title")]/a[text()[contains(.,"Product 3")]]'
+        type: 'xpath'
+
   suites:
     OroShoppingListBundle:
       contexts:
@@ -769,5 +795,7 @@ oro_behat_extension:
         - Oro\Bundle\ShippingBundle\Tests\Behat\Context\SingleCurrencyContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\ScrollspyContext
+        - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\PricingBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

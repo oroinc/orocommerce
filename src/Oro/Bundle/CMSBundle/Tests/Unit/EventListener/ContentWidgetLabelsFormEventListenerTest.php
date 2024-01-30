@@ -85,20 +85,20 @@ class ContentWidgetLabelsFormEventListenerTest extends TestCase
         return [
             'content widget with empty labels' => [
                 'contentWidget' => $contentWidget->setSettings([
-                    'enable_autoplay' => false
+                    'autoplay' => false
                 ]),
-                'settings' => ['enable_autoplay' => false],
+                'settings' => ['autoplay' => false],
                 'labels' => $contentWidget->getLabels()
             ],
             'content widget with labels' => [
                 'contentWidget' => $contentWidget->setSettings([
-                    'enable_autoplay' => false,
+                    'autoplay' => false,
                     'labels' => new ArrayCollection([
                         (new LocalizedFallbackValue())->setString('Default Label'),
                         (new LocalizedFallbackValue())->setString('France Label'),
                     ])
                 ]),
-                'settings' => ['enable_autoplay' => false],
+                'settings' => ['autoplay' => false],
                 'labels' => $contentWidget->getSettings()['labels']
             ],
         ];

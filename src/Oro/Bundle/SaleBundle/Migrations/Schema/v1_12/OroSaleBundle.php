@@ -5,8 +5,8 @@ namespace Oro\Bundle\SaleBundle\Migrations\Schema\v1_12;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CustomerBundle\Migrations\Schema\v1_10\ConfigMigration;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
@@ -20,13 +20,9 @@ class OroSaleBundle implements
     OrderedMigrationInterface,
     ContainerAwareInterface
 {
-    use MigrationConstraintTrait;
     use ContainerAwareTrait;
-
-    /**
-     * @var RenameExtension
-     */
-    private $renameExtension;
+    use RenameExtensionAwareTrait;
+    use MigrationConstraintTrait;
 
     /**
      * {@inheritdoc}
@@ -135,17 +131,7 @@ class OroSaleBundle implements
     }
 
     /**
-     * Sets the RenameExtension
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
-
-    /**
-     * Get the order of this migration
-     *
-     * @return integer
+     * {@inheritDoc}
      */
     public function getOrder()
     {

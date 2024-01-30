@@ -24,7 +24,8 @@ class LoadPageData extends AbstractFixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        $manager->createQuery('DELETE OroCMSBundle:Page')->execute(); // remove all built-in pages before tests
+        // remove all built-in pages before tests
+        $manager->createQuery('DELETE Oro\Bundle\CMSBundle\Entity\Page')->execute();
         foreach (self::$page as $menuItemReference => $data) {
             /** @var Organization $organization */
             $organization = $this->getReference(LoadOrganization::ORGANIZATION);

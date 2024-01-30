@@ -2,35 +2,24 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_17;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Migrate ID from integer to UUID to prevent reaching max integer value.
  */
-class CombinedProductPriceIdToUUID implements Migration, ConnectionAwareInterface, ContainerAwareInterface
+class CombinedProductPriceIdToUUID implements Migration, ConnectionAwareInterface
 {
-    /**
-     * @var Container
-     */
-    protected $container;
+    use ConnectionAwareTrait;
 
     /**
-     * @var Connection
-     */
-    protected $connection;
-
-    /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -52,7 +41,7 @@ class CombinedProductPriceIdToUUID implements Migration, ConnectionAwareInterfac
             $table->changeColumn(
                 'id',
                 [
-                    'type' => Type::getType("guid"),
+                    'type' => Type::getType('guid'),
                     'notnull' => false,
                     'comment' => '(DC2Type:guid)'
                 ]
@@ -63,21 +52,5 @@ class CombinedProductPriceIdToUUID implements Migration, ConnectionAwareInterfac
             );
             $table->setPrimaryKey(['id']);
         }
-    }
-
-    /**
-     * Sets the database connection
-     */
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 }

@@ -25,14 +25,14 @@ class ValidateConnectionController extends AbstractController
 {
     /**
      * @Route("/validate-connection/{channelId}/", name="oro_fedex_validate_connection", methods={"POST"})
-     * @ParamConverter("channel", class="OroIntegrationBundle:Channel", options={"id" = "channelId"})
+     * @ParamConverter("channel", class="Oro\Bundle\IntegrationBundle\Entity\Channel", options={"id" = "channelId"})
      * @CsrfProtection()
      *
      * @throws \InvalidArgumentException
      */
     public function validateConnectionAction(Request $request, Channel $channel = null): JsonResponse
     {
-        $translator = $this->get(TranslatorInterface::class);
+        $translator = $this->container->get(TranslatorInterface::class);
         if (!$this->isShippingOriginProvided()) {
             return new JsonResponse([
                 'success' => false,
@@ -51,8 +51,8 @@ class ValidateConnectionController extends AbstractController
         /** @var FedexIntegrationSettings $settings */
         $settings = $channel->getTransport();
 
-        $response = $this->get(FedexRateServiceSoapClient::class)->send(
-            $this->get(FedexRateServiceValidateConnectionRequestFactory::class)->create($settings),
+        $response = $this->container->get(FedexRateServiceSoapClient::class)->send(
+            $this->container->get(FedexRateServiceValidateConnectionRequestFactory::class)->create($settings),
             $settings
         );
 
@@ -86,7 +86,7 @@ class ValidateConnectionController extends AbstractController
 
     private function isShippingOriginProvided(): bool
     {
-        $shippingOrigin = $this->get(SystemShippingOriginProvider::class)->getSystemShippingOrigin();
+        $shippingOrigin = $this->container->get(SystemShippingOriginProvider::class)->getSystemShippingOrigin();
 
         return $shippingOrigin->getCountry() !== null;
     }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
 use Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler;
@@ -49,7 +50,7 @@ class AjaxCouponController extends AbstractController
      */
     public function validateCouponApplicabilityAction(Request $request)
     {
-        return $this->get(CouponValidationHandler::class)->handle($request);
+        return $this->container->get(CouponValidationHandler::class)->handle($request);
     }
 
     /**
@@ -83,7 +84,7 @@ class AjaxCouponController extends AbstractController
      */
     private function getCouponRepository()
     {
-        return $this->get('doctrine')
+        return $this->container->get(ManagerRegistry::class)
             ->getManagerForClass(Coupon::class)
             ->getRepository(Coupon::class);
     }
@@ -97,6 +98,7 @@ class AjaxCouponController extends AbstractController
             parent::getSubscribedServices(),
             [
                 CouponValidationHandler::class,
+                ManagerRegistry::class,
             ]
         );
     }

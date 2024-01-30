@@ -10,7 +10,6 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\SEOBundle\Migrations\Schema\OroSEOBundleInstaller;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -40,8 +39,8 @@ class LoadWebCatalogWithContentNodes extends AbstractFixture implements Dependen
 
     private static array $contentNodeMeta = [
         self::CONTENT_NODE_1 => [
-            OroSEOBundleInstaller::METAINFORMATION_DESCRIPTIONS => self::META_DESCRIPTION,
-            OroSEOBundleInstaller::METAINFORMATION_KEYWORDS => self::META_KEYWORDS,
+            'metaDescriptions' => self::META_DESCRIPTION,
+            'metaKeywords' => self::META_KEYWORDS,
         ]
     ];
 

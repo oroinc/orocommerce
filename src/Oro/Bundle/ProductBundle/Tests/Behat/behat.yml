@@ -401,6 +401,77 @@ oro_behat_extension:
             locator: 'textarea[id^="oro_product_field_wysiwyg"]'
             element: WysiwygField
 
+          Multiple Files Attribute:
+            type: xpath
+            locator: '//input[contains(@name,"multiple_files_attribute") and contains(@type,"file")]'
+          Multiple Images Attribute:
+            type: xpath
+            locator: '//input[contains(@name,"multiple_images_attribute") and contains(@type,"file")]'
+          Multiple Files Field:
+            type: xpath
+            locator: '//input[contains(@name,"multiple_files_field") and contains(@type,"file")]'
+          Multiple Images Field:
+            type: xpath
+            locator: '//input[contains(@name,"multiple_images_field") and contains(@type,"file")]'
+
+    Multiple Files DAM Attribute:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id, "multiple_files_dam_attribute")]//tr[contains(@data-content, "[0]")]//a[contains(text(), "Choose File")]'
+    Multiple Images DAM Attribute:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id, "multiple_images_dam_attribute")]//tr[contains(@data-content, "[0]")]//a[contains(text(), "Choose Image")]'
+    Multiple Files DAM Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id, "multiple_files_dam_field")]//tr[contains(@data-content, "[0]")]//a[contains(text(), "Choose File")]'
+    Multiple Images DAM Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id, "multiple_images_dam_field")]//tr[contains(@data-content, "[0]")]//a[contains(text(), "Choose Image")]'
+
+    Multiple Files Attribute Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-files-grid:multiple_files_attribute")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Images Attribute Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-images-grid:multiple_images_attribute")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Files Field Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-files-grid:multiple_files_field")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Images Field Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-images-grid:multiple_images_field")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Files DAM Attribute Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-files-grid:multiple_files_dam_attribute")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Images DAM Attribute Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-images-grid:multiple_images_dam_attribute")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Files DAM Field Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-files-grid:multiple_files_dam_field")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Multiple Images DAM Field Grid:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@data-page-component-name,"attachment-images-grid:multiple_images_dam_field")]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
     NameEnglishUnitedStatesValue:
       selector:
         type: 'xpath'
@@ -1126,27 +1197,27 @@ oro_behat_extension:
     New Arrivals Block:
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="New Arrivals"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/div/h2[text()="New Arrivals"]/../../div[2]'
 
     Featured Products Block:
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Featured Products"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/div/h2[text()="Featured Products"]/../../div[2]'
 
     Top Selling Items Block:
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Top Selling Items"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/div/h2[text()="Top Selling Items"]/../../div[2]'
 
     Related Products Block:
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Related Products"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/div/h2[text()="Related Products"]/../../div[2]'
 
     Upsell Products Block:
       selector:
         type: xpath
-        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/h2/span[text()="Up-sell Products"]/../../div'
+        locator: '//div[contains(concat(" ", @class, " "), " embedded-list ")]/div/h2[text()="Up-sell Products"]/../../div[2]'
 
     EmbeddedProduct:
       selector: 'div.product-item'
@@ -1467,12 +1538,22 @@ oro_behat_extension:
     MultipleFiles Field:
       selector:
         type: xpath
-        locator: '//h4[contains(., "MultipleFiles")]/parent::*'
+        locator: '//div[contains(@id,"MultipleFiles") and contains(@class,"file-collection")]/parent::*'
+
+    MultipleFiles Backoffice Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id,"grid-MultipleFiles")]/parent::*'
 
     MultipleImages Field:
       selector:
         type: xpath
-        locator: '//h4[contains(., "MultipleImages")]/parent::*'
+        locator: '//div[contains(@id,"MultipleImages") and contains(@class,"file-collection")]/parent::*'
+
+    MultipleImages Backoffice Field:
+      selector:
+        type: xpath
+        locator: '//div[contains(@id,"grid-MultipleImages")]/parent::*'
 
     Drawing Storefront Field:
       selector:
@@ -1494,8 +1575,11 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(@class, "product-view-attribute") and contains(., "MultipleFiles")]/parent::div'
 
-    Product Segment Content Widget Slider Next:
-      selector: 'div[data-page-component-name="segment-product-list-0"] button.slick-next'
+    Product Segment Content Widget Slider Control1:
+      selector: 'div[data-type="product_segment"] button[aria-controls="slick-slide01"]'
+
+    Product Segment Content Widget Slider Control2:
+      selector: 'div[data-type="product_segment"] button[aria-controls="slick-slide02"]'
 
     Import Choose File Link:
       selector: ".import-widget-content .tab-pane.active .input-widget-file"
@@ -1580,16 +1664,40 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Product Type Microdata Declaration:
-      selector: '[itemtype="http://schema.org/Product"]'
+      selector: '[itemtype$="://schema.org/Product"]'
+
+    Product Brand Microdata Declaration:
+      selector: '[itemtype$="://schema.org/Brand"]'
+
+    Product Price Microdata Declaration:
+      selector: '[itemtype$="://schema.org/Offer"]'
 
     Product Item View:
       selector: 'div.product-view'
 
-    SchemaOrg Brand Name:
-      selector: 'span[itemprop="brand"] meta[itemprop="name"]'
+    Product Details:
+      selector: 'div.product-view > div:nth-child(1)'
+
+    SchemaOrg SKU:
+      selector: '[itemprop="sku"]'
+
+    SchemaOrg Name:
+      selector: '[itemprop="name"]'
 
     SchemaOrg Description:
-      selector: 'meta[itemprop="description"]'
+      selector: '[itemprop="description"]'
+
+    SchemaOrg Image:
+      selector: '[itemprop="image"]'
+
+    SchemaOrg Brand Name:
+      selector: '[itemprop="brand"] [itemprop="name"]'
+
+    SchemaOrg Price Currency:
+      selector: '[itemprop="offers"] [itemprop="priceCurrency"]'
+
+    SchemaOrg Price:
+      selector: '[itemprop="offers"] [itemprop="price"]'
 
     Draggable Product1 Row:
       selector:
@@ -1632,6 +1740,9 @@ oro_behat_extension:
 
     Drop Zone Exclude from Collection:
       selector: '.drop-zones-menu [data-zone="excludeFromCollection"]'
+
+    Remove Product Shipping Options 1:
+      selector: '.product-shipping-options-collection tr:first-child .removeRow'
 
     Add Kit Item:
       selector: '.product-kit-control-group .add-list-item'
@@ -1777,6 +1888,11 @@ oro_behat_extension:
         type: xpath
         locator: './/*[contains(concat(" ",normalize-space(@class)," ")," oro-collection-item ")][contains(@data-content,"0")]//*[contains(concat(" ",normalize-space(@class)," ")," product-kit-item__title ")]'
 
+    Kit Item 1 Product Unit:
+      selector:
+        type: xpath
+        locator: '//select[@name="oro_product[kitItems][0][productUnit]"]'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
@@ -1796,6 +1912,7 @@ oro_behat_extension:
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\ProductImportExportContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\QuickOrderFormContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\ProductMicrodataContext
         - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
         - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
         - Oro\Bundle\SEOBundle\Tests\Behat\Context\FeatureContext
@@ -1821,6 +1938,7 @@ oro_behat_extension:
         - Oro\Bundle\EntityExtendBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\UIBundle\Tests\Behat\Context\BreadcrumbContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ConsoleContext
+        - Oro\Bundle\SearchBundle\Tests\Behat\Context\SearchContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'
@@ -1882,3 +2000,9 @@ oro_behat_extension:
         - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'
+
+  optional_listeners:
+    required_for_fixtures:
+      - 'oro_product.event_listener.search_product_kit'
+      - 'oro_product.event_listener.website_search_reindex_product_kit'
+      - 'oro_product.event_listener.website_search_product_preloading_index'

@@ -106,7 +106,7 @@ class FormViewListenerTest extends TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroCatalogBundle:Category')
+            ->with(Category::class)
             ->willReturn($repository);
 
         $this->env->expects($this->once())
@@ -160,7 +160,7 @@ class FormViewListenerTest extends TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroCatalogBundle:Category')
+            ->with(Category::class)
             ->willReturn($repository);
 
         $this->env->expects($this->never())

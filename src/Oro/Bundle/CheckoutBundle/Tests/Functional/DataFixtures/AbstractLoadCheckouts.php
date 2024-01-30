@@ -15,25 +15,17 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 abstract class AbstractLoadCheckouts extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    protected ObjectManager $manager;
-    protected ContainerInterface $container;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setContainer(ContainerInterface $container = null): void
-    {
-        $this->container = $container;
-    }
+    use ContainerAwareTrait;
 
     abstract protected function getData(): array;
 
@@ -54,12 +46,11 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
      */
     public function load(ObjectManager $manager): void
     {
-        $this->manager = $manager;
         /* @var User $owner */
         $owner = $manager->getRepository(User::class)->findOneBy([]);
         /* @var WorkflowManager $workflowManager */
         $workflowManager = $this->container->get('oro_workflow.manager');
-        $this->clearPreconditions();
+        $this->clearPreconditions($manager);
         $defaultCustomerUser = $this->getDefaultCustomerUser($manager);
         /* @var Website $website */
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
@@ -115,10 +106,9 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
         }
     }
 
-    protected function clearPreconditions(): void
+    protected function clearPreconditions(ObjectManager $manager): void
     {
-        $workflowDefinition = $this->manager
-            ->getRepository('OroWorkflowBundle:WorkflowDefinition')
+        $workflowDefinition = $manager->getRepository(WorkflowDefinition::class)
             ->findOneBy(['name' => $this->getWorkflowName()]);
         $config = $workflowDefinition->getConfiguration();
         $config['transition_definitions']['__start___definition']['preconditions'] = [];

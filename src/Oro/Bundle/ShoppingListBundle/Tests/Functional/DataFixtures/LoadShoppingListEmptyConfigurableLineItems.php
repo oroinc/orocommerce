@@ -8,8 +8,7 @@ class LoadShoppingListEmptyConfigurableLineItems extends AbstractShoppingListLin
 {
     public const LINE_ITEM_1 = 'shopping_list_configurable_line_item.1';
 
-    /** @var array */
-    protected static $lineItems = [
+    protected static array $lineItems = [
         self::LINE_ITEM_1 => [
             'product' => LoadConfigurableProductWithVariants::CONFIGURABLE_SKU,
             'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
@@ -19,7 +18,7 @@ class LoadShoppingListEmptyConfigurableLineItems extends AbstractShoppingListLin
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDependencies(): array
     {

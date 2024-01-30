@@ -18,7 +18,7 @@ class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
     public function __construct(
         string $channelType,
         IntegrationShippingMethodFactoryInterface $shippingMethodFactory,
-        ShippingMethodLoader $shippingMethodLoader,
+        ShippingMethodLoader $shippingMethodLoader
     ) {
         $this->channelType = $channelType;
         $this->shippingMethodFactory = $shippingMethodFactory;

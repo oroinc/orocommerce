@@ -7,9 +7,10 @@ use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\RFPBundle\Form\DataTransformer\UserIdToEmailTransformer;
 use Oro\Bundle\UserBundle\Entity\User;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
-class UserIdToEmailTransformerTest extends \PHPUnit\Framework\TestCase
+class UserIdToEmailTransformerTest extends TestCase
 {
     private const USER_ID = 42;
     private const USER_EMAIL = 'box42@example.com';
@@ -40,13 +41,13 @@ class UserIdToEmailTransformerTest extends \PHPUnit\Framework\TestCase
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->any())
             ->method('getRepository')
-            ->with('OroUserBundle:User')
+            ->with(User::class)
             ->willReturn($repository);
 
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroUserBundle:User')
+            ->with(User::class)
             ->willReturn($manager);
 
         return $registry;

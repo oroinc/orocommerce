@@ -99,9 +99,11 @@ services:
 
     oro_product.form.autocomplete.brand.search_handler:
         parent: oro_form.autocomplete.search_handler
+        class: Oro\Bundle\ProductBundle\Autocomplete\BrandSearchHandler
         arguments:
             - 'Oro\Bundle\ProductBundle\Entity\Brand'
             - ['name']
+            - '@oro_entity.entity_name_resolver'
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\ProductBundle\Form\Type\BrandType }
 
@@ -528,6 +530,7 @@ services:
             - '@doctrine'
             - '@property_accessor'
             - '@oro_security.acl_helper'
+            - '@oro_entity.entity_name_resolver'
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_families }
 
@@ -1068,6 +1071,15 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onEdit, priority: -255 }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onViewList, priority: -255 }
 
+    oro_product.event_listener.product_multi_file_block_listener:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductMultiFileBlockListener
+        arguments:
+            - '@oro_entity_config.provider.entity'
+        calls:
+            - [setPages, [['product-visibility-edit', 'product-create-step-one']]]
+        tags:
+            - { name: kernel.event_listener, event: entity_form.render.before, method: onBeforeFormRender, priority: -250 }
+
     oro_product.provider.product_variant_availability_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider'
         arguments:
@@ -1448,6 +1460,14 @@ services:
             - '@oro_datagrid.provider.selected_fields'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
+
+    oro_product.datagrid.event_listener.product_grid_attribute_family:
+        class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\AttributeFamilyColumnOnProductsListener'
+        arguments:
+            - '@oro_entity.entity_name_resolver'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
 
     oro_product.provider.catalog_context_url_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantContextUrlProvider
@@ -1968,6 +1988,14 @@ services:
             - { name: oro_featuretogle.voter }
             - { name: oro_featuretogle.feature, feature: attachment_original_filenames }
 
+    # Component added back for theme layout BC from version 5.0
+    oro_checkout.layout.extension.product_seo_context_configurator:
+        class: Oro\Bundle\ProductBundle\Layout\Extension\ProductSEOContextConfigurator
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.context_configurator }
+
     oro_product.datagrid.provider.product_variants_selected_fields_provider:
         class: Oro\Bundle\ProductBundle\DataGrid\Provider\ProductVariantsSelectedFieldsProvider
         arguments:
@@ -2111,6 +2139,14 @@ services:
                 method: onDuplicateAfter
                 priority: -128
 
+    oro_product.event_listener.product_multi_fields_duplicate:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductMultiFieldsDuplicateListener
+        arguments:
+            - '@oro_entity_config.provider.entity'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter, priority: -200 }
+
     oro_product.service.product_collection_segment_manipulator:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionSegmentManipulator
         arguments:
@@ -2202,15 +2238,6 @@ services:
             - 'Oro\Bundle\ProductBundle\Entity\ProductKitItem'
         tags:
             - { name: doctrine.repository_service }
-
-    oro_product.delete_handler_extension.product:
-        class: Oro\Bundle\ProductBundle\Handler\ProductDeleteHandlerExtension
-        parent: oro_entity.delete_handler_extension
-        arguments:
-            - '@oro_product.provider.product_kits_by_product'
-            - '@translator'
-        tags:
-            - { name: oro_entity.delete_handler_extension, entity: Oro\Bundle\ProductBundle\Entity\Product }
 
     oro_product.delete_handler_extension.product_kit_item:
         class: Oro\Bundle\ProductBundle\Handler\ProductKitItemDeleteHandlerExtension
@@ -2351,3 +2378,11 @@ services:
             - '@oro_product.formatter.product_unit_label'
         tags:
             - { name: validator.constraint_validator }
+
+    oro_product.event_listener.website_search_product_preloading_index:
+        class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductPreloadingIndexerListener'
+        arguments:
+            - '@oro_website_search.manager.website_context_manager'
+            - '@oro_entity.manager.preloading_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: 255 }

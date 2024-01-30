@@ -124,10 +124,10 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
         $args = $event->getEventArgs();
 
         /** @var EntityManager $em */
-        $em = $args->getEntityManager();
+        $em = $args->getObjectManager();
 
         $uow = $em->getUnitOfWork();
-        $price = $args->getEntity();
+        $price = $args->getObject();
 
         $idChanged = $args->hasChangedField('id');
         if ($uow->getOriginalEntityData($price) && (!$idChanged || ($idChanged && $args->getOldValue('id')))) {

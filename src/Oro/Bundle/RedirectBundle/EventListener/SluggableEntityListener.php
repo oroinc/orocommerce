@@ -66,7 +66,7 @@ class SluggableEntityListener implements OptionalListenerInterface
             return;
         }
 
-        $entity = $args->getEntity();
+        $entity = $args->getObject();
         if ($entity instanceof SluggableInterface) {
             $this->scheduleEntitySlugCalculation($entity);
         }
@@ -78,7 +78,7 @@ class SluggableEntityListener implements OptionalListenerInterface
             return;
         }
 
-        $unitOfWork = $event->getEntityManager()->getUnitOfWork();
+        $unitOfWork = $event->getObjectManager()->getUnitOfWork();
         $sluggableEntitiesToCheck = [];
         foreach ($this->getUpdatedSlugs($unitOfWork) as $sluggableEntity) {
             $slugPrototypes = $sluggableEntity->getSlugPrototypes();

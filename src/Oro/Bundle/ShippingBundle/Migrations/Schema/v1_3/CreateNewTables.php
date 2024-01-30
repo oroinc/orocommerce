@@ -3,29 +3,18 @@
 namespace Oro\Bundle\ShippingBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class CreateNewTables implements Migration, OrderedMigrationInterface, ActivityExtensionAwareInterface
 {
-    /**
-     * @var ActivityExtension
-     */
-    private $activityExtension;
+    use ActivityExtensionAwareTrait;
 
     /**
-     * @inheritDoc
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
-
-    /**
-     * @return int
+     * {@inheritDoc}
      */
     public function getOrder()
     {
@@ -33,7 +22,7 @@ class CreateNewTables implements Migration, OrderedMigrationInterface, ActivityE
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

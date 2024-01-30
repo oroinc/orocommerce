@@ -19,7 +19,7 @@ class DisableProductKitItemLabelCreation implements ProcessorInterface
     {
         /** @var Context $context */
 
-        if ($context->isMasterRequest()) {
+        if ($context->isMainRequest()) {
             throw new AccessDeniedException(
                 'Use API resource to create a product kit item. A product kit item label can be created only '
                 . 'together with a product kit item.'

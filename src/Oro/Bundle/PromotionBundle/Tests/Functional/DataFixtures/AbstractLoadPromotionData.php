@@ -5,13 +5,11 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -24,11 +22,18 @@ abstract class AbstractLoadPromotionData extends AbstractFixture implements
     /**
      * {@inheritDoc}
      */
+    public function getDependencies(): array
+    {
+        return [LoadUser::class];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function load(ObjectManager $manager): void
     {
-        $userRepository = $manager->getRepository(User::class);
-        $user = $userRepository->findOneBy(['email' => LoadAdminUserData::DEFAULT_ADMIN_EMAIL]);
-
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
         foreach ($this->getPromotions() as $reference => $promotionData) {
             $rule = new Rule();
             $rule->setName($promotionData['rule']['name']);
@@ -40,39 +45,21 @@ abstract class AbstractLoadPromotionData extends AbstractFixture implements
             $promotion->setOrganization($user->getOrganization());
             $promotion->setRule($rule);
             $promotion->setUseCoupons($promotionData['useCoupons']);
-
-            /** @var DiscountConfiguration $discountConfiguration */
-            $discountConfiguration = $this->getReference($promotionData['discountConfiguration']);
-
-            /** @var Segment $segment */
-            $segment = $this->getReference($promotionData['segmentReference']);
-
-            $promotion->setDiscountConfiguration($discountConfiguration);
-            $promotion->setProductsSegment($segment);
-
+            $promotion->setDiscountConfiguration($this->getReference($promotionData['discountConfiguration']));
+            $promotion->setProductsSegment($this->getReference($promotionData['segmentReference']));
             foreach ($promotionData['scopeCriterias'] as $scopeCriteria) {
-                $scopeCriteria = $this->getScope($scopeCriteria);
-                $promotion->addScope($scopeCriteria);
+                $promotion->addScope($this->getScope($scopeCriteria));
             }
 
             $manager->persist($promotion);
-
             $this->setReference($reference, $promotion);
         }
-
         $manager->flush();
     }
 
-    /**
-     * @return array
-     */
-    abstract protected function getPromotions();
+    abstract protected function getPromotions(): array;
 
-    /**
-     * @param array $scopeCriteria
-     * @return Scope
-     */
-    private function getScope(array $scopeCriteria)
+    private function getScope(array $scopeCriteria): Scope
     {
         return $this->container->get('oro_scope.scope_manager')->findOrCreate('promotion', $scopeCriteria);
     }

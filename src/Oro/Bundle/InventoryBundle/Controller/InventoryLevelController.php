@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension;
@@ -32,7 +33,7 @@ class InventoryLevelController extends AbstractController
      * @Acl(
      *      id="oro_inventory_level_view",
      *      type="entity",
-     *      class="OroInventoryBundle:InventoryLevel",
+     *      class="Oro\Bundle\InventoryBundle\Entity\InventoryLevel",
      *      permission="VIEW"
      * )
      */
@@ -55,7 +56,7 @@ class InventoryLevelController extends AbstractController
      * @Acl(
      *      id="oro_product_inventory_update",
      *      type="entity",
-     *      class="OroInventoryBundle:InventoryLevel",
+     *      class="Oro\Bundle\InventoryBundle\Entity\InventoryLevel",
      *      permission="EDIT"
      * )
      */
@@ -72,12 +73,12 @@ class InventoryLevelController extends AbstractController
         );
 
         $handler = new InventoryLevelHandler(
-            $this->getDoctrine()->getManagerForClass(InventoryLevel::class),
-            $this->get(QuantityRoundingService::class),
-            $this->get(InventoryManager::class)
+            $this->container->get('doctrine')->getManagerForClass(InventoryLevel::class),
+            $this->container->get(QuantityRoundingService::class),
+            $this->container->get(InventoryManager::class)
         );
 
-        $result = $this->get(UpdateHandlerFacade::class)->update(
+        $result = $this->container->get(UpdateHandlerFacade::class)->update(
             $product,
             $form,
             '',
@@ -100,7 +101,7 @@ class InventoryLevelController extends AbstractController
         }
 
         return $noDataReason
-            ? ['noDataReason' => $this->get(TranslatorInterface::class)->trans($noDataReason)]
+            ? ['noDataReason' => $this->container->get(TranslatorInterface::class)->trans($noDataReason)]
             : [];
     }
 
@@ -115,7 +116,8 @@ class InventoryLevelController extends AbstractController
                 TranslatorInterface::class,
                 QuantityRoundingService::class,
                 InventoryManager::class,
-                UpdateHandlerFacade::class
+                UpdateHandlerFacade::class,
+                'doctrine' => ManagerRegistry::class
             ]
         );
     }

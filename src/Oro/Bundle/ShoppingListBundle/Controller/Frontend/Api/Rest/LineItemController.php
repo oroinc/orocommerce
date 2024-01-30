@@ -2,14 +2,22 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerRegistry;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
+use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
+use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
+use Oro\Bundle\SoapBundle\Handler\DelegateIncludeHandler;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Controller for shopping list line item REST API requests.
@@ -32,16 +40,16 @@ class LineItemController extends RestController
     {
         $success = false;
         /** @var LineItem $lineItem */
-        $lineItem = $this->getDoctrine()
-            ->getManagerForClass('OroShoppingListBundle:LineItem')
-            ->getRepository('OroShoppingListBundle:LineItem')
+        $lineItem = $this->container->get('doctrine')
+            ->getManagerForClass(LineItem::class)
+            ->getRepository(LineItem::class)
             ->find($id);
 
         $view = $this->view(null, Response::HTTP_NO_CONTENT);
 
         if ($lineItem) {
             if ($this->isGranted('DELETE', $lineItem) && $this->isGranted('EDIT', $lineItem->getShoppingList())) {
-                $this->get('oro_shopping_list.manager.shopping_list')->removeLineItem(
+                $this->container->get(ShoppingListManager::class)->removeLineItem(
                     $lineItem,
                     (bool) $onlyCurrent
                 );
@@ -68,7 +76,7 @@ class LineItemController extends RestController
         $success = false;
 
         /** @var LineItem[] $lineItems */
-        $lineItems = $this->getDoctrine()
+        $lineItems = $this->container->get('doctrine')
             ->getManagerForClass(LineItem::class)
             ->getRepository(LineItem::class)
             ->findLineItemsByParentProductAndUnit($shoppingListId, $productId, $unitCode);
@@ -89,7 +97,7 @@ class LineItemController extends RestController
 
             if ($allowed) {
                 $options = [];
-                $handler = $this->get('oro_entity.delete_handler_registry')
+                $handler = $this->container->get('oro_entity.delete_handler_registry')
                     ->getHandler(LineItem::class);
 
                 foreach ($lineItems as $lineItem) {
@@ -136,10 +144,10 @@ class LineItemController extends RestController
                 $handler = new LineItemHandler(
                     $form,
                     $request,
-                    $this->getDoctrine(),
-                    $this->get('oro_shopping_list.manager.shopping_list'),
-                    $this->get('oro_shopping_list.manager.current_shopping_list'),
-                    $this->get('validator')
+                    $this->container->get('doctrine'),
+                    $this->container->get(ShoppingListManager::class),
+                    $this->container->get(CurrentShoppingListManager::class),
+                    $this->container->get('validator')
                 );
                 $isFormHandled = $handler->process($entity);
                 if ($isFormHandled) {
@@ -165,7 +173,7 @@ class LineItemController extends RestController
      */
     public function getManager()
     {
-        return $this->get('oro_shopping_list.line_item.manager.api');
+        return $this->container->get(ApiEntityManager::class);
     }
 
     /**
@@ -182,5 +190,22 @@ class LineItemController extends RestController
     public function getFormHandler()
     {
         throw new \LogicException('This method should not be called');
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                ApiEntityManager::class,
+                ShoppingListManager::class,
+                CurrentShoppingListManager::class,
+                'doctrine' => ManagerRegistry::class,
+                'validator' => ValidatorInterface::class,
+                'form.factory' => FormFactoryInterface::class,
+                'oro_soap.handler.include' => DelegateIncludeHandler::class,
+                'oro_entity.delete_handler_registry' => EntityDeleteHandlerRegistry::class,
+            ]
+        );
     }
 }

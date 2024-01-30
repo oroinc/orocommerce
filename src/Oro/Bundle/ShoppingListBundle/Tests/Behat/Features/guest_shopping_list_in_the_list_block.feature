@@ -12,7 +12,7 @@ Feature: Guest shopping list in the list block
 
   Scenario: Feature Background
     Given sessions active:
-      | Buyer | second_session |
+      | Buyer | first_session |
     And I enable configuration options:
       | oro_shopping_list.availability_for_guests |
       | oro_checkout.guest_checkout               |

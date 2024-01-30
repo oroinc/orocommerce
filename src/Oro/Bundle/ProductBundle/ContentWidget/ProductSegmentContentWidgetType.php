@@ -21,11 +21,12 @@ class ProductSegmentContentWidgetType implements ContentWidgetTypeInterface
     private int $instanceNumber = 0;
 
     private const DEFAULT_WIDGET_OPTIONS = [
-        'slidesToShow' => 4,
+        'slidesToShow' => 5,
         'responsive' => [
-            ['breakpoint' => 1100, 'settings' => ['arrows' => true]],
-            ['breakpoint' => 768, 'settings' => ['slidesToShow' => 2, 'arrows' => true]],
-            ['breakpoint' => 641, 'settings' => ['slidesToShow' => 1, 'arrows' => true]],
+            ['breakpoint' => 1367, 'settings' => ['slidesToShow' => 4, 'arrows' => true]],
+            ['breakpoint' => 1281, 'settings' => ['slidesToShow' => 3, 'arrows' => true]],
+            ['breakpoint' => 769, 'settings' => ['slidesToShow' => 2, 'arrows' => false, 'dots' => true]],
+            ['breakpoint' => 641, 'settings' => ['slidesToShow' => 1, 'arrows' => false, 'dots' => true]],
         ],
     ];
 

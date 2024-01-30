@@ -24,7 +24,6 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
             ->findOneBy(['email' => LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL]);
         $token = new UsernamePasswordOrganizationToken(
             $user,
-            false,
             'k',
             $user->getOrganization(),
             $user->getUserRoles()

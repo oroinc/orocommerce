@@ -7,7 +7,9 @@ use Oro\Bundle\WorkflowBundle\Validator\Constraints\TransitionIsAllowed;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Validator\ConstraintViolation;
 
 class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
@@ -21,7 +23,14 @@ class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->flashBag = new FlashBag();
-        $this->handler = new CheckoutErrorHandler($this->flashBag);
+        $session = $this->createMock(Session::class);
+        $session->method('getFlashBag')
+            ->willReturn($this->flashBag);
+        $requestStack = $this->createMock(RequestStack::class);
+        $requestStack->method('getSession')
+            ->willReturn($session);
+
+        $this->handler = new CheckoutErrorHandler($requestStack);
     }
 
     /**

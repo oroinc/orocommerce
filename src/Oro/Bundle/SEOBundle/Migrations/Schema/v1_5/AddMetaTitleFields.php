@@ -4,60 +4,32 @@ namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class AddMetaTitleFields implements Migration, ExtendExtensionAwareInterface
 {
-    const PRODUCT_TABLE_NAME = 'oro_product';
-    const CATEGORY_TABLE_NAME = 'oro_catalog_category';
-    const LANDING_PAGE_TABLE_NAME = 'oro_cms_page';
-    const WEB_CATALOG_NODE_TABLE_NAME = 'oro_web_catalog_content_node';
-    const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
-
-    const METAINFORMATION_TITLES = 'metaTitles';
+    use ExtendExtensionAwareTrait;
 
     /**
-     * @var ExtendExtension
+     * {@inheritDoc}
      */
-    protected $extendExtension;
-
-    /**
-     * @inheritdoc
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $this->extendExtension = $extendExtension;
+        $this->addMetaTitlesField($schema, 'oro_product');
+        $this->addMetaTitlesField($schema, 'oro_catalog_category');
+        $this->addMetaTitlesField($schema, 'oro_cms_page');
+        $this->addMetaTitlesField($schema, 'oro_web_catalog_content_node');
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function up(Schema $schema, QueryBag $queries)
-    {
-        $this->addMetaInformationField($schema, self::PRODUCT_TABLE_NAME, self::METAINFORMATION_TITLES);
-        $this->addMetaInformationField($schema, self::CATEGORY_TABLE_NAME, self::METAINFORMATION_TITLES);
-        $this->addMetaInformationField($schema, self::LANDING_PAGE_TABLE_NAME, self::METAINFORMATION_TITLES);
-        $this->addMetaInformationField($schema, self::WEB_CATALOG_NODE_TABLE_NAME, self::METAINFORMATION_TITLES);
-    }
-
-    /**
-     * Add a many-to-many relation between a given table and the table corresponding to the
-     * LocalizedFallbackValue entity, with the given relation name.
-     *
-     * @param Schema $schema
-     * @param string $ownerTable
-     * @param string $relationName
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\DBAL\Schema\SchemaException
-     */
-    private function addMetaInformationField(Schema $schema, $ownerTable, $relationName, $isString = false)
+    private function addMetaTitlesField(Schema $schema, string $ownerTable): void
     {
         if (!$schema->hasTable($ownerTable)) {
             return;
         }
+
         $targetTable = $schema->getTable($ownerTable);
 
         // Column names are used to show a title of target entity
@@ -70,8 +42,8 @@ class AddMetaTitleFields implements Migration, ExtendExtensionAwareInterface
         $this->extendExtension->addManyToManyRelation(
             $schema,
             $targetTable,
-            $relationName,
-            self::FALLBACK_LOCALE_VALUE_TABLE_NAME,
+            'metaTitles',
+            'oro_fallback_localization_val',
             $targetTitleColumnNames,
             $targetDetailedColumnNames,
             $targetGridColumnNames,
@@ -85,7 +57,7 @@ class AddMetaTitleFields implements Migration, ExtendExtensionAwareInterface
                 'view' => ['is_displayable' => false],
                 'importexport' => [
                     'excluded' => false,
-                    'fallback_field' => $isString ? 'string' : 'text',
+                    'fallback_field' => 'text'
                 ],
             ]
         );

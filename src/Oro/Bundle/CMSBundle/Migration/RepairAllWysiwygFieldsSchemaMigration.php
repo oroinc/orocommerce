@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\CMSBundle\Migration;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -20,19 +20,8 @@ class RepairAllWysiwygFieldsSchemaMigration implements
     ConnectionAwareInterface,
     ExtendExtensionAwareInterface
 {
-    protected Connection $connection;
-
-    protected ExtendExtension $extendExtension;
-
-    public function setConnection(Connection $connection): void
-    {
-        $this->connection = $connection;
-    }
-
-    public function setExtendExtension(ExtendExtension $extendExtension): void
-    {
-        $this->extendExtension = $extendExtension;
-    }
+    use ConnectionAwareTrait;
+    use ExtendExtensionAwareTrait;
 
     public function up(Schema $schema, QueryBag $queries): void
     {

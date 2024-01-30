@@ -29,16 +29,16 @@ class AjaxLocalizationController extends AbstractController
      */
     public function setCurrentLocalizationAction(Request $request): JsonResponse
     {
-        $localization = $this->get(LocalizationManager::class)
+        $localization = $this->container->get(LocalizationManager::class)
             ->getLocalization($request->get('localization'), false);
 
-        $localizationManager = $this->get(UserLocalizationManager::class);
+        $localizationManager = $this->container->get(UserLocalizationManager::class);
         if ($localization instanceof Localization
             && array_key_exists($localization->getId(), $localizationManager->getEnabledLocalizations())
         ) {
             $localizationManager->setCurrentLocalization($localization);
 
-            $redirectHelper = $this->get('oro_locale.helper.localized_slug_redirect');
+            $redirectHelper = $this->container->get('oro_locale.helper.localized_slug_redirect');
             $fromUrl = $this->generateUrlWithContext($request);
 
             if ($request->server->has('WEBSITE_PATH')) {
@@ -130,7 +130,7 @@ class AjaxLocalizationController extends AbstractController
     private function getUrlForWebsitePath(Request $request, string $fromUrl, Localization $localization): string
     {
         $baseUrl = $request->getBaseUrl();
-        $redirectHelper = $this->get('oro_locale.helper.localized_slug_redirect');
+        $redirectHelper = $this->container->get('oro_locale.helper.localized_slug_redirect');
         $websitePath = $request->server->get('WEBSITE_PATH');
 
         if (in_array($baseUrl, ['/', ''])) {

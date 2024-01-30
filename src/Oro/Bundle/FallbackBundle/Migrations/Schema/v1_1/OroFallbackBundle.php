@@ -2,26 +2,17 @@
 
 namespace Oro\Bundle\FallbackBundle\Migrations\Schema\v1_1;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroFallbackBundle implements Migration, DatabasePlatformAwareInterface
 {
-    /** @var AbstractPlatform */
-    protected $platform;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDatabasePlatform(AbstractPlatform $platform)
-    {
-        $this->platform = $platform;
-    }
+    use DatabasePlatformAwareTrait;
 
     /**
      * {@inheritdoc}

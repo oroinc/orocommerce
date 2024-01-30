@@ -54,7 +54,7 @@ class ConsentControllerTest extends WebTestCase
     public function testCreate(): int
     {
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
-        $this->configManager->set('oro_web_catalog.web_catalog', $webCatalog);
+        $this->configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId());
         $this->configManager->flush();
         $contentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2);
         $crawler = $this->client->request('GET', $this->getUrl('oro_consent_create'));

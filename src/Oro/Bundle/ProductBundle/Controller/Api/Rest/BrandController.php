@@ -45,7 +45,7 @@ class BrandController extends RestController
      * @Acl(
      *      id="oro_product_brand_delete",
      *      type="entity",
-     *      class="OroProductBundle:Brand",
+     *      class="Oro\Bundle\ProductBundle\Entity\Brand",
      *      permission="DELETE"
      * )
      *
@@ -63,7 +63,7 @@ class BrandController extends RestController
      */
     public function getManager()
     {
-        return $this->get('oro_product.brand.manager.api');
+        return $this->container->get('oro_product.brand.manager.api');
     }
 
     /**

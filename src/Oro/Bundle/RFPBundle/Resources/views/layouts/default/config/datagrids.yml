@@ -1,0 +1,115 @@
+datagrids:
+    frontend-requests-grid:
+        acl_resource: oro_rfp_frontend_request_view
+        extended_entity_name: 'Oro\Bundle\RFPBundle\Entity\Request'
+        options:
+            frontend: true
+            entityHint: oro.rfp.request.entity_plural_label
+            entity_pagination: true
+        source:
+            type: orm
+            query:
+                select:
+                    - request.id
+                    - request.createdAt
+                    - request.poNumber
+                    - request.shipUntil
+                    - CONCAT(requestCustomerUser.firstName, ' ', requestCustomerUser.lastName) as customerUserName
+                    - customerStatus.name as customerStatusName
+                    - customerStatus.id as customerStatusId
+                from:
+                    - { table: 'Oro\Bundle\RFPBundle\Entity\Request', alias: request }
+                join:
+                    left:
+                        - { join: request.customerUser, alias: requestCustomerUser }
+                        - { join: request.customer_status, alias: customerStatus }
+                where:
+                    and:
+                        - IDENTITY(request.internal_status) IS NULL OR IDENTITY(request.internal_status) <> :internalStatus
+            bind_parameters:
+                -   name: internalStatus
+                    default: deleted
+            hints:
+                - HINT_TRANSLATABLE
+
+        columns:
+            id:
+                label: oro.frontend.rfp.request.id.label
+            customerStatusName:
+                label: oro.frontend.rfp.request.customer_status.label
+            poNumber:
+                label: oro.frontend.rfp.request.po_number.label
+            shipUntil:
+                label: oro.frontend.rfp.request.ship_until.label
+                frontend_type: date
+            createdAt:
+                label: oro.ui.created_at
+                frontend_type: datetime
+            customerUserName:
+                label: oro.frontend.rfp.request.customer_user.label
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: oro_rfp_frontend_request_view
+                params: [ id ]
+            update_link:
+                type: url
+                route: oro_rfp_frontend_request_update
+                params: [ id ]
+            view_aria_label:
+                type: translatable
+                key: oro.rfp.action.request.view.aria_label
+                params: [ id ]
+            update_aria_label:
+                type: translatable
+                key: oro.rfp.action.request.edit.aria_label
+                params: [ id ]
+        sorters:
+            columns:
+                customerStatusName:
+                    data_name: customerStatusName
+                customerUserName:
+                    data_name: customerUserName
+                poNumber:
+                    data_name: request.poNumber
+                shipUntil:
+                    data_name: request.shipUntil
+                createdAt:
+                    data_name: request.createdAt
+            disable_default_sorting: true
+        filters:
+            columns:
+                customerStatusName:
+                    type: enum
+                    data_name: customerStatusId
+                    enum_code: rfp_customer_status
+                customerUserName:
+                    type: string
+                    data_name: customerUserName
+                poNumber:
+                    type: string
+                    data_name: request.poNumber
+                shipUntil:
+                    type: date
+                    data_name: request.shipUntil
+                createdAt:
+                    type: datetime
+                    data_name: request.createdAt
+        actions:
+            view:
+                type: navigate
+                label: oro.grid.action.view
+                ariaLabel: view_aria_label
+                link: view_link
+                icon: eye
+                rowAction: true
+                acl_resource: oro_rfp_frontend_request_view
+            update:
+                type: navigate
+                label: oro.grid.action.update
+                ariaLabel: update_aria_label
+                link: update_link
+                icon: pencil-square-o
+                rowAction: true
+                acl_resource: oro_rfp_frontend_request_update

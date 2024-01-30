@@ -8,14 +8,11 @@ use Oro\Bundle\SegmentBundle\Tests\Functional\DataFixtures\AbstractLoadSegmentDa
 
 class LoadSegmentData extends AbstractLoadSegmentData
 {
-    const PRODUCT_STATIC_SEGMENT = 'product_static_segment';
-    const PRODUCT_DYNAMIC_SEGMENT = 'product_dynamic_segment';
-    const PRODUCT_DYNAMIC_EMPTY_SEGMENT = 'product_dynamic_empty_segment';
+    public const PRODUCT_STATIC_SEGMENT = 'product_static_segment';
+    public const PRODUCT_DYNAMIC_SEGMENT = 'product_dynamic_segment';
+    public const PRODUCT_DYNAMIC_EMPTY_SEGMENT = 'product_dynamic_empty_segment';
 
-    /**
-     * @var array
-     */
-    protected static $segments = [
+    private static array $segments = [
         self::PRODUCT_STATIC_SEGMENT => [
             'name' => 'Product Static Segment',
             'description' => 'Product Static Segment Description',
@@ -107,6 +104,9 @@ class LoadSegmentData extends AbstractLoadSegmentData
         ]
     ];
 
+    /**
+     * {@inheritDoc}
+     */
     protected function getSegmentsData(): array
     {
         return self::$segments;

@@ -21,8 +21,23 @@ const ShoppingListRefreshPlugin = BasePlugin.extend({
             this.messageHiddenLineItem(hiddenLineItems);
         });
 
-        this.listenTo(this.main.collection, 'request', () => mediator.trigger('shopping-list:request'));
-        this.listenTo(this.main.collection, 'reset', () => mediator.trigger('shopping-list:refresh'));
+        let storeCurrentPage;
+
+        this.listenTo(this.main.collection, 'beforeFetch', collection => {
+            storeCurrentPage = collection.previousState.currentPage;
+        });
+
+        this.listenTo(this.main.collection, 'request', collection => {
+            if (storeCurrentPage === collection.state.currentPage) {
+                mediator.trigger('shopping-list:request');
+            }
+        });
+
+        this.listenTo(this.main.collection, 'reset', collection => {
+            if (storeCurrentPage === collection.state.currentPage) {
+                mediator.trigger('shopping-list:refresh');
+            }
+        });
 
         ShoppingListRefreshPlugin.__super__.enable.call(this);
     },

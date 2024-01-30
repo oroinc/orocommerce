@@ -17,7 +17,7 @@
                 {% for name, view in views %}
                     {% if views is defined and view is iterable %}
                         {% set selected = currentPaymentMethod == name %}
-                        <div class="{{ class_prefix }}-form__radio" data-item-container>
+                        <div class="{{ class_prefix }}-form__radio {% if view.options.cssClass is defined %}{{ view.options.cssClass }}{% endif %}" data-item-container>
                             <label class="checkbox-label" data-radio>
                                 <input type="radio" name="paymentMethod" data-choice="{{ name }}" value="{{ name }}" {% if selected%}checked="checked"{% endif %} />
                                 {{- view.label -}}

@@ -3,7 +3,7 @@
         '~class': ' product-prices'
     }) %}
 
-    {% if not is_price_hidden(product, matrixFormType|default(false) == 'none') %}
+    {% if not is_price_hidden(product, matrixFormType|default('') == 'none') %}
         {# Use to modify quantity in case when it not enough quantity to show the price #}
         {# We use this component as single entry point for price extendability #}
         {% set attr = layout_attr_defaults(attr, {

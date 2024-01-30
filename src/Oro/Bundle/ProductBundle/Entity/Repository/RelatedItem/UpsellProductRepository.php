@@ -43,7 +43,7 @@ class UpsellProductRepository extends EntityRepository implements AbstractAssign
     public function findUpsell($id, $limit = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
-            ->from('OroProductBundle:Product', 'p')
+            ->from(Product::class, 'p')
             ->select('p')
             ->leftJoin(UpsellProduct::class, 'up_l', Join::WITH, 'up_l.relatedItem = p.id')
             ->where('up_l.product = :id')

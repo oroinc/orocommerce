@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorManager;
-use Oro\Bundle\CustomerBundle\Security\Firewall\AnonymousCustomerUserAuthenticationListener;
+use Oro\Bundle\CustomerBundle\Security\AnonymousCustomerUserAuthenticator;
 use Oro\Bundle\DataAuditBundle\EventListener\SendChangedEntitiesToMessageQueueListener;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListMigrationManager;
@@ -96,7 +96,7 @@ class InteractiveLoginListener
      */
     private function getCredentials(Request $request)
     {
-        $value = $request->cookies->get(AnonymousCustomerUserAuthenticationListener::COOKIE_NAME);
+        $value = $request->cookies->get(AnonymousCustomerUserAuthenticator::COOKIE_NAME);
         if (!$value) {
             return null;
         }

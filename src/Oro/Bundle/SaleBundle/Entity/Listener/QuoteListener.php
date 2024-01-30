@@ -16,7 +16,7 @@ class QuoteListener
             return;
         }
 
-        $unitOfWork = $event->getEntityManager()->getUnitOfWork();
+        $unitOfWork = $event->getObjectManager()->getUnitOfWork();
 
         $changeSet = [
             'qid' => [null, $quote->getId()],

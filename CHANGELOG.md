@@ -4,6 +4,7 @@ The current file describes significant changes in the code that may affect the u
 
 ## Changes in the Сommerce package versions
 
+- [6.0.0-BETA](#600-beta-2024-01-08)
 - [5.1.0](#510-2023-03-31)
 - [5.0.0](#500-2022-01-26)
 - [4.2.3](#423)
@@ -21,7 +22,8 @@ The current file describes significant changes in the code that may affect the u
 - [1.2.0](#120-2017-06-01)
 - [1.1.0](#110-2017-03-31)
 
-## UNRELEASED
+## 6.0.0-BETA (2024-01-08)
+[Show detailed list of changes](incompatibilities-6-0-beta.md)
 
 ### Added
 
@@ -52,9 +54,13 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\ProductBundle\Event\DatagridKitItemLineItemsDataEvent` as the event for collecting product kit item line items data for the product line items storefront datagrids.
 * Added `\Oro\Bundle\ProductBundle\Filter\ComposedSkuStringFilter` for SKU filter on the product line items storefront datagrids to take into account product kit item line items SKUs during filtration.
 * Added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener` that switches status and inventory status of a product kit depending on its kit item products.
+* Added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\SearchProductKitListener` that schedule index operation for the product kit for the back-office.
+* Added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\WebsiteSearchReindexProductKitListener` that schedule index operation for the product kit for the storefront.
+* Added `\Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductPreloadingIndexerListener` that preload products with required data at the start of website reindex operation.
 * Disabled the ability to add a product kit to Quick Order Form via `\Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler::setNotAllowedProductTypes`.
 * Removed the `oro_product.popup_gallery_on_product_view` option from the system configuration.
 * Added new options fields to `product_segment` content widget in `\Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType`.
+* Restored the is_optimized field in quick add forms (for compatibility to older layout themes), but the optimized version is forced. Consider refactoring your templates which rely on this field.
 
 #### PaymentBundle
 * Added the new and only way to create a payment line items `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` - see `\Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactoryInterface`.
@@ -77,8 +83,15 @@ The current file describes significant changes in the code that may affect the u
 
 #### CMSBundle
 * Added a new localizable `labels` field to `\Oro\Bundle\CMSBundle\Entity\ContentWidget`.
+* Added new image fields to `\Oro\Bundle\CMSBundle\Entity\ImageSlide`: `extraLargeImage2x`,`extraLargeImage3x`,`largeImage`,`largeImage2x`,`largeImage3x`,`mediumImage2x`,`mediumImage3x`,`smallImage2x`,`smallImage3x` .
+* Added a new `header` field to `\Oro\Bundle\CMSBundle\Entity\ImageSlide`.
+* Added a new twig function `oro_cms_image_slide_image` that returns the URL to the slider image using a predefined fallback strategy.
+* Added the `Oro\Bundle\CMSBundle\Validator\Constraints\HasAtLeastOneSizeImage` constraint and `\Oro\Bundle\CMSBundle\Validator\Constraints\HasAtLeastOneSizeImageValidator` validator to ensure at least one size of image is selected in a group.
 
 ### Changed
+
+#### UPSBundle
+* Changed `\Oro\Bundle\UPSBundle\Factory\PriceRequestFactory` to make it work with `\Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface` models.
 
 #### CheckoutBundle
 * Changed `\Oro\Bundle\CheckoutBundle\Converter\ShoppingListLineItemConverter`, `\Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter`, `\Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShoppingListLineItemDiffMapper` to take into account `\Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem` entities.
@@ -121,6 +134,13 @@ The current file describes significant changes in the code that may affect the u
 * Decomposed `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface` into `\Oro\Bundle\ProductBundle\Model\ProductKitItemAwareInterface`.
 * Changed `\Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy` - added the possibility of postponing rows for missing product kits item products and fixed losing the related kitItems collections located deeper than 1st level.
 * Changed `\Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture` - added new simple and kit products.
+* Changed `\Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener` - to take into account product kits.
+* Field names were changed for form type `\Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType`
+  - field `enable_autoplay` renamed to `autoplay`
+  - field `autoplay_speed` renamed to `autoplaySpeed`
+  - field `show_dots` renamed to `dots`
+  - field `enable_infinite_scroll` renamed to `infinite`
+  - field `autoplay_speed` renamed to `autoplaySpeed`
 
 #### SaleBundle
 * Changed `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\FirstOffers\FirstOffersQuoteToShippingLineItemConverter` and `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\SelectedOffers\SelectedOffersQuoteToShippingLineItemConverter` to make them work with the new shipping line item factory `\Oro\Bundle\SaleBundle\Quote\Shipping\Context\LineItem\Factory\ShippingLineItemFromQuoteProductDemandFactory`. 
@@ -131,10 +151,15 @@ The current file describes significant changes in the code that may affect the u
 * Changed `\Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface` to make it work with `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem` instead of the removed `\Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface` and `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface`.
 * Changed `\Oro\Bundle\ShippingBundle\Converter\Basic\ShippingContextToRulesValuesConverter` to take into account `\Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem` models.
 * Changed `\Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory` to make it work with `\Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem` models.
+* Changed `\Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem` to make it work with `\Oro\Bundle\ShippingBundle\Model\Dimensions` and `\Oro\Bundle\ShippingBundle\Model\Weight`.
 
 #### ShoppingListBundle
 * Made use of `\Symfony\Component\Validator\Constraints\GroupSequence` in `\Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController` when creating/updating a product kit line item.
 * Made use of nested validation groups transforming into `\Symfony\Component\Validator\Constraints\GroupSequence` for `shoppinglistitem` and `shoppinglistkititem` storefront API resources.
+
+#### CMSBundle
+* Renamed field `title` to `altImageText`.
+* Renamed field `mainImage` to `extraLargeImage`.
 
 ### Removed
 

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManager;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider;
@@ -33,7 +34,7 @@ class AjaxCheckoutController extends AbstractController
     public function getTotalsAction(Request $request, $entityId)
     {
         /** @var Checkout $checkout */
-        $checkout = $this->getDoctrine()->getManagerForClass(Checkout::class)
+        $checkout = $this->container->get('doctrine')->getManagerForClass(Checkout::class)
             ->getRepository(Checkout::class)->getCheckoutWithRelations($entityId);
 
         if (!$checkout) {
@@ -43,7 +44,7 @@ class AjaxCheckoutController extends AbstractController
 
         $this->setCorrectCheckoutShippingMethodData($checkout, $request);
 
-        return new JsonResponse($this->get(CheckoutTotalsProvider::class)->getTotalsArray($checkout));
+        return new JsonResponse($this->container->get(CheckoutTotalsProvider::class)->getTotalsArray($checkout));
     }
 
     /**
@@ -54,7 +55,7 @@ class AjaxCheckoutController extends AbstractController
      */
     protected function setCorrectCheckoutShippingMethodData(Checkout $checkout, Request $request)
     {
-        $workflowTransitionData = $request->request->get('oro_workflow_transition');
+        $workflowTransitionData = $request->request->all('oro_workflow_transition');
         if (!is_array($workflowTransitionData)
             || !array_key_exists('shipping_method', $workflowTransitionData)
             || !array_key_exists('shipping_method_type', $workflowTransitionData)
@@ -85,7 +86,8 @@ class AjaxCheckoutController extends AbstractController
             parent::getSubscribedServices(),
             [
                 CheckoutTotalsProvider::class,
-                CheckoutLineItemsShippingManager::class
+                CheckoutLineItemsShippingManager::class,
+                'doctrine' => ManagerRegistry::class
             ]
         );
     }

@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Migration\Extension;
 
+/**
+ * This trait can be used by migrations that implement {@see PaymentTermExtensionAwareInterface}.
+ */
 trait PaymentTermExtensionAwareTrait
 {
-    /** @var PaymentTermExtension */
-    protected $paymentTermExtension;
+    private PaymentTermExtension $paymentTermExtension;
 
-    public function setPaymentTermExtension(PaymentTermExtension $paymentTermExtension)
+    public function setPaymentTermExtension(PaymentTermExtension $paymentTermExtension): void
     {
         $this->paymentTermExtension = $paymentTermExtension;
     }

@@ -7,25 +7,24 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryTitle;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 class LoadMasterCatalogLocalizedTitles extends AbstractFixture implements DependentFixtureInterface
 {
     public const MASTER_CATALOG_LOCALIZED_TITLES = 2;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDependencies(): array
     {
-        return [LoadLocalizationData::class];
+        return [LoadLocalizationData::class, LoadOrganization::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager): void
     {
@@ -43,16 +42,11 @@ class LoadMasterCatalogLocalizedTitles extends AbstractFixture implements Depend
 
     private function getCategory(ObjectManager $manager): Category
     {
-        /** @var Organization $organization */
-        $organization = $manager->getRepository(Organization::class)->getFirst();
-
-        /** @var CategoryRepository $categoryRepository */
-        $categoryRepository = $manager->getRepository(Category::class);
-        $queryBuilder = $categoryRepository->getMasterCatalogRootQueryBuilder();
-        $queryBuilder
+        return $manager->getRepository(Category::class)
+            ->getMasterCatalogRootQueryBuilder()
             ->andWhere('category.organization = :organization')
-            ->setParameter('organization', $organization);
-
-        return $queryBuilder->getQuery()->getSingleResult();
+            ->setParameter('organization', $this->getReference(LoadOrganization::ORGANIZATION))
+            ->getQuery()
+            ->getSingleResult();
     }
 }

@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-21285
+@ticket-BB-22581
 @fixture-OroProductBundle:products.yml
 Feature: Product microdata without prices disabled
   In order to prevent products being excluded from search results, due to prices are missing in the product microdata definition
@@ -8,23 +9,100 @@ Feature: Product microdata without prices disabled
 
   Scenario: Feature Background
     Given sessions active:
-      | Buyer | second_session |
+      | Buyer | first_session |
+    And I enable configuration options:
+      | oro_product.microdata_without_prices_disabled |
 
-  Scenario: Check product type microdata definition in product item
+  Scenario: Check microdata with switched ON protection for products with prices
     Given I proceed as the Buyer
     And I am on the homepage
-    And I type "PSKU1" in "search"
+    When I type "PSKU1" in "search"
     And I click "Search Button"
-    Then I should see "Product Type Microdata Declaration" element inside "ProductItem" element
+    Then "PSKU1" product in "Product Frontend Grid" should contains microdata:
+      | Product Type Microdata Declaration  |
+      | Product Price Microdata Declaration |
+      | SchemaOrg Description               |
+      | SchemaOrg Price Currency            |
+      | SchemaOrg Price                     |
+    And "PSKU1" product in "Product Frontend Grid" should contains "SchemaOrg Description" with attributes:
+      | content | Product Description1 |
+    And "PSKU1" product in "Product Frontend Grid" should contains microdata elements with text:
+      | SchemaOrg Price Currency | USD   |
+      | SchemaOrg Price          | 10.00 |
+    # Because product without brand association, just ensure that element not rendered
+    Then "PSKU1" product in "Product Frontend Grid" should not contains microdata:
+      | Product Brand Microdata Declaration |
+      | SchemaOrg Brand Name                |
 
-  Scenario: Check no microdata definition with switched off Oro Pricing feature
-    And I disable configuration options:
+    When click "View Details" for "PSKU1" product
+    Then "Product Details" should contains microdata:
+      | Product Type Microdata Declaration  |
+      | Product Price Microdata Declaration |
+      | SchemaOrg Description               |
+      | SchemaOrg Price Currency            |
+      | SchemaOrg Price                     |
+    And "Product Details" should contains "SchemaOrg Description" with attributes:
+      | content | Product Description1 |
+    And "Product Details" should contains microdata elements with text:
+      | SchemaOrg Price Currency | USD   |
+      | SchemaOrg Price          | 10.00 |
+    # Because product without brand association, just ensure that element not rendered
+    And "Product Details" should not contains microdata:
+      | Product Brand Microdata Declaration |
+      | SchemaOrg Brand Name                |
+
+  Scenario: Check no microdata with switched off Oro Pricing feature
+    Given I disable configuration options:
       | oro_pricing.feature_enabled |
-    And I reload the page
-    Then I should not see "Product Type Microdata Declaration" element inside "ProductItem" element
+    And I am on the homepage
+    When I type "PSKU1" in "search"
+    And I click "Search Button"
+    Then "PSKU1" product in "Product Frontend Grid" should not contains microdata:
+      | Product Type Microdata Declaration  |
+      | Product Brand Microdata Declaration |
+      | Product Price Microdata Declaration |
+      | SchemaOrg Description               |
+      | SchemaOrg Brand Name                |
+      | SchemaOrg Price Currency            |
+      | SchemaOrg Price                     |
 
-  Scenario: Check microdata definition with switched off protection for products microdata without prices
-    And I disable configuration options:
+    When click "View Details" for "PSKU1" product
+    Then "Product Details" should not contains microdata:
+      | Product Type Microdata Declaration  |
+      | Product Brand Microdata Declaration |
+      | SchemaOrg Brand Name                |
+      | Product Price Microdata Declaration |
+      | SchemaOrg Description               |
+      | SchemaOrg Price Currency            |
+      | SchemaOrg Price                     |
+
+  Scenario: Check microdata with switched OFF protection for products with prices and Oro Pricing feature is OFF
+    Given I disable configuration options:
       | oro_product.microdata_without_prices_disabled |
-    And I reload the page
-    Then I should see "Product Type Microdata Declaration" element inside "ProductItem" element
+    And I am on the homepage
+    When I type "PSKU1" in "search"
+    And I click "Search Button"
+    Then "PSKU1" product in "Product Frontend Grid" should contains microdata:
+      | Product Type Microdata Declaration |
+      | SchemaOrg Description              |
+    And "PSKU1" product in "Product Frontend Grid" should contains "SchemaOrg Description" with attributes:
+      | content | Product Description1 |
+    And "PSKU1" product in "Product Frontend Grid" should not contains microdata:
+      | Product Price Microdata Declaration |
+      | SchemaOrg Price Currency            |
+      | SchemaOrg Price                     |
+      | Product Brand Microdata Declaration |
+      | SchemaOrg Brand Name                |
+
+    When click "View Details" for "PSKU1" product
+    Then "Product Details" should contains microdata:
+      | Product Type Microdata Declaration |
+      | SchemaOrg Description              |
+    And "Product Details" should contains "SchemaOrg Description" with attributes:
+      | content | Product Description1 |
+    And "Product Details" should not contains microdata:
+      | Product Price Microdata Declaration |
+      | SchemaOrg Price Currency            |
+      | SchemaOrg Price                     |
+      | Product Brand Microdata Declaration |
+      | SchemaOrg Brand Name                |

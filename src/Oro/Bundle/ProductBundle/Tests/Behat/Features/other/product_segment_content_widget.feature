@@ -154,12 +154,10 @@ Feature: Product segment content widget
     And I should see "Additional test data"
     And I should see "New Arrivals Label (English)"
     And I should see "Product7"
-    When I click "Product Segment Content Widget Slider Next"
+    When I click "Product Segment Content Widget Slider Control1"
     Then I should see "Product6"
-    When I click "Product Segment Content Widget Slider Next"
+    When I click "Product Segment Content Widget Slider Control2"
     Then I should see "Product5"
-    When I click "Product Segment Content Widget Slider Next"
-    Then I should see "Product4"
     And I should see "Add to Shopping List"
 
   Scenario: Check add button

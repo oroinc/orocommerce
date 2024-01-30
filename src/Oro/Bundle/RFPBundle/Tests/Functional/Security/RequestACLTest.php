@@ -42,7 +42,7 @@ class RequestACLTest extends WebTestCase
         /** @var CustomerUser $user */
         $user = $this->getContainer()->get('oro_security.token_accessor')->getUser();
         $this->assertInstanceOf(CustomerUser::class, $user);
-        $this->assertEquals(LoadCustomerUsersData::USER_EMAIL, $user->getUsername());
+        $this->assertEquals(LoadCustomerUsersData::USER_EMAIL, $user->getUserIdentifier());
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $result = $this->client->getResponse();
@@ -141,7 +141,6 @@ class RequestACLTest extends WebTestCase
     private function login(string $email, string $password): void
     {
         $this->initClient([], $this->generateBasicAuthHeader($email, $password));
-        $this->client->useHashNavigation(true);
         $this->client->request('GET', '/'); // any page to apply new user
     }
 

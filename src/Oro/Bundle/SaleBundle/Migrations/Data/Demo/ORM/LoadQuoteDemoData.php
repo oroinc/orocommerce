@@ -2,67 +2,61 @@
 
 namespace Oro\Bundle\SaleBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData;
+use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct as RFPRequestProduct;
+use Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestDemoData;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Loading demo data for Quote entity
+ * Loads demo data for Quote entity.
  */
-class LoadQuoteDemoData extends AbstractFixture implements
-    FixtureInterface,
-    ContainerAwareInterface,
-    DependentFixtureInterface
+class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    use ContainerAwareTrait;
+
+    private ?array $productUnits = null;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
-            'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
-            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
-            'Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestDemoData'
+            LoadAdminUserData::class,
+            LoadProductUnitPrecisionDemoData::class,
+            LoadCustomerUserDemoData::class,
+            LoadCustomerDemoData::class,
+            LoadPriceListDemoData::class,
+            LoadRequestDemoData::class
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         // temporary disable notification rules event listener
         $notificationListener = $this->container->get('oro_workflow.listener.workflow_transition_record');
@@ -72,20 +66,18 @@ class LoadQuoteDemoData extends AbstractFixture implements
         $requests = $this->getRequests($manager);
         $organization = $user->getOrganization();
         $customers = $this->getCustomers($manager);
-        $website = $this->container->get('doctrine')
-            ->getRepository('OroWebsiteBundle:Website')
-            ->findOneBy(['name' => 'Default']);
+        $website = $manager->getRepository(Website::class)->findOneBy(['name' => 'Default']);
         $currencies = $this->getCurrencies();
 
         for ($i = 0; $i < 20; $i++) {
-            /* @var $customer Customer */
+            /* @var Customer $customer */
             $customer = $customers[mt_rand(0, count($customers) - 1)];
 
             if (!$customer) {
                 $customerUser = null;
             } else {
                 $customerUsers = array_merge([null], $customer->getUsers()->getValues());
-                /* @var $customerUser CustomerUser */
+                /* @var CustomerUser $customerUser */
                 $customerUser = $customerUsers[mt_rand(0, count($customerUsers) - 1)];
             }
 
@@ -121,29 +113,17 @@ class LoadQuoteDemoData extends AbstractFixture implements
         $notificationListener->setEnabled();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @return Collection|Customer[]
-     */
-    protected function getCustomers(ObjectManager $manager)
+    private function getCustomers(ObjectManager $manager): array
     {
-        return array_merge([null], $manager->getRepository('OroCustomerBundle:Customer')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository(Customer::class)->findBy([], null, 10));
     }
 
-    /**
-     * @return array
-     */
-    protected function getCurrencies()
+    private function getCurrencies(): array
     {
         return $this->container->get('oro_currency.config.currency')->getCurrencyList();
     }
 
-    /**
-     * @param Quote $quote
-     * @param string $currency
-     * @param ObjectManager $manager
-     */
-    protected function processQuoteProducts(Quote $quote, $currency, ObjectManager $manager)
+    private function processQuoteProducts(Quote $quote, string $currency, ObjectManager $manager): void
     {
         $products = $this->getProducts($manager);
 
@@ -212,12 +192,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
     }
 
-    /**
-     * @param Product $product
-     * @param int $type
-     * @return QuoteProduct
-     */
-    protected function createQuoteProduct(Product $product, $type)
+    private function createQuoteProduct(Product $product, int $type): QuoteProduct
     {
         static $index = 0;
 
@@ -238,7 +213,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
         return $quoteProduct;
     }
 
-    protected function processRequestProductItems(QuoteProduct $quoteProduct, RFPRequestProduct $requestProduct)
+    private function processRequestProductItems(QuoteProduct $quoteProduct, RFPRequestProduct $requestProduct): void
     {
         foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
             $quoteProductRequest = new QuoteProductRequest();
@@ -250,51 +225,35 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @return Collection|Product[]
-     */
-    protected function getProducts(ObjectManager $manager)
+    private function getProducts(ObjectManager $manager): array
     {
-        $products = $manager->getRepository('OroProductBundle:Product')->findBy([], null, 10);
-
-        if (!count($products)) {
+        $products = $manager->getRepository(Product::class)->findBy([], null, 10);
+        if (!$products) {
             throw new \LogicException('There are no products in system');
         }
 
         return $products;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @return Collection|RFPRequest[]
-     */
-    protected function getRequests(ObjectManager $manager)
+    private function getRequests(ObjectManager $manager): array
     {
-        $requests = $manager->getRepository('OroRFPBundle:Request')->findBy([], null, 10);
-
-        if (!count($requests)) {
+        $requests = $manager->getRepository(RFPRequest::class)->findBy([], null, 10);
+        if (!$requests) {
             throw new \LogicException('There are no RFPRequests in system');
         }
 
         return $requests;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @return User
-     */
-    protected function getUser(ObjectManager $manager)
+    private function getUser(ObjectManager $manager): User
     {
-        $role = $manager->getRepository('OroUserBundle:Role')
-            ->findOneBy(['role' => LoadRolesData::ROLE_ADMINISTRATOR]);
-
+        $roleRepository = $manager->getRepository(Role::class);
+        $role = $roleRepository->findOneBy(['role' => LoadRolesData::ROLE_ADMINISTRATOR]);
         if (!$role) {
             throw new \RuntimeException(sprintf('%s role should exist.', LoadRolesData::ROLE_ADMINISTRATOR));
         }
 
-        $user = $manager->getRepository('OroUserBundle:Role')->getFirstMatchedUser($role);
-
+        $user = $roleRepository->getFirstMatchedUser($role);
         if (!$user) {
             throw new \RuntimeException(
                 sprintf('At least one user with role %s should exist.', LoadRolesData::ROLE_ADMINISTRATOR)
@@ -304,29 +263,18 @@ class LoadQuoteDemoData extends AbstractFixture implements
         return $user;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @return ProductUnit[]
-     */
-    protected function getAllUnits(ObjectManager $manager)
+    private function getAllUnits(ObjectManager $manager): array
     {
-        static $productUnits = null;
-
-        if (null === $productUnits) {
-            $productUnits = $manager->getRepository('OroProductBundle:ProductUnit')->findBy([], null, 10);
+        if (null === $this->productUnits) {
+            $this->productUnits = $manager->getRepository(ProductUnit::class)->findBy([], null, 10);
         }
 
-        return $productUnits;
+        return $this->productUnits;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param Product|null $product
-     * @return ProductUnit[]
-     */
-    protected function getProductUnits(ObjectManager $manager, Product $product = null)
+    private function getProductUnits(ObjectManager $manager, ?Product $product): array
     {
-        if (!$product) {
+        if (null === $product) {
             return $this->getAllUnits($manager);
         }
 

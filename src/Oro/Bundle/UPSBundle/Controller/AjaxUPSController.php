@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Form\Type\ChannelType;
@@ -10,6 +11,7 @@ use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValida
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResultInterface;
 use Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidator;
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
+use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,9 +37,9 @@ class AjaxUPSController extends AbstractController
     public function getShippingServicesByCountryAction(Country $country)
     {
         /** @var ShippingServiceRepository $repository */
-        $repository = $this->get('doctrine')
-            ->getManagerForClass('OroUPSBundle:ShippingService')
-            ->getRepository('OroUPSBundle:ShippingService');
+        $repository = $this->container->get('doctrine')
+            ->getManagerForClass(ShippingService::class)
+            ->getRepository(ShippingService::class);
         $services = $repository->getShippingServicesByCountry($country);
         $result = [];
         foreach ($services as $service) {
@@ -48,7 +50,7 @@ class AjaxUPSController extends AbstractController
 
     /**
      * @Route("/validate-connection/{channelId}/", name="oro_ups_validate_connection", methods={"POST"})
-     * @ParamConverter("channel", class="OroIntegrationBundle:Channel", options={"id" = "channelId"})
+     * @ParamConverter("channel", class="Oro\Bundle\IntegrationBundle\Entity\Channel", options={"id" = "channelId"})
      * @CsrfProtection()
      *
      * @param Request      $request
@@ -70,7 +72,7 @@ class AjaxUPSController extends AbstractController
 
         /** @var UPSTransport $transport */
         $transport = $channel->getTransport();
-        $result = $this->get(UpsConnectionValidator::class)->validateConnectionByUpsSettings($transport);
+        $result = $this->container->get(UpsConnectionValidator::class)->validateConnectionByUpsSettings($transport);
 
         if (!$result->getStatus()) {
             return new JsonResponse([
@@ -79,7 +81,7 @@ class AjaxUPSController extends AbstractController
             ]);
         }
 
-        $translator = $this->get(TranslatorInterface::class);
+        $translator = $this->container->get(TranslatorInterface::class);
 
         return new JsonResponse([
             'success' => true,
@@ -109,7 +111,7 @@ class AjaxUPSController extends AbstractController
                 $message = 'oro.ups.connection_validation.result.server_error.message';
                 break;
         }
-        return $this->get(TranslatorInterface::class)->trans($message, $parameters);
+        return $this->container->get(TranslatorInterface::class)->trans($message, $parameters);
     }
 
     /**
@@ -122,6 +124,7 @@ class AjaxUPSController extends AbstractController
             [
                 TranslatorInterface::class,
                 UpsConnectionValidator::class,
+                'doctrine' => ManagerRegistry::class,
             ]
         );
     }

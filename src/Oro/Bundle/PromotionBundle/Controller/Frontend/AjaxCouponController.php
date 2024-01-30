@@ -29,7 +29,7 @@ class AjaxCouponController extends AbstractController
      */
     public function addCouponAction(Request $request)
     {
-        return $this->get(FrontendCouponHandler::class)->handle($request);
+        return $this->container->get(FrontendCouponHandler::class)->handle($request);
     }
 
     /**
@@ -50,14 +50,14 @@ class AjaxCouponController extends AbstractController
      */
     public function removeCouponAction($entityClass, $entityId, AppliedCoupon $appliedCoupon)
     {
-        $entity = $this->get(EntityRoutingHelper::class)->getEntity($entityClass, $entityId);
+        $entity = $this->container->get(EntityRoutingHelper::class)->getEntity($entityClass, $entityId);
         /** @var PromotionAwareEntityHelper $promotionAwareHelper */
         $promotionAwareHelper = $this->container->get(PromotionAwareEntityHelper::class);
         if (!$promotionAwareHelper->isCouponAware($entity)) {
             throw new BadRequestHttpException('Unsupported entity class ' . ClassUtils::getClass($entity));
         }
 
-        $this->get(FrontendCouponRemoveHandler::class)->handleRemove($entity, $appliedCoupon);
+        $this->container->get(FrontendCouponRemoveHandler::class)->handleRemove($entity, $appliedCoupon);
 
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }

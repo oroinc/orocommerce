@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShippingBundle\EventListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -40,13 +41,13 @@ class FormViewListener
         }
 
         /** @var Product $product */
-        $product = $this->doctrineHelper->getEntityReference('OroProductBundle:Product', $productId);
+        $product = $this->doctrineHelper->getEntityReference(Product::class, $productId);
         if (!$product) {
             return;
         }
 
         $shippingOptions = $this->doctrineHelper
-            ->getEntityRepositoryForClass('OroShippingBundle:ProductShippingOptions')
+            ->getEntityRepositoryForClass(ProductShippingOptions::class)
             ->findBy(['product' => $productId]);
 
         if (0 === count($shippingOptions)) {

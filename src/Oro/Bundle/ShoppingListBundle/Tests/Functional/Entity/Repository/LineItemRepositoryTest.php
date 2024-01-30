@@ -30,7 +30,6 @@ class LineItemRepositoryTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
-        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             LoadShoppingListProductKitLineItems::class,
             LoadShoppingListLineItems::class,
@@ -199,7 +198,6 @@ class LineItemRepositoryTest extends WebTestCase
         $role = $this->getCustomerUserRoleRepository()->findOneBy(['role' => $roleName]);
         $token = new UsernamePasswordOrganizationToken(
             $customerUser,
-            LoadCustomerUserData::LEVEL_1_PASSWORD,
             'phpunit',
             $customerUser->getOrganization(),
             [$role]

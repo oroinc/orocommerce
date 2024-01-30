@@ -73,7 +73,7 @@ class LineItemHandler
 
         // handle case for new shopping list creation
         $formName = $this->form->getName();
-        $formData = $this->request->request->get($formName, []);
+        $formData = $this->request->request->all($formName);
         if (empty($formData['shoppingList']) && !empty($formData['shoppingListLabel'])) {
             $shoppingList = $this->currentShoppingListManager->createCurrent($formData['shoppingListLabel']);
             $formData['shoppingList'] = $shoppingList->getId();

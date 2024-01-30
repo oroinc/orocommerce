@@ -51,7 +51,7 @@ class ShippingMethodsConfigsRuleController extends AbstractController
      *     id="oro_shipping_methods_configs_rule_create",
      *     type="entity",
      *     permission="CREATE",
-     *     class="OroShippingBundle:ShippingMethodsConfigsRule"
+     *     class="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule"
      * )
      */
     public function createAction(Request $request): array|RedirectResponse
@@ -64,13 +64,13 @@ class ShippingMethodsConfigsRuleController extends AbstractController
      * @Acl(
      *      id="oro_shipping_methods_configs_rule_view",
      *      type="entity",
-     *      class="OroShippingBundle:ShippingMethodsConfigsRule",
+     *      class="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule",
      *      permission="VIEW"
      * )
      */
     public function viewAction(ShippingMethodsConfigsRule $shippingRule): Response
     {
-        $organizationProvider = $this->get(ShippingMethodOrganizationProvider::class);
+        $organizationProvider = $this->container->get(ShippingMethodOrganizationProvider::class);
         $previousOrganization = $organizationProvider->getOrganization();
 
         $organizationProvider->setOrganization($shippingRule->getOrganization());
@@ -91,7 +91,7 @@ class ShippingMethodsConfigsRuleController extends AbstractController
      *     id="oro_shipping_methods_configs_rule_update",
      *     type="entity",
      *     permission="EDIT",
-     *     class="OroShippingBundle:ShippingMethodsConfigsRule"
+     *     class="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule"
      * )
      */
     public function updateAction(Request $request, ShippingMethodsConfigsRule $entity): array|RedirectResponse
@@ -102,13 +102,13 @@ class ShippingMethodsConfigsRuleController extends AbstractController
     protected function update(ShippingMethodsConfigsRule $entity, Request $request): array|RedirectResponse
     {
         $form = $this->createForm(ShippingMethodsConfigsRuleType::class);
-        if ($this->get(ShippingMethodsConfigsRuleHandler::class)->process($form, $entity)) {
+        if ($this->container->get(ShippingMethodsConfigsRuleHandler::class)->process($form, $entity)) {
             $request->getSession()->getFlashBag()->add(
                 'success',
-                $this->get(TranslatorInterface::class)->trans('oro.shipping.controller.rule.saved.message')
+                $this->container->get(TranslatorInterface::class)->trans('oro.shipping.controller.rule.saved.message')
             );
 
-            return $this->get(Router::class)->redirect($entity);
+            return $this->container->get(Router::class)->redirect($entity);
         }
 
         if ($request->get(ShippingMethodsConfigsRuleHandler::UPDATE_FLAG, false)) {
@@ -131,13 +131,13 @@ class ShippingMethodsConfigsRuleController extends AbstractController
      *     id="oro_shipping_methods_configs_rule_update",
      *     type="entity",
      *     permission="EDIT",
-     *     class="OroShippingBundle:ShippingMethodsConfigsRule"
+     *     class="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule"
      * )
      * @CsrfProtection()
      */
     public function markMassAction(string $gridName, string $actionName, Request $request): JsonResponse
     {
-        $massActionDispatcher = $this->get(MassActionDispatcher::class);
+        $massActionDispatcher = $this->container->get(MassActionDispatcher::class);
 
         $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
 

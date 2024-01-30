@@ -7,7 +7,10 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
+use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * REST API Shipping Methods Configs Rule Controller
@@ -43,7 +46,8 @@ class ShippingMethodsConfigsRuleController extends RestController
             $objectManager->flush();
             $view = $this->view(
                 [
-                    'message' => $this->get('translator')->trans('oro.shipping.notification.channel.enabled'),
+                    'message' => $this->container->get(TranslatorInterface::class)
+                        ->trans('oro.shipping.notification.channel.enabled'),
                     'successful' => true,
                 ],
                 Response::HTTP_OK
@@ -87,7 +91,8 @@ class ShippingMethodsConfigsRuleController extends RestController
             $objectManager->flush();
             $view = $this->view(
                 [
-                    'message' => $this->get('translator')->trans('oro.shipping.notification.channel.disabled'),
+                    'message' => $this->container->get(TranslatorInterface::class)
+                        ->trans('oro.shipping.notification.channel.disabled'),
                     'successful' => true,
                 ],
                 Response::HTTP_OK
@@ -107,7 +112,7 @@ class ShippingMethodsConfigsRuleController extends RestController
      */
     public function getManager()
     {
-        return $this->get('oro_shipping.shipping_rule.manager.api');
+        return $this->container->get(ApiEntityManager::class);
     }
 
     /**
@@ -133,7 +138,7 @@ class ShippingMethodsConfigsRuleController extends RestController
      */
     private function validateShippingMethodsConfigsRule(ShippingMethodsConfigsRule $configsRule)
     {
-        $errors = $this->get('validator')->validate($configsRule);
+        $errors = $this->container->get(ValidatorInterface::class)->validate($configsRule);
         if ($errors->count()) {
             $view = $this->view(
                 [
@@ -149,5 +154,20 @@ class ShippingMethodsConfigsRuleController extends RestController
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                ValidatorInterface::class,
+                ApiEntityManager::class,
+                TranslatorInterface::class,
+            ]
+        );
     }
 }

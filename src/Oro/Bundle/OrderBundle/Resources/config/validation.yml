@@ -146,13 +146,15 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             -   Length:
                     max: 255
         shippingMethod:
-            -   Length:
-                    max: 255
-                    allowEmptyString: true
+            - AtLeastOneOf:
+                -   Blank: ~
+                -   Length:
+                        max: 255
         shippingMethodType:
-            -   Length:
-                    max: 255
-                    allowEmptyString: true
+            - AtLeastOneOf:
+                -   Blank: ~
+                -   Length:
+                        max: 255
         shippingEstimateAmount:
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         kitItemLineItems:

@@ -1,0 +1,9 @@
+datagrids:
+    test-theme-aware-grid:
+        actions:
+            update:
+                type: navigate
+                link: update_link
+                acl_resource: oro_channel_update
+                icon: edit
+                label: fe-custom-theme-grid-update-label

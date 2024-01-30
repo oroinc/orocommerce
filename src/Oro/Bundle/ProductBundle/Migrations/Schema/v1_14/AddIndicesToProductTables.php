@@ -5,21 +5,15 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_14;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 
 class AddIndicesToProductTables implements Migration
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $this->addProductIndices($schema);
-    }
-
-    protected function addProductIndices(Schema $schema)
-    {
-        $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('oro_product');
         $table->dropIndex('idx_oro_product_is_featured');
         $table->addIndex(
             ['is_featured'],

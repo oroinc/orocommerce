@@ -19,7 +19,7 @@ class PageController extends AbstractController
      * @Acl(
      *      id="oro_cms_frontend_page_view",
      *      type="entity",
-     *      class="OroCMSBundle:Page",
+     *      class="Oro\Bundle\CMSBundle\Entity\Page",
      *      permission="VIEW",
      *      group_name=""
      * )

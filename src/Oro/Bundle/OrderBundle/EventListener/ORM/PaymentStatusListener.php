@@ -32,7 +32,7 @@ class PaymentStatusListener
             return;
         }
 
-        $order = $event->getEntityManager()->find(
+        $order = $event->getObjectManager()->find(
             $paymentStatus->getEntityClass(),
             $paymentStatus->getEntityIdentifier()
         );

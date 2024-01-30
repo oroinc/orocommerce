@@ -10,7 +10,8 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Form\Type\SegmentFilterBuilderType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
-use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
+use Symfony\Component\Form\Extension\Core\DataAccessor\PropertyPathAccessor;
+use Symfony\Component\Form\Extension\Core\DataMapper\DataMapper;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -45,9 +46,9 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
     private $propertyAccessor;
 
     /**
-     * @var PropertyPathMapper
+     * @var DataMapper
      */
-    private $propertyPathMapper;
+    private $dataMapper;
 
     public function __construct(
         ProductCollectionDefinitionConverter $definitionConverter,
@@ -175,7 +176,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
      */
     public function mapDataToForms(mixed $data, \Traversable $forms)
     {
-        $this->getPropertyPathMapper()->mapDataToForms($data, $forms);
+        $this->getDataMapper()->mapDataToForms($data, $forms);
         /** @var Form[]|\Traversable $forms */
         $forms = iterator_to_array($forms);
 
@@ -204,7 +205,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
      */
     public function mapFormsToData(\Traversable $forms, mixed &$data)
     {
-        $this->getPropertyPathMapper()->mapFormsToData($forms, $data);
+        $this->getDataMapper()->mapFormsToData($forms, $data);
         /** @var Form[]|\Traversable $forms */
         $forms = iterator_to_array($forms);
 
@@ -217,15 +218,12 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
         $data->setDefinition($segmentDefinition);
     }
 
-    /**
-     * @return PropertyPathMapper
-     */
-    private function getPropertyPathMapper()
+    private function getDataMapper(): DataMapper
     {
-        if (!$this->propertyPathMapper) {
-            $this->propertyPathMapper = new PropertyPathMapper($this->propertyAccessor);
+        if (!$this->dataMapper) {
+            $this->dataMapper = new DataMapper(new PropertyPathAccessor($this->propertyAccessor));
         }
 
-        return $this->propertyPathMapper;
+        return $this->dataMapper;
     }
 }

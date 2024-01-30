@@ -27,7 +27,10 @@ class LowInventoryThresholdFallbackTest extends WebTestCase
     public function testProductLowInventoryThresholdView()
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_product_view', ['id' => $product->getId()])
+        );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $inventoryThresholdValue = $crawler->filterXPath(self::VIEW_INVENTORY_THRESHOLD_XPATH)->html();
@@ -46,7 +49,7 @@ class LowInventoryThresholdFallbackTest extends WebTestCase
 
     public function testCategoryLowInventoryThreshold()
     {
-        $newCategoryFallbackValue = 3.5;
+        // Get form
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
         $crawler = $this->client->request(
             'GET',
@@ -55,21 +58,34 @@ class LowInventoryThresholdFallbackTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $form = $crawler->selectButton('Save')->form();
-        $inventoryThresholdValue = $form->get('oro_catalog_category[lowInventoryThreshold][scalarValue]')->getValue();
-        $this->assertEmpty($inventoryThresholdValue);
 
-        $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
-        $form['oro_catalog_category[lowInventoryThreshold][useFallback]'] = false;
-        $form['oro_catalog_category[lowInventoryThreshold][scalarValue]'] = $newCategoryFallbackValue;
+        // Ensure that the tested field has a value different from the value that it will be changed to
+        $lowInventoryThresholdValue = $form
+            ->get('oro_catalog_category[lowInventoryThreshold][scalarValue]')
+            ->getValue();
+        $this->assertEquals('', $lowInventoryThresholdValue);
+
+        // Fill the form
+        $this->updateFallbackField(
+            $form,
+            '3.5',
+            null,
+            'oro_catalog_category',
+            'lowInventoryThreshold'
+        );
+        unset($form['oro_catalog_category[lowInventoryThreshold][useFallback]']);
+
+        // Submit form
         $this->client->followRedirects();
-
         $crawler = $this->client->submit($form);
 
+        // Assert result
         $form = $crawler->selectButton('Save')->form();
-        $this->assertEquals(
-            $newCategoryFallbackValue,
-            $form->get('oro_catalog_category[lowInventoryThreshold][scalarValue]')->getValue()
-        );
+        $actualScalarValue = $form->get('oro_catalog_category[lowInventoryThreshold][scalarValue]')->getValue();
+        $this->assertEquals('3.5', $actualScalarValue);
+
+        // Ensure that the flash message was fired
+        $this->assertStringContainsString('Category has been saved', $this->client->getResponse()->getContent());
     }
 
     private function setProductLowInventoryThresholdField(
@@ -77,7 +93,10 @@ class LowInventoryThresholdFallbackTest extends WebTestCase
         mixed $ownValue,
         mixed $fallbackValue
     ): Crawler {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_product_update', ['id' => $product->getId()])
+        );
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form['input_action'] = $crawler->selectButton('Save and Close')->attr('data-action');

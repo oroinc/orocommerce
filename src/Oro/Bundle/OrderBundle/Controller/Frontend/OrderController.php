@@ -25,7 +25,7 @@ class OrderController extends AbstractController
      * @Acl(
      *      id="oro_order_frontend_view",
      *      type="entity",
-     *      class="OroOrderBundle:Order",
+     *      class="Oro\Bundle\OrderBundle\Entity\Order",
      *      permission="VIEW",
      *      group_name="commerce"
      * )
@@ -52,7 +52,8 @@ class OrderController extends AbstractController
         return [
             'data' => [
                 'order' => $order,
-                'totals' => (object)$this->get(TotalProcessorProvider::class)->getTotalWithSubtotalsAsArray($order),
+                'totals' => (object)$this->container->get(TotalProcessorProvider::class)
+                    ->getTotalWithSubtotalsAsArray($order),
             ],
         ];
     }
@@ -75,7 +76,7 @@ class OrderController extends AbstractController
      */
     public function checkoutAction(Checkout $checkout): RedirectResponse
     {
-        $this->get('oro_checkout.helper.check_compare')->compare($checkout);
+        $this->container->get('oro_checkout.helper.check_compare')->compare($checkout);
 
         return $this->redirectToRoute('oro_checkout_frontend_checkout', ['id' => $checkout->getId()]);
     }

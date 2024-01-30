@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\UIBundle\Form\Type\TreeMoveType;
 use Oro\Bundle\UIBundle\Model\TreeCollection;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
@@ -41,7 +43,7 @@ class WebCatalogController extends AbstractController
      * @Acl(
      *      id="oro_web_catalog_view",
      *      type="entity",
-     *      class="OroWebCatalogBundle:WebCatalog",
+     *      class="Oro\Bundle\WebCatalogBundle\Entity\WebCatalog",
      *      permission="VIEW"
      * )
      * @Template()
@@ -59,7 +61,7 @@ class WebCatalogController extends AbstractController
      * @Acl(
      *      id="oro_web_catalog_create",
      *      type="entity",
-     *      class="OroWebCatalogBundle:WebCatalog",
+     *      class="Oro\Bundle\WebCatalogBundle\Entity\WebCatalog",
      *      permission="CREATE"
      * )
      */
@@ -74,7 +76,7 @@ class WebCatalogController extends AbstractController
      * @Acl(
      *      id="oro_web_catalog_update",
      *      type="entity",
-     *      class="OroWebCatalogBundle:WebCatalog",
+     *      class="Oro\Bundle\WebCatalogBundle\Entity\WebCatalog",
      *      permission="EDIT"
      * )
      * @Template()
@@ -90,14 +92,14 @@ class WebCatalogController extends AbstractController
      * @Acl(
      *      id="oro_web_catalog_update",
      *      type="entity",
-     *      class="OroWebCatalogBundle:WebCatalog",
+     *      class="Oro\Bundle\WebCatalogBundle\Entity\WebCatalog",
      *      permission="EDIT"
      * )
      */
     public function moveAction(Request $request, WebCatalog $webCatalog): array
     {
-        $handler = $this->get(ContentNodeTreeHandler::class);
-        $contentNodeRepository = $this->getDoctrine()->getRepository("OroWebCatalogBundle:ContentNode");
+        $handler = $this->container->get(ContentNodeTreeHandler::class);
+        $contentNodeRepository = $this->container->get('doctrine')->getRepository(ContentNode::class);
 
         $root = $handler->getTreeRootByWebCatalog($webCatalog);
         $treeItems = $handler->getTreeItemList($root, true);
@@ -127,7 +129,7 @@ class WebCatalogController extends AbstractController
             foreach ($collection->source as $source) {
                 if ($createRedirect) {
                     $sourceContentNode = $contentNodeRepository->find($source->getKey());
-                    $urlChanges = $this->get(SlugGenerator::class)
+                    $urlChanges = $this->container->get(SlugGenerator::class)
                         ->getSlugsUrlForMovedNode($targetContentNode, $sourceContentNode);
                 }
 
@@ -149,10 +151,11 @@ class WebCatalogController extends AbstractController
 
     protected function update(WebCatalog $webCatalog): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $webCatalog,
             $this->createForm(WebCatalogType::class, $webCatalog),
-            $this->get(TranslatorInterface::class)->trans('oro.webcatalog.controller.webcatalog.saved.message')
+            $this->container->get(TranslatorInterface::class)
+                ->trans('oro.webcatalog.controller.webcatalog.saved.message')
         );
     }
 
@@ -165,7 +168,8 @@ class WebCatalogController extends AbstractController
             ContentNodeTreeHandler::class,
             SlugGenerator::class,
             TranslatorInterface::class,
-            UpdateHandlerFacade::class
+            UpdateHandlerFacade::class,
+            'doctrine' => ManagerRegistry::class
         ]);
     }
 }

@@ -36,7 +36,7 @@ class LoginPageController extends AbstractController
      * @Acl(
      *      id="oro_cms_loginpage_view",
      *      type="entity",
-     *      class="OroCMSBundle:LoginPage",
+     *      class="Oro\Bundle\CMSBundle\Entity\LoginPage",
      *      permission="VIEW"
      * )
      */
@@ -54,7 +54,7 @@ class LoginPageController extends AbstractController
      * @Acl(
      *      id="oro_cms_loginpage_create",
      *      type="entity",
-     *      class="OroCMSBundle:LoginPage",
+     *      class="Oro\Bundle\CMSBundle\Entity\LoginPage",
      *      permission="CREATE"
      * )
      */
@@ -69,7 +69,7 @@ class LoginPageController extends AbstractController
      * @Acl(
      *      id="oro_cms_loginpage_update",
      *      type="entity",
-     *      class="OroCMSBundle:LoginPage",
+     *      class="Oro\Bundle\CMSBundle\Entity\LoginPage",
      *      permission="EDIT"
      * )
      */
@@ -80,10 +80,10 @@ class LoginPageController extends AbstractController
 
     protected function update(LoginPage $loginPage): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $loginPage,
             $this->createForm(LoginPageType::class, $loginPage),
-            $this->get(TranslatorInterface::class)->trans('oro.cms.loginpage.save.message')
+            $this->container->get(TranslatorInterface::class)->trans('oro.cms.loginpage.save.message')
         );
     }
 

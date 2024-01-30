@@ -32,7 +32,7 @@ class AjaxPriceListController extends AbstractController
      */
     public function getPriceListCurrencyListAction(PriceList $priceList)
     {
-        $currencyNames = Currencies::getNames($this->get(LocaleSettings::class)->getLocale());
+        $currencyNames = Currencies::getNames($this->container->get(LocaleSettings::class)->getLocale());
 
         $currencies = array_intersect_key($currencyNames, array_fill_keys($priceList->getCurrencies(), null));
 

@@ -1,5 +1,5 @@
 {% block __oro_product_price__product_price_component_widget %}
-    {% if not is_price_hidden(product, matrixFormType == 'none') %}
+    {% if not is_price_hidden(product, matrixFormType|default('') == 'none') %}
         {% set attr = layout_attr_defaults(attr, {
             'data-page-component-module': 'oroui/js/app/components/view-component',
             '~data-page-component-options': {

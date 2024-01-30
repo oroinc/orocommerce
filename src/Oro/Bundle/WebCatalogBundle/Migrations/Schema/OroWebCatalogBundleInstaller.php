@@ -3,12 +3,12 @@
 namespace Oro\Bundle\WebCatalogBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareTrait;
 use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
 use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareTrait;
 
@@ -24,46 +24,22 @@ class OroWebCatalogBundleInstaller implements
     SlugExtensionAwareInterface,
     ScopeExtensionAwareInterface
 {
+    use ActivityExtensionAwareTrait;
+    use SlugExtensionAwareTrait;
     use ScopeExtensionAwareTrait;
 
     /**
-     * @var SlugExtension
+     * {@inheritDoc}
      */
-    protected $slugExtension;
-
-    /**
-     * @var ActivityExtension
-     */
-    protected $activityExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSlugExtension(SlugExtension $extension)
-    {
-        $this->slugExtension = $extension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_2';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
         $this->createOroWebCatalogTable($schema);
@@ -85,18 +61,13 @@ class OroWebCatalogBundleInstaller implements
         $this->addOroWebCatalogNodeScopeForeignKeys($schema);
         $this->addOroWebCatalogVariantScopeForeignKeys($schema);
 
-        $this->scopeExtension->addScopeAssociation(
-            $schema,
-            'webCatalog',
-            'oro_web_catalog',
-            'name'
-        );
+        $this->scopeExtension->addScopeAssociation($schema, 'webCatalog', 'oro_web_catalog', 'name');
     }
 
     /**
      * Create oro_web_catalog table
      */
-    protected function createOroWebCatalogTable(Schema $schema)
+    private function createOroWebCatalogTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_web_catalog');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -114,7 +85,7 @@ class OroWebCatalogBundleInstaller implements
     /**
      * Create oro_web_catalog_variant table
      */
-    protected function createOroContentVariantTable(Schema $schema)
+    private function createOroContentVariantTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_web_catalog_variant');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -122,29 +93,29 @@ class OroWebCatalogBundleInstaller implements
         $table->addColumn('type', 'string', ['length' => 255]);
         $table->addColumn('system_page_route', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('override_variant_configuration', 'boolean', ['default' => false]);
+        $table->addColumn('is_default', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['node_id']);
-        $table->addColumn('is_default', 'boolean', ['default' => false]);
     }
 
     /**
      * Create oro_web_catalog_content_node table
      */
-    protected function createOroContentNodeTable(Schema $schema)
+    private function createOroContentNodeTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_web_catalog_content_node');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
-        $table->addColumn('web_catalog_id', 'integer', []);
+        $table->addColumn('web_catalog_id', 'integer');
         $table->addColumn('parent_scope_used', 'boolean', ['default' => true]);
         $table->addColumn('rewrite_variant_title', 'boolean', ['default' => true]);
         $table->addColumn('materialized_path', 'string', ['notnull' => false, 'length' => 1024]);
-        $table->addColumn('tree_left', 'integer', []);
-        $table->addColumn('tree_level', 'integer', []);
-        $table->addColumn('tree_right', 'integer', []);
+        $table->addColumn('tree_left', 'integer');
+        $table->addColumn('tree_level', 'integer');
+        $table->addColumn('tree_right', 'integer');
         $table->addColumn('tree_root', 'integer', ['notnull' => false]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
         $table->setPrimaryKey(['id']);
 
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', $table->getName());
@@ -153,7 +124,7 @@ class OroWebCatalogBundleInstaller implements
     /**
      * Create oro_web_catalog_node_slug_prot table
      */
-    protected function createOroContentNodeSlugPrototypeTable(Schema $schema)
+    private function createOroContentNodeSlugPrototypeTable(Schema $schema): void
     {
         $this->slugExtension->addLocalizedSlugPrototypes(
             $schema,
@@ -166,11 +137,11 @@ class OroWebCatalogBundleInstaller implements
     /**
      * Create oro_web_catalog_node_title table
      */
-    protected function createOroContentNodeTitleTable(Schema $schema)
+    private function createOroContentNodeTitleTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_web_catalog_node_title');
-        $table->addColumn('node_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addColumn('node_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['node_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id']);
     }
@@ -178,11 +149,11 @@ class OroWebCatalogBundleInstaller implements
     /**
      * Create oro_web_catalog_node_title table
      */
-    protected function createOroContentNodeUrlTable(Schema $schema)
+    private function createOroContentNodeUrlTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_web_catalog_node_url');
-        $table->addColumn('node_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addColumn('node_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['node_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id']);
     }
@@ -190,7 +161,7 @@ class OroWebCatalogBundleInstaller implements
     /**
      * Create oro_web_catalog_variant_slug table
      */
-    protected function createOroWebCatalogVariantSlugTable(Schema $schema)
+    private function createOroWebCatalogVariantSlugTable(Schema $schema): void
     {
         $this->slugExtension->addSlugs(
             $schema,
@@ -203,29 +174,29 @@ class OroWebCatalogBundleInstaller implements
     /**
      * Create oro_web_catalog_node_scope table
      */
-    protected function createOroWebCatalogNodeScopeTable(Schema $schema)
+    private function createOroWebCatalogNodeScopeTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_web_catalog_node_scope');
-        $table->addColumn('node_id', 'integer', []);
-        $table->addColumn('scope_id', 'integer', []);
+        $table->addColumn('node_id', 'integer');
+        $table->addColumn('scope_id', 'integer');
         $table->setPrimaryKey(['node_id', 'scope_id']);
     }
 
     /**
      * Create oro_web_catalog_variant_scope table
      */
-    protected function createOroWebCatalogVariantScopeTable(Schema $schema)
+    private function createOroWebCatalogVariantScopeTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_web_catalog_variant_scope');
-        $table->addColumn('variant_id', 'integer', []);
-        $table->addColumn('scope_id', 'integer', []);
+        $table->addColumn('variant_id', 'integer');
+        $table->addColumn('scope_id', 'integer');
         $table->setPrimaryKey(['variant_id', 'scope_id']);
     }
 
     /**
      * Add oro_web_catalog foreign keys.
      */
-    protected function addOroWebCatalogForeignKeys(Schema $schema)
+    private function addOroWebCatalogForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_web_catalog');
         $table->addForeignKeyConstraint(
@@ -245,7 +216,7 @@ class OroWebCatalogBundleInstaller implements
     /**
      * Add oro_web_catalog_content_node foreign keys.
      */
-    protected function addOroContentNodeForeignKeys(Schema $schema)
+    private function addOroContentNodeForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_web_catalog_content_node');
         $table->addForeignKeyConstraint(
@@ -265,7 +236,7 @@ class OroWebCatalogBundleInstaller implements
     /**
      * Add oro_web_catalog_node_title foreign keys.
      */
-    protected function addOroContentNodeTitleForeignKeys(Schema $schema)
+    private function addOroContentNodeTitleForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_web_catalog_node_title');
         $table->addForeignKeyConstraint(
@@ -285,7 +256,7 @@ class OroWebCatalogBundleInstaller implements
     /**
      * Add oro_web_catalog_node_title foreign keys.
      */
-    protected function addOroContentNodeUrlForeignKeys(Schema $schema)
+    private function addOroContentNodeUrlForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_web_catalog_node_url');
         $table->addForeignKeyConstraint(
@@ -305,7 +276,7 @@ class OroWebCatalogBundleInstaller implements
     /**
      * Add oro_web_catalog_variant foreign keys.
      */
-    protected function addOroContentVariantForeignKeys(Schema $schema)
+    private function addOroContentVariantForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_web_catalog_variant');
         $table->addForeignKeyConstraint(
@@ -319,7 +290,7 @@ class OroWebCatalogBundleInstaller implements
     /**
      * Add oro_web_catalog_node_scope foreign keys.
      */
-    protected function addOroWebCatalogNodeScopeForeignKeys(Schema $schema)
+    private function addOroWebCatalogNodeScopeForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_web_catalog_node_scope');
         $table->addForeignKeyConstraint(
@@ -339,7 +310,7 @@ class OroWebCatalogBundleInstaller implements
     /**
      * Add oro_web_catalog_variant_scope foreign keys.
      */
-    protected function addOroWebCatalogVariantScopeForeignKeys(Schema $schema)
+    private function addOroWebCatalogVariantScopeForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_web_catalog_variant_scope');
         $table->addForeignKeyConstraint(

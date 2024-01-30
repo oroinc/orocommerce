@@ -47,6 +47,10 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
             return;
         }
 
+        if ($rootNode->getParentNode()) {
+            $rootNode = $rootNode->getParentNode();
+        }
+
         $dumpedLocations = [];
         $scopes = $this->getScopes();
         foreach ($scopes as $scope) {

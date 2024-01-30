@@ -19,12 +19,14 @@ use Oro\Bundle\CMSBundle\Tests\Unit\ContentWidget\Stub\ImageSlideTypeStub;
 use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\ImageSlide as ImageSlideStub;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
+use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Asset\Context\ContextInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\FormType as SymfonyFormType;
@@ -32,14 +34,9 @@ use Twig\Environment;
 
 class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
 {
-    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $repository;
-
-    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $manager;
-
-    /** @var ImageSliderContentWidgetType */
-    private $contentWidgetType;
+    private ObjectRepository|MockObject $repository;
+    private ObjectManager|MockObject $manager;
+    private ImageSliderContentWidgetType $contentWidgetType;
 
     protected function setUp(): void
     {
@@ -48,13 +45,13 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
         $this->repository = $this->createMock(ObjectRepository::class);
 
         $this->manager = $this->createMock(ObjectManager::class);
-        $this->manager->expects($this->any())
+        $this->manager->expects(self::any())
             ->method('getRepository')
             ->with(ImageSlide::class)
             ->willReturn($this->repository);
 
         $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects($this->any())
+        $registry->expects(self::any())
             ->method('getManagerForClass')
             ->with(ImageSlide::class)
             ->willReturn($this->manager);
@@ -64,17 +61,17 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
 
     public function testGetName(): void
     {
-        $this->assertEquals('image_slider', $this->contentWidgetType::getName());
+        self::assertEquals('image_slider', $this->contentWidgetType::getName());
     }
 
     public function testGetLabel(): void
     {
-        $this->assertEquals('oro.cms.content_widget_type.image_slider.label', $this->contentWidgetType->getLabel());
+        self::assertEquals('oro.cms.content_widget_type.image_slider.label', $this->contentWidgetType->getLabel());
     }
 
     public function testIsInline(): void
     {
-        $this->assertFalse($this->contentWidgetType->isInline());
+        self::assertFalse($this->contentWidgetType->isInline());
     }
 
     public function testGetWidgetData(): void
@@ -84,7 +81,7 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
 
         $slides = [new ImageSlide()];
 
-        $this->repository->expects($this->any())
+        $this->repository->expects(self::any())
             ->method('findBy')
             ->with(['contentWidget' => $contentWidget], ['slideOrder' => 'ASC'])
             ->willReturn($slides);
@@ -101,17 +98,18 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
                     'arrows' => false,
                     'dots' => true,
                     'infinite' => false,
+                    'scaling' => 'crop_images',
                 ]
             ),
             'imageSlides' => new ArrayCollection($slides),
         ];
 
-        $this->assertEquals($expectedData, $this->contentWidgetType->getWidgetData($contentWidget));
-        $this->assertEquals(
+        self::assertEquals($expectedData, $this->contentWidgetType->getWidgetData($contentWidget));
+        self::assertEquals(
             array_merge($expectedData, ['pageComponentName' => 'test_name1']),
             $this->contentWidgetType->getWidgetData(clone $contentWidget)
         );
-        $this->assertEquals(
+        self::assertEquals(
             array_merge($expectedData, ['pageComponentName' => 'test_name2']),
             $this->contentWidgetType->getWidgetData($contentWidget)
         );
@@ -129,16 +127,17 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
 
         $form = $this->contentWidgetType->getSettingsForm($contentWidget, $this->factory);
 
-        $this->assertInstanceOf(SymfonyFormType::class, $form->getConfig()->getType()->getInnerType());
-        $this->assertTrue($form->has('slidesToShow'));
-        $this->assertTrue($form->has('slidesToScroll'));
-        $this->assertTrue($form->has('autoplay'));
-        $this->assertTrue($form->has('autoplaySpeed'));
-        $this->assertTrue($form->has('arrows'));
-        $this->assertTrue($form->has('dots'));
-        $this->assertTrue($form->has('infinite'));
-        $this->assertTrue($form->has('imageSlides'));
-        $this->assertInstanceOf(
+        self::assertInstanceOf(SymfonyFormType::class, $form->getConfig()->getType()->getInnerType());
+        self::assertTrue($form->has('slidesToShow'));
+        self::assertTrue($form->has('slidesToScroll'));
+        self::assertTrue($form->has('autoplay'));
+        self::assertTrue($form->has('autoplaySpeed'));
+        self::assertTrue($form->has('arrows'));
+        self::assertTrue($form->has('dots'));
+        self::assertTrue($form->has('infinite'));
+        self::assertTrue($form->has('scaling'));
+        self::assertTrue($form->has('imageSlides'));
+        self::assertInstanceOf(
             ImageSlideCollectionType::class,
             $form->get('imageSlides')->getConfig()->getType()->getInnerType()
         );
@@ -148,10 +147,13 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
     {
         $contentWidget = new ContentWidget();
         $contentWidget->setName('test_name');
+        $contentWidget->setSettings([
+            'scaling' => 'proportional'
+        ]);
 
         $slides = [new ImageSlide()];
 
-        $this->repository->expects($this->any())
+        $this->repository->expects(self::any())
             ->method('findBy')
             ->with(['contentWidget' => $contentWidget], ['slideOrder' => 'ASC'])
             ->willReturn($slides);
@@ -161,7 +163,7 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
             ->method('render')
             ->willReturnCallback(
                 function ($name, array $context = []) use ($slides) {
-                    $this->assertEquals(
+                    self::assertEquals(
                         [
                             'contentWidgetName' => 'test_name',
                             'pageComponentName' => 'test_name',
@@ -174,6 +176,7 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
                                     'arrows' => false,
                                     'dots' => true,
                                     'infinite' => false,
+                                    'scaling' => 'proportional',
                                 ]
                             ),
                             'imageSlides' => new ArrayCollection($slides),
@@ -188,10 +191,12 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
                     if ($name === '@OroCMS/ImageSliderContentWidget/image_slides.html.twig') {
                         return 'rendered slides template';
                     }
+
+                    return null;
                 }
             );
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 [
                     'title' => 'oro.cms.contentwidget.sections.slider_options.label',
@@ -221,18 +226,18 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
             }
         );
 
-        /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager */
+        /** @var ConfigManager|MockObject $configManager */
         $configManager = $this->createMock(ConfigManager::class);
 
-        /** @var HtmlTagProvider|\PHPUnit\Framework\MockObject\MockObject $htmlTagProvider */
+        /** @var HtmlTagProvider|MockObject $htmlTagProvider */
         $htmlTagProvider = $this->createMock(HtmlTagProvider::class);
-        $htmlTagProvider->expects($this->any())
+        $htmlTagProvider->expects(self::any())
             ->method('getAllowedElements')
             ->willReturn(['br', 'a']);
 
         $htmlTagHelper = new HtmlTagHelper($htmlTagProvider);
 
-        /** @var ContextInterface|\PHPUnit\Framework\MockObject\MockObject $context */
+        /** @var ContextInterface|MockObject $context */
         $context = $this->createMock(ContextInterface::class);
 
         return [
@@ -242,6 +247,7 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
                     ImageSlideCollectionType::class => new ImageSlideCollectionTypeStub(),
                     ImageSlideType::class => new ImageSlideTypeStub(),
                     new OroRichTextType($configManager, $htmlTagProvider, $context, $htmlTagHelper),
+                    OroChoiceType::class => new OroChoiceType(),
                 ],
                 [
                     SymfonyFormType::class => [new DataBlockExtension(), new FormTypeValidatorExtensionStub()]
@@ -255,6 +261,6 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
         $contentWidget = new ContentWidget();
         $twig = $this->createMock(Environment::class);
 
-        $this->assertEquals('', $this->contentWidgetType->getDefaultTemplate($contentWidget, $twig));
+        self::assertEquals('', $this->contentWidgetType->getDefaultTemplate($contentWidget, $twig));
     }
 }

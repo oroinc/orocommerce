@@ -118,6 +118,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
      */
     public function testBackendVisibility(string $searchHandlerName, array $expectedProducts): void
     {
+        $this->initClient([], $this->generateBasicAuthHeader());
         $url = $this->getUrl(
             'oro_form_autocomplete_search',
             [
