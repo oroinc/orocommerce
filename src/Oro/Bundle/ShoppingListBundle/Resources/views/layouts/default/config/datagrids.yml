@@ -155,7 +155,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
-                icon:          pencil-square-o
+                icon:          pencil
                 acl_resource:  oro_shopping_list_frontend_update
         views_list: '@oro_shopping_list.datagrid.frontend_shopping_lists_views_list'
 
@@ -469,7 +469,7 @@ datagrids:
                 route: oro_api_frontend_patch_entity_data
                 route_parameters:
                     className: 'Oro_Bundle_ShoppingListBundle_Entity_LineItem'
-                icon: file-text-o
+                icon: add-note
                 frontend_options:
                     dialogOptions:
                         modal: true
@@ -488,16 +488,16 @@ datagrids:
             update_configurable:
                 type: update-configurable-product
                 label: oro.shoppinglist.actions.update_configurable_line_item.label
-                icon: pencil-square-o
+                icon: pencil
             update_product_kit_line_item:
                 type: update-product-kit-line-item
                 label: oro.shoppinglist.actions.update_product_kit_line_item.label
-                icon: pencil-square-o
+                icon: pencil
             delete:
                 type: delete-product
                 label: oro.shoppinglist.actions.delete_line_item.label
                 link: deleteLink
-                icon: trash-o
+                icon: trash
                 defaultMessages:
                     confirm_title: oro.shoppinglist.actions.delete_line_item.confirm_title
                     confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content
@@ -524,7 +524,7 @@ datagrids:
                     namespace: shopping_list
             move:
                 type: moveproducts
-                icon: level-up
+                icon: level
                 label: oro.shoppinglist.mass_actions.move_line_items.label
                 entity_name: Oro\Bundle\ShoppingListBundle\Entity\LineItem
                 acl_resource:  oro_shopping_list_frontend_update
@@ -646,12 +646,12 @@ datagrids:
             update_product_kit_line_item:
                 type: update-product-kit-line-item
                 label: oro.shoppinglist.actions.update_product_kit_line_item.label
-                icon: pencil-square-o
+                icon: pencil
             delete:
                 type: delete-product
                 label: oro.shoppinglist.actions.delete_product_kit_line_item.label
                 link: deleteLink
-                icon: trash-o
+                icon: trash
                 defaultMessages:
                     confirm_title: oro.shoppinglist.actions.delete_line_item.confirm_title
                     confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content
