@@ -5,6 +5,9 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver as BaseOptionsResolver;
 
+/**
+ * Resolves options for Payflow request.
+ */
 class OptionsResolver extends BaseOptionsResolver
 {
     /**
@@ -39,7 +42,7 @@ class OptionsResolver extends BaseOptionsResolver
     /**
      * {@inheritdoc}
      */
-    public function resolve(array $options = [])
+    public function resolve(array $options = []): array
     {
         $this->addOptionLocked = true;
         $this->handleDependentOptions($options);

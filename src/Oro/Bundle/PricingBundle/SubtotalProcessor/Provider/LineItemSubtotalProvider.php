@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Provider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
@@ -122,10 +121,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
         $rowTotal = $lineItem->getPrice()->getValue();
         $rowCurrency = $lineItem->getPrice()->getCurrency();
 
-        if ($lineItem instanceof PriceTypeAwareInterface &&
-            $lineItem instanceof QuantityAwareInterface &&
-            (int)$lineItem->getPriceType() === PriceTypeAwareInterface::PRICE_TYPE_UNIT
-        ) {
+        if ($lineItem instanceof QuantityAwareInterface) {
             $rowTotal *= $lineItem->getQuantity();
         }
 

@@ -36,7 +36,7 @@ class RedirectExceptionListenerTest extends \PHPUnit\Framework\TestCase
         return new ExceptionEvent(
             $this->createMock(HttpKernelInterface::class),
             $request,
-            $isMaster ? HttpKernelInterface::MASTER_REQUEST : HttpKernelInterface::SUB_REQUEST,
+            $isMaster ? HttpKernelInterface::MAIN_REQUEST : HttpKernelInterface::SUB_REQUEST,
             $exception
         );
     }

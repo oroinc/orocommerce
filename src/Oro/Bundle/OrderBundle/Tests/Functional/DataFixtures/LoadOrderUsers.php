@@ -60,6 +60,6 @@ class LoadOrderUsers extends AbstractFixture implements ContainerAwareInterface
 
         $userManager->updateUser($user, false);
 
-        $this->setReference($user->getUsername(), $user);
+        $this->setReference($user->getUserIdentifier(), $user);
     }
 }

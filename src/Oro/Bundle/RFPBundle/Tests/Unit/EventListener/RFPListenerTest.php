@@ -11,6 +11,7 @@ use Oro\Bundle\RFPBundle\EventListener\RFPListener;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class RFPListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -61,7 +62,7 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
                 'checkout' => new Request()
             ],
             'unsupported token and without owner' => [
-                'token' => new \stdClass(),
+                'token' => $this->createMock(TokenInterface::class),
                 'checkout' => new Request()
             ],
             'with owner' => [
@@ -131,6 +132,6 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
         $visitor = new CustomerVisitor();
         $visitor->setCustomerUser(new CustomerUser());
 
-        return new AnonymousCustomerUserToken('', [], $visitor);
+        return new AnonymousCustomerUserToken($visitor, []);
     }
 }

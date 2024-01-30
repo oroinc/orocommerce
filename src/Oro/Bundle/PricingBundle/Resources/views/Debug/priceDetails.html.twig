@@ -1,0 +1,78 @@
+{% block price_details %}
+<div class="prices-collection prices-collection--divider">
+    {% for unitCode, currencies in used_units_and_currencies %}
+        {% for currency in currencies %}
+            <div class="price-details price-details--divider">
+                <div class="price-details-unit">
+                    <strong>{{ unitCode|oro_format_product_unit_label|capitalize }} ({{ currency }})</strong>
+                </div>
+                {% if prices[currency][unitCode]|length > 0 %}
+                    <div class="price-details-items">
+                        {% for item in prices[currency][unitCode] %}
+                            {% with {
+                                quantity: item.quantity,
+                                price: item.price,
+                                is_selected: false,
+                                price_id: item.quantity ~ '-' ~ unitCode ~ '-' ~ currency
+                            } %}
+                                {{ block('price_item') }}
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+{% endblock price_details %}
+
+{% block price_merge_items %}
+    <div class="price-details price-details--divider">
+        <div class="price-details-unit">
+            <strong>{{ unitCode|oro_format_product_unit_label|capitalize }} ({{ currency }})</strong>
+        </div>
+        {% if items|length > 0 %}
+            <div class="price-details-items">
+            {% for item in items %}
+                {% if skipSelected %}
+                    {% set isSelected = false %}
+                {%  else %}
+                    {% set isSelected = item.is_selected %}
+                {% endif %}
+                {% with {
+                    is_selected: isSelected,
+                    quantity: item.price.quantity,
+                    price: item.price.price,
+                    price_id: item.price.quantity ~ '-' ~ unitCode ~ '-' ~ currency
+                } %}
+                    {{ block('price_item') }}
+                {% endwith %}
+            {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock price_merge_items %}
+
+{% block price_item %}
+    <div class="price-details-item" data-price-id="{{ price_id }}">
+        <div class="price-details-item-quantity {{ is_selected ? 'selected' }}">{{ quantity }}</div>
+        <div class="price-details-item-price {{ is_selected ? 'selected' }}">{{ price|oro_format_price }}</div>
+    </div>
+{% endblock %}
+
+{% block price_merge_details %}
+    <div class="prices-collection prices-collection--divider">
+    {% for unitCode, currencies in used_units_and_currencies %}
+        {% for currency in currencies %}
+            {% if mergePricesCollection[currency][unitCode] is defined %}
+            {% set prices = mergePricesCollection[currency][unitCode] %}
+            {% else %}
+                {% set prices = [] %}
+            {% endif %}
+            {% with {items: prices, unitCode: unitCode, currency: currency, skipSelected: skipSelected|default(false)} %}
+                {{ block('price_merge_items') }}
+            {% endwith %}
+        {% endfor %}
+    {% endfor %}
+    </div>
+{% endblock price_merge_details %}

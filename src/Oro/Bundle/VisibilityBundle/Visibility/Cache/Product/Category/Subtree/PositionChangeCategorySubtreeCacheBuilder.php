@@ -5,10 +5,14 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository;
 
+/**
+ * Updates denormalized data for categories in case when position of category was changed.
+ */
 class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategorySubtreeCacheBuilder
 {
     /**
@@ -43,8 +47,8 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $parentCategory = $category->getParentCategory();
         /** @var CategoryRepository $repository */
         $repository = $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved');
+            ->getManagerForClass(CategoryVisibilityResolved::class)
+            ->getRepository(CategoryVisibilityResolved::class);
         $visibility = $repository->getFallbackToAllVisibility($parentCategory);
 
         $childCategoryIds = $this->getChildCategoryIdsForUpdate($category);

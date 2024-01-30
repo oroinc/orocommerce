@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Manager\PriceManager;
@@ -23,47 +22,38 @@ class ProductPriceEntityListenerTest extends WebTestCase
     use MessageQueueExtension;
     use ProductPriceReference;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures([
-            LoadProductPrices::class,
-            LoadPriceRuleLexemes::class
-        ]);
+        $this->loadFixtures([LoadProductPrices::class, LoadPriceRuleLexemes::class]);
 
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.product_price_cpl');
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
 
-        $this->enableMessageBuffering();
+        self::enableMessageBuffering();
     }
 
     private function getPriceManager(): PriceManager
     {
-        return $this->getContainer()->get('oro_pricing.manager.price_manager');
+        return self::getContainer()->get('oro_pricing.manager.price_manager');
     }
 
     private function getShardManager(): ShardManager
     {
-        return $this->getContainer()->get('oro_pricing.shard_manager');
+        return self::getContainer()->get('oro_pricing.shard_manager');
     }
 
     public function testPostPersist()
     {
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
-
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_4);
 
         $price = new ProductPrice();
-        $price->setProduct($product)
-            ->setPriceList($priceList)
-            ->setQuantity(1)
-            ->setUnit($this->getReference('product_unit.box'))
-            ->setPrice(Price::create(42, 'USD'));
+        $price->setProduct($product);
+        $price->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_2));
+        $price->setQuantity(1);
+        $price->setUnit($this->getReference('product_unit.box'));
+        $price->setPrice(Price::create(42, 'USD'));
 
         $priceManager = $this->getPriceManager();
         $priceManager->persist($price);
@@ -73,9 +63,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
             ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
-                    $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
-                        $product->getId()
-                    ]
+                    $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [$product->getId()]
                 ]
             ]
         );
@@ -119,9 +107,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
             ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
-                    $priceList->getId() => [
-                        $product->getId()
-                    ]
+                    $priceList->getId() => [$product->getId()]
                 ]
             ]
         );
@@ -132,20 +118,15 @@ class ProductPriceEntityListenerTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
-        /** @var ProductPrice $price */
-        $price = $this->getPriceByReference('product_price.2');
-
         $priceManager = $this->getPriceManager();
-        $priceManager->remove($price);
+        $priceManager->remove($this->getPriceByReference('product_price.2'));
         $priceManager->flush();
 
         self::assertMessageSent(
             ResolvePriceRulesTopic::getName(),
             [
                 'product' => [
-                    $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
-                        $product->getId()
-                    ]
+                    $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [$product->getId()]
                 ]
             ]
         );

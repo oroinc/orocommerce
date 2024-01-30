@@ -5,14 +5,14 @@ namespace Oro\Bundle\SaleBundle\Migrations\Data\ORM;
 use Oro\Bundle\EmailBundle\Migrations\Data\ORM\AbstractEmailFixture;
 
 /**
- * Adds the email template which can used to send to the customer user the guest link to the quote.
+ * Loads email templates.
  */
 class LoadGuestAccessEmailTemplate extends AbstractEmailFixture
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getEmailsDir()
+    public function getEmailsDir(): string
     {
         return $this->container
             ->get('kernel')

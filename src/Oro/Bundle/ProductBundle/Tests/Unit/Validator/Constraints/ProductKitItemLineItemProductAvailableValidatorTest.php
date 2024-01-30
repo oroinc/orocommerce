@@ -192,7 +192,8 @@ class ProductKitItemLineItemProductAvailableValidatorTest extends ConstraintVali
             ->expects(self::never())
             ->method('isChangedEntity');
 
-        $this->innerContextualValidator
+        $innerContextualValidator = $this->innerContextualValidator;
+        $innerContextualValidator
             ->expects(self::once())
             ->method('validate')
             ->with(
@@ -200,8 +201,10 @@ class ProductKitItemLineItemProductAvailableValidatorTest extends ConstraintVali
                 null,
                 $this->productKitItemLineItemProductAvailableConstraint->availabilityValidationGroups
             )
-            ->willReturnCallback(function () {
+            ->willReturnCallback(function () use (&$innerContextualValidator) {
                 $this->context->addViolation('sample violation');
+
+                return $innerContextualValidator;
             });
 
         $this->validator->validate($product, $this->productKitItemLineItemProductAvailableConstraint);
@@ -327,7 +330,8 @@ class ProductKitItemLineItemProductAvailableValidatorTest extends ConstraintVali
             ->with($kitItemLineItem, ['product'])
             ->willReturn(true);
 
-        $this->innerContextualValidator
+        $innerContextualValidator = $this->innerContextualValidator;
+        $innerContextualValidator
             ->expects(self::once())
             ->method('validate')
             ->with(
@@ -335,8 +339,10 @@ class ProductKitItemLineItemProductAvailableValidatorTest extends ConstraintVali
                 null,
                 $this->productKitItemLineItemProductAvailableConstraint->availabilityValidationGroups
             )
-            ->willReturnCallback(function () {
+            ->willReturnCallback(function () use (&$innerContextualValidator) {
                 $this->context->addViolation('sample violation');
+
+                return $innerContextualValidator;
             });
 
         $this->validator->validate($product, $this->productKitItemLineItemProductAvailableConstraint);
@@ -428,7 +434,8 @@ class ProductKitItemLineItemProductAvailableValidatorTest extends ConstraintVali
             ->expects(self::never())
             ->method(self::anything());
 
-        $this->innerContextualValidator
+        $innerContextualValidator = $this->innerContextualValidator;
+        $innerContextualValidator
             ->expects(self::once())
             ->method('validate')
             ->with(
@@ -436,8 +443,10 @@ class ProductKitItemLineItemProductAvailableValidatorTest extends ConstraintVali
                 null,
                 $this->productKitItemLineItemProductAvailableConstraint->availabilityValidationGroups
             )
-            ->willReturnCallback(function () {
+            ->willReturnCallback(function () use (&$innerContextualValidator) {
                 $this->context->addViolation('sample violation');
+
+                return $innerContextualValidator;
             });
 
         $this->productKitItemLineItemProductAvailableConstraint->ifChanged = [];

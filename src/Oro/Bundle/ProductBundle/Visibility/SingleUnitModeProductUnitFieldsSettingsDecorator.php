@@ -9,37 +9,19 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Exception\DefaultUnitNotFoundException;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
+/**
+ * This service decorates basic functionality when product single unit mode is enabled.
+ */
 class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFieldsSettingsInterface
 {
-    /**
-     * @var ProductUnitFieldsSettingsInterface
-     */
-    private $settings;
-
-    /**
-     * @var SingleUnitModeServiceInterface
-     */
-    private $singleUnitModeService;
-
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
-
     public function __construct(
-        ProductUnitFieldsSettingsInterface $settings,
-        SingleUnitModeServiceInterface $singleUnitModeService,
-        DoctrineHelper $doctrineHelper
+        private ProductUnitFieldsSettingsInterface $settings,
+        private SingleUnitModeServiceInterface $singleUnitModeService,
+        private DoctrineHelper $doctrineHelper
     ) {
-        $this->settings = $settings;
-        $this->singleUnitModeService = $singleUnitModeService;
-        $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isProductUnitSelectionVisible(Product $product)
+    public function isProductUnitSelectionVisible(?Product $product): bool
     {
         if ($this->singleUnitModeService->isSingleUnitMode()) {
             return !$this->isProductPrimaryUnitSingleAndDefault($product);
@@ -47,10 +29,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
         return $this->settings->isProductUnitSelectionVisible($product);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isProductPrimaryUnitVisible(Product $product = null)
+    public function isProductPrimaryUnitVisible(?Product $product = null): bool
     {
         if ($this->singleUnitModeService->isSingleUnitMode()) {
             return $product && !$this->isProductPrimaryUnitSingleAndDefault($product);
@@ -58,10 +37,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
         return $this->settings->isProductPrimaryUnitVisible($product);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isAddingAdditionalUnitsToProductAvailable(Product $product = null)
+    public function isAddingAdditionalUnitsToProductAvailable(?Product $product = null): bool
     {
         if ($this->singleUnitModeService->isSingleUnitMode()) {
             return false;
@@ -73,7 +49,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
      * {@inheritdoc}
      * @throws DefaultUnitNotFoundException
      */
-    public function getAvailablePrimaryUnitChoices(Product $product = null)
+    public function getAvailablePrimaryUnitChoices(Product $product = null): array
     {
         if (!$this->singleUnitModeService->isSingleUnitMode()) {
             return $this->settings->getAvailablePrimaryUnitChoices($product);
@@ -100,11 +76,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
         return $units;
     }
 
-    /**
-     * @param Product $product
-     * @return bool
-     */
-    private function isProductPrimaryUnitSingleAndDefault(Product $product)
+    private function isProductPrimaryUnitSingleAndDefault(Product $product): bool
     {
         $defaultUnitCode = $this->singleUnitModeService->getDefaultUnitCode();
 

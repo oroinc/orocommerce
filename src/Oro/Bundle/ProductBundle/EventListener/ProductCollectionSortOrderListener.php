@@ -32,7 +32,7 @@ class ProductCollectionSortOrderListener
             return;
         }
 
-        $uow = $eventArgs->getEntityManager()->getUnitOfWork();
+        $uow = $eventArgs->getObjectManager()->getUnitOfWork();
 
         // Getting all changed CollectionSortOrder
         foreach ($uow->getScheduledEntityUpdates() as $entity) {

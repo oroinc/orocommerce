@@ -41,22 +41,22 @@ class ProductController extends AbstractController
      * @Acl(
      *      id="oro_product_view",
      *      type="entity",
-     *      class="OroProductBundle:Product",
+     *      class="Oro\Bundle\ProductBundle\Entity\Product",
      *      permission="VIEW"
      * )
      */
     public function viewAction(Product $product): array
     {
-        $pageTemplate = $this->get(PageTemplateProvider::class)
+        $pageTemplate = $this->container->get(PageTemplateProvider::class)
             ->getPageTemplate($product, 'oro_product_frontend_product_view');
 
         return [
             'entity' => $product,
-            'imageTypes' => $this->get(ImageTypeProvider::class)->getImageTypes(),
+            'imageTypes' => $this->container->get(ImageTypeProvider::class)->getImageTypes(),
             'pageTemplate' => $pageTemplate,
-            'upsellProductsEnabled' => $this->get(UpsellProductConfigProvider::class)
+            'upsellProductsEnabled' => $this->container->get(UpsellProductConfigProvider::class)
                 ->isEnabled(),
-            'relatedProductsEnabled' => $this->get(RelatedProductsConfigProvider::class)
+            'relatedProductsEnabled' => $this->container->get(RelatedProductsConfigProvider::class)
                 ->isEnabled(),
         ];
     }
@@ -70,7 +70,7 @@ class ProductController extends AbstractController
     {
         return [
             'product' => $product,
-            'imageTypes' => $this->get(ImageTypeProvider::class)->getImageTypes()
+            'imageTypes' => $this->container->get(ImageTypeProvider::class)->getImageTypes()
         ];
     }
 
@@ -106,7 +106,7 @@ class ProductController extends AbstractController
         ];
 
         /** @var ProductGridWidgetRenderEvent $event */
-        $event = $this->get(EventDispatcherInterface::class)->dispatch(
+        $event = $this->container->get(EventDispatcherInterface::class)->dispatch(
             new ProductGridWidgetRenderEvent($widgetRouteParameters),
             ProductGridWidgetRenderEvent::NAME
         );
@@ -125,7 +125,7 @@ class ProductController extends AbstractController
      * @Acl(
      *      id="oro_product_create",
      *      type="entity",
-     *      class="OroProductBundle:Product",
+     *      class="Oro\Bundle\ProductBundle\Entity\Product",
      *      permission="CREATE"
      * )
      */
@@ -154,7 +154,7 @@ class ProductController extends AbstractController
      * @Acl(
      *      id="oro_product_update",
      *      type="entity",
-     *      class="OroProductBundle:Product",
+     *      class="Oro\Bundle\ProductBundle\Entity\Product",
      *      permission="EDIT"
      * )
      */
@@ -176,7 +176,7 @@ class ProductController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        if (!$this->get(RelatedItemConfigHelper::class)->isAnyEnabled()) {
+        if (!$this->container->get(RelatedItemConfigHelper::class)->isAnyEnabled()) {
             throw $this->createNotFoundException();
         }
 
@@ -186,12 +186,12 @@ class ProductController extends AbstractController
     private function update(Product $product): array|RedirectResponse
     {
         /** @var ProductUpdateHandler $handler */
-        $handler = $this->get(ProductUpdateHandler::class);
+        $handler = $this->container->get(ProductUpdateHandler::class);
 
         return $handler->update(
             $product,
             $this->createForm(ProductType::class, $product),
-            $this->get(TranslatorInterface::class)->trans('oro.product.controller.product.saved.message')
+            $this->container->get(TranslatorInterface::class)->trans('oro.product.controller.product.saved.message')
         );
     }
 
@@ -242,7 +242,7 @@ class ProductController extends AbstractController
         }
 
         $form = $this->createForm(ProductStepOneType::class, $product, ['validation_groups'=> false]);
-        $form->submit($request->request->get(ProductType::NAME));
+        $form->submit($request->request->all(ProductType::NAME));
 
         return $this->update($product);
     }
@@ -253,7 +253,7 @@ class ProductController extends AbstractController
      */
     public function getChangedSlugsAction(Product $product): JsonResponse
     {
-        return new JsonResponse($this->get(ChangedSlugsHelper::class)
+        return new JsonResponse($this->container->get(ChangedSlugsHelper::class)
             ->getChangedSlugsData($product, ProductType::class));
     }
 
@@ -265,15 +265,15 @@ class ProductController extends AbstractController
     {
         $newName = $request->get('productName');
 
-        $configManager = $this->get(ConfigManager::class);
+        $configManager = $this->container->get(ConfigManager::class);
         $showRedirectConfirmation =
             $configManager->get('oro_redirect.redirect_generation_strategy') === Configuration::STRATEGY_ASK;
 
         $slugsData = [];
         if ($newName !== null) {
             $newName = $this->container->get('oro_ui.html_tag_helper')->stripTags($newName);
-            $newSlug = $this->get(SlugGenerator::class)->slugify($newName);
-            $slugsData = $this->get(ChangedSlugsHelper::class)
+            $newSlug = $this->container->get(SlugGenerator::class)->slugify($newName);
+            $slugsData = $this->container->get(ChangedSlugsHelper::class)
                 ->getChangedDefaultSlugData($product, $newSlug);
         }
 

@@ -31,7 +31,7 @@ class OrderProductKitLineItemListener
     {
         $kitItemLineItems = [];
         $checksum = [];
-        $lineItemsForm = $event->getForm()->get('lineItems');
+        $lineItemsForm = $event->getForm()->get('lineItems')->all();
         foreach ($lineItemsForm as $lineItemForm) {
             /** @var OrderLineItem|null $orderLineItem */
             $orderLineItem = $lineItemForm->getData();

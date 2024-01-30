@@ -3,17 +3,14 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroCatalogBundle implements Migration, ActivityExtensionAwareInterface
 {
-    /**
-     * @var ActivityExtension
-     */
-    protected $activityExtension;
+    use ActivityExtensionAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -126,13 +123,5 @@ class OroCatalogBundle implements Migration, ActivityExtensionAwareInterface
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-    }
-
-    /**
-     * Sets the ActivityExtension
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
     }
 }

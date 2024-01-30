@@ -40,7 +40,7 @@ class AjaxPromotionController extends AbstractController
      */
     public function getPromotionDataByAppliedPromotionAction(AppliedPromotion $appliedPromotion): JsonResponse
     {
-        $mapper = $this->get(AppliedPromotionMapper::class);
+        $mapper = $this->container->get(AppliedPromotionMapper::class);
 
         return $this->getPromotionJsonResponse($mapper->mapAppliedPromotionToPromotionData($appliedPromotion));
     }
@@ -51,7 +51,7 @@ class AjaxPromotionController extends AbstractController
             '@OroPromotion/Promotion/getPromotionDetails.html.twig',
             [
                 'entity' => $promotionData,
-                'scopeEntities' => $this->get(ScopeManager::class)->getScopeEntities('promotion')
+                'scopeEntities' => $this->container->get(ScopeManager::class)->getScopeEntities('promotion')
             ]
         );
 

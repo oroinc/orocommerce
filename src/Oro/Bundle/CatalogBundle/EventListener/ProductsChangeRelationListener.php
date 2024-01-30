@@ -8,6 +8,9 @@ use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Dispatches ProductsChangeRelationEvent when product category is changed.
+ */
 class ProductsChangeRelationListener
 {
     /** @var EventDispatcherInterface */
@@ -20,7 +23,7 @@ class ProductsChangeRelationListener
 
     public function onFlush(OnFlushEventArgs $event)
     {
-        $unitOfWork = $event->getEntityManager()->getUnitOfWork();
+        $unitOfWork = $event->getObjectManager()->getUnitOfWork();
         $productsChangedRelation = [];
 
         /** @var Product $entity */

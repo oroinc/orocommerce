@@ -42,20 +42,30 @@ class ProductTypeTypeTest extends FormIntegrationTestCase
     public function testChoices(): void
     {
         $form = $this->factory->create(ProductTypeType::class);
-        $availableProductTypes = $this->productTypeProvider->getAvailableProductTypes();
-        $choices = [];
 
-        foreach ($availableProductTypes as $label => $value) {
-            $choices[] = new ChoiceView($value, $value, $label);
-        }
-
-        self::assertEquals(
-            $choices,
-            $form->createView()->vars['choices']
+        $this->assertEquals(
+            [0 => new ChoiceView(Product::TYPE_SIMPLE, Product::TYPE_SIMPLE, 'oro.product.type.simple')],
+            $form->createView()->vars['preferred_choices']
         );
 
         self::assertEquals(
-            Product::TYPE_SIMPLE,
+            [
+                1 => new ChoiceView(
+                    Product::TYPE_CONFIGURABLE,
+                    Product::TYPE_CONFIGURABLE,
+                    'oro.product.type.configurable'
+                ),
+                2 => new ChoiceView(Product::TYPE_KIT, Product::TYPE_KIT, 'oro.product.type.kit'),
+            ],
+            $form->createView()->vars['choices']
+        );
+
+        $this->assertFalse(
+            $form->getConfig()->getOptions()['duplicate_preferred_choices']
+        );
+
+        self::assertEquals(
+            [Product::TYPE_SIMPLE],
             $form->getConfig()->getOptions()['preferred_choices']
         );
     }

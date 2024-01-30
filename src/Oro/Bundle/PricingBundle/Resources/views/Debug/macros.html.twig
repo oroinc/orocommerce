@@ -1,0 +1,52 @@
+{% macro scheduleIntervalsInfo(schedules, labels) %}
+    {% set now = date('now', 'UTC') %}
+    <ul class="schedule-list">
+        {% set activityShown = false %}
+        {% for schedule in schedules %}
+            {% if schedule.activeAt < now %}
+                {% if schedule.activeAt %}
+                    <li>
+                        <span class="schedule-list-item">{{ labels.wasActivated|trans({'%date%': schedule.activeAt|oro_format_datetime})|raw }}</span>
+                    </li>
+                {% endif %}
+
+                {% if not schedule.deactivateAt or schedule.deactivateAt > now %}
+                    {% set activityShown = true %}
+                    <li>
+                        <strong>{{ labels.activeNow|trans }}</strong>
+                    </li>
+                {% endif %}
+            {% endif %}
+
+            {% if schedule.activeAt > now %}
+                {% if not activityShown %}
+                    {% set activityShown = true %}
+                    <li>
+                        <span class="schedule-list-item"><strong>{{ labels.notActiveNow|trans }}</strong></span>
+                    </li>
+                {% endif %}
+                <li>
+                    <span class="schedule-list-item">{{ labels.willBeActivated|trans({'%date%': schedule.activeAt|oro_format_datetime})|raw }}</span>
+                </li>
+            {% endif %}
+
+            {% if schedule.deactivateAt %}
+                {% if schedule.deactivateAt < now %}
+                    <li>
+                        <span class="schedule-list-item">{{ labels.wasDeactivated|trans({'%date%': schedule.deactivateAt|oro_format_datetime})|raw }}</span>
+                    </li>
+                {% else %}
+                    <li>
+                        <span class="schedule-list-item">{{ labels.willBeDeactivated|trans({'%date%': schedule.deactivateAt|oro_format_datetime})|raw }}</span>
+                    </li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% if not activityShown %}
+            <li>
+                <span class="schedule-list-item"><strong>{{ labels.notActiveNow|trans }}</strong></span>
+            </li>
+        {% endif %}
+    </ul>
+{% endmacro %}

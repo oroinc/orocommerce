@@ -26,7 +26,7 @@ class PageController extends AbstractController
      * @Acl(
      *      id="oro_cms_page_view",
      *      type="entity",
-     *      class="OroCMSBundle:Page",
+     *      class="Oro\Bundle\CMSBundle\Entity\Page",
      *      permission="VIEW"
      * )
      */
@@ -68,7 +68,7 @@ class PageController extends AbstractController
      * @Acl(
      *      id="oro_cms_page_create",
      *      type="entity",
-     *      class="OroCMSBundle:Page",
+     *      class="Oro\Bundle\CMSBundle\Entity\Page",
      *      permission="CREATE"
      * )
      */
@@ -84,7 +84,7 @@ class PageController extends AbstractController
      * @Acl(
      *      id="oro_cms_page_update",
      *      type="entity",
-     *      class="OroCMSBundle:Page",
+     *      class="Oro\Bundle\CMSBundle\Entity\Page",
      *      permission="EDIT"
      * )
      */
@@ -95,12 +95,12 @@ class PageController extends AbstractController
 
     protected function update(Page $page): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $page,
             $this->createForm(PageType::class, $page),
             $page->getDraftUuid()
-                ? $this->get(TranslatorInterface::class)->trans('oro.draft.operations.create.success')
-                : $this->get(TranslatorInterface::class)->trans('oro.cms.controller.page.saved.message')
+                ? $this->container->get(TranslatorInterface::class)->trans('oro.draft.operations.create.success')
+                : $this->container->get(TranslatorInterface::class)->trans('oro.cms.controller.page.saved.message')
         );
     }
 
@@ -110,7 +110,7 @@ class PageController extends AbstractController
      */
     public function getChangedSlugsAction(Page $page): JsonResponse
     {
-        return new JsonResponse($this->get(ChangedSlugsHelper::class)
+        return new JsonResponse($this->container->get(ChangedSlugsHelper::class)
             ->getChangedSlugsData($page, PageType::class));
     }
 

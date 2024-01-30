@@ -68,7 +68,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         );
     }
 
-    public function testOnWebsiteSearchUnsupportedFieldsGroup()
+    public function testOnWebsiteSearchUnsupportedFieldsGroup(): void
     {
         $attributeFamilyId = 42;
         $productId = 1;
@@ -90,11 +90,34 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $this->listener->onWebsiteSearchIndex($event);
     }
 
+    public function testOnWebsiteSearchNotFoundWebsite(): void
+    {
+        $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']];
+        $this->websiteContextManager->expects($this->once())
+            ->method('getWebsiteId')
+            ->with($context)
+            ->willReturn(null);
+
+        $this->websiteLocalizationProvider->expects($this->never())
+            ->method($this->anything());
+        $this->doctrine->expects($this->never())
+            ->method($this->anything());
+        $this->attributeManager->expects($this->never())
+            ->method($this->anything());
+        $this->dataProvider->expects($this->never())
+            ->method($this->anything());
+
+        $event = new IndexEntityEvent(Product::class, [new Product()], $context);
+        $this->listener->onWebsiteSearchIndex($event);
+
+        $this->assertTrue($event->isPropagationStopped());
+    }
+
     /**
      * @dataProvider validContextDataProvider
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testOnWebsiteSearchIndexProductClass(array $context)
+    public function testOnWebsiteSearchIndexProductClass(array $context): void
     {
         $organization = new Organization();
         $website = new Website();

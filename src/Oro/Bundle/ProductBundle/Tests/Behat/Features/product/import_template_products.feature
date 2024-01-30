@@ -18,10 +18,10 @@ Feature: Import Template Products
     Then Email should contains the following "Errors: 0 processed: 3, read: 3, added: 3, updated: 0, replaced: 0" text
     When I reload the page
     Then I should see following grid:
-      | SKU     | Name                  | Status  | Inventory Status |
-      | sku_003 | Product Kit           | Enabled | In Stock         |
-      | sku_002 | Product Second Simple | Enabled | In Stock         |
-      | sku_001 | Product Simple        | Enabled | In Stock         |
+      | SKU     | Name                  | Status   | Inventory Status |
+      | sku_003 | Product Kit           | Disabled | In Stock         |
+      | sku_002 | Product Second Simple | Enabled  | In Stock         |
+      | sku_001 | Product Simple        | Enabled  | In Stock         |
 
   Scenario: Check Product Simple
     Given I click view "sku_001" in grid

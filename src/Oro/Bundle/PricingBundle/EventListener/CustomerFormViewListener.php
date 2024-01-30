@@ -35,12 +35,12 @@ class CustomerFormViewListener extends AbstractCustomerFormViewListener
         }
 
         /** @var Customer $customer */
-        $customer = $this->doctrineHelper->getEntityReference('OroCustomerBundle:Customer', (int)$request->get('id'));
+        $customer = $this->doctrineHelper->getEntityReference(Customer::class, (int)$request->get('id'));
 
         /** @var PriceListToCustomer[] $priceLists */
         $websites = $this->websiteProvider->getWebsites();
         $priceLists = $this->doctrineHelper
-            ->getEntityRepository('OroPricingBundle:PriceListToCustomer')
+            ->getEntityRepository(PriceListToCustomer::class)
             ->findBy(
                 ['customer' => $customer, 'website' => $websites],
                 ['sortOrder' => PriceListCollectionType::DEFAULT_ORDER]
@@ -48,7 +48,7 @@ class CustomerFormViewListener extends AbstractCustomerFormViewListener
 
         /** @var PriceListCustomerFallback $fallbackEntity */
         $fallbackEntity = $this->doctrineHelper
-            ->getEntityRepository('OroPricingBundle:PriceListCustomerFallback')
+            ->getEntityRepository(PriceListCustomerFallback::class)
             ->findOneBy(['customer' => $customer, 'website' => $websites]);
 
         $fallback = $fallbackEntity

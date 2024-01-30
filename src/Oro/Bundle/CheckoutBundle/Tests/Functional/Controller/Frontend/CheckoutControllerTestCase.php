@@ -11,7 +11,6 @@ use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\UpdateInventoryLevelsQuantities;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
@@ -74,7 +73,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadCombinedProductPrices::class,
             LoadShippingMethodsConfigsRulesWithConfigs::class,
         ], $this->getPaymentFixtures(), $this->getInventoryFixtures()));
-        $this->registry = $this->getContainer()->get('doctrine');
+        $this->registry = self::getContainer()->get('doctrine');
     }
 
     protected function getPaymentFixtures(): array
@@ -196,20 +195,22 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
 
     protected function startCheckoutByData(array $data)
     {
-        $userManager = $this->getContainer()->get('oro_customer_user.manager');
+        $userManager = self::getContainer()->get('oro_customer_user.manager');
         $this->setCurrentWebsite('default');
+        /** @var CustomerUser $user */
         $user = $this->registry
             ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => TestCustomerUserData::AUTH_USER]);
         $user->setCustomer($this->getReference('customer.level_1'));
         $userManager->updateUser($user);
 
-        $organization = $this->registry
-            ->getRepository(Organization::class)
-            ->getFirst();
-        $token = new UsernamePasswordOrganizationToken($user, false, 'key', $organization, $user->getUserRoles());
-        $this->client->getContainer()->get('security.token_storage')->setToken($token);
-        $action = $this->client->getContainer()->get('oro_action.action.run_action_group');
+        self::getContainer()->get('security.token_storage')->setToken(new UsernamePasswordOrganizationToken(
+            $user,
+            'key',
+            $user->getOrganization(),
+            $user->getUserRoles()
+        ));
+        $action = self::getContainer()->get('oro_action.action.run_action_group');
         $action->initialize($data['options']);
         $action->execute($data['context']);
         self::$checkoutUrl = $data['context']['redirectUrl'];

@@ -1,56 +1,56 @@
 acls:
     oro_shopping_list_frontend_view:
         type: entity
-        class: OroShoppingListBundle:ShoppingList
+        class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
         permission: VIEW
         category: "shopping"
         group_name: "commerce"
 
     oro_shopping_list_frontend_update:
         type: entity
-        class: OroShoppingListBundle:ShoppingList
+        class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
         permission: EDIT
         category: "shopping"
         group_name: "commerce"
 
     oro_shopping_list_frontend_delete:
         type: entity
-        class: OroShoppingListBundle:ShoppingList
+        class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
         permission: DELETE
         category: "shopping"
         group_name: "commerce"
 
     oro_shopping_list_frontend_duplicate:
         type: entity
-        class: OroShoppingListBundle:ShoppingList
+        class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
         permission: DUPLICATE_SHOPPING_LIST
         category: "shopping"
         group_name: "commerce"
 
     oro_shopping_list_frontend_rename:
         type: entity
-        class: OroShoppingListBundle:ShoppingList
+        class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
         permission: RENAME_SHOPPING_LIST
         category: "shopping"
         group_name: "commerce"
 
     oro_shopping_list_frontend_set_as_default:
         type: entity
-        class: OroShoppingListBundle:ShoppingList
+        class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
         permission: SET_AS_DEFAULT_SHOPPING_LIST
         category: "shopping"
         group_name: "commerce"
 
     oro_shopping_list_frontend_assign:
         type: entity
-        class: OroShoppingListBundle:ShoppingList
+        class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
         permission: ASSIGN
         category: "shopping"
         group_name: "commerce"
 
     oro_shopping_list_line_item_frontend_delete:
         type: entity
-        class: OroShoppingListBundle:LineItem
+        class: Oro\Bundle\ShoppingListBundle\Entity\LineItem
         permission: DELETE
         category: "shopping"
         group_name: "commerce"

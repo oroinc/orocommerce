@@ -34,7 +34,7 @@ class CheckoutController extends AbstractController
      * @Acl(
      *      id="oro_checkout_frontend_checkout",
      *      type="entity",
-     *      class="OroCheckoutBundle:Checkout",
+     *      class="Oro\Bundle\CheckoutBundle\Entity\Checkout",
      *      permission="EDIT",
      *      group_name="commerce"
      * )
@@ -48,7 +48,7 @@ class CheckoutController extends AbstractController
     {
         $this->disableGarbageCollector();
 
-        $this->get(PreloadingManager::class)->preloadInEntities(
+        $this->container->get(PreloadingManager::class)->preloadInEntities(
             $checkout->getLineItems()->toArray(),
             [
                 'product' => [
@@ -99,7 +99,7 @@ class CheckoutController extends AbstractController
             ]
         );
 
-        $currentStep = $this->get(CheckoutWorkflowHelper::class)
+        $currentStep = $this->container->get(CheckoutWorkflowHelper::class)
             ->processWorkflowAndGetCurrentStep($request, $checkout);
 
         $workflowItem = $this->getWorkflowItem($checkout);
@@ -138,7 +138,7 @@ class CheckoutController extends AbstractController
      */
     private function disableGarbageCollector()
     {
-        if ($this->get(KernelInterface::class)->getEnvironment() === 'prod') {
+        if ($this->container->get(KernelInterface::class)->getEnvironment() === 'prod') {
             gc_disable();
         }
     }
@@ -151,7 +151,7 @@ class CheckoutController extends AbstractController
      */
     protected function getWorkflowItem(CheckoutInterface $checkout)
     {
-        $item =  $this->get(CheckoutWorkflowHelper::class)->getWorkflowItem($checkout);
+        $item =  $this->container->get(CheckoutWorkflowHelper::class)->getWorkflowItem($checkout);
 
         if (!$item) {
             throw $this->createNotFoundException('Unable to find correct WorkflowItem for current checkout');

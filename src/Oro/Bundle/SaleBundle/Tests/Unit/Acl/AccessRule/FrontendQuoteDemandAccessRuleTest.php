@@ -51,7 +51,7 @@ class FrontendQuoteDemandAccessRuleTest extends \PHPUnit\Framework\TestCase
     public function testProcessForVisitor()
     {
         $visitor = $this->getEntity(CustomerVisitor::class, ['id' => 2]);
-        $token = new AnonymousCustomerUserToken('', [], $visitor);
+        $token = new AnonymousCustomerUserToken($visitor, []);
 
         $this->tokenStorage->expects($this->once())
             ->method('getToken')

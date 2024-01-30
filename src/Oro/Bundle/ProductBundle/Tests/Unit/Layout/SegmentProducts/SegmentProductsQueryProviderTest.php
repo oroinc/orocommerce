@@ -17,6 +17,7 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class SegmentProductsQueryProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -179,7 +180,7 @@ class SegmentProductsQueryProviderTest extends \PHPUnit\Framework\TestCase
         $cacheKey = 'test_query_0_100_42_25';
         $query = $this->getQuery();
 
-        $user = 'test';
+        $user = $this->createMock(UserInterface::class);
         $token = $this->createMock(TokenInterface::class);
         $this->tokenStorage->expects(self::once())
             ->method('getToken')

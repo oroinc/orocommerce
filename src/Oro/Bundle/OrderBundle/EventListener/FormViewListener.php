@@ -44,7 +44,7 @@ class FormViewListener
     public function onCustomerUserView(BeforeListRenderEvent $event)
     {
         /** @var CustomerUser $customerUser */
-        $customerUser = $this->getEntityFromRequestId('OroCustomerBundle:CustomerUser');
+        $customerUser = $this->getEntityFromRequestId(CustomerUser::class);
         if ($customerUser) {
             $template = $event->getEnvironment()->render(
                 '@OroOrder/CustomerUser/orders_view.html.twig',
@@ -57,7 +57,7 @@ class FormViewListener
     public function onCustomerView(BeforeListRenderEvent $event)
     {
         /** @var Customer $customer */
-        $customer = $this->getEntityFromRequestId('OroCustomerBundle:Customer');
+        $customer = $this->getEntityFromRequestId(Customer::class);
         if ($customer) {
             $template = $event->getEnvironment()->render(
                 '@OroOrder/Customer/orders_view.html.twig',
@@ -70,7 +70,7 @@ class FormViewListener
     public function onShoppingListView(BeforeListRenderEvent $event)
     {
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityFromRequestId('OroShoppingListBundle:ShoppingList');
+        $shoppingList = $this->getEntityFromRequestId(ShoppingList::class);
         if ($shoppingList) {
             $template = $event->getEnvironment()->render(
                 '@OroOrder/ShoppingList/orders_view.html.twig',

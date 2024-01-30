@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -55,5 +56,15 @@ class CombinedPriceListToWebsiteRepository extends PriceListToWebsiteRepository
             ->setParameter('priceList', $combinedPriceList);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function getRelation(Website $website): ?CombinedPriceListToWebsite
+    {
+        $qb = $this->createQueryBuilder('rel');
+        $qb->where($qb->expr()->eq('rel.website', ':website'))
+            ->setParameter('website', $website)
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

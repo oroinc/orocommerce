@@ -13,6 +13,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -360,7 +361,7 @@ class ProductVisibilityProvider
 
         $queryBuilder
             ->innerJoin(
-                'OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved',
+                CustomerGroupProductVisibilityResolved::class,
                 'customer_group_product_visibility_resolved',
                 Join::WITH,
                 $queryBuilder->expr()->eq(
@@ -378,7 +379,7 @@ class ProductVisibilityProvider
                 )
             )
             ->innerJoin(
-                'OroCustomerBundle:Customer',
+                Customer::class,
                 'customer',
                 Join::WITH,
                 'customer.group = customerGroupScope.customerGroup'
@@ -450,7 +451,7 @@ class ProductVisibilityProvider
 
         $queryBuilder
             ->innerJoin(
-                'OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved',
+                CustomerProductVisibilityResolved::class,
                 'customer_product_visibility_resolved',
                 Join::WITH,
                 $queryBuilder->expr()->eq(

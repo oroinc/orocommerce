@@ -5,12 +5,22 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 
+/**
+ * Abstract class for updating product visibility in a category subtree, considering changes in customer and customer
+ * group visibilities.
+ */
 abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
 {
     /** @var array */
@@ -74,8 +84,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         }
 
         $childCategories = $this->registry
-            ->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')
+            ->getManagerForClass(Category::class)
+            ->getRepository(Category::class)
             ->getAllChildCategories($category);
 
         $childCategoryLevels = [];
@@ -158,8 +168,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
     protected function removeIdsWithConfigFallback(Category $category, array $customerGroupIds)
     {
         $customerGroupsCategoryVisibilities = $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
+            ->getManagerForClass(CustomerGroupCategoryVisibilityResolved::class)
+            ->getRepository(CustomerGroupCategoryVisibilityResolved::class)
             ->getVisibilitiesForCustomerGroups($this->scopeManager, $category, $customerGroupIds);
 
         $customerGroupsWithConfigCallbackIds = [];
@@ -233,26 +243,25 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroCustomerBundle:Customer')
+            ->getManagerForClass(Customer::class)
             ->createQueryBuilder();
 
         /** @var QueryBuilder $subQb */
         $subQb = $this->registry
-            ->getManagerForClass('OroVisibilityBundle:Visibility\CustomerCategoryVisibility')
+            ->getManagerForClass(CustomerCategoryVisibility::class)
             ->createQueryBuilder();
 
         $subQb->select('1')
-            ->from('OroVisibilityBundle:Visibility\CustomerCategoryVisibility', 'customerCategoryVisibility')
+            ->from(CustomerCategoryVisibility::class, 'customerCategoryVisibility')
             ->join('customerCategoryVisibility.scope', 'scope')
             ->join('scope.customer', 'scopeCustomer')
             ->where($qb->expr()->eq('customerCategoryVisibility.category', ':category'))
             ->andWhere($qb->expr()->eq('scope.customer', 'customer.id'));
 
         $qb->select('customer.id')
-            ->from('OroCustomerBundle:Customer', 'customer')
+            ->from(Customer::class, 'customer')
             ->where($qb->expr()->not($qb->expr()->exists($subQb->getDQL())))
             ->andWhere($qb->expr()->in('customer.group', ':customerGroupIds'))
-
             ->setParameters([
                 'category' => $category,
                 'customerGroupIds' => $customerGroupIds
@@ -269,19 +278,19 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
     {
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroCatalogBundle:Category')
-            ->getRepository('OroCatalogBundle:Category')
+            ->getManagerForClass(Category::class)
+            ->getRepository(Category::class)
             ->getChildrenQueryBuilderPartial($category);
 
         $qb->leftJoin(
-            'OroVisibilityBundle:Visibility\CategoryVisibility',
+            CategoryVisibility::class,
             'categoryVisibility',
             Join::WITH,
             $qb->expr()->eq('node.id', 'categoryVisibility.category')
         )
-        ->andWhere($qb->expr()->isNull('categoryVisibility.visibility'))
-        ->andWhere($qb->expr()->eq('node.parentCategory', ':category'))
-        ->setParameter('category', $category);
+            ->andWhere($qb->expr()->isNull('categoryVisibility.visibility'))
+            ->andWhere($qb->expr()->eq('node.parentCategory', ':category'))
+            ->setParameter('category', $category);
 
         return $qb->getQuery()->getResult();
     }
@@ -306,10 +315,10 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved')
+            ->getManagerForClass(CustomerGroupProductVisibilityResolved::class)
             ->createQueryBuilder();
 
-        $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved', 'agpvr')
+        $qb->update(CustomerGroupProductVisibilityResolved::class, 'agpvr')
             ->set('agpvr.visibility', ':visibility')
             ->where($qb->expr()->eq('agpvr.category', ':category'))
             ->andWhere($qb->expr()->in('agpvr.scope', ':scopes'))
@@ -336,10 +345,10 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         }
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved')
+            ->getManagerForClass(CustomerProductVisibilityResolved::class)
             ->createQueryBuilder();
 
-        $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved', 'apvr')
+        $qb->update(CustomerProductVisibilityResolved::class, 'apvr')
             ->set('apvr.visibility', ':visibility')
             ->where($qb->expr()->eq('apvr.category', ':category'))
             ->andWhere($qb->expr()->in('apvr.scope', ':scopes'))
@@ -367,10 +376,10 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved')
+            ->getManagerForClass(CustomerCategoryVisibilityResolved::class)
             ->createQueryBuilder();
 
-        $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved', 'acvr')
+        $qb->update(CustomerCategoryVisibilityResolved::class, 'acvr')
             ->set('acvr.visibility', ':visibility')
             ->where($qb->expr()->eq('acvr.category', ':category'))
             ->andWhere($qb->expr()->in('acvr.scope', ':scopes'))
@@ -400,10 +409,10 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         }
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
+            ->getManagerForClass(CustomerGroupCategoryVisibilityResolved::class)
             ->createQueryBuilder();
 
-        $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved', 'agcvr')
+        $qb->update(CustomerGroupCategoryVisibilityResolved::class, 'agcvr')
             ->set('agcvr.visibility', ':visibility')
             ->where($qb->expr()->eq('agcvr.category', ':category'))
             ->andWhere($qb->expr()->in('agcvr.scope', ':scopes'))

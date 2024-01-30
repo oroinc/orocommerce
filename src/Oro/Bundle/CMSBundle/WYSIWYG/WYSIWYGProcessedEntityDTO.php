@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CMSBundle\WYSIWYG;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
@@ -12,37 +12,18 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
  */
 class WYSIWYGProcessedEntityDTO
 {
-    /** @var EntityManager */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
+    private PropertyAccessorInterface $propertyAccessor;
+    private object $entity;
+    private ?string $fieldName = null;
+    private ?string $fieldType = null;
+    private ?ClassMetadata $metadata = null;
+    private ?array $changeSet;
 
-    /** @var PropertyAccessorInterface */
-    private $propertyAccessor;
-
-    /** @var object */
-    private $entity;
-
-    /** @var string|null */
-    private $fieldName;
-
-    /** @var string|null */
-    private $fieldType;
-
-    /** @var ClassMetadata */
-    private $metadata;
-
-    /** @var array|null */
-    private $changeSet;
-
-    /**
-     * @param EntityManager $entityManager
-     * @param PropertyAccessorInterface $propertyAccessor
-     * @param object $entity
-     * @param array|null $changeSet
-     */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         PropertyAccessorInterface $propertyAccessor,
-        $entity,
+        object $entity,
         ?array $changeSet = null
     ) {
         $this->entityManager = $entityManager;
@@ -51,15 +32,12 @@ class WYSIWYGProcessedEntityDTO
         $this->changeSet = $changeSet;
     }
 
-    public function getEntityManager(): EntityManager
+    public function getEntityManager(): EntityManagerInterface
     {
         return $this->entityManager;
     }
 
-    /**
-     * @return object
-     */
-    public function getEntity()
+    public function getEntity(): object
     {
         return $this->entity;
     }
@@ -96,10 +74,11 @@ class WYSIWYGProcessedEntityDTO
         return $this->fieldType;
     }
 
+
     /**
      * @param string $fieldName
      * @param string|null $fieldType Null when field is relation to children entity
-     * @return WYSIWYGProcessedEntityDTO
+     * @return $this
      */
     public function withField(string $fieldName, ?string $fieldType = null): WYSIWYGProcessedEntityDTO
     {
@@ -110,10 +89,7 @@ class WYSIWYGProcessedEntityDTO
         return $dto;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getFieldValue()
+    public function getFieldValue(): mixed
     {
         $value = null;
         if ($this->propertyAccessor->isReadable($this->getEntity(), $this->getFieldName())) {

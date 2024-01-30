@@ -1,0 +1,33 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{% set pageComponentOptions = {
+    'customersSelector': '#' ~ customers.vars.id
+} %}
+
+{% if websites is defined %}
+    {% set pageComponentOptions = pageComponentOptions|merge({
+        'websitesSelector': '#' ~ websites.vars.id
+    }) %}
+{% endif %}
+
+{% if currencies is defined %}
+    {% set pageComponentOptions = pageComponentOptions|merge({
+        'currenciesSelector': '#' ~ currencies.vars.id
+    }) %}
+{% endif %}
+
+{% if showTierPrices is defined %}
+    {% form_theme showTierPrices with '@OroPricing/Form/sidebar.html.twig' %}
+    {% set pageComponentOptions = pageComponentOptions|merge({'showTierPricesSelector': '#' ~ showTierPrices.vars.id}) %}
+{% endif %}
+
+<div class="sidebar-items form-vertical"
+    {{ UI.renderPageComponentAttributes({
+        view: 'oropricing/js/app/views/product-price-debug-sidebar-view',
+        options: pageComponentOptions|json_encode
+    }) }}>
+    {% if websites is defined %}{{ form_row(websites) }}{% endif %}
+    {% if customers is defined %}{{ form_row(customers) }}{% endif %}
+    {% if showTierPrices is defined %}{{ form_row(showTierPrices) }}{% endif %}
+    {% if currencies is defined %}{{ form_row(currencies) }}{% endif %}
+</div>

@@ -18,46 +18,26 @@ use Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Loads payment term integration channel.
+ */
 class LoadPaymentRuleIntegrationData extends AbstractFixture implements ContainerAwareInterface
 {
-    const PAYMENT_TERM_INTEGRATION_CHANNEL_REFERENCE = 'payment_term_integration_channel';
-    const MAIN_USER_ID = 1;
+    use ContainerAwareTrait;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    public const PAYMENT_TERM_INTEGRATION_CHANNEL_REFERENCE = 'payment_term_integration_channel';
 
     /**
      * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function load(ObjectManager $manager): void
     {
-        $this->container = $container;
+        $this->loadShippingRule($manager, $this->loadIntegration($manager));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function load(ObjectManager $manager)
-    {
-        if (!$this->container) {
-            return;
-        }
-
-        $channel = $this->loadIntegration($manager);
-
-        $this->loadShippingRule($manager, $channel);
-    }
-
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return Channel
-     */
-    private function loadIntegration(ObjectManager $manager)
+    private function loadIntegration(ObjectManager $manager): Channel
     {
         $label = (new LocalizedFallbackValue())->setString('Payment Term');
 
@@ -66,12 +46,12 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
         $transport->addShortLabel($label);
 
         $channel = new Channel();
-        $channel->setType(PaymentTermChannelType::TYPE)
-            ->setName((string)$label)
-            ->setEnabled(true)
-            ->setOrganization($this->getOrganization($manager))
-            ->setDefaultUserOwner($this->getMainUser($manager))
-            ->setTransport($transport);
+        $channel->setType(PaymentTermChannelType::TYPE);
+        $channel->setName((string)$label);
+        $channel->setEnabled(true);
+        $channel->setOrganization($this->getOrganization($manager));
+        $channel->setDefaultUserOwner($this->getMainUser($manager));
+        $channel->setTransport($transport);
 
         $this->setReference(self::PAYMENT_TERM_INTEGRATION_CHANNEL_REFERENCE, $channel);
 
@@ -81,51 +61,37 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
         return $channel;
     }
 
-    private function loadShippingRule(ObjectManager $manager, Channel $channel)
+    private function loadShippingRule(ObjectManager $manager, Channel $channel): void
     {
         $methodConfig = new PaymentMethodConfig();
         $methodConfig->setType($this->getPaymentTermIdentifier($channel));
 
         $rule = new Rule();
-        $rule->setName('Default')
-            ->setEnabled(true)
-            ->setSortOrder(1);
+        $rule->setName('Default');
+        $rule->setEnabled(true);
+        $rule->setSortOrder(1);
 
         $shippingRule = new PaymentMethodsConfigsRule();
-
-        $shippingRule->setRule($rule)
-            ->setOrganization($this->getOrganization($manager))
-            ->setCurrency($this->getDefaultCurrency())
-            ->addMethodConfig($methodConfig);
+        $shippingRule->setRule($rule);
+        $shippingRule->setOrganization($this->getOrganization($manager));
+        $shippingRule->setCurrency($this->getDefaultCurrency());
+        $shippingRule->addMethodConfig($methodConfig);
 
         $manager->persist($shippingRule);
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return Organization|object
-     */
-    private function getOrganization(ObjectManager $manager)
+    private function getOrganization(ObjectManager $manager): Organization
     {
         if ($this->hasReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION)) {
             return $this->getReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION);
         }
 
-        return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        return $manager->getRepository(Organization::class)->getFirst();
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return User
-     *
-     * @throws EntityNotFoundException
-     */
-    public function getMainUser(ObjectManager $manager)
+    public function getMainUser(ObjectManager $manager): User
     {
-        /** @var User $entity */
         $entity = $manager->getRepository(User::class)->findOneBy([], ['id' => 'ASC']);
         if (!$entity) {
             throw new EntityNotFoundException('Main user does not exist.');
@@ -134,28 +100,18 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
         return $entity;
     }
 
-    /**
-     * @param Channel $channel
-     *
-     * @return int|string
-     */
-    private function getPaymentTermIdentifier(Channel $channel)
+    private function getPaymentTermIdentifier(Channel $channel): string
     {
-        return $this->container
-            ->get('oro_payment_term.config.integration_method_identifier_generator')
+        return $this->container->get('oro_payment_term.config.integration_method_identifier_generator')
             ->generateIdentifier($channel);
     }
 
-    /**
-     * @return string
-     */
-    private function getDefaultCurrency()
+    private function getDefaultCurrency(): string
     {
         /** @var ConfigManager $configManager * */
         $configManager = $this->container->get('oro_config.global');
 
-        $currencyConfigKey = CurrencyConfig::getConfigKeyByName(CurrencyConfig::KEY_DEFAULT_CURRENCY);
-
-        return $configManager->get($currencyConfigKey) ?: CurrencyConfig::DEFAULT_CURRENCY;
+        return $configManager->get(CurrencyConfig::getConfigKeyByName(CurrencyConfig::KEY_DEFAULT_CURRENCY))
+            ?: CurrencyConfig::DEFAULT_CURRENCY;
     }
 }

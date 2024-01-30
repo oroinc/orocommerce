@@ -27,23 +27,23 @@ class CombinedPriceListToCustomerGroupRepositoryTest extends AbstractCombinedPri
         $combinedPriceListsToCustomerGroup = $repo->findAll();
         $this->assertCount(1, $combinedPriceListsToCustomerGroup);
         //Add Base Relation
-        $priceListToCustomer = new PriceListToCustomerGroup();
+        $priceListToCustomerGroup = new PriceListToCustomerGroup();
         /** @var CombinedPriceListToCustomerGroup $combinedPriceListToCustomerGroup */
         $combinedPriceListToCustomerGroup = $this->getRelationByPriceList(
             $combinedPriceListsToCustomerGroup,
             $combinedPriceList
         );
-        $priceListToCustomer->setCustomerGroup($combinedPriceListToCustomerGroup->getCustomerGroup());
-        $priceListToCustomer->setMergeAllowed(false);
-        $priceListToCustomer->setPriceList($priceList);
-        $priceListToCustomer->setSortOrder(4);
-        $priceListToCustomer->setWebsite($combinedPriceListToCustomerGroup->getWebsite());
-        $em->persist($priceListToCustomer);
+        $priceListToCustomerGroup->setCustomerGroup($combinedPriceListToCustomerGroup->getCustomerGroup());
+        $priceListToCustomerGroup->setMergeAllowed(false);
+        $priceListToCustomerGroup->setPriceList($priceList);
+        $priceListToCustomerGroup->setSortOrder(4);
+        $priceListToCustomerGroup->setWebsite($combinedPriceListToCustomerGroup->getWebsite());
+        $em->persist($priceListToCustomerGroup);
         $em->flush();
         $repo->deleteInvalidRelations();
         $this->assertCount(1, $repo->findAll());
         //Remove Base Relation
-        $em->remove($priceListToCustomer);
+        $em->remove($priceListToCustomerGroup);
         $em->flush();
 
         $fallback = new PriceListCustomerGroupFallback();
@@ -75,5 +75,20 @@ class CombinedPriceListToCustomerGroupRepositoryTest extends AbstractCombinedPri
         $websites = $repo->getWebsitesByCombinedPriceList($combinedPriceList);
 
         $this->assertEquals([$this->getReference(LoadWebsiteData::WEBSITE1)], $websites);
+    }
+
+    public function testGetRelation()
+    {
+        $registry = $this->getContainer()->get('doctrine');
+        $repo = $registry->getRepository(CombinedPriceListToCustomerGroup::class);
+
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        $customerGroup = $this->getReference('customer_group.group1');
+
+        $cpl = $this->getReference('1t_2t_3t');
+
+        $relation = $repo->getRelation($website, $customerGroup);
+        $this->assertNotNull($relation);
+        $this->assertEquals($cpl->getId(), $relation->getFullChainPriceList()->getId());
     }
 }

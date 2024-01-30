@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Voter;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\Voter\VoterInterface;
 use Oro\Bundle\ProductBundle\Voter\GuestQuickOrderFormVoter;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class GuestQuickOrderFormVoterTest extends \PHPUnit\Framework\TestCase
 {
@@ -32,7 +34,7 @@ class GuestQuickOrderFormVoterTest extends \PHPUnit\Framework\TestCase
     {
         $featureName = 'feature_name';
 
-        $token = new \stdClass();
+        $token = $this->createMock(TokenInterface::class);
         $scopeIdentifier = 1;
         $this->tokenStorage->expects($this->once())
             ->method('getToken')
@@ -52,7 +54,7 @@ class GuestQuickOrderFormVoterTest extends \PHPUnit\Framework\TestCase
 
     public function testVoteEnabled()
     {
-        $token = new AnonymousCustomerUserToken('');
+        $token = new AnonymousCustomerUserToken(new CustomerVisitor());
         $featureName = 'feature_name';
 
         $scopeIdentifier = 1;
@@ -71,7 +73,7 @@ class GuestQuickOrderFormVoterTest extends \PHPUnit\Framework\TestCase
 
     public function testVoteDisabled()
     {
-        $token = new AnonymousCustomerUserToken('');
+        $token = new AnonymousCustomerUserToken(new CustomerVisitor());
         $featureName = 'feature_name';
 
         $scopeIdentifier = 1;

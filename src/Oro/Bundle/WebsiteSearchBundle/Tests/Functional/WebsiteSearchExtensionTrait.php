@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
@@ -27,6 +28,11 @@ trait WebsiteSearchExtensionTrait
     protected static function getIndexAgent()
     {
         return self::getContainer()->get('oro_website_elastic_search.engine.index_agent');
+    }
+
+    protected static function getSearchEngine(): EngineInterface
+    {
+        return self::getContainer()->get('oro_website_search.engine');
     }
 
     protected static function getIndexPrefix()

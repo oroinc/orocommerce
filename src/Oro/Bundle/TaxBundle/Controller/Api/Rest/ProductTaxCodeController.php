@@ -26,7 +26,7 @@ class ProductTaxCodeController extends AbstractFOSRestController
     public function patchAction(Request $request, Product $product)
     {
         $taxCodeId = $request->get('taxCode');
-        $doctrineHelper = $this->get('oro_entity.doctrine_helper');
+        $doctrineHelper = $this->container->get('oro_entity.doctrine_helper');
 
         /** @var ProductTaxCodeRepository $taxCodeRepository */
         $taxCodeRepository = $doctrineHelper->getEntityRepositoryForClass(ProductTaxCode::class);

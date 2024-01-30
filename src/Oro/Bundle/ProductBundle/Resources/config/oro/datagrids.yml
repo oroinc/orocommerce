@@ -158,63 +158,6 @@ datagrids:
                 type:
                     visible: false
 
-    products-select-grid-frontend:
-        acl_resource: oro_product_frontend_view
-        options:
-            entityHint: oro.product.entity_plural_label
-            frontend: true
-        source:
-            type: search
-            search_index: website
-            skip_acl_apply: true
-            query:
-                select:
-                    - integer.system_entity_id as autocomplete_record_id
-                    - text.sku as sku
-                    - text.names_LOCALIZATION_ID as productName
-                    - text.status as status
-                    - text.type as type
-                    - datetime.created_at as createdAt
-                    - datetime.updated_at as updatedAt
-                    - text.inv_status as inventoryStatus
-                from:
-                    - oro_product_WEBSITE_ID
-        columns:
-            sku:
-                label:         oro.product.sku.label
-            productName:
-                label:         oro.product.names.label
-            inventoryStatus:
-                label:         oro.product.inventory_status.label
-                frontend_type: select
-                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
-                translatable_options: false
-        filters:
-            columns:
-                sku:
-                    type:      string
-                    data_name: sku
-                productName:
-                    type:      string
-                    data_name: names_LOCALIZATION_ID
-                inventoryStatus:
-                    type:      enum
-                    data_name: inv_status
-                    enum_code: prod_inventory_status
-        properties:
-            id: ~
-        sorters:
-            columns:
-                sku:
-                    data_name: sku
-                productName:
-                    data_name: names_LOCALIZATION_ID
-                inventoryStatus:
-                    data_name: inventory_status
-
-            toolbar_sorting: true
-            disable_default_sorting: true
-
     product-collection-base-grid:
         extends: products-select-grid-base-without-default-sorting
         columns:
@@ -390,11 +333,6 @@ datagrids:
     products-grid:
         extends: products-select-grid-base
         extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Product'
-        source:
-            query:
-                join:
-                    left:
-                        - { join: product.attributeFamily, alias: af }
         options:
             entity_pagination: true
         properties:
@@ -415,10 +353,6 @@ datagrids:
                     - id
                 direct_params:
                     entity: 'products'
-            attribute_family_localized:
-                type: localized_value
-                data_name: af.labels
-                allow_empty: true
         actions:
             view:
                 type:          navigate
@@ -461,9 +395,6 @@ datagrids:
                 images:
                     data_name: product.images
                     column_name: productImage
-                attributeFamily:
-                    data_name: product.attributeFamily
-                    column_name: attribute_family_localized
         columns:
             productImage:
                 label:         oro.product.image.label
@@ -485,10 +416,6 @@ datagrids:
                     validation_rules:
                         NotBlank: true
                 order:         3
-            attributeFamily:
-                label:         oro.product.attribute_family.label
-                data_name:     attribute_family_localized
-                order:         4
             inventoryStatusId:
                 inline_editing:
                     enable: true
@@ -515,19 +442,8 @@ datagrids:
                 order:         80
             updatedAt:
                 order:         90
-        sorters:
-            columns:
-                attributeFamily:
-                    data_name: product.attributeFamily
         filters:
             columns:
-                attributeFamily:
-                    data_name: product.attributeFamily
-                    type: choice-tree
-                    label: oro.product.attribute_family.label
-                    autocomplete_alias: oro_product_families
-                    renderedPropertyName: 'defaultLabel'
-                    className: 'Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily'
                 createdAt:
                     renderable: false
 
@@ -945,83 +861,6 @@ datagrids:
                 selectors:
                     included: '#productAppendUpsellSelect'
                     excluded: '#productRemoveUpsellSelect'
-
-    frontend-product-search-grid:
-        options:
-            entityHint: oro.product.entity_plural_label
-            displayOptions:
-                selector: '.catalog__filter-controls__item_display-options'
-            jsmodules:
-                - oroproduct/js/app/datagrid/frontend-product-process-options-builder
-                - oroproduct/js/app/datagrid/frontend-product-display-options-builder
-                - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
-            frontend: true
-        source:
-            type: search
-            search_index: website
-            query:
-                select:
-                    - text.sku as sku
-                    - integer.newArrival as newArrival
-                    - text.names_LOCALIZATION_ID as name
-                    - text.shortDescriptions_LOCALIZATION_ID as shortDescription
-                    - text.type as type
-                    - text.image_product_medium as image_product_medium
-                    - text.image_product_large as image_product_large
-                    - text.image_product_medium_webp as image_product_medium_webp
-                    - text.image_product_large_webp as image_product_large_webp
-                    - text.product_units as product_units
-                    - text.primary_unit as unit
-                    - integer.variant_fields_count as variant_fields_count
-                    - text.schema_org_brand_name_LOCALIZATION_ID as schemaOrgBrandName
-                    - text.schema_org_description_LOCALIZATION_ID as schemaOrgDescription
-                from:
-                    - oro_product_WEBSITE_ID
-            hints:
-                - {'name': HINT_SEARCH_TYPE, 'value': 'product_search'} # Used for search term logging.
-        columns:
-            sku:
-                label:         oro.product.sku.label
-            name:
-                label:         oro.product.names.label
-            shortDescription:
-                label:         oro.product.short_descriptions.label
-        filters:
-            columns:
-                all_text:
-                    type:      string
-                    data_name: all_text_LOCALIZATION_ID
-                    label:     oro.product.anything.label
-                    max_length: 255
-                    options:
-                        operator_choices:
-                           '@oro_search.utils.search_all_text->getOperatorChoices'
-        properties:
-            id: ~
-            type: ~
-            schemaOrgBrandName: ~
-            schemaOrgDescription: ~
-            view_link:
-                type:  url
-                route: oro_product_frontend_product_view
-                params: [ id ]
-            newArrival: ~
-            unit: ~
-            view_aria_label:
-                type:   translatable
-                key:    oro.product.frontend.grid.action.product.view.aria_label
-                params: [name]
-        sorters:
-            toolbar_sorting: true
-            disable_default_sorting: true
-        actions:
-            view:
-                type:          navigate
-                label:         oro.grid.action.view
-                ariaLabel:     view_aria_label
-                link:          view_link
-                icon:          eye
-                rowAction:     true
 
     brand-grid:
         acl_resource: oro_product_brand_view

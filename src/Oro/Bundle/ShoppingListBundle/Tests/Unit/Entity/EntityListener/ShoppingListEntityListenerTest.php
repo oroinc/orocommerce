@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\EntityListener;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -10,6 +11,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -53,7 +55,7 @@ class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'with token and without owner' => [
-                'token' => new AnonymousCustomerUserToken(''),
+                'token' => new AnonymousCustomerUserToken(new CustomerVisitor()),
                 'shoppingList' => new ShoppingList()
             ],
             'without token and without owner' => [
@@ -61,11 +63,11 @@ class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
                 'shoppingList' => new ShoppingList()
             ],
             'unsupported token and without owner' => [
-                'token' => new \stdClass(),
+                'token' => $this->createMock(TokenInterface::class),
                 'shoppingList' => new ShoppingList()
             ],
             'with owner' => [
-                'token' => new AnonymousCustomerUserToken(''),
+                'token' => new AnonymousCustomerUserToken(new CustomerVisitor()),
                 'shoppingList' => (new ShoppingList())->setOwner(new User())
             ]
         ];
@@ -73,7 +75,7 @@ class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPrePersistSetDefaultOwnerAndCurrency()
     {
-        $token = new AnonymousCustomerUserToken('');
+        $token = new AnonymousCustomerUserToken(new CustomerVisitor());
         $shoppingList = new ShoppingList();
 
         $currency = 'GBP';

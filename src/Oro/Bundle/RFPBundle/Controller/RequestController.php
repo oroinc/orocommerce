@@ -24,7 +24,7 @@ class RequestController extends AbstractController
      * @Acl(
      *      id="oro_rfp_request_view",
      *      type="entity",
-     *      class="OroRFPBundle:Request",
+     *      class="Oro\Bundle\RFPBundle\Entity\Request",
      *      permission="VIEW"
      * )
      */
@@ -66,7 +66,7 @@ class RequestController extends AbstractController
      *     id="oro_rfp_request_update",
      *     type="entity",
      *     permission="EDIT",
-     *     class="OroRFPBundle:Request"
+     *     class="Oro\Bundle\RFPBundle\Entity\Request"
      * )
      */
     public function updateAction(RFPRequest $rfpRequest): array|RedirectResponse
@@ -76,10 +76,10 @@ class RequestController extends AbstractController
 
     protected function update(RFPRequest $rfpRequest): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $rfpRequest,
             $this->createForm(RequestType::class, $rfpRequest),
-            $this->get(TranslatorInterface::class)->trans('oro.rfp.controller.request.saved.message')
+            $this->container->get(TranslatorInterface::class)->trans('oro.rfp.controller.request.saved.message')
         );
     }
 

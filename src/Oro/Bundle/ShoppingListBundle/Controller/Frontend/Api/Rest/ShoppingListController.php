@@ -29,7 +29,7 @@ class ShoppingListController extends RestController
      */
     public function setCurrentAction(ShoppingList $shoppingList)
     {
-        $this->get('oro_shopping_list.manager.current_shopping_list')
+        $this->container->get('oro_shopping_list.manager.current_shopping_list')
             ->setCurrent($this->getUser(), $shoppingList);
 
         return $this->buildResponse(
@@ -52,7 +52,7 @@ class ShoppingListController extends RestController
      */
     public function setOwnerAction(Request $request, ShoppingList $shoppingList)
     {
-        $manager = $this->get('oro_shopping_list.shopping_list.owner_manager');
+        $manager = $this->container->get('oro_shopping_list.shopping_list.owner_manager');
         $status = Response::HTTP_OK;
         $data = $this->container->get('translator')
             ->trans(
@@ -77,7 +77,7 @@ class ShoppingListController extends RestController
      */
     public function getManager()
     {
-        return $this->get('oro_shopping_list.shopping_list.manager.api');
+        return $this->container->get('oro_shopping_list.shopping_list.manager.api');
     }
 
     /**

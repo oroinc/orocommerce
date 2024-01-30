@@ -10,11 +10,10 @@ class LoadGuestShoppingListLineItems extends AbstractShoppingListLineItemsFixtur
 {
     use UserUtilityTrait;
 
-    const LINE_ITEM_1 = 'guest_shopping_list_line_item.1';
-    const LINE_ITEM_2 = 'guest_shopping_list_line_item.2';
+    public const LINE_ITEM_1 = 'guest_shopping_list_line_item.1';
+    public const LINE_ITEM_2 = 'guest_shopping_list_line_item.2';
 
-    /** @var array */
-    protected static $lineItems = [
+    protected static array $lineItems = [
         self::LINE_ITEM_1 => [
             'product' => LoadProductData::PRODUCT_4,
             'shoppingList' => LoadGuestShoppingLists::GUEST_SHOPPING_LIST_1,
@@ -30,9 +29,9 @@ class LoadGuestShoppingListLineItems extends AbstractShoppingListLineItemsFixtur
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadProductUnitPrecisions::class,

@@ -4,47 +4,26 @@ namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroSEOBundle implements Migration, ExtendExtensionAwareInterface
 {
-    const PRODUCT_TABLE_NAME = 'orob2b_product';
-    const CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
-    const LANDING_PAGE_TABLE_NAME = 'orob2b_cms_page';
-    const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
-
-    /** @var ExtendExtension */
-    protected $extendExtension;
+    use ExtendExtensionAwareTrait;
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
-    public function setExtendExtension(ExtendExtension $extendExtension)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $this->extendExtension = $extendExtension;
+        $this->addMetaInformation($schema, 'orob2b_product');
+        $this->addMetaInformation($schema, 'orob2b_catalog_category');
+        $this->addMetaInformation($schema, 'orob2b_cms_page');
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function up(Schema $schema, QueryBag $queries)
-    {
-        $this->addMetaInformation($schema, self::PRODUCT_TABLE_NAME);
-        $this->addMetaInformation($schema, self::CATEGORY_TABLE_NAME);
-        $this->addMetaInformation($schema, self::LANDING_PAGE_TABLE_NAME);
-    }
-
-    /**
-     * Method that adds 3 meta fields (metaTitles, metaDescription, metaKeywords) relations to the
-     * received table (corresponding to a an entitiy).
-     *
-     * @param Schema $schema
-     * @param string $ownerTable
-     */
-    private function addMetaInformation($schema, $ownerTable)
+    private function addMetaInformation(Schema $schema, string $ownerTable): void
     {
         $this->addMetaInformationField($schema, $ownerTable, 'metaTitles');
         $this->addMetaInformationField($schema, $ownerTable, 'metaDescriptions');
@@ -54,14 +33,8 @@ class OroSEOBundle implements Migration, ExtendExtensionAwareInterface
     /**
      * Add a many-to-many relation between a given table and the table corresponding to the
      * LocalizedFallbackValue entity, with the given relation name.
-     *
-     * @param Schema $schema
-     * @param string $ownerTable
-     * @param string $relationName
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    private function addMetaInformationField($schema, $ownerTable, $relationName)
+    private function addMetaInformationField(Schema $schema, string $ownerTable, string $relationName): void
     {
         $targetTable = $schema->getTable($ownerTable);
 
@@ -76,7 +49,7 @@ class OroSEOBundle implements Migration, ExtendExtensionAwareInterface
             $schema,
             $targetTable,
             $relationName,
-            self::FALLBACK_LOCALE_VALUE_TABLE_NAME,
+            'oro_fallback_localization_val',
             $targetTitleColumnNames,
             $targetDetailedColumnNames,
             $targetGridColumnNames,

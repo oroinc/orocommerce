@@ -11,26 +11,24 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class UpdateTypeForExistingProducts implements Migration, OrderedMigrationInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function getOrder(): int
     {
-        $productTableName = AddColumnTypeToProduct::PRODUCT_TABLE_NAME;
-
-        // Add type 'simple' to all existing products
-        $queries->addPreQuery(
-            new ParametrizedSqlMigrationQuery(
-                "UPDATE $productTableName SET type = :typeValue WHERE type IS NULL",
-                ['typeValue' => 'simple']
-            )
-        );
+        return 20;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getOrder()
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        return 20;
+        // Add type 'simple' to all existing products
+        $queries->addPreQuery(
+            new ParametrizedSqlMigrationQuery(
+                'UPDATE oro_product SET type = :typeValue WHERE type IS NULL',
+                ['typeValue' => 'simple']
+            )
+        );
     }
 }

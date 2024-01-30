@@ -64,7 +64,7 @@ class OrderControllerTest extends WebTestCase
         $this->loginUser($user);
         $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
         $this->assertSame($indexResponseStatus, $this->client->getResponse()->getStatusCode());
-        $response = $this->client->requestGrid(
+        $response = $this->client->requestFrontendGrid(
             [
                 'gridName' => 'frontend-orders-grid',
             ]

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -40,7 +41,7 @@ class OrderController extends AbstractController
      * @Acl(
      *      id="oro_order_view",
      *      type="entity",
-     *      class="OroOrderBundle:Order",
+     *      class="Oro\Bundle\OrderBundle\Entity\Order",
      *      permission="VIEW",
      *      category="orders"
      * )
@@ -49,7 +50,8 @@ class OrderController extends AbstractController
     {
         return [
             'entity' => $order,
-            'totals' => $this->get(TotalProvider::class)->getTotalWithSubtotalsWithBaseCurrencyValues($order),
+            'totals' => $this->container->get(TotalProvider::class)
+                ->getTotalWithSubtotalsWithBaseCurrencyValues($order),
         ];
     }
 
@@ -61,7 +63,7 @@ class OrderController extends AbstractController
     public function infoAction(Order $order): array
     {
         if ($order->getSourceEntityClass() && $order->getSourceEntityId()) {
-            $sourceEntity = $this->getDoctrine()
+            $sourceEntity = $this->container->get('doctrine')
                 ->getManagerForClass($order->getSourceEntityClass())
                 ->find($order->getSourceEntityClass(), $order->getSourceEntityId());
         }
@@ -92,7 +94,7 @@ class OrderController extends AbstractController
      * @Acl(
      *      id="oro_order_create",
      *      type="entity",
-     *      class="OroOrderBundle:Order",
+     *      class="Oro\Bundle\OrderBundle\Entity\Order",
      *      permission="CREATE"
      * )
      */
@@ -125,7 +127,8 @@ class OrderController extends AbstractController
         $order = new Order();
         $order->setCustomer($customer);
 
-        $saveAndReturnActionFormTemplateDataProvider = $this->get(SaveAndReturnActionFormTemplateDataProvider::class);
+        $saveAndReturnActionFormTemplateDataProvider = $this->container
+            ->get(SaveAndReturnActionFormTemplateDataProvider::class);
         $saveAndReturnActionFormTemplateDataProvider
             ->setSaveFormActionRoute(
                 'oro_order_create_for_customer',
@@ -167,7 +170,8 @@ class OrderController extends AbstractController
         $order->setCustomerUser($customerUser);
         $order->setCustomer($customerUser->getCustomer());
 
-        $saveAndReturnActionFormTemplateDataProvider = $this->get(SaveAndReturnActionFormTemplateDataProvider::class);
+        $saveAndReturnActionFormTemplateDataProvider = $this->container
+            ->get(SaveAndReturnActionFormTemplateDataProvider::class);
         $saveAndReturnActionFormTemplateDataProvider
             ->setSaveFormActionRoute(
                 'oro_order_create_for_customer_user',
@@ -195,7 +199,7 @@ class OrderController extends AbstractController
      * @Acl(
      *      id="oro_order_update",
      *      type="entity",
-     *      class="OroOrderBundle:Order",
+     *      class="Oro\Bundle\OrderBundle\Entity\Order",
      *      permission="EDIT"
      * )
      */
@@ -210,7 +214,7 @@ class OrderController extends AbstractController
         FormTemplateDataProviderInterface|null $resultProvider = null
     ): array|RedirectResponse {
         if (\in_array($request->getMethod(), ['POST', 'PUT'], true)) {
-            $orderRequestHandler = $this->get(OrderRequestHandler::class);
+            $orderRequestHandler = $this->container->get(OrderRequestHandler::class);
             $order->setCustomer($orderRequestHandler->getCustomer());
             $order->setCustomerUser($orderRequestHandler->getCustomerUser());
         }
@@ -221,15 +225,15 @@ class OrderController extends AbstractController
             ['validation_groups' => $this->getValidationGroups($order)]
         );
 
-        $formTemplateDataProviderComposite = $this->get(FormTemplateDataProviderComposite::class)
+        $formTemplateDataProviderComposite = $this->container->get(FormTemplateDataProviderComposite::class)
             ->addFormTemplateDataProviders($resultProvider)
             ->addFormTemplateDataProviders(
                 function (Order $order, FormInterface $form, Request $request) {
                     $submittedData = $request->get($form->getName());
                     $event = new OrderEvent($form, $form->getData(), $submittedData);
-                    $this->get(EventDispatcherInterface::class)->dispatch($event, OrderEvent::NAME);
+                    $this->container->get(EventDispatcherInterface::class)->dispatch($event, OrderEvent::NAME);
                     $orderData = $event->getData()->getArrayCopy();
-                    $orderAddressSecurityProvider = $this->get(OrderAddressSecurityProvider::class);
+                    $orderAddressSecurityProvider = $this->container->get(OrderAddressSecurityProvider::class);
 
                     return [
                         'form' => $form->createView(),
@@ -244,10 +248,10 @@ class OrderController extends AbstractController
                 }
             );
 
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $order,
             $form,
-            $this->get(TranslatorInterface::class)->trans('oro.order.controller.order.saved.message'),
+            $this->container->get(TranslatorInterface::class)->trans('oro.order.controller.order.saved.message'),
             $request,
             null,
             $formTemplateDataProviderComposite
@@ -275,6 +279,7 @@ class OrderController extends AbstractController
             UpdateHandlerFacade::class,
             SaveAndReturnActionFormTemplateDataProvider::class,
             FormTemplateDataProviderComposite::class,
+            'doctrine' => ManagerRegistry::class,
         ]);
     }
 }

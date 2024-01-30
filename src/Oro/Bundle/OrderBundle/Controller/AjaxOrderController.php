@@ -31,7 +31,7 @@ class AjaxOrderController extends AbstractController
     {
         if (!$order) {
             $order = new Order();
-            $order->setWebsite($this->get(WebsiteManager::class)->getDefaultWebsite());
+            $order->setWebsite($this->container->get(WebsiteManager::class)->getDefaultWebsite());
         }
 
         $form = $this->getType($order);
@@ -41,7 +41,7 @@ class AjaxOrderController extends AbstractController
         $form->submit($submittedData);
 
         $event = new OrderEvent($form, $form->getData(), $submittedData);
-        $this->get(EventDispatcherInterface::class)->dispatch($event, OrderEvent::NAME);
+        $this->container->get(EventDispatcherInterface::class)->dispatch($event, OrderEvent::NAME);
 
         return new JsonResponse($event->getData());
     }

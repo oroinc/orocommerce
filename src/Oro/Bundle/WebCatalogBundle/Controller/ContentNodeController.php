@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -115,7 +116,7 @@ class ContentNodeController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $slugGenerator = $this->get(SlugGenerator::class);
+        $slugGenerator = $this->container->get(SlugGenerator::class);
 
         return new JsonResponse($slugGenerator->getSlugsUrlForMovedNode($newParentContentNode, $contentNode));
     }
@@ -133,15 +134,15 @@ class ContentNodeController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $slugGenerator = $this->get(SlugGenerator::class);
+        $slugGenerator = $this->container->get(SlugGenerator::class);
         $oldUrls = $slugGenerator->prepareSlugUrls($node);
 
         $form = $this->createForm(ContentNodeType::class, $node);
-        $form->submit($request->request->get($form->getName()), false);
+        $form->submit($request->request->all($form->getName()), false);
 
         $newUrls = $slugGenerator->prepareSlugUrls($form->getData());
 
-        $slugUrlDiffer = $this->get(SlugUrlDiffer::class);
+        $slugUrlDiffer = $this->container->get(SlugUrlDiffer::class);
 
         $urlChanges = $slugUrlDiffer->getSlugUrlsChanges($oldUrls, $newUrls);
 
@@ -150,19 +151,20 @@ class ContentNodeController extends AbstractController
 
     protected function updateTreeNode(ContentNode $node): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $node,
             $this->createForm(ContentNodeType::class, $node),
-            $this->get(TranslatorInterface::class)->trans('oro.webcatalog.controller.contentnode.saved.message'),
+            $this->container->get(TranslatorInterface::class)
+                ->trans('oro.webcatalog.controller.contentnode.saved.message'),
             null,
-            $this->get(ContentNodeHandler::class),
-            $this->get(ContentNodeFormTemplateDataProvider::class)
+            $this->container->get(ContentNodeHandler::class),
+            $this->container->get(ContentNodeFormTemplateDataProvider::class)
         );
     }
 
     protected function getTreeHandler(): ContentNodeTreeHandler
     {
-        return $this->get(ContentNodeTreeHandler::class);
+        return $this->container->get(ContentNodeTreeHandler::class);
     }
 
     /**
@@ -177,14 +179,15 @@ class ContentNodeController extends AbstractController
             UpdateHandlerFacade::class,
             TranslatorInterface::class,
             ContentNodeHandler::class,
-            ContentNodeFormTemplateDataProvider::class
+            ContentNodeFormTemplateDataProvider::class,
+            'doctrine' => ManagerRegistry::class
         ]);
     }
 
     private function getSlugPrototypeStrings(int $nodeId): array
     {
         /** @var ContentNode $movedNode */
-        $movedNode = $this->getDoctrine()
+        $movedNode = $this->container->get('doctrine')
             ->getManagerForClass(ContentNode::class)
             ->find(ContentNode::class, $nodeId);
 

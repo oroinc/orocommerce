@@ -7,7 +7,6 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -16,6 +15,8 @@ use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -30,29 +31,18 @@ class SlugRepositoryTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(
-                LoadCustomerUserData::AUTH_USER,
-                LoadCustomerUserData::AUTH_PW
-            )
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->loadFixtures([LoadSlugScopesData::class]);
+        $this->loadFixtures([LoadSlugScopesData::class, LoadOrganization::class]);
 
-        $this->client->useHashNavigation(true);
-        $this->repository = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository(Slug::class);
-        $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+        $this->repository = self::getContainer()->get('doctrine')->getRepository(Slug::class);
+        $this->scopeManager = self::getContainer()->get('oro_scope.scope_manager');
 
-        $organization = $this->getContainer()->get('doctrine')
-            ->getRepository(Organization::class)
-            ->getFirst();
-        $token = new UsernamePasswordOrganizationToken(
-            LoadCustomerUserData::AUTH_USER,
-            'admin',
+        self::getContainer()->get('security.token_storage')->setToken(new UsernamePasswordOrganizationToken(
+            $this->createMock(AbstractUser::class),
             'key',
-            $organization
-        );
-        $this->client->getContainer()->get('security.token_storage')->setToken($token);
+            $this->getReference(LoadOrganization::ORGANIZATION)
+        ));
     }
 
     public function testGetSlugByUrlAndScopeCriteriaAnonymous()

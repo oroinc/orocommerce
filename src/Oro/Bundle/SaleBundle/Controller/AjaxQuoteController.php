@@ -93,7 +93,7 @@ class AjaxQuoteController extends AbstractController
         $form->submit($submittedData);
 
         $event = new QuoteEvent($form, $form->getData(), $submittedData);
-        $this->get(EventDispatcherInterface::class)->dispatch($event, QuoteEvent::NAME);
+        $this->container->get(EventDispatcherInterface::class)->dispatch($event, QuoteEvent::NAME);
 
         return new JsonResponse($event->getData());
     }
@@ -138,7 +138,7 @@ class AjaxQuoteController extends AbstractController
      */
     protected function getPaymentTermProvider()
     {
-        return $this->get(PaymentTermProvider::class);
+        return $this->container->get(PaymentTermProvider::class);
     }
 
     /**
@@ -151,7 +151,7 @@ class AjaxQuoteController extends AbstractController
 
     protected function getQuoteRequestHandler(): QuoteRequestHandler
     {
-        return $this->get(QuoteRequestHandler::class);
+        return $this->container->get(QuoteRequestHandler::class);
     }
 
     /**

@@ -7,6 +7,7 @@ use Oro\Bundle\FormBundle\Provider\FormFieldsMapProvider;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -16,6 +17,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductKitItemType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
+use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -40,9 +42,12 @@ class ProductKitItemCollectionTypeTest extends FormIntegrationTestCase
 
     private FormFieldsMapProvider|MockObject $fieldsMapProvider;
 
+    private ProductUnitFieldsSettingsInterface|MockObject $unitFieldsSettings;
+
     protected function setUp(): void
     {
         $this->fieldsMapProvider = $this->createMock(FormFieldsMapProvider::class);
+        $this->unitFieldsSettings = $this->createMock(ProductUnitFieldsSettingsInterface::class);
         $this->type = new ProductKitItemCollectionType();
         $translator = $this->createMock(TranslatorInterface::class);
         $bypassCallback = static fn ($value) => $value;
@@ -65,7 +70,7 @@ class ProductKitItemCollectionTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $this->type,
-                    new ProductKitItemType($this->fieldsMapProvider),
+                    new ProductKitItemType($this->fieldsMapProvider, $this->unitFieldsSettings),
                     ProductKitItemProductsType::class => $this->kitItemProductsType,
                     new ProductUnitSelectType($this->productUnitLabelFormatter),
                     EntityType::class => new EntityTypeStub([
@@ -93,9 +98,19 @@ class ProductKitItemCollectionTypeTest extends FormIntegrationTestCase
         self::assertNull($form->getData());
     }
 
+    public function testBuildFormWithoutProductKitData(): void
+    {
+        $productKitItem = new ProductKitItem();
+
+        $form = $this->factory->create(ProductKitItemCollectionType::class, new ArrayCollection([$productKitItem]));
+
+        self::assertEquals($productKitItem, $form->get(0)->getData());
+    }
+
     public function testBuildFormWithData(): void
     {
         $productKitItem = new ProductKitItem();
+        $productKitItem->setProductKit(new Product());
 
         $form = $this->factory->create(ProductKitItemCollectionType::class, new ArrayCollection([$productKitItem]));
 

@@ -40,10 +40,15 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__content product-item__content--{{ class_prefix }}',
     }) %}
+    {% if matrixFormType is not defined %}
+        {% set matrixFormType = '' %}
+    {% endif %}
+    {% set isProductHasPrices = productPrices is defined and productPrices is not empty or
+        product is defined and product.prices is defined and matrixFormType == 'none' and product.prices is not empty
+    %}
     {% if
         microdataWithoutPricesDisabled == false or
-        productPrices is defined and productPrices is not empty or
-        product is defined and product.prices is defined and matrixFormType == 'none' and product.prices is not empty
+        (not is_price_hidden(product) and isProductHasPrices == true)
     %}
         {% set attr = layout_attr_defaults(attr, {
             'itemscope': '',
@@ -54,7 +59,7 @@
                 <meta itemprop="description" content="{{ product.schemaOrgDescription }}" />
             {% endset %}
         {% endif %}
-        {% if product.schemaOrgBrandName is defined %}
+        {% if product.schemaOrgBrandName is defined and product.schemaOrgBrandName|length %}
             {% set productSchemaOrgBrand %}
                 <span class="hidden" itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
                     <meta itemprop="name" content="{{ product.schemaOrgBrandName }}" />
@@ -164,7 +169,8 @@
             src: product.image,
             alt: product.name,
             class: 'product-item__preview-image',
-            itemprop: 'image'
+            itemprop: 'image',
+            loading: 'lazy'
         },
         picture_attrs: attr
     } %}
@@ -197,7 +203,7 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__primary-content product-item__primary-content--{{ class_prefix }}'
     }) %}
-    {% if matrixFormType == 'inline' %}
+    {% if matrixFormType|default('') == 'inline' %}
         {% if class_prefix == 'list-view' %}
             {% set attr = layout_attr_defaults(attr, {
                 '~class': ' product-item__primary-content--remainder-width'

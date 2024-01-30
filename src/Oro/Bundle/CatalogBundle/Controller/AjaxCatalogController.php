@@ -34,7 +34,7 @@ class AjaxCatalogController extends AbstractController
         $position = (int)$request->get('position');
 
         return new JsonResponse(
-            $this->get(CategoryTreeHandler::class)->moveNode($nodeId, $parentId, $position)
+            $this->container->get(CategoryTreeHandler::class)->moveNode($nodeId, $parentId, $position)
         );
     }
 

@@ -8,93 +8,79 @@ use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-/** Bundle install migrations */
 class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
-    const CONSENT_TABLE_NAME = 'oro_consent';
-    const CONSENT_NAME_TABLE_NAME = 'oro_consent_name';
-    const CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME = 'oro_consent_acceptance';
-
-    /** @var ExtendExtension */
-    private $extendExtension;
+    use ExtendExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_2';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
+        /** Tables generation **/
         $this->createConsentTable($schema);
         $this->createOroConsentNameTable($schema);
         $this->createOroConsentAcceptanceTable($schema);
 
+        /** Foreign keys generation **/
         $this->addOroConsentForeignKeys($schema);
         $this->addOroConsentNameForeignKeys($schema);
         $this->addOroConsentAcceptanceForeignKeys($schema);
-        $this->addConsentAcceptanceCustomerUserRelation($schema);
 
-        $table = $schema->getTable(self::CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME);
-        $table->addUniqueIndex(['consent_id','customerUser_id'], 'oro_customeru_consent_uidx');
+        $this->addConsentAcceptanceCustomerUserRelation($schema);
     }
 
-    private function createConsentTable(Schema $schema)
+    private function createConsentTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::CONSENT_TABLE_NAME);
+        $table = $schema->createTable('oro_consent');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('content_node_id', 'integer', ['notnull' => false]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
         $table->addColumn('mandatory', 'boolean', ['notnull' => true, 'default' => true]);
         $table->addColumn('declined_notification', 'boolean', ['notnull' => true, 'default' => true]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['created_at'], 'idx_oro_consent_created_at', []);
+        $table->addIndex(['created_at'], 'idx_oro_consent_created_at');
         $table->addIndex(['content_node_id'], 'oro_consent_content_node_id');
     }
 
-    private function createOroConsentNameTable(Schema $schema)
+    private function createOroConsentNameTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::CONSENT_NAME_TABLE_NAME);
-        $table->addColumn('consent_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table = $schema->createTable('oro_consent_name');
+        $table->addColumn('consent_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['consent_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'oro_consent_name_trans_localized_value_id');
     }
 
-    private function createOroConsentAcceptanceTable(Schema $schema)
+    private function createOroConsentAcceptanceTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME);
+        $table = $schema->createTable('oro_consent_acceptance');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('consent_id', 'integer', []);
+        $table->addColumn('consent_id', 'integer');
         $table->addColumn('landing_page_id', 'integer', ['notnull' => false]);
-        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
         $table->setPrimaryKey(['id']);
     }
 
-    private function addOroConsentForeignKeys(Schema $schema)
+    private function addOroConsentForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::CONSENT_TABLE_NAME);
+        $table = $schema->getTable('oro_consent');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
@@ -115,11 +101,11 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
         );
     }
 
-    private function addOroConsentNameForeignKeys(Schema $schema)
+    private function addOroConsentNameForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::CONSENT_NAME_TABLE_NAME);
+        $table = $schema->getTable('oro_consent_name');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::CONSENT_TABLE_NAME),
+            $schema->getTable('oro_consent'),
             ['consent_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -132,11 +118,11 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
         );
     }
 
-    private function addOroConsentAcceptanceForeignKeys(Schema $schema)
+    private function addOroConsentAcceptanceForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME);
+        $table = $schema->getTable('oro_consent_acceptance');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::CONSENT_TABLE_NAME),
+            $schema->getTable('oro_consent'),
             ['consent_id'],
             ['id'],
             ['onDelete' => 'RESTRICT', 'onUpdate' => null]
@@ -154,14 +140,14 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
      */
     private function addConsentAcceptanceCustomerUserRelation(Schema $schema): void
     {
-        $inverseSideTable = $schema->getTable('oro_customer_user');
-        $owningSideTable = $schema->getTable(self::CONSENT_CUSTOMER_ACCEPTANCE_TABLE_NAME);
+        $consentAcceptanceTable = $schema->getTable('oro_consent_acceptance');
+        $customerUserTable = $schema->getTable('oro_customer_user');
 
         $this->extendExtension->addManyToOneRelation(
             $schema,
-            $owningSideTable,
+            $consentAcceptanceTable,
             'customerUser',
-            $inverseSideTable,
+            $customerUserTable,
             'id',
             [
                 ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
@@ -177,12 +163,11 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
                 'merge' => ['display' => false]
             ]
         );
-
         $this->extendExtension->addManyToOneInverseRelation(
             $schema,
-            $owningSideTable,
+            $consentAcceptanceTable,
             'customerUser',
-            $inverseSideTable,
+            $customerUserTable,
             'acceptedConsents',
             ['id'],
             ['id'],
@@ -204,5 +189,7 @@ class OroConsentBundleInstaller implements Installation, ExtendExtensionAwareInt
                 'merge' => ['display' => false]
             ]
         );
+
+        $consentAcceptanceTable->addUniqueIndex(['consent_id','customerUser_id'], 'oro_customeru_consent_uidx');
     }
 }

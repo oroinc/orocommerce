@@ -36,19 +36,19 @@ class ProductVisibilityController extends AbstractController
      */
     public function editAction(Request $request, Product $product): array|RedirectResponse
     {
-        $scopes = $this->get(VisibilityRootScopesProvider::class)->getScopes($product);
+        $scopes = $this->container->get(VisibilityRootScopesProvider::class)->getScopes($product);
         if (0 === count($scopes)) {
             $preloadedScopes = [];
         } else {
             $preloadedScopes = [reset($scopes)];
         }
 
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $product,
             $this->createScopedDataForm($product, $preloadedScopes),
-            $this->get(TranslatorInterface::class)->trans('oro.visibility.event.saved.message'),
+            $this->container->get(TranslatorInterface::class)->trans('oro.visibility.event.saved.message'),
             $request,
-            new VisibilityFormDataHandler($this->get(EventDispatcherInterface::class))
+            new VisibilityFormDataHandler($this->container->get(EventDispatcherInterface::class))
         );
     }
 
@@ -83,7 +83,8 @@ class ProductVisibilityController extends AbstractController
                 'ownership_disabled' => true,
                 'dynamic_fields_disabled' => true,
                 ScopedDataType::PRELOADED_SCOPES_OPTION => $preloadedScopes,
-                ScopedDataType::SCOPES_OPTION => $this->get(VisibilityRootScopesProvider::class)->getScopes($product),
+                ScopedDataType::SCOPES_OPTION => $this->container->get(VisibilityRootScopesProvider::class)
+                    ->getScopes($product),
                 ScopedDataType::TYPE_OPTION => EntityVisibilityType::class,
                 ScopedDataType::OPTIONS_OPTION => [
                     'dynamic_fields_disabled' => true,

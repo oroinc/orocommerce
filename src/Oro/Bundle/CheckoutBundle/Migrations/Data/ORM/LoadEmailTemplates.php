@@ -21,26 +21,24 @@ class LoadEmailTemplates extends AbstractEmailFixture implements VersionedFixtur
      *     <template_name> => [<MD5_of_previous_version_allowed_to_update>],
      *     <template_name_2> => true
      * ]
-     *
-     * @var array
      */
-    protected $emailsUpdateConfig = [
+    private array $emailsUpdateConfig = [
         'checkout_registration_confirmation' => ['61d0aa78a03cff496e373d85f3f3bfce'],
         'checkout_customer_user_reset_password' => ['d5eac9230ad16940519a2cd1e0bfa88e'],
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return '1.0';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function findExistingTemplate(ObjectManager $manager, array $template)
+    protected function findExistingTemplate(ObjectManager $manager, array $template): ?EmailTemplate
     {
         if (empty($template['params']['name'])) {
             return null;
@@ -48,14 +46,14 @@ class LoadEmailTemplates extends AbstractEmailFixture implements VersionedFixtur
 
         return $manager->getRepository(EmailTemplate::class)->findOneBy([
             'name' => $template['params']['name'],
-            'entityName' => $template['params']['entityName'],
+            'entityName' => $template['params']['entityName']
         ]);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function updateExistingTemplate(EmailTemplate $emailTemplate, array $template)
+    protected function updateExistingTemplate(EmailTemplate $emailTemplate, array $template): void
     {
         foreach ($this->emailsUpdateConfig as $templateName => $contentHashes) {
             if ($emailTemplate->getName() === $templateName
@@ -67,11 +65,9 @@ class LoadEmailTemplates extends AbstractEmailFixture implements VersionedFixtur
     }
 
     /**
-     * Return path to email templates
-     *
-     * @return string
+     * {@inheritDoc}
      */
-    public function getEmailsDir()
+    public function getEmailsDir(): string
     {
         return $this->container
             ->get('kernel')

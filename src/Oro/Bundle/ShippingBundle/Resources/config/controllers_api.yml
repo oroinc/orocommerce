@@ -2,8 +2,9 @@ services:
     _defaults:
         public: true
 
-    OroShippingBundleRestApiController:
-        namespace: Oro\Bundle\ShippingBundle\Controller\Api\Rest\
-        resource: '../../Controller/Api/Rest/*Controller.php'
+    Oro\Bundle\ShippingBundle\Controller\Api\Rest\ShippingMethodsConfigsRuleController:
         calls:
-            - [setContainer, ['@service_container']]
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_shipping.shipping_rule.manager.api, key: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager }

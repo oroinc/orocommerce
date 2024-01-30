@@ -4,11 +4,13 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\EventListener\CheckoutListener;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -52,11 +54,11 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
                 'checkout' => new Checkout()
             ],
             'unsupported token and without owner' => [
-                'token' => new \stdClass(),
+                'token' => $this->createMock(TokenInterface::class),
                 'checkout' => new Checkout()
             ],
             'with owner' => [
-                'token' => new AnonymousCustomerUserToken(''),
+                'token' => new AnonymousCustomerUserToken(new CustomerVisitor()),
                 'checkout' => (new Checkout())->setOwner(new User())
             ]
         ];
@@ -94,12 +96,12 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'with token, without owner, without current organization' => [
-                'token' => new AnonymousCustomerUserToken(''),
+                'token' => new AnonymousCustomerUserToken(new CustomerVisitor()),
                 'checkout' => new Checkout(),
                 'expectedOrganization' => null
             ],
             'with token, without owner, with organization' => [
-                'token' => new AnonymousCustomerUserToken(''),
+                'token' => new AnonymousCustomerUserToken(new CustomerVisitor()),
                 'checkout' => new Checkout(),
                 'organization' => new Organization()
             ],

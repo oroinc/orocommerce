@@ -45,7 +45,7 @@ class AjaxProductShippingOptionsController extends AbstractController
     {
         $unitCode = $request->request->get('activeUnitCode');
 
-        $productData = $request->request->get(ProductType::NAME);
+        $productData = $request->request->all(ProductType::NAME);
         if (!is_array($productData)) {
             throw $this->createNotFoundException();
         }
@@ -56,9 +56,9 @@ class AjaxProductShippingOptionsController extends AbstractController
         }
         $activeShippingOptions->setProduct($product);
 
-        $provider = $this->get(FreightClassesProvider::class);
+        $provider = $this->container->get(FreightClassesProvider::class);
 
-        $formatter = $this->get(UnitLabelFormatter::class);
+        $formatter = $this->container->get(UnitLabelFormatter::class);
 
         $units = $provider->getFreightClasses($activeShippingOptions);
 

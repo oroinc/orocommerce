@@ -11,9 +11,9 @@ use Symfony\Component\Yaml\Yaml;
 class LoadProductKitPriceDemoData extends LoadProductPriceDemoData
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return array_merge(parent::getDependencies(), [
             LoadProductKitDemoData::class,
@@ -25,9 +25,9 @@ class LoadProductKitPriceDemoData extends LoadProductPriceDemoData
      */
     protected function getProducts(): \Iterator
     {
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/product_kits.yaml');
-        if (is_array($filePath)) {
+        $filePath = $this->getFileLocator()
+            ->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/product_kits.yaml');
+        if (\is_array($filePath)) {
             $filePath = current($filePath);
         }
 

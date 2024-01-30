@@ -11,30 +11,27 @@ use Oro\Bundle\UserBundle\Entity\UserManager;
 
 class LoadUserData extends AbstractLoadCustomerUserFixture
 {
-    const USER1 = 'rfp-user1';
-    const USER2 = 'rfp-user2';
+    public const USER1 = 'rfp-user1';
+    public const USER2 = 'rfp-user2';
 
-    const ROLE1 = 'rfp-role1';
-    const ROLE2 = 'rfp-role2';
-    const ROLE3 = 'rfp-role3';
-    const ROLE4 = 'rfp-role4';
+    public const ROLE1 = 'rfp-role1';
+    public const ROLE2 = 'rfp-role2';
+    public const ROLE3 = 'rfp-role3';
+    public const ROLE4 = 'rfp-role4';
 
-    const PARENT_ACCOUNT = 'rfp-parent-customer';
-    const ACCOUNT1 = 'rfp-customer1';
-    const ACCOUNT2 = 'rfp-customer2';
+    public const PARENT_ACCOUNT = 'rfp-parent-customer';
+    public const ACCOUNT1 = 'rfp-customer1';
+    public const ACCOUNT2 = 'rfp-customer2';
 
-    const ACCOUNT1_USER1    = 'rfp-customer1-user1@example.com';
-    const ACCOUNT1_USER2    = 'rfp-customer1-user2@example.com';
-    const ACCOUNT1_USER3    = 'rfp-customer1-user3@example.com';
-    const ACCOUNT2_USER1    = 'rfp-customer2-user1@example.com';
-    const ACCOUNT2_USER2    = 'rfp-customer2-user2@example.com';
-    const PARENT_ACCOUNT_USER1    = 'rfp-parent-customer-user1@example.com';
-    const PARENT_ACCOUNT_USER2    = 'rfp-parent-customer-user2@example.com';
+    public const ACCOUNT1_USER1 = 'rfp-customer1-user1@example.com';
+    public const ACCOUNT1_USER2 = 'rfp-customer1-user2@example.com';
+    public const ACCOUNT1_USER3 = 'rfp-customer1-user3@example.com';
+    public const ACCOUNT2_USER1 = 'rfp-customer2-user1@example.com';
+    public const ACCOUNT2_USER2 = 'rfp-customer2-user2@example.com';
+    public const PARENT_ACCOUNT_USER1 = 'rfp-parent-customer-user1@example.com';
+    public const PARENT_ACCOUNT_USER2 = 'rfp-parent-customer-user2@example.com';
 
-    /**
-     * @var array
-     */
-    protected $roles = [
+    private array $roles = [
         self::ROLE1 => [
             [
                 'class' => Request::class,
@@ -81,10 +78,7 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
         ]
     ];
 
-    /**
-     * @var array
-     */
-    protected $customers = [
+    private array $customers = [
         [
             'name' => self::PARENT_ACCOUNT,
         ],
@@ -98,10 +92,7 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
         ],
     ];
 
-    /**
-     * @var array
-     */
-    protected $customerUsers = [
+    private array $customerUsers = [
         [
             'email'     => self::ACCOUNT1_USER1,
             'firstname' => 'User1FN',
@@ -160,10 +151,7 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
         ],
     ];
 
-    /**
-     * @var array
-     */
-    protected $users = [
+    private array $users = [
         [
             'email'     => 'rfp-user1@example.com',
             'username'  => self::USER1,
@@ -181,26 +169,20 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $this->loadUsers($manager);
-
+        $this->loadUsers();
         parent::load($manager);
     }
 
-    protected function loadUsers(ObjectManager $manager)
+    private function loadUsers(): void
     {
         /* @var UserManager $userManager */
         $userManager = $this->container->get('oro_user.manager');
-
-        $defaultUser = $this->getUser($manager);
-
-        $businessUnit = $defaultUser->getOwner();
-        $organization = $defaultUser->getOrganization();
+        $defaultUser = $this->getUser();
         $roles = $defaultUser->getUserRoles();
-
         foreach ($this->users as $item) {
             /* @var User $user */
             $user = $userManager->createUser();
@@ -209,38 +191,37 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
                 ->setBusinessUnits($defaultUser->getBusinessUnits())
-                ->setOwner($businessUnit)
-                ->setOrganization($organization)
+                ->setOwner($defaultUser->getOwner())
+                ->setOrganization($defaultUser->getOrganization())
                 ->addUserRole($roles[0])
                 ->setUsername($item['username'])
                 ->setPlainPassword($item['password'])
                 ->setEnabled(true);
             $userManager->updateUser($user);
-
-            $this->setReference($user->getUsername(), $user);
+            $this->setReference($user->getUserIdentifier(), $user);
         }
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getCustomers()
+    protected function getCustomers(): array
     {
         return $this->customers;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getRoles()
+    protected function getRoles(): array
     {
         return $this->roles;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getCustomerUsers()
+    protected function getCustomerUsers(): array
     {
         return $this->customerUsers;
     }

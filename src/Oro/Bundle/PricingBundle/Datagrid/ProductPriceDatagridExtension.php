@@ -6,19 +6,22 @@ use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
+use Oro\Component\PhpUtils\ArrayUtil;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -29,13 +32,12 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
 {
     use FeatureCheckerHolderTrait;
 
-    private const SUPPORTED_GRID = 'products-grid';
     private const UNIT_FILTER_SUFFIX = '__value';
 
     /** @var bool */
     private $applied = false;
 
-    /** @var PriceListRequestHandler */
+    /** @var PriceListRequestHandlerInterface */
     private $priceListRequestHandler;
 
     /** @var DoctrineHelper */
@@ -55,9 +57,10 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
 
     /** @var array */
     private $enabledPriceColumns;
+    private array $supportedGrids = [];
 
     public function __construct(
-        PriceListRequestHandler $priceListRequestHandler,
+        PriceListRequestHandlerInterface $priceListRequestHandler,
         DoctrineHelper $doctrineHelper,
         SelectedFieldsProviderInterface $selectedFieldsProvider,
         TranslatorInterface $translator,
@@ -68,6 +71,21 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         $this->selectedFieldsProvider = $selectedFieldsProvider;
         $this->translator = $translator;
         $this->authorizationChecker = $authorizationChecker;
+    }
+
+    protected function getFilterType(): string
+    {
+        return 'product-price';
+    }
+
+    protected function getPriceClassName(): string
+    {
+        return ProductPrice::class;
+    }
+
+    public function addSupportedGrid(string $gridName): void
+    {
+        $this->supportedGrids[$gridName] = true;
     }
 
     /**
@@ -87,7 +105,7 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
     {
         return $this->isFeaturesEnabled()
             && !$this->applied
-            && static::SUPPORTED_GRID === $config->getName()
+            && !empty($this->supportedGrids[$config->getName()])
             && parent::isApplicable($config);
     }
 
@@ -211,9 +229,27 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         $columnConfig = $this->createPriceColumnConfig($currencyIsoCode, $unitCode);
         $filterConfig = $this->createPriceFilterConfig($columnName, $currencyIsoCode, $unitCode);
 
+        $alias = $this->getJoinAlias($columnName);
+
         $config->offsetAddToArrayByPath('[columns]', [$columnName => $columnConfig]);
         $config->offsetAddToArrayByPath('[filters][columns]', [$columnName => $filterConfig]);
-        $config->offsetAddToArrayByPath('[sorters][columns]', [$columnName => ['data_name' => $columnName]]);
+        // For sorting, utilize the same algorithm as on the front, irrespective of the unit
+        $config->offsetAddToArrayByPath(
+            '[sorters][columns]',
+            [
+                $columnName => [
+                    'data_name' => QueryBuilderUtil::sprintf('MIN(%s.value)', $alias),
+                    'apply_callback' => function (OrmDatasource $datasource, $sortKey, $direction) use ($alias) {
+                        if ($sortKey) {
+                            $qb = $datasource->getQueryBuilder();
+                            if (\in_array($alias, $qb->getAllAliases(), true)) {
+                                $qb->addOrderBy($sortKey, QueryBuilderUtil::getSortOrder($direction));
+                            }
+                        }
+                    },
+                ],
+            ]
+        );
 
         return array_unique([$columnName, $filterConfig['data_name']]);
     }
@@ -252,7 +288,7 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
                 'renderable' => false,
             ];
         } else {
-            $filter = ['type' => 'product-price', 'data_name' => $currencyIsoCode];
+            $filter = ['type' => $this->getFilterType(), 'data_name' => $currencyIsoCode];
         }
 
         return $filter;
@@ -313,7 +349,6 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         $showTierPrices = $this->priceListRequestHandler->getShowTierPrices();
         $joinAlias = $this->getJoinAlias($columnName);
         /** It is assumed that we cannot get null here because we worked out this case earlier in ::getCurrencies() */
-        /** @var PriceList $priceList */
         $priceList = $this->getPriceList();
         $expr = new Expr();
         $joinExpr = $expr
@@ -330,14 +365,14 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         }
 
         $config->getOrmQuery()->addLeftJoin(
-            ProductPrice::class,
+            $this->getPriceClassName(),
             $joinAlias,
             Expr\Join::WITH,
             (string)$joinExpr
         );
     }
 
-    private function getPriceList(): ?PriceList
+    private function getPriceList(): ?BasePriceList
     {
         if (!$this->priceList) {
             $this->priceList = $this->priceListRequestHandler->getPriceList();
@@ -361,14 +396,21 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         foreach (explode(';', $rawPrices) as $rawPrice) {
             [$priceValue, $quantity, $unitCode] = explode('|', $rawPrice);
             $price = Price::create($priceValue, $currencyIsoCode);
-            $prices[] = [
+            $prices[$unitCode][] = [
                 'price' => $price,
                 'unitCode' => $unitCode,
                 'quantity' => $quantity,
             ];
         }
 
-        return $prices;
+        if (!$prices) {
+            return [];
+        }
+        foreach ($prices as &$pricesPerUnit) {
+            ArrayUtil::sortBy($pricesPerUnit, false, 'quantity');
+        }
+
+        return array_merge(...array_values($prices));
     }
 
     private function isGrantedToViewPriceFields(): bool

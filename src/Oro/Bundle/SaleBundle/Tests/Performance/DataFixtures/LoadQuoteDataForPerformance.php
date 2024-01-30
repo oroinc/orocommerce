@@ -2,22 +2,27 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Performance\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\AbstractFixture;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddresses;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
+use Oro\Bundle\UserBundle\Entity\User;
 
-class LoadQuoteDataForPerformance extends AbstractFixture
+class LoadQuoteDataForPerformance extends AbstractFixture implements DependentFixtureInterface
 {
     /** Total quotes will be NUMBER_OF_QUOTE_GROUPS * count(LoadQuoteData::$items) */
-    const NUMBER_OF_QUOTE_GROUPS = 10000;
+    public const NUMBER_OF_QUOTE_GROUPS = 10000;
 
-    const QUOTES_TO_EXPIRE = 10000;
+    public const QUOTES_TO_EXPIRE = 10000;
 
-    /** @var int */
-    protected $quotesToExpire = self::QUOTES_TO_EXPIRE;
+    private int $quotesToExpire = self::QUOTES_TO_EXPIRE;
 
-    /** @var array */
-    protected static $quoteUpdateFields = [
+    private static array $quoteUpdateFields = [
         'user_owner_id',
         'qid',
         'organization_id',
@@ -30,11 +35,26 @@ class LoadQuoteDataForPerformance extends AbstractFixture
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function getDependencies(): array
     {
-        $user = $this->getUser($manager);
+        return [
+            LoadUserData::class,
+            LoadCustomerUserAddresses::class,
+            LoadCustomerAddresses::class,
+            LoadProductUnitPrecisions::class,
+            LoadUser::class
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager): void
+    {
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
         $insertQuoteBaseSql = $this->getUpdateQuotesBaseSql();
 
         $params = [];
@@ -44,12 +64,12 @@ class LoadQuoteDataForPerformance extends AbstractFixture
             $params[] = "'%s'";
         }
         $valueSprintf = '(' . implode(', ', $params) . '),';
-        $UTC = new \DateTimeZone("UTC");
+        $UTC = new \DateTimeZone('UTC');
 
         for ($i = 1; $i <= static::NUMBER_OF_QUOTE_GROUPS; $i++) {
             $quoteSql = $insertQuoteBaseSql;
             foreach (LoadQuoteData::$items as $item) {
-                $poNumber = 'CA' . rand(1000, 9999) . 'USD';
+                $poNumber = 'CA' . random_int(1000, 9999) . 'USD';
 
                 // generate VALUES sql
                 $quoteSql .= sprintf(
@@ -70,24 +90,18 @@ class LoadQuoteDataForPerformance extends AbstractFixture
         }
     }
 
-    /**
-     * @return string
-     */
-    protected function getUpdateQuotesBaseSql()
+    private function getUpdateQuotesBaseSql(): string
     {
-        $sql = "INSERT INTO oro_sale_quote (";
+        $sql = 'INSERT INTO oro_sale_quote (';
         foreach (self::$quoteUpdateFields as $field) {
-            $sql .= $field . ", ";
+            $sql .= $field . ', ';
         }
         $sql = substr($sql, 0, -2) . ') VALUES ';
 
         return $sql;
     }
 
-    /**
-     * @return int
-     */
-    protected function getExpiredValue()
+    private function getExpiredValue(): int
     {
         if ($this->quotesToExpire >= 0) {
             $this->quotesToExpire--;
@@ -98,28 +112,10 @@ class LoadQuoteDataForPerformance extends AbstractFixture
         return 1;
     }
 
-    /**
-     * @param string $timezone
-     *
-     * @return string
-     */
-    protected function getValidUntilValue($timezone)
+    private function getValidUntilValue(string $timezone): string
     {
         return $this->quotesToExpire >= 0
             ? (new \DateTime('-1days', $timezone))->format('Y-m-d H:i:s')
             : (new \DateTime('+1days', $timezone))->format('Y-m-d H:i:s');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddresses',
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses',
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-        ];
     }
 }

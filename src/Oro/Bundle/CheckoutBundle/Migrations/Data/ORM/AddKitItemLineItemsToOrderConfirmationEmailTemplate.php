@@ -10,15 +10,18 @@ use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
  */
 class AddKitItemLineItemsToOrderConfirmationEmailTemplate extends UpdateOrderConfirmationEmailTemplate
 {
-    public function getDependencies()
+    /**
+     * {@inheritDoc}
+     */
+    public function getDependencies(): array
     {
         return [ConvertOrderConfirmationEmail::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getEmailsDir()
+    public function getEmailsDir(): string
     {
         return $this->container
             ->get('kernel')
@@ -26,11 +29,9 @@ class AddKitItemLineItemsToOrderConfirmationEmailTemplate extends UpdateOrderCon
     }
 
     /**
-     * Return path to old email templates
-     *
-     * @return string
+     * {@inheritDoc}
      */
-    public function getPreviousEmailsDir()
+    public function getPreviousEmailsDir(): string
     {
         return $this->container
             ->get('kernel')

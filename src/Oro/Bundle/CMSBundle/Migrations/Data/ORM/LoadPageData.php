@@ -12,8 +12,7 @@ use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
  */
 class LoadPageData extends AbstractLoadPageData
 {
-    /** @var array */
-    private $imagesMap = [
+    private array $imagesMap = [
         'about' => [
             '@OroCMSBundle/Migrations/Data/ORM/data/landing-page/320.jpg' =>
                 '/bundles/orocms/images/landing-page/320.jpg',
@@ -85,7 +84,7 @@ class LoadPageData extends AbstractLoadPageData
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function loadFromFile(ObjectManager $manager, string $filePath, Organization $organization): array
     {
@@ -123,9 +122,9 @@ class LoadPageData extends AbstractLoadPageData
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getFilePaths()
+    protected function getFilePaths(): string
     {
         return $this->getFilePathsFromLocator('@OroCMSBundle/Migrations/Data/ORM/data/pages.yml');
     }

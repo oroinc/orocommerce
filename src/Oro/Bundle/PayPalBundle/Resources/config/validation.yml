@@ -32,7 +32,6 @@ Oro\Bundle\PayPalBundle\Entity\PayPalSettings:
             - NotBlank: ~
             - Length:
                 min: 7
-                allowEmptyString: false
 
 Oro\Bundle\IntegrationBundle\Entity\Channel:
     constraints:

@@ -11,24 +11,13 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentSnapshot;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
-class LoadProductCollectionSegmentData extends AbstractFixture implements
-    ContainerAwareInterface,
-    DependentFixtureInterface
+class LoadProductCollectionSegmentData extends AbstractFixture implements DependentFixtureInterface
 {
-    const PRODUCT_COLLECTION_SEGMENT_1 = 'product-collection-segment-1';
+    public const PRODUCT_COLLECTION_SEGMENT_1 = 'product-collection-segment-1';
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var array
-     */
-    private $segments = [
+    private array $segments = [
         [
             'name' => self::PRODUCT_COLLECTION_SEGMENT_1,
             'definition' => '',
@@ -42,65 +31,40 @@ class LoadProductCollectionSegmentData extends AbstractFixture implements
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function getDependencies(): array
     {
-        $this->container = $container;
+        return [LoadProductData::class, LoadOrganization::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function load(ObjectManager $manager): void
     {
-        return [
-            LoadProductData::class
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ObjectManager $manager)
-    {
+        /** @var Organization $organization */
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
+        $owner = $organization->getBusinessUnits()->first();
         foreach ($this->segments as $item) {
-            $organization = $manager->getRepository(Organization::class)->getFirst();
-            $owner = $organization->getBusinessUnits()->first();
-
             $segment = new Segment();
             $segment->setName($item['name']);
             $segment->setOrganization($organization);
             $segment->setOwner($owner);
             $segment->setDefinition($item['definition']);
-            $segment->setType($this->getSegmentTypeByName($item['type']));
+            $segment->setType($manager->getRepository(SegmentType::class)->findOneBy(['name' => $item['type']]));
             $segment->setEntity($item['entity']);
             $this->setReference($item['name'], $segment);
-
             $manager->persist($segment);
 
             foreach ($item['snapshotProducts'] as $snapshotProduct) {
+                /** @var Product $product */
                 $product = $this->getReference($snapshotProduct);
-
                 $segmentSnapshot = new SegmentSnapshot($segment);
                 $segmentSnapshot->setIntegerEntityId($product->getId());
-
                 $manager->persist($segmentSnapshot);
             }
         }
-
         $manager->flush();
-    }
-
-    /**
-     * @param string $name
-     * @return SegmentType
-     */
-    private function getSegmentTypeByName($name)
-    {
-        return $this->container->get('doctrine')
-            ->getManagerForClass(SegmentType::class)
-            ->getRepository(SegmentType::class)
-            ->findOneBy(['name' => $name]);
     }
 }

@@ -31,7 +31,7 @@ class ProductsController extends AbstractController
             'grid_config' => [
                 self::PRODUCT_GRID_NAME
             ],
-            'theme_name' => $this->get(DataGridThemeHelper::class)
+            'theme_name' => $this->container->get(DataGridThemeHelper::class)
                 ->getTheme('order-products-previously-purchased-grid')
         ];
     }
