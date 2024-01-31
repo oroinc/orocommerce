@@ -63,11 +63,7 @@ Feature: Product Gallery Popup On Products Catalog
     Then I should see gallery image with alt "Product1`\"'&йёщ®&reg;>"
     When I click "Popup Gallery Widget Close"
     Then I should not see an "Popup Gallery Widget" element
-    When I click on "ProductFrontendMassActionHeadButtonTablet"
-    Then I should not see an "Product Item Gallery Trigger" element
-    When I click on "ProductFrontendMassActionHeadButtonTablet"
     Then I should see an "Product Item Gallery Trigger" element
-    When I click on "ProductFrontendMassActionHeadButtonTablet"
     And I click on "ProductFrontendSelectRowCell"
     And I click on "ProductFrontendMassClosePanel"
     Then I should see an "Product Item Gallery Trigger" element

@@ -923,10 +923,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
 
     ProductFrontendMassActionHeadCheckbox:
-      selector: 'div.datagrid-massaction button'
-
-    ProductFrontendMassActionHeadButtonTablet:
-      selector: '.product-action-area .product-action > .btn'
+      selector: 'div.datagrid-massaction label'
 
     ProductFrontendMassActionButton:
       selector: '.datagrid-massaction button.dropdown-toggle'

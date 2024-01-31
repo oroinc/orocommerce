@@ -5,12 +5,6 @@ define(function(require) {
     const $ = require('jquery');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-all-header-cell.html');
     const SelectAllHeaderCell = require('orodatagrid/js/datagrid/header-cell/select-all-header-cell');
-    const viewportManager = require('oroui/js/viewport-manager').default;
-
-    const modes = {
-        DROPDOWN: 'Dropdown',
-        SIMPLE: 'Simple'
-    };
 
     const BackendSelectAllHeaderCell = SelectAllHeaderCell.extend({
         /** @property */
@@ -78,12 +72,6 @@ define(function(require) {
         defineRenderingStrategy() {
             const prevRenderMode = this.renderMode;
 
-            if (this._isSimple()) {
-                this.renderMode = modes.SIMPLE;
-            } else {
-                this.renderMode = modes.DROPDOWN;
-            }
-
             if (prevRenderMode !== this.renderMode) {
                 this.trigger('render-mode:changed', {
                     prevRenderMode,
@@ -141,31 +129,10 @@ define(function(require) {
                 .removeClass('checked');
         },
 
-        _isSimple() {
-            return viewportManager.isApplicable(this.optimizedScreenSize);
-        },
-
-        /**
-         * @inheritdoc
-         */
-        getTemplateData() {
-            const data = BackendSelectAllHeaderCell.__super__.getTemplateData.call(this);
-
-            data.isSimple = this._isSimple();
-
-            return data;
-        },
-
         render() {
             BackendSelectAllHeaderCell.__super__.render.call(this);
 
             this.$el.trigger('content:changed');
-
-            if (this.renderMode === modes.SIMPLE) {
-                this.updateVisibleState(false);
-            } else {
-                this.updateVisibleState();
-            }
 
             return this;
         }
