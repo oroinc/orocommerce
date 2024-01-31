@@ -10,7 +10,7 @@ use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormRegistryInterface;
-use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Form\ResolvedFormTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class TotalCalculateListenerTest extends \PHPUnit\Framework\TestCase
@@ -110,7 +110,7 @@ class TotalCalculateListenerTest extends \PHPUnit\Framework\TestCase
      */
     private function configureFormRegistry($className, $formName)
     {
-        $formType = $this->createMock(FormTypeInterface::class);
+        $formType = $this->createMock(ResolvedFormTypeInterface::class);
         $formType ->expects($this->any())
             ->method('getBlockPrefix')
             ->willReturn($formName);

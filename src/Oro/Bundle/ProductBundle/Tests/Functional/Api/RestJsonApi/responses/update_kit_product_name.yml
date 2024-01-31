@@ -1,0 +1,11 @@
+data:
+    type: productnames
+    id: '<toString(@product_kit1_name->id)>'
+    attributes:
+        fallback: null
+        string: "An Updated Kit Name"
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product_kit1->id)>'

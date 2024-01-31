@@ -8,11 +8,11 @@ use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\DataGridBundle\Provider\SelectedFields\SelectedFieldsProviderInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 
 abstract class AbstractProductsGridPricesExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PriceListRequestHandler|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var PriceListRequestHandlerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $priceListRequestHandler;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
@@ -30,9 +30,11 @@ abstract class AbstractProductsGridPricesExtensionTest extends \PHPUnit\Framewor
     /** @var AbstractExtension */
     protected $extension;
 
+    protected string $supportedGridName;
+
     protected function setUp(): void
     {
-        $this->priceListRequestHandler = $this->createMock(PriceListRequestHandler::class);
+        $this->priceListRequestHandler = $this->createMock(PriceListRequestHandlerInterface::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->selectedFieldsProvider = $this->createMock(SelectedFieldsProviderInterface::class);
 
@@ -53,7 +55,7 @@ abstract class AbstractProductsGridPricesExtensionTest extends \PHPUnit\Framewor
             ->with(ParameterBag::DATAGRID_MODES_PARAMETER)
             ->willReturn([]);
 
-        $this->mockDatagridName('products-grid');
+        $this->mockDatagridName($this->supportedGridName);
 
         $this->extension->setParameters($this->datagridParameters);
         self::assertTrue($this->extension->isApplicable($this->datagridConfiguration));

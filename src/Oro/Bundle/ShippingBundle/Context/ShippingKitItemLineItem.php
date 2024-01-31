@@ -12,6 +12,9 @@ use Oro\Bundle\ProductBundle\Model\ProductKitItemAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecorator;
+use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Bundle\ShippingBundle\Model\Weight;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -19,6 +22,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class ShippingKitItemLineItem extends ParameterBag implements
     ProductUnitHolderInterface,
+    ProductShippingOptionsInterface,
     ProductHolderInterface,
     QuantityAwareInterface,
     PriceAwareInterface,
@@ -34,6 +38,8 @@ class ShippingKitItemLineItem extends ParameterBag implements
     public const FIELD_PRICE = 'price';
     public const FIELD_KIT_ITEM = 'kit_item';
     public const FIELD_SORT_ORDER = 'sort_order';
+    public const FIELD_WEIGHT = 'weight';
+    public const FIELD_DIMENSIONS = 'dimensions';
 
     public function __construct(ProductHolderInterface $productHolder)
     {
@@ -149,6 +155,30 @@ class ShippingKitItemLineItem extends ParameterBag implements
     public function setSortOrder(int $sortOrder): self
     {
         $this->set(self::FIELD_SORT_ORDER, $sortOrder);
+
+        return $this;
+    }
+
+    public function getWeight(): ?Weight
+    {
+        return $this->get(self::FIELD_WEIGHT);
+    }
+
+    public function getDimensions(): ?Dimensions
+    {
+        return $this->get(self::FIELD_DIMENSIONS);
+    }
+
+    public function setWeight(?Weight $weight): self
+    {
+        $this->set(self::FIELD_WEIGHT, $weight);
+
+        return $this;
+    }
+
+    public function setDimensions(?Dimensions $dimensions): self
+    {
+        $this->set(self::FIELD_DIMENSIONS, $dimensions);
 
         return $this;
     }

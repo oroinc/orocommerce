@@ -5,10 +5,12 @@ namespace Oro\Bundle\ShippingBundle\Migrations\Data\ORM;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
 
+/**
+ * Loads product units and freight classes.
+ */
 class LoadUnitsAndFreightClassesData extends AbstractUnitsAndFreightClassesFixture implements VersionedFixtureInterface
 {
-    /** @var array */
-    protected $weightUnits = [
+    private array $weightUnits = [
         ['code' => 'lbs', 'conversion_rates' => [
             'kg' => 0.45359237
         ]],
@@ -17,8 +19,7 @@ class LoadUnitsAndFreightClassesData extends AbstractUnitsAndFreightClassesFixtu
         ]]
     ];
 
-    /** @var array */
-    protected $lengthUnits = [
+    private array $lengthUnits = [
         ['code' => 'inch', 'conversion_rates' => [
             'foot' => 0.0833333,
             'cm'   => 2.54,
@@ -41,15 +42,14 @@ class LoadUnitsAndFreightClassesData extends AbstractUnitsAndFreightClassesFixtu
         ]]
     ];
 
-    /** @var array */
-    protected $freightClasses = [
+    private array $freightClasses = [
         ['code' => 'parcel']
     ];
 
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->addUpdateWeightUnits($manager, $this->weightUnits);
         $this->addUpdateLengthUnits($manager, $this->lengthUnits);
@@ -59,11 +59,9 @@ class LoadUnitsAndFreightClassesData extends AbstractUnitsAndFreightClassesFixtu
     }
 
     /**
-     * Return current fixture version
-     *
-     * @return string
+     * {@inheritDoc}
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return '1.1';
     }

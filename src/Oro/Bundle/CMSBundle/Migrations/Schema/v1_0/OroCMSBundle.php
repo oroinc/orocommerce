@@ -12,14 +12,10 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 {
     use AttachmentExtensionAwareTrait;
 
-    const CMS_LOGIN_PAGE_TABLE = 'orob2b_cms_login_page';
-    const MAX_LOGO_IMAGE_SIZE_IN_MB = 10;
-    const MAX_BACKGROUND_IMAGE_SIZE_IN_MB = 10;
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
         $this->createOrob2BCmsPageTable($schema);
@@ -30,13 +26,14 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
         $this->addOrob2BCmsPageForeignKeys($schema);
         $this->addOrob2BCmsPageToSlugForeignKeys($schema);
 
-        $this->addImageAssociations($schema);
+        $this->attachmentExtension->addImageRelation($schema, 'orob2b_cms_login_page', 'logoImage', [], 10);
+        $this->attachmentExtension->addImageRelation($schema, 'orob2b_cms_login_page', 'backgroundImage', [], 10);
     }
 
     /**
      * Create orob2b_cms_page table
      */
-    protected function createOrob2BCmsPageTable(Schema $schema)
+    private function createOrob2BCmsPageTable(Schema $schema): void
     {
         $table = $schema->createTable('orob2b_cms_page');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -58,7 +55,7 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
     /**
      * Create orob2b_cms_page_to_slug table
      */
-    protected function createOrob2BCmsPageToSlugTable(Schema $schema)
+    private function createOrob2BCmsPageToSlugTable(Schema $schema): void
     {
         $table = $schema->createTable('orob2b_cms_page_to_slug');
         $table->addColumn('page_id', 'integer', []);
@@ -70,7 +67,7 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
     /**
      * Add orob2b_cms_page foreign keys.
      */
-    protected function addOrob2BCmsPageForeignKeys(Schema $schema)
+    private function addOrob2BCmsPageForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('orob2b_cms_page');
         $table->addForeignKeyConstraint(
@@ -96,7 +93,7 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
     /**
      * Add orob2b_cms_page_to_slug foreign keys.
      */
-    protected function addOrob2BCmsPageToSlugForeignKeys(Schema $schema)
+    private function addOrob2BCmsPageToSlugForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('orob2b_cms_page_to_slug');
         $table->addForeignKeyConstraint(
@@ -116,32 +113,13 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
     /**
      * Create orob2b_cms_login_page table
      */
-    protected function createOroCmsLoginPageTable(Schema $schema)
+    private function createOroCmsLoginPageTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::CMS_LOGIN_PAGE_TABLE);
+        $table = $schema->createTable('orob2b_cms_login_page');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('top_content', 'text', ['notnull' => false]);
         $table->addColumn('bottom_content', 'text', ['notnull' => false]);
         $table->addColumn('css', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-    }
-
-    protected function addImageAssociations(Schema $schema)
-    {
-        $this->attachmentExtension->addImageRelation(
-            $schema,
-            self::CMS_LOGIN_PAGE_TABLE,
-            'logoImage',
-            [],
-            self::MAX_LOGO_IMAGE_SIZE_IN_MB
-        );
-
-        $this->attachmentExtension->addImageRelation(
-            $schema,
-            self::CMS_LOGIN_PAGE_TABLE,
-            'backgroundImage',
-            [],
-            self::MAX_BACKGROUND_IMAGE_SIZE_IN_MB
-        );
     }
 }

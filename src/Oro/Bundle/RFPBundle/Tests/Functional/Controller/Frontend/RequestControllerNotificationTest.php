@@ -6,7 +6,6 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
@@ -31,9 +30,7 @@ class RequestControllerNotificationTest extends WebTestCase
     private const PO_NUMBER = 'CA245566789KL';
 
     private ?ObjectManager $em;
-
     private ConfigManager $configManager;
-
     private Website $website;
 
     /**
@@ -42,14 +39,8 @@ class RequestControllerNotificationTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            [
-                LoadRequestData::class,
-                LoadProductPrices::class,
-            ]
-        );
+        $this->loadFixtures([LoadRequestData::class, LoadProductPrices::class]);
 
         $this->client->enableProfiler();
 
@@ -58,7 +49,7 @@ class RequestControllerNotificationTest extends WebTestCase
             ->getManagerForClass(User::class);
         $this->website = self::getContainer()->get('oro_website.manager')->getDefaultWebsite();
 
-        $this->configManager = self::getConfigManager('global');
+        $this->configManager = self::getConfigManager();
     }
 
     protected function tearDown(): void
@@ -230,7 +221,6 @@ class RequestControllerNotificationTest extends WebTestCase
 
         $crfToken = $this->getCsrfToken('oro_rfp_frontend_request')->getValue();
 
-        /** @var ProductPrice $productPrice */
         $productPrice = $this->getPriceByReference('product_price.1');
 
         $parameters = [

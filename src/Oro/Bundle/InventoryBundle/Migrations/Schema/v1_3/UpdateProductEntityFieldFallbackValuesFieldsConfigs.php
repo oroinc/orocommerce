@@ -5,40 +5,33 @@ namespace Oro\Bundle\InventoryBundle\Migrations\Schema\v1_3;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigIndexFieldValueQuery;
-use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManagerAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManagerAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class UpdateProductEntityFieldFallbackValuesFieldsConfigs implements Migration, ContainerAwareInterface
+class UpdateProductEntityFieldFallbackValuesFieldsConfigs implements Migration, ExtendOptionsManagerAwareInterface
 {
-    use ContainerAwareTrait;
-
-    /** @var array */
-    private static $fields = [
-        'manageInventory',
-        'highlightLowInventory',
-        'inventoryThreshold',
-        'lowInventoryThreshold',
-        'minimumQuantityToOrder',
-        'maximumQuantityToOrder',
-        'decrementQuantity',
-        'backOrder',
-        'isUpcoming'
-    ];
+    use ExtendOptionsManagerAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        /** @var ExtendOptionsManager $optionsManager */
-        $optionsManager = $this->container->get('oro_entity_extend.migration.options_manager');
-
-        foreach (self::$fields as $fieldName) {
+        $fields = [
+            'manageInventory',
+            'highlightLowInventory',
+            'inventoryThreshold',
+            'lowInventoryThreshold',
+            'minimumQuantityToOrder',
+            'maximumQuantityToOrder',
+            'decrementQuantity',
+            'backOrder',
+            'isUpcoming'
+        ];
+        foreach ($fields as $fieldName) {
             $queries->addQuery(
                 new UpdateEntityConfigFieldValueQuery(Product::class, $fieldName, 'importexport', 'full', true)
             );
@@ -46,10 +39,10 @@ class UpdateProductEntityFieldFallbackValuesFieldsConfigs implements Migration, 
                 new UpdateEntityConfigIndexFieldValueQuery(Product::class, $fieldName, 'importexport', 'full', true)
             );
 
-            $options = $optionsManager->getColumnOptions(OroProductBundleInstaller::PRODUCT_TABLE_NAME, $fieldName);
+            $options = $this->extendOptionsManager->getColumnOptions('oro_product', $fieldName);
             if ($options && empty($options['importexport']['full'])) {
                 $options['importexport']['full'] = true;
-                $optionsManager->setColumnOptions(OroProductBundleInstaller::PRODUCT_TABLE_NAME, $fieldName, $options);
+                $this->extendOptionsManager->setColumnOptions('oro_product', $fieldName, $options);
             }
         }
     }

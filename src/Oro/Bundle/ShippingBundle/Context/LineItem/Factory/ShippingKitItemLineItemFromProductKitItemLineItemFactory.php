@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Context\LineItem\Factory;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemPriceAwareInterface;
+use Oro\Bundle\ShippingBundle\Context\LineItem\ShippingLineItemOptionsModifier;
 use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
 
 /**
@@ -15,9 +16,31 @@ use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
 class ShippingKitItemLineItemFromProductKitItemLineItemFactory implements
     ShippingKitItemLineItemFromProductKitItemLineItemFactoryInterface
 {
-    public function create(ProductKitItemLineItemPriceAwareInterface $productKitItemLineItem): ShippingKitItemLineItem
+    public function __construct(
+        private ShippingLineItemOptionsModifier $shippingLineItemOptionsModifier
+    ) {
+    }
+
+    public function create(
+        ProductKitItemLineItemPriceAwareInterface $productKitItemLineItem
+    ): ShippingKitItemLineItem {
+        return $this->createShippingKitItemLineItem($productKitItemLineItem);
+    }
+
+    public function createCollection(iterable $productKitItemLineItems): Collection
     {
-        return (new ShippingKitItemLineItem($productKitItemLineItem))
+        $shippingKitItemLineItems = [];
+        foreach ($productKitItemLineItems as $productKitItemLineItem) {
+            $shippingKitItemLineItems[] = $this->createShippingKitItemLineItem($productKitItemLineItem);
+        }
+
+        return new ArrayCollection($shippingKitItemLineItems);
+    }
+
+    protected function createShippingKitItemLineItem(
+        ProductKitItemLineItemPriceAwareInterface $productKitItemLineItem
+    ): ShippingKitItemLineItem {
+        $shippingKitLineItem = (new ShippingKitItemLineItem($productKitItemLineItem))
             ->setProduct($productKitItemLineItem->getProduct())
             ->setProductSku($productKitItemLineItem->getProductSku())
             ->setProductUnit($productKitItemLineItem->getProductUnit())
@@ -26,15 +49,9 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactory implements
             ->setPrice($productKitItemLineItem->getPrice())
             ->setKitItem($productKitItemLineItem->getKitItem())
             ->setSortOrder($productKitItemLineItem->getSortOrder());
-    }
 
-    public function createCollection(iterable $productKitItemLineItems): Collection
-    {
-        $shippingKitItemLineItems = [];
-        foreach ($productKitItemLineItems as $productKitItemLineItem) {
-            $shippingKitItemLineItems[] = $this->create($productKitItemLineItem);
-        }
+        $this->shippingLineItemOptionsModifier->modifyLineItemWithShippingOptions($shippingKitLineItem);
 
-        return new ArrayCollection($shippingKitItemLineItems);
+        return $shippingKitLineItem;
     }
 }

@@ -34,7 +34,7 @@ class RequestController extends AbstractController
      * @Acl(
      *      id="oro_rfp_frontend_request_view",
      *      type="entity",
-     *      class="OroRFPBundle:Request",
+     *      class="Oro\Bundle\RFPBundle\Entity\Request",
      *      permission="VIEW",
      *      group_name="commerce"
      * )
@@ -66,7 +66,7 @@ class RequestController extends AbstractController
      * @Acl(
      *      id="oro_rfp_frontend_request_create",
      *      type="entity",
-     *      class="OroRFPBundle:Request",
+     *      class="Oro\Bundle\RFPBundle\Entity\Request",
      *      permission="CREATE",
      *      group_name="commerce"
      * )
@@ -75,7 +75,7 @@ class RequestController extends AbstractController
      */
     public function createAction(Request $request): array|Response
     {
-        $rfpRequest = $this->get(RequestManager::class)->create();
+        $rfpRequest = $this->container->get(RequestManager::class)->create();
         $this->addProductItemsToRfpRequest($rfpRequest, $request);
 
         $response = $this->update($rfpRequest);
@@ -93,7 +93,7 @@ class RequestController extends AbstractController
      * @Acl(
      *      id="oro_rfp_frontend_request_update",
      *      type="entity",
-     *      class="OroRFPBundle:Request",
+     *      class="Oro\Bundle\RFPBundle\Entity\Request",
      *      permission="EDIT",
      *      group_name="commerce"
      * )
@@ -120,7 +120,7 @@ class RequestController extends AbstractController
     {
         $rfqID = $request->getSession()->get(self::LAST_SUCCESS_RFQ_SESSION_NAME);
         if ($rfqID !== null) {
-            $repository = $this->get(DoctrineHelper::class)->getEntityRepositoryForClass(RFPRequest::class);
+            $repository = $this->container->get(DoctrineHelper::class)->getEntityRepositoryForClass(RFPRequest::class);
             $rfpRequest = $repository->find($rfqID);
             if ($rfpRequest) {
                 $this->assertValidInternalStatus($rfpRequest);
@@ -139,18 +139,18 @@ class RequestController extends AbstractController
     private function update(RFPRequest $rfpRequest): array|RedirectResponse
     {
         /** @var RequestUpdateHandler $handler */
-        $handler = $this->get(RequestUpdateHandler::class);
-        $form = $this->get(RFPFormProvider::class)->getRequestForm($rfpRequest);
+        $handler = $this->container->get(RequestUpdateHandler::class);
+        $form = $this->container->get(RFPFormProvider::class)->getRequestForm($rfpRequest);
 
         return $handler->update(
             $rfpRequest,
             $form,
-            $this->get(TranslatorInterface::class)->trans('oro.rfp.controller.request.saved.message'),
+            $this->container->get(TranslatorInterface::class)->trans('oro.rfp.controller.request.saved.message'),
             null,
             null,
             function (RFPRequest $rfpRequest, FormInterface $form, Request $request) {
                 return [
-                    'backToUrl' => $this->get(SameSiteUrlHelper::class)
+                    'backToUrl' => $this->container->get(SameSiteUrlHelper::class)
                         ->getSameSiteReferer($request, $request->getUri()),
                     'form' => $form->createView()
                 ];
@@ -160,7 +160,7 @@ class RequestController extends AbstractController
 
     private function addProductItemsToRfpRequest(RFPRequest $rfpRequest, Request $request): void
     {
-        $productLineItems = (array)$request->query->get('product_items', []);
+        $productLineItems = $request->query->all('product_items');
         $filteredProducts = [];
         foreach ($productLineItems as $productId => $items) {
             $productId = (int)$productId;
@@ -181,7 +181,7 @@ class RequestController extends AbstractController
         if (count($productLineItems) === 0) {
             return;
         }
-        $this->get(RequestManager::class)
+        $this->container->get(RequestManager::class)
             ->addProductLineItemsToRequest($rfpRequest, $filteredProducts);
     }
 

@@ -26,7 +26,6 @@ class FormattedProductPriceProviderTest extends FrontendWebTestCase
         $user = $container->get('oro_customer_user.manager')->findUserByEmail(LoadCustomerUserData::AUTH_USER);
         $container->get('security.token_storage')->setToken(new UsernamePasswordOrganizationToken(
             $user,
-            $user->getUsername(),
             'main',
             $user->getOrganization()
         ));

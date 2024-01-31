@@ -437,4 +437,4 @@ Feature: Quote Backoffice Default Workflow
     Then I should see following records in grid:
       | POWithoutCustomerUser |
     When I click view POWithoutCustomerUser in grid
-    Then I should see "My Account / Quotes / View"
+    Then I should see "My Account Quotes View"

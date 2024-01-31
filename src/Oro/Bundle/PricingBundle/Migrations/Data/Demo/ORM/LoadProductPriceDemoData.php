@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -15,10 +13,12 @@ use Oro\Bundle\PricingBundle\Manager\PriceManager;
  */
 class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
 {
+    private array $priceLists = [];
+
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return array_merge(
             parent::getDependencies(),
@@ -30,10 +30,9 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
     }
 
     /**
-     * {@inheritdoc}
-     * @param EntityManager $manager
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $priceLists = [
             'Default Price List' => [
@@ -80,10 +79,9 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
 
     protected function getProducts(): \Iterator
     {
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
-
-        if (is_array($filePath)) {
+        $filePath = $this->getFileLocator()
+            ->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+        if (\is_array($filePath)) {
             $filePath = current($filePath);
         }
 
@@ -97,18 +95,14 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
         fclose($handler);
     }
 
-    protected function createPriceTiers(
-        PriceManager $priceManager,
-        ProductPrice $productPrice,
-        Price $unitPrice
-    ) {
+    protected function createPriceTiers(PriceManager $priceManager, ProductPrice $productPrice, Price $unitPrice): void
+    {
         $tiers = [
             10 => 0.05,
             20 => 0.10,
             50 => 0.15,
             100 => 0.20,
         ];
-
         foreach ($tiers as $qty => $discount) {
             $price = clone $productPrice;
             $currentPrice = clone $unitPrice;
@@ -119,10 +113,10 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
         }
     }
 
-    protected function getPriceList(EntityManagerInterface $manager, string $name): ?PriceList
+    protected function getPriceList(ObjectManager $manager, string $name): ?PriceList
     {
-        if (!array_key_exists($name, $this->priceLists)) {
-            $this->priceLists[$name] = $manager->getRepository('OroPricingBundle:PriceList')
+        if (!\array_key_exists($name, $this->priceLists)) {
+            $this->priceLists[$name] = $manager->getRepository(PriceList::class)
                 ->findOneBy(['name' => $name]);
         }
 

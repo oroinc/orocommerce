@@ -11,7 +11,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 
 /**
- * Website search engine repository for OroProductBundle:Product entity
+ * Website search engine repository for Oro\Bundle\ProductBundle\Entity\Product entity
  * This repository encapsulates Category related operations
  */
 class ProductRepository extends WebsiteSearchRepository

@@ -29,9 +29,9 @@ class QuickAddController extends AbstractController
      */
     public function addAction(Request $request): Response|array
     {
-        $form = $this->get(ProductFormProvider::class)->getQuickAddForm();
+        $form = $this->container->get(ProductFormProvider::class)->getQuickAddForm();
 
-        return $this->get(QuickAddProcessHandler::class)->process($form, $request);
+        return $this->container->get(QuickAddProcessHandler::class)->process($form, $request);
     }
 
     /**
@@ -39,9 +39,9 @@ class QuickAddController extends AbstractController
      */
     public function importAction(Request $request): Response
     {
-        $form = $this->get(ProductFormProvider::class)->getQuickAddImportForm();
+        $form = $this->container->get(ProductFormProvider::class)->getQuickAddImportForm();
 
-        return $this->get(QuickAddImportFromFileHandler::class)->process($form, $request);
+        return $this->container->get(QuickAddImportFromFileHandler::class)->process($form, $request);
     }
 
     /**
@@ -49,9 +49,9 @@ class QuickAddController extends AbstractController
      */
     public function copyPasteAction(Request $request): Response
     {
-        $form = $this->get(ProductFormProvider::class)->getQuickAddCopyPasteForm();
+        $form = $this->container->get(ProductFormProvider::class)->getQuickAddCopyPasteForm();
 
-        return $this->get(QuickAddImportFromPlainTextHandler::class)->process($form, $request);
+        return $this->container->get(QuickAddImportFromPlainTextHandler::class)->process($form, $request);
     }
 
     /**

@@ -4,25 +4,25 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 
 class LoadPromotionData extends AbstractLoadPromotionData
 {
-    const ORDER_PERCENT_PROMOTION = 'order_percent_promotion';
-    const ORDER_AMOUNT_PROMOTION = 'order_amount_promotion';
-    const SHIPPING_PROMOTION = 'shipping_promotion';
+    public const ORDER_PERCENT_PROMOTION = 'order_percent_promotion';
+    public const ORDER_AMOUNT_PROMOTION = 'order_amount_promotion';
+    public const SHIPPING_PROMOTION = 'shipping_promotion';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return [
-            LoadSegmentData::class,
-            LoadDiscountConfigurationData::class,
-        ];
+        return array_merge(
+            [LoadSegmentData::class, LoadDiscountConfigurationData::class],
+            parent::getDependencies()
+        );
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getPromotions()
+    protected function getPromotions(): array
     {
         return [
             self::ORDER_PERCENT_PROMOTION => [

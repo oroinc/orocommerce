@@ -25,18 +25,30 @@ Feature: Content Widget in Content Block
       | Name                          | test_image_slider |
       | Number of Slides to Show      | 1                 |
       | Number of Slides to Scroll    | 1                 |
+      | Enable Autoplay               | false             |
+      | Autoplay Speed (milliseconds) | 4000              |
+      | Show Arrows                   | false             |
+      | Show Dots                     | true              |
+      | Enable Infinite Scroll        | false             |
     And fill "Image Slider Form" with:
-      | Slide Order 1    | 1            |
-      | URL 1            | /product     |
-      | Target 1         | Same Window  |
-      | Title 1          | Slide 1      |
-      | Text Alignment 1 | Center       |
-      | Text 1           | Slide text 1 |
-    And I click on "Choose Main Slider Image 1"
+      | Slide Order 1    | 1              |
+      | URL 1            | /product       |
+      | Target 1         | Same Window    |
+      | Alt Image Text 1 | Slide 1        |
+      | Text Alignment 1 | Center         |
+      | Text 1           | Slide text 1   |
+      | Header           | Image Header 1 |
+    And I click on "Choose Extra Large Slider Image1x 1"
     And I fill "Digital Asset Dialog Form" with:
       | File  | cat1.jpg |
       | Title | cat1.jpg |
     And I click "Upload"
+    And click on cat1.jpg in grid
+    And I click on "Choose Large Slider Image1x 1"
+    And click on cat1.jpg in grid
+    And I click on "Choose Medium Slider Image1x 1"
+    And click on cat1.jpg in grid
+    And I click on "Choose Small Slider Image1x 1"
     And click on cat1.jpg in grid
     Then I save and close form
     And I should see "Content widget has been saved" flash message

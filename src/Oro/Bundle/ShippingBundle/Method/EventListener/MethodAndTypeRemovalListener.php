@@ -2,14 +2,22 @@
 
 namespace Oro\Bundle\ShippingBundle\Method\EventListener;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodRemovalEvent;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeRemovalEvent;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Removes shipping method configs and rules without shipping methods
+ */
 class MethodAndTypeRemovalListener
 {
     /**
@@ -91,34 +99,34 @@ class MethodAndTypeRemovalListener
     }
 
     /**
-     * @return \Doctrine\ORM\EntityManager|null
+     * @return EntityManager|null
      */
     private function getEntityManager()
     {
-        return $this->doctrineHelper->getEntityManagerForClass('OroShippingBundle:ShippingMethodsConfigsRule');
+        return $this->doctrineHelper->getEntityManagerForClass(ShippingMethodsConfigsRule::class);
     }
 
     /**
-     * @return ShippingMethodConfigRepository|\Doctrine\ORM\EntityRepository
+     * @return ShippingMethodConfigRepository|EntityRepository
      */
     private function getShippingMethodConfigRepository()
     {
-        return $this->doctrineHelper->getEntityRepository('OroShippingBundle:ShippingMethodConfig');
+        return $this->doctrineHelper->getEntityRepository(ShippingMethodConfig::class);
     }
 
     /**
-     * @return ShippingMethodTypeConfigRepository|\Doctrine\ORM\EntityRepository
+     * @return ShippingMethodTypeConfigRepository|EntityRepository
      */
     private function getShippingMethodTypeConfigRepository()
     {
-        return $this->doctrineHelper->getEntityRepository('OroShippingBundle:ShippingMethodTypeConfig');
+        return $this->doctrineHelper->getEntityRepository(ShippingMethodTypeConfig::class);
     }
 
     /**
-     * @return ShippingMethodsConfigsRuleRepository|\Doctrine\ORM\EntityRepository
+     * @return ShippingMethodsConfigsRuleRepository|EntityRepository
      */
     private function getShippingMethodsConfigsRuleRepository()
     {
-        return $this->doctrineHelper->getEntityRepository('OroShippingBundle:ShippingMethodsConfigsRule');
+        return $this->doctrineHelper->getEntityRepository(ShippingMethodsConfigsRule::class);
     }
 }

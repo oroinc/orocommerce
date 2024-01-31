@@ -231,7 +231,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title' => 'form constraint',
-                'detail' => 'This value is not valid.',
+                'detail' => 'Please enter an integer.',
                 'source' => ['pointer' => '/data/attributes/sortOrder'],
             ],
             $response
@@ -268,7 +268,7 @@ class ProductKitItemTest extends RestJsonApiTestCase
     public function invalidQuantityDataProvider(): array
     {
         return [
-            ['value' => 'string', 'title' => 'form constraint', 'detail' => 'This value is not valid.'],
+            ['value' => 'string', 'title' => 'form constraint', 'detail' => 'Please enter a number.'],
             ['value' => -42, 'title' => 'range constraint', 'detail' => 'This value should be 0 or more.'],
         ];
     }

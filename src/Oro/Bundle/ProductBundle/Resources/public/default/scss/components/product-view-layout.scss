@@ -131,7 +131,7 @@
             display: $product-view-primary-wrapper-display-tablet;
             flex-direction: $product-view-primary-wrapper-flex-direction-tablet;
 
-            margin-top: $product-view-primary-wrapper-margin-top-tablet;
+            margin-top: $product-view-primary-wrapper-margin-top-mobile-landscape;
         }
 
         &__main {
@@ -166,14 +166,6 @@
             &__content {
                 min-height: $product-view-shopping-lists-content-min-height-tablet;
             }
-        }
-    }
-}
-
-@include breakpoint('mobile-landscape') {
-    .product-view {
-        &__primary-wrapper {
-            margin-top: $product-view-primary-wrapper-margin-top-mobile-landscape;
         }
     }
 }

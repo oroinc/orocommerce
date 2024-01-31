@@ -9,15 +9,17 @@ use Oro\Bundle\ProductBundle\Duplicator\SkuIncrementor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class SkuIncrementorTest extends \PHPUnit\Framework\TestCase
+class SkuIncrementorTest extends TestCase
 {
-    private const PRODUCT_CLASS = 'OroProductBundle:Product';
+    private const PRODUCT_CLASS = Product::class;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var DoctrineHelper|MockObject */
     private $doctrineHelper;
 
-    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AclHelper|MockObject */
     private $aclHelper;
 
     /** @var SkuIncrementor */

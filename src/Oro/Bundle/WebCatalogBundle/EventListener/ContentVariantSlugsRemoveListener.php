@@ -22,7 +22,7 @@ class ContentVariantSlugsRemoveListener
 
     public function onFlush(OnFlushEventArgs $eventArgs)
     {
-        $em = $eventArgs->getEntityManager();
+        $em = $eventArgs->getObjectManager();
 
         $entitiesToDelete = $em->getUnitOfWork()->getScheduledEntityDeletions();
         if (!$entitiesToDelete) {

@@ -1,68 +1,121 @@
 {% block _content_widget_image_slider_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set slideToShow = pageComponentOptions.slidesToShow %}
     {% set slidesToScroll = pageComponentOptions.slidesToScroll %}
     {% set pageComponentOptions = pageComponentOptions|merge({
         responsive: [{
-            breakpoint: 991,
+            breakpoint: 1280,
             settings: {
                 slidesToShow: slideToShow > 3 ? 3 : slideToShow,
                 slidesToScroll: slidesToScroll > 3 ? 3 : slidesToScroll
             }
         }, {
-            breakpoint: 641,
+            breakpoint: 768,
             settings: {
                 slidesToShow: slideToShow > 2 ? 2 : slideToShow,
                 slidesToScroll: slidesToScroll > 2 ? 2 : slidesToScroll
             }
         }, {
-            breakpoint: 415,
+            breakpoint: 430,
             settings: {
                 slidesToShow: 1,
                 slidesToScroll: 1
             }
         }]
     }) %}
-    <div class="promo-slider{{ pageComponentOptions.arrows ? ' promo-slider--has-arrows' : '' }}"
+    {% set scaling = pageComponentOptions.scaling|default('crop_images')|replace({'_': '-'}) %}
+    {% set iscCropImages = scaling == 'crop-images' %}
+    {% set hope_slider_holder_id = 'holder-'|uniqid %}
+    <div class="promo-slider {{ scaling }}"
          data-page-component-name="{{ pageComponentName }}"
          data-page-component-module="orofrontend/js/app/components/list-slider-component"
          data-page-component-options="{{ pageComponentOptions|merge({
              itemSelector: '.slick-slide',
              itemLinkSelector: '[data-role="slide-item-link"]',
-             processClick: '[data-role="slide-content"]'
+             processClick: '[data-role="slide-content"]',
+             appendArrows: '#' ~ hope_slider_holder_id,
+             appendDots: '#' ~ hope_slider_holder_id,
          })|json_encode }}">
         {% apply spaceless %}
             {% for imageSlide in imageSlides %}
                 {% set windowTarget = imageSlide.displayInSameWindow ? '_self' : '_blank' %}
                 <div class="promo-slider__item promo-slider__item--fraction-{{ pageComponentOptions.slidesToShow }}">
                     <a href="{{ imageSlide.url|strip_dangerous_protocols }}" target="{{ windowTarget }}" data-role="slide-item-link">
-                        <div class="promo-slider__picture">
-                            {% set imageVariantSettings = {
-                                smallImage: { filter: 'original', fallback_filter: 'max_width_414', media: '(max-width: 414px)' },
-                                mediumImage: { filter: 'original', fallback_filter: 'max_width_992', media: '(max-width: 992px)' },
-                                mainImage: { filter: 'original' },
-                            } %}
-                            {% include '@OroAttachment/Twig/picture.html.twig' with {
-                                sources: oro_cms_image_slide_sources(imageSlide, imageVariantSettings),
-                                img_attrs: {
-                                    src: product_filtered_image(imageSlide.mainImage, 'original'),
-                                    alt: imageSlide.title,
-                                    loading: 'eager',
-                                    class: 'promo-slider__img',
-                                    width: '1322',
-                                    height: '460'
-                                }
-                            } %}
-                        </div>
+                        {% set imageVariantSettings = {
+                            smallImage: {
+                                filter: 'original',
+                                fallback_filter: 'slider_small',
+                                filter2x: 'original',
+                                fallback_filter2x: 'slider_small2x',
+                                filter3x: 'original',
+                                media: '(max-width: 430px)'
+                            },
+                            mediumImage: {
+                                filter: 'original',
+                                fallback_filter: 'slider_medium',
+                                filter2x: 'original',
+                                fallback_filter2x: 'slider_medium2x',
+                                filter3x: 'original',
+                                media: '(max-width: 768px)'
+                            },
+                            largeImage: {
+                                filter: 'original',
+                                fallback_filter: 'slider_large',
+                                filter2x: 'original',
+                                fallback_filter2x: 'slider_large2x',
+                                filter3x: 'original',
+                                media: '(max-width: 1280px)'
+                            },
+                            extraLargeImage: {
+                                filter: 'original',
+                                fallback_filter: 'slider_extra_large',
+                                filter2x: 'original',
+                                fallback_filter2x: 'slider_extra_large2x',
+                                filter3x: 'original',
+                                media: '(min-width: 1281px)'
+                            },
+                        } %}
+                        {% set pictureSettings = {
+                            picture_attrs: {
+                                class: 'promo-slider__picture'
+                            },
+                            sources: oro_cms_image_slide_sources(imageSlide, imageVariantSettings),
+                            img_attrs: {
+                                src: product_filtered_image(imageSlide.extraLargeImage, 'original'),
+                                alt: imageSlide.altImageText,
+                                'data-item-name': imageSlide.header|default(imageSlide.altImageText),
+                                loading: 'eager',
+                                class: 'promo-slider__img'
+                            }
+                        } %}
+                        {% include '@OroAttachment/Twig/picture.html.twig' with pictureSettings %}
                     </a>
-                    {% if imageSlide.text %}
-                        <div class="promo-slider__info promo-slider__info--{{ imageSlide.textAlignment }}"
+                    {% if imageSlide.header or imageSlide.text %}
+                        <div class="promo-slider__info"
                              data-role="slide-content"
                              data-url="{{ imageSlide.url|strip_dangerous_protocols }}"
                              data-target="{{ windowTarget }}"
-                        >{{ imageSlide.text|raw }}</div>
+                        >
+                            <div class="promo-slider__content promo-slider__content--{{ imageSlide.textAlignment }}">
+                                {% if imageSlide.header %}
+                                    <h2 class="promo-slider__header">
+                                        {{ imageSlide.header }}
+                                        <a href="{{ imageSlide.url|strip_dangerous_protocols }}" class="btn btn--size-large">
+                                            {{ renderIcon.icon({name: oro_is_rtl_mode() ? 'arrow-left' : 'arrow-right'}) }}
+                                        </a>
+                                    </h2>
+                                {% endif %}
+                                {% if imageSlide.text %}
+                                    <div class="promo-slider__text">{{ imageSlide.text|raw }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
                     {% endif %}
                 </div>
             {%- endfor -%}
         {% endapply %}
     </div>
+    {% if imageSlides|length > 1 and (pageComponentOptions.arrows or pageComponentOptions.dots) %}
+        <div id="{{ hope_slider_holder_id }}" class="promo-slider__navigation-holder"></div>
+    {% endif %}
 {% endblock %}

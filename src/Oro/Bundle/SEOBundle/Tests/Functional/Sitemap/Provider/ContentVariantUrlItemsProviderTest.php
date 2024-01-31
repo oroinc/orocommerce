@@ -7,7 +7,9 @@ use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\ContentVariantUrlItemsProvider;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\ContentVariantUrlItemsProvider as FixtureDir;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
+use Oro\Component\Testing\ReflectionUtil;
 
 /**
  * @dbIsolationPerTest
@@ -45,6 +47,37 @@ class ContentVariantUrlItemsProviderTest extends WebTestCase
             $this->getReference(FixtureDir\LoadWebsiteData::WEBSITE_DEFAULT),
             1
         );
+
+        $urlItems = iterator_to_array($urlItems);
+        $actualLocations = \array_map(static function (UrlItem $urlItem) {
+            return $urlItem->getLocation();
+        }, $urlItems);
+        sort($actualLocations);
+
+        self::assertEquals([
+            'http://localhost/content-node-slug-1',
+            'http://localhost/content-node-slug-3',
+            'http://localhost/content-node-slug-5',
+        ], $actualLocations);
+    }
+
+    public function testGetUrlItemsOfRootNode()
+    {
+        $website = $this->getReference(FixtureDir\LoadWebsiteData::WEBSITE_DEFAULT);
+
+        $webCatalogProvider = $this->createMock(WebCatalogProvider::class);
+        $webCatalogProvider->expects(self::once())
+            ->method('getNavigationRootWithCatalogRootFallback')
+            ->with($website)
+            ->willReturn($this->getReference('content-node-4'));
+
+        ReflectionUtil::setPropertyValue(
+            $this->contentVariantUrlItemsProvider,
+            'webCatalogProvider',
+            $webCatalogProvider
+        );
+
+        $urlItems = $this->contentVariantUrlItemsProvider->getUrlItems($website, 1);
 
         $urlItems = iterator_to_array($urlItems);
         $actualLocations = \array_map(static function (UrlItem $urlItem) {

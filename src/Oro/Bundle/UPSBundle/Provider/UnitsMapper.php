@@ -4,8 +4,13 @@ namespace Oro\Bundle\UPSBundle\Provider;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
+use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSTransportEntity;
 
+/**
+ * Provides information about UPS units.
+ */
 class UnitsMapper
 {
     const UNIT_OF_WEIGHT_KG = 'kg';
@@ -60,9 +65,9 @@ class UnitsMapper
         $oroUnitCode = $this->getShippingUnitCode($upsUnitCode);
         if ($oroUnitCode) {
             if ($oroUnitCode === static::UNIT_OF_WEIGHT_KG || $oroUnitCode === static::UNIT_OF_WEIGHT_LBS) {
-                $repository = $this->registry->getRepository('OroShippingBundle:WeightUnit');
+                $repository = $this->registry->getRepository(WeightUnit::class);
             } else {
-                $repository = $this->registry->getRepository('OroShippingBundle:LengthUnit');
+                $repository = $this->registry->getRepository(LengthUnit::class);
             }
 
             $oroUnit = $repository->findOneBy(['code' => $oroUnitCode]);

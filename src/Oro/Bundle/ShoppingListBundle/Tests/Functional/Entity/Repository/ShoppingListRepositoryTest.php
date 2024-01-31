@@ -34,7 +34,6 @@ class ShoppingListRepositoryTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->client->useHashNavigation(true);
 
         $this->setCurrentWebsite('default');
 
@@ -149,7 +148,6 @@ class ShoppingListRepositoryTest extends WebTestCase
     {
         return new UsernamePasswordOrganizationToken(
             $customerUser,
-            false,
             'k',
             $customerUser->getOrganization(),
             $customerUser->getUserRoles()

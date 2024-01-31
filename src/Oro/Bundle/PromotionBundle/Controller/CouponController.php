@@ -51,7 +51,7 @@ class CouponController extends AbstractController
      * @Acl(
      *      id="oro_promotion_coupon_create",
      *      type="entity",
-     *      class="OroPromotionBundle:Coupon",
+     *      class="Oro\Bundle\PromotionBundle\Entity\Coupon",
      *      permission="CREATE"
      * )
      * @param Request $request
@@ -68,7 +68,7 @@ class CouponController extends AbstractController
      * @Acl(
      *      id="oro_promotion_coupon_update",
      *      type="entity",
-     *      class="OroPromotionBundle:Coupon",
+     *      class="Oro\Bundle\PromotionBundle\Entity\Coupon",
      *      permission="EDIT"
      * )
      * @param \Oro\Bundle\PromotionBundle\Entity\Coupon $coupon
@@ -86,7 +86,7 @@ class CouponController extends AbstractController
      * @Acl(
      *      id="oro_promotion_coupon_view",
      *      type="entity",
-     *      class="OroPromotionBundle:Coupon",
+     *      class="Oro\Bundle\PromotionBundle\Entity\Coupon",
      *      permission="VIEW"
      * )
      *
@@ -115,7 +115,7 @@ class CouponController extends AbstractController
 
         $emptyData = new Coupon();
         /** @var DoctrineHelper $doctrineHelper */
-        $doctrineHelper = $this->get(DoctrineHelper::class);
+        $doctrineHelper = $this->container->get(DoctrineHelper::class);
         $gridName = $request->get('gridName');
         $gridParameters = $request->get($gridName);
         if (!empty($gridParameters['promotion_id'])) {
@@ -126,7 +126,7 @@ class CouponController extends AbstractController
         $form = $this->createForm(BaseCouponType::class, $emptyData);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $massActionDispatcher = $this->get(MassActionDispatcher::class);
+            $massActionDispatcher = $this->container->get(MassActionDispatcher::class);
             $response = $massActionDispatcher->dispatchByRequest(
                 $request->get('gridName'),
                 $request->get('actionName'),
@@ -166,7 +166,7 @@ class CouponController extends AbstractController
             return new JsonResponse(['error' => (string)$form->getErrors(true, false)]);
         }
 
-        $generator = $this->get(CodeGenerator::class);
+        $generator = $this->container->get(CodeGenerator::class);
 
         return new JsonResponse(['error' => false, 'code' => $generator->generateOne($options)]);
     }
@@ -178,12 +178,12 @@ class CouponController extends AbstractController
      */
     protected function update(Coupon $coupon, Request $request)
     {
-        $handler = $this->get(UpdateHandlerFacade::class);
+        $handler = $this->container->get(UpdateHandlerFacade::class);
 
         return $handler->update(
             $coupon,
             CouponType::class,
-            $this->get(TranslatorInterface::class)->trans('oro.promotion.coupon.form.message.saved'),
+            $this->container->get(TranslatorInterface::class)->trans('oro.promotion.coupon.form.message.saved'),
             $request
         );
     }

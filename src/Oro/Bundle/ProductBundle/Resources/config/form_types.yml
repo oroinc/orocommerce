@@ -237,7 +237,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension'
         arguments:
             - 'unit'
-            - "@oro_product.visibility.product_unit_fields_settings"
+            - '@oro_product.visibility.product_unit_fields_settings'
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType' }
 
@@ -297,6 +297,7 @@ services:
         class: Oro\Bundle\ProductBundle\Form\Type\ProductKitItemType
         arguments:
             - '@oro_form.provider.form_fields_map'
+            - '@oro_product.visibility.product_unit_fields_settings'
         tags:
             - { name: form.type }
 
@@ -324,3 +325,9 @@ services:
             - '@doctrine.orm.entity_manager'
             - 'Oro\Bundle\ProductBundle\Entity\Product'
             - 'id'
+
+    # Component added back for theme layout BC from version 5.0
+    oro_product.form.type.extension.is_optimized_quick_add:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\IsOptimizedQuickAddTypeExtension'
+        tags:
+            - { name: form.type_extension }

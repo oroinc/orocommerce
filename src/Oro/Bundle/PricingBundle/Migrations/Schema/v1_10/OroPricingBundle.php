@@ -4,8 +4,8 @@ namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_10;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\MigrationBundle\Migration\Extension\DataStorageExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DataStorageExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DataStorageExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -18,20 +18,10 @@ class OroPricingBundle implements
     DataStorageExtensionAwareInterface
 {
     use ContainerAwareTrait;
-
-    /** @var DataStorageExtension */
-    private $dataStorageExtension;
+    use DataStorageExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
-     */
-    public function setDataStorageExtension(DataStorageExtension $dataStorageExtension)
-    {
-        $this->dataStorageExtension = $dataStorageExtension;
-    }
-
-    /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

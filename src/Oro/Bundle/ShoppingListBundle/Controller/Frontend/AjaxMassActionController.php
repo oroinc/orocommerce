@@ -32,7 +32,7 @@ class AjaxMassActionController extends AbstractController
 
     private function getMassActionProvider(): AddLineItemMassActionProvider
     {
-        return $this->get(AddLineItemMassActionProvider::class);
+        return $this->container->get(AddLineItemMassActionProvider::class);
     }
 
     /**

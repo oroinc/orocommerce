@@ -16,11 +16,11 @@ use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
- * Fixture to load fallback fields data.
+ * Loads fallback fields data.
  */
 class LoadFallbackFieldsData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
-    const FALLBACK_FIELDS = [
+    private const FALLBACK_FIELDS = [
         'minimumQuantityToOrder',
         'maximumQuantityToOrder',
         'manageInventory',
@@ -32,20 +32,20 @@ class LoadFallbackFieldsData extends AbstractEntityReferenceFixture implements D
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [LoadProductCategoryDemoData::class];
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         /** @var CategoryRepository $categoryRepository */
-        $categoryRepository = $manager->getRepository('OroCatalogBundle:Category');
+        $categoryRepository = $manager->getRepository(Category::class);
 
         /** @var Category[] $categories */
         $categories = $categoryRepository->findAll();
@@ -54,7 +54,7 @@ class LoadFallbackFieldsData extends AbstractEntityReferenceFixture implements D
         }
 
         /** @var Product[] $products */
-        $products = $manager->getRepository('OroProductBundle:Product')->findAll();
+        $products = $manager->getRepository(Product::class)->findAll();
         foreach ($products as $product) {
             $category = $categoryRepository->findOneByProduct($product);
             if ($category) {
@@ -67,13 +67,7 @@ class LoadFallbackFieldsData extends AbstractEntityReferenceFixture implements D
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param $fallbackId
-     * @param $entity
-     * @return mixed
-     */
-    protected function addFallbacksToEntity(ObjectManager $manager, $fallbackId, $entity)
+    private function addFallbacksToEntity(ObjectManager $manager, string $fallbackId, object $entity): object
     {
         $accessor = PropertyAccess::createPropertyAccessor();
 
@@ -85,12 +79,7 @@ class LoadFallbackFieldsData extends AbstractEntityReferenceFixture implements D
         return $entity;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string $fallbackId
-     * @return EntityFieldFallbackValue
-     */
-    protected function createFallbackEntity(ObjectManager $manager, $fallbackId)
+    private function createFallbackEntity(ObjectManager $manager, string $fallbackId): EntityFieldFallbackValue
     {
         $entityFallback = new EntityFieldFallbackValue();
         $entityFallback->setFallback($fallbackId);

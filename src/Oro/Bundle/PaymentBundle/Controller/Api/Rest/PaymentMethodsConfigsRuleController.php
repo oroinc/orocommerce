@@ -41,7 +41,8 @@ class PaymentMethodsConfigsRuleController extends RestController
             $view = $this->view(
                 [
                     'message'    =>
-                        $this->get('translator')->trans('oro.payment.paymentmethodsconfigsrule.notification.enabled'),
+                        $this->container->get('translator')
+                            ->trans('oro.payment.paymentmethodsconfigsrule.notification.enabled'),
                     'successful' => true,
                 ],
                 Response::HTTP_OK
@@ -82,7 +83,8 @@ class PaymentMethodsConfigsRuleController extends RestController
             $view = $this->view(
                 [
                     'message'    =>
-                        $this->get('translator')->trans('oro.payment.paymentmethodsconfigsrule.notification.disabled'),
+                        $this->container->get('translator')
+                            ->trans('oro.payment.paymentmethodsconfigsrule.notification.disabled'),
                     'successful' => true,
                 ],
                 Response::HTTP_OK
@@ -102,7 +104,7 @@ class PaymentMethodsConfigsRuleController extends RestController
      */
     public function getManager()
     {
-        return $this->get('oro_payment.payment_methods_configs_rule.manager.api');
+        return $this->container->get('oro_payment.payment_methods_configs_rule.manager.api');
     }
 
     /**

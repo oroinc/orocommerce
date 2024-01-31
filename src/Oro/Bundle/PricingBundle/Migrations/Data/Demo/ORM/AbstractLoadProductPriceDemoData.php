@@ -4,15 +4,14 @@ namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData;
+use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * The base class for product price demo fixtures.
@@ -21,38 +20,15 @@ abstract class AbstractLoadProductPriceDemoData extends AbstractFixture implemen
     ContainerAwareInterface,
     DependentFixtureInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
-    /**
-     * @var array
-     */
-    protected $products = [];
-
-    /**
-     * @var array
-     */
-    protected $productUnis = [];
-
-    /**
-     * @var array
-     */
-    protected $priceLists = [];
+    private array $products = [];
+    private array $productUnis = [];
 
     /**
      * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadPriceAttributePriceListDemoData::class,
@@ -61,24 +37,23 @@ abstract class AbstractLoadProductPriceDemoData extends AbstractFixture implemen
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     * @param EntityManager $manager
-     */
-    abstract public function load(ObjectManager $manager);
-
-    protected function getProductBySku(EntityManagerInterface $manager, $sku): ?Product
+    protected function getFileLocator(): FileLocatorInterface
     {
-        if (!array_key_exists($sku, $this->products)) {
+        return $this->container->get('file_locator');
+    }
+
+    protected function getProductBySku(ObjectManager $manager, string $sku): ?Product
+    {
+        if (!\array_key_exists($sku, $this->products)) {
             $this->products[$sku] = $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
         }
 
         return $this->products[$sku];
     }
 
-    protected function getProductUnit(EntityManagerInterface $manager, $code): ?ProductUnit
+    protected function getProductUnit(ObjectManager $manager, string $code): ?ProductUnit
     {
-        if (!array_key_exists($code, $this->productUnis)) {
+        if (!\array_key_exists($code, $this->productUnis)) {
             $this->productUnis[$code] = $manager->getRepository(ProductUnit::class)->find($code);
         }
 

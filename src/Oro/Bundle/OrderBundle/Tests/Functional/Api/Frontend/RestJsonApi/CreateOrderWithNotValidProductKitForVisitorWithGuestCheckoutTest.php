@@ -263,7 +263,7 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
             [
                 [
                     'title' => 'form constraint',
-                    'detail' => 'This value is not valid.',
+                    'detail' => 'Please enter a number.',
                     'source' => ['pointer' => '/included/4/attributes/quantity'],
                 ],
             ],

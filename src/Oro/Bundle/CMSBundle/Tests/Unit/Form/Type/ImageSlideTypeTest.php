@@ -60,16 +60,28 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
 
     public function submitDataProviderNew(): array
     {
-        $mainImage = $this->getFile(1001);
-        $mediumImage = $this->getFile(2002);
-        $smallImage = $this->getFile(3003);
+        $extraLargeImage = $this->getFile(1001);
+        $extraLargeImage2x = $this->getFile(1002);
+        $extraLargeImage3x = $this->getFile(1003);
+
+        $largeImage = $this->getFile(2001);
+        $largeImage2x = $this->getFile(2002);
+        $largeImage3x = $this->getFile(2003);
+
+        $mediumImage = $this->getFile(3001);
+        $mediumImage2x = $this->getFile(3002);
+        $mediumImage3x = $this->getFile(3003);
+
+        $smallImage = $this->getFile(4001);
+        $smallImage2x = $this->getFile(4002);
+        $smallImage3x = $this->getFile(4003);
 
         $expected = new ImageSlide();
         $expected->setContentWidget(new ContentWidget())
             ->setSlideOrder(42)
             ->setUrl('path/to/test')
             ->setDisplayInSameWindow(true)
-            ->setTitle('test title')
+            ->setAltImageText('test title')
             ->setTextAlignment(ImageSlide::TEXT_ALIGNMENT_TOP_CENTER);
 
         return [
@@ -78,7 +90,7 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
                     'slideOrder' => 42,
                     'url' => 'path/to/test',
                     'displayInSameWindow' => true,
-                    'title' => 'test title',
+                    'altImageText' => 'test title',
                     'textAlignment' => ImageSlide::TEXT_ALIGNMENT_TOP_CENTER,
                 ],
                 'expectedData' => $expected,
@@ -86,20 +98,40 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
             'full data' => [
                 'submittedData' => [
                     'slideOrder' => 42,
-                    'mainImage' => 1001,
-                    'mediumImage' => 2002,
-                    'smallImage' => 3003,
+                    'extraLargeImage' => 1001,
+                    'extraLargeImage2x' => 1002,
+                    'extraLargeImage3x' => 1003,
+                    'largeImage' => 2001,
+                    'largeImage2x' => 2002,
+                    'largeImage3x' => 2003,
+                    'mediumImage' => 3001,
+                    'mediumImage2x' => 3002,
+                    'mediumImage3x' => 3003,
+                    'smallImage' => 4001,
+                    'smallImage2x' => 4002,
+                    'smallImage3x' => 4003,
                     'url' => 'path/to/test',
                     'displayInSameWindow' => true,
-                    'title' => 'test title',
+                    'altImageText' => 'test title',
                     'textAlignment' => ImageSlide::TEXT_ALIGNMENT_TOP_CENTER,
-                    'text' => 'test content'
+                    'text' => 'test content',
+                    'header' => 'test header'
                 ],
                 'expectedData' => (clone $expected)
-                    ->setMainImage($mainImage)
+                    ->setExtraLargeImage($extraLargeImage)
+                    ->setExtraLargeImage2x($extraLargeImage2x)
+                    ->setExtraLargeImage3x($extraLargeImage3x)
+                    ->setLargeImage($largeImage)
+                    ->setLargeImage2x($largeImage2x)
+                    ->setLargeImage3x($largeImage3x)
                     ->setMediumImage($mediumImage)
+                    ->setMediumImage2x($mediumImage2x)
+                    ->setMediumImage3x($mediumImage3x)
                     ->setSmallImage($smallImage)
-                    ->setText('test content'),
+                    ->setSmallImage2x($smallImage2x)
+                    ->setSmallImage3x($smallImage3x)
+                    ->setText('test content')
+                    ->setHeader('test header'),
             ],
         ];
     }
@@ -133,8 +165,17 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
                     $fileType,
                     ImageType::class => new ImageTypeStub([
                         1001 => $this->getFile(1001),
+                        1002 => $this->getFile(1002),
+                        1003 => $this->getFile(1003),
+                        2001 => $this->getFile(2001),
                         2002 => $this->getFile(2002),
+                        2003 => $this->getFile(2003),
+                        3001 => $this->getFile(3001),
+                        3002 => $this->getFile(3002),
                         3003 => $this->getFile(3003),
+                        4001 => $this->getFile(4001),
+                        4002 => $this->getFile(4002),
+                        4003 => $this->getFile(4003),
                     ]),
                     ImageSlideCollectionType::class => new ImageSlideCollectionTypeStub(),
                     ImageSlideType::class => new ImageSlideTypeStub(),

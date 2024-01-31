@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -69,7 +68,6 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
         $entity = new EntityStub();
         foreach ($lineItemsData as $item) {
             $lineItem = new LineItemStub();
-            $lineItem->setPriceType($item['price_type']);
             $lineItem->setPrice(Price::create($item['price'], $currency));
             $lineItem->setQuantity($item['quantity']);
             $entity->addLineItem($lineItem);
@@ -97,41 +95,27 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
                     [
                         'price' => 0.03,
                         'quantity' => 3,
-                        'price_type' => LineItemStub::PRICE_TYPE_UNIT
                     ],
                     [
                         'price' => 1.02,
                         'quantity' => 7,
-                        'price_type' => LineItemStub::PRICE_TYPE_UNIT
                     ],
-                    [
-                        'price' => 1.11,
-                        'quantity' => 10,
-                        'price_type' => LineItemStub::PRICE_TYPE_BUNDLED
-                    ]
                 ],
-                'expectedValue' => 8.34,
+                'expectedValue' => 7.23,
                 'precision' => 2,
             ],
             'price with precision 4, system precision 2' => [
                 'lineItems' => [
                     [
                         'price' => 0.0149,
-                        'quantity' => 3,
-                        'price_type' => LineItemStub::PRICE_TYPE_UNIT
+                        'quantity' => 3
                     ],
                     [
                         'price' => 1.0149,
-                        'quantity' => 7,
-                        'price_type' => LineItemStub::PRICE_TYPE_UNIT
+                        'quantity' => 7
                     ],
-                    [
-                        'price' => 1.1149,
-                        'quantity' => 10,
-                        'price_type' => LineItemStub::PRICE_TYPE_BUNDLED
-                    ]
                 ],
-                'expectedValue' => 8.25,
+                'expectedValue' => 7.14,
                 'precision' => 2,
             ],
             'price with precision 4, system precision 4' => [
@@ -139,20 +123,13 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
                     [
                         'price' => 0.0149,
                         'quantity' => 3,
-                        'price_type' => LineItemStub::PRICE_TYPE_UNIT
                     ],
                     [
                         'price' => 1.0149,
-                        'quantity' => 7,
-                        'price_type' => LineItemStub::PRICE_TYPE_UNIT
+                        'quantity' => 6,
                     ],
-                    [
-                        'price' => 1.1149,
-                        'quantity' => 10,
-                        'price_type' => LineItemStub::PRICE_TYPE_BUNDLED
-                    ]
                 ],
-                'expectedValue' => 8.2639,
+                'expectedValue' => 6.1341,
                 'precision' => 4,
             ],
         ];
@@ -207,7 +184,7 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
     {
         $lineItem = new LineItemStub();
         $lineItem->setPrice(Price::create(10.499, 'USD'));
-        $lineItem->setPriceType(PriceTypeAwareInterface::PRICE_TYPE_BUNDLED);
+        $lineItem->setQuantity(1);
         $this->roundingService->expects($this->once())
             ->method('round')
             ->with(10.499)

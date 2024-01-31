@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\DataGridBundle\Controller\GridController;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionParametersParser;
@@ -46,7 +47,7 @@ class AjaxLineItemController extends AbstractLineItemController
      *      methods={"POST"}
      * )
      * @AclAncestor("oro_product_frontend_view")
-     * @ParamConverter("product", class="OroProductBundle:Product", options={"id" = "productId"})
+     * @ParamConverter("product", class="Oro\Bundle\ProductBundle\Entity\Product", options={"id" = "productId"})
      *
      * @param Request $request
      * @param Product $product
@@ -55,10 +56,14 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function addProductFromViewAction(Request $request, Product $product)
     {
-        $currentShoppingListManager = $this->get(CurrentShoppingListManager::class);
+        $currentShoppingListManager = $this->container->get(CurrentShoppingListManager::class);
         $shoppingList = $currentShoppingListManager->getForCurrentUser($request->get('shoppingListId'), true);
 
-        if (!$this->get(AuthorizationCheckerInterface::class)->isGranted('EDIT', $shoppingList)) {
+        if (!$shoppingList) {
+            throw $this->createNotFoundException();
+        }
+
+        if (!$this->container->get(AuthorizationCheckerInterface::class)->isGranted('EDIT', $shoppingList)) {
             throw $this->createAccessDeniedException();
         }
 
@@ -79,10 +84,10 @@ class AjaxLineItemController extends AbstractLineItemController
         $handler = new LineItemHandler(
             $form,
             $request,
-            $this->getDoctrine(),
-            $this->get(ShoppingListManager::class),
+            $this->container->get('doctrine'),
+            $this->container->get(ShoppingListManager::class),
             $currentShoppingListManager,
-            $this->get(ValidatorInterface::class)
+            $this->container->get(ValidatorInterface::class)
         );
         $isFormHandled = $handler->process($lineItem);
 
@@ -105,7 +110,7 @@ class AjaxLineItemController extends AbstractLineItemController
      *      methods={"DELETE"}
      * )
      * @AclAncestor("oro_shopping_list_frontend_update")
-     * @ParamConverter("lineItem", class="OroShoppingListBundle:LineItem", options={"id" = "lineItemId"})
+     * @ParamConverter("lineItem", class="Oro\Bundle\ShoppingListBundle\Entity\LineItem", options={"id" = "lineItemId"})
      *
      * @param LineItem $lineItem
      *
@@ -117,7 +122,7 @@ class AjaxLineItemController extends AbstractLineItemController
             throw $this->createAccessDeniedException();
         }
 
-        $shoppingListManager = $this->get(ShoppingListManager::class);
+        $shoppingListManager = $this->container->get(ShoppingListManager::class);
         $isRemoved = $shoppingListManager->removeLineItem($lineItem);
         if ($isRemoved > 0) {
             $result = $this->getSuccessResponse(
@@ -128,7 +133,7 @@ class AjaxLineItemController extends AbstractLineItemController
         } else {
             $result = [
                 'successful' => false,
-                'message' => $this->get(TranslatorInterface::class)
+                'message' => $this->container->get(TranslatorInterface::class)
                     ->trans('oro.frontend.shoppinglist.lineitem.product.cant_remove.label')
             ];
         }
@@ -146,7 +151,7 @@ class AjaxLineItemController extends AbstractLineItemController
      *      methods={"DELETE"}
      * )
      * @AclAncestor("oro_shopping_list_frontend_update")
-     * @ParamConverter("product", class="OroProductBundle:Product", options={"id" = "productId"})
+     * @ParamConverter("product", class="Oro\Bundle\ProductBundle\Entity\Product", options={"id" = "productId"})
      *
      * @param Request $request
      * @param Product $product
@@ -155,14 +160,14 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function removeProductFromViewAction(Request $request, Product $product)
     {
-        $shoppingListManager = $this->get(ShoppingListManager::class);
+        $shoppingListManager = $this->container->get(ShoppingListManager::class);
 
-        $shoppingList = $this->get(CurrentShoppingListManager::class)
+        $shoppingList = $this->container->get(CurrentShoppingListManager::class)
             ->getForCurrentUser($request->get('shoppingListId'));
 
         $result = [
             'successful' => false,
-            'message' => $this->get(TranslatorInterface::class)
+            'message' => $this->container->get(TranslatorInterface::class)
                 ->trans('oro.frontend.shoppinglist.lineitem.product.cant_remove.label')
         ];
 
@@ -192,13 +197,13 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function addProductsMassAction(Request $request, $gridName, $actionName)
     {
-        $shoppingList = $this->get(ShoppingListLineItemHandler::class)
+        $shoppingList = $this->container->get(ShoppingListLineItemHandler::class)
             ->getShoppingList($request->query->get('shoppingList'));
 
-        $parameters = $this->get(MassActionParametersParser::class)->parse($request);
+        $parameters = $this->container->get(MassActionParametersParser::class)->parse($request);
         $requestData = array_merge($request->query->all(), $request->request->all());
 
-        $response = $this->get(MassActionDispatcher::class)->dispatch(
+        $response = $this->container->get(MassActionDispatcher::class)->dispatch(
             $gridName,
             $actionName,
             $parameters,
@@ -226,18 +231,18 @@ class AjaxLineItemController extends AbstractLineItemController
      */
     public function addProductsToNewMassAction(Request $request, $gridName, $actionName)
     {
-        $shoppingList = $this->get(ShoppingListManager::class)->create();
+        $shoppingList = $this->container->get(ShoppingListManager::class)->create();
 
         $form = $this->createForm(ShoppingListType::class, $shoppingList);
         $form->handleRequest($request);
 
         $response = [];
         if ($form->isSubmitted() && $form->isValid()) {
-            $parameters = $this->get(MassActionParametersParser::class)->parse($request);
+            $parameters = $this->container->get(MassActionParametersParser::class)->parse($request);
             $requestData = array_merge($request->query->all(), $request->request->all());
 
             /** @var MassActionResponseInterface $result */
-            $result = $this->get(MassActionDispatcher::class)
+            $result = $this->container->get(MassActionDispatcher::class)
                 ->dispatch(
                     $gridName,
                     $actionName,
@@ -245,7 +250,7 @@ class AjaxLineItemController extends AbstractLineItemController
                     array_merge($requestData, ['shoppingList' => $shoppingList])
                 );
 
-            $this->get(CurrentShoppingListManager::class)
+            $this->container->get(CurrentShoppingListManager::class)
                 ->setCurrent($this->getUser(), $shoppingList);
 
             $response['messages']['data'][] = $result->getMessage();
@@ -292,7 +297,7 @@ class AjaxLineItemController extends AbstractLineItemController
             return $this->json(['message' => 'The request data should not be empty'], Response::HTTP_BAD_REQUEST);
         }
 
-        $handler = $this->get(ShoppingListLineItemBatchUpdateHandler::class);
+        $handler = $this->container->get(ShoppingListLineItemBatchUpdateHandler::class);
 
         $errors = $handler->process($this->getLineItemModels($data['data']), $shoppingList);
         if ($errors) {
@@ -335,7 +340,7 @@ class AjaxLineItemController extends AbstractLineItemController
         $parentProductId = $request->get('parentProductId');
 
         return $parentProductId
-            ? $this->getDoctrine()->getRepository(Product::class)->find($parentProductId)
+            ? $this->container->get('doctrine')->getRepository(Product::class)->find($parentProductId)
             : null;
     }
 
@@ -356,6 +361,7 @@ class AjaxLineItemController extends AbstractLineItemController
                 AuthorizationCheckerInterface::class,
                 UpdateHandlerFacade::class,
                 ShoppingListLineItemBatchUpdateHandler::class,
+                'doctrine' => ManagerRegistry::class,
             ]
         );
     }

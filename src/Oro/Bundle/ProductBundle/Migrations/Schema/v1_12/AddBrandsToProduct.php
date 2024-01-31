@@ -3,49 +3,25 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_12;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, ExtendExtensionAwareInterface
 {
-    const PRODUCT_TABLE_NAME = 'oro_product';
-    const BRAND_TABLE_NAME = 'oro_brand';
-
-    /** @var ExtendExtension */
-    protected $extendExtension;
+    use SlugExtensionAwareTrait;
+    use ExtendExtensionAwareTrait;
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * @var SlugExtension
-     */
-    protected $slugExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSlugExtension(SlugExtension $extension)
-    {
-        $this->slugExtension = $extension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
         $this->createBrandTable($schema);
@@ -68,28 +44,28 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
     /**
      * Create oro_brand table
      */
-    protected function createBrandTable(Schema $schema)
+    private function createBrandTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_brand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
         $table->addColumn('status', 'string', ['length' => 16]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['created_at'], 'idx_oro_brand_created_at', []);
-        $table->addIndex(['updated_at'], 'idx_oro_brand_updated_at', []);
+        $table->addIndex(['created_at'], 'idx_oro_brand_created_at');
+        $table->addIndex(['updated_at'], 'idx_oro_brand_updated_at');
     }
 
     /**
      * Create oro_brand_description table
      */
-    protected function createBrandDescriptionTable(Schema $schema)
+    private function createBrandDescriptionTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_brand_description');
-        $table->addColumn('brand_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addColumn('brand_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['brand_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_E42C1AB4EB576E89');
     }
@@ -97,9 +73,9 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
     /**
      * Add oro_brand foreign keys.
      */
-    protected function addBrandForeignKeys(Schema $schema)
+    private function addBrandForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::BRAND_TABLE_NAME);
+        $table = $schema->getTable('oro_brand');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
@@ -117,11 +93,11 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
     /**
      * Create oro_brand_name table
      */
-    protected function createBrandNameTable(Schema $schema)
+    private function createBrandNameTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_brand_name');
-        $table->addColumn('brand_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addColumn('brand_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['brand_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_FA144D83EB576E89');
     }
@@ -129,11 +105,11 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
     /**
      * Create oro_brand_short_desc table
      */
-    protected function createBrandShortDescTable(Schema $schema)
+    private function createBrandShortDescTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_brand_short_desc');
-        $table->addColumn('brand_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addColumn('brand_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['brand_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_70031058EB576E89');
     }
@@ -141,7 +117,7 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
     /**
      * Create oro_brand_slug table
      */
-    protected function createBrandSlugTable(Schema $schema)
+    private function createBrandSlugTable(Schema $schema): void
     {
         $this->slugExtension->addSlugs(
             $schema,
@@ -154,20 +130,15 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
     /**
      * Create oro_brand_slug_prototype table
      */
-    protected function createBrandSlugPrototypeTable(Schema $schema)
+    private function createBrandSlugPrototypeTable(Schema $schema): void
     {
-        $this->slugExtension->addLocalizedSlugPrototypes(
-            $schema,
-            'oro_brand_slug_prototype',
-            'oro_brand',
-            'brand_id'
-        );
+        $this->slugExtension->addLocalizedSlugPrototypes($schema, 'oro_brand_slug_prototype', 'oro_brand', 'brand_id');
     }
 
     /**
      * Add oro_brand_description foreign keys.
      */
-    protected function addBrandDescriptionForeignKeys(Schema $schema)
+    private function addBrandDescriptionForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_brand_description');
         $table->addForeignKeyConstraint(
@@ -187,7 +158,7 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
     /**
      * Add oro_brand_name foreign keys.
      */
-    protected function addBrandNameForeignKeys(Schema $schema)
+    private function addBrandNameForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_brand_name');
         $table->addForeignKeyConstraint(
@@ -207,7 +178,7 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
     /**
      * Add oro_brand_short_desc foreign keys.
      */
-    protected function addBrandShortDescForeignKeys(Schema $schema)
+    private function addBrandShortDescForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_brand_short_desc');
         $table->addForeignKeyConstraint(
@@ -224,9 +195,9 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
         );
     }
 
-    public function addProductToBrand(Schema $schema)
+    private function addProductToBrand(Schema $schema): void
     {
-        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('oro_product');
         $table->addColumn('brand_id', 'integer', ['notnull' => false]);
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_brand'),

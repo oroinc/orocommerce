@@ -3,18 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
-class LoadPriceListToProducts extends AbstractFixture implements DependentFixtureInterface
+class LoadPriceListToProducts extends AbstractFixture
 {
-    /**
-     * @var array
-     */
-    protected $data = [
+    private array $data = [
         [
             'product' => 'product-1',
             'priceList' => 'price_list_1',
@@ -50,37 +44,17 @@ class LoadPriceListToProducts extends AbstractFixture implements DependentFixtur
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         foreach ($this->data as $data) {
-            /** @var Product $product */
-            $product = $this->getReference($data['product']);
-            if ($data['priceList'] === 'default_price_list') {
-                $priceList = $manager->getRepository(PriceList::class)->getDefault();
-            } else {
-                /** @var PriceList $priceList */
-                $priceList = $this->getReference($data['priceList']);
-            }
-
             $relation = new PriceListToProduct();
-            $relation
-                ->setPriceList($priceList)
-                ->setProduct($product);
-
+            $relation->setPriceList($this->getReference($data['priceList']));
+            $relation->setProduct($this->getReference($data['product']));
             $manager->persist($relation);
             $manager->flush($relation);
         }
-
         $manager->flush();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [];
     }
 }

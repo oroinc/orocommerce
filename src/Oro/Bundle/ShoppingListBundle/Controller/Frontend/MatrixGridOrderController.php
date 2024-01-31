@@ -31,7 +31,7 @@ class MatrixGridOrderController extends AbstractLineItemController
      * @Acl(
      *      id="oro_shopping_list_frontend_view",
      *      type="entity",
-     *      class="OroShoppingListBundle:ShoppingList",
+     *      class="Oro\Bundle\ShoppingListBundle\Entity\ShoppingList",
      *      permission="VIEW",
      *      group_name="commerce"
      * )
@@ -42,25 +42,25 @@ class MatrixGridOrderController extends AbstractLineItemController
      */
     public function orderAction(Request $request, Product $product)
     {
-        $currentShoppingListManager = $this->get(CurrentShoppingListManager::class);
+        $currentShoppingListManager = $this->container->get(CurrentShoppingListManager::class);
 
         $shoppingListId = $request->get('shoppingListId');
         $shoppingList = $currentShoppingListManager->getForCurrentUser($shoppingListId);
 
-        $form = $this->get(MatrixGridOrderFormProvider::class)->getMatrixOrderForm($product, $shoppingList);
+        $form = $this->container->get(MatrixGridOrderFormProvider::class)->getMatrixOrderForm($product, $shoppingList);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $matrixGridOrderManager = $this->get(MatrixGridOrderManager::class);
+            $matrixGridOrderManager = $this->container->get(MatrixGridOrderManager::class);
             $lineItems = $matrixGridOrderManager->convertMatrixIntoLineItems(
                 $form->getData(),
                 $product,
-                $request->request->get('matrix_collection', [])
+                $request->request->all('matrix_collection')
             );
 
             $shoppingList = $shoppingList ?? $currentShoppingListManager->getForCurrentUser($shoppingListId, true);
 
-            $shoppingListManager = $this->get(ShoppingListManager::class);
+            $shoppingListManager = $this->container->get(ShoppingListManager::class);
             foreach ($lineItems as $lineItem) {
                 $shoppingListManager->updateLineItem($lineItem, $shoppingList);
             }
@@ -101,10 +101,10 @@ class MatrixGridOrderController extends AbstractLineItemController
      */
     public function updateAction(ShoppingList $shoppingList, Product $product, ProductUnit $unit, Request $request)
     {
-        $form = $this->get(MatrixGridOrderFormProvider::class)
+        $form = $this->container->get(MatrixGridOrderFormProvider::class)
             ->getMatrixOrderByUnitForm($product, $unit, $shoppingList);
 
-        $result = $this->get(MatrixGridOrderFormHandler::class)
+        $result = $this->container->get(MatrixGridOrderFormHandler::class)
             ->process($form->getData(), $form, $request);
 
         if ($result) {
@@ -128,7 +128,7 @@ class MatrixGridOrderController extends AbstractLineItemController
      */
     protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, string $message): array
     {
-        $productShoppingLists = $this->get(ProductShoppingListsDataProvider::class)
+        $productShoppingLists = $this->container->get(ProductShoppingListsDataProvider::class)
             ->getProductUnitsQuantity($product->getId());
 
         return [

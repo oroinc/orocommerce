@@ -1,0 +1,59 @@
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist:
+        label: 'List 1'
+        customer: '@customer'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+    shoppinglist2:
+        label: 'List 2'
+        customer: '@customer'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1:
+        product: '@product1'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+    lineitem2:
+        product: '@product2'
+        quantity: '2'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist2'
+        organization: '@organization'
+    lineitem3:
+        product: '@productKit'
+        quantity: '3'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist2'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
+    product_kit_item_line_item1:
+        lineItem: '@lineitem3'
+        kitItem: '@product_kit_item1'
+        product: '@product2'
+        quantity: 2
+        unit: '@item'
+        sortOrder: 2
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppingListTotal:
+        __construct: ['@shoppinglist','USD']
+        shoppingList: '@shoppinglist'
+        currency: 'USD'
+        subtotalValue: '10'
+        valid: true
+    shoppingListTotal2:
+        __construct: ['@shoppinglist2','USD']
+        shoppingList: '@shoppinglist2'
+        currency: 'USD'
+        subtotalValue: '51.75'
+        valid: true

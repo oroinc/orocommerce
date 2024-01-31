@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -13,29 +14,26 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadShoppingLists extends AbstractFixture implements DependentFixtureInterface
 {
-    const SHOPPING_LIST_1 = 'shopping_list_1';
-    const SHOPPING_LIST_2 = 'shopping_list_2';
-    const SHOPPING_LIST_3 = 'shopping_list_3';
-    const SHOPPING_LIST_4 = 'shopping_list_4';
-    const SHOPPING_LIST_5 = 'shopping_list_5';
-    const SHOPPING_LIST_6 = 'shopping_list_6';
-    const SHOPPING_LIST_7 = 'shopping_list_7';
-    const SHOPPING_LIST_8 = 'shopping_list_8';
-    const SHOPPING_LIST_9 = 'shopping_list_9';
+    public const SHOPPING_LIST_1 = 'shopping_list_1';
+    public const SHOPPING_LIST_2 = 'shopping_list_2';
+    public const SHOPPING_LIST_3 = 'shopping_list_3';
+    public const SHOPPING_LIST_4 = 'shopping_list_4';
+    public const SHOPPING_LIST_5 = 'shopping_list_5';
+    public const SHOPPING_LIST_6 = 'shopping_list_6';
+    public const SHOPPING_LIST_7 = 'shopping_list_7';
+    public const SHOPPING_LIST_8 = 'shopping_list_8';
+    public const SHOPPING_LIST_9 = 'shopping_list_9';
 
-    protected static $currency = 'USD';
+    private static $currency = 'USD';
 
-    /**
-     * @var array
-     */
-    protected $shoppingListWebsites = [
+    private array $shoppingListWebsites = [
         self::SHOPPING_LIST_9 => LoadWebsiteData::WEBSITE3,
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadWebsiteData::class,
@@ -44,9 +42,9 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         foreach ($this->getData() as $listLabel => $definition) {
             $isCurrent = $listLabel === self::SHOPPING_LIST_2;
@@ -60,19 +58,12 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param CustomerUser $customerUser
-     * @param string $name
-     * @param bool $isCurrent
-     * @return ShoppingList
-     */
-    protected function createShoppingList(
+    private function createShoppingList(
         ObjectManager $manager,
         CustomerUser $customerUser,
-        $name,
-        $isCurrent = false
-    ) {
+        string $name,
+        bool $isCurrent = false
+    ): void {
         $shoppingList = new ShoppingList();
         $shoppingList->setOrganization($customerUser->getOrganization());
         $shoppingList->setCustomerUser($customerUser);
@@ -81,28 +72,18 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         $shoppingList->setNotes($name . '_notes');
         $shoppingList->setCurrency(static::$currency);
         $shoppingList->setCurrent($isCurrent);
-        if (array_key_exists($name, $this->shoppingListWebsites)) {
+        if (\array_key_exists($name, $this->shoppingListWebsites)) {
             $shoppingList->setWebsite($this->getReference($this->shoppingListWebsites[$name]));
         } else {
             $shoppingList->setWebsite($this->getDefaultWebsite($manager));
         }
         $manager->persist($shoppingList);
         $this->addReference($name, $shoppingList);
-
-        return $shoppingList;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string $email
-     *
-     * @return CustomerUser
-     * @throws \LogicException
-     */
-    protected function getCustomerUser(ObjectManager $manager, $email)
+    private function getCustomerUser(ObjectManager $manager, string $email): CustomerUser
     {
-        $customerUser = $manager->getRepository(CustomerUser::class)
-            ->findOneBy(['email' => $email]);
+        $customerUser = $manager->getRepository(CustomerUser::class)->findOneBy(['email' => $email]);
         if (!$customerUser) {
             throw new \LogicException('Test customer user not loaded');
         }
@@ -110,10 +91,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         return $customerUser;
     }
 
-    /**
-     * @return array
-     */
-    protected function getData()
+    private function getData(): array
     {
         return [
             self::SHOPPING_LIST_1 => [
@@ -146,17 +124,13 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         ];
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @return Website
-     */
-    protected function getDefaultWebsite(ObjectManager $manager)
+    private function getDefaultWebsite(ObjectManager $manager): Website
     {
         return $manager->getRepository(Website::class)->getDefaultWebsite();
     }
 
     public static function setCurrency(string $currency): void
     {
-        static::$currency = $currency;
+        self::$currency = $currency;
     }
 }

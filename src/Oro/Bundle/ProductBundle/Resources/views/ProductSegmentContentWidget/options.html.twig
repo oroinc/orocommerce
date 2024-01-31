@@ -62,17 +62,17 @@
     ) }}
 {% endif %}
 
-{% if enable_autoplay is defined %}
+{% if autoplay is defined %}
     {{ UI.renderProperty(
-        'oro.product.content_widget_type.product_segment.options.enable_autoplay.label'|trans,
-        enable_autoplay ? 'Yes'|trans : 'No'|trans
+        'oro.product.content_widget_type.product_segment.options.autoplay.label'|trans,
+        autoplay ? 'Yes'|trans : 'No'|trans
     ) }}
 {% endif %}
 
-{% if autoplay_speed is defined %}
+{% if autoplaySpeed is defined %}
     {{ UI.renderProperty(
         'oro.product.content_widget_type.product_segment.options.autoplay_speed.label'|trans,
-        autoplay_speed
+        autoplaySpeed
     ) }}
 {% endif %}
 
@@ -90,16 +90,16 @@
     ) }}
 {% endif %}
 
-{% if show_dots is defined %}
+{% if dots is defined %}
     {{ UI.renderProperty(
-        'oro.product.content_widget_type.product_segment.options.show_dots.label'|trans,
-        show_dots ? 'Yes'|trans : 'No'|trans
+        'oro.product.content_widget_type.product_segment.options.dots.label'|trans,
+        dots ? 'Yes'|trans : 'No'|trans
     ) }}
 {% endif %}
 
-{% if enable_infinite_scroll is defined %}
+{% if infinite is defined %}
     {{ UI.renderProperty(
-        'oro.product.content_widget_type.product_segment.options.enable_infinite_scroll.label'|trans,
-        enable_infinite_scroll ? 'Yes'|trans : 'No'|trans
+        'oro.product.content_widget_type.product_segment.options.infinite.label'|trans,
+        infinite ? 'Yes'|trans : 'No'|trans
     ) }}
 {% endif %}

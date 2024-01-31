@@ -4,7 +4,6 @@ namespace Oro\Bundle\PromotionBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 /**
  * Coupon ORM Entity repository.
@@ -27,12 +26,12 @@ class CouponRepository extends EntityRepository
     }
 
     /**
-     * @param array|int[]|Promotion[] $promotions
-     * @param array $couponCodes|string[]
+     * @param int[]    $promotionIds
+     * @param string[] $couponCodes
      *
-     * @return array
+     * @return int[]
      */
-    public function getPromotionsWithMatchedCoupons(array $promotions, array $couponCodes): array
+    public function getPromotionsWithMatchedCoupons(array $promotionIds, array $couponCodes): array
     {
         $queryBuilder = $this->createQueryBuilder('coupon');
 
@@ -40,7 +39,7 @@ class CouponRepository extends EntityRepository
             ->where($queryBuilder->expr()->in('IDENTITY(coupon.promotion)', ':promotions'))
             ->andWhere($queryBuilder->expr()->in('coupon.code', ':couponCodes'))
             ->andWhere($queryBuilder->expr()->eq('coupon.enabled', ':enabled'))
-            ->setParameter('promotions', $promotions)
+            ->setParameter('promotions', $promotionIds)
             ->setParameter('couponCodes', array_map('strval', $couponCodes)) //Ensure coupon codes are passed as strings
             ->setParameter('enabled', true)
             ->getQuery()->getArrayResult();

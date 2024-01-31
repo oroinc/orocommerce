@@ -75,7 +75,7 @@ class ProductUnitRepository extends ServiceEntityRepository
 
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
-            ->from('OroProductBundle:ProductUnitPrecision', 'productUnitPrecision')
+            ->from(ProductUnitPrecision::class, 'productUnitPrecision')
             ->select('IDENTITY(productUnitPrecision.product) as productId')
             ->where($qb->expr()->in('productUnitPrecision.product', ':products'))
             ->andWhere($qb->expr()->eq('productUnitPrecision.unit', ':unit'));

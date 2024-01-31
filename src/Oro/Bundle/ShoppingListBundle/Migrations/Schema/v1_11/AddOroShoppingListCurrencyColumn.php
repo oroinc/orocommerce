@@ -14,6 +14,9 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
  */
 class AddOroShoppingListCurrencyColumn implements Migration, OrderedMigrationInterface
 {
+    /**
+     * {@inheritDoc}
+     */
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_shopping_list');
@@ -23,6 +26,9 @@ class AddOroShoppingListCurrencyColumn implements Migration, OrderedMigrationInt
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getOrder()
     {
         return 1;

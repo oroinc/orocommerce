@@ -1,29 +1,34 @@
 {% import '@OroUI/macros.html.twig' as UI %}
 
-{% if slidesToShow is defined %}
-    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.slides_to_show.label'|trans, slidesToShow) }}
+{% if pageComponentOptions.slidesToShow is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.slides_to_show.label'|trans, pageComponentOptions.slidesToShow) }}
 {% endif %}
 
-{% if slidesToScroll is defined %}
-    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.slides_to_scroll.label'|trans, slidesToScroll) }}
+{% if pageComponentOptions.slidesToScroll is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.slides_to_scroll.label'|trans, pageComponentOptions.slidesToScroll) }}
 {% endif %}
 
-{% if autoplay is defined %}
-    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.autoplay.label'|trans, autoplay ? 'Yes'|trans : 'No'|trans) }}
+{% if pageComponentOptions.autoplay is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.autoplay.label'|trans, pageComponentOptions.autoplay ? 'Yes'|trans : 'No'|trans) }}
 {% endif %}
 
-{% if autoplaySpeed is defined %}
-    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.autoplay_speed.label'|trans, autoplaySpeed) }}
+{% if pageComponentOptions.autoplaySpeed is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.autoplay_speed.label'|trans, pageComponentOptions.autoplaySpeed) }}
 {% endif %}
 
-{% if arrows is defined %}
-    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.arrows.label'|trans, arrows ? 'Yes'|trans : 'No'|trans) }}
+{% if pageComponentOptions.arrows is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.arrows.label'|trans, pageComponentOptions.arrows ? 'Yes'|trans : 'No'|trans) }}
 {% endif %}
 
-{% if dots is defined %}
-    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.dots.label'|trans, dots ? 'Yes'|trans : 'No'|trans) }}
+{% if pageComponentOptions.dots is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.dots.label'|trans, pageComponentOptions.dots ? 'Yes'|trans : 'No'|trans) }}
 {% endif %}
 
-{% if infinite is defined %}
-    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.infinite.label'|trans, infinite ? 'Yes'|trans : 'No'|trans) }}
+{% if pageComponentOptions.infinite is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.infinite.label'|trans, pageComponentOptions.infinite ? 'Yes'|trans : 'No'|trans) }}
+{% endif %}
+
+{% if pageComponentOptions.scaling is defined %}
+    {{ UI.renderProperty('oro.cms.content_widget_type.slider_options.scaling.label'|trans,
+        ('oro.cms.content_widget_type.slider_options.scaling.value.' ~ pageComponentOptions.scaling)|trans) }}
 {% endif %}

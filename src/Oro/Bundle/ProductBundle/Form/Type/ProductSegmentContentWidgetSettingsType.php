@@ -119,10 +119,10 @@ class ProductSegmentContentWidgetSettingsType extends AbstractType
         );
 
         $builder->add(
-            'enable_autoplay',
+            'autoplay',
             CheckboxType::class,
             [
-                'label' => 'oro.product.content_widget_type.product_segment.options.enable_autoplay.label',
+                'label' => 'oro.product.content_widget_type.product_segment.options.autoplay.label',
                 'required' => false,
                 'block' => 'options',
                 'constraints' => [
@@ -132,7 +132,7 @@ class ProductSegmentContentWidgetSettingsType extends AbstractType
         );
 
         $builder->add(
-            'autoplay_speed',
+            'autoplaySpeed',
             IntegerType::class,
             [
                 'label' => 'oro.product.content_widget_type.product_segment.options.autoplay_speed.label',
@@ -172,10 +172,10 @@ class ProductSegmentContentWidgetSettingsType extends AbstractType
         );
 
         $builder->add(
-            'show_dots',
+            'dots',
             CheckboxType::class,
             [
-                'label' => 'oro.product.content_widget_type.product_segment.options.show_dots.label',
+                'label' => 'oro.product.content_widget_type.product_segment.options.dots.label',
                 'required' => false,
                 'block' => 'options',
                 'constraints' => [
@@ -185,10 +185,10 @@ class ProductSegmentContentWidgetSettingsType extends AbstractType
         );
 
         $builder->add(
-            'enable_infinite_scroll',
+            'infinite',
             CheckboxType::class,
             [
-                'label' => 'oro.product.content_widget_type.product_segment.options.enable_infinite_scroll.label',
+                'label' => 'oro.product.content_widget_type.product_segment.options.infinite.label',
                 'required' => false,
                 'block' => 'options',
                 'constraints' => [
@@ -215,8 +215,8 @@ class ProductSegmentContentWidgetSettingsType extends AbstractType
             $data['minimum_items'] = 3;
         }
 
-        if (!isset($data['autoplay_speed'])) {
-            $data['autoplay_speed'] = 4000;
+        if (!isset($data['autoplaySpeed'])) {
+            $data['autoplaySpeed'] = 4000;
         }
 
         if (!array_key_exists('use_slider_on_mobile', $data)) {

@@ -20,7 +20,6 @@ class FrontendRoutingTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->client->useHashNavigation(true);
 
         $this->getOptionalListenerManager()->enableListener('oro_redirect.event_listener.slug_prototype_change');
         $this->getOptionalListenerManager()->enableListener('oro_redirect.event_listener.slug_change');

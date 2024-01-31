@@ -5,29 +5,19 @@ namespace Oro\Bundle\ProductBundle\Visibility;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
+/**
+ * Abstraction for product single unit mode.
+ */
 interface ProductUnitFieldsSettingsInterface
 {
-    /**
-     * @param Product $product
-     * @return bool
-     */
-    public function isProductUnitSelectionVisible(Product $product);
+    public function isProductUnitSelectionVisible(Product $product): bool;
+
+    public function isProductPrimaryUnitVisible(?Product $product = null): bool;
+
+    public function isAddingAdditionalUnitsToProductAvailable(?Product $product = null): bool;
 
     /**
-     * @param Product|null $product
-     * @return bool
-     */
-    public function isProductPrimaryUnitVisible(Product $product = null);
-
-    /**
-     * @param Product|null $product
-     * @return bool
-     */
-    public function isAddingAdditionalUnitsToProductAvailable(Product $product = null);
-
-    /**
-     * @param Product|null $product
      * @return ProductUnit[]
      */
-    public function getAvailablePrimaryUnitChoices(Product $product = null);
+    public function getAvailablePrimaryUnitChoices(?Product $product = null): array;
 }

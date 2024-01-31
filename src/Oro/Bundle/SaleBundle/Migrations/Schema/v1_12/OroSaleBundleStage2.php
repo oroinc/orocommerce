@@ -13,7 +13,7 @@ class OroSaleBundleStage2 implements Migration, OrderedMigrationInterface
     use MigrationConstraintTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -78,9 +78,7 @@ class OroSaleBundleStage2 implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * Get the order of this migration
-     *
-     * @return integer
+     * {@inheritDoc}
      */
     public function getOrder()
     {

@@ -54,7 +54,7 @@
     {% set additionalGeneralData = {} %}
     {% if is_granted('VIEW', entity, 'brand') %}
         {% set additionalGeneralData = additionalGeneralData|merge({
-            'brand': UI.renderProperty('oro.product.brand.label'|trans, entity.brand),
+            'brand': UI.renderProperty('oro.product.brand.label'|trans, entity.brand|oro_format_name(null, 'full')),
         }) %}
     {% endif %}
 
@@ -106,7 +106,7 @@
         'info': productInfo
     } %}
     {% if is_granted('VIEW', entity, 'attributeFamily') %}
-        {% set generalDataBlock = generalDataBlock|merge({'attributeFamily': UI.renderProperty('oro.product.attribute_family.label'|trans, entity.attributeFamily)}) %}
+        {% set generalDataBlock = generalDataBlock|merge({'attributeFamily': UI.renderProperty('oro.product.attribute_family.label'|trans, entity.attributeFamily|oro_format_name(null, 'full'))}) %}
     {% endif %}
     {% if is_granted('VIEW', entity, 'featured') %}
         {% set generalDataBlock = generalDataBlock|merge({'featured': UI.renderProperty('oro.product.featured.label'|trans, entity.featured ? 'oro.product.featured.yes'|trans : 'oro.product.featured.no'|trans)}) %}

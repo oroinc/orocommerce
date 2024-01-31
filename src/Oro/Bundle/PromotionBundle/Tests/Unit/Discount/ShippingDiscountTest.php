@@ -2,18 +2,15 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
-use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class ShippingDiscountTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ShippingDiscount
-     */
-    private $discount;
+    private ShippingDiscount $discount;
 
     protected function setUp(): void
     {
@@ -23,7 +20,7 @@ class ShippingDiscountTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider invalidOptionsDataProvider
      */
-    public function testInvalidOptions(array $options)
+    public function testInvalidOptions(array $options): void
     {
         $this->expectException(InvalidOptionsException::class);
         $this->discount->configure($options);
@@ -32,89 +29,125 @@ class ShippingDiscountTest extends \PHPUnit\Framework\TestCase
     public function invalidOptionsDataProvider(): array
     {
         return [
+            'invalid DISCOUNT_TYPE type' => [
+                [
+                    ShippingDiscount::DISCOUNT_TYPE => []
+                ]
+            ],
+            'invalid DISCOUNT_VALUE type' => [
+                [
+                    ShippingDiscount::DISCOUNT_VALUE => 'abc'
+                ]
+            ],
+            'invalid DISCOUNT_CURRENCY type' => [
+                [
+                    ShippingDiscount::DISCOUNT_TYPE => ShippingDiscount::TYPE_AMOUNT,
+                    ShippingDiscount::DISCOUNT_CURRENCY => 100
+                ]
+            ],
+            'invalid DISCOUNT_CURRENCY code length' => [
+                [
+                    ShippingDiscount::DISCOUNT_TYPE => ShippingDiscount::TYPE_AMOUNT,
+                    ShippingDiscount::DISCOUNT_CURRENCY => 'ABCD'
+                ]
+            ],
             'invalid SHIPPING_OPTIONS type' => [
                 [
                     ShippingDiscount::SHIPPING_OPTIONS => 1.0,
-                ],
-            ],
+                ]
+            ]
         ];
     }
 
-    public function testApply()
+    public function testApply(): void
     {
         $discountContext = new DiscountContext();
 
         $options = [
-            AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
-            AbstractDiscount::DISCOUNT_VALUE => 0.2,
+            ShippingDiscount::DISCOUNT_TYPE => ShippingDiscount::TYPE_PERCENT,
+            ShippingDiscount::DISCOUNT_VALUE => 0.2,
         ];
         $this->discount->configure($options);
 
         $this->discount->apply($discountContext);
-        $this->assertCount(1, $discountContext->getShippingDiscounts());
-        $this->assertEquals($this->discount, $discountContext->getShippingDiscounts()[0]);
+        self::assertCount(1, $discountContext->getShippingDiscounts());
+        self::assertEquals($this->discount, $discountContext->getShippingDiscounts()[0]);
     }
 
-    public function testCalculateNonSupportedEntity()
+    public function testCalculateNonSupportedEntity(): void
     {
         $entity = new \stdClass();
         $options = [
-            AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
-            AbstractDiscount::DISCOUNT_VALUE => 0.2
+            ShippingDiscount::DISCOUNT_TYPE => ShippingDiscount::TYPE_PERCENT,
+            ShippingDiscount::DISCOUNT_VALUE => 0.2
         ];
 
         $this->discount->configure($options);
 
-        $this->assertSame(0.0, $this->discount->calculate($entity));
+        self::assertSame(0.0, $this->discount->calculate($entity));
     }
 
     /**
      * @dataProvider calculateDataProvider
-     *
-     * @param array $options
-     * @param float $shippingCost
-     * @param float $expectedDiscount
      */
-    public function testCalculate(array $options, $shippingCost, $expectedDiscount)
+    public function testCalculate(array $options, mixed $shippingCost, float $expectedDiscount): void
     {
         $entity = $this->createMock(ShippingAwareInterface::class);
-        $entity->expects($this->any())
+        $entity->expects(self::once())
             ->method('getShippingCost')
             ->willReturn($shippingCost);
 
         $this->discount->configure($options);
 
-        $this->assertSame($expectedDiscount, $this->discount->calculate($entity));
+        self::assertSame($expectedDiscount, $this->discount->calculate($entity));
     }
 
     public function calculateDataProvider(): array
     {
         return [
+            'null shipping cost' => [
+                'options' => [
+                    ShippingDiscount::DISCOUNT_TYPE => ShippingDiscount::TYPE_AMOUNT,
+                    ShippingDiscount::DISCOUNT_VALUE => 100.2,
+                    ShippingDiscount::DISCOUNT_CURRENCY => 'EUR'
+                ],
+                'shippingCost' => null,
+                'expectedDiscount' => 0.0
+            ],
             'fixed amount > shipping cost' => [
                 'options' => [
-                    AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
-                    AbstractDiscount::DISCOUNT_VALUE => 100.2,
-                    AbstractDiscount::DISCOUNT_CURRENCY => 'EUR'
+                    ShippingDiscount::DISCOUNT_TYPE => ShippingDiscount::TYPE_AMOUNT,
+                    ShippingDiscount::DISCOUNT_VALUE => 100.2,
+                    ShippingDiscount::DISCOUNT_CURRENCY => 'EUR'
                 ],
                 'shippingCost' => 100.0,
                 'expectedDiscount' => 100.0
             ],
             'fixed amount < shipping cost' => [
                 'options' => [
-                    AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
-                    AbstractDiscount::DISCOUNT_VALUE => 100.2,
-                    AbstractDiscount::DISCOUNT_CURRENCY => 'EUR'
+                    ShippingDiscount::DISCOUNT_TYPE => ShippingDiscount::TYPE_AMOUNT,
+                    ShippingDiscount::DISCOUNT_VALUE => 100.2,
+                    ShippingDiscount::DISCOUNT_CURRENCY => 'EUR'
                 ],
                 'shippingCost' => 200.0,
                 'expectedDiscount' => 100.2
             ],
             'percent' => [
                 'options' => [
-                    AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
-                    AbstractDiscount::DISCOUNT_VALUE => 0.2
+                    ShippingDiscount::DISCOUNT_TYPE => ShippingDiscount::TYPE_PERCENT,
+                    ShippingDiscount::DISCOUNT_VALUE => 0.2
                 ],
                 'shippingCost' => 100.0,
                 'expectedDiscount' => 20.0
+            ],
+            'shipping cost as Price object' => [
+                'options' => [
+                    ShippingDiscount::DISCOUNT_TYPE => ShippingDiscount::TYPE_AMOUNT,
+                    ShippingDiscount::DISCOUNT_VALUE => 100.2,
+                    ShippingDiscount::DISCOUNT_CURRENCY => 'EUR'
+                ],
+                'shippingCost' => Price::create(200.0, 'EUR'),
+                'expectedDiscount' => 100.2
             ]
         ];
     }

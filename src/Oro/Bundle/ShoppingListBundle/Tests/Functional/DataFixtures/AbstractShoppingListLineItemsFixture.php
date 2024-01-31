@@ -2,22 +2,28 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture implements DependentFixtureInterface
+abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture implements
+    ContainerAwareInterface,
+    DependentFixtureInterface
 {
+    use ContainerAwareTrait;
     use UserUtilityTrait;
 
-    /** @var array */
-    protected static $lineItems = [];
+    protected static array $lineItems = [];
 
-    public function load(ObjectManager $manager)
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager): void
     {
         $shoppingLists = [];
         foreach (static::$lineItems as $name => $lineItemData) {
@@ -37,33 +43,23 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
         $manager->flush();
     }
 
-    protected function createLineItem(
-        ObjectManager $manager,
-        array $lineItemData
-    ): LineItem {
+    protected function createLineItem(ObjectManager $manager, array $lineItemData): LineItem
+    {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference($lineItemData['shoppingList']);
 
-        /** @var ProductUnit $unit */
-        $unit = $this->getReference($lineItemData['unit']);
-
-        /** @var Product $product */
-        $product = $this->getReference($lineItemData['product']);
-
         $owner = $this->getFirstUser($manager);
-        $lineItem = (new LineItem())
-            ->setNotes('Test Notes')
-            ->setCustomerUser($shoppingList->getCustomerUser())
-            ->setOrganization($shoppingList->getOrganization())
-            ->setOwner($owner)
-            ->setShoppingList($shoppingList)
-            ->setUnit($unit)
-            ->setProduct($product);
+        $lineItem = new LineItem();
+        $lineItem->setNotes('Test Notes');
+        $lineItem->setCustomerUser($shoppingList->getCustomerUser());
+        $lineItem->setOrganization($shoppingList->getOrganization());
+        $lineItem->setOwner($owner);
+        $lineItem->setShoppingList($shoppingList);
+        $lineItem->setUnit($this->getReference($lineItemData['unit']));
+        $lineItem->setProduct($this->getReference($lineItemData['product']));
 
         if (isset($lineItemData['parentProduct'])) {
-            /** @var Product $parentProduct */
-            $parentProduct = $this->getReference($lineItemData['parentProduct']);
-            $lineItem->setParentProduct($parentProduct);
+            $lineItem->setParentProduct($this->getReference($lineItemData['parentProduct']));
         }
 
         if (isset($lineItemData['quantity'])) {

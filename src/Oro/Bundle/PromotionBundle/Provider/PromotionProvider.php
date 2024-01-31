@@ -30,6 +30,11 @@ class PromotionProvider
     ) {
     }
 
+    /**
+     * @param object $sourceEntity
+     *
+     * @return PromotionDataInterface[]
+     */
     public function getPromotions(object $sourceEntity): array
     {
         $promotions = [];

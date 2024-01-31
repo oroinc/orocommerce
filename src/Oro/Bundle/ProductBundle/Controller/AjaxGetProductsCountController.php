@@ -29,7 +29,7 @@ class AjaxGetProductsCountController extends AbstractController
     public function getAction($gridName, Request $request)
     {
         $params = $request->get('params', []);
-        $count = $this->get(GridCountProvider::class)->getGridCount($gridName, $params);
+        $count = $this->container->get(GridCountProvider::class)->getGridCount($gridName, $params);
 
         return new JsonResponse($count);
     }

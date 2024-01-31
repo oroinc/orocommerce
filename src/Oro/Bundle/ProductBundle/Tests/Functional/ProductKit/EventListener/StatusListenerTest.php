@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadDisabledProductKitData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -30,6 +31,7 @@ class StatusListenerTest extends WebTestCase
         $this->loadFixtures(
             [
                 LoadProductKitData::class,
+                LoadDisabledProductKitData::class,
             ]
         );
         $this->registry = self::getContainer()->get(ManagerRegistry::class);
@@ -41,49 +43,74 @@ class StatusListenerTest extends WebTestCase
         $kit1 = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
         $kit2 = $this->getReference(LoadProductKitData::PRODUCT_KIT_2);
         $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
+        $kit4 = $this->getReference(LoadDisabledProductKitData::PRODUCT_KIT_4);
 
         self::assertEquals(
             [
                 Product::STATUS_ENABLED,
                 Product::STATUS_ENABLED,
                 Product::STATUS_ENABLED,
+                Product::STATUS_DISABLED,
             ],
             [
                 $kit1->getStatus(),
                 $kit2->getStatus(),
                 $kit3->getStatus(),
+                $kit4->getStatus(),
             ]
         );
     }
 
-    public function testStatusChangedIfRelatedProductChanged(): void
-    {
+    /**
+     * @dataProvider getChangedToDisabledStatusDataProvider
+     */
+    public function testStatusIfRelatedProductChanged(
+        string $productKitReferenceName,
+        string $originalStatus,
+        string $expectedStatus
+    ): void {
+        $productKit = $this->getReference($productKitReferenceName);
+        self::assertEquals($originalStatus, $productKit->getStatus());
+
         $product = $this->getReference('product-4');
         $product->setStatus(Product::STATUS_DISABLED);
         $this->registry->getManager()->flush();
         $this->registry->getManager()->clear();
 
-        $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
-
-        self::assertEquals(Product::STATUS_DISABLED, $kit3->getStatus());
+        self::assertEquals($expectedStatus, $productKit->getStatus());
     }
 
-    public function testStatusChangedIfRelatedProductRemoved(): void
-    {
+    /**
+     * @dataProvider getRemainsTheSameStatusDataProvider
+     */
+    public function testStatusIfRelatedProductRemoved(
+        string $productKitReferenceName,
+        string $originalStatus,
+        string $expectedStatus
+    ): void {
+        $productKit = $this->getReference($productKitReferenceName);
+        self::assertEquals($originalStatus, $productKit->getStatus());
+
         $product = $this->getReference('product-5'); // it disabled in fixtures
         $this->registry->getManager()->remove($product);
         $this->registry->getManager()->flush();
         $this->registry->getManager()->clear();
 
-        $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
-
-        self::assertEquals(Product::STATUS_ENABLED, $kit3->getStatus());
+        self::assertEquals($expectedStatus, $productKit->getStatus());
     }
 
-    public function testStatusChangedIfProductKitItemWithDisabledProductIsRemoved(): void
-    {
+    /**
+     * @dataProvider getRemainsTheSameStatusDataProvider
+     */
+    public function testStatusIfProductKitItemWithDisabledProductIsRemoved(
+        string $productKitReferenceName,
+        string $originalStatus,
+        string $expectedStatus
+    ): void {
         /** @var Product $productKit */
-        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
+        $productKit = $this->getReference($productKitReferenceName);
+        self::assertEquals($originalStatus, $productKit->getStatus());
+
         $productKitItem = $productKit->getKitItems()->filter(
             static fn (ProductKitItem $kitItem) => $kitItem->getProducts()->filter(
                 static fn (Product $product) => $product->getSku() === LoadProductData::PRODUCT_5
@@ -93,15 +120,21 @@ class StatusListenerTest extends WebTestCase
         $this->registry->getManager()->flush();
         $this->registry->getManager()->clear();
 
-        $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
-
-        self::assertEquals(Product::STATUS_ENABLED, $kit3->getStatus());
+        self::assertEquals($expectedStatus, $productKit->getStatus());
     }
 
-    public function testStatusChangedIfProductKitItemWithDisabledProductTurnedIntoOptional(): void
-    {
+    /**
+     * @dataProvider getRemainsTheSameStatusDataProvider
+     */
+    public function testStatusIfProductKitItemWithDisabledProductTurnedIntoOptional(
+        string $productKitReferenceName,
+        string $originalStatus,
+        string $expectedStatus
+    ): void {
         /** @var Product $productKit */
-        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
+        $productKit = $this->getReference($productKitReferenceName);
+        self::assertEquals($originalStatus, $productKit->getStatus());
+
         $productKitItem = $productKit->getKitItems()->filter(
             static fn (ProductKitItem $kitItem) => $kitItem->getProducts()->filter(
                 static fn (Product $product) => $product->getSku() === LoadProductData::PRODUCT_5
@@ -112,15 +145,21 @@ class StatusListenerTest extends WebTestCase
         $this->registry->getManager()->flush();
         $this->registry->getManager()->clear();
 
-        $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
-
-        self::assertEquals(Product::STATUS_ENABLED, $kit3->getStatus());
+        self::assertEquals($expectedStatus, $productKit->getStatus());
     }
 
-    public function testStatusChangedIfProductKitItemProductWithDisabledProductWasRemoved(): void
-    {
+    /**
+     * @dataProvider getRemainsTheSameStatusDataProvider
+     */
+    public function testStatusIfProductKitItemProductWithDisabledProductWasRemoved(
+        string $productKitReferenceName,
+        string $originalStatus,
+        string $expectedStatus
+    ): void {
         /** @var Product $productKit */
-        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
+        $productKit = $this->getReference($productKitReferenceName);
+        self::assertEquals($originalStatus, $productKit->getStatus());
+
         $productKitItem = $productKit->getKitItems()->filter(
             static fn (ProductKitItem $kitItem) => $kitItem->getProducts()->filter(
                 static fn (Product $product) => $product->getSku() === LoadProductData::PRODUCT_5
@@ -136,15 +175,21 @@ class StatusListenerTest extends WebTestCase
         $this->registry->getManager()->flush();
         $this->registry->getManager()->clear();
 
-        $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
-
-        self::assertEquals(Product::STATUS_ENABLED, $kit3->getStatus());
+        self::assertEquals($expectedStatus, $productKit->getStatus());
     }
 
-    public function testStatusChangedIfProductKitItemProductWithDisabledProductWasChanged()
-    {
+    /**
+     * @dataProvider getRemainsTheSameStatusDataProvider
+     */
+    public function testStatusIfProductKitItemProductWithDisabledProductWasChanged(
+        string $productKitReferenceName,
+        string $originalStatus,
+        string $expectedStatus
+    ): void {
         /** @var Product $productKit */
-        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
+        $productKit = $this->getReference($productKitReferenceName);
+        self::assertEquals($originalStatus, $productKit->getStatus());
+
         $productKitItem = $productKit->getKitItems()->filter(
             static fn (ProductKitItem $kitItem) => $kitItem->getProducts()->filter(
                 static fn (Product $product) => $product->getSku() === LoadProductData::PRODUCT_5
@@ -160,8 +205,38 @@ class StatusListenerTest extends WebTestCase
         $this->registry->getManager()->flush();
         $this->registry->getManager()->clear();
 
-        $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
+        self::assertEquals($expectedStatus, $productKit->getStatus());
+    }
 
-        self::assertEquals(Product::STATUS_ENABLED, $kit3->getStatus());
+    public function getChangedToDisabledStatusDataProvider(): array
+    {
+        return [
+            'kit 3' => [
+                'productKitReferenceName' => LoadProductKitData::PRODUCT_KIT_3,
+                'originalStatus' => Product::STATUS_ENABLED,
+                'expectedStatus' => Product::STATUS_DISABLED,
+            ],
+            'kit 4' => [
+                'productKitReferenceName' => LoadDisabledProductKitData::PRODUCT_KIT_4,
+                'originalStatus' => Product::STATUS_DISABLED,
+                'expectedStatus' => Product::STATUS_DISABLED,
+            ],
+        ];
+    }
+
+    public function getRemainsTheSameStatusDataProvider(): array
+    {
+        return [
+            'kit 3' => [
+                'productKitReferenceName' => LoadProductKitData::PRODUCT_KIT_3,
+                'originalStatus' => Product::STATUS_ENABLED,
+                'expectedStatus' => Product::STATUS_ENABLED,
+            ],
+            'kit 4' => [
+                'productKitReferenceName' => LoadDisabledProductKitData::PRODUCT_KIT_4,
+                'originalStatus' => Product::STATUS_DISABLED,
+                'expectedStatus' => Product::STATUS_DISABLED,
+            ],
+        ];
     }
 }

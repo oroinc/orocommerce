@@ -10,18 +10,20 @@ use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\AvailableLineItemShippingMethodsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\LineItemShippingPriceProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class CheckoutLineItemsShippingManagerTest extends TestCase
+class CheckoutLineItemsShippingManagerTest extends \PHPUnit\Framework\TestCase
 {
-    private AvailableLineItemShippingMethodsProvider|MockObject $lineItemShippingMethodsProvider;
+    /** @var AvailableLineItemShippingMethodsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemShippingMethodsProvider;
 
-    private CheckoutLineItemsProvider|MockObject $lineItemsProvider;
+    /** @var CheckoutLineItemsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemsProvider;
 
-    private LineItemShippingPriceProviderInterface|MockObject $shippingPricePriceProvider;
+    /** @var LineItemShippingPriceProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $shippingPricePriceProvider;
 
-    private CheckoutLineItemsShippingManager $manager;
+    /** @var CheckoutLineItemsShippingManager */
+    private $manager;
 
     protected function setUp(): void
     {
@@ -55,18 +57,15 @@ class CheckoutLineItemsShippingManagerTest extends TestCase
 
     public function testUpdateLineItemsShippingMethods(): void
     {
-        $checkout = new Checkout();
-
         $lineItem1 = $this->createLineItem('sku-1', 'item');
-        $checkout->addLineItem($lineItem1);
-
         $lineItem2 = $this->createLineItem('sku-2', 'set');
-        $checkout->addLineItem($lineItem2);
-
         $lineItem2_1 = $this->createLineItem('sku-2', 'set', 'sample_checksum');
-        $checkout->addLineItem($lineItem2_1);
-
         $lineItem3 = $this->createLineItem('sku-3', 'item');
+
+        $checkout = new Checkout();
+        $checkout->addLineItem($lineItem1);
+        $checkout->addLineItem($lineItem2);
+        $checkout->addLineItem($lineItem2_1);
         $checkout->addLineItem($lineItem3);
 
         $this->lineItemsProvider->expects(self::once())
@@ -110,15 +109,13 @@ class CheckoutLineItemsShippingManagerTest extends TestCase
 
     public function testUpdateLineItemsShippingMethodsWithDefaultsExists(): void
     {
-        $checkout = new Checkout();
-
         $lineItem1 = $this->createLineItem('sku-1', 'item');
-        $checkout->addLineItem($lineItem1);
-
         $lineItem3 = $this->createLineItem('sku-3', 'item');
-        $checkout->addLineItem($lineItem3);
-
         $lineItem3_1 = $this->createLineItem('sku-3', 'item', 'sample_checksum');
+
+        $checkout = new Checkout();
+        $checkout->addLineItem($lineItem1);
+        $checkout->addLineItem($lineItem3);
         $checkout->addLineItem($lineItem3_1);
 
         $this->lineItemsProvider->expects(self::once())
@@ -175,15 +172,13 @@ class CheckoutLineItemsShippingManagerTest extends TestCase
 
     public function testUpdateLineItemsShippingMethodsWithEmptyDefaults(): void
     {
-        $checkout = new Checkout();
-
         $lineItem1 = $this->createLineItem('sku-1', 'item');
-        $checkout->addLineItem($lineItem1);
-
         $lineItem1_1 = $this->createLineItem('sku-1', 'item', 'sample_checksum');
-        $checkout->addLineItem($lineItem1_1);
-
         $lineItem3 = $this->createLineItem('sku-3', 'item');
+
+        $checkout = new Checkout();
+        $checkout->addLineItem($lineItem1);
+        $checkout->addLineItem($lineItem1_1);
         $checkout->addLineItem($lineItem3);
 
         $this->lineItemsProvider->expects(self::once())
@@ -225,14 +220,8 @@ class CheckoutLineItemsShippingManagerTest extends TestCase
 
     public function testGetCheckoutLineItemsShippingData(): void
     {
-        $checkout = new Checkout();
-
         $lineItem1 = $this->createLineItem('sku-1', 'item', '', 'SHIPPING_METHOD', 'SHIPPING_METHOD_TYPE');
-        $checkout->addLineItem($lineItem1);
-
         $lineItem2 = $this->createLineItem('sku-2', 'set', '', 'SHIPPING_METHOD_2', 'SHIPPING_METHOD_TYPE_2');
-        $checkout->addLineItem($lineItem2);
-
         $lineItem2_1 = $this->createLineItem(
             'sku-2',
             'set',
@@ -240,6 +229,10 @@ class CheckoutLineItemsShippingManagerTest extends TestCase
             'SHIPPING_METHOD_2_1',
             'SHIPPING_METHOD_TYPE_2_1'
         );
+
+        $checkout = new Checkout();
+        $checkout->addLineItem($lineItem1);
+        $checkout->addLineItem($lineItem2);
         $checkout->addLineItem($lineItem2_1);
 
         $this->lineItemsProvider->expects(self::once())
@@ -284,53 +277,42 @@ class CheckoutLineItemsShippingManagerTest extends TestCase
 
     public function testUpdateLineItemsShippingPrices(): void
     {
-        $checkout = new Checkout();
-
         $lineItem1 = $this->createLineItem('sku-1', 'item', '', 'SHIPPING_METHOD', 'SHIPPING_METHOD_TYPE');
-        $checkout->addLineItem($lineItem1);
-
         $lineItem2 = $this->createLineItem('sku-2', 'set', '', 'SHIPPING_METHOD', 'SHIPPING_METHOD_TYPE');
-        $checkout->addLineItem($lineItem2);
-
-        $lineItem2_1 = $this->createLineItem(
-            'sku-2',
-            'set',
-            'sample_checksum',
-            'SHIPPING_METHOD',
-            'SHIPPING_METHOD_TYPE'
-        );
-        $checkout->addLineItem($lineItem2_1);
-
         $lineItem3 = $this->createLineItem('sku-3', 'item');
-        $checkout->addLineItem($lineItem3);
+        $lineItem4 = $this->createLineItem('sku-4', 'set', '', 'SHIPPING_METHOD', 'SHIPPING_METHOD_TYPE');
 
         $checkout = new Checkout();
         $checkout->addLineItem($lineItem1);
         $checkout->addLineItem($lineItem2);
-        $checkout->addLineItem($lineItem2_1);
         $checkout->addLineItem($lineItem3);
+        $checkout->addLineItem($lineItem4);
 
         $this->lineItemsProvider->expects(self::once())
             ->method('getCheckoutLineItems')
             ->with($checkout)
-            ->willReturn(new ArrayCollection([$lineItem1, $lineItem2, $lineItem2_1, $lineItem3]));
+            ->willReturn(new ArrayCollection([$lineItem1, $lineItem2, $lineItem3, $lineItem4]));
 
         $this->shippingPricePriceProvider->expects(self::exactly(3))
             ->method('getPrice')
             ->willReturnMap([
                 [$lineItem1, Price::create(10.00, 'USD')],
-                [$lineItem2, Price::create(7.00, 'USD')],
-                [$lineItem2_1, Price::create(8.00, 'USD')],
+                [$lineItem2, Price::create(7.00, 'EUR')],
+                [$lineItem4, null],
             ]);
 
         $this->manager->updateLineItemsShippingPrices($checkout);
 
-        self::assertNotNull($lineItem1->getShippingEstimateAmount());
-        self::assertNotNull($lineItem2->getShippingEstimateAmount());
-
         self::assertEquals(10.00, $lineItem1->getShippingEstimateAmount());
+        self::assertEquals('USD', $lineItem1->getCurrency());
+
         self::assertEquals(7.00, $lineItem2->getShippingEstimateAmount());
-        self::assertEquals(8.00, $lineItem2_1->getShippingEstimateAmount());
+        self::assertEquals('EUR', $lineItem2->getCurrency());
+
         self::assertNull($lineItem3->getShippingEstimateAmount());
+        self::assertNull($lineItem3->getCurrency());
+
+        self::assertNull($lineItem4->getShippingEstimateAmount());
+        self::assertNull($lineItem4->getCurrency());
     }
 }

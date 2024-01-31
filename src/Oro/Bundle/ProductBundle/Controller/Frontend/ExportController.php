@@ -39,10 +39,10 @@ class ExportController extends AbstractController
         }
 
         /** @var Website $currentWebsite */
-        $currentWebsite = $this->get(WebsiteManager::class)->getCurrentWebsite();
-        $currentLocalization = $this->get(LocalizationHelper::class)->getCurrentLocalization();
+        $currentWebsite = $this->container->get(WebsiteManager::class)->getCurrentWebsite();
+        $currentLocalization = $this->container->get(LocalizationHelper::class)->getCurrentLocalization();
         $localizationId = $currentLocalization ? $currentLocalization->getId() : null;
-        $currentCurrency = $this->get(UserCurrencyManager::class)->getUserCurrency($currentWebsite);
+        $currentCurrency = $this->container->get(UserCurrencyManager::class)->getUserCurrency($currentWebsite);
         $refererUrl = $this->getRefererUrl($request, $currentWebsite);
 
         $options = [
@@ -58,7 +58,7 @@ class ExportController extends AbstractController
             $options['filteredResultsGridParams'] = $gridRequestParams;
         }
 
-        $this->get(MessageProducerInterface::class)->send(PreExportTopic::getName(), [
+        $this->container->get(MessageProducerInterface::class)->send(PreExportTopic::getName(), [
             'jobName' => 'filtered_frontend_product_export_to_csv',
             'processorAlias' => 'oro_product_frontend_product_listing',
             'outputFilePrefix' => 'product',
@@ -83,8 +83,8 @@ class ExportController extends AbstractController
 
     private function getRefererUrl(Request $request, Website $website): string
     {
-        $referer = $this->get(SameSiteUrlHelper::class)->getSameSiteReferer($request);
-        $baseUrl = $this->get(WebsiteUrlResolver::class)->getWebsiteUrl($website, true);
+        $referer = $this->container->get(SameSiteUrlHelper::class)->getSameSiteReferer($request);
+        $baseUrl = $this->container->get(WebsiteUrlResolver::class)->getWebsiteUrl($website, true);
 
         return str_replace($baseUrl, '', $referer);
     }

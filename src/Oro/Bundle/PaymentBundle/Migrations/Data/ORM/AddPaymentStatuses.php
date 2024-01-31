@@ -3,69 +3,53 @@
 namespace Oro\Bundle\PaymentBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Selects PaymentTransaction.entityClass,
  * then use Repository of selected class
- * then updates OroPaymentBundle:PaymentStatus table with selected data
+ * then updates Oro\Bundle\PaymentBundle\Entity\PaymentStatus table with selected data
  */
 class AddPaymentStatuses extends AbstractFixture implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
-    /** @var PaymentStatusProvider */
-    protected $paymentStatusProvider;
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        /** @var EntityManager $em */
-        $em = $this->container->get('doctrine')->getManagerForClass(PaymentTransaction::class);
-
-        $classNames = $em
-            ->createQueryBuilder()
+        $classNames = $this->createQueryBuilder($manager)
             ->select('pt.entityClass')
             ->from(PaymentTransaction::class, 'pt')
             ->groupBy('pt.entityClass')
             ->getQuery()
             ->getScalarResult();
-
         $classNames = \array_column($classNames, 'entityClass');
-
         foreach ($classNames as $className) {
-            $this->doUpdate($className);
+            $this->doUpdate($manager, $className);
         }
     }
 
-    /**
-     * @param string $className
-     */
-    protected function doUpdate($className)
+    private function doUpdate(ObjectManager $manager, string $className): void
     {
-        /** @var EntityManager $em */
-        $em = $this->container->get('doctrine')->getManagerForClass($className);
-
-        $query = $em->createQueryBuilder()
+        $query = $this->createQueryBuilder($manager)
             ->select('DISTINCT o')
             ->from($className, 'o')
             ->innerJoin(
-                'OroPaymentBundle:PaymentTransaction',
+                PaymentTransaction::class,
                 'transaction',
                 'WITH',
                 'o.id = transaction.entityIdentifier AND transaction.entityClass = :className'
             )
             ->leftJoin(
-                'OroPaymentBundle:PaymentStatus',
+                PaymentStatus::class,
                 'status',
                 'WITH',
                 'o.id = status.entityIdentifier AND status.entityClass = :className'
@@ -75,36 +59,32 @@ class AddPaymentStatuses extends AbstractFixture implements ContainerAwareInterf
             ->getQuery();
 
         $iterableResult = new BufferedIdentityQueryResultIterator($query);
+        $paymentStatusProvider = $this->container->get('oro_payment.provider.payment_status');
 
         $objects = [];
         foreach ($iterableResult as $entity) {
             $paymentStatusEntity = new PaymentStatus();
             $paymentStatusEntity->setEntityClass($className);
             $paymentStatusEntity->setEntityIdentifier($entity->getId());
-            $paymentStatusEntity->setPaymentStatus($this->getPaymentStatusProvider()->getPaymentStatus($entity));
-            $em->persist($paymentStatusEntity);
+            $paymentStatusEntity->setPaymentStatus($paymentStatusProvider->getPaymentStatus($entity));
+            $manager->persist($paymentStatusEntity);
             $objects[] = $paymentStatusEntity;
-            if (count($objects) === 100) {
-                $em->flush($objects);
-                $em->clear($className);
+            if (\count($objects) === 100) {
+                $manager->flush($objects);
+                $manager->clear($className);
                 $objects = [];
             }
         }
 
         if ($objects) {
-            $em->flush($objects);
+            $manager->flush($objects);
         }
 
-        $em->clear($className);
+        $manager->clear($className);
     }
 
-    /** @return PaymentStatusProvider */
-    public function getPaymentStatusProvider()
+    private function createQueryBuilder(ObjectManager $manager): QueryBuilder
     {
-        if (!$this->paymentStatusProvider) {
-            $this->paymentStatusProvider = $this->container->get('oro_payment.provider.payment_status');
-        }
-
-        return $this->paymentStatusProvider;
+        return $manager->createQueryBuilder();
     }
 }

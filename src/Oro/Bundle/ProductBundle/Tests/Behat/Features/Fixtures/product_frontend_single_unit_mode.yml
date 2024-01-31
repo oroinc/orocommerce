@@ -14,6 +14,28 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision4:
         unit: '@item'
         precision: '1'
+    precisionKit1:
+        unit: '@set'
+        precision: '1'
+    additionalPrecisionKit1:
+        unit: '@each'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    productKitItemProduct1:
+        kitItem: '@productKitItem1'
+        productUnitPrecision: '@precision3'
+        product: '@product3'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    productKitItem1:
+        productUnit: '@set'
+        optional: false
+        sortOrder: 1
+        minimumQuantity: 1
+        maximumQuantity: 1
+        __calls:
+            - setDefaultLabel: ['Base Unit']
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
@@ -60,6 +82,20 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         owner: '@business_unit'
+    product5:
+        sku: 'PSKU_KIT1'
+        type: 'kit'
+        primaryUnitPrecision: '@precisionKit1'
+        unitPrecisions: ['@precisionKit1']
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - addAdditionalUnitPrecision: ['@additionalPrecisionKit1']
+            - setDefaultName: ['@locvalueKit1']
+            - addKitItem: ['@productKitItem1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:
@@ -70,6 +106,8 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'Product 3'
     locvalue4:
         string: 'Product 4'
+    locvalueKit1:
+        string: 'Product Kit 1'
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceListToProduct{1..4}:
@@ -115,4 +153,12 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         quantity: '1'
         unit: '@item'
         value: '40'
+        currency: 'USD'
+    productKitPrice5:
+        pricelist: '@defaultPriceList'
+        product: '@product5'
+        productSku: 'PSKU_KIT1'
+        quantity: '1'
+        unit: '@set'
+        value: '30'
         currency: 'USD'

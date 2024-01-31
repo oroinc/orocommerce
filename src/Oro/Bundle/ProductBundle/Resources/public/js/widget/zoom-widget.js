@@ -169,29 +169,27 @@ define(function(require) {
          * @private
          */
         _setZoomWindowSize: function(activeImage) {
-            const imageWidth = $(activeImage).width();
-            const imageHeight = $(activeImage).height();
+            $(activeImage).on('load', () => {
+                const imageWidth = $(activeImage).width();
+                const imageHeight = $(activeImage).height();
+                const zoomWindowHeight = this.options.zoomWindowHeight;
 
-            const zoomWindowHeight = this.options.zoomWindowHeight;
+                const maxZoomWindowWidth = this.options.maxZoomWindowWidth;
+                const minZoomWindowWidth = this.options.minZoomWindowWidth;
+                // Calculate proportional size of zoom window
+                let proportionalWidth = zoomWindowHeight * imageWidth / imageHeight;
+                // Check max zoom window width
+                proportionalWidth = proportionalWidth > maxZoomWindowWidth ? maxZoomWindowWidth : proportionalWidth;
+                // Check min zoom window width
+                proportionalWidth = proportionalWidth < minZoomWindowWidth ? minZoomWindowWidth : proportionalWidth;
 
-            const maxZoomWindowWidth = this.options.maxZoomWindowWidth;
-            const minZoomWindowWidth = this.options.minZoomWindowWidth;
+                // Set proportionalWidth for zoom window
+                this.options.zoomWindowWidth = proportionalWidth;
 
-            // Calculate proportional size of zoom window
-            let proportionalWidth = zoomWindowHeight * imageWidth / imageHeight;
-
-            // Check max zoom window width
-            proportionalWidth = proportionalWidth > maxZoomWindowWidth ? maxZoomWindowWidth : proportionalWidth;
-
-            // Check min zoom window width
-            proportionalWidth = proportionalWidth < minZoomWindowWidth ? minZoomWindowWidth : proportionalWidth;
-
-            // Set proportionalWidth for zoom window
-            this.options.zoomWindowWidth = proportionalWidth;
-
-            if (_.isRTL()) {
-                this.options.zoomWindowOffetx = -proportionalWidth;
-            }
+                if (_.isRTL()) {
+                    this.options.zoomWindowOffetx = -proportionalWidth;
+                }
+            });
         },
 
         /**

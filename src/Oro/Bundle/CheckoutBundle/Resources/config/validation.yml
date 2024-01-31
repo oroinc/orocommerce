@@ -120,13 +120,15 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
         shippingMethod:
-            -   Length:
-                    max: 255
-                    allowEmptyString: true
+            - AtLeastOneOf:
+                -   Blank: ~
+                -   Length:
+                        max: 255
         shippingMethodType:
-            -   Length:
-                    max: 255
-                    allowEmptyString: true
+            - AtLeastOneOf:
+                -   Blank: ~
+                -   Length:
+                        max: 255
         shippingEstimateAmount:
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         product:

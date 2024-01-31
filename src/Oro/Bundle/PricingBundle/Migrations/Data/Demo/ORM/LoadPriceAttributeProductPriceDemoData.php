@@ -2,22 +2,23 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Symfony\Component\Config\FileLocatorInterface;
 
 /**
  * Loads MSRP and MAP price attributes demo data
  */
 class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDemoData
 {
+    private array $priceLists = [];
+
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return array_merge(
             parent::getDependencies(),
@@ -28,10 +29,9 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
     }
 
     /**
-     * {@inheritdoc}
-     * @param EntityManager $manager
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $priceAttributes = [
             'MSRP',
@@ -63,12 +63,16 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
         $manager->flush();
     }
 
+    protected function getFileLocator(): FileLocatorInterface
+    {
+        return $this->container->get('file_locator');
+    }
+
     protected function getProducts(): \Iterator
     {
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
-
-        if (is_array($filePath)) {
+        $filePath = $this->getFileLocator()
+            ->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+        if (\is_array($filePath)) {
             $filePath = current($filePath);
         }
 
@@ -82,10 +86,10 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
         fclose($handler);
     }
 
-    protected function getPriceAttribute(EntityManagerInterface $manager, $name): ?PriceAttributePriceList
+    protected function getPriceAttribute(ObjectManager $manager, string $name): ?PriceAttributePriceList
     {
-        if (!array_key_exists($name, $this->priceLists)) {
-            $this->priceLists[$name] = $manager->getRepository('OroPricingBundle:PriceAttributePriceList')
+        if (!\array_key_exists($name, $this->priceLists)) {
+            $this->priceLists[$name] = $manager->getRepository(PriceAttributePriceList::class)
                 ->findOneBy(['name' => $name]);
         }
 

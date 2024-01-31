@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Compiler;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -131,7 +132,7 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
         /** @var EntityManagerInterface $em */
         $em = $qb->getEntityManager();
         $subQb = $em->createQueryBuilder();
-        $subQb->from('OroPricingBundle:PriceListToProduct', 'PriceListToProductOld')
+        $subQb->from(PriceListToProduct::class, 'PriceListToProductOld')
             ->select('PriceListToProductOld')
             ->where(
                 $subQb->expr()->andX(

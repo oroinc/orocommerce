@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ImportExportBundle\Event\BeforeImportChunksEvent;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
@@ -34,6 +35,8 @@ class BeforeImportChunksListener
             if (null !== $priceList) {
                 $this->doctrine->getRepository(ProductPrice::class)
                     ->deleteByPriceList($this->shardManager, $priceList);
+                $this->doctrine->getRepository(PriceListToProduct::class)
+                    ->deleteManualRelations($priceList);
             }
         }
     }

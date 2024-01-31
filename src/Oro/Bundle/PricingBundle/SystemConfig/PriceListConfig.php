@@ -83,5 +83,7 @@ class PriceListConfig implements PriceListAwareInterface
     public function setMergeAllowed(?bool $mergeAllowed)
     {
         $this->mergeAllowed = $mergeAllowed;
+
+        return $this;
     }
 }

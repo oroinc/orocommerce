@@ -20,7 +20,7 @@ class OpenOrdersController extends AbstractController
      * @Acl(
      *      id="oro_checkout_frontend_view",
      *      type="entity",
-     *      class="OroCheckoutBundle:Checkout",
+     *      class="Oro\Bundle\CheckoutBundle\Entity\Checkout",
      *      permission="VIEW",
      *      group_name="commerce"
      * )
@@ -29,7 +29,7 @@ class OpenOrdersController extends AbstractController
      */
     public function openOrdersAction()
     {
-        if (!$this->get(ConfigManager::class)->get('oro_checkout.frontend_show_open_orders')) {
+        if (!$this->container->get(ConfigManager::class)->get('oro_checkout.frontend_show_open_orders')) {
             throw new NotFoundHttpException();
         }
 

@@ -90,9 +90,9 @@ class CheckoutLineItemsShippingManager
                 continue;
             }
 
-            $lineItem->setShippingEstimateAmount(
-                $this->shippingPricePriceProvider->getPrice($lineItem)?->getValue()
-            );
+            $shippingPrice = $this->shippingPricePriceProvider->getPrice($lineItem);
+            $lineItem->setShippingEstimateAmount($shippingPrice?->getValue());
+            $lineItem->setCurrency($shippingPrice?->getCurrency());
         }
     }
 

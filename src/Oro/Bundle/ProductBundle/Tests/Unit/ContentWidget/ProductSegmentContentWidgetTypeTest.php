@@ -94,11 +94,12 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
         $this->assertSame(
             [
                 'slider_options' => ['data' => [
-                    'slidesToShow' => 4,
+                    'slidesToShow' => 5,
                     'responsive' => [
-                        ['breakpoint' => 1100, 'settings' => ['arrows' => true]],
-                        ['breakpoint' => 768, 'settings' => ['slidesToShow' => 2, 'arrows' => true]],
-                        ['breakpoint' => 641, 'settings' => ['slidesToShow' => 1, 'arrows' => true]],
+                        ['breakpoint' => 1367, 'settings' => ['slidesToShow' => 4, 'arrows' => true]],
+                        ['breakpoint' => 1281, 'settings' => ['slidesToShow' => 3, 'arrows' => true]],
+                        ['breakpoint' => 769, 'settings' => ['slidesToShow' => 2, 'arrows' => false, 'dots' => true]],
+                        ['breakpoint' => 641, 'settings' => ['slidesToShow' => 1, 'arrows' => false, 'dots' => true]],
                     ],
                 ]],
                 'product_segment' => $segment,
@@ -127,11 +128,12 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
         $this->assertSame(
             [
                 'slider_options' => ['data' => [
-                    'slidesToShow' => 4,
+                    'slidesToShow' => 5,
                     'responsive' => [
-                        ['breakpoint' => 1100, 'settings' => ['arrows' => true]],
-                        ['breakpoint' => 768, 'settings' => ['slidesToShow' => 2, 'arrows' => true]],
-                        ['breakpoint' => 641, 'settings' => ['slidesToShow' => 1, 'arrows' => true]],
+                        ['breakpoint' => 1367, 'settings' => ['slidesToShow' => 4, 'arrows' => true]],
+                        ['breakpoint' => 1281, 'settings' => ['slidesToShow' => 3, 'arrows' => true]],
+                        ['breakpoint' => 769, 'settings' => ['slidesToShow' => 2, 'arrows' => false, 'dots' => true]],
+                        ['breakpoint' => 641, 'settings' => ['slidesToShow' => 1, 'arrows' => false, 'dots' => true]],
                     ],
                 ]],
                 'product_segment' => $segment,
@@ -158,11 +160,12 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
         $this->assertSame(
             [
                 'slider_options' => ['data' => [
-                    'slidesToShow' => 4,
+                    'slidesToShow' => 5,
                     'responsive' => [
-                        ['breakpoint' => 1100, 'settings' => ['arrows' => true]],
-                        ['breakpoint' => 768, 'settings' => ['slidesToShow' => 2, 'arrows' => true]],
-                        ['breakpoint' => 641, 'settings' => ['slidesToShow' => 1, 'arrows' => true]],
+                        ['breakpoint' => 1367, 'settings' => ['slidesToShow' => 4, 'arrows' => true]],
+                        ['breakpoint' => 1281, 'settings' => ['slidesToShow' => 3, 'arrows' => true]],
+                        ['breakpoint' => 769, 'settings' => ['slidesToShow' => 2, 'arrows' => false, 'dots' => true]],
+                        ['breakpoint' => 641, 'settings' => ['slidesToShow' => 1, 'arrows' => false, 'dots' => true]],
                     ],
                 ]],
                 'product_segment' => null,
@@ -186,11 +189,12 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
         $this->assertSame(
             [
                 'slider_options' => ['data' => [
-                    'slidesToShow' => 4,
+                    'slidesToShow' => 5,
                     'responsive' => [
-                        ['breakpoint' => 1100, 'settings' => ['arrows' => true]],
-                        ['breakpoint' => 768, 'settings' => ['slidesToShow' => 2, 'arrows' => true]],
-                        ['breakpoint' => 641, 'settings' => ['slidesToShow' => 1, 'arrows' => true]],
+                        ['breakpoint' => 1367, 'settings' => ['slidesToShow' => 4, 'arrows' => true]],
+                        ['breakpoint' => 1281, 'settings' => ['slidesToShow' => 3, 'arrows' => true]],
+                        ['breakpoint' => 769, 'settings' => ['slidesToShow' => 2, 'arrows' => false,'dots' => true]],
+                        ['breakpoint' => 641, 'settings' => ['slidesToShow' => 1, 'arrows' => false, 'dots' => true]],
                     ],
                 ]],
                 'product_segment' => null,
@@ -253,11 +257,26 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
                     'labels' => $contentWidget->getLabels(),
                     'product_segment' => $segment,
                     'slider_options' => ['data' => [
-                        'slidesToShow' => 4,
+                        'slidesToShow' => 5,
                         'responsive' => [
-                            ['breakpoint' => 1100, 'settings' => ['arrows' => true]],
-                            ['breakpoint' => 768, 'settings' => ['slidesToShow' => 2, 'arrows' => true]],
-                            ['breakpoint' => 641, 'settings' => ['slidesToShow' => 1, 'arrows' => true]],
+                            ['breakpoint' => 1367, 'settings' => ['slidesToShow' => 4, 'arrows' => true]],
+                            ['breakpoint' => 1281, 'settings' => ['slidesToShow' => 3, 'arrows' => true]],
+                            [
+                                'breakpoint' => 769,
+                                'settings' => [
+                                    'slidesToShow' => 2,
+                                    'arrows' => false,
+                                    'dots' => true,
+                                ],
+                            ],
+                            [
+                                'breakpoint' => 641,
+                                'settings' => [
+                                    'slidesToShow' => 1,
+                                    'arrows' => false,
+                                    'dots' => true,
+                                ],
+                            ],
                         ],
                     ]],
                 ],
@@ -304,11 +323,26 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
                     'labels' => $contentWidget->getLabels(),
                     'product_segment' => $segment,
                     'slider_options' => ['data' => [
-                        'slidesToShow' => 4,
+                        'slidesToShow' => 5,
                         'responsive' => [
-                            ['breakpoint' => 1100, 'settings' => ['arrows' => true]],
-                            ['breakpoint' => 768, 'settings' => ['slidesToShow' => 2, 'arrows' => true]],
-                            ['breakpoint' => 641, 'settings' => ['slidesToShow' => 1, 'arrows' => true]],
+                            ['breakpoint' => 1367, 'settings' => ['slidesToShow' => 4, 'arrows' => true]],
+                            ['breakpoint' => 1281, 'settings' => ['slidesToShow' => 3, 'arrows' => true]],
+                            [
+                                'breakpoint' => 769,
+                                'settings' => [
+                                    'slidesToShow' => 2,
+                                    'arrows' => false,
+                                    'dots' => true,
+                                ],
+                            ],
+                            [
+                                'breakpoint' => 641,
+                                'settings' => [
+                                    'slidesToShow' => 1,
+                                    'arrows' => false,
+                                    'dots' => true,
+                                ],
+                            ],
                         ],
                     ]],
                 ],

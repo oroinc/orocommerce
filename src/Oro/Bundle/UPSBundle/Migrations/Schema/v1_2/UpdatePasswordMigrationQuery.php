@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\UPSBundle\Migrations\Schema\v1_2;
 
-use Doctrine\DBAL\Connection;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\MigrationQuery;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Psr\Log\LoggerInterface;
@@ -14,30 +14,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class UpdatePasswordMigrationQuery implements MigrationQuery, ConnectionAwareInterface
 {
+    use ConnectionAwareTrait;
+
     /**
      * @var ContainerInterface
      */
     private $container;
 
-    /**
-     * @var Connection
-     */
-    private $connection;
-
-    /**
-     * UpdatePasswordMigrationQuery constructor.
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
     }
 
     /**

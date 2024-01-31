@@ -48,8 +48,8 @@ operations:
             - '@tree':
                 conditions:
                     '@and':
-                        - '@acl_granted': 'CREATE;entity:OroCustomerBundle:CustomerUserAddress'
-                        - '@acl_granted': 'CREATE;entity:OroCustomerBundle:CustomerAddress'
+                        - '@acl_granted': 'CREATE;entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress'
+                        - '@acl_granted': 'CREATE;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress'
                 actions:
                     - '@assign_value': [$.save_address, $.data.saveBillingAddress]
         actions:
@@ -107,8 +107,8 @@ operations:
             - '@tree':
                 conditions:
                     '@and':
-                        - '@acl_granted': 'CREATE;entity:OroCustomerBundle:CustomerUserAddress'
-                        - '@acl_granted': 'CREATE;entity:OroCustomerBundle:CustomerAddress'
+                        - '@acl_granted': 'CREATE;entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress'
+                        - '@acl_granted': 'CREATE;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress'
                 actions:
                     - '@assign_value': [$.save_address, $.data.saveShippingAddress]
         actions:

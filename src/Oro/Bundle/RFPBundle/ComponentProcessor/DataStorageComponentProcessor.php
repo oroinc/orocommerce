@@ -88,8 +88,7 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
 
     public function isAllowedForGuest(): bool
     {
-        return
-            $this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken
+        return $this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken
             && $this->featureChecker->isFeatureEnabled('guest_rfp');
     }
 }

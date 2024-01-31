@@ -36,45 +36,74 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
         [
             'url' => '/product/',
             'displayInSameWindow' => true,
-            'title' => 'Seasonal Sale',
-            'textAlignment' => ImageSlide::TEXT_ALIGNMENT_RIGHT,
-            'text' => '<h2 style="color:#34495e;text-transform:uppercase;">Seasonal Sale</h2>
-<h4></h4>
-<p style="color:#34495e;">Get <strong><span style="color:#e67e23;">25 Percent Off the Order Total</span></strong>
- With a Coupon Code <span style="color:#e67e23;"><b>SALE25</b></span></p>
-<p></p>
-<p style="color:#34495e;">Explore our bestselling collections of industrial, medical, and furniture supplies.</p>
-<p></p>
-<p></p>
-<p><a href="/product/">Browse</a></p>',
-            'mainImage' => 'promo-slider-4',
-            'mediumImage' => 'promo-slider-medium-4',
-            'smallImage' => 'promo-slider-small-4',
+            'altImageText' => 'Seasonal Sale',
+            'header' => 'Seasonal Sale',
+            'textAlignment' => ImageSlide::TEXT_ALIGNMENT_LEFT,
+            'text' => '
+                <p>Get 25 Percent Off the Order Total With a Coupon Code <em>SALE25</em></p>
+                <p>Explore our bestselling collections of industrial, medical, and furniture supplies.</p>
+            ',
+            'extraLargeImage' => 'promo-slider-1-extra-large',
+            'extraLargeImage2x' => 'promo-slider-1-extra-large-2x',
+            'largeImage' => 'promo-slider-1-large',
+            'largeImage2x' => 'promo-slider-1-large-2x',
+            'mediumImage' => 'promo-slider-1-medium',
+            'mediumImage2x' => 'promo-slider-1-medium-2x',
+            'smallImage' => 'promo-slider-1-small',
+            'smallImage2x' => 'promo-slider-1-small-2x',
         ],
         [
             'url' => '/navigation-root/new-arrivals/lighting-products',
             'displayInSameWindow' => true,
-            'title' => 'Bright New Day In Lighting',
-            'textAlignment' => ImageSlide::TEXT_ALIGNMENT_LEFT,
-            'text' => '<h3 style="text-transform:uppercase;color:#34495e;">Bright New Day In Lighting</h3>
-<p style="color:#34495e;">Explore our new-season collection of models and brands</p>
-<p><a href="/navigation-root/new-arrivals/lighting-products">Browse</a></p>',
-            'mainImage' => 'promo-slider-5',
-            'mediumImage' => 'promo-slider-medium-5',
-            'smallImage' => 'promo-slider-small-6',
+            'altImageText' => 'Bright New Day In Lighting',
+            'header' => 'Bright New Day In Lighting',
+            'textAlignment' => ImageSlide::TEXT_ALIGNMENT_CENTER,
+            'text' => '
+                <p>Explore our new-season collection of models and brands</p>
+            ',
+            'extraLargeImage' => 'promo-slider-2-extra-large',
+            'extraLargeImage2x' => 'promo-slider-2-extra-large-2x',
+            'largeImage' => 'promo-slider-2-large',
+            'largeImage2x' => 'promo-slider-2-extra-large-2x',
+            'mediumImage' => 'promo-slider-2-medium',
+            'mediumImage2x' => 'promo-slider-2-medium-2x',
+            'smallImage' => 'promo-slider-2-small',
+            'smallImage2x' => 'promo-slider-2-small-2x',
+
         ],
         [
             'url' => '/medical/medical-apparel',
             'displayInSameWindow' => true,
-            'title' => 'Best-Priced Medical Supplies',
+            'altImageText' => 'Best-Priced Medical Supplies',
+            'header' => 'Best-Priced Medical Supplies',
             'textAlignment' => ImageSlide::TEXT_ALIGNMENT_RIGHT,
-            'text' => '<h3 style="text-transform:uppercase;text-align:left;">Best-Priced Medical Supplies</h3>
-<p>Find and buy quality medical equipment and home healthcare supplies</p>
-<p style="text-align:left;"><a href="/medical/medical-apparel">Browse</a></p>',
-            'mainImage' => 'promo-slider-6',
-            'mediumImage' => 'promo-slider-medium-6',
-            'smallImage' => 'promo-slider-small-6',
+            'text' => '
+                <p>Find and buy quality medical equipment and home healthcare supplies</p>
+            ',
+            'extraLargeImage' => 'promo-slider-3-extra-large',
+            'extraLargeImage2x' => 'promo-slider-3-extra-large-2x',
+            'largeImage' => 'promo-slider-3-large',
+            'largeImage2x' => 'promo-slider-3-large-2x',
+            'mediumImage' => 'promo-slider-3-medium',
+            'mediumImage2x' => 'promo-slider-3-medium-2x',
+            'smallImage' => 'promo-slider-3-small',
+            'smallImage2x' => 'promo-slider-3-small-2x',
         ],
+    ];
+
+    public const IMAGE_TYPES = [
+        'extraLargeImage',
+        'largeImage',
+        'mediumImage',
+        'smallImage',
+        'extraLargeImage2x',
+        'largeImage2x',
+        'mediumImage2x',
+        'smallImage2x',
+        'extraLargeImage3x',
+        'largeImage3x',
+        'mediumImage3x',
+        'smallImage3x',
     ];
 
     public function getDependencies(): array
@@ -101,6 +130,7 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
                 'arrows' => false,
                 'dots' => true,
                 'infinite' => false,
+                'scaling' => ImageSliderContentWidgetType::SCALING_CROP_IMAGES,
             ]
         );
         $manager->persist($widget);
@@ -111,17 +141,24 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
 
         foreach (static::SLIDES as $order => $data) {
             $slide = new ImageSlide();
-            $slide->setMainImage($this->createImage($manager, $user, $data['mainImage']));
-            $slide->setMediumImage($this->createImage($manager, $user, $data['mediumImage']));
-            $slide->setSmallImage($this->createImage($manager, $user, $data['smallImage']));
+            foreach (self::IMAGE_TYPES as $imageType) {
+                $filename = $data[$imageType] ?? null;
+                if ($filename) {
+                    call_user_func_array(
+                        [$slide, sprintf('set%s', ucfirst($imageType))],
+                        [$this->createImage($manager, $user, $filename)]
+                    );
+                }
+            }
             $slide->setContentWidget($widget);
             $slide->setSlideOrder($order + 1);
             $slide->setUrl($data['url']);
             $slide->setDisplayInSameWindow($data['displayInSameWindow']);
-            $slide->setTitle($data['title']);
+            $slide->setAltImageText($data['altImageText']);
             $slide->setTextAlignment($data['textAlignment']);
             $slide->setText($data['text']);
             $slide->setOrganization($organization);
+            $slide->setHeader($data['header']);
 
             $manager->persist($slide);
             $manager->flush();
@@ -181,7 +218,7 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
     {
         $locator = $this->container->get('file_locator');
 
-        $imagePath = $locator->locate(sprintf('@OroCMSBundle/Migrations/Data/ORM/data/promo-slider/%s.jpg', $filename));
+        $imagePath = $locator->locate(sprintf('@OroCMSBundle/Migrations/Data/ORM/data/promo-slider/%s.png', $filename));
         if (is_array($imagePath)) {
             $imagePath = current($imagePath);
         }

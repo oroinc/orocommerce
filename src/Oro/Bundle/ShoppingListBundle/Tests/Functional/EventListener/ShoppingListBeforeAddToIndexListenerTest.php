@@ -84,7 +84,7 @@ class ShoppingListBeforeAddToIndexListenerTest extends FrontendWebTestCase
         $visitor = $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR);
 
         self::getContainer()->get('security.token_storage')->setToken(
-            new AnonymousCustomerUserToken('', [], $visitor)
+            new AnonymousCustomerUserToken($visitor)
         );
     }
 
@@ -102,7 +102,7 @@ class ShoppingListBeforeAddToIndexListenerTest extends FrontendWebTestCase
     private function setCustomerUserToTokenStorage(?CustomerUser $customerUser): void
     {
         self::getContainer()->get('security.token_storage')->setToken(
-            new UsernamePasswordToken($customerUser, 'user', 'key')
+            new UsernamePasswordToken($customerUser, 'key')
         );
     }
 }

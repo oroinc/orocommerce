@@ -11,6 +11,7 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -28,15 +29,15 @@ class PriceListToProductRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('p')
-            ->from('OroProductBundle:Product', 'p')
+            ->from(Product::class, 'p')
             ->join(
-                'OroPricingBundle:PriceListToProduct',
+                PriceListToProduct::class,
                 'plp',
                 Join::WITH,
                 $qb->expr()->eq('plp.product', 'p')
             )
             ->leftJoin(
-                'OroPricingBundle:ProductPrice',
+                ProductPrice::class,
                 'pp',
                 Join::WITH,
                 $qb->expr()->andX(

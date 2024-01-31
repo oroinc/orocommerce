@@ -100,7 +100,7 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
 
     protected function assertRequestCalls(
         SluggableInterface $data,
-        ?string $expectedBaseUrl = null
+        string $expectedBaseUrl = ''
     ): void {
         /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createMock(Request::class);

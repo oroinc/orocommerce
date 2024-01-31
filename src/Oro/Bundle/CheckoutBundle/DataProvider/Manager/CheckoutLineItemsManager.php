@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\DataProvider\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -19,44 +19,32 @@ use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
  */
 class CheckoutLineItemsManager
 {
-    use MemoryCacheProviderAwareTrait;
-
-    /**
-     * @var iterable|CheckoutDataProviderInterface[]
-     */
-    protected $providers;
-
-    /**
-     * @var CheckoutLineItemsConverter
-     */
-    protected $checkoutLineItemsConverter;
-
-    /**
-     * @var UserCurrencyManager
-     */
-    protected $userCurrencyManager;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
+    /** @var iterable|CheckoutDataProviderInterface[] */
+    protected iterable $providers;
+    protected CheckoutLineItemsConverter $checkoutLineItemsConverter;
+    protected UserCurrencyManager $userCurrencyManager;
+    protected ConfigManager $configManager;
+    private MemoryCacheProviderInterface $memoryCacheProvider;
 
     /**
      * @param iterable|CheckoutDataProviderInterface[] $providers
      * @param CheckoutLineItemsConverter $checkoutLineItemsConverter
      * @param UserCurrencyManager $userCurrencyManager
      * @param ConfigManager $configManager
+     * @param MemoryCacheProviderInterface $memoryCacheProvider
      */
     public function __construct(
         iterable $providers,
         CheckoutLineItemsConverter $checkoutLineItemsConverter,
         UserCurrencyManager $userCurrencyManager,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        MemoryCacheProviderInterface $memoryCacheProvider
     ) {
         $this->providers = $providers;
         $this->checkoutLineItemsConverter = $checkoutLineItemsConverter;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->configManager = $configManager;
+        $this->memoryCacheProvider = $memoryCacheProvider;
     }
 
     /**
@@ -70,7 +58,7 @@ class CheckoutLineItemsManager
         $disablePriceFilter = false,
         $configVisibilityPath = 'oro_order.frontend_product_visibility'
     ) {
-        return $this->getMemoryCacheProvider()->get(
+        return $this->memoryCacheProvider->get(
             ['checkout' => $checkout, $disablePriceFilter, $configVisibilityPath],
             function () use ($checkout, $disablePriceFilter, $configVisibilityPath) {
                 return $this->getOrderLineItems($checkout, $disablePriceFilter, $configVisibilityPath);
