@@ -6,8 +6,8 @@ layout:
                       blockType: content_block
                       prepend: true
                       options:
-                          visible: '=data["system_config_provider"].getValue("oro_frontend.promotional_content")'
-                          alias: '=data["system_config_provider"].getValue("oro_frontend.promotional_content")'
+                          visible: '=data["theme_header_config"].getPromotionalBlockAlias()'
+                          alias: '=data["theme_header_config"].getPromotionalBlockAlias()'
                           vars:
                               hideTitle: true
                           attr:
