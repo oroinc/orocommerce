@@ -105,7 +105,7 @@ services:
             - ['name']
             - '@oro_entity.entity_name_resolver'
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: Oro\Bundle\ProductBundle\Form\Type\BrandType }
+            - { name: oro_form.autocomplete.search_handler, acl_resource: oro_product_brand_view, alias: Oro\Bundle\ProductBundle\Form\Type\BrandType }
 
     oro_product.service.sku_incrementor:
         class: 'Oro\Bundle\ProductBundle\Duplicator\SkuIncrementor'
@@ -2415,3 +2415,10 @@ services:
             - '@oro_entity.manager.preloading_manager'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: 255 }
+
+    oro_product.event_listener.product_brand_view:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductBrandViewListener
+        arguments:
+            - '@security.authorization_checker'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onViewList, priority: -260 }

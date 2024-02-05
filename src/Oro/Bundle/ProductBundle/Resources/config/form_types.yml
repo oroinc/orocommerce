@@ -338,3 +338,10 @@ services:
             - '@doctrine.orm.entity_manager'
             - 'Oro\Bundle\ProductBundle\Entity\Product'
             - 'id'
+
+    oro_product.form.extension.product_type:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\ProductBrandExtension'
+        arguments:
+            - '@security.authorization_checker'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType}
