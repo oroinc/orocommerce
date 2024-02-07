@@ -2,6 +2,14 @@
 
 $product-view-attribute-font-weight: font-weight('bold') !default;
 
+$product-view-attribute-group-border-bottom: 1px solid get-color('neutral', 'grey2') !default;
+
+$product-view-attribute-group-title-border-bottom: spacing('base') !default;
+$product-view-attribute-group-toggle-gap: spacing('sm') !default;
+
+$product-view-attribute-group-content-gap: spacing('md') !default;
+$product-view-attribute-content-gap: spacing('sm') !default;
+
 // Attributes containers
 $product-view-attributes-containers-border-color: get-color('additional-old', 'light') !default;
 $product-view-attributes-container-border-radius: 5px !default;

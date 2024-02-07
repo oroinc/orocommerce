@@ -1083,20 +1083,16 @@ oro_behat_extension:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\LineItemForm
 
     Default Page:
-      selector: '.product-view__attributes-container'
+      selector: '.product-view__additional'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\DefaultTemplate
 
-    Short Page:
-      selector: '.product-view.short-theme'
-      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ShortTemplate
-
-    List Page:
+    Tabs Template:
       selector: '.product-view__additional'
-      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ListTemplate
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\TabsTemplate
 
-    Two Columns Page:
-      selector: '.product-view__attribute-box-wrapper'
-      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\TwoColumnsTemplate
+    Wide Template:
+      selector: '.product-view__additional'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\WideTemplate
 
     Default Page Prices:
       selector: '.product-prices__table'
@@ -1104,13 +1100,10 @@ oro_behat_extension:
     Product General Information:
       selector: '.product-view__main'
 
-    Short Page Prices:
+    Tabs Template Prices:
       selector: '.product-view__content .product-price'
 
-    List Page Prices:
-      selector: '.product-view__content .product-price'
-
-    Two Columns Page Prices:
+    Wide Template Prices:
       selector: '.product-view__content .product-price'
 
     Color Product Attribute:

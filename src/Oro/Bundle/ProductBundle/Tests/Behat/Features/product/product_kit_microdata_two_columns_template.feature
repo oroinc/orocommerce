@@ -19,7 +19,7 @@ Feature: Product Kit microdata two columns template
     When I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates form" with:
       | Use Default  | false            |
-      | Product Page | Two columns page |
+      | Product Page | Wide Template    |
     And save form
     Then I should see "Configuration saved" flash message
 

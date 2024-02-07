@@ -51,7 +51,9 @@ Feature: Product attribute image
       | ImageField | N/A |
     When I click "Edit"
     And I fill "Product Form" with:
-      | ImageField | cat1.jpg |
+      | ImageField                 | cat1.jpg      |
+      | Page Template Use Fallback | false         |
+      | Page Template              | Tabs Template |
     And I set Images with:
       | Main | Listing | Additional |
       | 1    | 1       | 1          |

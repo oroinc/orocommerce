@@ -12,6 +12,7 @@
     max-height: $product-view-media-gallery-max-height;
     border: $product-view-media-gallery-border;
     z-index: $product-view-media-gallery-z-index;
+    margin: 0;
 
     .tab-content__wrapper & {
         max-width: $product-view-media-gallery-tab-content-max-width;

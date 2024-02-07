@@ -8,11 +8,10 @@
 @import './components/quick-order-import/quick-order-import';
 @import './components/product-view-layout';
 @import './components/product-view-quantity';
-@import './components/product-view-desc';
 @import './components/product-view-brand';
 @import './components/prices-hint-content';
 @import './components/product-sticker';
 
 //Page templates of product page
-@import './components/page-templates/two-columns-theme';
-@import './components/page-templates/list-theme';
+@import './components/page-templates/wide-theme';
+@import './components/page-templates/tabs-theme';

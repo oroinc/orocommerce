@@ -2,6 +2,18 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+### Added
+
+#### ProductBundle
+* "wide", "tabs" product templates were added.
+
+### Removed
+
+#### ProductBundle
+* "list", "short", "two-columns" product templates were removed.
+  Use "tabs" and "wide" templates instead. In case you have registered old templates in your theme - a default template will be applied.
+
+
 ## Changes in the Сommerce package versions
 
 - [6.0.0-BETA](#600-beta-2024-01-08)

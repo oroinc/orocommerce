@@ -1,3 +1,4 @@
 /* @theme: default; */
 
-$product-view-brand-title-color: get_color('primary', 'dark') !default;
+$product-view-brand-title-font-size: 13px !default;
+$product-view-brand-title-gap: spacing('sm') !default;

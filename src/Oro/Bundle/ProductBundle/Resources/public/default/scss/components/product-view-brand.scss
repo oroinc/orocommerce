@@ -1,9 +1,11 @@
 /* @theme: default; */
 
 .product-view-brand {
-    font-weight: font-weight('bold');
-}
+    display: inline-flex;
+    gap: $product-view-brand-title-gap;
+    font-size: $product-view-brand-title-font-size;
 
-.product-view-brand-title {
-    color: $product-view-brand-title-color;
+    &:before {
+        content: '|';
+    }
 }

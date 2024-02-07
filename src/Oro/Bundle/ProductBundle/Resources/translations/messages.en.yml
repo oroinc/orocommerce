@@ -113,15 +113,12 @@ oro:
             title: Product Page
             label: Page Template
             description: Page Template style used for displaying product in frontend store
-            short:
-                label: Short page
-                description: Short page template of product page (no additional attributes groups are displayed at all)
-            two_columns:
-                label: Two columns page
-                description: Two columns template of product page (additional attribute groups are displayed in two columns)
-            list:
-                label: List page
-                description: List template of product page (additional attribute groups are displayed in column one below another)
+            tabs:
+                label: Tabs Template
+                description: Tabs template of product page (additional attribute groups are displayed in tabs)
+            wide:
+                label: Wide Template
+                description: Wide Template of product page (additional attribute groups are displayed in collapse one below another for full page width)
         slugs:
             label:              'Slugs'
             singular_label:     'Slug'

@@ -1,7 +1,5 @@
 layout:
     actions:
-        - '@setBlockTheme':
-            themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/page_template/list/layout.html.twig'
         - '@move':
             id: product_view_line_item_container
             parentId: product_view_content_container
@@ -45,5 +43,3 @@ layout:
             id: upsell_products
             optionName: use_slider
             optionValue: false
-
-    conditions: '!context["is_mobile"] && context["product_type"] != "kit"'

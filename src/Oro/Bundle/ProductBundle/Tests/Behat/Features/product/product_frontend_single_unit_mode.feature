@@ -54,38 +54,21 @@ Feature: Product frontend single unit mode
     Then I should see an "Default Page Prices" element
     And I should see "Each 1 $20.00" in the "Default Page Prices" element
 
-  Scenario: Enable "Short page" view mode for product units
-    Given I proceed as the Admin
-    And I go to System/ Configuration
-    And I follow "Commerce/Design/Theme" on configuration sidebar
-    When I fill "Page Templates Form" with:
-      | Use Default  | false      |
-      | Product Page | Short page |
-    And I click "Save settings"
-    Then I should see "Configuration saved" flash message
-
-  Scenario: Verify that prices in "Related Products Block" are correctly displayed in "Short page" layout view
-    Given I proceed as the Buyer
-    When I type "PSKU1" in "search"
-    And click "Search Button"
-    And I click "View Details" for "PSKU1" product
-    Then I should see "Your Price: $20.00 / each" for "PSKU2" product
-    And I should see "Your Price: $30.00 / set" for "PSKU3" product
-    And I should see "Your Price: $40.00 / item" for "PSKU4" product
-
-  Scenario: Enable "Two columns page" view mode for product units
+  Scenario: Enable "Wide Template" view mode for product units
     Given I proceed as the Admin
     And I go to System/ Configuration
     And I follow "Commerce/Design/Theme" on configuration sidebar
     When I fill "Page Templates Form" with:
       | Use Default  | false            |
-      | Product Page | Two columns page |
+      | Product Page | Wide Template    |
     And I click "Save settings"
     Then I should see "Configuration saved" flash message
 
-  Scenario: Verify that prices in "Related Products Block" are correctly displayed in "Two columns page" layout view
+  Scenario: Verify that prices in "Related Products Block" are correctly displayed in "Wide Template" layout view
     Given I proceed as the Buyer
-    When I reload the page
+    When I type "PSKU1" in "search"
+    And click "Search Button"
+    And I click "View Details" for "PSKU1" product
     Then I should see "Your Price: $20.00 / each" for "PSKU2" product
     And I should see "Your Price: $30.00 / set" for "PSKU3" product
     And I should see "Your Price: $40.00 / item" for "PSKU4" product
@@ -96,11 +79,11 @@ Feature: Product frontend single unit mode
     And I follow "Commerce/Design/Theme" on configuration sidebar
     When I fill "Page Templates Form" with:
       | Use Default  | false     |
-      | Product Page | List page |
+      | Product Page | Tabs Template |
     And I click "Save settings"
     Then I should see "Configuration saved" flash message
 
-  Scenario: Verify that prices in "Related Products Block" are correctly displayed in "List page" layout view
+  Scenario: Verify that prices in "Related Products Block" are correctly displayed in "Tabs Template" layout view
     Given I proceed as the Buyer
     When I reload the page
     Then I should see "Your Price: $20.00 / each" for "PSKU2" product
@@ -159,7 +142,7 @@ Feature: Product frontend single unit mode
     And I should not see "each" for "Product Kit Line Item Totals Form Unit" select
     And I close ui dialog
 
-  Scenario: As guest user verify that prices are correctly displayed in "List page" layout view
+  Scenario: As guest user verify that prices are correctly displayed in "Tabs Template" layout view
     When I click "Sign Out"
     And I type "PSKU2" in "search"
     And click "Search Button"

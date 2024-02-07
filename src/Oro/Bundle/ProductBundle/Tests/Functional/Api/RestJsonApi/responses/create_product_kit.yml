@@ -232,12 +232,12 @@ included:
         type: entityfieldfallbackvalues
         id: 'new'
         meta:
-            includeId: products-kit1-page-template-short
+            includeId: products-kit1-page-template-wide
         attributes:
             fallback: null
             scalarValue: null
             arrayValue:
-                oro_product_frontend_product_view: short
+                oro_product_frontend_product_view: wide
     -
         type: productnames
         id: 'new'

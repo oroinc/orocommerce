@@ -122,41 +122,28 @@ Feature: Product attribute multiselect
     When I click "View Details" for "SKU123" product
     Then I should see "MultiSelectField: TestMultiValueOne, TestMultiValueThree"
 
-  Scenario: Change product page view to "Short Page"
+  Scenario: Change product page template to "Wide Template"
     Given I proceed as the Admin
     And I go to System / Configuration
     And I follow "Commerce/Design/Theme" on configuration sidebar
     When fill "Page Templates form" with:
-      | Use Default  | false      |
-      | Product Page | Short page |
+      | Product Page | Wide Template |
     And save form
     Then I should see "Configuration saved" flash message
 
-  Scenario: Check attribute in product page with "Short Page" template
+  Scenario: Check attribute in product page with "Wide Template" template
     Given I proceed as the Buyer
     When I reload the page
     Then I should see "MultiSelectField: TestMultiValueOne, TestMultiValueThree"
 
-  Scenario: Change product page template to "Two columns page"
+  Scenario: Change product page view to "Tabs Template"
     Given I proceed as the Admin
     When fill "Page Templates form" with:
-      | Product Page | Two columns page |
+      | Product Page | Tabs Template |
     And save form
     Then I should see "Configuration saved" flash message
 
-  Scenario: Check attribute in product page with "Two columns page" template
-    Given I proceed as the Buyer
-    When I reload the page
-    Then I should see "MultiSelectField: TestMultiValueOne, TestMultiValueThree"
-
-  Scenario: Change product page view to "List Page"
-    Given I proceed as the Admin
-    When fill "Page Templates form" with:
-      | Product Page | List page |
-    And save form
-    Then I should see "Configuration saved" flash message
-
-  Scenario: Check attribute in product page with "List Page" template
+  Scenario: Check attribute in product page with "Tabs Template" template
     Given I proceed as the Buyer
     When I reload the page
     Then I should see "MultiSelectField: TestMultiValueOne, TestMultiValueThree"
