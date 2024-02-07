@@ -81,7 +81,6 @@ class ContentBlockRepositoryTest extends WebTestCase
             ->get('security.token_storage')
             ->setToken(new UsernamePasswordOrganizationToken(
                 $user,
-                false,
                 'k',
                 $user->getOrganization(),
                 $user->getUserRoles()
@@ -106,7 +105,6 @@ class ContentBlockRepositoryTest extends WebTestCase
             ->get('security.token_storage')
             ->setToken(new UsernamePasswordOrganizationToken(
                 $user,
-                false,
                 'k',
                 $user->getOrganization(),
                 $user->getUserRoles()
