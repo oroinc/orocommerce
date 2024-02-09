@@ -1,31 +1,26 @@
 /* @theme: default; */
 
 .shopping-lists-modify {
-    @include clearfix();
-
     &__text,
     &__select {
         display: inline-block;
-
-        vertical-align: middle;
     }
 
     &__badges {
         float: right;
-        margin-top: 3px;
-        margin-left: 4px;
     }
 
     &__text {
-        margin-right: 4px;
+        margin-right: spacing('xs');
     }
 
     &__input {
-        width: 50px;
+        width: $shopping-lists-modify-input-width;
+        text-align: $shopping-lists-modify-input-text-align;
     }
 
     &__select {
-        min-width: 66px;
+        min-width: $shopping-lists-modify-select-min-width;
     }
 
     &__edit {
@@ -33,7 +28,7 @@
         vertical-align: middle;
 
         &:not(:first-child) {
-            margin-left: 4px;
+            margin-left: spacing('xs');
         }
     }
 
@@ -48,18 +43,26 @@
 
 @include breakpoint('mobile') {
     .shopping-lists-modify {
+        padding-top: $shopping-lists-modify-offset-inner-top;
+        display: flex;
+        column-gap: 8px;
+
         &__input {
-            width: 35px;
-            text-align: center;
+            width: $shopping-lists-modify-input-width-mobile;
         }
 
         &__select {
-            min-width: 59px;
-            width: 59px;
+            min-width: $shopping-lists-modify-select-min-width-mobile;
+            width: $shopping-lists-modify-select-width-mobile;
+            margin-right: auto;
         }
 
-        .select2-container .select2-choice {
-            margin-right: -2px;
+        &__text {
+            margin-inline-end: $shopping-lists-modify-text-margin-end;
+        }
+
+        &__badges {
+            flex-shrink: 0;
         }
     }
 }
