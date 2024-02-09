@@ -2,6 +2,11 @@
 
 .product-view {
     &-attribute {
+        &__tab-content {
+            display: $product-view-attribute-tab-content-display;
+            padding-top: $product-view-attribute-tab-content-padding-top;
+        }
+
         &__group {
             display: flex;
             flex-direction: column;
