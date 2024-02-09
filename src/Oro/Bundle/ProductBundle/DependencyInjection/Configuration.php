@@ -83,6 +83,8 @@ class Configuration implements ConfigurationInterface
     const SCHEMA_ORG_DESCRIPTION_FIELD = 'schema_org_description_field';
     const SCHEMA_ORG_DEFAULT_DESCRIPTION = 'oro_product_full_description';
     const PRODUCT_TYPES = 'product_types';
+    public const DISPLAY_PRICE_TIERS_AS = 'product_details_display_price_tiers_as'; // BB-23597
+    public const DISPLAY_PRICE_TIERS_AS_DEFAULT_VALUE = 'multi-unit-table'; // BB-23597
 
     /**
      * {@inheritDoc}
@@ -212,6 +214,10 @@ class Configuration implements ConfigurationInterface
                 static::SCHEMA_ORG_DESCRIPTION_FIELD => [
                     'type' => 'string',
                     'value' => static::SCHEMA_ORG_DEFAULT_DESCRIPTION
+                ],
+                static::DISPLAY_PRICE_TIERS_AS => [ // BB-23597
+                    'type' => 'string',
+                    'value' => static::DISPLAY_PRICE_TIERS_AS_DEFAULT_VALUE
                 ]
             ]
         );
