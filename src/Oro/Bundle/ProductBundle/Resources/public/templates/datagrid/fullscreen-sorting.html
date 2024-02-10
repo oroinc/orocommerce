@@ -1,5 +1,6 @@
-<button class="btn btn--size-small" title="Sorting" data-role="fullscreen-sorting">
-    <i class="fa-sort-alpha-asc hide-text"></i>
+<% let oroui = _.macros('oroui') %>
+<button class="btn btn--outlined btn--text" title="Sorting" data-role="fullscreen-sorting">
+    <%= oroui.renderIcon({name: 'sorting'}) %>
 </button>
 <div class="sorting-popup" data-role="fullscreen-sorting-content">
     <% if (itemsList) { %>

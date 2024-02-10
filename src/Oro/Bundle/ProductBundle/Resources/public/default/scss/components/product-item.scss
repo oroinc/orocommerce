@@ -159,6 +159,10 @@
         position: relative;
         overflow: hidden;
         border-radius: $border-radius;
+
+        &--no-image {
+            background-color: $product-item-no-image-bc-color;
+        }
     }
 
     &__preview-image {

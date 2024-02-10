@@ -59,7 +59,9 @@
         'data-grid-actions-panel': ''
     }) %}
 
-    {{ parent_block_widget(block) }}
+    {% if block.children|length %}
+        {{ parent_block_widget(block) }}
+    {% endif %}
 {% endblock %}
 
 {% block _product_mass_actions_container_widget %}
