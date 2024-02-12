@@ -1,6 +1,7 @@
 <% let oroui = _.macros('oroui') %>
-<div class="datagrid-massaction sticky-mode" data-action-panel>
+<div class="datagrid-massaction sticky-mode hidden" data-action-panel>
     <div class="product-selected-counter"></div>
+    <div class="datagrid-massaction-actions"></div>
     <div class="datagrid-massaction-close-container">
         <button type="button" class="btn btn--outlined-inverse btn--text btn--no-padding" data-undo-selection>
             <%= oroui.renderIcon({name: 'close'}) %>

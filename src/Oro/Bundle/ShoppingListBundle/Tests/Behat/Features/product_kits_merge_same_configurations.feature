@@ -108,4 +108,3 @@ Feature: Product kits merge same configurations
     Then I should see "Product Kit Shopping List" on shopping list widget
     And I should see "1 Item | $402.00"
     And I close shopping list widget
-

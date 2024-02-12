@@ -174,7 +174,7 @@ define(function(require, exports, module) {
         },
 
         getActionContainer() {
-            return this.$('[data-action-panel]');
+            return this.$('.datagrid-massaction-actions');
         },
 
         render: function() {
@@ -196,13 +196,10 @@ define(function(require, exports, module) {
             switch (this.renderMode) {
                 case modes.GROUP:
                     return this._renderAsGroup();
-                    break;
                 case modes.GROUPDROPDOWN:
                     return this._renderAsGroupDropdown();
-                    break;
                 case modes.FULLSCREEN:
                     return this._renderAsFullscreen();
-                    break;
                 default:
                     break;
             }
@@ -250,7 +247,7 @@ define(function(require, exports, module) {
                 $dropdownToggle.prependTo(panel.$el);
 
                 $mainLuncher
-                    .addClass('btn btn--inverse')
+                    .addClass('btn btn--inverse dropdown-toggler')
                     .removeClass('disabled')
                     .prependTo(panel.$el);
             } else {
@@ -271,10 +268,10 @@ define(function(require, exports, module) {
 
         _doActivateGroupDropdown(selectState) {
             if (selectState.isEmpty()) {
-                this.getActionContainer().addClass('hidden');
+                $('[data-action-panel]').addClass('hidden');
                 this.subview('actionsPanel').disable();
             } else {
-                this.getActionContainer().removeClass('hidden');
+                $('[data-action-panel]').removeClass('hidden');
                 this.subview('actionsPanel').enable();
             }
         },
@@ -308,10 +305,10 @@ define(function(require, exports, module) {
 
         _doActivateGroup(selectState) {
             if (selectState.isEmpty()) {
-                this.getActionContainer().addClass('hidden');
+                $('[data-action-panel]').addClass('hidden');
                 this.subview('actionsPanel').disable();
             } else {
-                this.getActionContainer().removeClass('hidden');
+                $('[data-action-panel]').removeClass('hidden');
                 this.subview('actionsPanel').enable();
             }
         },
