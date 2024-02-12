@@ -65,7 +65,7 @@ define(function(require) {
                 _.debounce(this.redirectToHomepage.bind(this), this.options.delay)
             );
 
-            this.$el.find(this.options.selectors.radio).filter(':selected').trigger('change');
+            this.$el.find(this.options.selectors.radio).filter(':checked').trigger('change');
         },
 
         redirectToHomepage: function() {
