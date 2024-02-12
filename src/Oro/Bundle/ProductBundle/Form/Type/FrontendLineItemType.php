@@ -36,7 +36,7 @@ class FrontendLineItemType extends AbstractType
                     'required' => true,
                     'label' => 'oro.product.lineitem.quantity.enter',
                     'attr' => [
-                        'placeholder' => 'oro.product.lineitem.quantity.placeholder',
+                        'placeholder' => 'oro.product.lineitem.quantity.placeholder'
                     ],
                     'grouping' => true,
                     'useInputTypeNumberValueFormat' => true

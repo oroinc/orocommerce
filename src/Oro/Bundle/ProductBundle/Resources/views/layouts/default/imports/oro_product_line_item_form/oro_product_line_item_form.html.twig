@@ -30,7 +30,7 @@
         }) %}
 
         <div {{ block('block_attributes') }}>
-            <div class="form-row {{ class_prefix }}">
+            <div class="form-row {{ class_prefix }}" data-page-component-view="orofrontend/default/js/app/views/increment-input/increment-input-view">
                 {{ form_widget(form.quantity, {attr: {
                     'class': 'product-item__qty-input',
                     'aria-label': 'oro.product.quantity.aria_label'|trans,
