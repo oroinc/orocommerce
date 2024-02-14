@@ -25,6 +25,7 @@ oro_behat_extension:
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
         - Oro\Bundle\CatalogBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ConsoleContext
+        - Oro\Bundle\PricingBundle\Tests\Behat\Context\PriceCalculationDetailsContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
 
@@ -124,6 +125,33 @@ oro_behat_extension:
     PriceListSidebarSelector:
       selector: 'input[name="oro_pricing_price_list_select"]'
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+    Price Calculation Details Grid Sidebar:
+      selector: '[data-role="sidebar"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Website:
+            type: 'css'
+            locator: 'input[name="oro_multiwebsite_website_select"]'
+            element: Select2Entity
+          Customer:
+            type: 'css'
+            locator: 'input[name="oro_customer_customer_select"]'
+            element: Select2Entity
+    Price Calculation Details Element Label:
+      selector: '.attribute-item__term'
+    Price Calculation Details Price List Label:
+      selector: '.terms-title-divider'
+    Price Calculation Details Prices Collection:
+      selector:
+        locator: "/following-sibling::*//*[contains(concat(' ', normalize-space(@class), ' '), ' prices-collection ')]"
+        type: 'xpath'
+    Price Calculation Details Price Block:
+      selector: '.price-details'
+    Price Calculation Details Price Unit:
+      selector: '.price-details-unit'
+    Price Calculation Details Price Item:
+      selector: '.price-details-item'
     PricingConfigurationForm:
       selector: 'form[name="pricing"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
