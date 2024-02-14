@@ -78,7 +78,6 @@
             "Oro\\Bundle\\CommerceBundle\\": "src/Oro/Bundle/CommerceBundle",
             "Oro\\Bundle\\CommerceEntityBundle\\": "src/Oro/Bundle/CommerceEntityBundle",
             "Oro\\Bundle\\ConsentBundle\\": "src/Oro/Bundle/ConsentBundle",
-            "Oro\\Bundle\\CustomThemeBundle\\": "src/Oro/Bundle/CustomThemeBundle",
             "Oro\\Bundle\\FallbackBundle\\": "src/Oro/Bundle/FallbackBundle",
             "Oro\\Bundle\\FedexShippingBundle\\": "src/Oro/Bundle/FedexShippingBundle",
             "Oro\\Bundle\\FlatRateShippingBundle\\": "src/Oro/Bundle/FlatRateShippingBundle",
