@@ -175,6 +175,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Removed
 
+#### CustomThemeBundle
+* Custom theme is removed
+
 #### CheckoutBundle
 * Removed `\Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider`, added `\Oro\Bundle\CheckoutBundle\DataProvider\CheckoutDataProvider` instead.
 * Removed `\Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataViolationsListener`, use `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead. 
