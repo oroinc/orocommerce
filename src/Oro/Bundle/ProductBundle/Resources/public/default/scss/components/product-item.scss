@@ -300,18 +300,6 @@
     }
 }
 
-@media (min-width: 600px) and (max-width: 673px) {
-    .product-item {
-        &__qty {
-            &--gallery-view {
-                form {
-                    grid-template-columns: 1fr 1fr;
-                }
-            }
-        }
-    }
-}
-
 @include breakpoint('desktop-small') {
     .product-item {
         &__content {
