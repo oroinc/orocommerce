@@ -21,7 +21,7 @@ const ProductKitInShoppingListsWidget = FrontendDialogWidget.extend({
             minWidth: 367,
             maxWidth: 'auto',
             autoResize: true,
-            dialogClass: 'product-kit-dialog product-kit-in-shopping-lists-dialog'
+            dialogClass: 'stretched product-kit-dialog product-kit-in-shopping-lists-dialog'
         }
     }),
 

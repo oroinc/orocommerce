@@ -17,7 +17,7 @@ const ProductKitLineItemWidget = DialogWidget.extend({
             minWidth: 367,
             maxWidth: 'auto',
             autoResize: true,
-            dialogClass: 'product-kit-dialog'
+            dialogClass: 'stretched product-kit-dialog'
         },
         actionSectionTemplate: _.template(`
             <div data-section="<%- section %>"
