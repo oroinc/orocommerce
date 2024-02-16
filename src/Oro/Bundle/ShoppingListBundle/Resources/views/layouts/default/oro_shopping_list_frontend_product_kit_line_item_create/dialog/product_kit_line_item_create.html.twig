@@ -4,22 +4,17 @@
         dataUrl: 'oro_shopping_list_frontend_product_kit_line_item_create',
         dataAttributes: {},
         aCss: '',
-        iCss: 'fa fa-shopping-cart fa--fw fa--as-line',
-        labelInIcon: false,
         form: form.vars.id
     } %}
 
     {% set newOptions = buttonOptions|merge({
         ariaLabel: 'oro.shoppinglist.actions.add_to_new_shopping_list.aria_label'|trans,
-        iCss: 'fa fa-plus fa--fw fa--as-line',
-        labelInIcon: false
+        iconName: 'plus'
     }) %}
 
     {% set removeOptions = buttonOptions|merge({
         dataUrl: 'oro_shopping_list_frontend_product_kit_line_item_create',
-        actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list'|trans,
-        iCss: 'fa fa-remove fa--fw fa--as-line',
-        labelInIcon: false
+        actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list_short'|trans
     }) %}
 
     {% set buttonsOptions = {

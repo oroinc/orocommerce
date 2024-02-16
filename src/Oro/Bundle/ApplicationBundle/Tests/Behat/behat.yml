@@ -251,14 +251,10 @@ oro_behat_extension:
         type: xpath
 
     Update Shopping List button:
-      selector:
-        locator: '//div/button[contains(text(),"Update Shopping List")]'
-        type: xpath
+      selector: 'button.btn-main:contains("Update Shopping List")'
 
     Add to Shopping List button:
-      selector:
-        locator: '//div/button[contains(text(),"Add to Shopping List")]'
-        type: xpath
+      selector: 'button.btn-main:contains("Add to Shopping List")'
 
     Gallery View:
       selector:
@@ -557,6 +553,4 @@ oro_behat_extension:
         type: xpath
 
     Add to New Front Shopping List:
-      selector:
-        locator: '//div/button[@title="Add to New Front Shopping List"]'
-        type: xpath
+      selector: 'div button:contains("Add to New Front Shopping List")'

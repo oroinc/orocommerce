@@ -226,7 +226,6 @@ define(function(require, exports, module) {
 
                 panel.launchers.forEach(launcher => {
                     launcher.$el.addClass('dropdown-item');
-                    launcher.$('.icon').addClass('fa fa--fw fa--as-line');
                 });
 
                 const $dropdownToggle = $('<button></button>', {
@@ -247,7 +246,7 @@ define(function(require, exports, module) {
                 $dropdownToggle.prependTo(panel.$el);
 
                 $mainLuncher
-                    .addClass('btn btn--inverse dropdown-toggler')
+                    .addClass('btn btn-main btn--inverse')
                     .removeClass('disabled')
                     .prependTo(panel.$el);
             } else {
@@ -321,7 +320,6 @@ define(function(require, exports, module) {
             panel.$el.addClass(this._replaceablePanelClasses);
             panel.launchers.forEach(launcher => {
                 launcher.$el.addClass('dropdown-item');
-                launcher.$('.icon').addClass('fa fa--fw fa--as-line');
             });
 
             return panel;

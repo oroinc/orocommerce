@@ -26,6 +26,7 @@ styles:
         - 'bundles/oroshoppinglist/default/scss/components/cart-list-empty.scss'
         - 'bundles/oroshoppinglist/default/scss/components/products-widget.scss'
         - 'bundles/oroshoppinglist/default/scss/components/shopping-list-dropdown.scss'
+        - 'bundles/oroshoppinglist/default/scss/components/add-to-shopping-list-button.scss'
         - 'bundles/oroshoppinglist/default/scss/components/shopping-lists-modify.scss'
         - 'bundles/oroshoppinglist/default/scss/components/shopping-lists-notes-modal.scss'
         - 'bundles/oroshoppinglist/default/scss/components/shopping-lists-units.scss'

@@ -201,7 +201,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                     'list1' => [
                         'is_current' => false,
                         'type' => 'addproducts',
-                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list_short',
                         'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
@@ -212,11 +212,12 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'attributes' => [
                             'data-order' => 'add',
                         ],
+                        'entityName' => 'shopping_list_1'
                     ],
                     'list2' => [
                         'is_current' => true,
                         'type' => 'addproducts',
-                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list_short',
                         'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
@@ -227,6 +228,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'attributes' => [
                             'data-order' => 'new',
                         ],
+                        'entityName' => 'shopping_list_2'
                     ],
                     'new' => [
                         'is_current' => false,
@@ -273,7 +275,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                     'list1' => [
                         'is_current' => false,
                         'type' => 'addproducts',
-                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list_short',
                         'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
@@ -284,11 +286,12 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'attributes' => [
                             'data-order' => 'add',
                         ],
+                        'entityName' => 'shopping_list_1'
                     ],
                     'list2' => [
                         'is_current' => true,
                         'type' => 'addproducts',
-                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list_short',
                         'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
@@ -299,6 +302,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'attributes' => [
                             'data-order' => 'new',
                         ],
+                        'entityName' => 'shopping_list_2'
                     ]
                 ],
                 'isGuest' => false,

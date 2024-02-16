@@ -97,7 +97,8 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
                     $name = 'list' . $shoppingList->getId();
 
                     $actions[$name] = $this->getConfig([
-                        'label' => $this->getLabel($shoppingList),
+                        'label' => $this->translator->trans('oro.shoppinglist.actions.add_to_shopping_list_short'),
+                        'entityName' => \strip_tags($shoppingList->getLabel()),
                         'translatable' => false,
                         'route_parameters' => [
                             'shoppingList' => $shoppingList->getId(),

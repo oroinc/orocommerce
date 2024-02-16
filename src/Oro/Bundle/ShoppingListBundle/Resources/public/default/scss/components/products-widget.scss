@@ -12,17 +12,6 @@
         @include clearfix();
     }
 
-    .add-to-shopping-list-button {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .btn-main {
-        .fa {
-            display: none;
-        }
-    }
-
     .product-add-to-shopping-list-container {
         display: block;
     }

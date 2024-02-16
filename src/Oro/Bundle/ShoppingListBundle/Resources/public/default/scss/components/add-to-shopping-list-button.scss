@@ -1,0 +1,16 @@
+/* @theme: default; */
+
+.add-to-shopping-list-button {
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+.btn-main {
+    font-weight: normal;
+
+    .entity-name {
+        font-weight: font-weight('semi-bold');
+    }
+}

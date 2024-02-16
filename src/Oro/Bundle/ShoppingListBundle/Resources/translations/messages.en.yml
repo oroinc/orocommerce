@@ -58,9 +58,12 @@ oro:
             choose_list: Choose list
             view: view shopping list
             add_to_shopping_list: Add to {{ shoppingList }}
+            add_to_shopping_list_short: Add to
             update_shopping_list: Update {{ shoppingList }}
+            update_shopping_list_short: Update
             add_to_current_shopping_list: Add to current Shopping List
             remove_from_shopping_list: Remove From {{ shoppingList }}
+            remove_from_shopping_list_short: Remove From
             add_to_new_shopping_list: Create New Shopping List
             add_to_new_shopping_list.aria_label: Create New Shopping List. Opens a popup
             add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"

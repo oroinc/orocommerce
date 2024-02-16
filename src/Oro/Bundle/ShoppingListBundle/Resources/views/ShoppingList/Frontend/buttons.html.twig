@@ -2,14 +2,14 @@
     {% import _self as buttons %}
     {% set options = {
         defaultLabel: 'oro.shoppinglist.entity_label'|trans,
-        actionLabel: 'oro.shoppinglist.actions.add_to_shopping_list'|trans
+        actionLabel: 'oro.shoppinglist.actions.add_to_shopping_list_short'|trans
     }|merge(options) %}
     {{ buttons.getButton(options) }}
 {% endmacro %}
 {% macro addToButton(options) -%}
     {% import _self as buttons %}
     {% set options = {
-        actionLabel: 'oro.shoppinglist.actions.add_to_shopping_list'|trans
+        actionLabel: 'oro.shoppinglist.actions.add_to_shopping_list_short'|trans
     }|merge(options) %}
     {{ buttons.getButton(options) }}
 {% endmacro %}
@@ -39,7 +39,7 @@
 {% endmacro %}
 
 {% macro getButton(options) %}
-    {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroUI/layouts/macros.html.twig' as UI %}
 
     {% set options = {
         shoppingList: null,
@@ -64,19 +64,13 @@
         'btnCss': 'btn btn--block btn-main add-to-shopping-list-button ' ~ options.btnCss,
         'moreButtonExtraClass': '',
         'dataId': shoppingListId,
-        'label' : options.actionLabel|replace({
-            '{{ shoppingList }}': shoppingListLabel
-        })
+        'label': options.actionLabel,
+        'entityName': shoppingListLabel
     } %}
 
-    {% if options.iCss is defined %}
+    {% if options.iconName is defined %}
         {% set buttonOptions = buttonOptions|merge({
-            'iCss': options.iCss
-        }) %}
-    {% endif %}
-    {% if options.labelInIcon is defined %}
-        {% set buttonOptions = buttonOptions|merge({
-            'labelInIcon': options.labelInIcon
+            'iconName': options.iconName
         }) %}
     {% endif %}
     {% if options.ariaLabel %}
