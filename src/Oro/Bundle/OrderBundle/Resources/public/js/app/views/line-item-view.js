@@ -252,14 +252,17 @@ define(function(require) {
         },
 
         updateKitItemLineItems: function(response) {
-            this.getElement('kitItemLineItems')
-                .one('content:initialized', () => {
-                    mediator.trigger('pricing:refresh:products-tier-prices', response.tierPrices);
-                });
+            mediator.trigger('entry-point:interrupt:postpone');
 
             this.getElement('kitItemLineItems')
                 .html(response.kitItemLineItems[this.options.fullName] || '')
-                .trigger('content:changed');
+                .trigger('content:changed', {
+                    onInitialized: () => {
+                        mediator.trigger('entry-point:listeners:off');
+                        mediator.trigger('pricing:refresh:products-tier-prices', response.tierPrices);
+                        mediator.trigger('entry-point:order:trigger');
+                    }
+                });
         },
 
         lineItemProductPriceLock: function() {
