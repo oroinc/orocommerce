@@ -215,3 +215,9 @@ services:
             - '@oro_inventory.validator.upcoming_label_checkout_line_item_validator'
         tags:
             - { name: validator.constraint_validator }
+
+    oro_inventory.provider.inventory_status:
+        class: Oro\Bundle\InventoryBundle\Provider\InventoryStatusProvider
+        arguments:
+            - '@oro_entity_extend.enum_value_provider'
+            - '@doctrine'
