@@ -59,6 +59,12 @@ navigation:
                 position: 70
                 acl_resource_id: 'oro_order_frontend_view'
 
+            oro_order_frontend_orders:
+                label: 'oro.order.menu.orders.label'
+                position: 50
+                uri: '#'
+                acl_resource_id: 'oro_order_frontend_view'
+
         tree:
             application_menu:
                 children:
@@ -86,10 +92,12 @@ navigation:
                             oro_order_products_frontend_previously_purchased: ~
             oro_customer_menu:
                 children:
-                    oro_order_frontend_index:
-                          children:
-                              oro_order_frontend_view: ~
-                    oro_order_products_frontend_previously_purchased: ~
+                    oro_order_frontend_orders:
+                        children:
+                            oro_order_frontend_index:
+                                  children:
+                                      oro_order_frontend_view: ~
+                            oro_order_products_frontend_previously_purchased: ~
 
     titles:
         oro_order_index: ~
