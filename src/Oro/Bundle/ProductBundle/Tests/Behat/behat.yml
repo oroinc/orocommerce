@@ -1355,6 +1355,11 @@ oro_behat_extension:
         type: xpath
         locator: '//label[contains(., "Additional Units")]/ancestor::div[contains(@class, "control-group")]'
 
+    Brand field:
+      selector:
+        type: xpath
+        locator: '//label[text()="Brand"]/../..//div[contains(@id, "s2id_oro_product_brand-uid")]'
+
     Brand humburger button:
       selector:
         type: xpath
