@@ -80,11 +80,14 @@
 {% macro renderJsItems() %}
     {% import _self as taxMacros %}
 
-    <% var translations = {
-        unit: '{{ 'oro.tax.result.unit'|trans }}',
-        row: '{{ 'oro.tax.result.row'|trans }}',
-        total: '{{ 'oro.tax.result.total'|trans }}',
-        shipping: '{{ 'oro.tax.result.shipping'|trans }}'}
+    <% var translations = {{
+        {
+            unit: 'oro.tax.result.unit'|trans,
+            row: 'oro.tax.result.row'|trans,
+            total: 'oro.tax.result.total'|trans,
+            shipping: 'oro.tax.result.shipping'|trans
+        }|json_encode|raw
+    }};
     %>
     <% var unit = unit; %>
     <% var row = row; %>
