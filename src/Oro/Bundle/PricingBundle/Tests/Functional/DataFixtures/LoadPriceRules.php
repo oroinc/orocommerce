@@ -79,7 +79,7 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
      */
     public function load(ObjectManager $manager)
     {
-        foreach (self::$data as $priceRuleData) {
+        foreach (static::$data as $priceRuleData) {
             $priceRule = new PriceRule();
 
             /** @var PriceList $priceList */
@@ -87,13 +87,27 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
             /** @var ProductUnit $unit */
             $unit = $this->getReference($priceRuleData['productUnit']);
 
+            $ruleCondition = $priceRuleData['ruleCondition'];
+            $rule = $priceRuleData['rule'];
+            if (!empty($priceRuleData['parentPriceList'])) {
+                $parentPriceList = $this->getReference($priceRuleData['parentPriceList']);
+
+                if ($ruleCondition) {
+                    $ruleCondition = sprintf($ruleCondition, $parentPriceList->getId());
+                }
+
+                if ($rule) {
+                    $rule = sprintf($rule, $parentPriceList->getId());
+                }
+            }
+
             $priceRule
                 ->setQuantity($priceRuleData['quantity'])
                 ->setCurrency($priceRuleData['currency'])
                 ->setPriceList($priceList)
                 ->setProductUnit($unit)
-                ->setRuleCondition($priceRuleData['ruleCondition'])
-                ->setRule($priceRuleData['rule'])
+                ->setRuleCondition($ruleCondition)
+                ->setRule($rule)
                 ->setPriority($priceRuleData['priority']);
 
             $manager->persist($priceRule);

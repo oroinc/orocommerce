@@ -100,3 +100,10 @@ services:
         class: 'Oro\Bundle\RFPBundle\Form\Type\OffersType'
         tags:
             - { name: form.type, alias: oro_rfp_request_offers }
+
+    oro_rfp.form.type.extension.frontend.request_product:
+        class: 'Oro\Bundle\RFPBundle\Form\Extension\Frontend\RequestProductExtension'
+        arguments:
+            - '@oro_visibility.provider.resolved_product_visibility_provider'
+        tags:
+            - { name: form.type_extension, alias: oro_rfp_frontend_request, extended_type: Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType }

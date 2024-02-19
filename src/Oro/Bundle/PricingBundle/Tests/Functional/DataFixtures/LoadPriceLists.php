@@ -78,6 +78,12 @@ class LoadPriceLists extends AbstractFixture
         foreach (static::getPriceListData() as $priceListData) {
             $priceList = new PriceList();
 
+            $assignmentRule = $priceListData['assignmentRule'];
+            if ($assignmentRule && !empty($priceListData['parentPriceList'])) {
+                $parentPriceList = $this->getReference($priceListData['parentPriceList']);
+                $assignmentRule = sprintf($assignmentRule, $parentPriceList->getId());
+            }
+
             $priceList
                 ->setName($priceListData['name'])
                 ->setDefault($priceListData['default'])
@@ -85,7 +91,7 @@ class LoadPriceLists extends AbstractFixture
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now)
                 ->setActive($priceListData['active'])
-                ->setProductAssignmentRule($priceListData['assignmentRule']);
+                ->setProductAssignmentRule($assignmentRule);
 
             $manager->persist($priceList);
             $this->setReference($priceListData['reference'], $priceList);

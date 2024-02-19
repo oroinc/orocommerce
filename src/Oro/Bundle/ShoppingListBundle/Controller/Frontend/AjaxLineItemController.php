@@ -57,7 +57,15 @@ class AjaxLineItemController extends AbstractLineItemController
     public function addProductFromViewAction(Request $request, Product $product)
     {
         $currentShoppingListManager = $this->get(CurrentShoppingListManager::class);
-        $shoppingList = $currentShoppingListManager->getForCurrentUser($request->get('shoppingListId'), true);
+        try {
+            $shoppingList = $currentShoppingListManager->getForCurrentUser($request->get('shoppingListId'), true);
+        } catch (\Exception $e) {
+            throw $this->createNotFoundException('Not Found', $e);
+        }
+
+        if (!$shoppingList) {
+            throw $this->createNotFoundException();
+        }
 
         if (!$this->get(AuthorizationCheckerInterface::class)->isGranted('EDIT', $shoppingList)) {
             throw $this->createAccessDeniedException();
