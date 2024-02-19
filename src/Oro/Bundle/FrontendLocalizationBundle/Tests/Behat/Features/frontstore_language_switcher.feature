@@ -54,49 +54,43 @@ Feature: FrontStore language switcher
 
   Scenario: Verify Switcher for anonymous front-end user
     Given I am on homepage
-    When I click "Localization Switcher"
+    When I should see that localization switcher contains localizations:
+      | Dutch                   |
+      | English (United States) |
+      | Japanese                |
+    Then I should see that "English (United States)" localization is active
+    When I select "Dutch" localization
     Then I should see that localization switcher contains localizations:
       | Dutch                   |
       | English (United States) |
       | Japanese                |
-    Then I should see that "Localization Switcher" contains "English (United States)"
-    When I click "Dutch"
-    And I click "Localization Switcher"
-    Then I should see that localization switcher contains localizations:
-      | Dutch                   |
-      | English (United States) |
-      | Japanese                |
-    Then I should see that "Localization Switcher" contains "Dutch"
+    Then I should see that "Dutch" localization is active
 
-    When I click "Japanese"
-    And I click "Localization Switcher"
+    When I select "Japanese" localization
     Then I should see that localization switcher contains localizations:
       | Dutch                   |
       | English (United States) |
       | Japanese                |
-    Then I should see that "Localization Switcher" contains "Japanese"
+    Then I should see that "Japanese" localization is active
 
   Scenario: Verify Switcher for logged in front-end user
     Given I signed in as AmandaRCole@example.org on the store frontend
-    When I click "Localization Switcher"
-    Then I should see that localization switcher contains localizations:
+    When I should see that localization switcher contains localizations:
       | Dutch                   |
       | English (United States) |
       | Japanese                |
-    Then I should see that "Localization Switcher" contains "English (United States)"
+    Then I should see that "English (United States)" localization is active
 
-    When I click "Dutch"
-    And I click "Localization Switcher"
+    When I select "Dutch" localization
     Then I should see that localization switcher contains localizations:
       | Dutch                   |
       | English (United States) |
       | Japanese                |
-    Then I should see that "Localization Switcher" contains "Dutch"
+    Then I should see that "Dutch" localization is active
 
-    When I click "Japanese"
-    And I click "Localization Switcher"
+    When I select "Japanese" localization
     Then I should see that localization switcher contains localizations:
       | Dutch                   |
       | English (United States) |
       | Japanese                |
-    Then I should see that "Localization Switcher" contains "Japanese"
+    Then I should see that "Japanese" localization is active

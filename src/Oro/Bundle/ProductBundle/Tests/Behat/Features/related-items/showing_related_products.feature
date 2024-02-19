@@ -184,8 +184,7 @@ Feature: Showing related products
       And I should see "PSKU1"
 
     Scenario: Check that product name is localized and displayed properly
-      Given I click "Localization Switcher"
-      When I select "Localization 1" localization
+      Given I select "Localization 1" localization
       When type "PSKU1" in "search"
       And click "Search Button"
       Then I should see "PSKU1" product

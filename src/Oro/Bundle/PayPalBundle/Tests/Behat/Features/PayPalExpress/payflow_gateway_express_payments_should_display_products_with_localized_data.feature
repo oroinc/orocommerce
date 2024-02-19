@@ -27,7 +27,7 @@ Feature: Payflow Gateway Express payments should display products with localized
     Then I should not see "ZU product shortdesc" for "SKU123" product
     When click "View Details" for "SKU123" product
     Then I should not see "ZU product desc"
-    And I click "Zulu"
+    And I select "Zulu" localization
     When I type "SKU123" in "search"
     And click "Search Button"
     Then I should see "ZU product shortdesc" for "SKU123" product

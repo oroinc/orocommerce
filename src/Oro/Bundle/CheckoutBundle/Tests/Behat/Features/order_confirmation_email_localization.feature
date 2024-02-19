@@ -20,8 +20,7 @@ Feature: Order confirmation email localization
   Scenario: Switch to German localization
     Given I login as AmandaRCole@example.org buyer
     And I am on the homepage
-    And I click "Localization Switcher"
-    And I click "German Localization"
+    And I select "German Localization" localization
 
   Scenario: Create order from Shopping List 1 with 5 line items
     Given I open page with shopping list List 1

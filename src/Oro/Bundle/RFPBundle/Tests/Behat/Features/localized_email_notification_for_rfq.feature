@@ -170,7 +170,6 @@ Feature: Localized email notification for RFQ
     When I proceed as the User
     And I click "Account Dropdown"
     And I click "Sign Out"
-    And I click "Localization Switcher"
     And I select "French Localization" localization
     And type "Product" in "search"
     And I click "Search Button"

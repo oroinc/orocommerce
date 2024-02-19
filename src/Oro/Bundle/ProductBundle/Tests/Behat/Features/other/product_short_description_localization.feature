@@ -33,6 +33,5 @@ Feature: Product short description localization
     Then I should see "Edited default localization" in the "Short Description With Strong Tag" element
 
   Scenario: Localization 1 not affected
-    When I click "Localization Switcher"
-    And I select "Localization 1" localization
+    When I select "Localization 1" localization
     Then I should see "Short description for localization 1" in the "Short Description With Strong Tag" element

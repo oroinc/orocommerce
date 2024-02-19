@@ -10,7 +10,6 @@ Feature: Quote Product Name Localization
   Scenario: Feature Background
     Given I enable the existing localizations
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Localization Switcher"
     And I select "Localization 1" localization
 
   Scenario: Check product name is localized on quote view page and quote choice page

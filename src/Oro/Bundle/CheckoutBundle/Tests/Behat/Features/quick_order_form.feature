@@ -475,8 +475,7 @@ Feature: Quick order form
     And I should see "Unit 'set' doesn't exist for product PSKU1."
 
   Scenario: Check product and unit names are localized
-    Given I click "Localization Switcher"
-    And I select "Localization 1" localization
+    Given I select "Localization 1" localization
     And I click "Quick Order"
     And I click "Get Directions"
     And I should see that "UiDialog Title" contains "Import Excel .CSV File"
@@ -498,7 +497,7 @@ Feature: Quick order form
       | UNIT2 | item (lang1)                     |
 
   Scenario: Check unit names are localized in copy paste form
-    Given I click "Zulu"
+    Given I select "Zulu" localization
     And I click "Quick Order"
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU2,1,item |

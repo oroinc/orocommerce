@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Behat\Context;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity;
+use Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Element\LocalizationCurrencySwitcherElement;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -22,6 +25,20 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
     use PageObjectDictionary;
+
+    /**
+     * @var CommerceMainContext
+     */
+    private $commerceMainContext;
+
+    /**
+     * @BeforeScenario
+     */
+    public function gatherContexts(BeforeScenarioScope $scope)
+    {
+        $environment = $scope->getEnvironment();
+        $this->commerceMainContext = $environment->getContext(CommerceMainContext::class);
+    }
 
     /**
      * @Then /^(?:|I )set (?P<collectionFieldName>[^"]+) collection element values in (?P<number>\d+) row:$/
@@ -110,14 +127,56 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @When /^I change currency in currency switcher to "(?P<currency>[^"]+)"$/
+     * @When /^(?:|I )select "(?P<currencyName>[^"]*)" currency$/
      */
-    public function iChangeCurrencyInCurrencySwitcher($currency): void
+    public function iChangeCurrencyInCurrencySwitcher(string $currency): void
     {
-        $currencySwitcher = $this->createElement('Currency Switcher');
-        $currencySwitcher->click();
-        $this->getPage()->clickLink($currency);
+        $this->commerceMainContext->openMainMenu();
+
+        /** @var LocalizationCurrencySwitcherElement $switcher */
+        $switcher = $this->createElement('LocalizationCurrencySwitcher');
+        $switcher->setCurrencyValue($currency);
+
         $this->waitForAjax();
+        $this->commerceMainContext->closeMainMenu();
+    }
+
+    /**
+     * @param string $currencyName
+     *
+     * @Then /^(?:|I )should see that "(?P<currencyName>[^"]*)" currency is active$/
+     */
+    public function localizationIsActive(string $currencyName)
+    {
+        $this->commerceMainContext->openMainMenu();
+
+        /** @var LocalizationCurrencySwitcherElement $switcher */
+        $switcher = $this->createElement('LocalizationCurrencySwitcher');
+
+        self::assertEquals($currencyName, $switcher->getActiveCurrencyOption());
+        $this->commerceMainContext->closeMainMenu();
+    }
+
+    /**
+     * @Then /^(?:|I )should see that currency switcher contains currencies:$/
+     */
+    public function iSeeThatLocalizationSwitcherContainLocalizations(TableNode $table)
+    {
+        $this->commerceMainContext->openMainMenu();
+        /** @var LocalizationCurrencySwitcherElement $switcher */
+        $switcher = $this->createElement('LocalizationCurrencySwitcher');
+        $actualOptions = $switcher->getAvailableCurrencyOptions();
+
+        $expectedOptions = array_map(function (array $row) {
+            list($value) = $row;
+
+            return $value;
+        }, $table->getRows());
+        sort($expectedOptions);
+
+        self::assertEquals($expectedOptions, $actualOptions);
+
+        $this->commerceMainContext->closeMainMenu();
     }
 
     /**

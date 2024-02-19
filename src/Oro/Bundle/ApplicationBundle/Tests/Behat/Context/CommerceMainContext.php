@@ -7,10 +7,13 @@ use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\SessionAliasProviderAwareInterface;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\SessionAliasProviderAwareTrait;
+use Oro\Bundle\TestFrameworkBundle\Behat\Context\SpinTrait;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\EntityPage;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Tabs;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
+use WebDriver\Exception\ElementNotVisible;
+use WebDriver\Exception\NoSuchElement;
 
 class CommerceMainContext extends OroFeatureContext implements
     OroPageObjectAware,
@@ -18,6 +21,7 @@ class CommerceMainContext extends OroFeatureContext implements
 {
     use PageObjectDictionary;
     use SessionAliasProviderAwareTrait;
+    use SpinTrait;
 
     /**
      * This step used for login bayer from frontend of commerce
@@ -157,6 +161,43 @@ class CommerceMainContext extends OroFeatureContext implements
 
         foreach ($table->getRows() as $row) {
             static::assertStringContainsString($this->fixStepArgument($row[0]), $activeTab->getText());
+        }
+    }
+
+    /**
+     * Example: When I open main menu
+     * @When /^(?:|I )open main menu$/
+     */
+    public function openMainMenu(): void
+    {
+        $mainMenuTrigger = $this->createElement('Main Menu Button');
+        $sidebarMainMenuPopup = $this->createElement('Sidebar Main Menu Popup');
+        if ($mainMenuTrigger->isValid() && $mainMenuTrigger->isVisible() && !$sidebarMainMenuPopup->isIsset()) {
+            // waiting for animation of menu opening
+            $this->spin(function () use ($mainMenuTrigger, $sidebarMainMenuPopup) {
+                try {
+                    $mainMenuTrigger->click();
+                } catch (NoSuchElement | ElementNotVisible $e) {
+                    return false;
+                } finally {
+                    return $sidebarMainMenuPopup->isVisible();
+                }
+            }, 10);
+        }
+    }
+
+    /**
+     * Example: When I close main menu
+     * @When /^(?:|I )close main menu$/
+     */
+    public function closeMainMenu(): void
+    {
+        $sidebarMainMenuPopup = $this->createElement('Sidebar Main Menu Popup');
+        if ($sidebarMainMenuPopup->isValid() && $sidebarMainMenuPopup->isVisible()) {
+            $closeButton = $sidebarMainMenuPopup->getElement('Frontend Main Menu Close Button');
+            if ($closeButton->isValid()) {
+                $closeButton->clickForce();
+            }
         }
     }
 }
