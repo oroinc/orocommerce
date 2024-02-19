@@ -12,10 +12,12 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\RFPBundle\Form\Extension\Frontend\RequestProductExtension;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 use Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
+use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -23,6 +25,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class RequestProductTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
+
+    private const HIDDEN_PRODUCT_ID = 12;
 
     /** @var RequestProductType */
     protected $formType;
@@ -119,6 +123,25 @@ class RequestProductTypeTest extends AbstractTest
                 'expectedData'  => $this->getRequestProduct(2, 'comment_stripped', [$requestProductItem]),
                 'defaultData'   => $this->getRequestProduct(2, 'comment', [$requestProductItem]),
             ],
+            'hidden product' => [
+                'isValid'       => false,
+                'submittedData' => [
+                    'product'   => self::HIDDEN_PRODUCT_ID,
+                    'comment'   => 'comment',
+                    'requestProductItems' => [
+                        [
+                            'quantity'      => 10,
+                            'productUnit'   => 'kg',
+                            'price'         => [
+                                'value'     => 20,
+                                'currency'  => 'USD',
+                            ],
+                        ],
+                    ],
+                ],
+                'expectedData'  => $this->getRequestProduct(null, 'comment_stripped', [$requestProductItem]),
+                'defaultData'   => $this->getRequestProduct(null, 'comment', [$requestProductItem]),
+            ],
         ];
     }
 
@@ -150,6 +173,18 @@ class RequestProductTypeTest extends AbstractTest
             ),
             $this->getValidatorExtension(true),
         ];
+    }
+
+    protected function getTypeExtensions(): array
+    {
+        $productVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);
+        $productVisibilityProvider->expects(self::any())
+            ->method('isVisible')
+            ->willReturnCallback(function ($productId) {
+                return self::HIDDEN_PRODUCT_ID !== $productId;
+            });
+
+        return [new RequestProductExtension($productVisibilityProvider)];
     }
 
     /**

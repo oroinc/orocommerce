@@ -24,7 +24,7 @@ Feature: Translatable product name is displayed in product blocks on store front
 
   Scenario: Check the product names for Zulu localization
     Given I am on the homepage
-    When I click "Zulu"
+    When I select "Zulu" localization
     Then should see the following products in the "New Arrivals Block":
       | SKU  | Product Name in Embedded Block |
       | SKU1 | Product1_ZU                    |

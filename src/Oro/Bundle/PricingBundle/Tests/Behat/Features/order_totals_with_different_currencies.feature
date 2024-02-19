@@ -33,7 +33,7 @@ Feature: Order totals with different currencies
     And I should see "Shipping Discount $0.00"
     And I should see "Tax $0.00"
     And I should see "Total $5.00"
-    And I click "Euro"
+    And I select "€" currency
     Then I should see "Subtotal $5.00"
     And I should see "Discount $0.00"
     And I should see "Shipping $0.00"

@@ -30,14 +30,14 @@ Feature: Shopping list subtotal with different currencies
     Then I should see "Subtotal $13.00"
     And I should see "Total $13.00"
     Then I am on homepage
-    And I click "Euro"
+    And I select "€" currency
     And I open shopping list widget
     And I click "Shopping List" on shopping list widget
     Then I should not see "Subtotal $13.00"
     And I should not see "Total $13.00"
     And I should see "Subtotal €10.00"
     And I should see "Total €10.00"
-    And I click "US Dollar"
+    And I select "$" currency
 
   Scenario: Check subtotal currency after disabling first currency
     Given I proceed as the Admin

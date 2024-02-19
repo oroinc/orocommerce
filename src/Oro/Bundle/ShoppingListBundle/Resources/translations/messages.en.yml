@@ -286,7 +286,7 @@ oro:
                 subtotal.label: 'Subtotal:'
 
                 item.label: 'Item #:'
-                qty.label: 'QTY #'
+                qty.label: 'QTY'
 
                 add_item_note:
                     label: 'Add a Note to This Item'

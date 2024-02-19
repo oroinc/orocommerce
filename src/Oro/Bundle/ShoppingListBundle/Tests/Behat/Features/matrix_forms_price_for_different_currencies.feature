@@ -136,7 +136,7 @@ Feature: Matrix forms price for different currencies
       | Value 1 | -       | 1       |
       | Value 2 | 1       | -       |
     Then I should see "Total QTY 2 | Total $24.00" in the "Matrix Grid Form" element
-    And I click "Euro"
+    And I select "€" currency
     When I fill "Matrix Grid Form" with:
       |         | Value 1 | Value 2 |
       | Value 1 | -       | 1       |
@@ -185,7 +185,7 @@ Feature: Matrix forms price for different currencies
     And type "Simple_3" in "search"
     And click "Search Button"
     And click "View Details" for "Simple_3" product
-    And I click "US Dollar"
+    And I select "$" currency
     When I fill "Matrix Grid Form" with:
       |         | Value 1 | Value 2 |
       | Value 1 | -       | 1       |

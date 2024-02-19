@@ -8,112 +8,52 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
-{% block localization_switcher_widget %}
+{% block _currency_localization_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-options': {
+            localizations: localizations|reduce((arr, localization) => arr|merge([{
+                id: localization.id,
+                value: localization.id,
+                name: localization.name,
+                title: localization.titles|localized_value,
+                formattingCode: localization.formattingCode|lower,
+                selected: localization == selected_localization,
+            }]), [])
+        }
+    }) %}
+
+    {% set useLocalizations = localizations|length > 1 %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _currency_localization_container_inner_widget %}
+    {{ parent_block_widget(block) }}
+
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
     {% if localizations|length == 2 %}
-        {% set currentRoute = app.request.get('_route') %}
-        {% set routeParameters = app.request.get('_route_params') %}
-        {% set queryParameters = app.request.query.all %}
-        <div
-            data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
-            data-page-component-options="{{ {
-                'selectedLocalization': selected_localization.id,
-                'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization',
-                'currentRoute': currentRoute,
-                'currentRouteParameters': routeParameters|json_encode,
-                'currentQueryParameters': queryParameters|json_encode
-            }|json_encode }}"
-            data-dom-relocation-options="{{ {
-                responsive: [
-                    {
-                        viewport: 'tablet',
-                        moveTo: '[data-switcher-localizations-target]'
-                    }
-                ]
-            }|json_encode }}"
-            class="oro-toolbar__content localization-switcher"
-        >
+        <div class="oro-toolbar__content localization-switcher">
             {{ renderIcon.icon({name: 'globe', extraClass: 'theme-icon--medium oro-toolbar__icon'}) }}
             {% for localization in localizations %}
                 {% if selected_localization.id == localization.id %}
-                    <span class="oro-toolbar__link oro-toolbar__link--divider oro-toolbar__link--active text-nowrap" dir="auto">
-                        {{- localization.titles|localized_value -}}
-                    </span>
+                    <span class="oro-toolbar__link oro-toolbar__link--active text-nowrap">{{ localization.title|trans }}</span>
                 {% else %}
-                    <a class="oro-toolbar__link oro-toolbar__link--divider text-nowrap" href="#" data-localization="{{ localization.id }}" dir="auto">
-                        {{- localization.titles|localized_value -}}
-                    </a>
+                    <a class="oro-toolbar__link text-nowrap" href="#" data-localization="{{ localization.id }}">{{ localization.title|trans }}</a>
+                {% endif %}
+                {% if loop.index == 1 %}
+                    <span class="divider"></span>
                 {% endif %}
             {% endfor %}
         </div>
-    {% endif %}
-
-    {% if localizations|length > 2 %}
-        {% set currentRoute = app.request.get('_route') %}
-        {% set routeParameters = app.request.get('_route_params') %}
-        {% set queryParameters = app.request.query.all %}
-        <div class="oro-toolbar dropdown customer-menu oro-localization-switcher">
-            {% set togglerId = 'dropdown-'|uniqid %}
-            <button
-                id="{{ togglerId }}"
-                class="btn btn--outlined-inverse btn--text btn--no-padding localization-switcher localization-switcher--{{ selected_localization.formattingCode|lower }}"
-                data-toggle="dropdown"
-                data-placement="bottom-end"
-                data-localization="{{ selected_localization.formattingCode|lower }}"
-                aria-label="{{ 'oro.frontendlocalization.select.label'|trans }}"
-                type="button"
-            >
-                {{ renderIcon.icon({name: 'globe', extraClass: 'oro-toolbar__icon'}) }}
-                {{ selected_localization.titles|localized_value }}
-                {{ renderIcon.icon({name: 'chevron-down', extraClass: 'dropdown-menu-chevron'}) }}
-            </button>
-            {% if routeParameters['_used_slug'] is defined %}
-                {% set urlParts = [routeParameters['_used_slug'].url] %}
-                {% if routeParameters['_context_url_attributes'] is defined %}
-                    {% for key, context in routeParameters['_context_url_attributes'] %}
-                        {% if context['_used_slug'] is defined %}
-                            {% set urlParts = urlParts|merge([context['_used_slug'].url]) %}
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-                {% set routeParameters = routeParameters|merge({'_used_slug_url': urlParts}) %}
-            {% endif %}
-            <div class="dropdown-menu customer-menu__dropdown" role="menu" aria-labelledby="{{ togglerId }}">
-                <div data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
-                     data-page-component-options="{{ {
-                         'selectedLocalization': selected_localization.id,
-                         'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization',
-                         'currentRoute': currentRoute,
-                         'currentRouteParameters': routeParameters|json_encode,
-                         'currentQueryParameters': queryParameters|json_encode
-                     }|json_encode }}"
-                     data-dom-relocation-options="{{ {
-                         responsive: [
-                             {
-                                 viewport: 'tablet',
-                                 moveTo: '[data-switcher-localizations-target]'
-                             }
-                         ]
-                     }|json_encode }}"
-                >
-                    <ul class="customer-menu-list">
-                        {% for localization in localizations %}
-                            <li class="customer-menu-list__item localization-switcher__item--{{ localization.formattingCode|lower }}">
-                                {% set title = localization.titles|localized_value %}
-                                {% if selected_localization.id == localization.id %}
-                                    <span class="dropdown-item text-nowrap dropdown-item--active" dir="auto">
-                                        {{- title -}}
-                                    </span>
-                                {% else %}
-                                    <a class="dropdown-item text-nowrap" href="#" data-localization="{{ localization.id }}" dir="auto">
-                                        {{- title -}}
-                                    </a>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
+    {% elseif localizations|length > 2 %}
+        <button
+            class="btn btn--outlined-inverse btn--text btn--no-padding localization-switcher localization-switcher--{{ selected_localization.formattingCode|lower }}"
+            type="button"
+        >
+            {{ renderIcon.icon({name: 'globe', extraClass: 'oro-toolbar__icon'}) }}
+            {{ selected_localization.titles|localized_value }}
+            {{ renderIcon.icon({name: 'chevron-down', extraClass: 'dropdown-menu-chevron'}) }}
+        </button>
     {% endif %}
 {% endblock %}

@@ -42,8 +42,8 @@ Feature: Shopping Lists Widget
   Scenario: Check buttons widget with disabled Show All in Shopping Lists Widget
     When click "In Shopping List" for "AA1" product
     Then I should see next rows in "In Shopping Lists" table in the exact order
-      | Shopping List   | QTY #  |
-      | Shopping List 1 | 5items |
+      | Shopping List   | QTY     |
+      | Shopping List 1 | 5 items |
     And I click "Choose list"
     And I should see the following options for "List" select in form "ShoppingListForm":
       | Shopping List 1 |
@@ -85,9 +85,9 @@ Feature: Shopping Lists Widget
   Scenario: Check buttons widget with enabled Show All in Shopping Lists Widget
     When click "In Shopping List" for "AA1" product
     Then I should see next rows in "In Shopping Lists" table in the exact order
-      | Shopping List   | QTY #  |
-      | Shopping List 1 | 5items |
-      | Shopping List 2 | 2items |
+      | Shopping List   | QTY     |
+      | Shopping List 1 | 5 items |
+      | Shopping List 2 | 2 items |
     And I click "Choose list"
     And I should see the following options for "List" select in form "ShoppingListForm":
       | Shopping List 2 |

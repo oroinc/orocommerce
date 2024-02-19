@@ -26,7 +26,8 @@ define(function(require) {
                 triggerDelayed: 'entry-point:order:trigger-delayed',
                 init: 'entry-point:order:init',
                 listenersOff: 'entry-point:listeners:off',
-                listenersOn: 'entry-point:listeners:on'
+                listenersOn: 'entry-point:listeners:on',
+                interruptPostpone: 'entry-point:interrupt:postpone'
             },
             triggerTimeout: 1500
         },
@@ -51,7 +52,8 @@ define(function(require) {
                 [`${this.options.events.trigger} mediator`]: 'callEntryPoint',
                 [`${this.options.events.triggerDelayed} mediator`]: 'callEntryPointDelayed',
                 [`${this.options.events.listenersOff} mediator`]: 'listenerOff',
-                [`${this.options.events.listenersOn} mediator`]: 'listenerOn'
+                [`${this.options.events.listenersOn} mediator`]: 'listenerOn',
+                [`${this.options.events.interruptPostpone} mediator`]: 'interruptPostpone'
             };
         },
 
@@ -76,6 +78,10 @@ define(function(require) {
             this.options._sourceElement
                 .on('change', '[data-entry-point-trigger]', this.callEntryPoint.bind(this))
                 .on('keyup', '[data-entry-point-trigger]', this.callEntryPointDelayed.bind(this));
+        },
+
+        interruptPostpone() {
+            this.postponedEntryPointAction = false;
         },
 
         listenerOff: function() {

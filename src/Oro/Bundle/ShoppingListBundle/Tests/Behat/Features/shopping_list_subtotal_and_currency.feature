@@ -24,7 +24,7 @@ Feature: Shopping list subtotal and currency
   Scenario: Create shopping list on frontend
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Euro"
+    And I select "€" currency
     And I am on the homepage
     And I open shopping list widget
     And I click "Create New List"

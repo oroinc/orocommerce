@@ -53,7 +53,7 @@ oro_behat_extension:
       selector: '.shopping-lists-popup'
 
     FirstRowAcceptButton:
-      selector: '.shopping-lists-popup .btn'
+      selector: '.shopping-lists-popup [data-role="accept"]'
 
     NewShoppingListNameField:
       selector: '[name="oro_shopping_list_type[label]"]'

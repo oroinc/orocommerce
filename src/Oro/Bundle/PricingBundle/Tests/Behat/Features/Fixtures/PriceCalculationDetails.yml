@@ -1,0 +1,20 @@
+include:
+    - '@OroPricingBundle:MergeStrategyProductPrices.yml'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite_pl1:
+        pricelist: '@pricelist1'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer_pl2:
+        pricelist: '@pricelist2'
+        customer: '@company_a'
+        website: '@website1'
+        sortOrder: 200
+    priceListToCustomer_pl3:
+        pricelist: '@pricelist3'
+        customer: '@company_a'
+        website: '@website1'
+        sortOrder: 300

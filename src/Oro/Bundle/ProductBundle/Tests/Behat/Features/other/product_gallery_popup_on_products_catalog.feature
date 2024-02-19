@@ -74,8 +74,7 @@ Feature: Product Gallery Popup On Products Catalog
     Then I should see an "Product Item Gallery Trigger" element
 
   Scenario: Check that alt attribute in product image is localized
-    Given I click "Localization Switcher"
-    And I click "Localization 1"
+    Given I select "Localization 1" localization
     And I should see preview image with alt "Product1 (Localization 1)" for "PSKU1" product
     And I hover on "Product Item Preview"
     When I click "Product Item Gallery Trigger"

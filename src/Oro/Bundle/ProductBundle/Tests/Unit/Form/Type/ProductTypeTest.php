@@ -25,6 +25,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
+use Oro\Bundle\ProductBundle\Form\Extension\ProductBrandExtension;
 use Oro\Bundle\ProductBundle\Form\Type\BrandSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
@@ -39,6 +40,7 @@ use Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductStatusProvider;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Brand;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\BrandSelectTypeStub;
@@ -55,6 +57,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
@@ -63,6 +66,8 @@ class ProductTypeTest extends FormIntegrationTestCase
 
     /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $urlGenerator;
+
+    private AuthorizationCheckerInterface $authorizationChecker;
 
     private array $submitCustomFields = [
         'size' => [
@@ -104,6 +109,8 @@ class ProductTypeTest extends FormIntegrationTestCase
         $this->images = [$image1, $image2];
 
         $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
+
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         parent::setUp();
     }
@@ -173,7 +180,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                 [
                     FormType::class => [
                         new TooltipFormExtensionStub($this),
-                        new IntegerExtension()
+                        new IntegerExtension(),
+                        new ProductBrandExtension($this->authorizationChecker)
                     ]
                 ]
             )
@@ -485,5 +493,55 @@ class ProductTypeTest extends FormIntegrationTestCase
             $formView->children['slugPrototypesWithRedirect']
                 ->vars['confirm_slug_change_component_options']['changedSlugsUrl']
         );
+    }
+
+    /** @dataProvider productBrandDataProvider */
+    public function testProductBrandSet(
+        bool $isGrantedToViewBrands,
+        bool $isGrantedToViewBrandField,
+        bool $formHasBrand
+    ): void {
+        $product = new Product();
+        $brand   = new Brand();
+        $product->setBrand($brand);
+
+        $this->authorizationChecker
+            ->expects(self::any())
+            ->method('isGranted')
+            ->withConsecutive(['oro_product_brand_view'], ['VIEW', $brand])
+            ->willReturnOnConsecutiveCalls($isGrantedToViewBrands, $isGrantedToViewBrandField);
+
+        $form = $this->factory->create(ProductType::class, $product);
+
+        $formView = $form->createView();
+
+        self::assertEquals($formHasBrand, $form->has('brand'));
+        self::assertEquals($formHasBrand, array_key_exists('brand', $formView->children));
+    }
+
+    public function productBrandDataProvider(): array
+    {
+        return [
+            'User is granted to view brands and granted to view brand field' => [
+                'isGrantedToViewBrands' => true,
+                'isGrantedToViewBrandField' => true,
+                'formHasBrand' => true,
+            ],
+            'User is not granted to view brands and granted to view brand field' => [
+                'isGrantedToViewBrands' => false,
+                'isGrantedToViewBrandField' => true,
+                'formHasBrand' => false,
+            ],
+            'User is granted to view brands and not granted to view brand field' => [
+                'isGrantedToViewBrands' => true,
+                'isGrantedToViewBrandField' => false,
+                'formHasBrand' => false,
+            ],
+            'User is not granted to view brands and not granted to view brand field' => [
+                'isGrantedToViewBrands' => false,
+                'isGrantedToViewBrandField' => false,
+                'formHasBrand' => false,
+            ],
+        ];
     }
 }
