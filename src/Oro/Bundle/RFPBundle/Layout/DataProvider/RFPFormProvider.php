@@ -7,7 +7,11 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 
+/**
+ * Provides a {@see Request} entity form for a use on a storefront.
+ */
 class RFPFormProvider extends AbstractFormProvider
 {
     const RFP_REQUEST_CREATE_ROUTE_NAME = 'oro_rfp_frontend_request_create';
@@ -51,10 +55,12 @@ class RFPFormProvider extends AbstractFormProvider
                 self::RFP_REQUEST_UPDATE_ROUTE_NAME,
                 ['id' => $request->getId()]
             );
+            $options['validation_groups'] = new GroupSequence(['Default', 'frontend_request_update']);
         } else {
             $options['action'] = $this->generateUrl(
                 self::RFP_REQUEST_CREATE_ROUTE_NAME
             );
+            $options['validation_groups'] = new GroupSequence(['Default', 'frontend_request_create']);
         }
 
         return $options;

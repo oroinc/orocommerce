@@ -119,9 +119,9 @@ Feature: Create Order with Product Kits and Promotions
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
     And I see next line item discounts for backoffice order:
-      | SKU            | Row Total Incl Tax | Row Total Excl Tax | Discount            |
-      | product-kit-01 | $393.336           | $393.336           | $43.70400000000001  |
-      | product-kit-01 | $336.663           | $336.663           | $37.406999999999996 |
+      | SKU            | Row Total Incl Tax | Row Total Excl Tax | Discount |
+      | product-kit-01 | $393.336           | $393.336           | $43.704  |
+      | product-kit-01 | $336.663           | $336.663           | $37.407  |
     And I see next subtotals for "Backend Order":
       | Subtotal | $811.11 |
       | Discount | -$81.11 |

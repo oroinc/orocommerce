@@ -227,6 +227,7 @@ class Quote implements
      * @var Collection|QuoteProduct[]
      *
      * @ORM\OneToMany(targetEntity="QuoteProduct", mappedBy="quote", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OrderBy({"id" = "ASC"})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

@@ -1,6 +1,15 @@
 dynamic-imports:
     orocheckout:
-        - ororfp/js/app/views/frontend-line-item-view
-        - ororfp/js/app/views/line-item-offer-view
-        - ororfp/js/app/views/line-item-view
-        - ororfp/js/app/views/line-items-view
+        - ororfp/js/app/utils/frontend-request-product-tier-prices
+        - ororfp/js/app/models/frontend-product-kit-item-line-item-collection
+        - ororfp/js/app/views/frontend-request-product-collection-view
+        - ororfp/js/app/views/frontend-request-product-view
+        - ororfp/js/app/views/frontend-request-product-modes-view
+        - ororfp/js/app/views/frontend-request-product-kit-item-line-item-view
+        - ororfp/js/app/views/frontend-request-product-kit-item-line-item-content-view
+        - ororfp/js/app/views/frontend-request-product-item-view
+        - ororfp/js/app/views/frontend-request-product-item-tier-prices-view
+        - ororfp/js/app/widget/frontend-request-product-kit-configuration-dialog-widget
+        - ororfp/js/app/views/frontend-request-product-kit-configuration-edit-view
+        - ororfp/js/app/views/frontend-request-product-kit-configuration-form-view
+        - ororfp/js/app/views/frontend-request-product-kit-configuration-price-view

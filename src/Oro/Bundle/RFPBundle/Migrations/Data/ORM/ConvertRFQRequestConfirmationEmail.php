@@ -77,7 +77,7 @@ class ConvertRFQRequestConfirmationEmail extends AbstractEmailFixture implements
         ]);
     }
 
-    private function getPreviousEmailsDir(): string
+    public function getPreviousEmailsDir(): string
     {
         return $this->container
             ->get('kernel')

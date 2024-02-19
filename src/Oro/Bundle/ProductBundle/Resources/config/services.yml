@@ -2281,7 +2281,6 @@ services:
                 setNotAllowedProductTypes:
                     -
                         - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
-                        - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid-frontend, method: onBuildAfter }
 
@@ -2376,6 +2375,7 @@ services:
         arguments:
             - '@oro_product.service.quantity_rounding'
             - '@oro_product.formatter.product_unit_label'
+            - '@property_accessor'
         tags:
             - { name: validator.constraint_validator }
 

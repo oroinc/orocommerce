@@ -497,8 +497,10 @@ class OrderProductKitItemLineItem implements
     protected function updateUnitPrecisionFallbackField(): void
     {
         if ($this->product !== null && $this->productUnitCode !== null) {
-            $this->productUnitPrecision = $this->product->getUnitPrecision($this->productUnitCode)?->getPrecision()
-                ?? (int) $this->getProductUnit()?->getDefaultPrecision();
+            $precision = $this->product->getUnitPrecision($this->productUnitCode)?->getPrecision();
+            $this->productUnitPrecision = $precision !== null
+                ? (int)$precision
+                : (int)$this->getProductUnit()?->getDefaultPrecision();
         }
     }
 

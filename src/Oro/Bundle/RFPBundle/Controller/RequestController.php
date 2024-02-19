@@ -11,6 +11,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -76,11 +78,23 @@ class RequestController extends AbstractController
 
     protected function update(RFPRequest $rfpRequest): array|RedirectResponse
     {
+        $form = $this->createForm(
+            RequestType::class,
+            $rfpRequest,
+            [
+                'validation_groups' => $this->getValidationGroups($rfpRequest),
+            ]
+        );
         return $this->container->get(UpdateHandlerFacade::class)->update(
             $rfpRequest,
-            $this->createForm(RequestType::class, $rfpRequest),
+            $form,
             $this->container->get(TranslatorInterface::class)->trans('oro.rfp.controller.request.saved.message')
         );
+    }
+
+    protected function getValidationGroups(RFPRequest $rfpRequest): GroupSequence|array|string
+    {
+        return new GroupSequence([Constraint::DEFAULT_GROUP, 'request_update']);
     }
 
     /**

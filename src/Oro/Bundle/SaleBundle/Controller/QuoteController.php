@@ -23,6 +23,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -211,6 +213,7 @@ class QuoteController extends AbstractController
     /**
      * @param Quote $quote
      * @param Request $request
+     * @param FormTemplateDataProviderInterface|null $resultProvider
      * @return array|RedirectResponse
      */
     protected function update(
@@ -222,9 +225,17 @@ class QuoteController extends AbstractController
             ->addFormTemplateDataProviders('quote_update')
             ->addFormTemplateDataProviders($resultProvider);
 
+        $form = $this->createForm(
+            QuoteType::class,
+            $quote,
+            [
+                'validation_groups' => $this->getValidationGroups($quote),
+            ]
+        );
+
         return $this->container->get(UpdateHandlerFacade::class)->update(
             $quote,
-            QuoteType::class,
+            $form,
             $this->container->get(TranslatorInterface::class)->trans('oro.sale.controller.quote.saved.message'),
             $request,
             null,
@@ -307,6 +318,15 @@ class QuoteController extends AbstractController
     private function isRequestHandledSuccessfully($updateResponse)
     {
         return $updateResponse instanceof RedirectResponse;
+    }
+
+    protected function getValidationGroups(Quote $quote): GroupSequence|array|string
+    {
+        return new GroupSequence([
+            Constraint::DEFAULT_GROUP,
+            'add_kit_item_line_item',
+            $quote->getId() ? 'quote_update' : 'quote_create'
+        ]);
     }
 
     /**

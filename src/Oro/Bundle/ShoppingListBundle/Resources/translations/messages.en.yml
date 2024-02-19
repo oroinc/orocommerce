@@ -288,8 +288,6 @@ oro:
                 item.label: 'Item #:'
                 qty.label: 'QTY #'
 
-                add_item_note:
-                    label: 'Add a Note to This Item'
                 not_have_available: 'You do not have available Shopping Lists'
                 empty: 'Your Shopping List Is Empty'
                 empty_single: 'Your Shopping List is empty'

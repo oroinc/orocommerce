@@ -3,17 +3,20 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use PHPUnit\Framework\TestCase;
 
-class RequestProductTest extends \PHPUnit\Framework\TestCase
+class RequestProductTest extends TestCase
 {
     use EntityTestCaseTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $properties = [
             ['id', 123],
@@ -23,49 +26,70 @@ class RequestProductTest extends \PHPUnit\Framework\TestCase
             ['comment', 'comment'],
         ];
 
-        static::assertPropertyAccessors(new RequestProduct(), $properties);
+        $entity = new RequestProduct();
+        self::assertPropertyAccessors($entity, $properties);
 
-        static::assertPropertyCollections(new RequestProduct(), [
+        self::assertPropertyCollections($entity, [
             ['requestProductItems', new RequestProductItem()],
         ]);
     }
 
-    public function testGetEntityIdentifier()
+    public function testKitItemLineItems(): void
+    {
+        $entity = new RequestProduct();
+
+        $productKitItem = new ProductKitItemStub(42);
+        $kitItemLineItem = (new RequestProductKitItemLineItem())
+            ->setKitItem($productKitItem);
+
+        self::assertSame([], $entity->getKitItemLineItems()->toArray());
+
+        $entity->addKitItemLineItem($kitItemLineItem);
+        self::assertSame(
+            [$productKitItem->getId() => $kitItemLineItem],
+            $entity->getKitItemLineItems()->toArray()
+        );
+
+        $entity->removeKitItemLineItem($kitItemLineItem);
+        self::assertSame([], $entity->getKitItemLineItems()->toArray());
+    }
+
+    public function testGetEntityIdentifier(): void
     {
         $request = new RequestProduct();
 
         $id = 123;
         ReflectionUtil::setId($request, $id);
-        $this->assertSame($id, $request->getEntityIdentifier());
+        self::assertSame($id, $request->getEntityIdentifier());
     }
 
     /**
      * @depends testProperties
      */
-    public function testSetProduct()
+    public function testSetProduct(): void
     {
-        $product        = (new Product())->setSku('rfp-sku');
+        $product = (new Product())->setSku('rfp-sku');
         $requestProduct = new RequestProduct();
 
-        $this->assertNull($requestProduct->getProductSku());
+        self::assertNull($requestProduct->getProductSku());
 
         $requestProduct->setProduct($product);
 
-        $this->assertEquals($product->getSku(), $requestProduct->getProductSku());
+        self::assertEquals($product->getSku(), $requestProduct->getProductSku());
     }
 
     /**
      * @depends testProperties
      */
-    public function testAddRequestProductItem()
+    public function testAddRequestProductItem(): void
     {
-        $requestProduct     = new RequestProduct();
+        $requestProduct = new RequestProduct();
         $requestProductItem = new RequestProductItem();
 
-        $this->assertNull($requestProductItem->getRequestProduct());
+        self::assertNull($requestProductItem->getRequestProduct());
 
         $requestProduct->addRequestProductItem($requestProductItem);
 
-        $this->assertEquals($requestProduct, $requestProductItem->getRequestProduct());
+        self::assertEquals($requestProduct, $requestProductItem->getRequestProduct());
     }
 }

@@ -1,0 +1,28 @@
+layout:
+    imports:
+        -
+            id: oro_rfp_frontend_request_product_kit_configuration_form_edit
+            root: widget_content
+            namespace: request_product_kit_configuration_widget
+            prepend: true
+    actions:
+        - '@setOption':
+            id: request_product_kit_configuration_widget_wrapper
+            optionName: vars
+            optionValue:
+                form: '=data["form"]'
+
+        - '@setOption':
+              id: request_product_kit_configuration_widget_form_start
+              optionName: form_route_name
+              optionValue: 'oro_rfp_frontend_request_product_kit_configuration'
+
+        - '@move':
+              id: request_product_kit_configuration_widget_form_actions
+              parentId: widget_actions
+
+        - '@move':
+              id: widget_actions
+              parentId: request_product_kit_configuration_widget_wrapper
+              siblingId: request_product_kit_configuration_widget_form_end
+              prepend: true

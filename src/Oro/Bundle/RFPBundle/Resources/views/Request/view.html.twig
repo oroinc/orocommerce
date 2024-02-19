@@ -82,6 +82,7 @@
                                     <td rowspan="{{ numSubItems }}" class="rfp-line_item-sku" dir="ltr">{{ lineItem.productSku }}</td>
                                     <td rowspan="{{ numSubItems }}" class="rfp-line_item-product">
                                         {{ lineItem.product }}
+                                        {% include '@OroRFP/Request/kitConfiguration.html.twig' %}
                                     </td>
                                 {% endif %}
                                 <td class="rfp-line_item-requested_quantity rfp-line_item-requested_quantity-{% if loop.first %}first{% else %}not_first{% endif %}">

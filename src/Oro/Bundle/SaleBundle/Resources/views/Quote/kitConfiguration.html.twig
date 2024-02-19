@@ -1,0 +1,19 @@
+<div class="product-kit-line-items">
+    {% if quoteProduct.product and quoteProduct.product.kit and quoteProduct.kitItemLineItems|length %}
+        {%- for kitItemLineItem in quoteProduct.kitItemLineItems %}
+            <div class="product-kit-line-items__item">
+                {% set kitItemLabel = kitItemLineItem.kitItem ? kitItemLineItem.kitItem.labels|localized_value : kitItemLineItem.kitItemLabel %}
+                <div>
+                    <span class="product-kit-line-items__item-name">{{ kitItemLabel|e }}</span>
+                    <span class="product-kit-line-items__item-quantity">[{{ kitItemLineItem.productUnitCode|e }} x {{ kitItemLineItem.quantity }}]</span>
+                </div>
+                {% set productId = kitItemLineItem.product.id|default(0) %}
+                {% if productId and is_visible_product(productId) %}
+                    <a href="{{ path('oro_product_view', {id: productId}) }}">{{ kitItemLineItem.product.names|localized_value|e }}</a>
+                {% else %}
+                    {{ kitItemLineItem.productName }}
+                {% endif %}
+            </div>
+        {%- endfor %}
+    {% endif %}
+</div>

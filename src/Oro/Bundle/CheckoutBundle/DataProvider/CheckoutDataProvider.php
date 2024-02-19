@@ -160,7 +160,7 @@ class CheckoutDataProvider implements CheckoutDataProviderInterface
      */
     private function getLineItemsPrices(Collection $lineItems, array &$invalidLineItems): array
     {
-        $lineItemsWithoutFixedPrice = [];
+        $lineItemsToGetPrices = [];
         foreach ($lineItems as $index => $lineItem) {
             if (isset($invalidLineItems[$index])) {
                 continue;
@@ -171,16 +171,23 @@ class CheckoutDataProvider implements CheckoutDataProviderInterface
                 continue;
             }
 
-            if ($lineItem->getProduct() && !$lineItem->isPriceFixed() && !$lineItem->getPrice()) {
-                $lineItemsWithoutFixedPrice[$index] = $lineItem;
+            if ($lineItem->getProduct()
+                && (
+                    (!$lineItem->getPrice() && !$lineItem->isPriceFixed())
+                    // We should get prices for Product Kits even if price is fixed,
+                    // because we need prices for Kit Item Line Items
+                    || $lineItem->getProduct()->isKit()
+                )
+            ) {
+                $lineItemsToGetPrices[$index] = $lineItem;
             }
         }
 
-        if (!$lineItemsWithoutFixedPrice) {
+        if (!$lineItemsToGetPrices) {
             return [];
         }
 
-        return $this->productLineItemPriceProvider->getProductLineItemsPrices($lineItemsWithoutFixedPrice);
+        return $this->productLineItemPriceProvider->getProductLineItemsPrices($lineItemsToGetPrices);
     }
 
     /**

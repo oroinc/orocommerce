@@ -95,7 +95,7 @@ define(function(require) {
         },
 
         onOrderEntryPoint: function(response) {
-            this.model.set('checksum', response.checksum[this.options.fullName] || '', {silent: true});
+            this.model.set('checksum', response.checksum[this.options.fullName] || '');
         },
 
         showLoadingMask: function() {
@@ -215,8 +215,6 @@ define(function(require) {
             _.each($fields, function(field) {
                 $(field).attr('data-entry-point-trigger', true);
             });
-
-            mediator.trigger('entry-point:order:init');
         },
 
         removeRow: function() {

@@ -45,13 +45,16 @@ class ProductLineItemProductPriceProvider implements ProductLineItemProductPrice
         string $currency
     ): array {
         $product = $productLineItem->getProduct();
-        $productUnit = $productLineItem->getProductUnit();
-        if ($product === null || $productUnit === null) {
+        if ($product === null) {
             return [];
         }
 
-        $productPrices = $productPriceCollection
-            ->getMatchingByCriteria($product->getId(), $productUnit->getCode(), $currency);
+        $productPrices = new \AppendIterator();
+        foreach ($product->getAvailableUnits() as $productUnit) {
+            $productPrices->append(
+                $productPriceCollection->getMatchingByCriteria($product->getId(), $productUnit->getCode(), $currency)
+            );
+        }
 
         if ($productLineItem instanceof ProductKitItemLineItemsAwareInterface && $product->isKit() === true) {
             $productPrices = $this->getProductPricesForKitLineItem(
@@ -80,7 +83,6 @@ class ProductLineItemProductPriceProvider implements ProductLineItemProductPrice
         string $currency
     ): iterable {
         $product = $productLineItem->getProduct();
-        $productUnit = $productLineItem->getProductUnit();
 
         $kitItemLineItemsPriceValue = BigDecimal::of(0.0);
         foreach ($productLineItem->getKitItemLineItems() as $kitItemLineItem) {
@@ -101,7 +103,8 @@ class ProductLineItemProductPriceProvider implements ProductLineItemProductPrice
             $priceValue = BigDecimal::of($productPrice->getPrice()->getValue())
                 ->plus($kitItemLineItemsPriceValue);
 
-            $productKitPrices[] = new ProductPriceDTO(
+            $productUnit = $productPrice->getUnit();
+            $productKitPrices[$productUnit->getCode()][] = new ProductPriceDTO(
                 $product,
                 Price::create($priceValue->toFloat(), $currency),
                 $productPrice->getQuantity(),
@@ -109,16 +112,18 @@ class ProductLineItemProductPriceProvider implements ProductLineItemProductPrice
             );
         }
 
-        if (!$productKitPrices) {
-            $productKitPrices[] = new ProductPriceDTO(
-                $product,
-                Price::create($kitItemLineItemsPriceValue->toFloat(), $currency),
-                1.0,
-                $productUnit
-            );
+        foreach ($product->getAvailableUnits() as $productUnit) {
+            if (empty($productKitPrices[$productUnit->getCode()])) {
+                $productKitPrices[$productUnit->getCode()][] = new ProductPriceDTO(
+                    $product,
+                    Price::create($kitItemLineItemsPriceValue->toFloat(), $currency),
+                    1.0,
+                    $productUnit
+                );
+            }
         }
 
-        return $productKitPrices;
+        return array_merge(...array_values($productKitPrices));
     }
 
     private function getKitItemLineItemPrice(

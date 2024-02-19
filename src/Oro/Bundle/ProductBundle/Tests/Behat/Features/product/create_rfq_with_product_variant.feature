@@ -92,7 +92,7 @@ Feature: Create RFQ with product variant
 
     When I click "New Quote"
     Then should not see the following options for "SKU" select in form "Frontstore RFQ Line Item Form1" pre-filled with "PROD":
-      | PROD_A_1 Product A 1 |
+      | PROD_A_1 - Product A 1 |
 
     When I open select entity popup for field "SKU" in form "Frontstore RFQ Line Item Form1"
     Then I should not see "PROD_A_1"
@@ -114,7 +114,7 @@ Feature: Create RFQ with product variant
     And I fill form with:
       | PO Number | RFQ001 |
     Then should see the following options for "SKU" select in form "Frontstore RFQ Line Item Form1" pre-filled with "PROD":
-      | PROD_A_1 Product A 1 |
+      | PROD_A_1 - Product A 1 |
 
     When I open select entity popup for field "SKU" in form "Frontstore RFQ Line Item Form1"
     Then I should see "PROD_A_1"

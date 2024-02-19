@@ -21,3 +21,7 @@ services:
         decorates: oro_entity.tests.entity_name_resolver.data_loader
         arguments:
             - '@.inner'
+
+    oro_pricing.tests.provider.frontend_product_prices:
+        alias: oro_pricing.provider.frontend_product_prices
+        public: true

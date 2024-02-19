@@ -1,0 +1,132 @@
+{% block _oro_rfp_frontend_request_requestProducts_entry_kitItemLineItems_row %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% set requestProduct = form.parent.vars.data|default(null) %}
+    {% set product = requestProduct.product|default(null) %}
+    <div class="request-form-editline__kit_item_line_items {{ product.isKit|default(false) ? '' : 'hidden' }}"
+         data-role="request-product-kit-configuration"
+         data-layout="deferred-initialize"
+            {{ UI.renderPageComponentAttributes({
+                module: 'oroui/js/app/components/view-component',
+                options: {
+                    view: 'ororfp/js/app/views/frontend-request-product-kit-configuration-edit-view'
+                }
+            }) }}>
+        <div data-role="request-product-kit-configuration-widget">
+            {{ form_widget(form) }}
+        </div>
+        <div class="request-form-lineitem-unit__kit">
+            {{ UI.clientLink({
+                'aCss': 'btn btn--default btn--size-s',
+                'iCss': 'fa-pencil-square-o',
+                'label': 'oro.frontend.rfp.request_product_kit_configuration_view.edit_button.label'|trans,
+                'ariaLabel': 'oro.frontend.rfp.request_product_kit_configuration_view.edit_button.aria_label'|trans,
+                'ariaHaspopup': true,
+                'labelInIcon': false,
+                'dataAttributes': {
+                    'role': 'request-product-kit-configuration-edit',
+                    'route-name': 'oro_rfp_frontend_request_product_kit_configuration'
+                }
+            }) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _oro_rfp_frontend_request_requestProducts_entry_kitItemLineItems_widget %}
+    {% apply spaceless %}
+    <div class="request-form-lineitem-unit__kit product-kit-line-items">
+        {{ block('form_rows') }}
+    </div>
+    {% endapply %}
+    <div class="fields-row-error">
+        {{ form_errors(form) }}
+        {%- if not valid -%}
+            <span class="validation-failed" role="alert">
+                <span class="validation-failed__icon" aria-hidden="true"></span>
+                <span>{{ 'oro.rfp.requestproduct.kit_item_line_items.general_error.message'|trans({}, 'validators') }}</span>
+            </span>
+        {%- endif -%}
+    </div>
+{% endblock %}
+
+{% block _oro_rfp_frontend_request_requestProducts_entry_kitItemLineItems_entry_row %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {% set kit_item_line_item = form.vars.data %}
+    {% set product = form.product.vars.data %}
+
+    {% if product %}
+        {% if is_granted(product) %}
+            {% set product_id = product.id|default(0) %}
+            {% set product_sku = product.sku|default('') %}
+            {% set product_name = product.names|localized_value %}
+            {% set is_visible = is_visible_product(product_id) %}
+        {% endif %}
+    {% else %}
+        {% set product_id = kit_item_line_item.productId|default(0) %}
+        {% set product_sku = kit_item_line_item.productSku|default('') %}
+        {% set product_name = kit_item_line_item.productName|default('') %}
+        {% set is_visible = false %}
+    {% endif %}
+
+    {% if product_kit_item %}
+        {% set kit_item_label = product_kit_item.labels|localized_value %}
+        {% set is_optional = product_kit_item.optional %}
+        {% set sort_order = product_kit_item.sortOrder %}
+    {% else %}
+        {% set kit_item_label = kit_item_line_item.kitItemLabel|default('') %}
+        {% set is_optional = true %}
+        {% set sort_order = kit_item_line_item.sortOrder|default(0) %}
+    {% endif %}
+
+    {% set product_unit_code = kit_item_line_item.productUnitCode|default('') %}
+
+    <div data-role="request-product-kit-item-line-item"
+        {{ UI.renderPageComponentAttributes({
+            module: 'oroui/js/app/components/view-component',
+            options: {
+                view: 'ororfp/js/app/views/frontend-request-product-kit-item-line-item-view',
+                mode: 'edit',
+                modelAttr: {
+                    kitItemId: kit_item_line_item.kitItemId|default(0),
+                    kitItemLabel: kit_item_label,
+                    isOptional: is_optional,
+                    sortOrder: sort_order,
+                    productId: product_id,
+                    productSku: product_sku,
+                    productName: product_name,
+                    isVisible: is_visible,
+                    productUnit: product_unit_code,
+                    isValid: valid
+                }
+            }
+        }) }}
+    >
+        {{ form_widget(form.product) }}
+        {{ form_widget(form.quantity) }}
+        <div data-role="request-product-kit-item-line-item-view"></div>
+
+        {%- if not valid -%}
+            <div class="fields-row-error">
+                {{ form_errors(form) }}
+                {{ form_errors(form.product) }}
+                {{ form_errors(form.quantity) }}
+            </div>
+        {%- endif -%}
+    </div>
+{% endblock %}
+
+{% block _oro_rfp_frontend_request_requestProducts_entry_kitItemLineItems_entry_product_widget %}
+    {% set attr = attr|merge({
+        'data-validation': [],
+    }) %}
+
+    {{ block('hidden_widget') }}
+{% endblock %}
+
+{% block _oro_rfp_frontend_request_requestProducts_entry_kitItemLineItems_entry_quantity_widget %}
+    {% set attr = attr|merge({
+        'data-validation': [],
+    }) %}
+
+    {{ block('hidden_widget') }}
+{% endblock %}

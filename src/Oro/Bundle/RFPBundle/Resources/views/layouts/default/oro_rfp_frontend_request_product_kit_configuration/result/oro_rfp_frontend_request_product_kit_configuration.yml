@@ -1,0 +1,23 @@
+layout:
+    imports:
+        -
+            id: oro_rfp_frontend_request_product_kit_configuration_form_view
+            root: content
+            namespace: request_product_kit_configuration_widget
+    actions:
+        - '@setBlockTheme':
+              themes: 'oro_rfp_frontend_request_product_kit_configuration.html.twig'
+
+        - '@addTree':
+              items:
+                  content:
+                      blockType: container
+              tree:
+                  root:
+                      content: ~
+
+        - '@setOption':
+            id: request_product_kit_configuration_widget_wrapper
+            optionName: vars
+            optionValue:
+                form: '=data["form"]'

@@ -1,0 +1,66 @@
+Oro\Bundle\RFPBundle\Entity\Request:
+    request1:
+        po_number: 'PO013'
+        first_name: 'Amanda'
+        last_name: 'Cole'
+        email: 'AmandaRCole@example.org'
+        company: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        customer_user: '@amanda'
+
+Oro\Bundle\RFPBundle\Entity\RequestProduct:
+    request_product_kit1_line_item1:
+        request: '@request1'
+        product: '@product_kit1'
+        product_sku: 'product-kit-01'
+        requestProductItems: ['@request_product_kit1_line_item1_item1']
+        __calls:
+            - addKitItemLineItem: ['@request_product_kit1_line_item1_kit_item1']
+    request_product_kit1_line_item2:
+        request: '@request1'
+        product: '@product_kit1'
+        product_sku: 'product-kit-01'
+        requestProductItems: ['@request_product_kit1_line_item2_item1']
+        __calls:
+            - addKitItemLineItem: ['@request_product_kit1_line_item2_kit_item1']
+            - addKitItemLineItem: ['@request_product_kit1_line_item2_kit_item2']
+
+Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+    request_product_kit1_line_item1_item1:
+        request_product: '@request_product_kit1_line_item1'
+        quantity: 1
+        productUnit: '@piece'
+        product_unit_code: 'piece'
+        value: 124
+        currency: 'USD'
+    request_product_kit1_line_item2_item1:
+        request_product: '@request_product_kit1_line_item2'
+        quantity: 1
+        productUnit: '@piece'
+        product_unit_code: 'piece'
+        value: 130
+        currency: 'USD'
+
+Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem:
+    request_product_kit1_line_item1_kit_item1:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product1'
+        quantity: 1
+        productUnit: '@piece'
+        minimumQuantity: 0
+        maximumQuantity: 5
+    request_product_kit1_line_item2_kit_item1:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product3'
+        quantity: 2
+        productUnit: '@piece'
+        minimumQuantity: 0
+        maximumQuantity: 5
+    request_product_kit1_line_item2_kit_item2:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product2'
+        quantity: 2
+        productUnit: '@piece'
+        minimumQuantity: 1
+        maximumQuantity: 10

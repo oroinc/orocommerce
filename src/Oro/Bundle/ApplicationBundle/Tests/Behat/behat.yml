@@ -444,7 +444,7 @@ oro_behat_extension:
 
     Update Line Item:
       selector:
-        locator: '//div[@class="request-form-editline" and @data-role="line-item-edit"]//button[@data-role="update"]'
+        locator: '//div[@class="request-form-editline" and @data-role="request-product-edit-mode-container"]//button[@data-role="update"]'
         type: xpath
 
     Delete Line Item:

@@ -49,5 +49,4 @@ Feature: Backoffice Quote Forbids to Override a Product Price
 
     When I proceed as the AdminEditQuotes
     And I save and close form
-    And agree that shipping cost may have changed
     Then I should not see alert

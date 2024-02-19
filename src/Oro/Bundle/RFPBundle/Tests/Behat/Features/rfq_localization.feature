@@ -20,7 +20,7 @@ Feature: RFQ Localization
     When I click "More Actions"
     When I click "Request Quote"
     Then Request a Quote contains products
-      | Product1`"'&йёщ®&reg;> | 10 | item (lang1) |
+      | AA1 - Product1`"'&йёщ®&reg;> | 10 | item (lang1) |
 
   Scenario: Create RFQ and ensure product name is displayed properly
     When I click "Submit Request"

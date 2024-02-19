@@ -5,6 +5,10 @@
     flex-direction: column;
     row-gap: $offset-x-s;
 
+    &:empty {
+        display: none;
+    }
+
     &__item-name {
         padding-right: $offset-x-m;
     }

@@ -43,6 +43,9 @@ class RequestToQuoteDataStorage
                 ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
                 'commentCustomer' => $requestProduct->getComment(),
                 'requestProductItems' => $items,
+                ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEMS_DATA_KEY => $this->getKitItemLineItemsData(
+                    $requestProduct
+                ),
             ];
         }
 
@@ -77,5 +80,32 @@ class RequestToQuoteDataStorage
         }
 
         return $ids;
+    }
+
+    private function getKitItemLineItemsData(RequestProduct $requestProduct): array
+    {
+        $kitItemLineItemsData = [];
+        foreach ($requestProduct->getKitItemLineItems() as $kitItemLineItem) {
+            $kitItemLineItemsData[] = [
+                ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEM_KIT_ITEM_KEY => $kitItemLineItem->getKitItem()?->getId(),
+                'kitItemId' => $kitItemLineItem->getKitItemId(),
+                'kitItemLabel' => $kitItemLineItem->getKitItemLabel(),
+                'optional' => $kitItemLineItem->isOptional(),
+                'minimumQuantity' => $kitItemLineItem->getMinimumQuantity(),
+                'maximumQuantity' => $kitItemLineItem->getMaximumQuantity(),
+                ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEM_PRODUCT_KEY => $kitItemLineItem->getProduct()?->getId(),
+                'productId' => $kitItemLineItem->getProductId(),
+                'productName' => $kitItemLineItem->getProductName(),
+                'productSku' => $kitItemLineItem->getProductSku(),
+                ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEM_PRODUCT_UNIT_KEY =>
+                    $kitItemLineItem->getProductUnit()?->getCode(),
+                'productUnitCode' => $kitItemLineItem->getProductUnitCode(),
+                'productUnitPrecision' => $kitItemLineItem->getProductUnitPrecision(),
+                ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEM_QUANTITY_KEY => $kitItemLineItem->getQuantity(),
+                'sortOrder' => $kitItemLineItem->getSortOrder(),
+            ];
+        }
+
+        return $kitItemLineItemsData;
     }
 }

@@ -33,7 +33,6 @@
 
 {% block __product_kit_line_item_form__header_product_picture_widget %}
     {% set productImageData = product.imagesByType('listing').first.image|default(null) %}
-    {% set productName = product.names|localized_value %}
     <div class="product-item product-popup__header-img">
         <div class="product-item__image-holder--aspect-ratio product-item__image-holder--tiny">
             <div class="product-item__preview">

@@ -266,6 +266,7 @@ Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
                         # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
                         - order_kit_item_line_item_update
             -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision:
+                    unitPrecisionPropertyPath: 'productUnitPrecision'
                     groups:
                         # Used in CREATE action by orderproductkititemlineitems API resource
                         - api_order_kit_item_line_item_create

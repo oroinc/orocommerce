@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -17,11 +18,9 @@ use Symfony\Component\Validator\Validation;
 
 class ProductUnitSelectTypeTest extends FormIntegrationTestCase
 {
-    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $productUnitLabelFormatter;
+    private UnitLabelFormatterInterface|MockObject $productUnitLabelFormatter;
 
-    /** @var ProductUnitSelectType */
-    private $formType;
+    private ProductUnitSelectType $formType;
 
     protected function setUp(): void
     {
@@ -56,26 +55,26 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider submitProvider
      */
-    public function testSubmit(array $inputOptions, array $expectedOptions, $submittedData, $expectedData)
+    public function testSubmit(array $inputOptions, array $expectedOptions, $submittedData, $expectedData): void
     {
         $form = $this->factory->create(ProductUnitSelectType::class, null, $inputOptions);
 
-        $this->assertNull($form->getData());
+        self::assertNull($form->getData());
 
         $formConfig = $form->getConfig();
         foreach ($expectedOptions as $key => $value) {
-            $this->assertTrue($formConfig->hasOption($key));
-            $this->assertEquals($value, $formConfig->getOption($key));
+            self::assertTrue($formConfig->hasOption($key));
+            self::assertEquals($value, $formConfig->getOption($key));
         }
 
         $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
-        $this->assertTrue($form->isSynchronized());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
 
         /** @var ProductUnit $data */
         $data = $form->getData();
 
-        $this->assertEquals($expectedData, $data->getCode());
+        self::assertEquals($expectedData, $data->getCode());
     }
 
     public function submitProvider(): array
@@ -102,10 +101,10 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testConfigureOptions()
+    public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects($this->exactly(2))
+        $resolver->expects(self::exactly(2))
             ->method('setDefaults')
             ->withConsecutive(
                 [
@@ -129,13 +128,13 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
         $this->formType->configureOptions($resolver);
     }
 
-    public function testsFinishView()
+    public function testsFinishView(): void
     {
         $form = $this->factory->create(ProductUnitSelectType::class, null, ['compact' => false,]);
-        $this->assertNull($form->getData());
+        self::assertNull($form->getData());
 
         $view = $form->createView();
-        $this->productUnitLabelFormatter->expects($this->any())
+        $this->productUnitLabelFormatter->expects(self::any())
             ->method('format')
             ->withConsecutive(['item', false], ['kg', false])
             ->willReturnOnConsecutiveCalls('oro.product_unit.item.label.full', 'oro.product_unit.kg.full');
@@ -149,6 +148,6 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
             $labels[] = $choiceView->label;
         }
 
-        $this->assertEquals(['oro.product_unit.item.label.full', 'oro.product_unit.kg.full'], $labels);
+        self::assertEquals(['oro.product_unit.item.label.full', 'oro.product_unit.kg.full'], $labels);
     }
 }

@@ -181,6 +181,9 @@ action_groups:
                     - [[keep], [property, ['Oro\Bundle\RFPBundle\Entity\RequestProduct', product]]]
                     - [[keep], [property, ['Oro\Bundle\RFPBundle\Entity\RequestProductItem', productUnit]]]
                     - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
+                    - [[keep], [property, ['Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem', product]]]
+                    - [[keep], [property, ['Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem', productUnit]]]
+                    - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\ProductKitItem']]]
             - '@assign_value': [$.requestCopy.createdAt, $.currentDatetime]
             - '@assign_value': [$.requestCopy.updatedAt, $.currentDatetime]
             - '@flush_entity':

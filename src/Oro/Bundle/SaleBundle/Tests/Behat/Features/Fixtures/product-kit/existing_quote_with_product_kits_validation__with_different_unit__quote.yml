@@ -1,0 +1,80 @@
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        internal_status: '@quote_internal_status_open'
+        po_number: 'PO013'
+        qid: 'Quote1'
+        organization: '@organization'
+        owner: '@admin'
+        customer_user: '@amanda'
+        website: '@website1'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quote_product1:
+        quote: '@quote1'
+        product: '@simple_product1'
+        comment: 'Seller Notes 1'
+        commentCustomer: 'Customer Notes 1'
+        __calls:
+            - addQuoteProductOffer: ['@quote_product_offer1']
+    # <with different unit>
+    quote_product_kit1_line_item2:
+        quote: '@quote1'
+        product: '@product_kit1'
+        __calls:
+            - addKitItemLineItem: ['@quote_product_kit1_line_item2_kit_item1']
+            - addKitItemLineItem: ['@quote_product_kit1_line_item2_kit_item2']
+            - addQuoteProductOffer: ['@quote_product_kit1_line_item2_offer1']
+    # </with different unit>
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem:
+    # <with different unit>
+    quote_product_kit1_line_item2_kit_item1:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product3'
+        quantity: 2
+        productUnit: '@each'
+        minimumQuantity: 0
+        maximumQuantity: 5
+    quote_product_kit1_line_item2_kit_item2:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product1'
+        quantity: 3
+        productUnit: '@each'
+        minimumQuantity: 1
+        maximumQuantity: 10
+    # </with different unit>
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quote_product_offer1:
+        quote_product: '@quote_product1'
+        product_unit: '@piece'
+        price: '@price1'
+        quantity: 1
+        allow_increments: true
+    quote_product_kit1_line_item2_offer1:
+        quote_product: '@quote_product_kit1_line_item2'
+        product_unit: '@piece'
+        price: '@price2'
+        quantity: 1
+        allow_increments: true
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    quote_product_request1:
+        quote_product: '@quote_product1'
+        product_unit: '@piece'
+        price: '@price1'
+        quantity: 1
+
+    quote_product_kit1_line_item2_request1:
+        quote_product: '@quote_product_kit1_line_item2'
+        productUnit: '@each'
+        price: '@price2'
+        quantity: 1
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price1:
+        value: 2
+        currency: USD
+    price2:
+        value: 104.69
+        currency: USD

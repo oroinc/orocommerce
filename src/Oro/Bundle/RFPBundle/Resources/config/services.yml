@@ -90,6 +90,13 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_rfp_product_prices }
 
+    oro_rfp.layout.data_provider.request_product_prices:
+        class: 'Oro\Bundle\RFPBundle\Layout\DataProvider\RequestProductPricesProvider'
+        arguments:
+            - '@oro_rfp.provider.request_product_line_item_tier_prices'
+        tags:
+            - { name: layout.data_provider, alias: oro_rfp_request_product_prices }
+
     oro_rfp.request.manager:
         class: 'Oro\Bundle\RFPBundle\Model\RequestManager'
         public: true
@@ -129,7 +136,6 @@ services:
            - setNotAllowedProductTypes:
                -
                    - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
-                   - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
 
     oro_rfp.acl.voter.frontend_request:
         class: Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter
@@ -201,7 +207,8 @@ services:
 
     oro_rfp.twig.request_products:
         class: 'Oro\Bundle\RFPBundle\Twig\RequestProductsExtension'
-        public: false
+        arguments:
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
@@ -216,4 +223,49 @@ services:
             - [ setEntityClass, [ 'Oro\Bundle\RFPBundle\Entity\Request' ] ]
         tags:
             - { name: oro_customer.updater.customer_user_reassign }
-        public: false
+
+    oro_rfp.product_kit.provider.product_kit_item_products:
+        class: Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider
+        arguments:
+            - '@oro_rfp.product_kit.checker.product_kit_item_product_availability_checker'
+
+    oro_rfp.product_kit.checker.product_kit_item_product_availability_checker:
+        class: Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker
+        arguments:
+            - '@validator'
+            - ['product_kit_item_product_is_available_for_rfp']
+
+    oro_rfp.product_kit.factory.request_product_kit_item_line_item:
+        class: Oro\Bundle\RFPBundle\ProductKit\Factory\RequestProductKitItemLineItemFactory
+        arguments:
+            - '@oro_rfp.product_kit.provider.product_kit_item_products'
+
+    oro_rfp.autocomplete.product_visibility_limited.search_handler:
+        parent: oro_product.autocomplete.product_visibility_limited.search_handler
+        calls:
+            - setNotAllowedProductTypes:
+                  -
+                      - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_rfp_product_visibility_limited }
+
+    oro_rfp.product_kit.checksum.request_product_kit_item_checksum_generator:
+        class: Oro\Bundle\RFPBundle\ProductKit\Checksum\RequestProductKitItemChecksumGenerator
+        tags:
+            -
+                name: oro_product.line_item_checksum_generator
+                priority: 10 # Must be called before the default one - oro_product.product_kit.checksum.product_kit_line_item_checksum_generator
+
+    oro_rfp.provider.request_product_price:
+        class: Oro\Bundle\RFPBundle\Provider\RequestProductPriceProvider
+        arguments:
+            - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_pricing.user_currency_manager'
+
+    oro_rfp.provider.request_product_line_item_tier_prices:
+        class: Oro\Bundle\RFPBundle\Provider\RequestProductLineItemTierPricesProvider
+        arguments:
+            - '@oro_rfp.provider.request_product_price'
+            - '@oro_pricing.provider.product_line_item_product_price'
+            - '@oro_pricing.user_currency_manager'

@@ -16,6 +16,7 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Stub\ProductKitItemLineItemPriceAwareStu
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductKitItemLineItemsAwareStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductKitItemLineItemStub;
@@ -82,7 +83,9 @@ class ProductLineItemProductPriceProviderTest extends TestCase
     public function testGetProductLineItemProductPricesWhenNotProductKitAndNoPrices(): void
     {
         $unitItem = (new ProductUnit())->setCode('item');
-        $product = (new ProductStub())->setId(42);
+        $product = (new ProductStub())
+            ->setId(42)
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitItem));
 
         self::assertSame(
             [],
@@ -97,7 +100,9 @@ class ProductLineItemProductPriceProviderTest extends TestCase
     public function testGetProductLineItemProductPricesWhenNotProductKitAndHasMatchingPrices(): void
     {
         $unitItem = (new ProductUnit())->setCode('item');
-        $product = (new ProductStub())->setId(42);
+        $product = (new ProductStub())
+            ->setId(42)
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitItem));
         $productPriceUsd1 = new ProductPriceDTO($product, Price::create(12.3456, 'USD'), 1.0, $unitItem);
         $productPriceUsd10 = new ProductPriceDTO($product, Price::create(12.3456, 'USD'), 10.0, $unitItem);
         $productPriceEur1 = new ProductPriceDTO($product, Price::create(12.3456, 'EUR'), 1.0, $unitItem);
@@ -116,7 +121,9 @@ class ProductLineItemProductPriceProviderTest extends TestCase
     {
         $unitItem = (new ProductUnit())->setCode('item');
         $unitKg = (new ProductUnit())->setCode('kg');
-        $product = (new ProductStub())->setId(42);
+        $product = (new ProductStub())
+            ->setId(42)
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitKg));
         $productPriceUsd1 = new ProductPriceDTO($product, Price::create(12.3456, 'USD'), 1.0, $unitItem);
         $productPriceUsd10 = new ProductPriceDTO($product, Price::create(12.3456, 'USD'), 10.0, $unitItem);
         $productPriceEur1 = new ProductPriceDTO($product, Price::create(12.3456, 'EUR'), 1.0, $unitItem);
@@ -137,6 +144,7 @@ class ProductLineItemProductPriceProviderTest extends TestCase
         $unitItem = (new ProductUnit())->setCode('item');
         $product = (new ProductStub())
             ->setId(42)
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitItem))
             ->setType(Product::TYPE_KIT);
         $lineItem = (new ProductLineItemStub(42))
             ->setProduct($product)
@@ -171,6 +179,7 @@ class ProductLineItemProductPriceProviderTest extends TestCase
             ->addKitItemProduct((new ProductKitItemProduct())->setProduct($kitItem1Product));
         $product = (new ProductStub())
             ->setId(42)
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitItem))
             ->setType(Product::TYPE_KIT)
             ->addKitItem($kitItem1);
         $kitItemLineItem1 = (new ProductKitItemLineItemStub(1000))
@@ -217,6 +226,7 @@ class ProductLineItemProductPriceProviderTest extends TestCase
             ->addKitItemProduct((new ProductKitItemProduct())->setProduct($kitItem1Product));
         $product = (new ProductStub())
             ->setId(42)
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitItem))
             ->setType(Product::TYPE_KIT)
             ->addKitItem($kitItem1);
         $kitItemLineItem1 = (new ProductKitItemLineItemStub(1000))
@@ -267,6 +277,7 @@ class ProductLineItemProductPriceProviderTest extends TestCase
             ->addKitItemProduct((new ProductKitItemProduct())->setProduct($kitItem1Product));
         $product = (new ProductStub())
             ->setId(42)
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitItem))
             ->setType(Product::TYPE_KIT)
             ->addKitItem($kitItem1);
         $kitItemLineItem1 = (new ProductKitItemLineItemStub(1000))
@@ -327,6 +338,8 @@ class ProductLineItemProductPriceProviderTest extends TestCase
             ->addKitItemProduct((new ProductKitItemProduct())->setProduct($kitItem2Product));
         $product = (new ProductStub())
             ->setId(42)
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitItem))
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitKg))
             ->setType(Product::TYPE_KIT)
             ->addKitItem($kitItem1)
             ->addKitItem($kitItem2);
@@ -398,9 +411,15 @@ class ProductLineItemProductPriceProviderTest extends TestCase
             10.0,
             $lineItem->getUnit()
         );
+        $productPrice3 = new ProductPriceDTO(
+            $lineItem->getProduct(),
+            Price::create(66.28, 'USD'),
+            1.0,
+            $unitKg
+        );
 
         self::assertEquals(
-            [$productPrice1, $productPrice2],
+            [$productPrice1, $productPrice2, $productPrice3],
             $this->provider->getProductLineItemProductPrices($lineItem, $productPriceCollection, 'USD')
         );
     }
@@ -422,6 +441,7 @@ class ProductLineItemProductPriceProviderTest extends TestCase
             ->addKitItemProduct((new ProductKitItemProduct())->setProduct($kitItem2Product));
         $product = (new ProductStub())
             ->setId(42)
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitItem))
             ->setType(Product::TYPE_KIT)
             ->addKitItem($kitItem1)
             ->addKitItem($kitItem2);
@@ -504,6 +524,7 @@ class ProductLineItemProductPriceProviderTest extends TestCase
             ->addKitItemProduct((new ProductKitItemProduct())->setProduct($kitItem2Product));
         $product = (new ProductStub())
             ->setId(42)
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit($unitItem))
             ->setType(Product::TYPE_KIT)
             ->addKitItem($kitItem1)
             ->addKitItem($kitItem2);

@@ -9,7 +9,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
 /**
- * Quote Product Request entity.
+ * Represents a quote product line item request.
  *
  * @ORM\Table(name="oro_sale_quote_prod_request")
  * @ORM\Entity

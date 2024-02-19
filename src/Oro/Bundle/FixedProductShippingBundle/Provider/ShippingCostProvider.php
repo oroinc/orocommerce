@@ -41,6 +41,10 @@ class ShippingCostProvider
         }
 
         foreach ($lineItems as $lineItem) {
+            if (!$lineItem->getProduct()) {
+                continue;
+            }
+
             $attribute = $this->pricesProvider->getPricesWithUnitAndCurrencies($priceList, $lineItem->getProduct());
             $unitCode = $lineItem->getProductUnitCode();
 

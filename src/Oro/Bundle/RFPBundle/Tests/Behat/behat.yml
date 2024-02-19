@@ -73,6 +73,52 @@ oro_behat_extension:
                     Do Not Ship Later Than:
                         type: 'css'
                         locator: 'input[name^="oro_sale_quote_shipUntil"]'
+                    Line Item 2 Product:
+                        type: 'xpath'
+                        locator: '//div[contains(@id,"s2id_oro_rfp_request_requestProducts_1_product-uid")]//input'
+                    Line Item 2 Unit: 'oro_rfp_request[requestProducts][1][requestProductItems][0][productUnit]'
+                    Line Item 2 Quantity: 'oro_rfp_request[requestProducts][1][requestProductItems][0][quantity]'
+                    Line Item 2 Target Price: 'oro_rfp_request[requestProducts][1][requestProductItems][0][price][value]'
+                    Line Item 2 Item 1 Product:
+                        locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][1]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
+                        type: xpath
+                    Line Item 2 Item 1 Quantity:
+                        locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][1]/td//input[@data-name="field__quantity"]'
+                        type: xpath
+                    Line Item 2 Item 2 Product:
+                        locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][2]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
+                        type: xpath
+                    Line Item 2 Item 2 Quantity:
+                        locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][2]/td//input[@data-name="field__quantity"]'
+                        type: xpath
+                    Line Item 2 Item 3 Product:
+                        locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][3]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
+                        type: xpath
+                    Line Item 2 Item 3 Quantity:
+                        locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][3]/td//input[@data-name="field__quantity"]'
+                        type: xpath
+                    Line Item 3 Product Dropdown:
+                        element: Select2Entity
+                        locator: '//div[contains(@id,"s2id_oro_rfp_request_requestProducts_2_product-uid")]/input'
+                        type: xpath
+                    Line Item 3 Product:
+                        type: 'xpath'
+                        locator: '//div[contains(@id,"s2id_oro_rfp_request_requestProducts_2_product-uid")]//input'
+                    Line Item 3 Unit: 'oro_rfp_request[requestProducts][2][requestProductItems][0][productUnit]'
+                    Line Item 3 Quantity: 'oro_rfp_request[requestProducts][2][requestProductItems][0][quantity]'
+                    Line Item 3 Target Price: 'oro_rfp_request[requestProducts][2][requestProductItems][0][price][value]'
+                    Line Item 3 Item 1 Product:
+                        locator: '//tr[@data-content="oro_rfp_request[requestProducts][2]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][1]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
+                        type: xpath
+                    Line Item 3 Item 1 Quantity:
+                        locator: '//tr[@data-content="oro_rfp_request[requestProducts][2]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][1]/td//input[@data-name="field__quantity"]'
+                        type: xpath
+                    Line Item 3 Item 2 Product:
+                        locator: '//tr[@data-content="oro_rfp_request[requestProducts][2]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][2]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
+                        type: xpath
+                    Line Item 3 Item 2 Quantity:
+                        locator: '//tr[@data-content="oro_rfp_request[requestProducts][2]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][2]/td//input[@data-name="field__quantity"]'
+                        type: xpath
 
         Frontend Request Form:
             selector: 'form[name^="oro_rfp_frontend_request"]'
@@ -90,13 +136,23 @@ oro_behat_extension:
                         type: 'css'
                         locator: 'select[name="oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][productUnit]"]'
                         element: Select2Entity
+                    Line Item 2 Product:
+                        type: 'css'
+                        locator: 'input[name="oro_rfp_frontend_request[requestProducts][1][product]"]'
+                        element: Select2Entity
 
         RFQ Products List:
             selector: '.request-form__content'
 
+        RFQ Products List Line Item 1:
+            selector: 'div[data-content="oro_rfp_frontend_request[requestProducts][0]"]'
+
+        RFQ Products List Line Item 2:
+            selector: 'div[data-content="oro_rfp_frontend_request[requestProducts][1]"]'
+
         Remove Request Product Edit Line Item:
             selector:
-                locator: '//div[@data-role="line-item-edit"][1]//button[contains(@class, "removeRow")]'
+                locator: '//div[@data-role="request-product-edit-mode-container"][1]//button[contains(@class, "removeRow")]'
                 type: xpath
 
         Requests For Quote tab:
@@ -106,17 +162,37 @@ oro_behat_extension:
 
         Edit Request Product Line Item:
             selector:
-                locator: '//div[@data-role="line-item"][1]//button[@data-role="edit"]'
+                locator: '//div[@data-role="request-product"][1]//button[@data-role="edit"]'
+                type: xpath
+
+        Edit Request Product Line Item 2:
+            selector:
+                locator: '//div[@data-role="request-product"][2]//button[@data-role="edit"]'
+                type: xpath
+
+        Edit Request Product Line Item 5:
+            selector:
+                locator: '//div[@data-role="request-product"][5]//button[@data-role="edit"]'
                 type: xpath
 
         Add Another Line:
             selector:
-                locator: '//div[@data-role="line-item"][1]//a[@data-role="lineitem-add"]'
+                locator: '//div[@data-role="request-product"][1]//a[@data-role="request-product-item-add"]'
+                type: xpath
+
+        Line Item 2 Add Another Line:
+            selector:
+                locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//button[text()="Add Another Line"]'
+                type: xpath
+
+        Line Item 3 Add Another Line:
+            selector:
+                locator: '//tr[@data-content="oro_rfp_request[requestProducts][2]"]//button[text()="Add Another Line"]'
                 type: xpath
 
         Line Item Quantity:
             selector:
-                locator: '//div[@data-role="line-item"][1]//div[@data-role="lineitems"]/div[last()]//input[@data-name="field__quantity"]'
+                locator: '//div[@data-role="request-product"][1]//div[@data-role="request-product-items-container"]/div[last()]//input[@data-name="field__quantity"]'
                 type: xpath
 
         Assigned To Tooltip Icon:
@@ -128,6 +204,121 @@ oro_behat_extension:
             selector:
                 type: xpath
                 locator: '//label[contains(., "Assigned Customer Users")]//i[contains(@class, "fa-info-circle") and contains(@class, "tooltip-icon")]'
+
+        Request Form Line Item 2 Kit Item 1 Label:
+            selector:
+                locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][1]/td[contains(@class, "line-item-label")]/label'
+                type: xpath
+
+        Request Form Line Item 2 Kit Item 1 Quantity Label Tooltip:
+            selector:
+                locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][1]/td[contains(@class, "line-item-quantity-label")]//i[contains(@class, "tooltip-icon")]'
+                type: xpath
+
+        Request Form Line Item 2 Kit Item 2 Label:
+            selector:
+                locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][2]/td[contains(@class, "line-item-label")]/label'
+                type: xpath
+
+        Request Form Line Item 2 Kit Item 2 Quantity Label Tooltip:
+            selector:
+                locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][2]/td[contains(@class, "line-item-quantity-label")]//i[contains(@class, "tooltip-icon")]'
+                type: xpath
+
+        Request Form Line Item 2 Kit Item 3 Label:
+            selector:
+                locator: '//tr[@data-content="oro_rfp_request[requestProducts][1]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][3]/td[contains(@class, "line-item-label")]/label'
+                type: xpath
+
+        Request Line Items Table:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+            selector:
+                type: 'xpath'
+                locator: '//table[contains(@class,"rfp-line-items")]'
+
+        Request Form Line Item 3 Remove:
+            selector:
+                locator: '//tr[@data-content="oro_rfp_request[requestProducts][2]"]//td[contains(@class, "request-form-lineitem-unit--remove")]/button'
+                type: xpath
+
+        Request Product Kit Item Line Item Product Ghost Option 1:
+            selector:
+                locator: '//li[1][contains(@class, "select2-result") and contains(@class, "ghost-option")]'
+                type: xpath
+
+        RFQ Product Kit Line Item Form:
+            selector: 'form[name="oro_rfp_frontend_request_product_kit_configuration"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Kit Item Line Item 1 Quantity: 'oro_rfp_frontend_request_product_kit_configuration[kitItemLineItems][2][quantity]'
+                    Readonly Kit Item Line Item 1 Quantity:
+                        locator: '//input[@name="oro_rfp_frontend_request_product_kit_configuration[kitItemLineItems][2][quantity]"][@disabled]'
+                        type: xpath
+                    Kit Item Line Item 1 Product 1:
+                        type: 'css'
+                        locator: 'input[data-ftid="oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_2_product_0"]'
+                    Kit Item Line Item 1 Product 2:
+                        type: 'css'
+                        locator: 'input[data-ftid="oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_2_product_1"]'
+                    Kit Item Line Item 2 Product 1:
+                        type: 'css'
+                        locator: 'input[data-ftid="oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_1_product_0"]'
+                    Kit Item Line Item 2 Product 2:
+                        type: 'css'
+                        locator: 'input[data-ftid="oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_1_product_1"]'
+                    Kit Item Line Item 2 Quantity: 'oro_rfp_frontend_request_product_kit_configuration[kitItemLineItems][1][quantity]'
+                    Kit Item Line Item 2 Product: 'oro_rfp_frontend_request_product_kit_configuration[kitItemLineItems][1][product]'
+                    Readonly Kit Item Line Item 2 Quantity:
+                        locator: '//input[@name="oro_rfp_frontend_request_product_kit_configuration[kitItemLineItems][1][quantity]"][@disabled]'
+                        type: xpath
+
+        RFQ Product Kit Line Item Totals Form:
+            selector: 'div.product-totals__controls'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Readonly Quantity:
+                        locator: '//input[@name="oro_rfp_frontend_request_product_kit_configuration[quantity]"][@readonly]'
+                        type: xpath
+                    Readonly Unit:
+                        locator: '//select[@name="oro_rfp_frontend_request_product_kit_configuration[productUnit]"][@readonly]'
+                        type: xpath
+
+        RFQ Kit Item Line Item 1 Product 1:
+            selector: 'input[data-ftid="oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_2_product_0"]'
+        RFQ Kit Item Line Item 1 Product 2:
+            selector: 'input[data-ftid="oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_2_product_1"]'
+        RFQ Kit Item Line Item 2 Product 1:
+            selector: 'input[data-ftid="oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_1_product_0"]'
+        RFQ Kit Item Line Item 2 Product 2:
+            selector: 'input[data-ftid="oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_1_product_1"]'
+        RFQ Kit Item Line Item 3 Product 1:
+            selector: 'input[data-ftid="oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_3_product_0"]'
+
+        RFQ Kit Item Line Item 1 Configure Button:
+            selector:
+                locator: '//div[@data-content="oro_rfp_frontend_request[requestProducts][0]"]//a[@data-role="request-product-kit-configuration-edit"]'
+                type: xpath
+        RFQ Kit Item Line Item 2 Configure Button:
+            selector:
+                locator: '//div[@data-content="oro_rfp_frontend_request[requestProducts][1]"]//a[@data-role="request-product-kit-configuration-edit"]'
+                type: xpath
+        RFQ Kit Item Line Item 5 Configure Button:
+            selector:
+                locator: '//div[@data-content="oro_rfp_frontend_request[requestProducts][4]"]//a[@data-role="request-product-kit-configuration-edit"]'
+                type: xpath
+
+        Storefront Request Line Items Table:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+            selector:
+                type: 'xpath'
+                locator: '//table[contains(@class,"customer-line-items__table")]'
+
+        Simple Product 01 Link:
+            selector:
+                locator: '//a[text()[contains(.,"Simple Product 01")]]'
+                type: 'xpath'
 
     pages:
         RequestViewBackendPage:

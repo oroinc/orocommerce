@@ -12,6 +12,7 @@ Feature: Existing Order with Product Kits Validation - with Wittingly Invalid
 
   Scenario: Check that order can be saved with an untouched wittingly invalid line item
     When I save form
+    And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
 
   Scenario: Check that order cannot be saved with an updated wittingly invalid line item

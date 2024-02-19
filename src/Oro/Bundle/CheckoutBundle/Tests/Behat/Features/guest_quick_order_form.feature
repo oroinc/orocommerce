@@ -220,10 +220,10 @@ Feature: Guest quick order form
       | Notes                  | Test note for quote. |
       | PO Number              | PO Test 01           |
     And Request a Quote contains products
-      | Product2               | 2 | item |
-      | Product2               | 4 | set  |
-      | Product3               | 2 | item |
-      | Product1`"'&йёщ®&reg;> | 5 | item |
+      | PSKU2 - Product2               | 2 | item |
+      | PSKU2 - Product2               | 4 | set  |
+      | PSKU3 - Product3               | 2 | item |
+      | psku1 - Product1`"'&йёщ®&reg;> | 5 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 

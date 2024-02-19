@@ -193,6 +193,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
                 'id' => $product->getId(),
                 'sku' => $product->getSku(),
                 'defaultName.string' => 'product-1.names.en_CA',
+                'type' => $product->getType(),
             ],
             $result
         );
@@ -222,12 +223,14 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
         self::assertArrayHasKey('product_id', $selectedData);
         self::assertArrayHasKey('sku', $selectedData);
         self::assertArrayHasKey('name', $selectedData);
+        self::assertArrayHasKey('type', $selectedData);
 
         self::assertEquals(
             [
                 'id' => $selectedData['product_id'],
                 'sku' => $selectedData['sku'],
                 'defaultName.string' => $selectedData['name'],
+                'type' => $selectedData['type'],
             ],
             $result
         );

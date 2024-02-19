@@ -59,7 +59,7 @@ const ProductUnitQuantityView = BaseView.extend({
      */
     _actualizePrecision($unitElement = this.$(this.unitSelector)) {
         const unit = $unitElement.val();
-        const precisions = $unitElement.data('unit-precisions');
+        const precisions = $unitElement.data('unit-precisions') || {};
 
         if (unit in precisions) {
             $(this.$(this.quantitySelector)).data('precision', precisions[unit]).inputWidget('refresh');

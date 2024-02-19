@@ -1,69 +1,281 @@
 Oro\Bundle\RFPBundle\Entity\Request:
     properties:
         firstName:
-            - NotBlank: ~
-            - Length:
-                max: 255
+            -   NotBlank: ~
+            -   Length:
+                    max: 255
         lastName:
-            - NotBlank: ~
-            - Length:
-                max: 255
+            -   NotBlank: ~
+            -   Length:
+                    max: 255
         email:
-            - NotBlank: ~
-            - Email: ~
-            - Length:
-                max: 255
+            -   NotBlank: ~
+            -   Email: ~
+            -   Length:
+                    max: 255
         company:
-            - NotBlank: ~
-            - Length:
-                max: 255
+            -   NotBlank: ~
+            -   Length:
+                    max: 255
         role:
-            - Length:
-                max: 255
+            -   Length:
+                    max: 255
         poNumber:
-            - Length:
-                max: 255
+            -   Length:
+                    max: 255
         shipUntil:
-            - Type:
-                  type: DateTimeInterface
-                  message: oro.rfp.request.ship_until.type.message
-                  payload:
-                      jsValidation:
-                          type: Date
+            -   Type:
+                    type: DateTimeInterface
+                    message: oro.rfp.request.ship_until.type.message
+                    payload:
+                        jsValidation:
+                            type: Date
         requestProducts:
-            - Valid: ~
+            -   Valid:
+                    groups:
+                        - Default
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_create
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_update
+                        # Used in \Oro\Bundle\RFPBundle\RequestController::update
+                        - request_update
 
 Oro\Bundle\RFPBundle\Entity\RequestProduct:
+    constraints:
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitLineItemContainsRequiredKitItems:
+                groups:
+                    # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                    - frontend_request_create
+                    # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                    - frontend_request_update
+                    # Used in \Oro\Bundle\RFPBundle\RequestController::update
+                    - request_update
+                    # Used in \Oro\Bundle\RFPBundle\AjaxRequestProductKitItemLineItemController::update
+                    - request_product_kit_configuration
     properties:
         request:
-            - NotBlank: ~
+            -   NotBlank: ~
         product:
-            - NotBlank:
-                message: 'oro.rfp.requestproduct.product.blank'
+            -   NotBlank:
+                    message: 'oro.rfp.requestproduct.product.blank'
+                    groups:
+                        - Default
+                        # Used in \Oro\Bundle\RFPBundle\Controller\Frontend\RequestProductKitConfigurationDialogController
+                        - frontend_request_product_kit_configuration
+                        # Used in \Oro\Bundle\RFPBundle\RequestController::update
+                        - request_update
+                        # Used in \Oro\Bundle\RFPBundle\AjaxRequestProductKitItemLineItemController::update
+                        - request_product_kit_configuration
         productSku:
-            - NotBlank:
-                groups: [ Import ]
+            -   NotBlank:
+                    message: 'oro.rfp.requestproduct.product.blank'
+                    groups:
+                        - Default
+                        # Used in \Oro\Bundle\RFPBundle\Controller\Frontend\RequestProductKitConfigurationDialogController
+                        - frontend_request_product_kit_configuration
+                        # Used in \Oro\Bundle\RFPBundle\RequestController::update
+                        - request_update
+                        # Used in \Oro\Bundle\RFPBundle\AjaxRequestProductKitItemLineItemController::update
+                        - request_product_kit_configuration
+        kitItemLineItems:
+            -   Valid:
+                    groups:
+                        - Default
+                        # Used in \Oro\Bundle\RFPBundle\Controller\Frontend\RequestProductKitConfigurationDialogController
+                        - frontend_request_product_kit_configuration
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_create
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_update
+                        # Used in \Oro\Bundle\RFPBundle\RequestController::update
+                        - request_update
+                        # Used in \Oro\Bundle\RFPBundle\AjaxRequestProductKitItemLineItemController::update
+                        - request_product_kit_configuration
         requestProductItems:
-            - Count:
-                min: 1
-                minMessage: 'oro.rfp.requestproduct.request_product_items.blank'
-            - Valid: ~
+            -   Count:
+                    min: 1
+                    minMessage: 'oro.rfp.requestproduct.request_product_items.blank'
+            -   Valid:
+                    groups:
+                        - Default
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_create
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_update
+                        # Used in \Oro\Bundle\RFPBundle\RequestController::update
+                        - request_update
+                        # Used in \Oro\Bundle\RFPBundle\AjaxRequestProductKitItemLineItemController::update
+                        - request_product_kit_configuration
 
 Oro\Bundle\RFPBundle\Entity\RequestProductItem:
     constraints:
-        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
-            path: quantity
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+                path: quantity
     properties:
         requestProduct:
-            - NotBlank: ~
+            -   NotBlank: ~
         quantity:
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
-            - NotBlank:
-                message: 'oro.product.productunit.invalid'
+            -   NotBlank:
+                    message: 'oro.product.productunit.unit.blank'
         productUnitCode:
-            - NotBlank:
-                groups: [ Import ]
+            -   NotBlank:
+                    message: 'oro.product.productunit.unit.blank'
         price:
-            - Valid: ~
+            -   Valid: ~
+
+Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem:
+    properties:
+        requestProduct:
+            -   NotNull:
+                    message: 'oro.rfp.requestproductkititemlineitem.request_product.blank.message'
+        kitItem:
+            -   Expression:
+                    expression: 'value || this.getKitItemId()'
+                    message: 'oro.rfp.requestproductkititemlineitem.kit_item.blank.message'
+                    groups:
+                        - Default
+            -   Expression:
+                    expression: 'value || !this.getKitItemId()'
+                    message: 'oro.rfp.requestproductkititemlineitem.kit_item.required.message'
+                    groups:
+                        - Default
+        kitItemId:
+            -   NotNull:
+                    message: 'oro.rfp.requestproductkititemlineitem.kit_item.blank.message'
+        kitItemLabel:
+            -   NotNull:
+                    message: 'oro.rfp.requestproductkititemlineitem.kit_item.blank.message'
+        product:
+            -   Expression:
+                    expression: 'value || this.getProductId()'
+                    message: 'oro.rfp.requestproductkititemlineitem.product.blank.required.message'
+                    groups:
+                        - Default
+                        # Used in \Oro\Bundle\RFPBundle\Controller\Frontend\RequestProductKitConfigurationDialogController
+                        - frontend_request_product_kit_configuration
+            -   Expression:
+                    expression: 'value || !this.getProductId()'
+                    message: 'oro.rfp.requestproductkititemlineitem.product.required.message'
+                    groups:
+                        - Default
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductAvailable:
+                    availabilityValidationGroups: [ product_kit_item_product_is_available_for_rfp ]
+                    groups:
+                        # Used in \Oro\Bundle\RFPBundle\Controller\Frontend\RequestProductKitConfigurationDialogController
+                        - frontend_request_product_kit_configuration
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_create
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_update
+                        # Used in \Oro\Bundle\RFPBundle\RequestController::update
+                        - request_update
+                        # Used in \Oro\Bundle\RFPBundle\AjaxRequestProductKitItemLineItemController::update
+                        - request_product_kit_configuration
+        quantity:
+            -   NotNull:
+                    message: 'oro.rfp.requestproductkititemlineitem.quantity.greater_than_zero.message'
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+                    message: 'oro.rfp.requestproductkititemlineitem.quantity.decimal.message'
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                    message: 'oro.rfp.requestproductkititemlineitem.quantity.greater_than_zero.message'
+                    groups:
+                        # Used in \Oro\Bundle\RFPBundle\Controller\Frontend\RequestProductKitConfigurationDialogController
+                        - frontend_request_product_kit_configuration
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_create
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_update
+                        # Used in \Oro\Bundle\RFPBundle\RequestController::update
+                        - request_update
+                        # Used in \Oro\Bundle\RFPBundle\AjaxRequestProductKitItemLineItemController::update
+                        - request_product_kit_configuration
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision:
+                    groups:
+                        # Used in \Oro\Bundle\RFPBundle\Controller\Frontend\RequestProductKitConfigurationDialogController
+                        - frontend_request_product_kit_configuration
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_create
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_update
+                        # Used in \Oro\Bundle\RFPBundle\RequestController::update
+                        - request_update
+                        # Used in \Oro\Bundle\RFPBundle\AjaxRequestProductKitItemLineItemController::update
+                        - request_product_kit_configuration
+            -   Range:
+                    minPropertyPath: 'kitItem.minimumQuantity'
+                    maxPropertyPath: 'kitItem.maximumQuantity'
+                    minMessage: 'oro.rfp.requestproductkititemlineitem.quantity.range.min_message'
+                    maxMessage: 'oro.rfp.requestproductkititemlineitem.quantity.range.max_message'
+                    notInRangeMessage: 'oro.rfp.requestproductkititemlineitem.quantity.range.not_in_range_message'
+                    groups:
+                        # Used in \Oro\Bundle\RFPBundle\Controller\Frontend\RequestProductKitConfigurationDialogController
+                        - frontend_request_product_kit_configuration
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_create
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_update
+                        # Used in \Oro\Bundle\RFPBundle\RequestController::update
+                        - request_update
+                        # Used in \Oro\Bundle\RFPBundle\AjaxRequestProductKitItemLineItemController::update
+                        - request_product_kit_configuration
+        productUnit:
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductUnitAvailable:
+                    groups:
+                        # Used in \Oro\Bundle\RFPBundle\Controller\Frontend\RequestProductKitConfigurationDialogController
+                        - frontend_request_product_kit_configuration
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_create
+                        # Used in \Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider
+                        - frontend_request_update
+                        # Used in \Oro\Bundle\RFPBundle\AjaxRequestProductKitItemLineItemController::update
+                        - request_product_kit_configuration
+        productUnitCode:
+            -   NotNull:
+                    message: 'oro.rfp.requestproductkititemlineitem.product_unit.blank.message'
+        sortOrder:
+            -   NotNull:
+                    message: 'oro.rfp.requestproductkititemlineitem.sort_order.blank.message'
+            -   Type:
+                    type: integer
+                    message: 'oro.rfp.requestproductkititemlineitem.sort_order.type.message'
+            -   Range:
+                    # Minimum of 4-byte integer value.
+                    min: -2147483648
+                    # Maximum of 4-byte integer value.
+                    max: 2147483647
+                    minMessage: 'oro.rfp.requestproductkititemlineitem.sort_order.range.min_message'
+                    maxMessage: 'oro.rfp.requestproductkititemlineitem.sort_order.range.max_message'
+                    notInRangeMessage: 'oro.rfp.requestproductkititemlineitem.sort_order.range.not_in_range_message'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    constraints:
+        -   Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPrice:
+                groups:
+                    # Used by oro_rfp.product_kit.checker.product_kit_item_product_availability_checker
+                    - product_kit_item_product_is_available_for_rfp
+    properties:
+        product:
+            -   Valid:
+                    groups:
+                        # Used by oro_rfp.product_kit.checker.product_kit_item_product_availability_checker
+                        - product_kit_item_product_is_available_for_rfp
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    properties:
+        type:
+            -   EqualTo:
+                    value: simple
+                    groups:
+                        # Used by oro_rfp.product_kit.checker.product_kit_item_product_availability_checker
+                        - product_kit_item_product_is_available_for_rfp
+        status:
+            -   EqualTo:
+                    value: enabled
+                    message: 'oro.rfp.requestproductkititemlineitem.product.not_enabled.message'
+                    groups:
+                        # Used by oro_rfp.product_kit.checker.product_kit_item_product_availability_checker
+                        - product_kit_item_product_is_available_for_rfp

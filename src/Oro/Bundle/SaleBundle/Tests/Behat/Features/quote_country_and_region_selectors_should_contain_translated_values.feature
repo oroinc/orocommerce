@@ -42,7 +42,6 @@ Feature: Quote Country and region selectors should contain translated values
     And I click "Submit"
     And I click "Save" in modal window
     Then I should see "Quote #Quote1 successfully updated" flash message
-    When I click View Quote1 in grid
     And I should see Quote with:
       | State           | BerlinZulu  |
       | Country         | GermanyZulu |

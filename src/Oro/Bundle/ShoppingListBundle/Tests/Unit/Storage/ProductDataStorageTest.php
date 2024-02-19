@@ -5,21 +5,25 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Storage;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
+class ProductDataStorageTest extends TestCase
 {
-    /** @var Storage|\PHPUnit\Framework\MockObject\MockObject */
-    private $storage;
+    private Storage|MockObject $storage;
 
-    /** @var ProductDataStorage */
-    private $productDataStorage;
+    private ProductDataStorage $productDataStorage;
 
     protected function setUp(): void
     {
@@ -28,7 +32,10 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
         $this->productDataStorage = new ProductDataStorage($this->storage);
     }
 
-    public function testSaveToStorage()
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testSaveToStorage(): void
     {
         $customerId = 10;
         $customerUserId = 42;
@@ -57,11 +64,41 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
         $lineItem->setProduct($product);
         $lineItem->setUnit($productUnit);
 
+        $productKitName = 'Product Kit';
+        $productKitSku = 'productKitSku';
+        $productKit = (new Product())
+            ->setId(2)
+            ->setType(Product::TYPE_KIT)
+            ->setSku($productKitSku)
+            ->setDefaultName($productKitName);
+        $productKitUnit = (new ProductUnit())->setCode('item');
+
+        $kitItemProductName = 'Product 3';
+        $kitItemProduct = (new Product())->setId(3)->setDefaultName($kitItemProductName);
+
+        $kitItemLabel = 'Kit Item Label';
+        $kitItemLabels = [(new ProductKitItemLabel())->setString($kitItemLabel)];
+        $kitItem = (new ProductKitItemStub(1))->setLabels($kitItemLabels);
+        $kitItemLineItem = $this->createKitItemLineItem(
+            1,
+            $productKitUnit,
+            $kitItemProduct,
+            $kitItem
+        );
+
+        $kitLineItem = (new LineItem())
+            ->setQuantity($quantity)
+            ->setNotes($comment)
+            ->setProduct($productKit)
+            ->setUnit($productKitUnit)
+            ->addKitItemLineItem($kitItemLineItem);
+
         $shoppingList = new ShoppingList();
         ReflectionUtil::setId($shoppingList, 1);
         $shoppingList->setCustomer($customer);
         $shoppingList->setCustomerUser($customerUser);
         $shoppingList->addLineItem($lineItem);
+        $shoppingList->addLineItem($kitLineItem);
         $shoppingList->setNotes($note);
 
         $this->storage->expects($this->once())
@@ -84,11 +121,41 @@ class ProductDataStorageTest extends \PHPUnit\Framework\TestCase
                             'comment' => $comment,
                             'productUnit' => $unitCode,
                             'productUnitCode' => $unitCode,
+                            'kitItemLineItemsData' => [],
+                        ],
+                        [
+                            Storage::PRODUCT_SKU_KEY => $productKitSku,
+                            Storage::PRODUCT_ID_KEY => 2,
+                            Storage::PRODUCT_QUANTITY_KEY => $quantity,
+                            'comment' => $comment,
+                            'productUnit' => 'item',
+                            'productUnitCode' => 'item',
+                            'kitItemLineItemsData' => [
+                                [
+                                    'kitItem' => $kitItem->getId(),
+                                    'product' => $kitItemProduct->getId(),
+                                    'productUnit' => 'item',
+                                    'quantity' => 1.0,
+                                ],
+                            ],
                         ]
                     ]
                 ]
             );
 
         $this->productDataStorage->saveToStorage($shoppingList);
+    }
+
+    private function createKitItemLineItem(
+        float $quantity,
+        ?ProductUnit $productUnit,
+        ?Product $product,
+        ?ProductKitItem $kitItem
+    ): ProductKitItemLineItem {
+        return (new ProductKitItemLineItem())
+            ->setProduct($product)
+            ->setKitItem($kitItem)
+            ->setUnit($productUnit)
+            ->setQuantity($quantity);
     }
 }

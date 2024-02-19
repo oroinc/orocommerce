@@ -1154,10 +1154,10 @@ oro_behat_extension:
           Product Images: 'product_images[oro_product___image_preview_on_product_listing_enabled][value]'
 
     RequestAQuoteProducts:
-      selector: '.page-content .request-form [data-role="product-container"]'
+      selector: '.page-content .request-form [data-role="request-products-container"]'
 
     RequestAQuoteProductLine:
-      selector: '[data-role="line-item"]'
+      selector: '[data-role="request-product"]'
 
     RequestAQuoteProductLineName:
       selector: '.request-form-product__item--link .request-form-link'
@@ -1882,6 +1882,21 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//select[@name="oro_product[kitItems][0][productUnit]"]'
+
+    Simple Product 03 Link:
+      selector:
+        type: xpath
+        locator: '//a[text()="Simple Product 03"]'
+
+    Simple Product 04 - Disabled Link:
+      selector:
+        type: xpath
+        locator: '//a[text()="Simple Product 04 - Disabled"]'
+
+    Simple Product 05 - Deleted Link:
+      selector:
+        type: xpath
+        locator: '//a[text()="Simple Product 05 - Deleted"]'
 
   pages:
     Product View:

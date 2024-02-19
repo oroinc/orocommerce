@@ -4,6 +4,7 @@ namespace Oro\Bundle\RFPBundle\Controller;
 
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Storage\OffersDataStorage;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -30,6 +31,7 @@ class OrderController extends AbstractController
                 ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProductSku(),
                 ProductDataStorage::PRODUCT_ID_KEY => $lineItem->getProduct()->getId(),
                 'comment' => $lineItem->getComment(),
+                ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEMS_DATA_KEY => $this->getKitItemLineItemsData($lineItem),
             ];
 
             $itemOffers = [];
@@ -81,6 +83,22 @@ class OrderController extends AbstractController
         }
 
         return $data;
+    }
+
+    private function getKitItemLineItemsData(RequestProduct $requestProduct): array
+    {
+        $kitItemLineItemsData = [];
+        foreach ($requestProduct->getKitItemLineItems() as $kitItemLineItem) {
+            $kitItemLineItemsData[] = [
+                ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEM_KIT_ITEM_KEY => $kitItemLineItem->getKitItem()?->getId(),
+                ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEM_PRODUCT_KEY => $kitItemLineItem->getProduct()?->getId(),
+                ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEM_PRODUCT_UNIT_KEY =>
+                    $kitItemLineItem->getProductUnit()?->getCode(),
+                ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEM_QUANTITY_KEY => $kitItemLineItem->getQuantity(),
+            ];
+        }
+
+        return $kitItemLineItemsData;
     }
 
     /**

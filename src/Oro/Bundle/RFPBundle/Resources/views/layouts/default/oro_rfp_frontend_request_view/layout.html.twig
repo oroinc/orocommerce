@@ -204,7 +204,7 @@
                 label : requestProduct.product.names|localized_value|trim,
             }) }}
         {% else %}
-            {{ requestProduct.product }}
+            {{ requestProduct.product ?? requestProduct.productSku }}
         {% endif %}
     </h3>
 {% endblock %}

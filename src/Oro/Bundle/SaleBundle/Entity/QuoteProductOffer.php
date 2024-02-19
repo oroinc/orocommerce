@@ -7,6 +7,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
 /**
+ * Represents a quote product line item offer.
+ *
  * @ORM\Table(name="oro_sale_quote_prod_offer")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
@@ -104,5 +106,10 @@ class QuoteProductOffer extends BaseQuoteProductItem
     public function isAllowIncrements()
     {
         return $this->allowIncrements;
+    }
+
+    public function getProductSku()
+    {
+        return parent::getProductSku() ?? $this->getQuoteProduct()?->getProductSku();
     }
 }

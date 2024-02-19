@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Model;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
-
-interface ProductLineItemInterface extends ProductHolderInterface, ProductUnitHolderInterface, QuantityAwareInterface
+/**
+ * Interface for a product line item.
+ */
+interface ProductLineItemInterface extends
+    ProductHolderInterface,
+    ProductUnitHolderInterface,
+    QuantityAwareInterface,
+    ParentProductAwareInterface
 {
-    /**
-     * @return Product|null
-     */
-    public function getParentProduct();
 }
