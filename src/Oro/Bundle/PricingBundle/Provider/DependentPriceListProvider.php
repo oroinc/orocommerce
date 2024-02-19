@@ -17,11 +17,26 @@ class DependentPriceListProvider
     {
         $this->priceRuleLexemeTriggerHandler = $priceRuleLexemeTriggerHandler;
     }
+
     /**
      * @param PriceList $priceList
      * @return array|PriceList[]
      */
     public function getDependentPriceLists(PriceList $priceList)
+    {
+        return $this->loadDependentPriceLists($priceList, false);
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return array|PriceList[]
+     */
+    public function getDirectlyDependentPriceLists(PriceList $priceList): array
+    {
+        return $this->loadDependentPriceLists($priceList, true);
+    }
+
+    private function loadDependentPriceLists(PriceList $priceList, bool $onlyDirect = false): array
     {
         $lexemes = $this->priceRuleLexemeTriggerHandler->findEntityLexemes(
             PriceList::class,
@@ -34,11 +49,14 @@ class DependentPriceListProvider
             $dependentPriceList = $lexeme->getPriceList();
             if ($dependentPriceList) {
                 $dependentPriceLists[$dependentPriceList->getId()] = $dependentPriceList;
-                foreach ($this->getDependentPriceLists($dependentPriceList) as $subDependentPriceList) {
-                    $dependentPriceLists[$subDependentPriceList->getId()] = $subDependentPriceList;
+                if (!$onlyDirect) {
+                    foreach ($this->getDependentPriceLists($dependentPriceList, false) as $subDependentPriceList) {
+                        $dependentPriceLists[$subDependentPriceList->getId()] = $subDependentPriceList;
+                    }
                 }
             }
         }
+
         return $dependentPriceLists;
     }
 
@@ -55,6 +73,7 @@ class DependentPriceListProvider
                 $priceListsWithDependent[$dependentPriceList->getId()] = $dependentPriceList;
             }
         }
+
         return $priceListsWithDependent;
     }
 }

@@ -2,25 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceRule;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class LoadPriceRules extends AbstractFixture implements DependentFixtureInterface
+class LoadApiPriceRules extends LoadPriceRules implements ContainerAwareInterface
 {
-    const PRICE_RULE_1 = 'price_list_1_price_rule_1';
-    const PRICE_RULE_2 = 'price_list_1_price_rule_2';
-    const PRICE_RULE_3 = 'price_list_1_price_rule_3';
-    const PRICE_RULE_4 = 'price_list_2_price_rule_4';
-    const PRICE_RULE_5 = 'price_list_3_price_rule_5';
+    use ContainerAwareTrait;
 
-    /**
-     * @var array
-     */
     protected static $data = [
         [
             'reference' => self::PRICE_RULE_1,
@@ -36,11 +26,12 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
             'reference' => self::PRICE_RULE_2,
             'quantity' => 2,
             'currency' => 'USD',
-            'priceList' => LoadPriceLists::PRICE_LIST_1,
+            'priceList' => LoadPriceLists::PRICE_LIST_2,
             'productUnit' => 'product_unit.milliliter',
             'ruleCondition' => 'product.category.id == 1',
-            'rule' => 'pricelist[1].prices.value + 10',
+            'rule' => 'pricelist[%d].prices.value + 10',
             'priority' => 2,
+            'parentPriceList' => LoadPriceLists::PRICE_LIST_1
         ],
         [
             'reference' => self::PRICE_RULE_3,
@@ -79,49 +70,21 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
      */
     public function load(ObjectManager $manager)
     {
-        foreach (static::$data as $priceRuleData) {
-            $priceRule = new PriceRule();
+        parent::load($manager);
 
-            /** @var PriceList $priceList */
-            $priceList = $this->getReference($priceRuleData['priceList']);
-            /** @var ProductUnit $unit */
-            $unit = $this->getReference($priceRuleData['productUnit']);
+        $priceRuleLexemeHandler = $this->container->get('oro_pricing.handler.price_rule_lexeme_handler');
 
-            $ruleCondition = $priceRuleData['ruleCondition'];
-            $rule = $priceRuleData['rule'];
-            if (!empty($priceRuleData['parentPriceList'])) {
-                $parentPriceList = $this->getReference($priceRuleData['parentPriceList']);
-
-                if ($ruleCondition) {
-                    $ruleCondition = sprintf($ruleCondition, $parentPriceList->getId());
-                }
-
-                if ($rule) {
-                    $rule = sprintf($rule, $parentPriceList->getId());
-                }
+        $priceLists = [];
+        foreach (self::$data as $row) {
+            $priceList = $this->getReference($row['priceList']);
+            if (!empty($priceLists[$priceList->getId()])) {
+                continue;
             }
 
-            $priceRule
-                ->setQuantity($priceRuleData['quantity'])
-                ->setCurrency($priceRuleData['currency'])
-                ->setPriceList($priceList)
-                ->setProductUnit($unit)
-                ->setRuleCondition($ruleCondition)
-                ->setRule($rule)
-                ->setPriority($priceRuleData['priority']);
-
-            $manager->persist($priceRule);
-            $this->setReference($priceRuleData['reference'], $priceRule);
+            $priceLists[$priceList->getId()] = true;
+            $priceRuleLexemeHandler->updateLexemesWithoutFlush($priceList);
         }
 
         $manager->flush();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [LoadPriceLists::class, LoadProductUnits::class];
     }
 }

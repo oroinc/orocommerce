@@ -51,6 +51,28 @@ class DependentPriceListProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testGetDirectlyDependentPriceLists()
+    {
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+
+        $lexeme1 = new PriceRuleLexeme();
+        $lexeme1->setPriceList($dependentPriceList1 = $this->getEntity(PriceList::class, ['id' => 2]));
+        $lexeme2 = new PriceRuleLexeme();
+        $lexeme2->setPriceList($dependentPriceList2 = $this->getEntity(PriceList::class, ['id' => 3]));
+
+        $this->priceRuleLexemeTriggerHandler->expects($this->once())
+            ->method('findEntityLexemes')
+            ->with(PriceList::class, [], 1)
+            ->willReturn(
+                [$lexeme1, $lexeme2]
+            );
+
+        $this->assertEquals(
+            [2 => $dependentPriceList1, 3 => $dependentPriceList2],
+            $this->dependentPriceListProvider->getDirectlyDependentPriceLists($priceList)
+        );
+    }
+
     public function testAppendDependent()
     {
         $priceList1 = $this->getEntity(PriceList::class, ['id' => 1]);

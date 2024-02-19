@@ -6,11 +6,14 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class LoadDependentPriceLists extends AbstractFixture implements DependentFixtureInterface
+class LoadDependentPriceLists extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     const DEPENDENT_PRICE_LIST_1 = 'dependent_price_list_1';
     /**
      * @var array
@@ -53,13 +56,8 @@ class LoadDependentPriceLists extends AbstractFixture implements DependentFixtur
             $manager->persist($priceList);
             $this->setReference($priceListData['reference'], $priceList);
 
-            $lexemeEntity = new PriceRuleLexeme();
-            $lexemeEntity
-                ->setClassName(PriceList::class)
-                ->setFieldName('assignedProducts')
-                ->setPriceList($priceList)
-                ->setRelationId($parentPriceListId);
-            $manager->persist($lexemeEntity);
+            $priceRuleLexemeHandler = $this->container->get('oro_pricing.handler.price_rule_lexeme_handler');
+            $priceRuleLexemeHandler->updateLexemesWithoutFlush($priceList);
         }
 
         $manager->flush();

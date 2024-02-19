@@ -14,6 +14,7 @@ use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -39,19 +40,23 @@ class PriceRuleProcessor implements
     private NotificationAlertManager $notificationAlertManager;
     private PriceListTriggerHandler $triggerHandler;
     private MessageProducerInterface $producer;
+    private DependentPriceListProvider $dependentPriceListProvider;
+    private array $processedPriceListIds = [];
 
     public function __construct(
         ManagerRegistry $doctrine,
         ProductPriceBuilder $priceBuilder,
         NotificationAlertManager $notificationAlertManager,
         PriceListTriggerHandler $triggerHandler,
-        MessageProducerInterface $producer
+        MessageProducerInterface $producer,
+        DependentPriceListProvider $dependentPriceListProvider
     ) {
         $this->doctrine = $doctrine;
         $this->priceBuilder = $priceBuilder;
         $this->notificationAlertManager = $notificationAlertManager;
         $this->triggerHandler = $triggerHandler;
         $this->producer = $producer;
+        $this->dependentPriceListProvider = $dependentPriceListProvider;
     }
 
     /**
@@ -69,6 +74,7 @@ class PriceRuleProcessor implements
     {
         $body = $message->getBody();
         $priceListsCount = count($body['product']);
+        $this->processedPriceListIds = [];
 
         /** @var EntityManagerInterface $em */
         $em = $this->doctrine->getManagerForClass(PriceList::class);
@@ -85,11 +91,6 @@ class PriceRuleProcessor implements
 
             $em->beginTransaction();
             try {
-                $this->notificationAlertManager->resolveNotificationAlertByOperationAndItemIdForCurrentUser(
-                    PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
-                    $priceList->getId()
-                );
-
                 $this->processPriceList($em, $priceList, $productIds);
 
                 $em->commit();
@@ -138,9 +139,23 @@ class PriceRuleProcessor implements
      */
     private function processPriceList(EntityManagerInterface $em, PriceList $priceList, array $productIds): void
     {
+        if (!empty($this->processedPriceListIds[$priceList->getId()])) {
+            return;
+        }
+
+        $this->notificationAlertManager->resolveNotificationAlertByOperationAndItemIdForCurrentUser(
+            PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
+            $priceList->getId()
+        );
+
         $startTime = $priceList->getUpdatedAt();
         $this->priceBuilder->buildByPriceList($priceList, $productIds);
         $this->updatePriceListActuality($em, $priceList, $startTime);
+        $this->processedPriceListIds[$priceList->getId()] = true;
+
+        foreach ($this->dependentPriceListProvider->getDirectlyDependentPriceLists($priceList) as $dependentPriceList) {
+            $this->processPriceList($em, $dependentPriceList, $productIds);
+        }
     }
 
     private function updatePriceListActuality(

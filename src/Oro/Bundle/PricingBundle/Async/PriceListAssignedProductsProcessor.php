@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -31,17 +32,21 @@ class PriceListAssignedProductsProcessor implements
     private ManagerRegistry $doctrine;
     private NotificationAlertManager $notificationAlertManager;
     private PriceListTriggerHandler $triggerHandler;
+    private DependentPriceListProvider $dependentPriceListProvider;
+    private array $processedPriceListIds = [];
 
     public function __construct(
         ManagerRegistry $doctrine,
         PriceListProductAssignmentBuilder $assignmentBuilder,
         NotificationAlertManager $notificationAlertManager,
-        PriceListTriggerHandler $triggerHandler
+        PriceListTriggerHandler $triggerHandler,
+        DependentPriceListProvider $dependentPriceListProvider
     ) {
         $this->doctrine = $doctrine;
         $this->assignmentBuilder = $assignmentBuilder;
         $this->notificationAlertManager = $notificationAlertManager;
         $this->triggerHandler = $triggerHandler;
+        $this->dependentPriceListProvider = $dependentPriceListProvider;
     }
 
     /**
@@ -59,6 +64,7 @@ class PriceListAssignedProductsProcessor implements
     {
         $body = $message->getBody();
         $priceListsCount = count($body['product']);
+        $this->processedPriceListIds = [];
 
         /** @var EntityManagerInterface $em */
         $em = $this->doctrine->getManagerForClass(PriceList::class);
@@ -75,12 +81,7 @@ class PriceListAssignedProductsProcessor implements
 
             $em->beginTransaction();
             try {
-                $this->notificationAlertManager->resolveNotificationAlertByOperationAndItemIdForCurrentUser(
-                    PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
-                    $priceList->getId()
-                );
-
-                $this->assignmentBuilder->buildByPriceList($priceList, $productIds);
+                $this->processPriceList($priceList, $productIds);
 
                 $em->commit();
             } catch (\Exception $e) {
@@ -118,5 +119,26 @@ class PriceListAssignedProductsProcessor implements
         }
 
         return self::ACK;
+    }
+
+    private function processPriceList(PriceList $priceList, array $productIds): void
+    {
+        if (!empty($this->processedPriceListIds[$priceList->getId()])) {
+            return;
+        }
+
+        $this->notificationAlertManager->resolveNotificationAlertByOperationAndItemIdForCurrentUser(
+            PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
+            $priceList->getId()
+        );
+
+        $this->assignmentBuilder->buildByPriceList($priceList, $productIds);
+        $this->processedPriceListIds[$priceList->getId()] = true;
+
+        foreach ($this->dependentPriceListProvider->getDirectlyDependentPriceLists($priceList) as $dependentPriceList) {
+            if ($dependentPriceList->getProductAssignmentRule()) {
+                $this->processPriceList($dependentPriceList, $productIds);
+            }
+        }
     }
 }

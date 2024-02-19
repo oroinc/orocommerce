@@ -12,30 +12,35 @@ use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
 class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|MockObject */
     private $doctrine;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var LoggerInterface|MockObject */
     private $logger;
 
-    /** @var PriceListProductAssignmentBuilder|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var PriceListProductAssignmentBuilder|MockObject */
     private $assignmentBuilder;
 
-    /** @var NotificationAlertManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var NotificationAlertManager|MockObject */
     private $notificationAlertManager;
 
-    /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var PriceListTriggerHandler|MockObject */
     private $triggerHandler;
+
+    /** @var DependentPriceListProvider|MockObject */
+    private $dependentPriceListProvider;
 
     /** @var PriceListAssignedProductsProcessor */
     private $processor;
@@ -47,12 +52,14 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
         $this->assignmentBuilder = $this->createMock(PriceListProductAssignmentBuilder::class);
         $this->notificationAlertManager = $this->createMock(NotificationAlertManager::class);
         $this->triggerHandler = $this->createMock(PriceListTriggerHandler::class);
+        $this->dependentPriceListProvider = $this->createMock(DependentPriceListProvider::class);
 
         $this->processor = new PriceListAssignedProductsProcessor(
             $this->doctrine,
             $this->assignmentBuilder,
             $this->notificationAlertManager,
-            $this->triggerHandler
+            $this->triggerHandler,
+            $this->dependentPriceListProvider
         );
         $this->processor->setLogger($this->logger);
     }
@@ -256,8 +263,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
                     PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
                     $priceListId2
                 ]
-            )
-        ;
+            );
         $this->assignmentBuilder->expects(self::exactly(2))
             ->method('buildByPriceList')
             ->withConsecutive(
@@ -265,7 +271,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
                 [$priceList2, $productIds]
             )
             ->willReturnCallback(
-                static function (PriceList  $priceList, array $productIds) use ($priceListId1, $exception) {
+                static function (PriceList $priceList, array $productIds) use ($priceListId1, $exception) {
                     if ($priceList->getId() === $priceListId1) {
                         throw $exception;
                     }
@@ -344,7 +350,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
                 [$priceList2, $productIds]
             )
             ->willReturnCallback(
-                static function (PriceList  $priceList, array $productIds) use ($priceListId1, $exception) {
+                static function (PriceList $priceList, array $productIds) use ($priceListId1, $exception) {
                     if ($priceList->getId() === $priceListId1) {
                         throw $exception;
                     }
@@ -378,11 +384,18 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcess()
     {
         $priceListId = 1;
+        $dependentPriceListId = 2;
         $productIds = [2];
         $body = ['product' => [$priceListId => $productIds]];
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId]);
+        $priceList->setProductAssignmentRule('product.id > 0');
+        /** @var PriceList $dependentPriceList1 */
+        $dependentPriceList1 = $this->getEntity(PriceList::class, ['id' => $dependentPriceListId]);
+        $dependentPriceList1->setProductAssignmentRule('product.id > 0');
+        /** @var PriceList $dependentPriceList2 */
+        $dependentPriceList2 = $this->getEntity(PriceList::class, ['id' => 3]);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::once())
@@ -400,15 +413,35 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit\Framework\TestCase
             ->with(PriceList::class, $priceListId)
             ->willReturn($priceList);
 
-        $this->assignmentBuilder->expects(self::once())
-            ->method('buildByPriceList')
-            ->with($priceList, $productIds);
+        $this->dependentPriceListProvider->expects(self::exactly(2))
+            ->method('getDirectlyDependentPriceLists')
+            ->withConsecutive(
+                [$priceList],
+                [$dependentPriceList1]
+            )
+            ->willReturnOnConsecutiveCalls(
+                [$dependentPriceList1, $dependentPriceList2],
+                []
+            );
 
-        $this->notificationAlertManager->expects(self::once())
+        $this->assignmentBuilder->expects(self::exactly(2))
+            ->method('buildByPriceList')
+            ->withConsecutive(
+                [$priceList, $productIds],
+                [$dependentPriceList1, $productIds]
+            );
+
+        $this->notificationAlertManager->expects(self::exactly(2))
             ->method('resolveNotificationAlertByOperationAndItemIdForCurrentUser')
-            ->with(
-                PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
-                $priceListId
+            ->withConsecutive(
+                [
+                    PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
+                    $priceListId
+                ],
+                [
+                    PriceListCalculationNotificationAlert::OPERATION_ASSIGNED_PRODUCTS_BUILD,
+                    $dependentPriceListId
+                ]
             );
 
         $this->assertEquals(
