@@ -1841,3 +1841,12 @@ services:
             - '@oro_pricing.product_price_criteria_factory'
             - '@oro_pricing.provider.product_price_by_matching_criteria'
             - '@oro_currency.rounding.price_rounding_service'
+
+    oro_pricing.migrations.generate_missing_product_by_rules:
+        class: Oro\Bundle\PricingBundle\Migrations\Service\GenerateMissingPricesByRules
+        public: true
+        arguments:
+            - '@oro_pricing.price_rule_lexeme_trigger_handler'
+            - '@oro_pricing.compiler.product_assignment_rule_compiler'
+            - '@oro_pricing.compiler.price_list_rule_compiler'
+            - '@oro_pricing.shard_manager'
