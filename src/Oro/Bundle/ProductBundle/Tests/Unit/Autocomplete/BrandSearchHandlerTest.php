@@ -12,10 +12,10 @@ class BrandSearchHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    protected function testConvertItem(): void
+    public function testConvertItemWithNameParameter(): void
     {
         $entityNameResolver = $this->createMock(EntityNameResolver::class);
-        $searchHandler = new BrandSearchHandler(Brand::class, ['name', 'status'], $entityNameResolver);
+        $searchHandler = new BrandSearchHandler(Brand::class, ['id', 'name', 'status'], $entityNameResolver);
         $searchHandler->setPropertyAccessor(PropertyAccess::createPropertyAccessor());
 
         $entity = $this->getEntity(Brand::class, ['id' => 23, 'status' => 'test_status']);
