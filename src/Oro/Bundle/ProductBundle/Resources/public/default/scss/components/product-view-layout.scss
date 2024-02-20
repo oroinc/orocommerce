@@ -29,6 +29,10 @@
         gap: $product-view-main-gap;
     }
 
+    &__specification {
+        max-width: 100%;
+    }
+
     &__content {
         grid-area: content;
         display: flex;

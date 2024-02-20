@@ -55,6 +55,11 @@ layout:
                     blockType: container
                 product_view_brand_container:
                     blockType: container
+                product_view_brand_inventory_status:
+                    blockType: container
+                    options:
+                        vars:
+                            product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
                 product_view_additional_container:
                     blockType: container
                 product_view_attribute_group_general:
@@ -75,6 +80,7 @@ layout:
                             product_view_primary_container:
                                 product_sticker_new: ~
                                 product_view_brand_container: ~
+                                product_view_brand_inventory_status: ~
                             product_view_main_container:
                                 product_view_aside_container: ~
                                 product_view_content_container:
@@ -93,6 +99,8 @@ layout:
         - '@move':
             id: product_view_attribute_group_general_attribute_product_brand_brand
             parentId: product_view_primary_container
+            siblingId: product_view_brand_inventory_status
+            prepend: false
 
         - '@move':
             id: product_view_attribute_group_general_attribute_boolean_featured

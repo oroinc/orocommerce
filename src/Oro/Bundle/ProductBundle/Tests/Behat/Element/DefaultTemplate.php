@@ -15,6 +15,7 @@ class DefaultTemplate extends ProductTemplate
 
         foreach ($table->getRows() as $row) {
             list($label, $value) = $row;
+
             static::assertStringContainsStringIgnoringCase(\sprintf('%s: %s', $label, $value), $this->getText());
         }
     }

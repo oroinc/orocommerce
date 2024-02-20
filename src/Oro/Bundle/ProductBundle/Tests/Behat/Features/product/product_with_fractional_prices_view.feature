@@ -35,9 +35,9 @@ Feature: Product with fractional prices view
     When I click "Product 1"
     Then I should see "Product 1"
     And I should see an "Default Page Prices" element
-    And I should see "0.5 15,99 $" in the "Default Page Prices" element
-    And I should see "1 12,99 $" in the "Default Page Prices" element
-    And I should see "100 10,99 $" in the "Default Page Prices" element
+    And I should see "0.5+ 15,99 $" in the "Default Page Prices" element
+    And I should see "1+ 12,99 $" in the "Default Page Prices" element
+    And I should see "100+ 10,99 $" in the "Default Page Prices" element
 
   Scenario: Prices on product view page in backoffice are formatted according to locale settings
     Given I login as administrator

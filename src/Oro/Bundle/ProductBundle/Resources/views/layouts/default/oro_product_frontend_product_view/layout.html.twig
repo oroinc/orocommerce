@@ -18,7 +18,7 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
-            view: 'oroproduct/js/app/views/base-product-view',
+            view: 'oroproduct/js/app/views/frontend-product-view',
             modelAttr: modelAttr
         },
         'data-layout': 'separate',
@@ -198,6 +198,17 @@
             {{ block_widget(block) }}
         </div>
     {% endif %}
+{% endblock %}
+
+{% block _product_view_brand_inventory_status_widget %}
+    {% set inventoryStatus = oro_inventory_status_code(product) %}
+    {% set statusesMap = {
+        'in_stock': 'success',
+        'out_of_stock': 'warning',
+        'discontinued': 'destructive'
+    } %}
+    {% set status = attribute(statusesMap, inventoryStatus) is defined ? ' status-label--' ~ statusesMap[inventoryStatus] : '' %}
+    <span class="status-label{{ status }}">{{- oro_inventory_status_label(product) -}}</span>
 {% endblock %}
 
 {% block _product_view_attribute_group_general_widget %}

@@ -262,6 +262,7 @@ oro:
         product:
             view:
                 request_a_quote: 'Request a Quote'
+                request_a_quote_more_units: '{1}*Also sold as {{ units }}. Request a quote to obtain pricing.|]2,Inf[*Also sold as {{ units }} and {{ andUnit }}. Request a quote to obtain pricing.'
         rfp:
             list: 'RFQs'
             request:

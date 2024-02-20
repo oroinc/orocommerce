@@ -9,15 +9,17 @@
         <span class="product-price__value" data-name="price-value" itemscope="itemscope" itemtype="http://schema.org/Offer" itemprop="offers">
             <span itemprop="priceCurrency" class="hidden" aria-hidden="true"><%- price.currency %></span><span itemprop="price" class="hidden" aria-hidden="true"><%- numeral(price.price).format('0.00') %></span><%- price.formatted_price.trim() %>
         </span>
-        <span> / </span>
-        <span class="product-price__unit" data-name="unit">
-            <span class="product-price__unit-full">
-                <%- _.__('oro.product.product_unit.' + price.unit + '.label.full') %>
+        <% if (false !== showUnit) { %>
+            <span> / </span>
+            <span class="product-price__unit" data-name="unit">
+                <span class="product-price__unit-full">
+                    <%- _.__('oro.product.product_unit.' + price.unit + '.label.full') %>
+                </span>
+                <span class="product-price__unit-short">
+                    <%- _.__('oro.product.product_unit.' + price.unit + '.label.short') %>
+                </span>
             </span>
-            <span class="product-price__unit-short">
-                <%- _.__('oro.product.product_unit.' + price.unit + '.label.short') %>
-            </span>
-        </span>
+        <% } %>
     </span>
 </div>
 <% } %>

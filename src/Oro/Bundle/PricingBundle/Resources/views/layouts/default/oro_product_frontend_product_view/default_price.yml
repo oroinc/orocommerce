@@ -1,0 +1,34 @@
+layout:
+    imports:
+        -   id: oro_product_price
+            root: product_view_specification_container
+    actions:
+        -   '@setBlockTheme':
+                themes: '@OroPricing/layouts/default/oro_product_frontend_product_view/default_price.html.twig'
+
+        -   '@setOption':
+                id: product_price_component
+                optionName: visible
+                optionValue: '=context["is_logged_in"]'
+
+        # Hiding listed price and unit
+        -   '@remove':
+                id: product_price_listed
+
+        -   '@setOption':
+                id: product_price_component
+                optionName: vars.showListedPrice
+                optionValue: false
+
+        -   '@setOption':
+                id: product_price_component
+                optionName: vars.showUnit
+                optionValue: false
+
+        # Hiding price popover
+        -    '@setOption':
+                 id: product_price_hint_trigger
+                 optionName: visible
+                 optionValue: false
+
+    conditions: 'context["product_type"] != "kit"'

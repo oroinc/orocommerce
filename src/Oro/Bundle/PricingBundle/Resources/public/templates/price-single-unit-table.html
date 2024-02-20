@@ -1,0 +1,39 @@
+<% if (obj.prices.length) { %>
+    <table class="product-prices-table stretch">
+        <thead class="product-prices-table__thead">
+            <th class="product-prices-table__th text-left" scope="col">
+                <%- _.__('oro.pricing.frontend.product.quantity.short_label') %>
+            </th>
+            <th class="product-prices-table__th text-right" scope="col">
+                <% if (obj.showCurrencySymbol) { %>
+                    <%- localeSettings.getCurrencySymbol(prices[0]['currency']) + ',' %>
+                <% } %>
+                <%- prices[0]['unit'] %>
+            </th>
+        </thead>
+        <tbody class="product-prices-table__tbody"
+               itemprop="offers"
+               itemscope=""
+               itemtype="http://schema.org/Offer"
+            >
+            <% prices.forEach(price => { %>
+                <tr class="product-prices-table__tr">
+                    <td class="product-prices-table__td"><%- price.quantity  %>+</td>
+                    <td class="product-prices-table__td text-right">
+                        <span class="hidden" aria-hidden="true" itemprop="priceSpecification" itemscope
+                              itemtype="http://schema.org/UnitPriceSpecification">
+                            <span itemprop="eligibleQuantity" itemscope
+                                  itemtype="http://schema.org/QuantitativeValue">
+                                <span itemprop="value" content="<%- price.quantity %>"><%- price.quantity %></span>
+                                <span class="hidden" aria-hidden="true" itemprop="unitCode"><%- price.formatted_unit.trim() %></span>
+                            </span>
+                            <span itemprop="priceCurrency"><%- price.currency %></span>
+                            <span itemprop="price"><%- numeral(price.price).format('0.00') %></span>
+                        </span>
+                        <%- price.formatted_price.trim()  %>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+<% } %>

@@ -15,6 +15,7 @@ dynamic-imports:
         - oropricing/js/app/views/line-item-product-prices-view
         - oropricing/js/app/views/product-total-price-view
         - oropricing/js/app/views/quick-add-row-price-view
+        - oropricing/js/app/views/price-single-unit-table-view
 map:
     '*':
         oropricing/templates/order/subtotals.html: oropricing/templates/order/frontend/subtotals.html

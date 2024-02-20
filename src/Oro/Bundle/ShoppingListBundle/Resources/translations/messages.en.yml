@@ -79,6 +79,7 @@ oro:
                 label: Edit
             delete_product_kit_line_item:
                 label: Delete
+            in_shopping_list: "In Shopping List"
 
         mass_actions:
             delete_line_items:

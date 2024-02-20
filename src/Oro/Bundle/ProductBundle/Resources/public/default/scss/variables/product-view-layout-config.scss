@@ -10,7 +10,7 @@ $product-view-main-grid-template-areas:
     'aside content'
     'aside details' !default;
 $product-view-main-grid-template-rows: auto 1fr !default;
-$product-view-main-grid-template-columns: minmax(0, 700px) minmax(0, 584px) !default;
+$product-view-main-grid-template-columns: minmax(0, 700px) minmax(0, 590px) !default;
 $product-view-main-gap: 0 spacing('huge') !default;
 
 $product-view-additional-wide-bottom-offset: spacing('xxxl') !default;
