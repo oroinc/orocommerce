@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\MakeProductAttributesTrait;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
@@ -50,17 +51,25 @@ class LoadBrandData extends LoadProductData implements DependentFixtureInterface
 
         /** @var EntityManager $manager */
         $user = $this->getFirstUser($manager);
-        $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
+        $businessUnit1 = $user->getOwner();
+
+        $businessUnit2 = (new BusinessUnit())
+            ->setName('TestBU')
+            ->setOrganization($organization);
+        $manager->persist($businessUnit2);
+
+        $this->setReference('main-bu', $businessUnit1);
+        $this->setReference('test-bu', $businessUnit2);
 
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'brand_fixture.yml';
 
         $data = Yaml::parse(file_get_contents($filePath));
 
-        foreach ($data as $item) {
+        foreach ($data as $key => $item) {
             $brand = new Brand();
             $brand
-                ->setOwner($businessUnit)
+                ->setOwner($this->getReference($item['businessUnit']))
                 ->setOrganization($organization)
                 ->setStatus($item['status']);
 

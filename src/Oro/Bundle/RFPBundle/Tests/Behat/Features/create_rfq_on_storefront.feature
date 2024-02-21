@@ -3,10 +3,13 @@
 @ticket-BB-21064
 @ticket-BB-21454
 @ticket-BB-23035
+@ticket-BB-16819
 Feature: Create RFQ on storefront
   In order to control RFQ content
   As an Administrator
   I need to be able to see correct RFQ content on view page
+  As an Buyer
+  I shouldn't be able to create RFQ with hidden products
 
   Scenario: Feature background
     Given sessions active:
@@ -66,3 +69,57 @@ Feature: Create RFQ on storefront
     When I click "Remove Request Product Edit Line Item"
     When I click "Remove Request Product Edit Line Item"
     Then I should not see "SKU123 product1" in the "RFQ Products List" element
+
+  Scenario: Create RFQ with hidden product on storefront
+    Given I continue as the Buyer
+    And I follow "Account"
+    And I click "Requests For Quote"
+    And I click "New Quote"
+    When I open select entity popup for field "Line Item Product" in form "Frontend Request Form"
+    Then I should see following grid:
+      | SKU    | Name     | Inventory Status |
+      | SKU123 | product1 | In Stock         |
+    And click on SKU123 in grid
+    Then I should see "SKU123 product1" in the "RFQ Products List" element
+    When I fill "Frontend Request Form" with:
+      | Line Item First Unit | set |
+    Then "Frontend Request Form" must contains values:
+      | Line Item First Unit | set |
+
+    When I continue as the Admin
+    And I go to Product/Products
+    And I click view SKU123 in grid
+    And click "More actions"
+    Then click "Manage Visibility"
+    And I select "Hidden" from "Visibility to All"
+    And I save and close form
+
+    When I continue as the Buyer
+    And I click "Submit Request"
+    Then I should see "Product cannot be empty."
+
+    When I continue as the Admin
+    And I go to Product/Products
+    And I click view SKU123 in grid
+    And click "More actions"
+    Then click "Manage Visibility"
+    And I select "Visible" from "Visibility to All"
+    And I save and close form
+
+    When I continue as the Buyer
+    And I open select entity popup for field "Line Item Product" in form "Frontend Request Form"
+    Then I should see following grid:
+      | SKU    | Name     | Inventory Status |
+      | SKU123 | product1 | In Stock         |
+    And click on SKU123 in grid
+    Then I should see "SKU123 product1" in the "RFQ Products List" element
+    And I fill "Frontend Request Form" with:
+      | Line Item First Unit | set |
+      | First Name | First Name    |
+      | Last Name  | Last Name     |
+      | Company    | Company New   |
+      | PO Number  | 008           |
+    And I click "Submit Request"
+    Then I should see "Request has been saved" flash message
+    And should see "REQUEST FOR QUOTE #3"
+    And should see "Product1"

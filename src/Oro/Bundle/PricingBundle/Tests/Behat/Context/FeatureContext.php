@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -117,6 +118,21 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $currencySwitcher->click();
         $this->getPage()->clickLink($currency);
         $this->waitForAjax();
+    }
+
+    /**
+     * @Then /^(?:|I )recalculate combined prices$/
+     */
+    public function recalculateCombinedPrices()
+    {
+        /** @var EntityManagerInterface $em */
+        $em = $this->getAppContainer()->get('doctrine')->getManagerForClass(CombinedPriceList::class);
+        $qb = $em->createQueryBuilder()
+            ->delete()
+            ->from(CombinedPriceList::class, 'cpl');
+        $qb->getQuery()->execute();
+
+        $this->getAppContainer()->get('oro_pricing.price_list_relation_trigger_handler')->handleFullRebuild();
     }
 
     /**
