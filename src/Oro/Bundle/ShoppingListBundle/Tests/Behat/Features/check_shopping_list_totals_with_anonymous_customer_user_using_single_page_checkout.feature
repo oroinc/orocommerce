@@ -61,7 +61,7 @@ Feature: Check shopping list totals with anonymous customer user using single pa
     And click "Add to Shopping List"
     Then I should see "Product has been added to" flash message and I close it
     When I open shopping list widget
-    And click "View List"
+    And click "Open List"
     Then I should see "ORO_PRODUCT_1"
 
   Scenario: Check shopping list widget after order create
@@ -69,5 +69,3 @@ Feature: Check shopping list totals with anonymous customer user using single pa
     And I open shopping list widget
     Then I should see "1 Item | $10.50"
     And should not see "1 Item | $0.00"
-
-

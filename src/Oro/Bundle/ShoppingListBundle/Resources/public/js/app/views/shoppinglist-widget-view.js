@@ -55,7 +55,11 @@ define(function(require) {
             }
 
             this.$dropdown.off(this.eventNamespace());
-            document.body.classList.remove('no-scroll');
+
+            if (_.isMobile()) {
+                document.body.classList.remove('no-scroll');
+            }
+
             delete this.shoppingListCollection;
             return ShoppingListWidgetView.__super__.dispose.call(this);
         },
@@ -82,11 +86,16 @@ define(function(require) {
         },
 
         hideDropdown() {
-            document.body.classList.remove('no-scroll');
+            if (_.isMobile()) {
+                document.body.classList.remove('no-scroll');
+            }
         },
 
         updateDropdown() {
-            document.body.classList.add('no-scroll');
+            if (_.isMobile() && this.$el.closest('.show').length) {
+                document.body.classList.add('no-scroll');
+            }
+
             const $container = this.$el.closest('[data-header-row-toggle]');
 
             if ($container.get(0)) {

@@ -172,7 +172,7 @@ Feature: Consent management via Management Console UI
   Scenario: Show consents on registration page
     Given I proceed as the User
     And I am on the homepage
-    When click "Register"
+    When click "Sign Up"
     Then I should see 2 elements "Required Consent"
     And I should see 3 elements "Optional Consent"
     And the "Presenting Personal Data" checkbox should not be checked
@@ -466,7 +466,7 @@ Feature: Consent management via Management Console UI
     And I click "Account Dropdown"
     And I click "Sign Out"
     And I am on the homepage
-    When click "Register"
+    When click "Sign Up"
     Then I should see 3 elements "Required Consent"
     And I fill form with:
       | Company Name                         | OroCommerce                 |
@@ -515,7 +515,7 @@ Feature: Consent management via Management Console UI
     # Proceeding to the registration form
     And I proceed as the User
     And I am on the homepage
-    When click "Register"
+    When click "Sign Up"
     Then I should see 3 elements "Required Consent"
     And I fill form with:
       | Company Name                         | OroCommerce                 |
@@ -885,7 +885,7 @@ Feature: Consent management via Management Console UI
     Given I proceed as the User
     And I click "Account Dropdown"
     And I click "Sign Out"
-    And I click "Register"
+    And I click "Sign Up"
     When I click "Presenting Personal Data"
     Then I should see "UiDialog" with elements:
       | Title             | Presenting Personal Data |

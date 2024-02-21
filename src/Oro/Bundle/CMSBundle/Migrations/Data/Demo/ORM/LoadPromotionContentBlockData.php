@@ -114,5 +114,3 @@ class LoadPromotionContentBlockData extends AbstractFixture implements
         return $manager->getRepository(ContentBlock::class)->findOneBy(['alias' => $alias]);
     }
 }
-
-
