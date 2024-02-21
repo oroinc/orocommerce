@@ -1,10 +1,11 @@
 /* @theme: default; */
 
 .add-to-shopping-list-button {
-    overflow: hidden;
-    text-overflow: ellipsis;
+    @include ellipsis();
 
-    white-space: nowrap;
+    .action-label {
+        @include ellipsis();
+    }
 }
 
 .btn-main {
