@@ -34,7 +34,8 @@ Feature: Quote View Frontend with shopping list limit equals one
     Then I should see "Product has been added to" flash message and I close it
 
   Scenario: Check quote view page
-    When I click "Quotes"
+    When I click "Account Dropdown"
+    And I click "Quotes"
     And click view "Q123" in grid
     Then I should see "Product1`\"'&йёщ®&reg;>"
     And I should not see "Product1`\"'&йёщ®®>"
