@@ -61,10 +61,6 @@
             transition: opacity .4s;
         }
 
-        .slick-slide {
-            margin: 0 8px;
-        }
-
         &.loading {
             opacity: 1;
             visibility: visible;
@@ -153,6 +149,93 @@
             $slick-arrow-inner-offset: 12px,
             $slick-arrow-border-radius: $product-view-media-gallery-nav-arrow-border-radius,
         );
+    }
+}
+
+@include breakpoint('desktop') {
+    .product-view-media-wrapper {
+        &.vertical-mode {
+            &:has(.product-view-media-gallery__nav) {
+                display: $vertical-product-view-media-wrapper-display;
+                // Don't use 1fr! This leads to a slick slider bug
+                grid-template-columns: $vertical-product-view-media-wrapper-grid-template-columns;
+                gap: $vertical-product-view-media-wrapper-gap;
+
+                .product-view-media-gallery {
+                    max-height: $vertical-product-view-media-gallery-max-height;
+                }
+
+                .product-view-media-gallery-container {
+                    grid-row: $vertical-product-view-media-gallery-container-grid-row;
+                    grid-column: $vertical-product-view-media-gallery-container-grid-column;
+                }
+
+                .product-view-media-gallery__image-item {
+                    height: $vertical-product-view-media-gallery-image-item-height;
+                }
+
+                .product-view-media-gallery__nav {
+                    grid-row: $vertical-product-view-media-gallery-nav-grid-row;
+                    grid-column: $vertical-product-view-media-gallery-nav-grid-column;
+
+                    &.slick-initialized {
+                        height: $vertical-product-view-media-gallery-nav-height;
+                        margin-top: $vertical-product-view-media-gallery-nav-margin-top;
+                    }
+
+                    &__item {
+                        padding: $vertical-product-view-media-gallery-nav-item-padding;
+
+                        &.slick-slide {
+                            margin: $vertical-product-view-media-gallery-nav-item-margin;
+                            border-width: $vertical-product-view-media-gallery-nav-item-border-width;
+                        }
+                    }
+
+                    &__image {
+                        width: $vertical-product-view-media-gallery-nav-image-width;
+                        height: $vertical-product-view-media-gallery-nav-image-height;
+                    }
+
+                    .slick-btn-wrapper {
+                        inset-inline: $vertical-product-view-media-gallery-nav-slick-btn-wrapper-inset-inline;
+                        justify-content: $vertical-product-view-media-gallery-nav-slick-btn-wrapper-justify-content;
+                        box-shadow: $vertical-product-view-media-gallery-nav-slick-btn-wrapper-box-shadow;
+
+                        &::before,
+                        &::after {
+                            content: $vertical-product-view-media-gallery-nav-slick-btn-before-content;
+                            width: $vertical-product-view-media-gallery-nav-slick-btn-before-width;
+                            height: $vertical-product-view-media-gallery-nav-slick-btn-before-height;
+                            position: $vertical-product-view-media-gallery-nav-slick-btn-before-position;
+                            pointer-events: none;
+                        }
+                    }
+
+                    .slick-arrow-prev {
+                        inset-block: $vertical-product-view-media-gallery-nav-slick-arrow-prev-inset-block;
+
+                        &::after {
+                            background: $vertical-product-view-media-gallery-nav-slick-arrow-prev-after-background;
+                            top: $vertical-product-view-media-gallery-nav-slick-arrow-prev-after-top;
+                        }
+                    }
+
+                    .slick-arrow-next {
+                        inset-block: $vertical-product-view-media-gallery-nav-slick-arrow-next-inset-block;
+
+                        &::before {
+                            background: $vertical-product-view-media-gallery-nav-slick-arrow-next-before-background;
+                            bottom: $vertical-product-view-media-gallery-nav-slick-arrow-next-before-bottom;
+                        }
+                    }
+
+                    .slick-arrow-btn {
+                        transform: $vertical-product-view-media-gallery-nav-slick-arrow-btn-transform;
+                    }
+                }
+            }
+        }
     }
 }
 
