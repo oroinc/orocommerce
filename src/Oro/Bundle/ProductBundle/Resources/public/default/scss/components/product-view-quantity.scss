@@ -3,11 +3,10 @@
 .product-view-line-item {
     display: flex;
     flex-wrap: wrap;
-    gap: spacing('lg');
+    gap: spacing('base') spacing('lg');
     justify-content: space-between;
 
     margin-top: spacing('xl');
-    margin-bottom: spacing('xl');
 
     &__quantity,
     &__button {
@@ -44,7 +43,7 @@
 
         gap: spacing('md');
         margin-top: spacing('lg');
-        margin-bottom: spacing('lg');
+        margin-bottom: 0;
 
         &__quantity {
             width: $product-view-line-item-quantity-width-mobile;

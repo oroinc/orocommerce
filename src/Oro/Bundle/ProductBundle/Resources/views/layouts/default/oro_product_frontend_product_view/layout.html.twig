@@ -140,17 +140,16 @@
 {% endblock %}
 
 {% block _product_view_benefits_container_widget %}
-    {% if block.children is not empty %}
+    {% set content = block_widget(block) %}
+    {%- if content|trim|length > 0 -%}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' product-view__benefits'
         }) %}
 
-        {% if block.children|length %}
-            <div {{ block('block_attributes') }}>
-                {{ block_widget(block) }}
-            </div>
-        {% endif %}
-    {% endif %}
+        <div {{ block('block_attributes') }}>
+            {{- content|raw -}}
+        </div>
+    {%- endif -%}
 {% endblock %}
 
 {% block _product_view_details_container_widget %}
@@ -364,7 +363,7 @@
             {%- endfor -%}
         </div>
         <div class="product-view__attribute-panel">
-            <button type="button" class="btn btn--no-padding" data-role="show-more"></button>
+            <button type="button" class="btn btn--outlined btn--size-small btn--text btn--no-padding" data-role="show-more"></button>
         </div>
     </div>
 {% endblock %}
@@ -434,7 +433,7 @@
             </table>
         </div>
         <div class="product-view__attribute-panel">
-            <button type="button" class="btn btn--no-padding" data-role="show-more"></button>
+            <button type="button" class="btn btn--outlined btn--size-small btn--text btn--no-padding" data-role="show-more"></button>
         </div>
     </div>
 {% endblock %}
