@@ -22,4 +22,4 @@ Feature: Guest should not see not own shopping lists
     And I click "Sign Out"
     When I follow remembered URL
     Then I should not see "Shopping List 1"
-    And I should see "Sign In"
+    And I should see "Log In"

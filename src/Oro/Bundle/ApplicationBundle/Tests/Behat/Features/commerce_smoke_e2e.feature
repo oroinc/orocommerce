@@ -439,7 +439,7 @@ Feature: Commerce smoke e2e
   Scenario: Create customer from the frontstore
     Given I proceed as the User
     And I am on the homepage
-    And click "Sign In"
+    And click "Log In"
     And click "Create An Account"
     And I fill "Registration Form" with:
       | Company Name     | OroCommerce              |
@@ -456,7 +456,7 @@ Feature: Commerce smoke e2e
     When fill form with:
       |Email Address|AmandaRCole1@example.org|
       |Password     |AmandaRCole1@example.org|
-    And click "Sign In"
+    And click "Log In"
     Then I should see "Your login was unsuccessful. Please check your e-mail address and password before trying again."
 
   Scenario: Activate customer user
@@ -473,7 +473,7 @@ Feature: Commerce smoke e2e
     And fill form with:
       |Email Address|AmandaRCole1@example.org|
       |Password     |AmandaRCole1@example.org|
-    And click "Sign In"
+    And click "Log In"
     Then should see "Amanda Cole"
     And I click "Account Dropdown"
     And click "Sign Out"

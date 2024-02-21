@@ -34,6 +34,8 @@
     }
 
     &__container {
+        overflow-y: auto;
+
         @include safe-area-offset(padding, spacing('base'));
 
         padding-top: 0;
@@ -120,7 +122,6 @@
 
         &__container {
             max-height: 450px;
-            overflow-y: auto;
 
             &--limit {
                 max-height: none;
@@ -135,8 +136,32 @@
         .header-row {
             &__wrapper {
                 width: 100%;
+                max-height: calc(var(--shopping-list-visible-viewport-height, 100vh) - var(--shopping-list-widget-top));
+                overflow: hidden;
 
-                overflow-y: scroll;
+                display: flex;
+                flex-direction: column;
+            }
+
+            &__container {
+                &.show-by-hover {
+                    .header-row__toggle {
+                        display: flex;
+                    }
+                }
+            }
+
+            &__dropdown {
+                display: flex;
+                flex-direction: column;
+
+                min-height: 100%;
+            }
+
+            &__dropdown-footer {
+                padding-top: spacing('base');
+
+                background: $shopping-list-widget-wrapper-background;
             }
         }
     }

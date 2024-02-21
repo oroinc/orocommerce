@@ -70,5 +70,3 @@ Feature: Check shopping list totals with anonymous customer user using single pa
     And I open shopping list widget
     Then I should see "1 ea $10.50"
     And should not see "1 ea $0.00"
-
-
