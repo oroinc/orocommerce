@@ -9,3 +9,7 @@ layout:
         - '@move':
             id: product_view_additional_container
             parentId: product_main_container
+        - '@move':
+            id: matrix_grid_order_inline
+            parentId: product_view_additional_container
+            prepend: true

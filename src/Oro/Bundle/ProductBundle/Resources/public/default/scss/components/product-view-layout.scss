@@ -59,6 +59,13 @@
             }
         }
     }
+
+    &__variant-field {
+        .label {
+            font-weight: font-weight('semi-bold');
+            margin-block: spacing('md');
+        }
+    }
 }
 
 @include breakpoint('tablet-small') {

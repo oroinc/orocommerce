@@ -5,6 +5,8 @@
     .product-view {
         &__additional {
             margin-top: $product-view-additional-tabs-theme-top-offset;
+            display: grid;
+            gap: 48px;
         }
     }
 }

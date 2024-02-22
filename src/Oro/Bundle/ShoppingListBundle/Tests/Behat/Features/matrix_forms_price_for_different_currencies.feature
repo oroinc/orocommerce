@@ -135,14 +135,14 @@ Feature: Matrix forms price for different currencies
       |         | Value 1 | Value 2 |
       | Value 1 | -       | 1       |
       | Value 2 | 1       | -       |
-    Then I should see "Total QTY 2 | Total $24.00" in the "Matrix Grid Form" element
+    Then I should see "Total QTY: 2 | Total: $24.00" in the "Matrix Grid Form" element
     When I click "Currency Switcher"
     And I click "Euro"
     When I fill "Matrix Grid Form" with:
       |         | Value 1 | Value 2 |
       | Value 1 | -       | 1       |
       | Value 2 | 1       | -       |
-    Then I should see "Total QTY 2 | Total €20.00" in the "Matrix Grid Form" element
+    Then I should see "Total QTY: 2 | Total: €20.00" in the "Matrix Grid Form" element
 
   Scenario: Create custom price list and attach to customer
     Given I proceed as the Admin
@@ -192,4 +192,4 @@ Feature: Matrix forms price for different currencies
       |         | Value 1 | Value 2 |
       | Value 1 | -       | 1       |
       | Value 2 | 1       | -       |
-    Then I should see "Total QTY 2 | Total $12.00" in the "Matrix Grid Form" element
+    Then I should see "Total QTY: 2 | Total: $12.00" in the "Matrix Grid Form" element

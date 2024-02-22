@@ -97,5 +97,5 @@ Feature: Matrix form product with decimal prices
     When I fill "Matrix Grid Form" with:
       |       | Value 1 | Value 2 |
       | Value | 5       | -       |
-    Then I should see "Total QTY 5 | Total $24.9975" in the "Matrix Grid Form" element
-    And should not see "Total QTY 5 | Total $24.997499999999999" in the "Matrix Grid Form" element
+    Then I should see "Total QTY: 5 | Total: $24.9975" in the "Matrix Grid Form" element
+    And should not see "Total QTY: 5 | Total: $24.997499999999999" in the "Matrix Grid Form" element

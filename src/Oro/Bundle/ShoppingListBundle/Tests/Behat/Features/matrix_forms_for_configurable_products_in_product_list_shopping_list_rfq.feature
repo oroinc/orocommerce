@@ -92,7 +92,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       |          |          | N/A      |
       | N/A      | N/A      | 1        |
     And I should see "Clear All Button" element inside "Matrix Grid Form Totals" element
-    And I should see "Total QTY 5 | Total $60.00" in the "Matrix Grid Form Totals" element
+    And I should see "Total QTY: 5 | Total: $60.00" in the "Matrix Grid Form Totals" element
     And I click "Clear All Product Variants"
     Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -100,7 +100,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       |          | N/A      |          |
       |          |          | N/A      |
       | N/A      | N/A      |          |
-    And I should see "Total QTY 0 | Total $0.00" in the "Matrix Grid Form Totals" element
+    And I should see "Total QTY: 0 | Total: $0.00" in the "Matrix Grid Form Totals" element
     Then I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | 1        | -        |
@@ -152,7 +152,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       |          |          | N/A      |
       | N/A      | N/A      | 1        |
     And I should see "Clear All Button" element inside "Matrix Grid Form Totals" element
-    And I should see "Total QTY 5 | Total $60.00" in the "Matrix Grid Form Totals" element
+    And I should see "Total QTY: 5 | Total: $60.00" in the "Matrix Grid Form Totals" element
     And I click "Clear All Product Variants"
     Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -160,7 +160,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       |          | N/A      |          |
       |          |          | N/A      |
       | N/A      | N/A      |          |
-    And I should see "Total QTY 0 | Total $0.00" in the "Matrix Grid Form Totals" element
+    And I should see "Total QTY: 0 | Total: $0.00" in the "Matrix Grid Form Totals" element
     And I am on the homepage
     When I open shopping list widget
     And I click "View Details"

@@ -49,3 +49,7 @@ layout:
             id: product_view_attribute_group_images_attribute_product_images_images
             optionName: vars.vertical
             optionValue: true
+        - '@move':
+            id: matrix_grid_order_inline
+            parentId: product_view_additional_container
+            prepend: true

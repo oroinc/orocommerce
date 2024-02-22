@@ -340,8 +340,8 @@ oro:
                 remove_source.label: Delete this shopping list after submitting order
             matrix_grid_order:
                 qty: 'QTY'
-                total_qty: 'Total QTY'
-                total: 'Total'
+                total_qty: 'Total QTY:'
+                total: 'Total:'
                 subtotal: 'Subtotal'
                 not_available: 'N/A'
                 close: 'Close'
