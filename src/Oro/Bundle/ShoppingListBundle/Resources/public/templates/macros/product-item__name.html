@@ -3,7 +3,7 @@
         <p class="grid-line-items__errors"><%- obj.errors.join(' ') %></p>
     <% } else { %>
         <% if (link && (obj.isVisible === undefined || obj.isVisible)) { %>
-        <a<% if (obj.clip) { %> class="<%- 'grid-line-items__title-content grid-line-items__ellipsis' %>"<% } %>
+        <a class="grid-line-items__title-content no-decoration <% if (obj.clip) { %> grid-line-items__ellipsis <% } %>"
             href="<%- link %>"
             title="<%- name %>"
             <% if (obj.popover_image_src) { %>

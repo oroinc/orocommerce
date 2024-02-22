@@ -191,7 +191,7 @@
     }) %}
     <h3 {{ block('block_attributes') }} itemprop="productID" content="{{ product.id }}">
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}"
-           class="view-product line-clamp"
+           class="view-product line-clamp no-decoration"
            itemprop="url"
            title="{{ product.name|e('html_attr') }}"
            {% if isTargetBlank is defined and isTargetBlank %}target="_blank"{% endif %}

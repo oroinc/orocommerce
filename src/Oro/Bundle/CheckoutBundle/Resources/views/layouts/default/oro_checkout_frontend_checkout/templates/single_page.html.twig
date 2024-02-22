@@ -408,7 +408,7 @@
             {% for consent in acceptedRequiredConsents %}
                 <li class="notification__item">
                     {%- if consent.cmsPageData.url is defined %}
-                        <a href="{{- consent.cmsPageData.url -}}" target="_blank" class="link">
+                        <a href="{{- consent.cmsPageData.url -}}" target="_blank">
                             {{- consent.title -}}
                         </a>
                     {%- else -%}

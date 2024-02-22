@@ -97,7 +97,12 @@
     }
 
     &__info {
-        color: $shopping-list-dropdown-info-color;
+        color: $link-color;
+        text-decoration: underline;
+
+        &:hover {
+            color: $link-hover-color;
+        }
     }
 
     &__link:hover &__info {

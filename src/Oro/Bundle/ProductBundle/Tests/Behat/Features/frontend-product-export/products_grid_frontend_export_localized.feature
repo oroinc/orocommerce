@@ -22,7 +22,7 @@ Feature: Products grid frontend export localized
     Given I go to System / Emails / Templates
     When I filter Template Name as is equal to "frontend_export_result_success"
     And I click "edit" on first row in grid
-    And I select "Zulu" localization
+    And I click "Zulu"
     And fill "Email Template Form" with:
       | Subject Fallback | false                                |
       | Subject          | Zulu Products export result is ready |

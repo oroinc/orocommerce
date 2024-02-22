@@ -6,8 +6,8 @@ Feature: Sidebar menu footer with multiple currency and multiple localization op
 
   Scenario: Create different window session
     Given sessions active:
-      | Admin     | first_session  |
-      | Buyer     | second_session |
+      | Admin | first_session  |
+      | Buyer | second_session |
 
   Scenario: Setup required multiple currency options and multiple localization options
     Given I proceed as the Admin

@@ -39,5 +39,5 @@ Feature: Sidebar menu localization footer
   Scenario: "Check sidebar menu footer on mobile device"
     Given I set window size to 375x640
     Then I should see that "Zulu" localization is active
-    When I select "English" localization
+    When I select "English (United States)" localization
     Then I should see that "English (United States)" localization is active

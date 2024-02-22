@@ -163,7 +163,7 @@
 
     <h2 {{ block('block_attributes') }}>
         <a href="{{ product.view_link }}"
-           class="view-product{% if 'gallery-view' in class_prefix %} line-clamp{% endif %}"
+           class="view-product no-decoration {% if 'gallery-view' in class_prefix %} line-clamp{% endif %}"
            itemprop="url"
            title="{{ block('container_widget')|trim|raw }}"
         >
