@@ -4,6 +4,8 @@ namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Element;
 
 use Behat\Mink\Element\NodeElement;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
+use WebDriver\Exception\ElementNotVisible;
+use WebDriver\Exception\NoSuchElement;
 
 class LocalizationCurrencySwitcherElement extends Element
 {
@@ -144,9 +146,17 @@ class LocalizationCurrencySwitcherElement extends Element
     protected function getOptionsFromSelector(Element $switcherElement): array
     {
         $footerExpand = $this->getElementByMappedSelector('FooterExpand');
-        if ($footerExpand->isVisible() && $footerExpand->isValid()) {
-            $footerExpand->click();
-        }
+
+        self::assertTrue($footerExpand->isValid());
+        $this->spin(function () use ($footerExpand) {
+            try {
+                $footerExpand->click();
+            } catch (NoSuchElement | ElementNotVisible $e) {
+                return false;
+            } finally {
+                return $footerExpand->isVisible();
+            }
+        }, 60);
 
         return match ($this->getInternalElementSelectorType($switcherElement)) {
             self::TYPE_TOGGLE => $this->getToggleOptions($switcherElement),

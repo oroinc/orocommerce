@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ApplicationBundle\Tests\Behat\Context;
 
+use Behat\Behat\Hook\Scope\BeforeStepScope;
 use Behat\Gherkin\Node\TableNode;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -12,8 +13,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\EntityPage;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Tabs;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
-use WebDriver\Exception\ElementNotVisible;
-use WebDriver\Exception\NoSuchElement;
+use WebDriver\Exception\UnexpectedAlertOpen;
 
 class CommerceMainContext extends OroFeatureContext implements
     OroPageObjectAware,
@@ -22,6 +22,32 @@ class CommerceMainContext extends OroFeatureContext implements
     use PageObjectDictionary;
     use SessionAliasProviderAwareTrait;
     use SpinTrait;
+
+    /**
+     * @BeforeStep
+     */
+    public function beforeStepDisableAnimation(BeforeStepScope $scope)
+    {
+        try {
+                $function = <<<JS
+(function(){
+    const body = document.querySelector("body");
+    const disableAnimation = function() {
+        document.querySelector("body").setAttribute('data-disable-animation', '1');
+    };
+    if (body) {
+        disableAnimation();
+    } else {
+        document.addEventListener("DOMContentLoaded", disableAnimation);
+    }
+})();
+JS;
+
+            $this->getSession()->executeScript($function);
+        } catch (UnexpectedAlertOpen $e) {
+            return;
+        }
+    }
 
     /**
      * This step used for login bayer from frontend of commerce
@@ -171,18 +197,8 @@ class CommerceMainContext extends OroFeatureContext implements
     public function openMainMenu(): void
     {
         $mainMenuTrigger = $this->createElement('Main Menu Button');
-        $sidebarMainMenuPopup = $this->createElement('Sidebar Main Menu Popup');
-        if ($mainMenuTrigger->isValid() && $mainMenuTrigger->isVisible() && !$sidebarMainMenuPopup->isIsset()) {
-            // waiting for animation of menu opening
-            $this->spin(function () use ($mainMenuTrigger, $sidebarMainMenuPopup) {
-                try {
-                    $mainMenuTrigger->click();
-                } catch (NoSuchElement | ElementNotVisible $e) {
-                    return false;
-                } finally {
-                    return $sidebarMainMenuPopup->isVisible();
-                }
-            }, 10);
+        if ($mainMenuTrigger->isValid() && $mainMenuTrigger->isVisible()) {
+            $mainMenuTrigger->click();
         }
     }
 
@@ -193,11 +209,9 @@ class CommerceMainContext extends OroFeatureContext implements
     public function closeMainMenu(): void
     {
         $sidebarMainMenuPopup = $this->createElement('Sidebar Main Menu Popup');
+        $closeButton = $sidebarMainMenuPopup->getElement('Frontend Main Menu Close Button');
         if ($sidebarMainMenuPopup->isValid() && $sidebarMainMenuPopup->isVisible()) {
-            $closeButton = $sidebarMainMenuPopup->getElement('Frontend Main Menu Close Button');
-            if ($closeButton->isValid()) {
-                $closeButton->clickForce();
-            }
+            $closeButton->clickForce();
         }
     }
 }
