@@ -68,6 +68,7 @@ class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerI
                     ->getLocalizedValue($product->getNames());
 
                 $results['items'][$index]['units'] = $product->getSellUnitsPrecision();
+                $results['items'][$index]['type'] = $product->getType();
             }
 
             $unitCode = (string) $quickAddRow->getUnit();

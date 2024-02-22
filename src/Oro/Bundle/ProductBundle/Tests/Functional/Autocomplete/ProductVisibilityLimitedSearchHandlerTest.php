@@ -86,7 +86,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
     public function frontendVisibilityDataProvider(): array
     {
         return [
-            'handler for simple products only' => [
+            'handler for simple and kits products' => [
                 'query' => 'pro',
                 'searchHandlerName' => 'oro_product_visibility_limited',
                 'expectedProductsResult' => [
@@ -94,6 +94,9 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
                     LoadProductData::PRODUCT_3,
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_1,
+                    LoadProductKitData::PRODUCT_KIT_1,
+                    LoadProductKitData::PRODUCT_KIT_2,
+                    LoadProductKitData::PRODUCT_KIT_3,
                 ]
             ],
             'handler for simple, configurable and kit products' => [
@@ -151,7 +154,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
     public function backendVisibilityDataProvider(): array
     {
         return [
-            'handler for simple products only' => [
+            'handler for simple and kits products' => [
                 'searchHandlerName' => 'oro_product_visibility_limited',
                 'expectedProductsResult' => [
                     LoadProductData::PRODUCT_1,
@@ -159,6 +162,9 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
                     LoadProductData::PRODUCT_3,
                     LoadProductData::PRODUCT_4,
                     LoadProductData::PRODUCT_6,
+                    LoadProductKitData::PRODUCT_KIT_1,
+                    LoadProductKitData::PRODUCT_KIT_2,
+                    LoadProductKitData::PRODUCT_KIT_3,
                 ]
             ],
             'handler for simple, configurable and kit products' => [

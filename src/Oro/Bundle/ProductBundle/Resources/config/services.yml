@@ -513,7 +513,6 @@ services:
             - setNotAllowedProductTypes:
                 -
                     - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
-                    - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_visibility_limited }
 
@@ -652,7 +651,6 @@ services:
                 setNotAllowedProductTypes:
                     -
                         - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
-                        - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
 
     oro_product.model.builder.quick_add_row_collection:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'

@@ -621,12 +621,24 @@ oro_behat_extension:
           SUBTOTAL2:
             type: 'css'
             locator: 'div[data-ftid="oro_product_quick_add_products_1"] input[data-name="field__product-subtotal"]'
+          SUBTOTAL3:
+            type: 'css'
+            locator: 'div[data-ftid="oro_product_quick_add_products_2"] input[data-name="field__product-subtotal"]'
+          SUBTOTAL4:
+            type: 'css'
+            locator: 'div[data-ftid="oro_product_quick_add_products_3"] input[data-name="field__product-subtotal"]'
 
     Quick Order Form > DeleteRow1:
       selector: '[data-content="oro_product_quick_add[products][0]"] button[data-role="row-remove"]'
 
     Quick Order Form > DeleteRow2:
       selector: '[data-content="oro_product_quick_add[products][1]"] button[data-role="row-remove"]'
+
+    Quick Order Form > DeleteRow3:
+      selector: '[data-content="oro_product_quick_add[products][2]"] button[data-role="row-remove"]'
+
+    Quick Order Form > DeleteRow4:
+      selector: '[data-content="oro_product_quick_add[products][3]"] button[data-role="row-remove"]'
 
     Quick Order Form > QTY1:
       selector:
@@ -674,6 +686,31 @@ oro_behat_extension:
 
     Create Order From Quick Order:
       selector: "a[id^='transition-b2b_flow_checkout-start_from_quickorderform']"
+
+    Enabled Create Order Button:
+      selector:
+        locator: '//a[@data-transition_name="start_from_quickorderform" and not(contains(@class, "disabled"))]'
+        type: xpath
+
+    Enabled Create Order Button Wrapper:
+      selector:
+        locator: '//a[@data-transition_name="start_from_quickorderform" and not(contains(@class, "disabled"))]/parent::div'
+        type: xpath
+
+    Disabled Create Order Button:
+      selector:
+        locator: '//a[@data-transition_name="start_from_quickorderform" and contains(@class, "disabled")]'
+        type: xpath
+
+    Disabled Create Order Button Wrapper:
+      selector:
+        locator: '//a[@data-transition_name="start_from_quickorderform" and contains(@class, "disabled")]/parent::div'
+        type: xpath
+
+    Get Quote Button:
+      selector:
+        locator: '//button[@data-action-name="oro_rfp_frontend_request_a_quote"]'
+        type: xpath
 
     ProductPriceCollection:
       class: 'Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductPriceCollection'
@@ -1897,6 +1934,14 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//a[text()="Simple Product 05 - Deleted"]'
+
+    Quick Order Form Line Item 1 View All Prices:
+      selector:
+        locator: '//div[@data-content="oro_product_quick_add[products][0]"]//button[@data-role="price-hint-trigger"]'
+        type: xpath
+
+    Quick Order Form Buttons:
+      selector: '.quick-order-add__buttons'
 
   pages:
     Product View:
