@@ -58,7 +58,7 @@ class SetShippingMethodsConfigsRuleOrganizationQuery extends ParametrizedSqlMigr
         ';
         $this->logQuery($logger, $sql);
 
-        $organizationId = $this->connection->query($sql)->fetchColumn(0);
+        $organizationId = $this->connection->executeQuery($sql)->fetchOne();
         if (!$organizationId) {
             throw new \Exception('No organizations found in system');
         }

@@ -41,8 +41,13 @@ class OrderProductKitItemLineItemTypeTest extends FormIntegrationTestCase
     private ProductKitItem $kitItem1;
 
     private ProductKitItem $kitItem2;
-
     private array $kitItemProducts;
+
+    private ProductUnit $productUnitItem;
+
+    private ProductUnit $productUnitKg;
+
+    private OrderProductKitItemLineItemType $formType;
 
     protected function setUp(): void
     {

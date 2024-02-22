@@ -69,6 +69,8 @@ class OrderLineItemTypeTest extends FormIntegrationTestCase
 
     private ProductUnit $productUnitKg;
 
+    private OrderLineItemType $formType;
+
     private array $sectionsConfig = [
         'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
         'price' => [

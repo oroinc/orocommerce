@@ -105,7 +105,7 @@ SQL;
 
         $this->logQuery($logger, $query);
 
-        $rows  = $this->connection->fetchAll($query);
+        $rows  = $this->connection->fetchAllAssociative($query);
 
         $redirects = [];
         foreach ($rows as $row) {
@@ -140,7 +140,7 @@ SQL;
 
         $this->logQuery($logger, $query, $params, $types);
 
-        $row = $this->connection->fetchAssoc($query, $params, $types);
+        $row = $this->connection->fetchAssociative($query, $params, $types);
 
         return is_array($row) && array_key_exists('id', $row) ? $row['id'] : null;
     }

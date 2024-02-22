@@ -46,7 +46,7 @@ class UpdatePasswordMigrationQuery implements MigrationQuery, ConnectionAwareInt
 
         $getIntegrationsSQL = "SELECT id, ups_api_password FROM oro_integration_transport WHERE type = 'upstransport'";
 
-        $integrations = $this->connection->fetchAll($getIntegrationsSQL);
+        $integrations = $this->connection->fetchAllAssociative($getIntegrationsSQL);
 
         foreach ($integrations as $integration) {
             $encrypterPassword = $encryptor->encryptData($integration['ups_api_password']);
@@ -57,7 +57,7 @@ class UpdatePasswordMigrationQuery implements MigrationQuery, ConnectionAwareInt
                 $integration['id']
             );
 
-            $this->connection->exec($updateSQL);
+            $this->connection->executeStatement($updateSQL);
         }
     }
 }

@@ -60,7 +60,7 @@ class RenameMasterCatalog extends ParametrizedMigrationQuery
 
         $this->logQuery($logger, $sql);
 
-        $rows = $this->connection->fetchAll($sql);
+        $rows = $this->connection->fetchAllAssociative($sql);
 
         return $rows ? $rows[0]['id'] : null;
     }

@@ -245,7 +245,8 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
      */
     public function isProductFreeForm()
     {
-        return (!$this->product) && ('' !== trim($this->freeFormProduct));
+        return (!$this->product) &&
+            (null !== $this->freeFormProduct && '' !== trim($this->freeFormProduct));
     }
 
     /**
@@ -255,7 +256,8 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
      */
     public function isProductReplacementFreeForm()
     {
-        return (!$this->productReplacement) && ('' !== trim($this->freeFormProductReplacement));
+        return (!$this->productReplacement) &&
+            (null !== $this->freeFormProductReplacement && '' !== trim($this->freeFormProductReplacement));
     }
 
     /**

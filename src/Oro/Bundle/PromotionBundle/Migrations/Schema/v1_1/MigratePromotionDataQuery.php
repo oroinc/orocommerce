@@ -142,7 +142,7 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
             $this->logQuery($this->logger, $qb->getSQL());
             $statement = $qb->execute();
 
-            while ($orderRow = $statement->fetch(\PDO::FETCH_ASSOC)) {
+            while ($orderRow = $statement->fetchAssociative()) {
                 $this->migrateDiscountsForOrder($orderRow);
             }
         }
@@ -159,7 +159,7 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
         $expression = $this->getCustomerRestrictionExpression($orderRow);
         $promotionRows = [];
 
-        while ($promotionRow = $discountStmt->fetch(\PDO::FETCH_ASSOC)) {
+        while ($promotionRow = $discountStmt->fetchAssociative()) {
             // We need to guarantee that for migrated applied promotions sort order is always less than for any
             // existing promotion. Also applying order between migrated discounts should be persisted.
             $sortOrder = 2 * self::DB_MIN_INT + $promotionRow['id'];
@@ -211,7 +211,7 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
 
         $this->logQuery($this->logger, $qb->getSQL());
 
-        return (int)ceil($qb->execute()->fetchColumn() / self::ORDERS_LIMIT);
+        return (int)ceil($qb->execute()->fetchOne() / self::ORDERS_LIMIT);
     }
 
     /**
@@ -261,7 +261,7 @@ SQL;
         $types = ['orderId' => Types::INTEGER];
 
         $this->logQuery($this->logger, $selectQuery, $params, $types);
-        $productIds = $this->connection->fetchColumn($selectQuery, $params, 0, $types);
+        $productIds = $this->connection->fetchOne($selectQuery, $params, $types);
 
         return $this->getProductsInSegmentDefinition($productIds);
     }
@@ -285,7 +285,7 @@ FROM
 SQL;
 
         $this->logQuery($this->logger, $selectQuery);
-        $productIds = $this->connection->fetchColumn($selectQuery);
+        $productIds = $this->connection->fetchOne($selectQuery);
 
         return $this->getProductsInSegmentDefinition($productIds);
     }
@@ -483,7 +483,7 @@ SQL;
 
         $this->logQuery($this->logger, $maxDuplicatedDeletedLineItemsPromotions);
         $stmt = $this->connection->executeQuery($maxDuplicatedDeletedLineItemsPromotions);
-        $info = $stmt->fetch(\PDO::FETCH_ASSOC);
+        $info = $stmt->fetchAssociative();
 
         return (int)$info['qty'];
     }

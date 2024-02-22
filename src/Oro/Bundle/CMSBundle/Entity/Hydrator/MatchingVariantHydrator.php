@@ -37,7 +37,7 @@ class MatchingVariantHydrator extends AbstractMatchingEntityHydrator
         $hasScopeQuery = 'SELECT 1 FROM oro_cms_txt_cont_variant_scope WHERE variant_id = :id LIMIT 1';
         $hasScopes = $this->_em->getConnection()
             ->executeQuery($hasScopeQuery, ['id' => $variantId], ['id' => \PDO::PARAM_INT])
-            ->fetchColumn();
+            ->fetchOne();
 
         return (bool)$hasScopes;
     }

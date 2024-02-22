@@ -56,7 +56,7 @@ LEFT JOIN oro_redirect_slug s ON (p.current_slug_id = s.id);';
 
         $this->logQuery($logger, $query);
 
-        $rows  = $this->connection->fetchAll($query);
+        $rows  = $this->connection->fetchAllAssociative($query);
         foreach ($rows as $row) {
             $this->relations[$row['id']] = $row['slug'];
         }

@@ -37,6 +37,8 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
 
     private ResolveNodeSlugsMessageFactory|\PHPUnit\Framework\MockObject\MockObject $messageFactory;
 
+    private CollectionSortOrderHandler|\PHPUnit\Framework\MockObject\MockObject $collectionSortOrderHandler;
+
     private ContentNodeListener $contentNodeListener;
 
     protected function setUp(): void

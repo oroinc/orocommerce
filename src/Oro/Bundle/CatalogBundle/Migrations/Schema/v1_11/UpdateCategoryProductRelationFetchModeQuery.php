@@ -34,7 +34,7 @@ class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQ
     {
         $rows = $this->createEntityConfigQb()
             ->execute()
-            ->fetchAll(\PDO::FETCH_ASSOC);
+            ->fetchAllAssociative();
 
         $row = reset($rows);
         if ($row) {

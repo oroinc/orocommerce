@@ -50,8 +50,8 @@ class ExportDataQuery extends ParametrizedSqlMigrationQuery
         ';
         $this->logQuery($logger, $sql);
 
-        $destinations = $this->connection->query($sql);
-        while ($row = $destinations->fetch()) {
+        $destinations = $this->connection->executeQuery($sql);
+        while ($row = $destinations->fetchAssociative()) {
             $postalCodes = explode(',', $row['postal_code']);
 
             foreach ($postalCodes as $postalCode) {
@@ -83,8 +83,8 @@ class ExportDataQuery extends ParametrizedSqlMigrationQuery
         ';
         $this->logQuery($logger, $sql);
 
-        $shippingRules = $this->connection->query($sql);
-        while ($row = $shippingRules->fetch()) {
+        $shippingRules = $this->connection->executeQuery($sql);
+        while ($row = $shippingRules->fetchAssociative()) {
             $query = '
                 INSERT INTO oro_rule (name, enabled, sort_order, stop_processing, expression, created_at, updated_at)
                 VALUES (:name, :enabled, :sort_order, :stop_processing, :expression, :created_at, :updated_at)

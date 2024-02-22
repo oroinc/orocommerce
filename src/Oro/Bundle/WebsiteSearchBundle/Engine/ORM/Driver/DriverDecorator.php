@@ -18,6 +18,7 @@ class DriverDecorator implements DriverInterface
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
+
     /** @var DriverInterface[] */
     private $availableDrivers = [];
 
@@ -42,8 +43,7 @@ class DriverDecorator implements DriverInterface
     {
         if (!$this->driver) {
             $em = $this->doctrineHelper->getEntityManagerForClass(Item::class);
-
-            $databasePlatform = $em->getConnection()->getDriver()->getName();
+            $databasePlatform = $em->getConnection()->getDatabasePlatform()->getName();
             if (!array_key_exists($databasePlatform, $this->availableDrivers)) {
                 throw new \RuntimeException(sprintf('Missing driver for %s platform', $databasePlatform));
             }

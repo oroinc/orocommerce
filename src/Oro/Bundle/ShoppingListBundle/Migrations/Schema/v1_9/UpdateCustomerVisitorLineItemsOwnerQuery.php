@@ -65,6 +65,6 @@ class UpdateCustomerVisitorLineItemsOwnerQuery extends ParametrizedMigrationQuer
 
         $this->logQuery($logger, $query, $params, $types);
 
-        return array_column($this->connection->fetchAll($query, $params, $types), 'id');
+        return array_column($this->connection->fetchAllAssociative($query, $params, $types), 'id');
     }
 }

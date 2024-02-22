@@ -53,7 +53,7 @@ class UpdateEntityConfigExtendClassQuery extends ParametrizedMigrationQuery
     {
         $sql = 'SELECT id, data FROM oro_entity_config WHERE class_name = ? LIMIT 1';
         $parameters = [$this->entityName];
-        $row = $this->connection->fetchAssoc($sql, $parameters);
+        $row = $this->connection->fetchAssociative($sql, $parameters);
         $this->logQuery($logger, $sql, $parameters);
 
         $id = $row['id'];
@@ -70,7 +70,7 @@ class UpdateEntityConfigExtendClassQuery extends ParametrizedMigrationQuery
         $sql = 'UPDATE oro_entity_config SET data = ? WHERE id = ?';
         $parameters = [$data, $id];
         $statement = $this->connection->prepare($sql);
-        $statement->execute($parameters);
+        $statement->executeQuery($parameters);
         $this->logQuery($logger, $sql, $parameters);
     }
 }

@@ -109,8 +109,8 @@ class ProductInventoryStatusListenerTest extends WebTestCase
         $productKitItems = $productKit->getKitItems()->filter(
             static fn (ProductKitItem $kitItem) => $kitItem->getProducts()->filter(
                 static fn (Product $product) => in_array($product->getSku(), [
-                    LoadProductData::PRODUCT_3,
-                ])
+                    LoadProductData::PRODUCT_3
+                ], true)
             )->count()
         );
         foreach ($productKitItems as $productKitItem) {
@@ -132,7 +132,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
             static fn (ProductKitItem $kitItem) => $kitItem->getProducts()->filter(
                 static fn (Product $product) => in_array($product->getSku(), [
                     LoadProductData::PRODUCT_3,
-                ])
+                ], true)
             )->count()
         );
         foreach ($productKitItems as $productKitItem) {
@@ -156,7 +156,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
                 static fn (Product $product) => in_array($product->getSku(), [
                     LoadProductData::PRODUCT_4,
                     LoadProductData::PRODUCT_3,
-                ])
+                ], true)
             )->count()
         );
         /** @var ProductKitItem $productKitItem */
@@ -165,7 +165,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
                 fn (ProductKitItemProduct $product) => in_array($product->getProduct()->getSku(), [
                     LoadProductData::PRODUCT_4,
                     LoadProductData::PRODUCT_3,
-                ])
+                ], true)
             );
 
             $productKitItemProduct = $productKitItemProduct->first();

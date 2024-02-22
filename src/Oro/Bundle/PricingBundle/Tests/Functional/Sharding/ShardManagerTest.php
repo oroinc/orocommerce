@@ -189,7 +189,7 @@ class ShardManagerTest extends WebTestCase
         $exists = (bool)$connection->executeQuery(
             'SELECT exists(SELECT 1 FROM ' . $table . ' WHERE id = :id)',
             ['id' => $id]
-        )->fetchColumn(0);
+        )->fetchOne();
 
         $this->assertTrue($exists, sprintf('Failed assert that %s in %s', $id, $table));
     }

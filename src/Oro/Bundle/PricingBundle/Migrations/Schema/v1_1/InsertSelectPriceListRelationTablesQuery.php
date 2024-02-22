@@ -88,7 +88,7 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
 
         $this->logQuery($logger, $sql);
         if (!$dryRun) {
-            $this->connection->exec($sql);
+            $this->connection->executeStatement($sql);
         }
     }
 
@@ -103,7 +103,7 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
                 ->from('orob2b_website')
                 ->orderBy('id', Criteria::ASC)
                 ->setMaxResults(1)
-                ->execute()->fetchColumn();
+                ->execute()->fetchOne();
         }
 
         return static::$defaultWebsiteId;

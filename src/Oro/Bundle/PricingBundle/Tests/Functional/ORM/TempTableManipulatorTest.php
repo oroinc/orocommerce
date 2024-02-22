@@ -237,7 +237,7 @@ class TempTableManipulatorTest extends WebTestCase
 
     private function assertTableRecordsCount(int $count, string $tableName): void
     {
-        $records = $this->connection->fetchColumn('SELECT COUNT(*) FROM ' . $tableName);
+        $records = $this->connection->fetchOne('SELECT COUNT(*) FROM ' . $tableName);
         $this->assertEquals($count, $records);
     }
 

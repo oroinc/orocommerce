@@ -66,7 +66,7 @@ class UpdateReportQuery extends ParametrizedMigrationQuery
 
         $this->logQuery($logger, $fetch);
 
-        $rows = $this->connection->fetchAll($fetch);
+        $rows = $this->connection->fetchAllAssociative($fetch);
         foreach ($rows as $row) {
             $def = json_decode($row['definition'], true);
             $entity = $row['entity'];
@@ -90,7 +90,7 @@ class UpdateReportQuery extends ParametrizedMigrationQuery
 
         $this->logQuery($logger, $fetch);
 
-        $rows = $this->connection->fetchAll($fetch);
+        $rows = $this->connection->fetchAllAssociative($fetch);
         foreach ($rows as $row) {
             $def = json_decode($row['definition'], true);
             $entity = $row['entity'];

@@ -262,7 +262,7 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
     protected function getPaymentOptions(PaymentTransaction $paymentTransaction)
     {
         $options = [
-            Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
+            Option\Amount::AMT => round((float)$paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
             Option\Tender::TENDER => Option\Tender::CREDIT_CARD,
             Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
         ];
