@@ -201,7 +201,8 @@
         {% if (requestProduct.product.id is defined) %}
             {{ UI.link({
                 path: path('oro_product_frontend_product_view', {'id': requestProduct.product.id}),
-                label : requestProduct.product.names|localized_value|trim,
+                label: requestProduct.product.names|localized_value|trim,
+                class: 'no-decoration'
             }) }}
         {% else %}
             {{ requestProduct.product }}

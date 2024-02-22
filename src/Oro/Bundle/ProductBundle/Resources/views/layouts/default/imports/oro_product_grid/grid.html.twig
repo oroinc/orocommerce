@@ -146,7 +146,7 @@
                     {% for view_item in view_list %}
                     <li>
                         <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): view_item.row_view}})|url_encode }}"
-                            class="dropdown-item"
+                            class="dropdown-item no-decoration"
                             data-catalog-view-trigger="{{ {'row-view': view_item.row_view}|json_encode }}"
                         >
                             <span class="fa {{ view_item.icon }} fa--fw fa--as-line" aria-hidden="true"></span>
