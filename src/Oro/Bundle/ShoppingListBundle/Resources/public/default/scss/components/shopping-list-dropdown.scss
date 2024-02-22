@@ -93,7 +93,12 @@
     }
 
     &__info {
-        color: $shopping-list-dropdown-info-color;
+        color: $link-color;
+        text-decoration: underline;
+
+        &:hover {
+            color: $link-hover-color;
+        }
     }
 
     &__info-container {
@@ -104,10 +109,6 @@
 
     &__info-container &__info {
         display: inline-block;
-    }
-
-    &__link:hover &__info {
-        text-decoration: underline;
     }
 
     &__ellipsis {

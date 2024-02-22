@@ -103,7 +103,8 @@
                                         {% if productId and is_visible_product(productId) %}
                                             {{ UI.link({
                                                 path: path('oro_product_frontend_product_view', {'id': productId}),
-                                                label : productName
+                                                label: productName,
+                                                class: 'no-decoration'
                                             }) }}
                                         {% else %}
                                             {{ productName|e }}
