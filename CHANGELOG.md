@@ -34,6 +34,73 @@ The current file describes significant changes in the code that may affect the u
 - [1.2.0](#120-2017-06-01)
 - [1.1.0](#110-2017-03-31)
 
+
+# UNRELEASED
+
+### Added
+
+#### ProductBundle
+* Added `\Oro\Bundle\ProductBundle\Form\Type\ProductUnitChoiceType` form type for selecting a product unit from the available product units of a specified product.
+
+#### RFPBundle
+* Added the ability to create on a storefront a request for quote with product kits.
+* Added the ability to edit in a back-office a request for quote with product kits. 
+* Added `\Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem` to represent product kit item line item in `\Oro\Bundle\RFPBundle\Entity\RequestProduct`.
+* Added `\Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemType` form type to decouple it from the form type used in back-office.
+* Added `\Oro\Bundle\RFPBundle\Provider\RequestProductLineItemTierPricesProvider` that provides tier product prices for the request product items of the specified request entity.
+
+#### SaleBundle
+* Added the ability to manage in a back-office a quote with product kits.
+* Added the ability to start on a storefront a checkout from a quote with product kits.
+* Added `\Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem` to represent product kit item line item in `\Oro\Bundle\SaleBundle\Entity\QuoteProduct`.
+* Added `\Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid` (`is_quote_valid`) workflow condition to check a quote could be sent to a customer.
+
+### Changed
+
+#### ProductBundle
+* Decomposed `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface` into `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface`.
+* Decomposed `\Oro\Bundle\ProductBundle\Model\ProductLineItemInterface` into `\Oro\Bundle\ProductBundle\Model\ParentProductAwareInterface`.
+* Added product type to the response of the autocomplete search handler `\Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler`.
+* Added `getProduct` to `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`.
+* Added the ability to specify product unit precision property path in validation constraint `\Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision` and its validator
+
+#### OrderBundle
+* `\Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension` now takes into account kit item line items when creating an order from the product data storage.
+
+#### PricingBundle
+* `\Oro\Bundle\PricingBundle\Provider\ProductLineItemProductPriceProvider` now returns prices for all enabled product units. 
+
+#### RFPBundle
+* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface` in `\Oro\Bundle\RFPBundle\Entity\RequestProduct` so it has the field `$kitItemLineItems` with a collection of kit item line items.
+* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`, `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface` in `\Oro\Bundle\RFPBundle\Entity\RequestProductItem` so it has the property `$kitItemLineItems` with a collection of kit item line items and a checksum.
+* `\Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension` now takes into account kit item line items when creating an RFQ from the product data storage.
+* Decoupled `\Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType` form type from the form type used in back-office.
+* Added additional validation groups `frontend_request_create`, `frontend_request_update` to `\Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider` that creates an RFQ form for a storefront.
+* Updated email template `request_create_confirmation` with the ability to show kit item line items.
+* Updated `\Oro\Bundle\RFPBundle\Twig\RequestProductsExtension` to add kit item line items data to the `rfp_products` TWIG function used in email templates.
+
+#### SaleBundle
+* Updated `\Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter` to enable the start of a checkout from a quote with product kits. 
+* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface` in `\Oro\Bundle\SaleBundle\Entity\QuoteProduct` so it has the field `$kitItemLineItems` with a collection of kit item line items.
+* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`, `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface` in `\Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem` so it has the property `$kitItemLineItems` with a collection of kit item line items and a checksum.
+* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`, `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface` in `\Oro\Bundle\SaleBundle\Entity\QuoteProductDemand` so it has the property `$kitItemLineItems` with a collection of kit item line items and a checksum.
+* `\Oro\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension` now takes into account kit item line items when creating a quote from the product data storage.
+* Added `verify_transition` to the `b2b_quote_backoffice_default` to check a quote could be sent to a customer.
+
+#### ShoppingListBundle
+* `\Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage` now additionally puts kit item line items data into the product data storage.
+
+#### PricingBundle
+* Removed `products-prices-component.js`, decoupled its dependent components.
+
+### Removed
+
+#### SaleBundle
+* Removed unused `tierPrices`, `matchedPrices`, `isShippingAddressGranted` from `\Oro\Bundle\SaleBundle\Form\QuoteFormTemplateDataProvider`.
+* Removed `\Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider` (`oro_sale.provider.quote_product_price`), use `\Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider` (`oro_sale.provider.quote_product_prices`) instead.
+* Removed `\Oro\Bundle\SaleBundle\Quote\Pricing\QuotePriceComparator`, use `\Oro\Bundle\SaleBundle\Quote\Pricing\QuotePricesComparator` (`oro_sale.quote.pricing.comparator`) instead.
+
+
 ## 6.0.0-BETA (2024-01-08)
 [Show detailed list of changes](incompatibilities-6-0-beta.md)
 

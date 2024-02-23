@@ -54,8 +54,6 @@ oro:
             product:
                 status_optional.message: 'Original selection no longer available'
                 status_required.message: 'Selection required'
-                invalid:
-                    message: 'The selected product is not allowed'
 
     product_unavailable: "This item is unavailable"
     non_valid_precision: "This value should be decimal with a precision {{ precision }}"

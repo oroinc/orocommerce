@@ -5,11 +5,13 @@ namespace Oro\Bundle\RFPBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 
 /**
  * RFP Request Product entity.
@@ -29,7 +31,7 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
  *      }
  * )
  */
-class RequestProduct implements ProductHolderInterface, ExtendEntityInterface
+class RequestProduct implements ProductHolderInterface, ProductKitItemLineItemsAwareInterface, ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
@@ -80,11 +82,26 @@ class RequestProduct implements ProductHolderInterface, ExtendEntityInterface
     protected $requestProductItems;
 
     /**
+     * @var Collection<RequestProductKitItemLineItem>
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="RequestProductKitItemLineItem",
+     *     mappedBy="requestProduct",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true,
+     *     indexBy="kitItemId"
+     * )
+     * @OrderBy({"sortOrder"="ASC"})
+     */
+    protected $kitItemLineItems;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->requestProductItems = new ArrayCollection();
+        $this->kitItemLineItems = new ArrayCollection();
     }
 
     /**
@@ -243,5 +260,36 @@ class RequestProduct implements ProductHolderInterface, ExtendEntityInterface
     public function getRequestProductItems()
     {
         return $this->requestProductItems;
+    }
+
+    /**
+     * @return Collection<RequestProductKitItemLineItem>
+     */
+    public function getKitItemLineItems()
+    {
+        return $this->kitItemLineItems;
+    }
+
+    public function addKitItemLineItem(RequestProductKitItemLineItem $productKitItemLineItem): self
+    {
+        $index = $productKitItemLineItem->getKitItemId();
+
+        if (!$this->kitItemLineItems->containsKey($index)) {
+            $productKitItemLineItem->setRequestProduct($this);
+            if ($index) {
+                $this->kitItemLineItems->set($index, $productKitItemLineItem);
+            } else {
+                $this->kitItemLineItems->add($productKitItemLineItem);
+            }
+        }
+
+        return $this;
+    }
+
+    public function removeKitItemLineItem(RequestProductKitItemLineItem $productKitItemLineItem): self
+    {
+        $this->kitItemLineItems->removeElement($productKitItemLineItem);
+
+        return $this;
     }
 }

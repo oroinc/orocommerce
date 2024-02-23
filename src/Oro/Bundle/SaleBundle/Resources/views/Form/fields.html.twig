@@ -53,6 +53,7 @@
     {% set page_component_options = form.vars.page_component_options|merge(form.vars.componentOptions|default({})) %}
     <tr data-content="{{ name }}" data-validation-optional-group {{ attributes }}
         class="quote-lineitem"
+        data-layout="separate"
         data-page-component-module="{{ form.vars.page_component }}"
         data-page-component-options="{{ page_component_options|json_encode }}">
         {{ form_widget(form) }}
@@ -63,8 +64,9 @@
 {% endmacro %}
 
 {% block oro_sale_quote_product_widget %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' quote-lineitem-widget control-group'}) %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' quote-lineitem-widget control-group'}) %}
     {% set commentCustomer = form.vars.value.commentCustomer|default(null) %}
     {% set commentSeller = form.vars.value.comment|default(null) %}
     {% set quoteProductRequests = form.vars.value.quoteProductRequests|default([]) %}
@@ -99,6 +101,12 @@
                 </div>
                 {% if allow_add_free_form_items %}
                     <a class="quote-lineitem-product-select-link" href="#">{{ 'oro.sale.quoteproduct.select.product'|trans }}</a>
+                {% endif %}
+            </div>
+            <div class="quote-lineitem-kit-item-line-items">
+                {% if form.kitItemLineItems is defined %}
+                    {{ form_widget(form.kitItemLineItems) }}
+                    {{ form_errors(form.kitItemLineItems) }}
                 {% endif %}
             </div>
         </div>
@@ -147,6 +155,57 @@
             </div>
         </div>
     </td>
+{% endblock %}
+
+{% block oro_sale_quote_product_kit_item_line_item_collection_widget %}
+    <table class="quote-product-kit-item-line-item-collection table table-borderless">
+        <tbody>
+        {%- for child in form -%}
+            {{ form_widget(child) }}
+        {%- endfor -%}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block oro_sale_quote_product_kit_item_line_item_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    <tr data-layout="separate"
+        {% if is_optional %}data-validation-optional-group{% endif %}
+            {{ UI.renderPageComponentAttributes({
+                view: 'orosale/js/app/views/kit-item-line-item-view',
+                options: {
+                    minimumQuantity: minimum_quantity ?: 1.0,
+                    maximumQuantity: maximum_quantity ?: null
+                }
+            }) }}
+        class="sale-quote-product-kit-item-line-item">
+        <td class="line-item-label">
+            {{ form_label(form, label, {translatable_label: false}) }}
+        </td>
+        <td>
+            <div class="fields-row">
+                {{ form_widget(form.product) }}
+                {{ form_errors(form.product) }}
+            </div>
+        </td>
+        <td class="line-item-quantity-label">
+            {% set unit_precision_info = oro_format_product_unit_precision_label(unit_code|default('N/A'|trans), unit_precision|default(0)) %}
+            {{ form_label(form.quantity, 'oro.sale.quoteproductkititemlineitem.quantity.label'|trans ~ ':', {tooltip: 'oro.sale.quoteproductkititemlineitem.quantity.form.tooltip'|trans({'{{ unit_precision_info }}': unit_precision_info})}) }}
+        </td>
+        <td class="line-item-quantity">
+            <div class="fields-row">
+                {{ form_widget(form.quantity, {
+                    attr: {
+                        'data-floating-error': true,
+                        'data-precision': unit_precision,
+                        'class': 'line-item-quantity-field'
+                    }
+                }) }}
+                {{ form_errors(form.quantity) }}
+            </div>
+        </td>
+    </tr>
 {% endblock %}
 
 {% block oro_sale_quote_product_request_collection %}
@@ -235,7 +294,7 @@
     {% if quoteProduct is not empty %}
         {% set product = quoteProduct.product %}
         {% if product is not empty %}
-            {% set modelAttr = {'product_units': product.sellUnitsPrecision} %}
+            {% set modelAttr = {product_units: product.sellUnitsPrecision, checksum: data.checksum|default('')} %}
         {% endif %}
     {% endif %}
     <tr data-content="{{ name }}"
@@ -244,6 +303,7 @@
         data-page-component-module="oroui/js/app/components/view-component"
         data-page-component-options="{{ {
             view: 'orosale/js/app/views/line-item-offer-view',
+            fullName: name,
             normalizeQuantityField: false,
             '$': {
                 product: '#' ~ productForm.product.vars.id,

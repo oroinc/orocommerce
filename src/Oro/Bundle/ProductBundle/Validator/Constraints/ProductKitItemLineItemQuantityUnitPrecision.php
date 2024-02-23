@@ -15,4 +15,6 @@ class ProductKitItemLineItemQuantityUnitPrecision extends Constraint
     protected static $errorNames = [self::INVALID_PRECISION => 'INVALID_PRECISION'];
 
     public string $message = 'oro.product.productkititemlineitem.quantity.invalid_precision.message';
+
+    public string $unitPrecisionPropertyPath = '';
 }

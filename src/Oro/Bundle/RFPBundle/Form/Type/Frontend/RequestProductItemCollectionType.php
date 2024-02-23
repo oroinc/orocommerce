@@ -3,48 +3,31 @@
 namespace Oro\Bundle\RFPBundle\Form\Type\Frontend;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type that represents an RFP request product item collection.
+ */
 class RequestProductItemCollectionType extends AbstractType
 {
-    const NAME = 'oro_rfp_frontend_request_product_item_collection';
-
-    /**
-     * {@inheritdoc}
-     */
     public function getParent(): ?string
     {
         return CollectionType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'entry_type' => RequestProductItemType::class,
-            'show_form_when_empty'  => false,
-            'error_bubbling'        => false,
-            'prototype_name'        => '__namerequestproductitem__',
+            'show_form_when_empty' => false,
+            'error_bubbling' => false,
+            'prototype_name' => '__namerequestproductitem__',
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
-        return self::NAME;
+        return 'oro_rfp_frontend_request_product_item_collection';
     }
 }

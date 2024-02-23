@@ -37,7 +37,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         LocalizationHelper $localizationHelper,
         FrontendHelper $frontendHelper
     ) {
-        parent::__construct($entityName, ['sku', 'defaultName.string']);
+        parent::__construct($entityName, ['sku', 'defaultName.string', 'type']);
         $this->requestStack = $requestStack;
         $this->productManager = $productManager;
         $this->searchRepository = $searchRepository;
@@ -58,16 +58,18 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
 
         if (\is_object($item) && method_exists($item, 'getSelectedData')) {
             $selectedData = $item->getSelectedData();
-            if (isset($selectedData['sku'], $selectedData['name'])) {
+            if (isset($selectedData['sku'], $selectedData['name'], $selectedData['type'])) {
                 $result += [
                     'sku'                => $selectedData['sku'],
-                    'defaultName.string' => $selectedData['name']
+                    'defaultName.string' => $selectedData['name'],
+                    'type'               => $selectedData['type'],
                 ];
             }
         } elseif ($item instanceof Product) {
             $result += [
                 'sku'                => $item->getSku(),
-                'defaultName.string' => (string)$this->localizationHelper->getLocalizedValue($item->getNames())
+                'defaultName.string' => (string)$this->localizationHelper->getLocalizedValue($item->getNames()),
+                'type'               => $item->getType(),
             ];
         } else {
             throw new InvalidArgumentException('Given item could not be converted');

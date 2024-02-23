@@ -5,11 +5,13 @@ namespace Oro\Bundle\SaleBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OrderBy;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 
 /**
  * Quote Product entity.
@@ -32,14 +34,15 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
+class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, ProductKitItemLineItemsAwareInterface
 {
     use ExtendEntityTrait;
 
-    const TYPE_REQUESTED        = 10;
-    const TYPE_OFFER            = 20;
-    const TYPE_NOT_AVAILABLE    = 30;
+    const TYPE_REQUESTED = 10;
+    const TYPE_OFFER = 20;
+    const TYPE_NOT_AVAILABLE = 30;
 
     /**
      * @var int
@@ -138,12 +141,27 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
     protected $quoteProductRequests;
 
     /**
+     * @var Collection<QuoteProductKitItemLineItem>
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="QuoteProductKitItemLineItem",
+     *     mappedBy="quoteProduct",
+     *     cascade={"ALL"},
+     *     orphanRemoval=true,
+     *     indexBy="kitItemId"
+     * )
+     * @OrderBy({"sortOrder"="ASC"})
+     */
+    protected $kitItemLineItems;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
-        $this->quoteProductOffers   = new ArrayCollection();
+        $this->quoteProductOffers = new ArrayCollection();
         $this->quoteProductRequests = new ArrayCollection();
+        $this->kitItemLineItems = new ArrayCollection();
     }
 
     /**
@@ -162,11 +180,11 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
     {
         if ($this->product) {
             $this->productSku = $this->product->getSku();
-            $this->freeFormProduct = (string) $this->product;
+            $this->freeFormProduct = (string)$this->product;
         }
         if ($this->productReplacement) {
             $this->productReplacementSku = $this->productReplacement->getSku();
-            $this->freeFormProductReplacement = (string) $this->productReplacement;
+            $this->freeFormProductReplacement = (string)$this->productReplacement;
         }
     }
 
@@ -184,9 +202,9 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
     public static function getTypes()
     {
         return [
-            self::TYPE_OFFER            => 'offer',
-            self::TYPE_REQUESTED        => 'requested',
-            self::TYPE_NOT_AVAILABLE    => 'not_available',
+            self::TYPE_OFFER => 'offer',
+            self::TYPE_REQUESTED => 'requested',
+            self::TYPE_NOT_AVAILABLE => 'not_available',
         ];
     }
 
@@ -227,7 +245,8 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
      */
     public function isProductFreeForm()
     {
-        return (!$this->product) && ('' !== trim($this->freeFormProduct));
+        return (!$this->product) &&
+            (null !== $this->freeFormProduct && '' !== trim($this->freeFormProduct));
     }
 
     /**
@@ -237,7 +256,8 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
      */
     public function isProductReplacementFreeForm()
     {
-        return (!$this->productReplacement) && ('' !== trim($this->freeFormProductReplacement));
+        return (!$this->productReplacement) &&
+            (null !== $this->freeFormProductReplacement && '' !== trim($this->freeFormProductReplacement));
     }
 
     /**
@@ -249,12 +269,12 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
         if ($this->isTypeNotAvailable()) {
             return $this->isProductReplacementFreeForm()
                 ? $this->freeFormProductReplacement
-                : (string) $this->productReplacement;
+                : (string)$this->productReplacement;
         }
 
         return $this->isProductFreeForm()
             ? $this->freeFormProduct
-            : (string) $this->product;
+            : (string)$this->product;
     }
 
     /**
@@ -632,5 +652,36 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
     {
         // QuoteProduct doesn't support configurable products
         return null;
+    }
+
+    /**
+     * @return Collection<QuoteProductKitItemLineItem>
+     */
+    public function getKitItemLineItems()
+    {
+        return $this->kitItemLineItems;
+    }
+
+    public function addKitItemLineItem(QuoteProductKitItemLineItem $productKitItemLineItem): self
+    {
+        $index = $productKitItemLineItem->getKitItemId();
+
+        if (!$this->kitItemLineItems->containsKey($index)) {
+            $productKitItemLineItem->setQuoteProduct($this);
+            if ($index) {
+                $this->kitItemLineItems->set($index, $productKitItemLineItem);
+            } else {
+                $this->kitItemLineItems->add($productKitItemLineItem);
+            }
+        }
+
+        return $this;
+    }
+
+    public function removeKitItemLineItem(QuoteProductKitItemLineItem $productKitItemLineItem): self
+    {
+        $this->kitItemLineItems->removeElement($productKitItemLineItem);
+
+        return $this;
     }
 }

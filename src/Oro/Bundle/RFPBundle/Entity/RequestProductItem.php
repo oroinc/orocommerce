@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\RFPBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
@@ -29,7 +33,11 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class RequestProductItem implements ProductLineItemInterface, ExtendEntityInterface
+class RequestProductItem implements
+    ProductLineItemInterface,
+    ProductLineItemChecksumAwareInterface,
+    ProductKitItemLineItemsAwareInterface,
+    ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
@@ -92,6 +100,24 @@ class RequestProductItem implements ProductLineItemInterface, ExtendEntityInterf
     protected $price;
 
     /**
+     * @var Collection<RequestProductKitItemLineItem>
+     */
+    protected $kitItemLineItems;
+
+    /**
+     * Differentiates the unique constraint allowing to add the same product with the same unit code multiple times,
+     * moving the logic of distinguishing of such line items out of the entity class.
+     *
+     * @ORM\Column(name="checksum", type="string", length=40, options={"default"=""}, nullable=false)
+     */
+    protected string $checksum = '';
+
+    public function __construct()
+    {
+        $this->kitItemLineItems = new ArrayCollection();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getEntityIdentifier()
@@ -149,6 +175,7 @@ class RequestProductItem implements ProductLineItemInterface, ExtendEntityInterf
     public function setRequestProduct(RequestProduct $requestProduct = null)
     {
         $this->requestProduct = $requestProduct;
+        $this->loadKitItemLineItems();
 
         return $this;
     }
@@ -212,6 +239,32 @@ class RequestProductItem implements ProductLineItemInterface, ExtendEntityInterf
         return $this->productUnitCode;
     }
 
+    public function setValue(?float $value): self
+    {
+        $this->value = $value;
+        $this->loadPrice();
+
+        return $this;
+    }
+
+    public function getValue(): ?float
+    {
+        return $this->value;
+    }
+
+    public function setCurrency(?string $currency): self
+    {
+        $this->currency = $currency;
+        $this->loadPrice();
+
+        return $this;
+    }
+
+    public function getCurrency(): ?string
+    {
+        return $this->currency;
+    }
+
     /**
      * @param Price|null $price
      * @return RequestProductItem
@@ -238,8 +291,8 @@ class RequestProductItem implements ProductLineItemInterface, ExtendEntityInterf
      */
     public function loadPrice()
     {
-        if ($this->value && $this->currency) {
-            $this->setPrice(Price::create($this->value, $this->currency));
+        if ($this->value !== null && $this->currency !== null) {
+            $this->price = Price::create($this->value, $this->currency);
         }
     }
 
@@ -249,17 +302,19 @@ class RequestProductItem implements ProductLineItemInterface, ExtendEntityInterf
      */
     public function updatePrice()
     {
-        $this->value = $this->price?->getValue();
-        $this->currency = $this->price?->getCurrency();
+        if ($this->price !== null) {
+            $this->value = (float)$this->price->getValue();
+            $this->currency = (string)$this->price->getCurrency();
+        } else {
+            $this->value = $this->currency = null;
+        }
     }
 
-    /** {@inheritdoc} */
     public function getProduct()
     {
         return $this->requestProduct?->getProduct();
     }
 
-    /** {@inheritdoc} */
     public function getProductSku()
     {
         return $this->getProduct()?->getSku();
@@ -268,5 +323,43 @@ class RequestProductItem implements ProductLineItemInterface, ExtendEntityInterf
     public function getParentProduct()
     {
         return null;
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function loadKitItemLineItems(): void
+    {
+        if ($this->requestProduct) {
+            $this->kitItemLineItems = $this->requestProduct->getKitItemLineItems()->map(
+                fn (RequestProductKitItemLineItem $item) => (clone $item)->setLineItem($this)
+            );
+        } else {
+            $this->kitItemLineItems = new ArrayCollection();
+        }
+    }
+
+    /**
+     * @return Collection<RequestProductKitItemLineItem>
+     */
+    public function getKitItemLineItems()
+    {
+        if (!$this->kitItemLineItems->count()) {
+            $this->loadKitItemLineItems();
+        }
+
+        return $this->kitItemLineItems;
+    }
+
+    public function setChecksum(string $checksum): self
+    {
+        $this->checksum = $checksum;
+
+        return $this;
+    }
+
+    public function getChecksum(): string
+    {
+        return $this->checksum;
     }
 }

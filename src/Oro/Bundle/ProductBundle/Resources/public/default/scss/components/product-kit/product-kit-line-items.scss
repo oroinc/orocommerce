@@ -5,6 +5,10 @@
     flex-direction: column;
     row-gap: spacing('xs');
 
+    &:empty {
+        display: none;
+    }
+
     &__item-name {
         padding-right: spacing('sm');
     }

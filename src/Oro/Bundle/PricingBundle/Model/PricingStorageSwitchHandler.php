@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -96,8 +95,7 @@ ON
 MIN_SQL;
 
         $stmt = $connection->prepare(sprintf($minIdsQuerySQL, $table, $associationColumn));
-        $stmt->execute();
-        $minIds = $stmt->fetchAll(FetchMode::COLUMN);
+        $minIds = $stmt->executeQuery()->fetchFirstColumn();
 
         if ($minIds) {
             $deleteQb = $connection->createQueryBuilder();

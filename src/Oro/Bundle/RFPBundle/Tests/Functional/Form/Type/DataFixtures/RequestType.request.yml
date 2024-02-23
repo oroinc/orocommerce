@@ -1,0 +1,56 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
+
+Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+    request_product_simple1_item1:
+        quantity: 12.3456
+        productUnit: '@item'
+        value: 234.5678
+        currency: 'USD'
+    request_product_kit1_item1:
+        quantity: 23
+        productUnit: '@each'
+        value: 345.6789
+        currency: 'USD'
+
+Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem:
+    request_product_kit1_item1_line_item:
+        kitItem: '@product_kit1_item1'
+        product: '@product_simple1'
+        quantity: 12.3456
+        productUnit: '@item'
+    request_product_kit1_item2_line_item:
+        kitItem: '@product_kit1_item2'
+        product: '@product_simple3'
+        quantity: 42
+        productUnit: '@each'
+
+Oro\Bundle\RFPBundle\Entity\RequestProduct:
+    request_product_simple1:
+        product: '@product_simple1'
+        __calls:
+            - addRequestProductItem: ['@request_product_simple1_item1']
+    request_product_kit1:
+        product: '@product_kit1'
+        __calls:
+            - addRequestProductItem: ['@request_product_kit1_item1']
+            - addKitItemLineItem: ['@request_product_kit1_item1_line_item']
+            - addKitItemLineItem: ['@request_product_kit1_item2_line_item']
+
+Oro\Bundle\RFPBundle\Entity\Request:
+    request1:
+        email: 'AmandaRCole@example.org'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        company: 'Customer1'
+        owner: '@user'
+        organization: '@organization'
+        customer: '@customer1'
+        __calls:
+            - addRequestProduct: ['@request_product_simple1']
+            - addRequestProduct: ['@request_product_kit1']

@@ -100,6 +100,7 @@ class ProductRepository extends WebsiteSearchRepository
 
         $searchQuery
             ->addSelect('sku')
+            ->addSelect('type')
             ->addSelect('names_LOCALIZATION_ID as name')
             ->addSelect('integer.system_entity_id as product_id')
             ->addWhere(Criteria::expr()->in('sku_uppercase', $upperCaseSkus));
@@ -167,6 +168,7 @@ class ProductRepository extends WebsiteSearchRepository
             ->setFrom('oro_product_WEBSITE_ID')
             ->addSelect('sku')
             ->addSelect('integer.system_entity_id as product_id')
+            ->addSelect('type')
             ->addSelect('names_LOCALIZATION_ID as name')
             ->getCriteria()
             ->andWhere(

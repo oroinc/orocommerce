@@ -20,6 +20,6 @@ class UpdateBrandDescriptionFieldDataQuery extends MigrateLocalizedFallbackValue
 
         $this->logQuery($logger, $sql);
 
-        return array_column($this->connection->fetchAll($sql), 'id');
+        return array_column($this->connection->fetchAllAssociative($sql), 'id');
     }
 }

@@ -39,7 +39,7 @@ trait OrderLineItemTypeTrait
                 }
             );
 
-        $entityStateChecker = $this->createMock(EntityStateChecker::class);
+        $entityStateChecker = $testCase->createMock(EntityStateChecker::class);
         $entityStateChecker
             ->method('getOriginalEntityFieldData')
             ->willReturn(null);

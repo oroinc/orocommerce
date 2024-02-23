@@ -6,6 +6,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\QuickAdd\Normalizer;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -15,9 +16,10 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\QuickAdd\Normalizer\BasicQuickAddCollectionNormalizer;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
+class BasicQuickAddCollectionNormalizerTest extends TestCase
 {
     private BasicQuickAddCollectionNormalizer $normalizer;
 
@@ -143,6 +145,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                             'errors' => [],
                             'additional' => [],
                             'organization' => null,
+                            'type' => Product::TYPE_SIMPLE,
                         ],
                     ],
                 ],
@@ -167,6 +170,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                                 $quickAddField2->getName() => $quickAddField2->getValue(),
                             ],
                             'organization' => null,
+                            'type' => Product::TYPE_SIMPLE,
                         ],
                     ],
                 ],
@@ -193,6 +197,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                             ],
                             'additional' => [],
                             'organization' => null,
+                            'type' => Product::TYPE_SIMPLE,
                         ],
                     ],
                 ],
@@ -214,6 +219,7 @@ class BasicQuickAddCollectionNormalizerTest extends \PHPUnit\Framework\TestCase
                             'errors' => [],
                             'additional' => [],
                             'organization' => null,
+                            'type' => Product::TYPE_SIMPLE,
                         ],
                     ],
                 ],

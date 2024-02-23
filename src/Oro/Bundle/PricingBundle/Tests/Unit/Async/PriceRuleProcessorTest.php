@@ -15,37 +15,42 @@ use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\Provider\DependentPriceListProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
 class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|MockObject */
     private $doctrine;
 
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var LoggerInterface|MockObject */
     private $logger;
 
-    /** @var ProductPriceBuilder|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ProductPriceBuilder|MockObject */
     private $priceBuilder;
 
-    /** @var NotificationAlertManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var NotificationAlertManager|MockObject */
     private $notificationAlertManager;
 
-    /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var PriceListTriggerHandler|MockObject */
     private $triggerHandler;
 
-    /** @var MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var MessageProducerInterface|MockObject */
     private $producer;
 
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var FeatureChecker|MockObject */
     private $featureChecker;
+
+    /** @var DependentPriceListProvider|MockObject */
+    private $dependentPriceListProvider;
 
     /** @var PriceRuleProcessor */
     private $processor;
@@ -59,13 +64,15 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
         $this->triggerHandler = $this->createMock(PriceListTriggerHandler::class);
         $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->dependentPriceListProvider = $this->createMock(DependentPriceListProvider::class);
 
         $this->processor = new PriceRuleProcessor(
             $this->doctrine,
             $this->priceBuilder,
             $this->notificationAlertManager,
             $this->triggerHandler,
-            $this->producer
+            $this->producer,
+            $this->dependentPriceListProvider
         );
         $this->processor->setFeatureChecker($this->featureChecker);
         $this->processor->setLogger($this->logger);
@@ -298,7 +305,7 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
                 [$priceList2, $productIds]
             )
             ->willReturnCallback(
-                static function (PriceList  $priceList, array $productIds) use ($priceListId1, $exception) {
+                static function (PriceList $priceList, array $productIds) use ($priceListId1, $exception) {
                     if ($priceList->getId() === $priceListId1) {
                         throw $exception;
                     }
@@ -435,7 +442,7 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
                 [$priceList2, $productIds]
             )
             ->willReturnCallback(
-                static function (PriceList  $priceList, array $productIds) use ($priceListId1, $exception) {
+                static function (PriceList $priceList, array $productIds) use ($priceListId1, $exception) {
                     if ($priceList->getId() === $priceListId1) {
                         throw $exception;
                     }
@@ -528,11 +535,15 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcessWithFlatPricingEnabled(): void
     {
         $priceListId = 1;
+        $dependentPriceListId = 2;
         $productIds = [2];
         $body = ['product' => [$priceListId => $productIds]];
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => $priceListId, 'updatedAt' => new \DateTime()]);
+        /** @var PriceList $dependentPriceList */
+        $dependentPriceList = $this->getEntity(PriceList::class, ['id' => $dependentPriceListId]);
+        $dependentPriceList->setUpdatedAt(new \DateTime());
 
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::once())
@@ -550,27 +561,53 @@ class PriceRuleProcessorTest extends \PHPUnit\Framework\TestCase
             ->with(PriceList::class, $priceList->getId())
             ->willReturn($priceList);
 
-        $this->notificationAlertManager->expects(self::once())
-            ->method('resolveNotificationAlertByOperationAndItemIdForCurrentUser')
-            ->with(
-                PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
-                $priceListId
+        $this->dependentPriceListProvider->expects(self::exactly(2))
+            ->method('getDirectlyDependentPriceLists')
+            ->withConsecutive(
+                [$priceList],
+                [$dependentPriceList]
+            )
+            ->willReturnOnConsecutiveCalls(
+                [$dependentPriceList],
+                []
             );
-        $this->priceBuilder->expects(self::once())
-            ->method('buildByPriceList')
-            ->with($priceList, $productIds);
 
-        $em->expects(self::once())
+        $this->notificationAlertManager->expects(self::exactly(2))
+            ->method('resolveNotificationAlertByOperationAndItemIdForCurrentUser')
+            ->withConsecutive(
+                [
+                    PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
+                    $priceListId
+                ],
+                [
+                    PriceListCalculationNotificationAlert::OPERATION_PRICE_RULES_BUILD,
+                    $dependentPriceListId
+                ]
+            );
+        $this->priceBuilder->expects(self::exactly(2))
+            ->method('buildByPriceList')
+            ->withConsecutive(
+                [$priceList, $productIds],
+                [$dependentPriceList, $productIds]
+            );
+
+        $em->expects(self::exactly(2))
             ->method('refresh')
-            ->with($priceList);
+            ->withConsecutive(
+                [$priceList],
+                [$dependentPriceList]
+            );
 
         $repository = $this->createMock(PriceListRepository::class);
-        $em->expects(self::once())
+        $em->expects(self::any())
             ->method('getRepository')
             ->willReturn($repository);
-        $repository->expects(self::once())
+        $repository->expects(self::exactly(2))
             ->method('updatePriceListsActuality')
-            ->with([$priceList], true);
+            ->withConsecutive(
+                [[$priceList], true],
+                [[$dependentPriceList], true],
+            );
 
         $this->featureChecker
             ->expects($this->once())

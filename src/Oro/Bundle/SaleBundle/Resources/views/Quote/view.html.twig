@@ -66,6 +66,7 @@
                                 </td>
                                 <td rowspan="{{ numSubItems }}">
                                     {{ quoteProduct.productName }}
+                                    {% include '@OroSale/Quote/kitConfiguration.html.twig' %}
                                 </td>
                             {% endif %}
                             <td class="quote-line_item-quantity quote-line_item-quantity-{% if loop.first %}first{% else %}not_first{% endif %}">

@@ -513,7 +513,6 @@ services:
             - setNotAllowedProductTypes:
                 -
                     - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
-                    - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_visibility_limited }
 
@@ -652,7 +651,6 @@ services:
                 setNotAllowedProductTypes:
                     -
                         - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
-                        - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
 
     oro_product.model.builder.quick_add_row_collection:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
@@ -2281,7 +2279,6 @@ services:
                 setNotAllowedProductTypes:
                     -
                         - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
-                        - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_KIT
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid-frontend, method: onBuildAfter }
 
@@ -2376,6 +2373,7 @@ services:
         arguments:
             - '@oro_product.service.quantity_rounding'
             - '@oro_product.formatter.product_unit_label'
+            - '@property_accessor'
         tags:
             - { name: validator.constraint_validator }
 

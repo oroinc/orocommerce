@@ -26,6 +26,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 
 /**
  * The form type for Quote entity.
@@ -169,6 +171,11 @@ class QuoteType extends AbstractType
             'csrf_token_id' => 'sale_quote',
             'allow_prices_override' => $this->authorizationChecker->isGranted('oro_quote_prices_override'),
             'allow_add_free_form_items' => $this->authorizationChecker->isGranted('oro_quote_add_free_form_items'),
+            'validation_groups' => new GroupSequence([
+                Constraint::DEFAULT_GROUP,
+                'add_kit_item_line_item',
+                'quote_is_valid_for_sending_to_customer'
+            ]),
         ]);
     }
 

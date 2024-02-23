@@ -37,7 +37,7 @@ class UpdateMaterializedPathQuery extends ParametrizedMigrationQuery
     {
         $sql = 'SELECT id, parent_id, materialized_path FROM oro_catalog_category ORDER BY tree_left';
         $this->logQuery($logger, $sql);
-        $categoriesResult = $this->connection->fetchAll($sql);
+        $categoriesResult = $this->connection->fetchAllAssociative($sql);
 
         $this->connection->beginTransaction();
         $categories = [];

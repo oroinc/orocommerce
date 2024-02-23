@@ -4,22 +4,25 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class QuoteProductTest extends \PHPUnit\Framework\TestCase
+class QuoteProductTest extends TestCase
 {
     use EntityTestCaseTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $properties = [
             ['id', 123],
@@ -35,101 +38,122 @@ class QuoteProductTest extends \PHPUnit\Framework\TestCase
             ['commentCustomer', 'Customer notes'],
         ];
 
-        self::assertPropertyAccessors(new QuoteProduct(), $properties);
+        $entity = new QuoteProduct();
+        self::assertPropertyAccessors($entity, $properties);
 
-        self::assertPropertyCollections(new QuoteProduct(), [
+        self::assertPropertyCollections($entity, [
             ['quoteProductOffers', new QuoteProductOffer()],
             ['quoteProductRequests', new QuoteProductRequest()],
         ]);
     }
 
-    public function testGetEntityIdentifier()
+    public function testKitItemLineItems(): void
+    {
+        $entity = new QuoteProduct();
+
+        $productKitItem = new ProductKitItemStub(42);
+        $kitItemLineItem = (new QuoteProductKitItemLineItem())
+            ->setKitItem($productKitItem);
+
+        self::assertSame([], $entity->getKitItemLineItems()->toArray());
+
+        $entity->addKitItemLineItem($kitItemLineItem);
+        self::assertSame(
+            [$productKitItem->getId() => $kitItemLineItem],
+            $entity->getKitItemLineItems()->toArray()
+        );
+
+        $entity->removeKitItemLineItem($kitItemLineItem);
+        self::assertSame([], $entity->getKitItemLineItems()->toArray());
+    }
+
+    public function testGetEntityIdentifier(): void
     {
         $product = new QuoteProduct();
         $value = 321;
         ReflectionUtil::setId($product, $value);
-        $this->assertSame($value, $product->getEntityIdentifier());
+        self::assertSame($value, $product->getEntityIdentifier());
     }
 
-    public function testUpdateProducts()
+    public function testUpdateProducts(): void
     {
         $product = (new ProductStub())->setSku('product-sku');
         $replacement = (new ProductStub())->setSku('replacement-sku');
 
         $quoteProduct = new QuoteProduct();
 
-        $this->assertNull($quoteProduct->getProductSku());
-        $this->assertNull($quoteProduct->getFreeFormProduct());
-        $this->assertNull($quoteProduct->getProductReplacementSku());
-        $this->assertNull($quoteProduct->getFreeFormProductReplacement());
+        self::assertNull($quoteProduct->getProductSku());
+        self::assertNull($quoteProduct->getFreeFormProduct());
+        self::assertNull($quoteProduct->getProductReplacementSku());
+        self::assertNull($quoteProduct->getFreeFormProductReplacement());
 
         ReflectionUtil::setPropertyValue($quoteProduct, 'product', $product);
         ReflectionUtil::setPropertyValue($quoteProduct, 'productReplacement', $replacement);
 
         $quoteProduct->updateProducts();
 
-        $this->assertSame('product-sku', $quoteProduct->getProductSku());
-        $this->assertSame((string)$product, $quoteProduct->getFreeFormProduct());
-        $this->assertSame('replacement-sku', $quoteProduct->getProductReplacementSku());
-        $this->assertSame((string)$replacement, $quoteProduct->getFreeFormProductReplacement());
+        self::assertSame('product-sku', $quoteProduct->getProductSku());
+        self::assertSame((string)$product, $quoteProduct->getFreeFormProduct());
+        self::assertSame('replacement-sku', $quoteProduct->getProductReplacementSku());
+        self::assertSame((string)$replacement, $quoteProduct->getFreeFormProductReplacement());
     }
 
-    public function testSetProduct()
+    public function testSetProduct(): void
     {
         $product = new QuoteProduct();
 
-        $this->assertNull($product->getProductSku());
-        $this->assertNull($product->getFreeFormProduct());
+        self::assertNull($product->getProductSku());
+        self::assertNull($product->getFreeFormProduct());
 
         $product->setProduct((new ProductStub())->setSku('test-sku'));
 
-        $this->assertEquals('test-sku', $product->getProductSku());
-        $this->assertEquals((string)(new ProductStub())->setSku('test-sku'), $product->getFreeFormProduct());
+        self::assertEquals('test-sku', $product->getProductSku());
+        self::assertEquals((string)(new ProductStub())->setSku('test-sku'), $product->getFreeFormProduct());
     }
 
-    public function testSetProductReplacement()
+    public function testSetProductReplacement(): void
     {
         $product = new QuoteProduct();
 
-        $this->assertNull($product->getProductReplacementSku());
-        $this->assertNull($product->getFreeFormProductReplacement());
+        self::assertNull($product->getProductReplacementSku());
+        self::assertNull($product->getFreeFormProductReplacement());
 
         $product->setProductReplacement((new ProductStub())->setSku('test-sku-replacement'));
 
-        $this->assertEquals('test-sku-replacement', $product->getProductReplacementSku());
-        $this->assertEquals(
+        self::assertEquals('test-sku-replacement', $product->getProductReplacementSku());
+        self::assertEquals(
             (string)(new ProductStub())->setSku('test-sku-replacement'),
             $product->getFreeFormProductReplacement()
         );
     }
 
-    public function testAddQuoteProductOffer()
+    public function testAddQuoteProductOffer(): void
     {
         $quoteProduct = new QuoteProduct();
         $quoteProductOffer = new QuoteProductOffer();
 
-        $this->assertNull($quoteProductOffer->getQuoteProduct());
+        self::assertNull($quoteProductOffer->getQuoteProduct());
 
         $quoteProduct->addQuoteProductOffer($quoteProductOffer);
 
-        $this->assertEquals($quoteProduct, $quoteProductOffer->getQuoteProduct());
+        self::assertEquals($quoteProduct, $quoteProductOffer->getQuoteProduct());
     }
 
-    public function testAddQuoteProductRequest()
+    public function testAddQuoteProductRequest(): void
     {
         $quoteProduct = new QuoteProduct();
         $quoteProductRequest = new QuoteProductRequest();
 
-        $this->assertNull($quoteProductRequest->getQuoteProduct());
+        self::assertNull($quoteProductRequest->getQuoteProduct());
 
         $quoteProduct->addQuoteProductRequest($quoteProductRequest);
 
-        $this->assertEquals($quoteProduct, $quoteProductRequest->getQuoteProduct());
+        self::assertEquals($quoteProduct, $quoteProductRequest->getQuoteProduct());
     }
 
-    public function testGetTypeTitles()
+    public function testGetTypeTitles(): void
     {
-        $this->assertEquals(
+        self::assertEquals(
             [
                 QuoteProduct::TYPE_OFFER => 'offer',
                 QuoteProduct::TYPE_REQUESTED => 'requested',
@@ -139,41 +163,41 @@ class QuoteProductTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testIsTypeOffer()
+    public function testIsTypeOffer(): void
     {
         $quoteProduct = new QuoteProduct();
         $quoteProduct->setType(QuoteProduct::TYPE_OFFER);
 
-        $this->assertTrue($quoteProduct->isTypeOffer());
+        self::assertTrue($quoteProduct->isTypeOffer());
     }
 
-    public function testIsTypeRequested()
+    public function testIsTypeRequested(): void
     {
         $quoteProduct = new QuoteProduct();
         $quoteProduct->setType(QuoteProduct::TYPE_REQUESTED);
 
-        $this->assertTrue($quoteProduct->isTypeRequested());
+        self::assertTrue($quoteProduct->isTypeRequested());
     }
 
-    public function testIsTypeNotAvailable()
+    public function testIsTypeNotAvailable(): void
     {
         $quoteProduct = new QuoteProduct();
         $quoteProduct->setType(QuoteProduct::TYPE_NOT_AVAILABLE);
 
-        $this->assertTrue($quoteProduct->isTypeNotAvailable());
+        self::assertTrue($quoteProduct->isTypeNotAvailable());
     }
 
     /**
      * @dataProvider hasQuoteProductOfferByPriceTypeDataProvider
      */
-    public function testHasQuoteProductOfferByPriceType(array $offers, int $type, bool $expected)
+    public function testHasQuoteProductOfferByPriceType(array $offers, int $type, bool $expected): void
     {
         $quoteProduct = new QuoteProduct();
         foreach ($offers as $offer) {
             $quoteProduct->addQuoteProductOffer($offer);
         }
 
-        $this->assertSame($expected, $quoteProduct->hasQuoteProductOfferByPriceType($type));
+        self::assertSame($expected, $quoteProduct->hasQuoteProductOfferByPriceType($type));
     }
 
     public function hasQuoteProductOfferByPriceTypeDataProvider(): array
@@ -204,14 +228,14 @@ class QuoteProductTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider hasIncrementalOffersDataProvider
      */
-    public function testHasIncrementalOffers(array $offers, bool $expected)
+    public function testHasIncrementalOffers(array $offers, bool $expected): void
     {
         $quoteProduct = new QuoteProduct();
         foreach ($offers as $offer) {
             $quoteProduct->addQuoteProductOffer($offer);
         }
 
-        $this->assertSame($expected, $quoteProduct->hasIncrementalOffers());
+        self::assertSame($expected, $quoteProduct->hasIncrementalOffers());
     }
 
     public function hasIncrementalOffersDataProvider(): array
@@ -244,7 +268,7 @@ class QuoteProductTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider freeFormProvider
      */
-    public function testIsProductFreeForm(array $inputData, bool $expectedResult)
+    public function testIsProductFreeForm(array $inputData, bool $expectedResult): void
     {
         $quoteProduct = new QuoteProduct();
 
@@ -252,13 +276,13 @@ class QuoteProductTest extends \PHPUnit\Framework\TestCase
             ->setFreeFormProduct($inputData['title'])
             ->setProduct($inputData['product']);
 
-        $this->assertEquals($expectedResult, $quoteProduct->isProductFreeForm());
+        self::assertEquals($expectedResult, $quoteProduct->isProductFreeForm());
     }
 
     /**
      * @dataProvider freeFormProvider
      */
-    public function testIsProductReplacementFreeForm(array $inputData, bool $expectedResult)
+    public function testIsProductReplacementFreeForm(array $inputData, bool $expectedResult): void
     {
         $quoteProduct = new QuoteProduct();
 
@@ -266,13 +290,13 @@ class QuoteProductTest extends \PHPUnit\Framework\TestCase
             ->setFreeFormProductReplacement($inputData['title'])
             ->setProductReplacement($inputData['product']);
 
-        $this->assertEquals($expectedResult, $quoteProduct->isProductReplacementFreeForm());
+        self::assertEquals($expectedResult, $quoteProduct->isProductReplacementFreeForm());
     }
 
     /**
      * @dataProvider getProductNameProvider
      */
-    public function testGetProductName(array $inputData, string $expectedResult)
+    public function testGetProductName(array $inputData, string $expectedResult): void
     {
         $quoteProduct = new QuoteProduct();
 
@@ -287,7 +311,7 @@ class QuoteProductTest extends \PHPUnit\Framework\TestCase
                 ->setProduct($inputData['product']);
         }
 
-        $this->assertEquals($expectedResult, $quoteProduct->getProductName());
+        self::assertEquals($expectedResult, $quoteProduct->getProductName());
     }
 
     public function freeFormProvider(): array
@@ -341,11 +365,11 @@ class QuoteProductTest extends \PHPUnit\Framework\TestCase
     public function getProductNameProvider(): array
     {
         $product1 = $this->createMock(Product::class);
-        $product1->expects($this->any())
+        $product1->expects(self::any())
             ->method('__toString')
             ->willReturn('Product 1');
         $product2 = $this->createMock(Product::class);
-        $product2->expects($this->any())
+        $product2->expects(self::any())
             ->method('__toString')
             ->willReturn('Product 2');
 

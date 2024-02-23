@@ -61,7 +61,7 @@ Feature: Create RFQ on storefront
       | SKU    | Name     | Inventory Status |
       | SKU123 | product1 | In Stock         |
     And click on SKU123 in grid
-    Then I should see "SKU123 product1" in the "RFQ Products List" element
+    Then I should see "SKU123 - product1" in the "RFQ Products List" element
     When I fill "Frontend Request Form" with:
       | Line Item First Unit | set |
     And I click "Add Another Line"
@@ -69,7 +69,7 @@ Feature: Create RFQ on storefront
       | Line Item First Unit | set |
     When I click "Remove Request Product Edit Line Item"
     When I click "Remove Request Product Edit Line Item"
-    Then I should not see "SKU123 product1" in the "RFQ Products List" element
+    Then I should not see "SKU123 - product1" in the "RFQ Products List" element
 
   Scenario: Create RFQ with hidden product on storefront
     Given I continue as the Buyer
@@ -81,7 +81,7 @@ Feature: Create RFQ on storefront
       | SKU    | Name     | Inventory Status |
       | SKU123 | product1 | In Stock         |
     And click on SKU123 in grid
-    Then I should see "SKU123 product1" in the "RFQ Products List" element
+    Then I should see "SKU123 - product1" in the "RFQ Products List" element
     When I fill "Frontend Request Form" with:
       | Line Item First Unit | set |
     Then "Frontend Request Form" must contains values:
@@ -113,7 +113,7 @@ Feature: Create RFQ on storefront
       | SKU    | Name     | Inventory Status |
       | SKU123 | product1 | In Stock         |
     And click on SKU123 in grid
-    Then I should see "SKU123 product1" in the "RFQ Products List" element
+    Then I should see "SKU123 - product1" in the "RFQ Products List" element
     And I fill "Frontend Request Form" with:
       | Line Item First Unit | set |
       | First Name | First Name    |

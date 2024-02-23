@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     const $ = require('jquery');
-    const ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
+    const QuoteProductsPricesComponent = require('orosale/js/app/components/quote-products-prices-component').default;
     const BaseView = require('oroui/js/app/views/base/view');
 
     /**
@@ -12,18 +12,12 @@ define(function(require) {
      */
     const LineItemsView = BaseView.extend({
         /**
-         * @property {Object}
+         * @inheritDoc
          */
         options: {
-            tierPrices: null,
-            tierPricesRoute: '',
-            currency: null,
-            customer: null
+            tierPrices: null
         },
 
-        /**
-         * @inheritdoc
-         */
         constructor: function LineItemsView(options) {
             LineItemsView.__super__.constructor.call(this, options);
         },
@@ -34,22 +28,11 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            this.subview('productsPricesComponent', new ProductsPricesComponent({
-                tierPrices: this.options.tierPrices,
-                tierPricesRoute: this.options.tierPricesRoute,
-                customer: this.options.customer
+            this.subview('productsPricesComponent', new QuoteProductsPricesComponent({
+                tierPrices: this.options.tierPrices
             }));
 
-            this.initLayout().done(this.handleLayoutInit.bind(this));
-        },
-
-        /**
-         * Doing something after loading child components
-         */
-        handleLayoutInit: function() {
-            this.$el.find('.add-lineitem').mousedown(function() {
-                $(this).click();
-            });
+            this.initLayout();
         }
     });
 

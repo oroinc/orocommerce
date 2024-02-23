@@ -12,6 +12,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for a product unit precision.
+ */
 class ProductUnitPrecisionType extends AbstractType
 {
     const NAME = 'oro_product_unit_precision';

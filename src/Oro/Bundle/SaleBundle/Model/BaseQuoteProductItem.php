@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\SaleBundle\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
@@ -10,8 +12,11 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem;
 
 /**
  * Model contains information about quote product
@@ -25,12 +30,18 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce",
+ *              "category"="quotes"
  *          }
  *      }
  * )
  */
-class BaseQuoteProductItem implements ProductLineItemInterface, PriceAwareInterface, ExtendEntityInterface
+class BaseQuoteProductItem implements
+    ProductLineItemInterface,
+    ProductLineItemChecksumAwareInterface,
+    ProductKitItemLineItemsAwareInterface,
+    PriceAwareInterface,
+    ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
@@ -93,6 +104,24 @@ class BaseQuoteProductItem implements ProductLineItemInterface, PriceAwareInterf
     protected $price;
 
     /**
+     * @var Collection<QuoteProductKitItemLineItem>
+     */
+    protected $kitItemLineItems;
+
+    /**
+     * Differentiates the unique constraint allowing to add the same product with the same unit code multiple times,
+     * moving the logic of distinguishing of such line items out of the entity class.
+     *
+     * @ORM\Column(name="checksum", type="string", length=40, options={"default"=""}, nullable=false)
+     */
+    protected string $checksum = '';
+
+    public function __construct()
+    {
+        $this->kitItemLineItems = new ArrayCollection();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getEntityIdentifier()
@@ -113,7 +142,7 @@ class BaseQuoteProductItem implements ProductLineItemInterface, PriceAwareInterf
      */
     public function postLoad()
     {
-        if (null !== $this->value && null !==  $this->currency) {
+        if (null !== $this->value && null !== $this->currency) {
             $this->setPrice(Price::create($this->value, $this->currency));
         }
     }
@@ -170,6 +199,7 @@ class BaseQuoteProductItem implements ProductLineItemInterface, PriceAwareInterf
     public function setQuoteProduct(QuoteProduct $quoteProduct = null)
     {
         $this->quoteProduct = $quoteProduct;
+        $this->loadKitItemLineItems();
 
         return $this;
     }
@@ -276,5 +306,43 @@ class BaseQuoteProductItem implements ProductLineItemInterface, PriceAwareInterf
     public function getParentProduct()
     {
         return $this->quoteProduct?->getParentProduct();
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function loadKitItemLineItems(): void
+    {
+        if ($this->quoteProduct) {
+            $this->kitItemLineItems = $this->quoteProduct->getKitItemLineItems()->map(
+                fn (QuoteProductKitItemLineItem $item) => (clone $item)->setLineItem($this)
+            );
+        } else {
+            $this->kitItemLineItems = new ArrayCollection();
+        }
+    }
+
+    /**
+     * @return Collection<QuoteProductKitItemLineItem>
+     */
+    public function getKitItemLineItems()
+    {
+        if (!$this->kitItemLineItems->count()) {
+            $this->loadKitItemLineItems();
+        }
+
+        return $this->kitItemLineItems;
+    }
+
+    public function setChecksum(string $checksum): self
+    {
+        $this->checksum = $checksum;
+
+        return $this;
+    }
+
+    public function getChecksum(): string
+    {
+        return $this->checksum;
     }
 }

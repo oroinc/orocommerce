@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity;
 use Oro\Bundle\ProductBundle\Entity\CollectionSortOrder;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Oro\Bundle\SegmentBundle\Entity\SegmentSnapshot;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 /**
@@ -17,11 +16,11 @@ class CollectionSortOrderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
 
-    /** @var Segment */
-    private $segment;
+    private Product $product;
 
-    /** @var SegmentSnapshot */
-    private $entity;
+    private Segment $segment;
+
+    private CollectionSortOrder $entity;
 
     protected function setUp(): void
     {

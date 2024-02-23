@@ -1,0 +1,37 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUser
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quote_product_kit1_item1:
+        quantity: 23
+        productUnit: '@each'
+        value: 345.6789
+        currency: 'USD'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem:
+    quote_product_kit1_item1_line_item:
+        kitItem: '@product_kit1_item1'
+        productId: '@product_simple1->id'
+        productSku: '@product_simple1->sku'
+        productName: '@product_simple1->name'
+        quantity: 12.3456
+        productUnit: '@item'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quote_product_kit1:
+        product: '@product_kit1'
+        __calls:
+            - addQuoteProductOffer: ['@quote_product_kit1_item1']
+            - addKitItemLineItem: ['@quote_product_kit1_item1_line_item']
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        customerUser: '@customer_user'
+        owner: '@user'
+        organization: '@organization'
+        customer: '@customer1'
+        __calls:
+            - addQuoteProduct: ['@quote_product_kit1']

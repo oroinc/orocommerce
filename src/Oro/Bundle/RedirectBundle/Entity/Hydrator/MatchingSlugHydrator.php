@@ -37,7 +37,7 @@ class MatchingSlugHydrator extends AbstractMatchingEntityHydrator
         $hasScopeQuery = 'SELECT 1 FROM oro_slug_scope WHERE slug_id = :id LIMIT 1';
         $hasScopes = $this->_em->getConnection()
             ->executeQuery($hasScopeQuery, ['id' => $slugId], ['id' => \PDO::PARAM_INT])
-            ->fetchColumn();
+            ->fetchOne();
 
         return (bool)$hasScopes;
     }

@@ -68,10 +68,10 @@ class ConvertPaymentTransactionOptionsToSecureArrayQuery extends ParametrizedMig
 
         do {
             $selectStatement->bindValue('offset', $selectParams['offset'], \PDO::PARAM_INT);
-            $selectStatement->execute();
+            $query = $selectStatement->executeQuery();
             $this->logQuery($logger, $selectSql, $selectParams, $selectTypes);
             $rowsCount = 0;
-            while ($row = $selectStatement->fetch()) {
+            while ($row = $query->fetchAssociative()) {
                 $rowsCount++;
 
                 $currentTransactionOptions = $arrayType->convertToPHPValue(
@@ -94,7 +94,7 @@ class ConvertPaymentTransactionOptionsToSecureArrayQuery extends ParametrizedMig
                 if ($dryRun) {
                     $this->logQuery($logger, $updateSql, $updateParams, $updateTypes);
                 } else {
-                    $updateStatement->execute();
+                    $updateStatement->executeQuery();
                 }
             }
 

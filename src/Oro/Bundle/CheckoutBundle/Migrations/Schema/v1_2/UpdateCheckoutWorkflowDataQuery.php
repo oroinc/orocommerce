@@ -76,6 +76,6 @@ class UpdateCheckoutWorkflowDataQuery extends ParametrizedMigrationQuery
 
         $this->logQuery($logger, $sql, $params, $types);
 
-        return $this->connection->fetchAll($sql, $params, $types);
+        return $this->connection->fetchAllAssociative($sql, $params, $types);
     }
 }

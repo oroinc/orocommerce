@@ -12,14 +12,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $translator;
+    protected TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator;
 
-    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
-    protected $session;
+    protected Session|\PHPUnit\Framework\MockObject\MockObject $session;
 
-    /** @var ProductImagesConfigurationListener */
-    protected $listener;
+    protected ProductImagesConfigurationListener $listener;
+
+    protected RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack;
 
     protected function setUp(): void
     {

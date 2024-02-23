@@ -25,6 +25,9 @@ oro_behat_extension:
     ShoppingListButtonGroupMenu:
       selector: '[data-product-dropdown-root] .dropdown-menu.show'
 
+    Shopping List Button Group in Dialog:
+      selector: '[role="dialog"] [data-product-dropdown-root]'
+
     ShoppingListForm:
       selector: '.shopping-lists-popup__item'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -670,6 +673,12 @@ oro_behat_extension:
       selector: '.product-kit-items-table__row-product:nth-child(5)'
     Product Kit Dialog Kit Item 2 Product 2:
       selector: '.product-kit-items-table__row-product:nth-child(6)'
+    Product Kit Dialog Error 1:
+      selector:
+        locator: '//tr[contains(@class, "product-kit-items-table__row-error")][1]'
+        type: xpath
+    Product Kit Dialog okButton:
+      selector: 'div.ui-dialog-buttonpane button[type=submit]'
 
     Product Kit In Shopping List Dialog:
       selector: 'div.product-kit-in-shopping-lists-dialog'

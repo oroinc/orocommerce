@@ -12,6 +12,8 @@ use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
 class FrontendCategorySortOrderDatagridListenerTest extends \PHPUnit\Framework\TestCase
 {
+    private FrontendCategorySortOrderDatagridListener $listener;
+
     protected function setUp(): void
     {
         $this->listener = new FrontendCategorySortOrderDatagridListener();

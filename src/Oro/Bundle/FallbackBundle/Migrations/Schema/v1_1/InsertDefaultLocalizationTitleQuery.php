@@ -4,9 +4,11 @@ namespace Oro\Bundle\FallbackBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
-use Oro\Bundle\SyncBundle\Tests\Unit\Wamp\PDO;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Migration to insert default localization title
+ */
 class InsertDefaultLocalizationTitleQuery extends ParametrizedMigrationQuery
 {
     /**
@@ -30,17 +32,17 @@ class InsertDefaultLocalizationTitleQuery extends ParametrizedMigrationQuery
             ->andWhere($qb->expr()->isNull('localized_value_id'))
             ->orderBy('id')
             ->execute()
-            ->fetchAll(PDO::FETCH_OBJ);
+            ->fetchAllAssociative();
 
         foreach ($localizations as $localization) {
             $sql = sprintf("INSERT INTO oro_fallback_localization_val (string) VALUES ('%s')", $localization->name);
 
-            $this->connection->exec($sql);
+            $this->connection->executeStatement($sql);
             $this->logQuery($logger, $sql);
 
             $fallbackLocalizationValueId = (int)$this->connection
                 ->executeQuery('SELECT MAX(id) FROM oro_fallback_localization_val')
-                ->fetchColumn();
+                ->fetchOne();
 
             $sql = sprintf(
                 'INSERT INTO %s (localization_id, localized_value_id) VALUES (%d, %d)',
@@ -49,7 +51,7 @@ class InsertDefaultLocalizationTitleQuery extends ParametrizedMigrationQuery
                 $fallbackLocalizationValueId
             );
 
-            $this->connection->exec($sql);
+            $this->connection->executeStatement($sql);
             $this->logQuery($logger, $sql);
         }
     }

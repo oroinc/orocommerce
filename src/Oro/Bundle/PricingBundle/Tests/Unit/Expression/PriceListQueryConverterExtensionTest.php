@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Expression;
 
-use Doctrine\DBAL\Query\Expression\ExpressionBuilder;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -120,9 +120,9 @@ class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedAliases, $tableAliasByColumn);
     }
 
-    private function initializeExpressionBuilder(): ExpressionBuilder
+    private function initializeExpressionBuilder(): Expr
     {
-        $expressionBuilder = $this->createMock(ExpressionBuilder::class);
+        $expressionBuilder = $this->createMock(Expr::class);
         $expressionBuilder->expects($this->any())
             ->method('eq')
             ->willReturnCallback(function ($x, $y) {

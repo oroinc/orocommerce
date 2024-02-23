@@ -87,15 +87,14 @@
 
     {% set lineItems %}
         <div class="quote-lineitems"
-            data-page-component-module="oroui/js/app/components/view-component"
-            data-page-component-options="{{ {
-                view: 'orosale/js/app/views/line-items-view',
-                tierPrices: tierPrices|default({}),
-                tierPricesRoute: 'oro_pricing_price_by_customer',
-                customer: entity.customer is null ? null : entity.customer.id,
-                currency: entity.currency
-            }|json_encode }}"
-            data-layout="separate">
+             data-layout="separate"
+                {{ UI.renderPageComponentAttributes({
+                    module: 'oroui/js/app/components/view-component',
+                    options: {
+                        view: 'orosale/js/app/views/line-items-view',
+                        tierPrices: quoteData.tierPrices|default({})
+                    }
+                }) }}>
             {{ form_widget(form.quoteProducts) }}
             {{ form_errors(form.quoteProducts) }}
         </div>
@@ -147,7 +146,7 @@
     ]
     %}
 
-    {% if isShippingAddressGranted %}
+    {% if form.shippingAddress is defined %}
         {% set shippingAddress %}
             <div
                 data-layout="separate"

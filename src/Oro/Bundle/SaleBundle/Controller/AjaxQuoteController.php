@@ -20,6 +20,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 
 /**
  * Provides supportive actions for ajax calls during quote creation and editing.
@@ -51,15 +53,15 @@ class AjaxQuoteController extends AbstractController
 
             if ($customer->getGroup() instanceof CustomerGroup) {
                 $customerGroupPaymentTerm = $this->getPaymentTermProvider()
-                                                 ->getCustomerGroupPaymentTerm($customer->getGroup());
+                    ->getCustomerGroupPaymentTerm($customer->getGroup());
             }
         }
 
         $quoteForm = $this->createForm($this->getQuoteFormTypeName(), $quote);
 
         $responseData = [
-            'customerPaymentTerm' => $customerPaymentTerm ? $customerPaymentTerm->getId() : null,
-            'customerGroupPaymentTerm' => $customerGroupPaymentTerm ? $customerGroupPaymentTerm->getId() : null
+            'customerPaymentTerm' => $customerPaymentTerm?->getId(),
+            'customerGroupPaymentTerm' => $customerGroupPaymentTerm?->getId(),
         ];
         if ($quoteForm->has(AddressType::TYPE_SHIPPING . 'Address')) {
             $responseData['shippingAddress'] = $this->renderFormView(
@@ -86,7 +88,13 @@ class AjaxQuoteController extends AbstractController
             $quote = new Quote();
         }
 
-        $form = $this->createForm($this->getQuoteFormTypeName(), $quote);
+        $form = $this->createForm(
+            $this->getQuoteFormTypeName(),
+            $quote,
+            [
+                'validation_groups' => $this->getValidationGroups($quote),
+            ]
+        );
 
         $submittedData = $request->get($form->getName());
 
@@ -125,8 +133,7 @@ class AjaxQuoteController extends AbstractController
      */
     protected function validateRelation(CustomerUser $customerUser, Customer $customer)
     {
-        if ($customerUser &&
-            $customerUser->getCustomer() &&
+        if ($customerUser->getCustomer() &&
             $customerUser->getCustomer()->getId() !== $customer->getId()
         ) {
             throw new BadRequestHttpException('CustomerUser must belong to Customer');
@@ -152,6 +159,15 @@ class AjaxQuoteController extends AbstractController
     protected function getQuoteRequestHandler(): QuoteRequestHandler
     {
         return $this->container->get(QuoteRequestHandler::class);
+    }
+
+    protected function getValidationGroups(Quote $quote): GroupSequence|array|string
+    {
+        return new GroupSequence([
+            Constraint::DEFAULT_GROUP,
+            'add_kit_item_line_item',
+            'quote_entry_point'
+        ]);
     }
 
     /**

@@ -74,11 +74,13 @@ Feature: Check if the quantity of the product is taken into account when calcula
       | Product  | ORO_PRODUCT |
       | Quantity | 1           |
     And click "Add Offer"
-    When I click on "Calculate Shipping"
+    When click "Shipping Information"
+    And I click on "Calculate Shipping"
     Then I should see "Flat Rate Shipping 1 $10.00"
 
     When I fill "Quote Line Items" with:
       | Quantity | 2 |
+    And click "Shipping Information"
     And click on "Calculate Shipping"
     Then I should see "Flat Rate Shipping 2 $10.00"
 

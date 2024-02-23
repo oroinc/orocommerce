@@ -8,3 +8,7 @@ product-3, 3, liter5
 SKU1,10.0112
 SKU2,asd
 SKU3,
+product-kit-1,
+product-kit-1, 1
+product-kit-1, 2, milliliter
+product-kit-2, 1, milliliter

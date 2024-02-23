@@ -24,6 +24,12 @@ class PriceMatcherTest extends TestCase
 
     private ProductPriceScopeCriteriaFactoryInterface|MockObject $priceScopeCriteriaFactory;
 
+    private Order|MockObject $order;
+
+    private OrderLineItem|MockObject $orderLineItem;
+
+    private ProductPriceCriteria|MockObject $productPriceCriteria;
+
     private PriceMatcher $matcher;
 
     protected function setUp(): void

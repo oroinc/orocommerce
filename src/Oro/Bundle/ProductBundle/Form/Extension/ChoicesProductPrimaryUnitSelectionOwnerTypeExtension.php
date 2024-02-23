@@ -51,6 +51,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
                 sprintf('Unknown %s child in %s', $this->childName, self::EXTENDED_TYPE)
             );
         }
+
         $child = $form->get($this->childName);
         $options = $child->getConfig()->getOptions();
         $product = $this->getProduct($child);

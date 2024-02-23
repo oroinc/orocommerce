@@ -1,0 +1,10 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+              themes: 'layout.html.twig'
+
+        - '@add':
+              id: __configuration
+              parentId: __root
+              prepend: false
+              blockType: block

@@ -177,8 +177,8 @@ Feature: Allowed inventory statuses configuration
     And I fill form with:
       | PO Number | Test RFQ |
     And Request a Quote contains products
-      | Product1 | 5 | item |
-      | Product2 | 5 | item |
+      | SKU1 - Product1 | 5 | item |
+      | SKU2 - Product2 | 5 | item |
     When I click "Submit Request"
     Then I should see "Request has been saved" flash message
     And should see "REQUEST FOR QUOTE #2"

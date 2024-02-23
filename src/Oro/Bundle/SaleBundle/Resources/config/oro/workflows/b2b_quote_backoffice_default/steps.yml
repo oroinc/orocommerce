@@ -8,9 +8,11 @@ workflows:
                     - clone_transition
                     - delete_transition
                     - send_to_customer_transition
+                    - verify_transition
             sent_to_customer:
                 order: 200
                 allowed_transitions:
+                    - __start__
                     - cancel_transition
                     - expire_transition
                     - auto_expire_transition

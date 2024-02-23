@@ -12,9 +12,8 @@ use Oro\Bundle\TaxBundle\Model\Address;
  */
 class AddressModelFactory
 {
-    public function __construct(DoctrineHelper $doctrineHelper)
+    public function __construct(private DoctrineHelper $doctrineHelper)
     {
-        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**

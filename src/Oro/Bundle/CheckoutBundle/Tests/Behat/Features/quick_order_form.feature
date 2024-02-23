@@ -72,9 +72,9 @@ Feature: Quick order form
     And should see that "PO Number" contains "PO Number" placeholder
     And should see that "Assigned To Input Field" contains "Assigned To" placeholder
     And Request a Quote contains products
-      | Product2 | 2 | item |
-      | Product2 | 4 | set  |
-      | Product3 | 2 | item |
+      | PSKU2 - Product2 | 2 | item |
+      | PSKU2 - Product2 | 4 | set  |
+      | PSKU3 - Product3 | 2 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
@@ -133,7 +133,7 @@ Feature: Quick order form
     When I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
-      | Product4 | 1 | item |
+      | PSKUwithlowercase - Product4 | 1 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
@@ -194,8 +194,8 @@ Feature: Quick order form
     And I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
-      | Product1`"'&йёщ®&reg;> | 5 | item |
-      | Product3               | 2 | item |
+      | psku1 - Product1`"'&йёщ®&reg;> | 5 | item |
+      | PSKU3 - Product3               | 2 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
@@ -244,7 +244,7 @@ Feature: Quick order form
     And I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
-      | Product2 | 3 | set |
+      | PSKU2 - Product2 | 3 | set |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
@@ -256,7 +256,7 @@ Feature: Quick order form
     And I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
-      | Product4 | 2 | item |
+      | PSKUwithlowercase - Product4 | 2 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 

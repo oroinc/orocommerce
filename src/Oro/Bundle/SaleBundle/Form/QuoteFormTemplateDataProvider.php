@@ -2,45 +2,28 @@
 
 namespace Oro\Bundle\SaleBundle\Form;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\FormBundle\Provider\FormTemplateDataProviderInterface;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Event\QuoteEvent;
-use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
-use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Provides data for TWIG on a create/update quote page.
+ */
 class QuoteFormTemplateDataProvider implements FormTemplateDataProviderInterface
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
+    private EventDispatcherInterface $eventDispatcher;
 
-    /**
-     * @var QuoteProductPriceProvider
-     */
-    private $quoteProductPriceProvider;
-
-    /**
-     * @var QuoteAddressSecurityProvider
-     */
-    private $quoteAddressSecurityProvider;
-
-    public function __construct(
-        EventDispatcherInterface $eventDispatcher,
-        QuoteProductPriceProvider $quoteProductPriceProvider,
-        QuoteAddressSecurityProvider $quoteAddressSecurityProvider
-    ) {
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
         $this->eventDispatcher = $eventDispatcher;
-        $this->quoteProductPriceProvider = $quoteProductPriceProvider;
-        $this->quoteAddressSecurityProvider = $quoteAddressSecurityProvider;
     }
 
     /**
      * {@inheritdoc}
+     *
      * @throws \InvalidArgumentException
      */
     public function getData($entity, FormInterface $form, Request $request)
@@ -59,11 +42,7 @@ class QuoteFormTemplateDataProvider implements FormTemplateDataProviderInterface
         return [
             'entity' => $entity,
             'form' => $form->createView(),
-            'tierPrices' => $this->quoteProductPriceProvider->getTierPrices($entity),
-            'matchedPrices' => $this->quoteProductPriceProvider->getMatchedPrices($entity),
-            'isShippingAddressGranted' => $this->quoteAddressSecurityProvider
-                ->isAddressGranted($entity, AddressType::TYPE_SHIPPING),
-            'quoteData' => $quoteData
+            'quoteData' => $quoteData,
         ];
     }
 }

@@ -3,24 +3,52 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem;
 use Oro\Bundle\RFPBundle\Twig\RequestProductsExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class RequestProductsExtensionTest extends \PHPUnit\Framework\TestCase
+class RequestProductsExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var RequestProductsExtension */
-    private $extension;
+    private LocalizationHelper|MockObject $localizedHelper;
+
+    private RequestProductsExtension $extension;
 
     protected function setUp(): void
     {
-        $this->extension = new RequestProductsExtension();
+        $this->localizedHelper = $this->createMock(LocalizationHelper::class);
+
+        $entityNameResolver = $this->createMock(EntityNameResolver::class);
+        $entityNameResolver->expects(self::any())
+            ->method('getName')
+            ->willReturnCallback(function (?ProductStub $entity) {
+                if ($entity) {
+                    return $entity->getDefaultName() ?? 'Item Sku';
+                } else {
+                    return 'Item Name';
+                }
+            });
+
+        $container = self::getContainerBuilder()
+            ->add(LocalizationHelper::class, $this->localizedHelper)
+            ->add(EntityNameResolver::class, $entityNameResolver)
+            ->getContainer($this);
+
+        $this->extension = new RequestProductsExtension($container);
     }
 
     /**
@@ -28,7 +56,11 @@ class RequestProductsExtensionTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetRequestProducts(Request $request, array $expectedResult): void
     {
-        $this->assertEquals(
+        $this->localizedHelper->expects(self::any())
+            ->method('getLocalizedValue')
+            ->willReturnCallback(static fn (iterable $values) => $values[0]->getString());
+
+        self::assertEquals(
             $expectedResult,
             self::callTwigFunction($this->extension, 'rfp_products', [$request])
         );
@@ -62,9 +94,18 @@ class RequestProductsExtensionTest extends \PHPUnit\Framework\TestCase
         $sample3Price1 = Price::create(15, $sampleCurrency);
         $sample3Unit1 = 'sample3Unit1';
 
+        $productKit1Name = 'Product Kit 1 Name';
+        $productKit1Sku = 'productKit1Sku';
+        $productKit1Comment1 = 'Product Kit 1 comment 1';
+        $productKit1Unit = (new ProductUnit())->setCode('item');
+
         $sample1Product = (new ProductStub())
             ->setNames([(new ProductName())->setString($sample1Name)])
             ->setSku($sample1Sku);
+
+        $productKit1Product = (new ProductStub())
+            ->setNames([(new ProductName())->setString($productKit1Name)])
+            ->setSku($productKit1Sku);
 
         $sample1RequestProductItem1 = (new RequestProductItem())
             ->setQuantity($sample1Quantity1)
@@ -81,6 +122,24 @@ class RequestProductsExtensionTest extends \PHPUnit\Framework\TestCase
             ->setComment($sample1Comment1)
             ->addRequestProductItem($sample1RequestProductItem1)
             ->addRequestProductItem($sample1RequestProductItem2);
+
+        $kitItemLabel = 'Kit Item Label';
+        $kitItemLabels = [(new ProductKitItemLabel())->setString($kitItemLabel)];
+        $kitItem = (new ProductKitItemStub(1))->setLabels($kitItemLabels);
+
+        $kitItemLineItem = $this->createKitItemLineItem(
+            1,
+            $productKit1Unit,
+            $sample1Product,
+            $kitItem
+        );
+
+        $productKit1RequestProduct = (new RequestProduct())
+            ->setProduct($productKit1Product)
+            ->setComment($productKit1Comment1)
+            ->addRequestProductItem($sample1RequestProductItem1)
+            ->addRequestProductItem($sample1RequestProductItem2)
+            ->addKitItemLineItem($kitItemLineItem);
 
         $sample2Product = clone $sample1Product;
 
@@ -122,6 +181,10 @@ class RequestProductsExtensionTest extends \PHPUnit\Framework\TestCase
 
         $request3 = new Request();
 
+        $requestWithProductKit = (new Request())
+            ->addRequestProduct($sample1RequestProduct)
+            ->addRequestProduct($productKit1RequestProduct);
+
         return [
             'when no request products' => [
                 'request' => $request3,
@@ -135,6 +198,7 @@ class RequestProductsExtensionTest extends \PHPUnit\Framework\TestCase
                         'sku' => $sample3Sku,
                         'comment' => $sample3Comment1,
                         'items' => [],
+                        'kitItemLineItems' => [],
                     ],
                 ],
             ],
@@ -157,6 +221,7 @@ class RequestProductsExtensionTest extends \PHPUnit\Framework\TestCase
                                 'unit' => $sample1Unit2,
                             ],
                         ],
+                        'kitItemLineItems' => [],
                     ],
                     [
                         'name' => $sample1Name,
@@ -169,6 +234,7 @@ class RequestProductsExtensionTest extends \PHPUnit\Framework\TestCase
                                 'unit' => $sample2Unit1,
                             ],
                         ],
+                        'kitItemLineItems' => [],
                     ],
                     [
                         'name' => $sample3Name,
@@ -181,9 +247,72 @@ class RequestProductsExtensionTest extends \PHPUnit\Framework\TestCase
                                 'unit' => $sample3Unit1,
                             ],
                         ],
+                        'kitItemLineItems' => [],
+                    ],
+                ],
+            ],
+            'request with product kit' => [
+                'request' => $requestWithProductKit,
+                'expectedResult' => [
+                    [
+                        'name' => $sample1Name,
+                        'sku' => $sample1Sku,
+                        'comment' => $sample1Comment1,
+                        'items' => [
+                            [
+                                'quantity' => $sample1Quantity1,
+                                'price' => $sample1Price1,
+                                'unit' => $sample1Unit1,
+                            ],
+                            [
+                                'quantity' => $sample1Quantity2,
+                                'price' => $sample1Price2,
+                                'unit' => $sample1Unit2,
+                            ],
+                        ],
+                        'kitItemLineItems' => [],
+                    ],
+                    [
+                        'name' => $productKit1Name,
+                        'sku' => $productKit1Sku,
+                        'comment' => $productKit1Comment1,
+                        'items' => [
+                            [
+                                'quantity' => $sample1Quantity1,
+                                'price' => $sample1Price1,
+                                'unit' => $sample1Unit1,
+                            ],
+                            [
+                                'quantity' => $sample1Quantity2,
+                                'price' => $sample1Price2,
+                                'unit' => $sample1Unit2,
+                            ],
+                        ],
+                        'kitItemLineItems' => [
+                            [
+                                'kitItemLabel' => $kitItemLabel,
+                                'unit' => $productKit1Unit,
+                                'quantity' => 1.0,
+                                'productName' => $sample1Name,
+                            ],
+                        ],
                     ],
                 ],
             ],
         ];
+    }
+
+    private function createKitItemLineItem(
+        float $quantity,
+        ?ProductUnit $productUnit,
+        ?ProductStub $product,
+        ?ProductKitItem $kitItem
+    ): RequestProductKitItemLineItem {
+        return (new RequestProductKitItemLineItem())
+            ->setProduct($product)
+            ->setKitItem($kitItem)
+            ->setProductUnit($productUnit)
+            ->setQuantity($quantity)
+            ->setSortOrder(1);
     }
 }

@@ -6,6 +6,9 @@ layout:
             id: oro_customer_toolbar_actions
             root: rfp_request_view_page
             namespace: rfp_request_view_toolbar
+        -
+            id: oro_rfp_frontend_request_view_product_kit_configuration
+            root: rfp_request_view_line_item_product_item_attributes
 
     actions:
         - '@setBlockTheme':

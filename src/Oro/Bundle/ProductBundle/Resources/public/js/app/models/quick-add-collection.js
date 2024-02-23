@@ -129,6 +129,7 @@ const QuickAddCollection = BaseCollection.extend({
             } = attrs;
             const unitsLoaded = attrs.units !== undefined;
             const sku = attrs.sku.toUpperCase();
+            const type = attrs.type;
             const organization = attrs.organization || '';
             let model;
 
@@ -151,7 +152,8 @@ const QuickAddCollection = BaseCollection.extend({
                     organization: organization,
                     product_units: units,
                     units_loaded: unitsLoaded,
-                    quantity
+                    quantity,
+                    type
                 });
             } else {
                 model = this.getEmptyModel();
@@ -162,7 +164,8 @@ const QuickAddCollection = BaseCollection.extend({
                     product_units: units,
                     units_loaded: unitsLoaded,
                     unit_label: unitLabel,
-                    quantity
+                    quantity,
+                    type
                 });
             }
 

@@ -94,8 +94,6 @@ const KitItemLineItemView = LineItemProductView.extend({
         for (const $field of $fields) {
             $field.attr('data-entry-point-trigger', true);
         }
-
-        mediator.trigger('entry-point:order:init');
     },
 
     onProductChange() {

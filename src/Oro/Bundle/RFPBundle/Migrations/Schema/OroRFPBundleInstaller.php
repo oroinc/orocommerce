@@ -37,7 +37,7 @@ class OroRFPBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_13';
+        return 'v1_14';
     }
 
     /**
@@ -51,6 +51,7 @@ class OroRFPBundleInstaller implements
         $this->createOroRfpRequestTable($schema, $queries);
         $this->createOroRfpRequestProductTable($schema);
         $this->createOroRfpRequestProductItemTable($schema);
+        $this->createOroRfpRequestProductKitItemLineItemTable($schema);
         $this->createOroRfpRequestAddNoteTable($schema);
 
         /** Foreign keys generation **/
@@ -59,6 +60,7 @@ class OroRFPBundleInstaller implements
         $this->addOroRfpRequestForeignKeys($schema);
         $this->addOroRfpRequestProductForeignKeys($schema);
         $this->addOroRfpRequestProductItemForeignKeys($schema);
+        $this->addOroRfpRequestProductKitItemLineItemForeignKeys($schema);
         $this->addOroRfpRequestAddNoteForeignKeys($schema);
 
         $this->addActivityAssociations($schema);
@@ -201,6 +203,7 @@ class OroRFPBundleInstaller implements
             ]
         );
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
         $table->setPrimaryKey(['id']);
     }
 
@@ -370,6 +373,58 @@ class OroRFPBundleInstaller implements
             ['owner_request_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
+        );
+    }
+
+    private function createOroRfpRequestProductKitItemLineItemTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_rfp_request_prod_kit_item_line_item');
+        $table->addColumn('id', 'integer', ['notnull' => true, 'autoincrement' => true]);
+        $table->addColumn('request_product_id', 'integer', ['notnull' => true]);
+        $table->addColumn('product_kit_item_id', 'integer', ['notnull' => false]);
+        $table->addColumn('product_kit_item_id_fallback', 'integer', ['notnull' => true]);
+        $table->addColumn('product_kit_item_label', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('optional', 'boolean', ['notnull' => true, 'default' => false]);
+        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('product_id_fallback', 'integer', ['notnull' => true]);
+        $table->addColumn('product_sku', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('product_name', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('product_unit_code', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('product_unit_precision', 'integer', ['notnull' => true]);
+        $table->addColumn('quantity', 'float', ['notnull' => true]);
+        $table->addColumn('minimum_quantity', 'float', ['notnull' => false]);
+        $table->addColumn('maximum_quantity', 'float', ['notnull' => false]);
+        $table->addColumn('sort_order', 'integer', ['notnull' => true, 'default' => 0]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    private function addOroRfpRequestProductKitItemLineItemForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_rfp_request_prod_kit_item_line_item');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_rfp_request_product'),
+            ['request_product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_kit_item'),
+            ['product_kit_item_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_unit'),
+            ['product_unit_id'],
+            ['code'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 }

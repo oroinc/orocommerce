@@ -1,0 +1,41 @@
+/* @theme: admin.oro; */
+
+.rfp-request-product-kit-item-line-item-collection {
+    tbody {
+        td {
+            &:first-child {
+                padding-left: 0;
+            }
+
+            &:last-child {
+                padding-right: 0;
+            }
+
+            label {
+                padding-top: $form-horizontal-control-label-offset;
+                padding-right: $content-padding-small;
+                line-height: $form-horizontal-control-label-line-height;
+            }
+
+            &.line-item-quantity-label {
+                white-space: nowrap;
+            }
+
+            .tooltip-icon {
+                margin-right: $content-padding-small;
+            }
+
+            &.line-item-label {
+                min-width: 150px;
+            }
+        }
+    }
+
+    input[type='text'] {
+        &.line-item-quantity-field {
+            // Rewrites high order selector with `width: 294px !important;`
+            // stylelint-disable-next-line declaration-no-important
+            width: 124px !important;
+        }
+    }
+}

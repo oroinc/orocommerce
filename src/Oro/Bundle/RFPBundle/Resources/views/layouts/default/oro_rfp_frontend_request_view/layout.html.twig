@@ -205,7 +205,7 @@
                 class: 'no-decoration'
             }) }}
         {% else %}
-            {{ requestProduct.product }}
+            {{ requestProduct.product ?? requestProduct.productSku }}
         {% endif %}
     </h3>
 {% endblock %}

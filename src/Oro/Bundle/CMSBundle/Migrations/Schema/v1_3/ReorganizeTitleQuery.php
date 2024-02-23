@@ -55,7 +55,7 @@ FROM oro_cms_page p;';
 
         $this->logQuery($logger, $query);
 
-        $rows  = $this->connection->fetchAll($query);
+        $rows  = $this->connection->fetchAllAssociative($query);
         foreach ($rows as $row) {
             $this->relations[$row['id']] = $row['title'];
         }

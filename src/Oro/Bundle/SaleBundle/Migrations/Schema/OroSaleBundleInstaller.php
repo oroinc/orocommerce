@@ -40,7 +40,7 @@ class OroSaleBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_19_1';
+        return 'v1_20';
     }
 
     /**
@@ -55,6 +55,7 @@ class OroSaleBundleInstaller implements
         $this->createOroQuoteAddressTable($schema);
         $this->createOroSaleQuoteProductTable($schema);
         $this->createOroSaleQuoteProdOfferTable($schema);
+        $this->createOroSaleQuoteProductKitItemLineItemTable($schema);
         $this->createOroSaleQuoteProdRequestTable($schema);
         $this->createOroSaleQuoteDemandTable($schema);
         $this->createOroSaleQuoteProductDemandTable($schema);
@@ -65,6 +66,7 @@ class OroSaleBundleInstaller implements
         $this->addOroSaleQuoteForeignKeys($schema);
         $this->addOroSaleQuoteProductForeignKeys($schema);
         $this->addOroSaleQuoteProdOfferForeignKeys($schema);
+        $this->addOroSaleQuoteProductKitItemLineItemForeignKeys($schema);
         $this->addOroSaleQuoteProdRequestForeignKeys($schema);
         $this->addOroQuoteAddressForeignKeys($schema);
         $this->addOroSaleQuoteProductDemandForeignKeys($schema);
@@ -205,6 +207,7 @@ class OroSaleBundleInstaller implements
             'comment' => '(DC2Type:money)'
         ]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
         $table->addColumn('price_type', 'smallint');
         $table->addColumn('allow_increments', 'boolean');
         $table->setPrimaryKey(['id']);
@@ -229,6 +232,7 @@ class OroSaleBundleInstaller implements
             'comment' => '(DC2Type:money)'
         ]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
         $table->setPrimaryKey(['id']);
     }
 
@@ -577,6 +581,7 @@ class OroSaleBundleInstaller implements
         $table->addColumn('quote_demand_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_product_offer_id', 'integer', ['notnull' => false]);
         $table->addColumn('quantity', 'float');
+        $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
         $table->setPrimaryKey(['id']);
     }
 
@@ -628,6 +633,64 @@ class OroSaleBundleInstaller implements
             $schema->getTable('oro_customer_visitor'),
             ['visitor_id'],
             ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    private function createOroSaleQuoteProductKitItemLineItemTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_sale_quote_product_kit_item_line_item');
+        $table->addColumn('id', 'integer', ['notnull' => true, 'autoincrement' => true]);
+        $table->addColumn('quote_product_id', 'integer', ['notnull' => true]);
+        $table->addColumn('product_kit_item_id', 'integer', ['notnull' => false]);
+        $table->addColumn('product_kit_item_id_fallback', 'integer', ['notnull' => true]);
+        $table->addColumn('product_kit_item_label', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('optional', 'boolean', ['notnull' => true, 'default' => false]);
+        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('product_id_fallback', 'integer', ['notnull' => true]);
+        $table->addColumn('product_sku', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('product_name', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('product_unit_code', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('product_unit_precision', 'integer', ['notnull' => true]);
+        $table->addColumn('quantity', 'float', ['notnull' => true]);
+        $table->addColumn('minimum_quantity', 'float', ['notnull' => false]);
+        $table->addColumn('maximum_quantity', 'float', ['notnull' => false]);
+        $table->addColumn('sort_order', 'integer', ['notnull' => true, 'default' => 0]);
+        $table->addColumn(
+            'value',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    private function addOroSaleQuoteProductKitItemLineItemForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_sale_quote_product_kit_item_line_item');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_sale_quote_product'),
+            ['quote_product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_kit_item'),
+            ['product_kit_item_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_unit'),
+            ['product_unit_id'],
+            ['code'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }

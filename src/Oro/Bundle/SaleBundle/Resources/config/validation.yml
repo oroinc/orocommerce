@@ -1,111 +1,342 @@
 Oro\Bundle\SaleBundle\Entity\Quote:
     properties:
         owner:
-            - NotBlank: ~
+            -   NotBlank: ~
         qid:
-            - NotBlank:
-                groups: [ Import ]
+            -   NotBlank:
+                    groups: [ Import ]
         organization:
-            - NotBlank:
-                groups: [ Import ]
+            -   NotBlank:
+                    groups: [ Import ]
         validUntil:
-            - NotBlank:
-                groups: [ Import ]
+            -   NotBlank:
+                    groups: [ Import ]
         poNumber:
-            - Length:
-                max: 255
+            -   Length:
+                    max: 255
         shipUntil:
-            - Type:
-                type: DateTimeInterface
-                message: oro.sale.quote.ship_until.type.message
-                payload:
-                    jsValidation:
-                        type: Date
+            -   Type:
+                    type: DateTimeInterface
+                    message: oro.sale.quote.ship_until.type.message
+                    payload:
+                        jsValidation:
+                            type: Date
         quoteProducts:
-            - Valid: ~
+            -   Valid: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
     constraints:
-        - Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProduct: ~
+        -   Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProduct: ~
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitLineItemContainsRequiredKitItems:
+                groups:
+                    # Used in \Oro\Bundle\SaleBundle\QuoteController::create
+                    - quote_create
+                    # Used in \Oro\Bundle\SaleBundle\QuoteController::update
+                    - quote_update
+                    # Used in \Oro\Bundle\SaleBundle\Form\Type\QuoteType
+                    # Used in \Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+                    # Used in \Oro\Bundle\SaleBundle\WorkflowState\Transition\VerifyQuoteTemplateDataProcessor
+                    - quote_is_valid_for_sending_to_customer
+                    # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
+                    - quote_entry_point
     properties:
         quote:
-            - NotBlank: ~
-        productSku:
-            - NotBlank:
-                groups: [ Import ]
+            -   NotBlank: ~
         type:
-            - NotBlank: ~
+            -   NotBlank: ~
         quoteProductRequests:
-            - Valid: ~
+            -   Valid: ~
         quoteProductOffers:
-            - Count:
-                min: 1
-                minMessage: 'oro.sale.quoteproduct.quote_product_items.blank'
-            - Valid: ~
+            -   Count:
+                    min: 1
+                    minMessage: 'oro.sale.quoteproduct.quote_product_items.blank'
+            -   Valid: ~
+        kitItemLineItems:
+            -   Valid:
+                    groups:
+                        - Default
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::create
+                        - quote_create
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::update
+                        - quote_update
+                        # Used in \Oro\Bundle\SaleBundle\Form\Type\QuoteType
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Transition\VerifyQuoteTemplateDataProcessor
+                        - quote_is_valid_for_sending_to_customer
+                        # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
+                        - quote_entry_point
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::create
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::update
+                        # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
+                        # Used in \Oro\Bundle\SaleBundle\Form\Type\QuoteType
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Transition\VerifyQuoteTemplateDataProcessor
+                        - add_kit_item_line_item
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem:
+    properties:
+        kitItem:
+            -   Expression:
+                    expression: 'value || this.getKitItemId()'
+                    message: 'oro.sale.quoteproductkititemlineitem.kit_item.blank.message'
+                    groups:
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::create
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::update
+                        # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
+                        # Used in \Oro\Bundle\SaleBundle\Form\Type\QuoteType
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Transition\VerifyQuoteTemplateDataProcessor
+                        - add_kit_item_line_item
+            -   Expression:
+                    expression: 'value || !this.getKitItemId()'
+                    message: 'oro.sale.quoteproductkititemlineitem.kit_item.required.message'
+                    groups:
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::create
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::update
+                        # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
+                        # Used in \Oro\Bundle\SaleBundle\Form\Type\QuoteType
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Transition\VerifyQuoteTemplateDataProcessor
+                        - add_kit_item_line_item
+        kitItemId:
+            -   NotNull:
+                    message: 'oro.sale.quoteproductkititemlineitem.kit_item.blank.message'
+        kitItemLabel:
+            -   NotNull:
+                    message: 'oro.sale.quoteproductkititemlineitem.kit_item.blank.message'
+        product:
+            -   Expression:
+                    expression: 'value || this.getProductId()'
+                    message: 'oro.sale.quoteproductkititemlineitem.product.blank.message'
+                    groups:
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::create
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::update
+                        # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
+                        # Used in \Oro\Bundle\SaleBundle\Form\Type\QuoteType
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Transition\VerifyQuoteTemplateDataProcessor
+                        - add_kit_item_line_item
+            -   Expression:
+                    expression: 'value || !this.getProductId()'
+                    message: 'oro.sale.quoteproductkititemlineitem.product.required.message'
+                    groups:
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::create
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::update
+                        # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
+                        # Used in \Oro\Bundle\SaleBundle\Form\Type\QuoteType
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Transition\VerifyQuoteTemplateDataProcessor
+                        - add_kit_item_line_item
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductAvailable:
+                    availabilityValidationGroups: [ product_kit_item_product_is_available_for_quote ]
+                    groups:
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::create
+                        - quote_create
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::update
+                        - quote_update
+                        # Used in \Oro\Bundle\SaleBundle\Form\Type\QuoteType
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Transition\VerifyQuoteTemplateDataProcessor
+                        - quote_is_valid_for_sending_to_customer
+                        # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
+                        - quote_entry_point
+        productId:
+            -   NotNull:
+                    message: 'oro.sale.quoteproductkititemlineitem.product.blank.message'
+        productSku:
+            -   NotNull:
+                    message: 'oro.sale.quoteproductkititemlineitem.product.blank.message'
+        productName:
+            -   NotNull:
+                    message: 'oro.sale.quoteproductkititemlineitem.product.blank.message'
+        productUnit:
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductUnitAvailable:
+                    groups:
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::create
+                        - quote_create
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::update
+                        - quote_update
+                        # Used in \Oro\Bundle\SaleBundle\Form\Type\QuoteType
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Transition\VerifyQuoteTemplateDataProcessor
+                        - quote_is_valid_for_sending_to_customer
+                        # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
+                        - quote_entry_point
+            -   NotNull:
+                    message: 'oro.sale.quoteproductkititemlineitem.product_unit.blank.message'
+                    groups:
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::create
+                        - quote_create
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::update
+                        - quote_update
+                        # Used in \Oro\Bundle\SaleBundle\Form\Type\QuoteType
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Transition\VerifyQuoteTemplateDataProcessor
+                        - quote_is_valid_for_sending_to_customer
+                        # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
+                        - quote_entry_point
+        productUnitCode:
+            -   NotNull:
+                    message: 'oro.sale.quoteproductkititemlineitem.product_unit.blank.message'
+        quoteProduct:
+            -   NotNull:
+                    message: 'oro.sale.quoteproductkititemlineitem.quote_product.blank.message'
+        quantity:
+            -   NotNull:
+                    message: 'oro.sale.quoteproductkititemlineitem.quantity.greater_than_zero.message'
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+                    message: 'oro.sale.quoteproductkititemlineitem.quantity.decimal.message'
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                    message: 'oro.sale.quoteproductkititemlineitem.quantity.greater_than_zero.message'
+                    groups:
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::create
+                        - quote_create
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::update
+                        - quote_update
+                        # Used in \Oro\Bundle\SaleBundle\Form\Type\QuoteType
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Transition\VerifyQuoteTemplateDataProcessor
+                        - quote_is_valid_for_sending_to_customer
+                        # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
+                        - quote_entry_point
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision:
+                    groups:
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::create
+                        - quote_create
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::update
+                        - quote_update
+                        # Used in \Oro\Bundle\SaleBundle\Form\Type\QuoteType
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Transition\VerifyQuoteTemplateDataProcessor
+                        - quote_is_valid_for_sending_to_customer
+                        # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
+                        - quote_entry_point
+            -   Range:
+                    minPropertyPath: 'kitItem.minimumQuantity'
+                    maxPropertyPath: 'kitItem.maximumQuantity'
+                    minMessage: 'oro.sale.quoteproductkititemlineitem.quantity.range.min_message'
+                    maxMessage: 'oro.sale.quoteproductkititemlineitem.quantity.range.max_message'
+                    notInRangeMessage: 'oro.sale.quoteproductkititemlineitem.quantity.range.not_in_range_message'
+                    groups:
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::create
+                        - quote_create
+                        # Used in \Oro\Bundle\SaleBundle\QuoteController::update
+                        - quote_update
+                        # Used in \Oro\Bundle\SaleBundle\Form\Type\QuoteType
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+                        # Used in \Oro\Bundle\SaleBundle\WorkflowState\Transition\VerifyQuoteTemplateDataProcessor
+                        - quote_is_valid_for_sending_to_customer
+                        # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
+                        - quote_entry_point
+        sortOrder:
+            -   NotNull:
+                    message: 'oro.sale.quoteproductkititemlineitem.sort_order.blank.message'
+            -   Type:
+                    type: integer
+                    message: 'oro.sale.quoteproductkititemlineitem.sort_order.type.message'
+            -   Range:
+                    # Minimum of 4-byte integer value.
+                    min: -2147483648
+                    # Maximum of 4-byte integer value.
+                    max: 2147483647
+                    minMessage: 'oro.sale.quoteproductkititemlineitem.sort_order.range.min_message'
+                    maxMessage: 'oro.sale.quoteproductkititemlineitem.sort_order.range.max_message'
+                    notInRangeMessage: 'oro.sale.quoteproductkititemlineitem.sort_order.range.not_in_range_message'
+        price:
+            -   Valid: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
     constraints:
-        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
-            path: quantity
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+                path: quantity
     properties:
         quoteProduct:
-            - NotBlank: ~
+            -   NotBlank: ~
         quantity:
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
-            - NotBlank:
-                message: 'oro.product.productunit.invalid'
+            -   NotBlank:
+                    message: 'oro.product.productunit.unit.blank'
         productUnitCode:
-            - NotBlank:
-                groups: [ Import ]
+            -   NotBlank:
+                    message: 'oro.product.productunit.unit.blank'
         price:
-            - Valid: ~
+            -   Valid: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
     constraints:
-        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
-            path: quantity
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+                path: quantity
     properties:
         quoteProduct:
-            - NotBlank: ~
+            -   NotBlank: ~
         quantity:
-            - NotBlank: ~
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            -   NotBlank: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         priceType:
-            - NotBlank: ~
+            -   NotBlank: ~
         productUnit:
-            - NotBlank:
-                message: 'oro.product.productunit.invalid'
+            -   NotBlank:
+                    message: 'oro.product.productunit.unit.blank'
         productUnitCode:
-            - NotBlank:
-                groups: [ Import ]
+            -   NotBlank:
+                    message: 'oro.product.productunit.unit.blank'
         price:
-            - Valid: ~
+            -   Valid: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteAddress:
     properties:
         phone:
-            - Length:
-                max: 255
+            -   Length:
+                    max: 255
         country:
-            - NotBlank: ~
+            -   NotBlank: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteDemand:
     properties:
         demandProducts:
-            - Symfony\Component\Validator\Constraints\Valid: ~
+            -   Symfony\Component\Validator\Constraints\Valid: ~
 
 Oro\Bundle\SaleBundle\Entity\QuoteProductDemand:
     constraints:
-        - Oro\Bundle\SaleBundle\Validator\Constraints\AllowedQuoteDemandQuantity: ~
-        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
-              path: quantity
+        -   Oro\Bundle\SaleBundle\Validator\Constraints\AllowedQuoteDemandQuantity: ~
+        -   Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+                path: quantity
     properties:
         quantity:
-            - NotBlank: ~
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            -   NotBlank: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         quoteProductOffer:
-            - NotBlank: ~
+            -   NotBlank: ~
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    constraints:
+        -   Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPrice:
+                groups:
+                    # Used by oro_sale.product_kit.checker.product_kit_item_product_availability_checker
+                    - product_kit_item_product_is_available_for_quote
+    properties:
+        product:
+            -   Valid:
+                    groups:
+                        # Used by oro_sale.product_kit.checker.product_kit_item_product_availability_checker
+                        - product_kit_item_product_is_available_for_quote
+
+Oro\Bundle\ProductBundle\Entity\Product:
+      properties:
+          type:
+              -   EqualTo:
+                      value: simple
+                      groups:
+                          # Used by oro_sale.product_kit.checker.product_kit_item_product_availability_checker
+                          - product_kit_item_product_is_available_for_quote
+          status:
+              -   EqualTo:
+                      value: enabled
+                      message: 'oro.sale.quoteproductkititemlineitem.product.not_enabled.message'
+                      groups:
+                          # Used by oro_sale.product_kit.checker.product_kit_item_product_availability_checker
+                          - product_kit_item_product_is_available_for_quote

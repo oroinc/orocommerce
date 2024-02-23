@@ -13,11 +13,11 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class TotalProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $processorProvider;
+    private TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject $processorProvider;
 
-    /** @var TotalProvider */
-    private $provider;
+    private TotalProvider $provider;
+
+    private RateConverterInterface $rateConverter;
 
     protected function setUp(): void
     {

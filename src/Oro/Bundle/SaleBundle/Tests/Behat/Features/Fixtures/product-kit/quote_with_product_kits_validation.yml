@@ -1,0 +1,148 @@
+include:
+    - '@OroCustomerBundle:CustomerAndCustomerUserWithAddressFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product_kit1:
+        sku: 'product-kit-01'
+        type: 'kit'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            - setDefaultName: ['Product Kit 01']
+            - addKitItem: ['@product_kit1_item1']
+            - addKitItem: ['@product_kit1_item2']
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+        inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@product_kit1_precision1'
+        unitPrecisions: ['@product_kit1_precision1']
+    simple_product{1..3}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'simple-product-<sprintf("%02d", $current)>'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@simple_product_precision<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            - setDefaultName: ['Simple Product <sprintf("%02d", $current)>']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product_kit1_precision1:
+        unit: '@piece'
+        precision: '0'
+    simple_product_precision{1..2}:
+        unit: '@piece'
+        precision: '0'
+    simple_product_precision3:
+        unit: '@piece'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    product_kit1_item1:
+        optional: false
+        sortOrder: 2
+        minimumQuantity: 3
+        maximumQuantity: 10
+        productUnit: '@piece'
+        __calls:
+            - setDefaultLabel: ['Mandatory Item']
+            - addKitItemProduct: ['@product_kit1_item1_product1']
+            - addKitItemProduct: ['@product_kit1_item1_product2']
+    product_kit1_item2:
+        optional: true
+        sortOrder: 1
+        minimumQuantity: 2
+        maximumQuantity: 5
+        productUnit: '@piece'
+        __calls:
+            - setDefaultLabel: ['Optional Item']
+            - addKitItemProduct: ['@product_kit1_item2_product3']
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    product_kit1_item1_product1:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product1'
+        sortOrder: 1
+        productUnitPrecision: '@simple_product_precision1'
+    product_kit1_item1_product2:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product2'
+        sortOrder: 2
+        productUnitPrecision: '@simple_product_precision2'
+    product_kit1_item2_product3:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product3'
+        sortOrder: 1
+        productUnitPrecision: '@simple_product_precision3'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price_product_kit1:
+        product: '@product_kit1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 123.4567
+    price_simple_product1:
+        product: '@simple_product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 1.2345
+    price_simple_product3:
+        product: '@simple_product3'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 1.2345
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    price_relation_product_kit1:
+        product: '@product_kit1'
+        priceList: '@defaultPriceList'
+    price_relation_simple_product{1..3}:
+        product: '@simple_product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        internal_status: '@quote_internal_status_open'
+        po_number: 'PO013'
+        qid: 'Quote1'
+        organization: '@organization'
+        owner: '@admin'
+        customer_user: '@amanda'
+        website: '@website1'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quote_product1:
+        __calls:
+            - addQuoteProductOffer: ['@quote_product_offer1']
+        product: '@simple_product1'
+        quote: '@quote1'
+        comment: 'Seller Notes 1'
+        commentCustomer: 'Customer Notes 1'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quote_product_offer1:
+        quote_product: '@quote_product1'
+        product_unit: '@piece'
+        price: '@price1'
+        quantity: 2
+        allow_increments: true
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    quote_product_request1:
+        quote_product: '@quote_product1'
+        product_unit: '@piece'
+        price: '@price1'
+        quantity: 2
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price1:
+        value: 100
+        currency: USD

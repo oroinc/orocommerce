@@ -126,7 +126,7 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
             $contextData = $parameters[self::CONTEXT_DATA];
             unset($parameters[self::CONTEXT_TYPE], $parameters[self::CONTEXT_DATA]);
 
-            $url = $this->contextUrlProvider->getUrl($contextType, $contextData);
+            $url = $this->contextUrlProvider->getUrl($contextType, $contextData) ?? '';
 
             return trim($url, '/');
         }

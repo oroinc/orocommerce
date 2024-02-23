@@ -43,6 +43,8 @@ class AppliedPromotionManagerTest extends \PHPUnit\Framework\TestCase
     /** @var AppliedPromotionManager */
     private $manager;
 
+    private ServiceLink $promotionExecutorServiceLink;
+
     protected function setUp(): void
     {
         $this->promotionExecutor = $this->createMock(PromotionExecutor::class);

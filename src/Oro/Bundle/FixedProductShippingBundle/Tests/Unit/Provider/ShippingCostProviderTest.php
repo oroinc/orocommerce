@@ -25,9 +25,6 @@ class ShippingCostProviderTest extends TestCase
 
     private ShippingCostProvider $provider;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         $this->priceProvider = $this->createMock(PriceAttributePricesProvider::class);
@@ -51,6 +48,23 @@ class ShippingCostProviderTest extends TestCase
             new ArrayCollection([]),
             'USD'
         ));
+    }
+
+    public function testCannotFoundProduct(): void
+    {
+        $priceAttribute = new PriceAttributePriceList();
+        $this->manager->expects(self::once())
+            ->method('findOneBy')
+            ->willReturn($priceAttribute);
+
+        $this->priceProvider->expects(self::never())
+            ->method('getPricesWithUnitAndCurrencies');
+
+        $lineItem = $this->getShippingLineItem(unitCode: 'piece');
+
+        $lineItems = new ArrayCollection([$lineItem]);
+
+        self::assertEquals(0.0, $this->provider->getCalculatedProductShippingCost($lineItems, 'USD'));
     }
 
     public function testCannotFoundProductUnitCode(): void

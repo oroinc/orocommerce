@@ -3,7 +3,8 @@
 namespace Oro\Bundle\RFPBundle\Form\Type\Frontend;
 
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,98 +12,80 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type that represents an RFP request product.
+ */
 class RequestProductType extends AbstractType
 {
-    const NAME = 'oro_rfp_frontend_request_product';
+    private EventSubscriberInterface $requestProductProductListener;
 
-    /**
-     * @var string
-     */
-    protected $dataClass;
+    private EventSubscriberInterface $requestProductItemChecksumListener;
 
-    /**
-     * @param string $dataClass
-     */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
+    public function __construct(
+        EventSubscriberInterface $requestProductProductListener,
+        EventSubscriberInterface $requestProductItemChecksumListener
+    ) {
+        $this->requestProductProductListener = $requestProductProductListener;
+        $this->requestProductItemChecksumListener = $requestProductItemChecksumListener;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('product', ProductSelectType::class, [
-                'required' => true,
-                'label' => 'oro.product.entity_label',
-                'create_enabled' => false,
-                'grid_name' => 'products-select-grid-frontend',
-                'grid_widget_route' => 'oro_frontend_datagrid_widget',
-                'grid_view_widget_route' => 'oro_frontend_datagrid_widget',
-                'configs' => [
-                    'route_name' => 'oro_frontend_autocomplete_search'
-                ],
-                'data_parameters' => [
-                    'scope' => 'rfp',
-                    'price_list' => 'default_customer_user'
-                ]
-            ])
-            ->add('requestProductItems', RequestProductItemCollectionType::class, [
-                'label' => 'oro.rfp.requestproductitem.entity_plural_label',
-                'entry_options' => [
-                    'compact_units' => $options['compact_units'],
-                ],
-            ])
+            ->add(
+                $builder->create(
+                    'product',
+                    ProductSelectType::class,
+                    [
+                        'required' => true,
+                        'create_enabled' => false,
+                        'autocomplete_alias' => 'oro_rfp_product_visibility_limited',
+                        'grid_name' => 'products-select-grid-frontend',
+                        'grid_widget_route' => 'oro_frontend_datagrid_widget',
+                        'grid_view_widget_route' => 'oro_frontend_datagrid_widget',
+                        'configs' => [
+                            'route_name' => 'oro_frontend_autocomplete_search',
+                            'placeholder' => 'oro.product.form.choose',
+                            'result_template_twig' => '@OroProduct/Product/Autocomplete/result.html.twig',
+                            'selection_template_twig' => '@OroProduct/Product/Autocomplete/selection.html.twig',
+                        ],
+                        'data_parameters' => [
+                            'scope' => 'rfp',
+                            'price_list' => 'default_customer_user',
+                        ],
+                    ]
+                )
+                    ->addEventSubscriber($this->requestProductProductListener)
+            )
+            ->add(
+                'kitItemLineItems',
+                RequestProductKitItemLineItemCollectionType::class,
+                ['entry_options' => ['set_default_data' => false]]
+            )
+            ->add('requestProductItems', RequestProductItemCollectionType::class, ['required' => true])
             ->add('comment', TextareaType::class, [
                 'required' => false,
-                'label' => 'oro.rfp.requestproduct.notes.label',
-            ])
-        ;
+            ]);
+
+        $builder->addEventSubscriber($this->requestProductItemChecksumListener);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => $this->dataClass,
-            'csrf_token_id' => 'rfp_frontend_request_product',
-            'skipLoadingMask' => true
+            'data_class' => RequestProduct::class,
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
-        $view->vars['componentOptions']['skipLoadingMask'] = $options['skipLoadingMask'];
+        $product = $form->getData()?->getProduct();
+
+        $view->vars['product_units'] = $product?->getAvailableUnitsPrecision() ?? [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent(): ?string
-    {
-        return BaseRequestProductType::class;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
-        return self::NAME;
+        return 'oro_rfp_frontend_request_product';
     }
 }

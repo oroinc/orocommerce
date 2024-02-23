@@ -4,3 +4,4 @@ dynamic-imports:
         - ororfp/js/app/views/line-item-offer-view
         - ororfp/js/app/views/line-item-view
         - ororfp/js/app/views/line-items-view
+        - ororfp/js/app/views/kit-item-line-item-view

@@ -5,7 +5,48 @@ oro:
                 blank: 'Product cannot be empty.'
             request_product_items:
                 blank: 'Please add one or more requests.'
+            kit_item_line_items:
+                general_error.message: 'The selected kit configuration is not valid. Please modify or remove it.'
         request:
             ship_until:
                 type:
                     message: 'This value is not a valid date.'
+
+        requestproductkititemlineitem:
+            request_product:
+                blank:
+                    message: 'The request product must not be blank'
+            kit_item:
+                blank.message: 'The product kit item must not be blank'
+                required.message: 'Original selection no longer available'
+            product:
+                blank:
+                    optional.message: 'Original selection no longer available'
+                    required.message: 'Selection required'
+                not_enabled:
+                    message: 'The selected product is not enabled'
+                required.message: 'Original selection no longer available'
+            quantity:
+                decimal:
+                    message: 'The quantity must be a decimal number'
+                greater_than_zero:
+                    message: 'The quantity should be greater than 0'
+                range:
+                    min_message: 'The quantity should be {{ limit }} or more'
+                    max_message: 'The quantity should be {{ limit }} or less'
+                    not_in_range_message: 'The quantity should be between {{ min }} and {{ max }}'
+            product_unit:
+                blank:
+                    message: 'The product unit must not be blank'
+            price:
+                blank:
+                    message: 'The price must not be blank'
+            sort_order:
+                blank:
+                    message: 'The sort order must not be blank'
+                type:
+                    message: 'The sort order must be an integer number'
+                range:
+                    min_message: 'The sort order must be {{ limit }} or more'
+                    max_message: 'The sort order must be {{ limit }} or less'
+                    not_in_range_message: 'The sort order must be between {{ min }} and {{ max }}'
