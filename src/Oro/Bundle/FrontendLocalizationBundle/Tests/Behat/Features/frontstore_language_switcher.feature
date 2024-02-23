@@ -48,9 +48,9 @@ Feature: FrontStore language switcher
     Given I go to System/Configuration
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill "System Config Form" with:
-      | Enabled Localizations | [English (United States),  Dutch, Japanese] |
+      | Enabled Localizations | [English (United States), Dutch, Japanese] |
     And I save form
-    Then Enabled Localizations field should has [English (United States),  Dutch, Japanese] value
+    Then Enabled Localizations field should has [English (United States), Dutch, Japanese] value
 
   Scenario: Verify Switcher for anonymous front-end user
     Given I am on homepage

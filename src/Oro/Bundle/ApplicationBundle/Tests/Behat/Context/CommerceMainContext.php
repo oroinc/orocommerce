@@ -29,7 +29,7 @@ class CommerceMainContext extends OroFeatureContext implements
     public function beforeStepDisableAnimation(BeforeStepScope $scope)
     {
         try {
-                $function = <<<JS
+            $function = <<<JS
 (function(){
     const body = document.querySelector("body");
     const disableAnimation = function() {
@@ -42,7 +42,6 @@ class CommerceMainContext extends OroFeatureContext implements
     }
 })();
 JS;
-
             $this->getSession()->executeScript($function);
         } catch (UnexpectedAlertOpen $e) {
             return;
@@ -196,6 +195,7 @@ JS;
      */
     public function openMainMenu(): void
     {
+        $this->getSession()->wait(300);
         $mainMenuTrigger = $this->createElement('Main Menu Button');
         if ($mainMenuTrigger->isValid() && $mainMenuTrigger->isVisible()) {
             $mainMenuTrigger->click();
