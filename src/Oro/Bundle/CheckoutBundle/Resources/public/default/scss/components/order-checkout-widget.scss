@@ -1,12 +1,13 @@
 /* @theme: default; */
 
 .order-checkout-widget {
-    position: relative;
     margin-top: spacing('base');
 
     padding-top: 0;
 
     @include clearfix();
+
+    --sticky-position-top-offset: calc(var(--sticky-page-header-element-offset-top, 0) + #{spacing('base')});
 
     &--offset-none {
         margin-top: 0;

@@ -216,6 +216,8 @@ oro:
             zoom:
                 label: 'Enlarge Product Image'
 
+        search_widget:
+            cancel: 'Cancel'
         autocomplete:
             popup:
                 button:

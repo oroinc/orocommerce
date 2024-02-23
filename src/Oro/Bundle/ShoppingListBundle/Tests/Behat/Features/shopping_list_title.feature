@@ -20,4 +20,4 @@ Feature: Shopping list title
       | Label | Shopping List 2 |
     And I click "Shopping List Action Submit"
     Then I should see "Shopping list has been successfully renamed" flash message and I close it
-    And I should see "Signed in as: Amanda Cole"
+    And I should see "Amanda Cole"

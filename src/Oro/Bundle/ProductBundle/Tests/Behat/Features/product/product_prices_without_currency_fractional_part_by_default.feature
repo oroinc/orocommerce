@@ -66,14 +66,14 @@ Feature: Product prices without currency fractional part by default
     And type "PSKU1" in "search"
     When I click "Search Button"
     And click "View Details" for "PSKU1" product
-    Then I should see "1 ¥1"
-    And should see "2 ¥1.6"
-    And should see "3 ¥1.67"
-    And should see "4 ¥1.678"
-    And should see "5 ¥1.6789"
+    Then I should see "1+ ¥1"
+    And should see "2+ ¥1.6"
+    And should see "3+ ¥1.67"
+    And should see "4+ ¥1.678"
+    And should see "5+ ¥1.6789"
 
   Scenario: Check Quick Order Form
-    Given click "Quick Order Form"
+    Given click "Quick Order"
     And fill "Quick Order Form" with:
       | SKU1 | PSKU1 |
     And I wait for products to load

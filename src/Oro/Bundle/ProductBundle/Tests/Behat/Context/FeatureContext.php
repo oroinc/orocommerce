@@ -548,7 +548,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * Assert specific template containing specified data on page.
-     * Example: Then I should see "Two Columns Page" with "Product Group" containing data:
+     * Example: Then I should see "Wide Template" with "Product Group" containing data:
      *            | Color | Green |
      *            | Size  | L     |
      *
@@ -564,7 +564,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * Assert prices on specific template.
-     * Example: Then I should see the following prices on "Two Columns Page":
+     * Example: Then I should see the following prices on "Wide Template":
      *    | Listed Price: | [$10.00 / item, $445.50 / set] |
      *    | Your Price:   | $10.00 / item                  |
      *

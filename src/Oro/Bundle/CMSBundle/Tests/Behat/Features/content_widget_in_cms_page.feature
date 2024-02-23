@@ -63,7 +63,7 @@ Feature: Content Widget in CMS Page
   Scenario: Check content widget is rendered on store front
     Given I proceed as the Buyer
     And I am on the homepage
-    When I click "Test CMS Page"
+    When I click "Test CMS Page" in hamburger menu
     Then Page title equals to "Test CMS Page"
     And I should see "Product 1" in the "CMS Page" element
 

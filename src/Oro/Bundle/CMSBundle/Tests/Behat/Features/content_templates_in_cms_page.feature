@@ -34,7 +34,7 @@ Feature: Content Templates in CMS Page
   Scenario: Check that page with content template is rendered on storefront
     Given I proceed as the Buyer
     And I am on the homepage
-    When I click "CMSPage1"
+    When I click "CMSPage1" in hamburger menu
     Then Page title equals to "CMSPage1"
     And I should see "TestContentTemplateContent1" in the "CMS Page" element
     And I should see picture "CMSPage1 Image" element

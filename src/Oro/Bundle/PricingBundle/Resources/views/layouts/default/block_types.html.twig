@@ -9,8 +9,6 @@
     }) %}
 
     {% if not is_price_hidden(product, applicableForConfiguredProduct) %}
-        <div {{ block('block_attributes') }}>
-            {{ block_widget(block) }}
-        </div>
+        <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
     {% endif %}
 {% endblock %}

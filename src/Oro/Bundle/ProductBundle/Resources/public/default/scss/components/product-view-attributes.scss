@@ -3,7 +3,16 @@
 .product-view {
     &-attribute {
         font-weight: $product-view-attribute-font-weight;
-        display: inline-flex;
+
+        &__content {
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: $product-view-attribute-content-gap;
+        }
+
+        &__label {
+            font-weight: $product-view-attribute-font-weight;
+        }
     }
 
     &__attribute-image {

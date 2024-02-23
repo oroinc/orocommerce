@@ -184,8 +184,7 @@ Feature: Showing related products
       And I should see "PSKU1"
 
     Scenario: Check that product name is localized and displayed properly
-      Given I click "Localization Switcher"
-      When I select "Localization 1" localization
+      Given I select "Localization 1" localization
       When type "PSKU1" in "search"
       And click "Search Button"
       Then I should see "PSKU1" product
@@ -242,35 +241,13 @@ Feature: Showing related products
 #    And I reload the page
 #    Then I should see an "Related Products Slider" element
 
-  Scenario: Verify that "Related Products" block is displayed in "Short page" layout view
-    Given I proceed as the Admin
-    And go to System/ Configuration
-    And I follow "Commerce/Design/Theme" on configuration sidebar
-    And I fill "Page Templates Form" with:
-      | Use Default  | false      |
-      | Product Page | Short page |
-    And I click "Save settings"
-    And I proceed as the Buyer
-    And type "PSKU1" in "search"
-    And click "Search Button"
-    And I should see "PSKU1" product
-    When I click "View Details" for "PSKU1" product
-    Then I should see "Related Products"
-    Then should see the following products in the "Related Products Block":
-      | Title                               |
-      | Product2Localization1`"'&йёщ®&reg;> |
-#    When click "In Shopping List" for "PSKU2" product
-#    Then I should see "UiDialog" with elements:
-#      | Title | Product2Localization1`"'&йёщ®&reg;> |
-#    And I close ui dialog
-
-  Scenario: Verify that "Related Products" block is displayed in "Two columns page" layout view
+  Scenario: Verify that "Related Products" block is displayed in "Wide Template" layout view
     Given I proceed as the Admin
     And go to System/ Configuration
     And I follow "Commerce/Design/Theme" on configuration sidebar
     And I fill "Page Templates Form" with:
       | Use Default  | false            |
-      | Product Page | Two columns page |
+      | Product Page | Wide Template    |
     And I click "Save settings"
     And I proceed as the Buyer
     And type "PSKU1" in "search"
@@ -286,13 +263,13 @@ Feature: Showing related products
 #      | Title | Product2Localization1`"'&йёщ®&reg;> |
 #    And I close ui dialog
 
-  Scenario: Verify that "Related Products" block is displayed in "List page" layout view
+  Scenario: Verify that "Related Products" block is displayed in "Tabs Template" layout view
     Given I proceed as the Admin
     And go to System/ Configuration
     And I follow "Commerce/Design/Theme" on configuration sidebar
     And I fill "Page Templates Form" with:
-      | Use Default  | false     |
-      | Product Page | List page |
+      | Use Default  | false         |
+      | Product Page | Tabs Template |
     And I click "Save settings"
     And I proceed as the Buyer
     And type "PSKU1" in "search"

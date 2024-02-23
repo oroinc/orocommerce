@@ -1,0 +1,5 @@
+{% block __oro_product_list_item__product_inventory_status_label_widget %}
+    {% if product.inventory_status is defined %}
+        <p class="product-inventory_status">{{ product.inventory_status_label }}</p>
+    {% endif %}
+{% endblock %}

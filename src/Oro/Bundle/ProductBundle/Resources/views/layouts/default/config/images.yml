@@ -60,6 +60,11 @@ dimensions:
         height: 80
         options:
             applyProductImageWatermark: true
+    product_extra_small:
+        width: 42
+        height: 42
+        options:
+            applyProductImageWatermark: true
     category_medium:
         width: 315
         height: 260

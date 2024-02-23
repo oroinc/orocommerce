@@ -56,7 +56,7 @@ class QuickAddFeatureToggleTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $linksCrawler = $crawler->selectLink('Quick Order Form');
+        $linksCrawler = $crawler->selectLink('Quick Order');
         $this->assertEquals(1, $linksCrawler->count());
         $this->assertEquals($this->getUrl('oro_product_frontend_quick_add', [], true), $linksCrawler->link()->getUri());
     }
@@ -69,7 +69,7 @@ class QuickAddFeatureToggleTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $linksCrawler = $crawler->selectLink('Quick Order Form');
+        $linksCrawler = $crawler->selectLink('Quick Order');
         $this->assertEquals(0, $linksCrawler->count());
     }
 }

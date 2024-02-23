@@ -7,7 +7,7 @@ Feature: Default RFQ Workflows
   Scenario: Create RFQ from Quick Order Form and Check Internal status: Open and Customer status: Submitted
     Given I login as administrator and use in "first_session" as "Admin"
     And I login as AmandaRCole@example.org the "Buyer" at "second_session" session
-    When I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click view 0110 in grid
     Then I should see RFQ status is "Submitted"
@@ -21,7 +21,7 @@ Feature: Default RFQ Workflows
 
   Scenario: Cancel RFQ and Check Internal status: Cancelled By Customer and Customer status: Cancelled
     Given I operate as the Buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click view 0110 in grid
     When I click "Cancel"
@@ -36,7 +36,7 @@ Feature: Default RFQ Workflows
 
   Scenario: Resubmit RFQ and Check Internal status: Cancelled By Customer and Customer status: Cancelled
     Given I proceed as the Buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click view 0110 in grid
     When I click "Resubmit"
@@ -89,7 +89,7 @@ Feature: Default RFQ Workflows
       | Internal Status | Cancelled By Customer |
       | Customer Status | Cancelled             |
     When I switch to the "Buyer" session
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click view 0110 in grid
     Then I should see RFQ status is "Cancelled"
@@ -161,7 +161,7 @@ Feature: Default RFQ Workflows
       | Customer Status | Requires Attention  |
     And I should see "Message for customer alert(1)"
     Then I continue as the Buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click view 0112 in grid
     Then I should see RFQ status is "Requires Attention"
@@ -199,7 +199,7 @@ Feature: Default RFQ Workflows
       | Internal Status | More Info Requested |
       | Customer Status | Requires Attention  |
     Then I continue as the Buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click view 0113 in grid
     Then I should see RFQ status is "Requires Attention"
@@ -257,7 +257,7 @@ Feature: Default RFQ Workflows
       | Internal Status | More Info Requested |
       | Customer Status | Requires Attention  |
     When I switch to the "Buyer" session
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click view 0113 in grid
     Then I should see RFQ status is "Requires Attention"
@@ -276,7 +276,7 @@ Feature: Default RFQ Workflows
       | Internal Status | Declined  |
       | Customer Status | Cancelled |
     When I switch to the "Buyer" session
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click view 0114 in grid
     Then I should see RFQ status is "Cancelled"

@@ -102,7 +102,7 @@ included:
         id: 'page-template'
         attributes:
             fallback: null
-            scalarValue: short
+            scalarValue: wide
             arrayValue: null
     -
         type: entityfieldfallbackvalues

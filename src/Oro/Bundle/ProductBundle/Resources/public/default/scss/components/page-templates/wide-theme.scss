@@ -1,0 +1,30 @@
+/* @theme: default; */
+// @productTheme: wide-theme;
+
+.wide-theme {
+    .product-view {
+        &__additional {
+            margin-top: $product-view-additional-wide-theme-top-offset;
+        }
+
+        &-attribute {
+            &__group-title {
+                font-size: $headline2-font-size;
+            }
+
+            &__group {
+                border-bottom: none;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .wide-theme {
+        .product-view {
+            &__additional {
+                margin-top: $product-view-additional-wide-theme-top-offset-mobile-big;
+            }
+        }
+    }
+}

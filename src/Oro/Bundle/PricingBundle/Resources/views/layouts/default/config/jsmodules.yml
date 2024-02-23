@@ -8,13 +8,13 @@ dynamic-imports:
         - oro/filter/frontend-product-price-filter
         - oro/filter/product-price-filter
     oroproduct:
-        - oropricing/js/app/components/currency-switcher-component
         - oropricing/js/app/components/list-item-product-prices-component
         - oropricing/js/app/components/totals-component
         - oropricing/js/app/views/base-product-matrix-view
         - oropricing/js/app/views/line-item-product-prices-view
         - oropricing/js/app/views/product-total-price-view
         - oropricing/js/app/views/quick-add-row-price-view
+        - oropricing/js/app/views/price-single-unit-table-view
 map:
     '*':
         oropricing/templates/order/subtotals.html: oropricing/templates/order/frontend/subtotals.html

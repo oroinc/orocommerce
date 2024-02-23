@@ -1,0 +1,18 @@
+/* @theme: default; */
+
+.product-view {
+    &__benefits {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: $product-view-benefits-gap;
+        margin-block-end: $product-view-benefits-margin-block-end;
+    }
+
+    &__featured,
+    &__newarrival {
+        display: inline-flex;
+        align-items: center;
+        gap: $product-view-benefits-items-gap;
+        color: $product-view-benefits-items-color;
+    }
+}

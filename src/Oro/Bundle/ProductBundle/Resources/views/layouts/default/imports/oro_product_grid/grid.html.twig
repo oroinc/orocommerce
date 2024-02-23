@@ -78,11 +78,10 @@
 
 {% block _product_mass_actions_sticky_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': 'product-action-area',
+        '~class': 'product-action-area sticky sticky--bottom',
         'data-mass-actions-sticky-container': '',
-        'data-sticky-target': 'bottom-sticky-panel',
         'data-sticky': {
-            alwaysInSticky: true
+            group: 'bottom'
         }
     }) %}
 
@@ -171,7 +170,7 @@
                     <div class="toggle-container">
                         {% for view_item in view_list %}
                             <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): view_item.row_view}})|url_encode }}"
-                                class="toggle-link {{view_item.row_view == current_row_view ? 'toggle-link--active' : ''}}"
+                                class="toggle-link no-decoration {{view_item.row_view == current_row_view ? 'toggle-link--active' : ''}}"
                                 data-catalog-view-trigger="{{ {'row-view': view_item.row_view}|json_encode }}"
                                 title="{{ view_item.title|trans }}"
                             >

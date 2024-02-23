@@ -30,5 +30,10 @@ oro:
         view_all_prices_extended: 'View All Prices for {{ product_attrs }}'
         matched_price: 'List Price'
         per_item: 'per {{ unit }}'
+        frontend:
+            product:
+                quantity:
+                    short_label: 'Qty'
+                    long_label: 'Quantity'
     totals:
         no_data: No data

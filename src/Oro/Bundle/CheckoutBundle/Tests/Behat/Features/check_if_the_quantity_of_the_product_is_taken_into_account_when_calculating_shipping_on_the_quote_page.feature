@@ -107,7 +107,8 @@ Feature: Check if the quantity of the product is taken into account when calcula
   Scenario: Customer can create order from Quote
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
-    When I click "Quotes"
+    When I click "Account Dropdown"
+    And I click "Quotes"
     And click "View" on first row in grid
     And should see following "Quote View Grid" grid:
       | Item                           | Quantity     | Unit Price |

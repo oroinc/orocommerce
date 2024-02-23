@@ -111,13 +111,13 @@
             <tr class="shopping-lists-popup__item">
                 <td class="shopping-lists-popup__list">
                     <% if (_.isString(list.href)) { %>
-                    <a class="shopping-lists-popup__link" href="<%- list.href %>">
+                    <a class="shopping-lists-popup__link no-decoration" href="<%- list.href %>">
                         <%- list.label %>
                     </a>
                     <% } else { %>
                     <span class="shopping-lists-popup__link">
-                            <%- list.label %>
-                        </span>
+                        <%- list.label %>
+                    </span>
                     <% } %>
                 </td>
                 <td class="shopping-lists-popup__quantity">

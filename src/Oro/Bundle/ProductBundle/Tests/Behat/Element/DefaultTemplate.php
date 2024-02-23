@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Behat\Element;
 
 use Behat\Gherkin\Node\TableNode;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
-use Oro\Bundle\TestFrameworkBundle\Behat\Element\Tabs;
 
 class DefaultTemplate extends ProductTemplate
 {
@@ -12,25 +11,12 @@ class DefaultTemplate extends ProductTemplate
 
     public function assertGroupWithValue($groupName, TableNode $table)
     {
-        $tabContainer = null;
-        $tabContainers = $this->findAllElements('Tab Container');
-        /** @var Tabs $element */
-        foreach ($tabContainers as $element) {
-            if ($element->hasTab($groupName)) {
-                $tabContainer = $element;
-                break;
-            }
-        }
-        self::assertNotEmpty($tabContainer);
-
-        $tabContainer->switchToTab($groupName);
-
-        $activeTab = $tabContainer->getActiveTab();
-        self::assertNotEmpty($activeTab);
+        $this->getPage()->pressButton($groupName);
 
         foreach ($table->getRows() as $row) {
             list($label, $value) = $row;
-            static::assertStringContainsStringIgnoringCase(\sprintf('%s: %s', $label, $value), $activeTab->getText());
+
+            static::assertStringContainsStringIgnoringCase(\sprintf('%s: %s', $label, $value), $this->getText());
         }
     }
 

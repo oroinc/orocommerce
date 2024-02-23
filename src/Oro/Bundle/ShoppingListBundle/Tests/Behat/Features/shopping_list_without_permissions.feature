@@ -65,7 +65,7 @@ Feature: Shopping list without permissions
     Then I should not see "Shopping list"
     When I open product with sku "PSKU1" on the store frontend
     Then I should not see "Add to Shopping List"
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     Then I should not see "You do not have permission to perform this action." flash message
 
   Scenario: Set view shopping list permissions
@@ -78,7 +78,7 @@ Feature: Shopping list without permissions
     And I reload the page
     When I open shopping list widget
     Then I should see "Shopping List 1" on shopping list widget
-    And I click "NewCategory"
+    And I click "NewCategory" in hamburger menu
     Then I should not see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
 
   Scenario: Set create shopping list permissions

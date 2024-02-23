@@ -40,8 +40,8 @@ Feature: Merge by Priority Strategy CPL Reuse Optimization
     And I login as AmandaRCole@example.org buyer
     When I type "PSKU1" in "search"
     And I click "Product 1"
-    Then should see "1 $10.00"
-    And should see "10 $9.00"
+    Then should see "1+ $10.00"
+    And should see "10+ $9.00"
 
   Scenario: Configure customer price lists chain PL1, PL2, PL3
     Given I proceed as the Admin
@@ -54,9 +54,9 @@ Feature: Merge by Priority Strategy CPL Reuse Optimization
   Scenario: Check that product have expected for Customer and PL1, PL2, PL3
     Given I proceed as the Buyer
     When I reload the page
-    Then should see "1 $10.00"
-    And should see "10 $9.00"
-    And should see "100 $8.00"
+    Then should see "1+ $10.00"
+    And should see "10+ $9.00"
+    And should see "100+ $8.00"
 
   Scenario: Configure customer price lists chain PL3, PL1, PL2
     Given I proceed as the Admin
@@ -67,9 +67,9 @@ Feature: Merge by Priority Strategy CPL Reuse Optimization
   Scenario: Check that product have expected for Customer and PL3, PL1, PL2
     Given I proceed as the Buyer
     When I reload the page
-    Then should see "1 $8.00"
-    And should see "10 $9.00"
-    And should see "100 $8.00"
+    Then should see "1+ $8.00"
+    And should see "10+ $9.00"
+    And should see "100+ $8.00"
 
   Scenario: Configure customer price lists chain PL3 (merge disallowed), PL1, PL2
     Given I proceed as the Admin
@@ -80,9 +80,9 @@ Feature: Merge by Priority Strategy CPL Reuse Optimization
   Scenario: Check that product have expected for Customer and PL3 (merge disallowed), PL1, PL2
     Given I proceed as the Buyer
     When I reload the page
-    Then should see "1 $8.00"
-    And should see "100 $8.00"
-    And should not see "10 $9.00"
+    Then should see "1+ $8.00"
+    And should see "100+ $8.00"
+    And should not see "10+ $9.00"
 
   Scenario: Configure customer price lists chain PL1, PL2, PL3 (merge disallowed)
     Given I proceed as the Admin
@@ -94,6 +94,6 @@ Feature: Merge by Priority Strategy CPL Reuse Optimization
   Scenario: Check that product have expected for Customer and PL1, PL2, PL3 (merge disallowed)
     Given I proceed as the Buyer
     When I reload the page
-    Then should see "1 $10.00"
-    And should see "10 $9.00"
-    And should not see "100 $8.00"
+    Then should see "1+ $10.00"
+    And should see "10+ $9.00"
+    And should not see "100+ $8.00"

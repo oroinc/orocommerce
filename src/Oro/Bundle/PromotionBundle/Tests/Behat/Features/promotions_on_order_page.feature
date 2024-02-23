@@ -43,7 +43,8 @@ Feature: Promotions on Order page
 
   Scenario: Check that applied discounts are shown on frontend order view page
     Given I operate as the Buyer
-    And click "Orders"
+    And I click "Account Dropdown"
+    And I click "Order History"
     Then I should see following "Past Orders Grid" grid:
       | Total |
       | $9.50 |

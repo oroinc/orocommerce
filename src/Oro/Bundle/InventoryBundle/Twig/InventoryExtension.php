@@ -3,8 +3,11 @@
 namespace Oro\Bundle\InventoryBundle\Twig;
 
 use Oro\Bundle\InventoryBundle\Inventory\LowInventoryProvider;
+use Oro\Bundle\InventoryBundle\Provider\InventoryStatusProvider;
 use Oro\Bundle\InventoryBundle\Provider\UpcomingProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductView;
+use Oro\Bundle\UIBundle\Twig\HtmlTagExtension;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
@@ -17,12 +20,17 @@ use Twig\TwigFunction;
  *
  * Provides a Twig function to check if the product is a "low inventory" item:
  *   - oro_is_low_inventory_product
+ *
+ * Provides a Twig function to get code and label for inventory status of given Product or Product View or search item
+ *   - oro_inventory_status_code
+ *   - oro_inventory_status_label
  */
 class InventoryExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     private ContainerInterface $container;
     private ?UpcomingProductProvider $upcomingProductProvider = null;
     private ?LowInventoryProvider $lowInventoryProvider = null;
+    private ?InventoryStatusProvider $inventoryStatusProvider = null;
 
     public function __construct(ContainerInterface $container)
     {
@@ -47,6 +55,14 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
                 'oro_is_low_inventory_product',
                 [$this, 'isLowInventory']
             ),
+            new TwigFunction(
+                'oro_inventory_status_code',
+                [$this, 'getInventoryStatusCode']
+            ),
+            new TwigFunction(
+                'oro_inventory_status_label',
+                [$this, 'getInventoryStatusLabel']
+            ),
         ];
     }
 
@@ -65,6 +81,16 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
         return $this->getLowInventoryProvider()->isLowInventoryProduct($product);
     }
 
+    public function getInventoryStatusCode(Product|ProductView|array $product): ?string
+    {
+        return $this->getInventoryStatusProvider()->getCode($product);
+    }
+
+    public function getInventoryStatusLabel(Product|ProductView|array $product): ?string
+    {
+        return $this->getInventoryStatusProvider()->getLabel($product);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -73,6 +99,8 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
         return [
             'oro_inventory.provider.upcoming_product_provider' => UpcomingProductProvider::class,
             'oro_inventory.inventory.low_inventory_provider' => LowInventoryProvider::class,
+            'oro_inventory.provider.inventory_status' => InventoryStatusProvider::class,
+            'oro_ui.twig.html_tag' => HtmlTagExtension::class,
         ];
     }
 
@@ -92,5 +120,14 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
         }
 
         return $this->lowInventoryProvider;
+    }
+
+    private function getInventoryStatusProvider(): InventoryStatusProvider
+    {
+        if (null === $this->inventoryStatusProvider) {
+            $this->inventoryStatusProvider = $this->container->get('oro_inventory.provider.inventory_status');
+        }
+
+        return $this->inventoryStatusProvider;
     }
 }

@@ -26,8 +26,7 @@ Feature: Localized Canonical URLs
   Scenario: Check product canonical URLs are localized
     Given I proceed as the Buyer
     And I am on the homepage
-    And I click "Localization Switcher"
-    When I select "Zulu" localization
+    And I select "Zulu" localization
     And I open product with sku "SKU2" on the store frontend
     Then Page should contain Canonical URL with URI "product_zulu2"
 

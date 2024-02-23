@@ -8,7 +8,7 @@ Feature: RFQ with empty product
 
   Scenario: Create RFQ with empty product
     Given I login as AmandaRCole@example.org buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"
     And I fill form with:

@@ -21,6 +21,7 @@ Feature: Create RFQ on storefront
     And I login as administrator
     And I go to System/Frontend Menus
     And I click view "oro_customer_menu" in grid
+    And I click Orders in menu tree
     And I click Requests For Quote in menu tree
     And I save form
     Then I should see "Menu item saved successfully." flash message
@@ -28,7 +29,7 @@ Feature: Create RFQ on storefront
   Scenario: Create RFQ that contains notes
     Given I continue as the Buyer
     When I signed in as AmandaRCole@example.org on the store frontend
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"
     And fill form with:
@@ -52,7 +53,7 @@ Feature: Create RFQ on storefront
 
   Scenario: Products management in RFQ on storefront
     Given I continue as the Buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"
     When I open select entity popup for field "Line Item Product" in form "Frontend Request Form"
@@ -72,7 +73,7 @@ Feature: Create RFQ on storefront
 
   Scenario: Create RFQ with hidden product on storefront
     Given I continue as the Buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"
     When I open select entity popup for field "Line Item Product" in form "Frontend Request Form"

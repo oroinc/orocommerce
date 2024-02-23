@@ -2,9 +2,3 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '@OroFrontendLocalization/layouts/default/layout.html.twig'
-
-        - '@appendOption':
-            id: switcher_info_trigger
-            optionName: vars.items
-            optionValue:
-                localizations: '=data["frontend_localization"].getEnabledLocalizations()'

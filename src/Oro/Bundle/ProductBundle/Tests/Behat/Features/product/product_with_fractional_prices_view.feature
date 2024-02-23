@@ -13,7 +13,6 @@ Feature: Product with fractional prices view
     And I enable the existing localizations
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on the homepage
-    And I click "Localization Switcher"
     And I select "German Localization" localization
 
   Scenario: Search product by SKU
@@ -35,9 +34,9 @@ Feature: Product with fractional prices view
     When I click "Product 1"
     Then I should see "Product 1"
     And I should see an "Default Page Prices" element
-    And I should see "0.5 15,99 $" in the "Default Page Prices" element
-    And I should see "1 12,99 $" in the "Default Page Prices" element
-    And I should see "100 10,99 $" in the "Default Page Prices" element
+    And I should see "0.5+ 15,99 $" in the "Default Page Prices" element
+    And I should see "1+ 12,99 $" in the "Default Page Prices" element
+    And I should see "100+ 10,99 $" in the "Default Page Prices" element
 
   Scenario: Prices on product view page in backoffice are formatted according to locale settings
     Given I login as administrator

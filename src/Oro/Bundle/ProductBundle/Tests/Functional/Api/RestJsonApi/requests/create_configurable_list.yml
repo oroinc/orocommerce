@@ -93,7 +93,7 @@ included:
         id: 'page-template'
         attributes:
             fallback: null
-            scalarValue: short
+            scalarValue: wide
             arrayValue: null
     -
         type: entityfieldfallbackvalues
@@ -208,7 +208,7 @@ included:
         id: 'page-template1'
         attributes:
             fallback: null
-            scalarValue: short
+            scalarValue: wide
             arrayValue: null
     -
         type: entityfieldfallbackvalues

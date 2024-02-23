@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductPageTemplateValidatorTest extends ConstraintValidatorTestCase
 {
-    private const VALID_CHOICES = ['short', 'two-columns', 'list'];
+    private const VALID_CHOICES = ['wide', 'tabs'];
 
     /** @var PageTemplatesManager|\PHPUnit\Framework\MockObject\MockObject */
     private $pageTemplatesManager;
@@ -22,9 +22,8 @@ class ProductPageTemplateValidatorTest extends ConstraintValidatorTestCase
 
         /* values are saved in "choices" array as keys in the form. ex:
         choices = [
-                "short" => 1,
-                "two-columns" => 2,
-                "list" => 3
+                "wide" => 1,
+                "tabs" => 2
             ]
         */
         $this->pageTemplatesManager->expects($this->any())
@@ -61,12 +60,11 @@ class ProductPageTemplateValidatorTest extends ConstraintValidatorTestCase
     public function validateProvider(): array
     {
         return [
-            ['short'],
-            ['two-columns'],
-            ['list'],
+            ['wide'],
+            ['tabs'],
             ['short-invalid'],
-            ['LIST'],
-            ['two'],
+            ['TABS'],
+            ['WIDE'],
             [null],
             [123]
         ];

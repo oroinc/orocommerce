@@ -22,10 +22,13 @@ Feature: Change counting the number of products in featured categories widget
     Then should see "3 items" for "NewCategory" category
     And should see "1 item" for "SubNew" category
     And should see "Short description" for "SubNew" category
-    When click "NewCategory"
+    When I click "NewCategory" in hamburger menu
+    And I click "All NewCategory" in hamburger menu
     Then should see "PSKU2" product
     And should see "PSKU1" product
     Then I go to homepage
+    And I click on "Main Menu Button"
     And I should see "NewCategory/ SubNew" in main menu
-    When click "SubNew"
+    When I click "NewCategory" in hamburger menu
+    When I click "SubNew" in hamburger menu
     Then should see "Long description" in the "Category Long Description" element

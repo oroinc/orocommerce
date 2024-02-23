@@ -26,16 +26,16 @@ Feature: Shopping List Line Items With Unsaved Changes
     Then I should see "Configuration saved" flash message
     Then I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Enabled Localizations | [English (United States), Zulu_Loc] |
-      | Default Localization  | English (United States) |
+      | Enabled Localizations | [English (United States) , Zulu_Loc] |
+      | Default Localization  | English (United States)              |
     And I submit form
     Then I should see "Configuration saved" flash message
 
   Scenario: Open Shopping List edit page
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
-    Then I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     And I click Edit "List 2" in grid
     Then I should see following grid:
       | SKU    | Qty Update All |
@@ -48,29 +48,28 @@ Feature: Shopping List Line Items With Unsaved Changes
     And I click "Create Order"
     Then should see "You have unsaved changes, are you sure you want to leave this page?" in confirmation dialogue
     And I click "Cancel" in confirmation dialogue
-    And I click "Cancel"
+    And I click on "Shopping List Line Item 1 Cancel Button"
     Then Page title equals to "List 2 - Shopping Lists - My Account"
 
   Scenario: Discard currency change with unsaved changed
     When I click on "Shopping List Line Item 1 Quantity"
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 3    |
-    And I click "Currency Switcher"
-    And I click "Euro"
+
+    And I select "€" currency
     Then should see "You have unsaved changes, are you sure you want to leave this page?" in confirmation dialogue
     And I click "Cancel" in confirmation dialogue
-    And I click "Cancel"
-    And I should see exact "$" in the "Currency Switcher Button" element
+    And I click on "Shopping List Line Item 1 Cancel Button"
+    And I should see that "$" currency is active
     And Page title equals to "List 2 - Shopping Lists - My Account"
 
   Scenario: Discard localization change with unsaved changed
     When I click on "Shopping List Line Item 1 Quantity"
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 3    |
-    And I click "Localization Switcher"
     And I select "Zulu" localization
     Then should see "You have unsaved changes, are you sure you want to leave this page?" in confirmation dialogue
     And I click "Cancel" in confirmation dialogue
-    And I click "Cancel"
-    And I should see exact "English (United States)" in the "Localization Switcher" element
+    And I click on "Shopping List Line Item 1 Cancel Button"
+    Then I should see that "English (United States)" localization is active
     And Page title equals to "List 2 - Shopping Lists - My Account"

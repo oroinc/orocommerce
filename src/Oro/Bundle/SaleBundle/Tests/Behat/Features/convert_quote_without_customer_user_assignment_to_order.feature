@@ -18,7 +18,7 @@ Feature: Convert Quote without customer user assignment to order
 
   Scenario: Create order from quote
     Given I signed in as NancyJSallee@example.org on the store frontend
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Quotes"
     And I click view Q123 in grid
     When I click "Accept and Submit to Order"

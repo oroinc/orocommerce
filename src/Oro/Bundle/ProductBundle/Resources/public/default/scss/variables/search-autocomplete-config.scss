@@ -90,7 +90,7 @@ $search-autocomplete-category-body-last-category-color: get-color('primary-old',
 $search-autocomplete-category-body-last-category-font-weight: font-weight('bold') !default;
 
 // Tablet
-$search-autocomplete-tablet-offset-bottom: -spacing('base') !default;
+$search-autocomplete-tablet-offset-bottom: -#{spacing('base')} !default;
 $search-autocomplete-tablet-position: relative !default;
 
 $search-autocomplete-content-tablet-min-width: initial !default;

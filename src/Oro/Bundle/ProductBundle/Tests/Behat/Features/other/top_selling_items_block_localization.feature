@@ -57,8 +57,7 @@ Feature: Top Selling Items Block Localization
     And I close ui dialog
 
   Scenario: Check that product name is localized
-    When I click "Localization Switcher"
-    And I select "Localization 1" localization
+    When I select "Localization 1" localization
     Then should see the following products in the "Top Selling Items Block":
       | Title                     |
       | Product1 (Localization 1) |

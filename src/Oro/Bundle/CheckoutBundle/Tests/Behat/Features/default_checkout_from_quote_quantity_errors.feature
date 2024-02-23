@@ -22,7 +22,7 @@ Feature: Default Checkout From Quote Quantity Errors
     Given There is USD currency in the system configuration
     And AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Quotes"
     And I click view PO1 in grid
 

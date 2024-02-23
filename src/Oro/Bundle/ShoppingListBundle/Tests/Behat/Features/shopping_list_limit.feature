@@ -22,11 +22,12 @@ Feature: Shopping list limit
     And I click "Add to Shopping List"
     And I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
-    And I should see "1 Shopping List"
+    And I should see "1" in the "Shopping List Widget" element
     When I open shopping list widget
     And I click "Create New List"
     And I click "Create"
-    Then I should see "2 Shopping Lists"
+    Then I should see "2" in the "Shopping List Widget" element
+    And click on "Flash Message Close Button"
 
   Scenario: Remove one shopping list
     Given I open shopping list widget
@@ -35,7 +36,7 @@ Feature: Shopping list limit
     And I click "Delete"
     And I click "Yes, delete" in modal window
     Then I should see "Shopping List deleted" flash message
-    And I should see "1 Shopping List"
+    And I should see "1" in the "Shopping List Widget" element
 
   Scenario: Set limit to One shopping list in configuration
     Given I operate as the Admin
@@ -49,7 +50,7 @@ Feature: Shopping list limit
   Scenario: Check limit is applied on frontend
     Given I operate as the Buyer
     When I reload the page
-    Then I should not see "1 Shopping List"
+    Then I should not see "1" in the "Shopping List Widget" element
     And I should see "Shopping List"
     And I open shopping list widget
     And I should not see "Create New List"
@@ -81,6 +82,6 @@ Feature: Shopping list limit
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
     Then should see "New Front Shopping List"
+    And reload the page
     And I open shopping list widget
     Then should see "New Front Shopping List"
-

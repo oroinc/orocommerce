@@ -12,6 +12,12 @@ oro_behat_extension:
       selector: "input[name='oro_product[additionalUnitPrecisions][0][sell]']"
     ProductUnitLabel:
       selector: "[data-role='unit-label']"
+    ProductUnitSelect:
+      selector: 'select[name="oro_product_frontend_line_item[unit]"]'
+    Product View Unit:
+      selector:
+        locator: '//select[starts-with(@form,"oro_product_frontend_line_item") and @name="oro_product_frontend_line_item[unit]"]'
+        type: xpath
     OptionCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\OptionCollection
     InStockInventoryStatus:
@@ -564,6 +570,11 @@ oro_behat_extension:
             locator: '//div[@id[starts-with(.,"s2id_oro_attribute_family_attributeGroups_general_attributeRelations-uid")]]//input'
             element: Select2EntitiesOrdered
 
+    Quick Order Link:
+      selector:
+        type: 'xpath'
+        locator: './/a[contains(concat(" ",normalize-space(@class)," ")," navigation-menu__button ")][contains(normalize-space(),"Quick Order")]'
+
     Quick Order Form:
       selector: "form[name='oro_product_quick_add']"
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -938,7 +949,7 @@ oro_behat_extension:
       selector: '[data-role="search-container"] .input'
 
     ProductFrontendGridMassActionSearchInDropdown:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction .dropdown-menu [data-role="search-container"] .input'
+      selector: '.sticky.sticky--bottom .datagrid-massaction .dropdown-menu [data-role="search-container"] .input'
 
     ProductFrontendGridMassActionSearchInDialog:
       selector: '[role="dialog"] [data-role="search-container"] .input'
@@ -950,22 +961,22 @@ oro_behat_extension:
       selector: '.dropdown-item[data-label]:first-child'
 
     ProductFrontendMassAddPanelInBottomSticky:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .dropup .action'
+      selector: '.sticky.sticky--bottom .dropup .action'
 
     ProductFrontendMassOpenInDropdown:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .dropdown-toggle'
+      selector: '.sticky.sticky--bottom .dropdown-toggle'
 
     ProductFrontendMassOpenInDialog:
-      selector: '[data-sticky-name="bottom-sticky-panel"] [data-fullscreen-trigger]'
+      selector: '.sticky.sticky--bottom [data-fullscreen-trigger]'
 
     ProductFrontendMassClosePanel:
-      selector: '[data-sticky-name="bottom-sticky-panel"] [data-undo-selection]'
+      selector: '.sticky.sticky--bottom [data-undo-selection]'
 
     ProductFrontendMassPanelInBottomSticky:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction'
+      selector: '.sticky.sticky--bottom .datagrid-massaction'
 
     ProductFrontendMassMenuInBottomSticky:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction .dropdown-menu'
+      selector: '.sticky.sticky--bottom .datagrid-massaction .dropdown-menu'
 
     ProductFrontendGridRow:
       selector: '.grid-row'
@@ -1034,7 +1045,6 @@ oro_behat_extension:
       options:
         mapping:
           Quantity: 'oro_product_frontend_line_item[quantity]'
-          Unit: 'oro_product_frontend_line_item[unit]'
 
     Product Shopping List Dropdown:
       selector:
@@ -1082,34 +1092,28 @@ oro_behat_extension:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\LineItemForm
 
     Default Page:
-      selector: '.product-view__attributes-container'
+      selector: '.product-view__additional'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\DefaultTemplate
 
-    Short Page:
-      selector: '.product-view.short-theme'
-      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ShortTemplate
-
-    List Page:
+    Tabs Template:
       selector: '.product-view__additional'
-      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ListTemplate
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\TabsTemplate
 
-    Two Columns Page:
-      selector: '.product-view__attribute-box-wrapper'
-      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\TwoColumnsTemplate
+    Wide Template:
+      selector: '.product-view__additional'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\WideTemplate
 
     Default Page Prices:
-      selector: '.product-prices__table'
+      selector: '.product-prices-table'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
 
     Product General Information:
       selector: '.product-view__main'
 
-    Short Page Prices:
+    Tabs Template Prices:
       selector: '.product-view__content .product-price'
 
-    List Page Prices:
-      selector: '.product-view__content .product-price'
-
-    Two Columns Page Prices:
+    Wide Template Prices:
       selector: '.product-view__content .product-price'
 
     Color Product Attribute:
@@ -1343,7 +1347,7 @@ oro_behat_extension:
       selector: '.product-view-media-wrapper .product-view-media-gallery__image'
 
     Product Main Image In Tab:
-      selector: '.tab-content__wrapper .product-view-media-gallery__image'
+      selector: '.product-view-attribute__content .product-view-media-gallery__image'
 
     Zoom Container:
       selector: '.zoomWindowContainer'

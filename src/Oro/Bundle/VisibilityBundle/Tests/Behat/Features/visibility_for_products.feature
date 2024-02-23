@@ -15,7 +15,7 @@ Feature: Visibility for products
   Scenario: Check default product visibility
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
-    When I click "Lighting Products"
+    When I click "Lighting Products" in hamburger menu
     Then I should see "PSKU1"
 
   Scenario: Hide product for all
@@ -47,5 +47,5 @@ Feature: Visibility for products
   Scenario: Check product visibility
     Given I continue as the Buyer
     And should be 4 items in "oro_product_WEBSITE_ID" website search index
-    When I click "Lighting Products"
+    When I click "Lighting Products" in hamburger menu
     Then I should see "PSKU1"

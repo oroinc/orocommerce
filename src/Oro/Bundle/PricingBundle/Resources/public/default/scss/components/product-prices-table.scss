@@ -1,0 +1,49 @@
+/* @theme: default; */
+
+.product-prices-table {
+    border-spacing: 0;
+    border-collapse: collapse;
+
+    &__th {
+        text-transform: $product-prices-table-th-text-transform;
+        color: $product-prices-table-th-color;
+        font-weight: $product-prices-table-th-font-weight;
+        line-height: $product-prices-table-th-line-height;
+        letter-spacing: $product-prices-table-th-letter-spacing;
+        padding-bottom: $product-prices-table-th-padding-bottom;
+    }
+
+    &__td {
+        color: $product-prices-table-td-color;
+        font-size: $product-prices-table-td-font-size;
+
+        padding: $product-prices-table-td-padding;
+
+        border-bottom: $product-prices-table-border-bottom;
+        min-width: $product-prices-table-min-width;
+
+        &:first-child {
+            min-width: $product-prices-table-first-min-width;
+            padding-left: 0;
+        }
+
+        tr:first-child & {
+            padding-top: 0;
+        }
+
+        tr:last-child & {
+            border-bottom-width: 0;
+            padding-bottom: 0;
+        }
+    }
+
+    &.stick-first-row {
+        th:first-child,
+        td:first-child {
+            position: sticky;
+            left: 0;
+
+            background-color: $product-prices-table-stick-cell-bc-color;
+        }
+    }
+}

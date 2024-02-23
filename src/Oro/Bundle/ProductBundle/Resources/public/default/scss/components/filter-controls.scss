@@ -38,30 +38,26 @@
     }
 }
 
-.catalog-filter {
-    position: relative;
-    padding: 15px 10px 4px 90px;
-    background: $catalog-filter-background;
+.toolbar {
+    --group-offset-y: var(--sticky-page-header-group-offset-y);
+    --sticky-position-top-offset: var(--sticky-page-header-element-offset-top);
 
-    form {
-        display: flex;
-        align-content: flex-start;
-        flex-wrap: wrap;
+    transition: $sticky-panel-transition;
 
-        > div {
-            margin: 0 5px 10px;
+    z-index: $sticky-panel-z-index + 1;
+
+    &.in-sticky {
+        background: $catalog-filter-controls-toolbar-sticky-container-background;
+        z-index: $sticky-panel-z-index + 1;
+        box-shadow: $sticky-panel-box-shadow;
+
+        &.scrolled-up {
+            transform: translateY(0);
         }
-    }
 
-    &__text-node {
-        position: absolute;
-        top: 21px;
-        left: 15px;
-    }
-
-    &__input-node {
-        flex-basis: 125px;
-        flex-shrink: 0;
+        &.scroll-down {
+            transform: translateY(calc(var(--group-offset-y, 0) * -1));
+        }
     }
 }
 

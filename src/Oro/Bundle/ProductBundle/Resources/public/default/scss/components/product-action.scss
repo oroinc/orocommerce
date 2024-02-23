@@ -16,6 +16,7 @@
 
     &.in-sticky {
         display: block;
+        z-index: $datagrid-massaction-sticky-mode-z-index;
 
         .product-action {
             display: block;

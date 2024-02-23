@@ -24,7 +24,7 @@ Feature: Shopping Lists Widget
     And I should not see "Shopping List 2" in the "Shopping List Widget" element
 
   Scenario: Check buttons with disabled Show All in Shopping Lists Widget
-    Given I click "New Category"
+    Given I click "New Category" in hamburger menu
     And I should not see "Remove from Shopping List 1"
     And I should not see "Remove from Shopping List 2"
     When I click on "Shopping List Dropdown"
@@ -67,7 +67,7 @@ Feature: Shopping Lists Widget
     And I should see "Shopping List 2" in the "Shopping List Widget" element
 
   Scenario: Check buttons with enabled Show All in Shopping Lists Widget
-    Given I click "New Category"
+    Given I click "New Category" in hamburger menu
     And I should not see "Remove from Shopping List 1"
     And I should not see "Remove from Shopping List 2"
     When I click on "Shopping List Dropdown"

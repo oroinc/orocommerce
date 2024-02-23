@@ -16,7 +16,7 @@ Feature: Responsive Product Filters On Products Catalog
   Scenario: Check Filter Panel State
     Given I proceed as the customer
     And I login as AmandaRCole@example.org buyer
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     Then I should see an "GridFilters" element
 
     When I set window size to 992x1024

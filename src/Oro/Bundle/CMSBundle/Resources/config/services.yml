@@ -528,3 +528,10 @@ services:
             - '@oro_config.global'
         tags:
             - { name: layout.context_configurator }
+
+    oro_cms.access_rule.frontend_organization_for_content_block:
+        class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule
+        arguments:
+            - '@oro_organization.organization_restriction_provider'
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\CMSBundle\Entity\ContentBlock, frontend: true }

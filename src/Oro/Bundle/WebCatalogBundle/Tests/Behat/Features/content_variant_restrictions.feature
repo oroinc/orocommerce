@@ -49,12 +49,14 @@ Feature: Content Variant restrictions
   Scenario: Restricted Content Variant not accessible by not allowed customer user
     Given I proceed as the Buyer
     And I am on the homepage
+    And I click on "Main Menu Button"
     And I should not see "Contact Us Node"
     When I am on "/contact-us-node"
     Then I should see "404 Not Found"
 
   Scenario: Restricted Content Variant is accessible by allowed customer user
     Given I signed in as AmandaRCole@example.org on the store frontend
+    And I click on "Main Menu Button"
     And I should see "Contact Us Node"
     When I am on "/contact-us-node"
     Then I should not see "404 Not Found"

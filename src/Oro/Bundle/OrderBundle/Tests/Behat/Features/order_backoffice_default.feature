@@ -14,7 +14,8 @@ Feature: Order Backoffice Default
       | Customer User | N/A |
 
     Then I operate as the Buyer
-    And click "Orders"
+    And I click "Account Dropdown"
+    And I click "Order History"
     Then I should see following records in grid:
       | OrderWithoutCustomerUser |
     When I click view OrderWithoutCustomerUser in grid
@@ -36,13 +37,15 @@ Feature: Order Backoffice Default
       | Customer User | N/A |
 
     Then I operate as the Buyer
-    And click "Orders"
+    And I click "Account Dropdown"
+    And I click "Order History"
     Then I should see following records in grid:
       | OrderWithChildCustomerAndWithCustomerUser |
       | OrderWithChildCustomerAndWithoutCustomerUser |
     When I click view OrderWithChildCustomerAndWithCustomerUser in grid
     Then I should see "Order #OrderWithChildCustomerAndWithCustomerUser"
-    When click "Orders"
+    And I click "Account Dropdown"
+    And I click "Order History"
     And I click view OrderWithChildCustomerAndWithoutCustomerUser in grid
     Then I should see "Order #OrderWithChildCustomerAndWithoutCustomerUser"
 
@@ -57,7 +60,8 @@ Feature: Order Backoffice Default
 
     Then I operate as the Buyer
     And I signed in as RuthWMaxwell@example.org on the store frontend
-    And click "Orders"
+    And I click "Account Dropdown"
+    And I click "Order History"
     Then I should not see "OrderWithoutCustomerUser"
     And I should see following records in grid:
       | OrderWithChildCustomerAndWithCustomerUser |
@@ -74,7 +78,8 @@ Feature: Order Backoffice Default
 
     Then I operate as the Buyer
     And I signed in as JuanaPBrzezinski@example.net on the store frontend
-    And click "Orders"
+    And I click "Account Dropdown"
+    And I click "Order History"
     Then I should see "There are no orders"
 
   Scenario: See Orders with Customer by creator (buyer).
@@ -88,7 +93,8 @@ Feature: Order Backoffice Default
 
     Then I operate as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    And click "Orders"
+    And I click "Account Dropdown"
+    And I click "Order History"
     Then I should not see "OrderWithoutCustomerUser"
     And I should see following records in grid:
       | OrderWithCustomerAndCustomerUser |

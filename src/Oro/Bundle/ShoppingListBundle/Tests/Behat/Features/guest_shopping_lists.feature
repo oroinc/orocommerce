@@ -102,7 +102,7 @@ Feature: Guest Shopping Lists
   Scenario: Empty shopping list shouldn't be created automatically for unauthorized user
     Given I proceed as the User
     And I am on homepage
-    And I should see "No Shopping Lists"
+    And I should see "0" in the "Shopping List Widget" element
 
   Scenario: Enable "Create Guest Shopping Lists Immediately"
     Given I proceed as the Admin
@@ -119,9 +119,9 @@ Feature: Guest Shopping Lists
 
   Scenario: Add empty matrices to the shopping Shopping List
     When I click "Add to Shopping List"
-    Then should see 'Shopping list "Shopping List" was updated successfully' flash message
+    Then I should see 'Shopping list "Shopping List" was updated successfully' flash message and I close it
     When I open shopping list widget
-    And I click "View List"
+    And I click "Open List"
     Then I should see following grid:
       | SKU    | Item         | Qty Update All                   | Price | Subtotal |
       | 1GB83  | Slip-On Clog | Click "edit" to select variants  |       |          |
@@ -146,13 +146,14 @@ Feature: Guest Shopping Lists
     Then I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
     And I hover on "Shopping List Widget"
-    And I should see "1 ea | $3.00" in the "Shopping List Widget" element
+    And I should see "1 ea $3.00" in the "Shopping List Widget" element
 
   Scenario: Check Update Shopping List
     Given I should see "Update Shopping list"
     When I fill "FrontendLineItemForm" with:
       | Quantity | 10   |
-      | Unit     | each |
+    And I click on empty space
+    And I type "each" in "Product View Unit"
     And I click "Update Shopping List"
     Then I should see 'Product has been updated in "Shopping List"' flash message
     Then type "SKU003" in "search"
@@ -161,7 +162,7 @@ Feature: Guest Shopping Lists
 
   Scenario: Check shopping list widget
     When I hover on "Shopping List Widget"
-    Then I should see "10 ea | $3.00" in the "Shopping List Widget" element
+    Then I should see "10 ea $3.00" in the "Shopping List Widget" element
 
   Scenario: Add more products to shopping list from list page (search)
     Given I type "CONTROL1" in "search"
@@ -173,6 +174,7 @@ Feature: Guest Shopping Lists
   Scenario: Check added products available in Guest Shopping List
     Given I click "Shopping List"
     Then  I should see "Control Product"
+    And I click on "Flash Message Close Button"
     And  I should see "Product3"
     And I should not see following buttons:
       | Delete        |

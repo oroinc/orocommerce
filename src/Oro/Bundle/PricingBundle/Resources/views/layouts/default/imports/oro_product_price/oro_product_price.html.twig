@@ -1,4 +1,9 @@
 {% block __oro_product_price__product_price_component_widget %}
+    {% do block|merge_context({
+        showValuePrice: showValuePrice,
+        showListedPrice: showListedPrice,
+        showUnit: showUnit
+    }) %}
     {% if not is_price_hidden(product, matrixFormType|default('') == 'none') %}
         {% set attr = layout_attr_defaults(attr, {
             'data-page-component-module': 'oroui/js/app/components/view-component',
@@ -6,6 +11,7 @@
                 view: 'oropricing/js/app/views/list-item-product-prices-view',
                 showValuePrice: showValuePrice,
                 showListedPrice: showListedPrice,
+                showUnit: showUnit,
                 modelAttr: {
                     prices: productPrices,
                 }
@@ -44,7 +50,7 @@
         'data-name': 'prices-hint-trigger'
     }) %}
     <button {{ block('block_attributes') }}>
-        {{ renderIcon.icon({name: 'info', extraClass: 'theme-icon--medium'}) }}
+        {{ renderIcon.icon({name: 'info'}) }}
     </button>
 {% endblock %}
 
@@ -85,8 +91,9 @@
                     {% endif %}
                 {% endapply %}
             </span>
-            <span> / </span>
-            <span class="product-price__unit" data-name="unit">
+            {% if showUnit %}
+                <span> / </span>
+                <span class="product-price__unit" data-name="unit">
                 <span class="product-price__unit-full">
                     {{ firstPrice ? firstPrice.formatted_unit }}
                 </span>
@@ -94,6 +101,7 @@
                     {{ firstPrice ? firstPrice.unit|oro_format_short_product_unit_label }}
                 </span>
             </span>
+            {% endif %}
         </span>
     </div>
 {% endblock %}

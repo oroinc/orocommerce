@@ -44,7 +44,9 @@ navigation:
                             frontend_shopping_lists: ~
             oro_customer_menu:
                 children:
-                    frontend_shopping_lists: ~
+                    oro_order_frontend_orders:
+                        children:
+                            frontend_shopping_lists: ~
 
     titles:
         oro_shopping_list_index: ~

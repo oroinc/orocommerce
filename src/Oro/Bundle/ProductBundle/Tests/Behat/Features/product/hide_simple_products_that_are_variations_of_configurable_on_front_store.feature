@@ -164,7 +164,7 @@ Feature: Hide simple products that are variations of configurable on front store
       | Value 11 | Value 12 |
       | 1        | 2        |
     When I click "Add to Shopping List"
-    Then should see 'Shopping list "Shopping list" was updated successfully' flash message
+    Then should see 'Shopping list "Shopping list" was updated successfully' flash message and I close it
     When I open shopping list widget
     Then I should see "Configurable Product A"
     And I should see "PROD_A_1"

@@ -21,8 +21,8 @@ Feature: Product view shopping list
     And click "View Details" for "PSKU1" product
     And I click on "Shopping List Dropdown"
     And I should see "Request A Quote Button" element inside "Product Shopping List Dropdown" element
-    When I fill "Product Shopping List Form" with:
-      | Unit | set |
+    And I click on empty space
+    When I type "set" in "Product View Unit"
     And I click on "Shopping List Dropdown"
     And I should see "Request A Quote Button" element inside "Product Shopping List Dropdown" element
     And I click "Request A Quote Button"
@@ -61,8 +61,7 @@ Feature: Product view shopping list
     And I should not see "Product1`\"'&йёщ®®>"
 
   Scenario: Check that product name is localized in shopping lists widget
-    Given I click "Localization Switcher"
-    And I select "Localization 1" localization
+    Given I select "Localization 1" localization
     And type "PSKU_LOCALIZED" in "search"
     And click "Search Button"
     And click "View Details" for "PSKU_LOCALIZED" product

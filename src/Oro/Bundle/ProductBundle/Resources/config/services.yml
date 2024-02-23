@@ -2387,6 +2387,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: 255 }
 
+    Oro\Bundle\ProductBundle\Layout\DataProvider\ProductDetailsPageConfigurationProvider: #BB-23597
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.data_provider, alias: product_details_page_configuration }
+
     oro_product.event_listener.product_brand_view:
         class: Oro\Bundle\ProductBundle\EventListener\ProductBrandViewListener
         arguments:
