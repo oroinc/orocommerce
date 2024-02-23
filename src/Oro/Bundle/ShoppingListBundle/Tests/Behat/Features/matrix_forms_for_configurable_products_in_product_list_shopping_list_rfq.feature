@@ -167,6 +167,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Shopping List Actions"
     And click "Delete"
     And click "Yes, delete"
+    And click on "Flash Message Close Button"
     And I open shopping list widget
     And I click "View Details"
     And I click "Shopping List Actions"
@@ -291,10 +292,11 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     When I click "Proceed"
     Then I should see "Cannot create order because Shopping List has no items" flash message
+    And click on "Flash Message Close Button"
 
   Scenario: Check quantity and unit for empty configurable product
-    When I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     And I click view Shopping List in grid
     Then I should see following grid:
       | SKU  | Item                 | Qty | Unit                            | Price  | Subtotal |
@@ -318,6 +320,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should see "Checkout"
     And I should see "400-Watt Bulb Work Light"
     And I should not see "ConfigurableProductB"
+    And click on "Flash Message Close Button"
 
   Scenario: Create request for quote with empty configurable product and a simple product
     Given I open shopping list widget
@@ -331,7 +334,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should not see "ConfigurableProductB" in the "RequestAQuoteProducts" element
 
   Scenario: Update empty matrix form in the shopping list and create order
-    Given I open shopping list widget
+    Given I reload the page
+    When I open shopping list widget
     And I click "View Details"
     And I click Edit CNFB in grid
     And I fill "Matrix Grid Form" with:
@@ -577,8 +581,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill in "Product Listings" with "Popup Matrix Form"
     And I save form
     Given I proceed as the User
-    When I click "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     Then I should see "There are no shopping lists"
     When type "CNFB" in "search"
     And click "Search Button"
@@ -600,7 +604,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Close" in modal window
     Then I should not see an "Matrix Grid Popup" element
     # Check opening popup matrix form doesn't create empty shopping list
-    And I should see "No Shopping Lists"
+    And I should see "0" in the "Shopping List Widget" element
     And I click "Add to Shopping List" for "CNFB" product
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
@@ -691,8 +695,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Close" in modal window
     Then I should not see an "Matrix Grid Popup" element
     # Check opening popup matrix form doesn't create empty shopping list
-    When I click "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     Then I should see "There are no shopping lists"
     And I reload the page
 
@@ -764,6 +768,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | 4        | N/A      |          |
       |          | 3        | N/A      |
       | N/A      | N/A      | 5        |
+    And reload the page
 
   Scenario: Check product name in shopping list dropdown in front store
     Given I open shopping list widget
@@ -783,8 +788,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill in "Shopping List Name" with "Product C Shopping List"
     And I click "Create and Add"
     And I should see "Product has been added to \"Product C Shopping List\""
-    When I click "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And click on "Flash Message Close Button"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     Then should see following grid:
       | Name                    | Items |
       | Product C Shopping List | 1     |
@@ -800,8 +806,9 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click on "Shopping List Dropdown"
     And I click "Remove From Shopping List" in "ShoppingListButtonGroupMenu" element
     Then I should see "Product has been removed from \"Shopping List\""
-    When I click "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And click on "Flash Message Close Button"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     Then should see following grid:
       | Name                    | Items |
       | Product C Shopping List | 1     |

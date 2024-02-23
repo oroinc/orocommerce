@@ -67,6 +67,7 @@ Feature: Product kits add from product view page
     And I fill in "Shopping List Name" with "Product Kit Shopping List"
     And I click "Create and Add"
     Then I should see 'Product kit has been added to \"Product Kit Shopping List\"' flash message
+    And click on "Flash Message Close Button"
     And I should see an "In Shopping List" element
 
   Scenario: Check "In Shopping List" dialog
@@ -80,7 +81,7 @@ Feature: Product kits add from product view page
   Scenario: Check shopping list widget
     When I open shopping list widget
     Then I should see "Product Kit Shopping List" on shopping list widget
-    And I should see "1 Item | $268.00"
+    And I should see "1 item | $268.00"
     And I close shopping list widget
 
   Scenario: Check shopping list view page

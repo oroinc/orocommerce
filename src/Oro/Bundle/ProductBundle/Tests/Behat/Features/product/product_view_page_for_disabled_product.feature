@@ -39,6 +39,7 @@ Feature: Product view page for disabled product
     Given I operate as the Buyer
     When I open product with sku "PSKU1" on the store frontend
     Then I should see "404 Not Found"
+    And I click "Account Dropdown"
     When I click "Sign Out"
     And I open product with sku "PSKU1" on the store frontend
     Then I should see "404 Not Found"

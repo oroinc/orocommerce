@@ -75,7 +75,7 @@ Feature: Create RFQ with product variant
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
 
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | PROD_A_1 |
     And I wait for products to load
@@ -87,7 +87,7 @@ Feature: Create RFQ with product variant
     And I click "Search Button"
     Then I should not see "PROD_A_1" product
 
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
 
     When I click "New Quote"
@@ -145,7 +145,7 @@ Feature: Create RFQ with product variant
   Scenario: Create RFQ from quick order form with enabled variants
     Given I proceed as the User
     And I am on the homepage
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | PROD_A_1 |
     And I wait for products to load

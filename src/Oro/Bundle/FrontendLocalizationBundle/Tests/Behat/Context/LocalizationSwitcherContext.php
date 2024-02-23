@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Element\LocalizationSwitcherElement;
+use Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext;
+use Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Element\LocalizationCurrencySwitcherElement;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
@@ -13,13 +15,28 @@ class LocalizationSwitcherContext extends OroFeatureContext implements OroPageOb
     use PageObjectDictionary;
 
     /**
+     * @var CommerceMainContext
+     */
+    private $commerceMainContext;
+
+    /**
+     * @BeforeScenario
+     */
+    public function gatherContexts(BeforeScenarioScope $scope)
+    {
+        $environment = $scope->getEnvironment();
+        $this->commerceMainContext = $environment->getContext(CommerceMainContext::class);
+    }
+
+    /**
      * @Then /^(?:|I )should see that localization switcher contains localizations:$/
      */
     public function iSeeThatLocalizationSwitcherContainLocalizations(TableNode $table)
     {
-        /** @var LocalizationSwitcherElement $switcher */
-        $switcher = $this->createElement('LocalizationSwitcher');
-        $actualOptions = $switcher->getLocalizationNames();
+        $this->commerceMainContext->openMainMenu();
+        /** @var LocalizationCurrencySwitcherElement $switcher */
+        $switcher = $this->createElement('LocalizationCurrencySwitcher');
+        $actualOptions = $switcher->getAvailableLocalizationOptions();
 
         $expectedOptions = array_map(function (array $row) {
             list($value) = $row;
@@ -29,6 +46,8 @@ class LocalizationSwitcherContext extends OroFeatureContext implements OroPageOb
         sort($expectedOptions);
 
         self::assertEquals($expectedOptions, $actualOptions);
+
+        $this->commerceMainContext->closeMainMenu();
     }
 
     /**
@@ -36,13 +55,15 @@ class LocalizationSwitcherContext extends OroFeatureContext implements OroPageOb
      *
      * @Then /^(?:|I )should see that "(?P<localizationName>[^"]*)" localization is active$/
      */
-    public function localizationIsActive($localizationName)
+    public function localizationIsActive(string $localizationName)
     {
-        $activeOption = $this->createElement('LocalizationSwitcherActiveOption');
-        self::assertEquals(
-            trim($localizationName),
-            $activeOption->getText()
-        );
+        $this->commerceMainContext->openMainMenu();
+
+        /** @var LocalizationCurrencySwitcherElement $switcher */
+        $switcher = $this->createElement('LocalizationCurrencySwitcher');
+
+        self::assertEquals($localizationName, $switcher->getActiveLocalizationOption());
+        $this->commerceMainContext->closeMainMenu();
     }
 
     /**
@@ -50,12 +71,15 @@ class LocalizationSwitcherContext extends OroFeatureContext implements OroPageOb
      *
      * @Given /^(?:|I )select "(?P<localizationName>[^"]*)" localization$/
      */
-    public function iSelectLocalization($localizationName)
+    public function iSelectLocalization(string $localizationName)
     {
-        /** @var LocalizationSwitcherElement $switcher */
-        $switcher = $this->createElement('LocalizationSwitcher');
-        $localizationLink = $switcher->findLocalizationLink(trim($localizationName));
-        self::assertNotNull($localizationLink, 'Localization link not found');
-        $localizationLink->click();
+        $this->commerceMainContext->openMainMenu();
+
+        /** @var LocalizationCurrencySwitcherElement $switcher */
+        $switcher = $this->createElement('LocalizationCurrencySwitcher');
+        $switcher->setLocalizationValue($localizationName);
+
+        $this->waitForAjax();
+        $this->commerceMainContext->closeMainMenu();
     }
 }

@@ -59,7 +59,7 @@ Feature: Product collection add
   Scenario: Created Product Collection accessible at frontend
     Given I operate as the Buyer
     And I am on homepage
-    And I click "Collection1"
+    And I click "Collection1" in hamburger menu
     Then I should see "PSKU1"
     And I should not see "PSKU2"
     And Page title equals to "Collection1"

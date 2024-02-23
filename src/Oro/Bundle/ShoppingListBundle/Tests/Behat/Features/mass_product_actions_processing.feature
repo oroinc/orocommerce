@@ -37,7 +37,7 @@ Feature: Mass Product Actions processing
   Scenario: "Create New shopping list" mass action on the category list view
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "All Products"
+    And I click "All Products" in hamburger menu
     And I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
     When I click "Catalog Switcher Toggle"
     And I click "Gallery View"
@@ -67,7 +67,7 @@ Feature: Mass Product Actions processing
 
   Scenario: "Add to Shopping List of Amanda" mass action on the category list view
     Given I proceed as the User
-    And I click "All Products"
+    And I click "All Products" in hamburger menu
     And I click "Search Button"
     And I check PSKU3 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU3" in frontend product grid:
@@ -76,6 +76,7 @@ Feature: Mass Product Actions processing
     And I click "Header"
     And I click "Add to Shopping List of Amanda" in "ProductFrontendMassPanelInBottomSticky" element
     Then I should see "1 product was added" flash message
+    And click on "Flash Message Close Button"
     When I hover on "Shopping Cart"
     And I click "Shopping List of Amanda" on shopping list widget
     Then I should see following grid:
@@ -87,7 +88,7 @@ Feature: Mass Product Actions processing
   Scenario: Should be possible to check mass action checkbox on All products page
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
-    When I click "All Products"
+    When I click "All Products" in hamburger menu
     And I check PSKU2 record in "Product Frontend Grid" grid
 
   Scenario: Show warning message when products are selected and trying to refresh the page
@@ -121,6 +122,7 @@ Feature: Mass Product Actions processing
     Then I should not see "Shopping List of Amanda" in the "ProductFrontendMassPanelInBottomSticky" element
     And I uncheck PSKU3 record in "Product Frontend Grid" grid
     # Guest, shouldn't see others lists
+    And I click "Account Dropdown"
     When click "Sign Out"
     And I type "PSKU3" in "search"
     And I click "Search Button"

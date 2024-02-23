@@ -2,15 +2,18 @@
 
 namespace Oro\Bundle\ApplicationBundle\Tests\Behat\Context;
 
+use Behat\Behat\Hook\Scope\BeforeStepScope;
 use Behat\Gherkin\Node\TableNode;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\SessionAliasProviderAwareInterface;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\SessionAliasProviderAwareTrait;
+use Oro\Bundle\TestFrameworkBundle\Behat\Context\SpinTrait;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\EntityPage;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Tabs;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
+use WebDriver\Exception\UnexpectedAlertOpen;
 
 class CommerceMainContext extends OroFeatureContext implements
     OroPageObjectAware,
@@ -18,6 +21,32 @@ class CommerceMainContext extends OroFeatureContext implements
 {
     use PageObjectDictionary;
     use SessionAliasProviderAwareTrait;
+    use SpinTrait;
+
+    /**
+     * @BeforeStep
+     */
+    public function beforeStepDisableAnimation(BeforeStepScope $scope)
+    {
+        try {
+            $function = <<<JS
+(function(){
+    const body = document.querySelector("body");
+    const disableAnimation = function() {
+        document.querySelector("body").setAttribute('data-disable-animation', '1');
+    };
+    if (body) {
+        disableAnimation();
+    } else {
+        document.addEventListener("DOMContentLoaded", disableAnimation);
+    }
+})();
+JS;
+            $this->getSession()->executeScript($function);
+        } catch (UnexpectedAlertOpen $e) {
+            return;
+        }
+    }
 
     /**
      * This step used for login bayer from frontend of commerce
@@ -157,6 +186,32 @@ class CommerceMainContext extends OroFeatureContext implements
 
         foreach ($table->getRows() as $row) {
             static::assertStringContainsString($this->fixStepArgument($row[0]), $activeTab->getText());
+        }
+    }
+
+    /**
+     * Example: When I open main menu
+     * @When /^(?:|I )open main menu$/
+     */
+    public function openMainMenu(): void
+    {
+        $this->getSession()->wait(300);
+        $mainMenuTrigger = $this->createElement('Main Menu Button');
+        if ($mainMenuTrigger->isValid() && $mainMenuTrigger->isVisible()) {
+            $mainMenuTrigger->click();
+        }
+    }
+
+    /**
+     * Example: When I close main menu
+     * @When /^(?:|I )close main menu$/
+     */
+    public function closeMainMenu(): void
+    {
+        $sidebarMainMenuPopup = $this->createElement('Sidebar Main Menu Popup');
+        $closeButton = $sidebarMainMenuPopup->getElement('Frontend Main Menu Close Button');
+        if ($sidebarMainMenuPopup->isValid() && $sidebarMainMenuPopup->isVisible()) {
+            $closeButton->clickForce();
         }
     }
 }

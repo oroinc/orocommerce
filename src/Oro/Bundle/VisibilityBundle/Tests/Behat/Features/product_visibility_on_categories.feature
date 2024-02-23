@@ -14,7 +14,7 @@ Feature: Product visibility on categories
   Scenario: Check default product visibility
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
-    When I click "Lighting Products"
+    When I click "Lighting Products" in hamburger menu
     And I click "All Products"
     Then I should see "PSKU1"
     And I should see "PSKU2"
@@ -49,7 +49,7 @@ Feature: Product visibility on categories
 
   Scenario: Check product visibility for customer group
     Given I continue as the Buyer
-    When I click "Lighting Products"
+    When I click "Lighting Products" in hamburger menu
     And I click "All Products"
     Then I should see "PSKU1"
     And I should not see "PSKU2"
@@ -84,8 +84,9 @@ Feature: Product visibility on categories
 
   Scenario: Check product visibility for All
     Given I proceed as the Buyer
+    And I click "Account Dropdown"
     When I click "Sign Out"
-    And I click "Lighting Products"
+    And I click "Lighting Products" in hamburger menu
     And I click "All Products"
     Then I should see "PSKU1"
     And I should not see "PSKU2"

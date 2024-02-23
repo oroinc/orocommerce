@@ -12,6 +12,7 @@ dynamic-imports:
         - oroproduct/js/app/views/base-product-view
         - oroproduct/js/app/views/frontend-product-view
         - oroproduct/js/app/views/search-autocomplete-view
+        - oroproduct/js/app/views/search-widget-view
         - oroproduct/js/content-processor/product-add-to-dropdown-button
     orodatagrid:
         - oroproduct/js/app/components/catalog-switch-component

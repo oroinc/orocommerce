@@ -33,8 +33,9 @@ Feature: Mass Product Actions shopping list limit
     When I type "First Shopping List" in "Shopping List Name"
     And click "Create and Add"
     Then I should see '1 product was added (view shopping list)' flash message
+    And click on "Flash Message Close Button"
     When I hover on "Shopping Cart"
-    Then I should see "View List"
+    Then I should see "Open List"
 
   Scenario: "Create New Shopping List" action is not available when Shopping List limit is less or equals the number of Shopping Lists
     When I check PSKU1 record in "Product Frontend Grid" grid

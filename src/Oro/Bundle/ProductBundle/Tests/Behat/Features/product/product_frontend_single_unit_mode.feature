@@ -143,7 +143,8 @@ Feature: Product frontend single unit mode
     And I close ui dialog
 
   Scenario: As guest user verify that prices are correctly displayed in "Tabs Template" layout view
-    When I click "Sign Out"
+    When I click "Account Dropdown"
+    And I click "Sign Out"
     And I type "PSKU2" in "search"
     And click "Search Button"
     And I click "View Details" for "PSKU2" product

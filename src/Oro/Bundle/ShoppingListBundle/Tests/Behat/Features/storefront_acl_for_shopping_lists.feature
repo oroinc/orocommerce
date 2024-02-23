@@ -280,6 +280,7 @@ Feature: Storefront acl for shopping lists
     And click "Set as Default"
     And I click "Yes, set as default"
     Then should see "Shopping list has been successfully set as default" flash message
+    And click on "Flash Message Close Button"
     When I open shopping list widget
     Then I should see a "<shownRadio1>" element
     And I should see a "<shownRadio2>" element
@@ -304,9 +305,9 @@ Feature: Storefront acl for shopping lists
     And click "Set as Default"
     And I click "Yes, set as default"
     Then should see "Shopping list has been successfully set as default" flash message
+    And click on "Flash Message Close Button"
     When I open shopping list widget
     And I click on "<radio>"
-    Then should see "Shopping list has been successfully set as default" flash message
 
     Examples:
       | name                      | radio                                    |
@@ -390,7 +391,7 @@ Feature: Storefront acl for shopping lists
     And I open shopping list widget
     And I click "Create New List"
     When I click "Create"
-    Then I should see "1 Shopping List"
+    Then I should see "1" in the "Shopping List Widget" element
 
   Scenario: Set create permission to Department
     Given I proceed as the Admin
@@ -405,7 +406,7 @@ Feature: Storefront acl for shopping lists
     And I open shopping list widget
     And I click "Create New List"
     When I click "Create"
-    Then I should see "2 Shopping Lists"
+    Then I should see "2" in the "Shopping List Widget" element
 
   Scenario: Set create permission to Corporate
     Given I proceed as the Admin
@@ -420,4 +421,4 @@ Feature: Storefront acl for shopping lists
     And I open shopping list widget
     And I click "Create New List"
     When I click "Create"
-    Then I should see "3 Shopping Lists"
+    Then I should see "3" in the "Shopping List Widget" element

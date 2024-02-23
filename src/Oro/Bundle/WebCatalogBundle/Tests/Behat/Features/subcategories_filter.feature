@@ -67,7 +67,7 @@ Feature: Sub-Categories filter
   Scenario: No category page
     Given I proceed as the Buyer
     And I am on the homepage
-    And I click "Products"
+    And I click "Products" in hamburger menu
     Then number of records in "Product Frontend Grid" should be 6
     And I should see "PSKU1" product
     And I should see "PSKU2" product
@@ -79,14 +79,14 @@ Feature: Sub-Categories filter
     Then I should not see an "Subcategories Filter" element
 
   Scenario: Category page for "Do not include"
-    And I click "Medical Apparel"
+    And I click "Medical Apparel" in hamburger menu
     Then number of records in "Product Frontend Grid" should be 1
     And I should see "PSKU5" product
     When I click on "Frontend Grid Action Filter Button"
     Then I should not see an "Subcategories Filter" element
 
   Scenario: Category page for "Include, show as filter"
-    And I click "Lighting Products"
+    And I click "Lighting Products" in hamburger menu
     Then number of records in "Product Frontend Grid" should be 4
     And I should see "PSKU1" product
     And I should see "PSKU2" product

@@ -38,9 +38,8 @@ Feature: Category canonical url
 
   Scenario: Check canonical URL of the front store web catalog node page
     Given I proceed as the Buyer
-    And I am on homepage
-    And I should see "Printers" in main menu
-    When I click "Printers"
+    And I signed in as AmandaRCole@example.org on the store frontend
+    When I click "Printers" in hamburger menu
     Then Page should contain Canonical URL with URI "web-catalog-printers"
 
   Scenario: Configure Canonical URL to use Direct URLs only

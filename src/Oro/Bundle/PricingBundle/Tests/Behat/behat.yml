@@ -226,14 +226,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Currency Switcher:
-      selector:
-        type: 'xpath'
-        locator: '//div[contains(@data-bound-component, "currency-switcher")]/ancestor::div[@class="oro-toolbar"]'
-
-    Currency Switcher Button:
-      selector:
-        type: 'xpath'
-        locator: '//div[contains(@data-bound-component, "currency-switcher")]/ancestor::div[@class="oro-toolbar"]/div[@data-toggle="dropdown"]'
+      selector: '[name="currency"]'
 
     Open Price Dropdown Button:
       selector:

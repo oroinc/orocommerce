@@ -92,7 +92,7 @@ Feature: Consents with disabled Guest Access
   Scenario: Guest create an Account
     Given I proceed as the User
     And I am on homepage
-    When I click "Register"
+    When I click "Sign Up"
     Then I should see 2 elements "Required Consent"
     And I should see 1 elements "Optional Consent"
     And I fill form with:

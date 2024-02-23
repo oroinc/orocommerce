@@ -24,13 +24,12 @@ Feature: Shopping list subtotal and currency
   Scenario: Create shopping list on frontend
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Currency Switcher"
-    And I click "Euro"
+    And I select "€" currency
     And I am on the homepage
     And I open shopping list widget
     And I click "Create New List"
     When I click "Create"
-    Then I should see "3 Shopping Lists"
+    Then I should see "3" in the "Shopping List Widget" element
     And I type "BB04" in "search"
     And I click "Search Button"
     Then I should see "Add to Shopping List"

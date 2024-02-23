@@ -281,7 +281,7 @@ oro:
                 is_default.label: 'Default'
                 assigned_to.label: 'Assigned To'
 
-                entity.label: '{0} No Shopping Lists|{1} <strong>%count%</strong> Shopping List|]1,Inf[ <strong>%count%</strong> Shopping Lists'
+                entity.label: '{0} No Shopping Lists|{1} Shopping List|]1,Inf[ Shopping Lists'
                 items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
                 total.label: 'Total:'
                 subtotal.label: 'Subtotal:'
@@ -297,7 +297,7 @@ oro:
 
                 view_details.label: 'View Details'
                 view_details.title: 'Click to see all items, discounts, taxes and other applicable fees'
-                view_list.label: 'View List'
+                view_list.label: 'Open List'
                 create_new_shopping_list.label: 'Create New List'
                 create_new_shopping_list.aria_label: 'Create New List. Opens a popup'
                 choose_assign_user.label: 'Choose a User to assign "%label%"'

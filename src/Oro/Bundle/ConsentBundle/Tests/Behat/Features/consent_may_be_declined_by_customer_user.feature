@@ -86,7 +86,8 @@ Feature: Consent may be declined by customer user
   Scenario: Manage consents from My profile page
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    When follow "Account"
+    And I click "Account Dropdown"
+    And I click "My Profile"
     Then should see a "Data Protection Section" element
     And I should see "Unaccepted Consent" element with text "Collecting and storing personal data" inside "Data Protection Section" element
     When I click "Edit Profile Button"

@@ -69,7 +69,7 @@ Feature: Product with slug same to web catalog node
   Scenario: Check product url
     Given I proceed as the Buyer
     And I am on the homepage
-    When I click "Test Node"
+    When I click "Test Node" in hamburger menu
     And should see "Test Product"
     And click "View Details" for "Test Product" product
     Then the url should match "/test-node/_item/test-1"

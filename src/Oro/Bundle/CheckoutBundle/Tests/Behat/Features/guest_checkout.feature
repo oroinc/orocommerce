@@ -149,7 +149,7 @@ Feature: Guest Checkout
   Scenario: Registration with the same email
     Given I proceed as the User
     And I am on homepage
-    And click "Sign In"
+    And click "Log In"
     And click "Create An Account"
     And I fill "Registration Form" with:
       | Company Name     | OroCommerce                |
@@ -179,5 +179,5 @@ Feature: Guest Checkout
     And fill form with:
       | Email Address | tester@test.com   |
       | Password      | TesterT1@test.com |
-    When click "Sign In"
-    Then should see "Signed in as: TesterFromRegistrationFlow"
+    When click "Log In"
+    Then should see "TesterFromRegistrationFlow"

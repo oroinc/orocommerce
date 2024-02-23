@@ -24,7 +24,8 @@ Feature: Order totals with different currencies
     Then I should see "Configuration saved" flash message
     When I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
-    And I click "Order"
+    And I click "Account Dropdown"
+    And I click "Order History"
     And I click view "SimpleOrder" in grid
     Then I should see "Subtotal $5.00"
     And I should see "Discount $0.00"
@@ -32,8 +33,7 @@ Feature: Order totals with different currencies
     And I should see "Shipping Discount $0.00"
     And I should see "Tax $0.00"
     And I should see "Total $5.00"
-    When I click "Currency Switcher"
-    And I click "Euro"
+    And I select "€" currency
     Then I should see "Subtotal $5.00"
     And I should see "Discount $0.00"
     And I should see "Shipping $0.00"

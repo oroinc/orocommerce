@@ -6,7 +6,7 @@ $checkout-view-margin: 20px 0 0 !default;
 $checkout-view-flex-direction: row !default;
 $checkout-view-flex-wrap: wrap !default;
 $checkout-view-justify-content: space-between !default;
-$checkout-view-align-items: flex-start !default;
+$checkout-view-align-items: stretch !default;
 
 $checkout-view-column-gap: 28px !default;
 
@@ -30,6 +30,7 @@ $checkout-view-title-font-weight: $headline2-font-weight !default;
 $checkout-view-sticky-column-offset: spacing('sm') $checkout-view-column-gap !default;
 
 $checkout-view-sticky-titles-background: get-color('additional-old', 'ultra') !default;
+$checkout-view-sticky-titles-z-index: z('fixed') !default;
 $checkout-view-sticky-titles-border-bottom: 1px solid get-color('additional-old', 'light') !default;
 
 $checkout-view-sticky-titles-inner-display: flex !default;

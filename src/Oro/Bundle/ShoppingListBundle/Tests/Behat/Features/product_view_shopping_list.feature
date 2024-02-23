@@ -61,8 +61,7 @@ Feature: Product view shopping list
     And I should not see "Product1`\"'&йёщ®®>"
 
   Scenario: Check that product name is localized in shopping lists widget
-    Given I click "Localization Switcher"
-    And I select "Localization 1" localization
+    Given I select "Localization 1" localization
     And type "PSKU_LOCALIZED" in "search"
     And click "Search Button"
     And click "View Details" for "PSKU_LOCALIZED" product

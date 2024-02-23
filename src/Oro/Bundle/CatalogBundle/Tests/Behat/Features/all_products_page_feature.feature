@@ -58,12 +58,12 @@ Feature: All products page feature
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     Then I go to the homepage
-    Then I click "All Products"
+    Then I click "All Products" in hamburger menu
     And I should see following categories in same order:
       | NewCategory  |
       | NewCategory2 |
       | NewCategory3 |
-    Then I click "All Products (Web Catalog)"
+    Then I click "All Products (Web Catalog)" in hamburger menu
     And I should see following categories in same order:
       | NewCategory  |
       | NewCategory2 |
@@ -71,21 +71,22 @@ Feature: All products page feature
 
   Scenario: User adds product to shopping list
     Given I proceed as the User
-    And I click "All Products"
+    And I click "All Products" in hamburger menu
     # Filtering by full product name "Product3`\"'&йёщ®&reg;>" does not work on elasticsearch, see BB-19131
     When I filter Name as contains "Product3`\"'&йёщ®"
     And I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message and I close it
     When I click "Shopping List"
+    And I click "Close" in modal window
     And I should see "Product3`\"'&йёщ®&reg;>"
-    Then I click "All Products"
+    Then I click "All Products" in hamburger menu
     # Filtering by full product name "Product3`\"'&йёщ®&reg;>" does not work on elasticsearch, see BB-19131
     When I filter Name as contains "Product3`\"'&йёщ®"
     Then I should see "In Shopping List"
 
   Scenario: User filters products and hide categories except one
     Given I proceed as the User
-    Given I click "All Products"
+    Given I click "All Products" in hamburger menu
     And I filter Name as contains "Product1"
     And I should not see "Product2"
     And I should not see "Product3`\"'&йёщ®&reg;>"
@@ -102,7 +103,7 @@ Feature: All products page feature
     Then I should see "Configuration saved" flash message
     Given I proceed as the User
     When I am on the homepage
-    Then I click "All Products"
+    Then I click "All Products" in hamburger menu
     And I should see "404 Not Found"
-    Then I click "All Products (Web Catalog)"
+    Then I click "All Products (Web Catalog)" in hamburger menu
     And I should see "404 Not Found"

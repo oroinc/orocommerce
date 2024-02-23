@@ -2,9 +2,3 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '@OroPricing/layouts/default/layout.html.twig'
-
-        - '@appendOption':
-            id: switcher_info_trigger
-            optionName: vars.items
-            optionValue:
-                currency: '=data["oro_pricing_currency"].getAvailableCurrencies()'

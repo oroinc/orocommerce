@@ -12,7 +12,7 @@ Feature: Product quantity negative value and unit precision
   Scenario: Check product quantity negative value
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "NewCategory"
+    And I click "NewCategory" in hamburger menu
     When I type "-432423" in "ProductQuantityField"
     And I click on empty space
     Then I should see "ProductLineItemForm" validation errors:

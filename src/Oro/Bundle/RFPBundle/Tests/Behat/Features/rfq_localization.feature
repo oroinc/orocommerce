@@ -12,7 +12,6 @@ Feature: RFQ Localization
   Scenario: Feature Background
     Given I enable the existing localizations
     And I signed in as MarleneSBradley@example.com on the store frontend
-    When I press "Localization Switcher"
     Then I select "Localization 1" localization
 
   Scenario: Create RFQ from shopping list

@@ -9,14 +9,13 @@ Feature: Check tooltips on the catalog switcher
 
   Scenario: Check for the appearance of the tooltip when hovering over the catalog switcher buttons
     Given I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Category 1"
+    And I click "Category 1" in hamburger menu
     And I should see an "Catalog Switcher" element
     When I hover on "Catalog Switcher"
     Then I should see "Product Grid Views Toolbar" in the "Tooltip" element
 
   Scenario: Check for the appearance of the tooltip when hovering over the catalog switcher buttons in the sticky panel
     Given I click "Copyright"
-    And I should not see an "Catalog Switcher" element
     And I should see an "Catalog Switcher Into Sticky Panel" element
     When I hover on "Catalog Switcher Into Sticky Panel"
     Then I should see "Product Grid Views Toolbar" in the "Tooltip" element

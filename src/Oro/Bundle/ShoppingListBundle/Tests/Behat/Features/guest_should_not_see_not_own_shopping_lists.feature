@@ -18,7 +18,8 @@ Feature: Guest should not see not own shopping lists
     Given I login as AmandaRCole@example.org buyer
     And Buyer is on "Shopping List 1" shopping list
     And I remember current URL
+    And I click "Account Dropdown"
     And I click "Sign Out"
     When I follow remembered URL
     Then I should not see "Shopping List 1"
-    And I should see "Sign In"
+    And I should see "Log In"

@@ -137,7 +137,7 @@ Feature: Product segment content widget
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on the homepage
-    When I click "Product Segment Page"
+    When I click "Product Segment Page" in hamburger menu
     Then Page title equals to "Product Segment Page"
     And I should see "New Arrivals Label (English)"
     And I should see "Additional test data"

@@ -36,6 +36,7 @@ Feature: Set web catalog node as a root node
     When I am on the homepage
     Then I should see "Products" in main menu
     And I should see "Clearance" in main menu
+    And I click on "Main Menu Button"
     When I hover on "Clearance menu item"
     Then I should see "By Brand" in main menu
     And I should see "Test" in main menu
@@ -101,6 +102,7 @@ Feature: Set web catalog node as a root node
     When I reload the page
     Then I should see "By Brand" in main menu
     And I should see "Headlamps" in main menu
+    And I click on "Main Menu Button"
     And I should see "Headlamps By Brand"
     And I should not see "By Brand Headlamps"
 

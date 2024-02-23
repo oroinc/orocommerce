@@ -570,6 +570,11 @@ oro_behat_extension:
             locator: '//div[@id[starts-with(.,"s2id_oro_attribute_family_attributeGroups_general_attributeRelations-uid")]]//input'
             element: Select2EntitiesOrdered
 
+    Quick Order Link:
+      selector:
+        type: 'xpath'
+        locator: './/a[contains(concat(" ",normalize-space(@class)," ")," navigation-menu__button ")][contains(normalize-space(),"Quick Order")]'
+
     Quick Order Form:
       selector: "form[name='oro_product_quick_add']"
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -943,7 +948,7 @@ oro_behat_extension:
       selector: '[data-role="search-container"] .input'
 
     ProductFrontendGridMassActionSearchInDropdown:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction .dropdown-menu [data-role="search-container"] .input'
+      selector: '.sticky.sticky--bottom .datagrid-massaction .dropdown-menu [data-role="search-container"] .input'
 
     ProductFrontendGridMassActionSearchInDialog:
       selector: '[role="dialog"] [data-role="search-container"] .input'
@@ -955,22 +960,22 @@ oro_behat_extension:
       selector: '.dropdown-item[data-label]:first-child'
 
     ProductFrontendMassAddPanelInBottomSticky:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .dropup .action'
+      selector: '.sticky.sticky--bottom .dropup .action'
 
     ProductFrontendMassOpenInDropdown:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .dropdown-toggle'
+      selector: '.sticky.sticky--bottom .dropdown-toggle'
 
     ProductFrontendMassOpenInDialog:
-      selector: '[data-sticky-name="bottom-sticky-panel"] [data-fullscreen-trigger]'
+      selector: '.sticky.sticky--bottom [data-fullscreen-trigger]'
 
     ProductFrontendMassClosePanel:
-      selector: '[data-sticky-name="bottom-sticky-panel"] [data-undo-selection]'
+      selector: '.sticky.sticky--bottom [data-undo-selection]'
 
     ProductFrontendMassPanelInBottomSticky:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction'
+      selector: '.sticky.sticky--bottom .datagrid-massaction'
 
     ProductFrontendMassMenuInBottomSticky:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction .dropdown-menu'
+      selector: '.sticky.sticky--bottom .datagrid-massaction .dropdown-menu'
 
     ProductFrontendGridRow:
       selector: '.grid-row'

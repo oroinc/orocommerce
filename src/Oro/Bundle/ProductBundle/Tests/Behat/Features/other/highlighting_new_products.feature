@@ -47,7 +47,7 @@ Feature: Highlighting new products
   Scenario: New Arrival Sticker for a not logged in user
     Given I proceed as the User
     And I am on the homepage
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     Then should see "New Arrival Sticker" for "PSKU1" product
     And should not see "New Arrival Sticker" for "PSKU2" product
     When I click "Catalog Switcher Toggle"
@@ -62,7 +62,7 @@ Feature: Highlighting new products
   Scenario: New Arrival Sticker for logged in user
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "NewCategory"
+    And I click "NewCategory" in hamburger menu
     When I click "Catalog Switcher Toggle"
     And I click "List View"
     Then should see "New Arrival Sticker" for "PSKU1" product
@@ -90,8 +90,9 @@ Feature: Highlighting new products
     And I click "List View"
     When click "View Details" for "PSKU1" product
     Then I should see an "New Arrival Sticker" element
+    And I click "Account Dropdown"
     And click "Sign Out"
-    And click "NewCategory"
+    And click "NewCategory" in hamburger menu
     When click "View Details" for "PSKU1" product
     Then I should see an "New Arrival Sticker" element
 
@@ -105,9 +106,10 @@ Feature: Highlighting new products
     When reload the page
     Then I should not see an "New Arrival Sticker" element
     And I signed in as AmandaRCole@example.org on the store frontend
-    And click "NewCategory"
+    And click "NewCategory" in hamburger menu
     When click "View Details" for "PSKU1" product
     Then I should not see an "New Arrival Sticker" element
+    And I click "Account Dropdown"
     And click "Sign Out"
 
   Scenario: UnAssign product
@@ -122,7 +124,7 @@ Feature: Highlighting new products
   Scenario: New Arrival Sticker for not loged user (UnAssign)
     Given I proceed as the User
     And I am on the homepage
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     And I click "Catalog Switcher Toggle"
     And I click "List View"
     Then should not see "New Arrival Sticker" for "PSKU1" product
@@ -136,7 +138,7 @@ Feature: Highlighting new products
   Scenario: New Arrival Sticker for loged user (UnAssign)
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I click "NewCategory"
+    And I click "NewCategory" in hamburger menu
     When I click "Catalog Switcher Toggle"
     And I click "List View"
     Then should not see "New Arrival Sticker" for "PSKU1" product

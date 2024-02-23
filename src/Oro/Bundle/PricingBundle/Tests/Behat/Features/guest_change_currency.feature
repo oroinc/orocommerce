@@ -1,4 +1,5 @@
 @ticket-BB-14857
+
 Feature: Guest Change Currency
   In order to operate main site functionality
   As a guest buyer
@@ -20,6 +21,6 @@ Feature: Guest Change Currency
 
   Scenario: Trying to change currency to EUR
     Given I am on homepage
-    Then I should see that "Currency Switcher Button" contains "$"
-    When I change currency in currency switcher to "Euro"
-    Then I should see that "Currency Switcher Button" contains "€"
+    And I should see that "$" currency is active
+    When I select "€" currency
+    Then I should see that "€" currency is active

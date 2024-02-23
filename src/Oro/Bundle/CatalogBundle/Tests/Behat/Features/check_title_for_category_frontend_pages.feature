@@ -44,7 +44,7 @@ Feature: Check title for category frontend pages
   Scenario: Check title, description and image on store front
     Given I proceed as the Buyer
     And I am on the homepage
-    When I click "Lighting Products"
+    When I click "Lighting Products" in hamburger menu
     Then Page title equals to "Lighting Products"
     And I should see "Long description:"
     And image "cat1 wysiwyg image" is loaded
@@ -67,7 +67,6 @@ Feature: Check title for category frontend pages
     And filename of the image "cat1 wysiwyg image" is as remembered
 
   Scenario: Check title, description and image on store front in Zulu localization
-    Given I click "Localization Switcher"
     When I select "Zulu" localization
     Then I should see "Zulu description:"
     And image "cat1 wysiwyg image" is loaded

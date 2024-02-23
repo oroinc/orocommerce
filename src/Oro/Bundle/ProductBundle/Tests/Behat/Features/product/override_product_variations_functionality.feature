@@ -80,7 +80,7 @@ Feature: Override product variations functionality
 
     When I proceed as the Buyer
     And I am on homepage
-    And I click "TEST"
+    And I click "TEST" in hamburger menu
     Then I should see "1GB81" product
     And I should see "1GB82" product
     And I should see "1GB83" product
@@ -112,7 +112,7 @@ Feature: Override product variations functionality
 
     When I proceed as the Buyer
     And I reload the page
-    And I click "ALL PRODUCTS"
+    And I click "ALL PRODUCTS" in hamburger menu
     Then I should not see "1GB81" product
     And I should not see "1GB82" product
     And I should see "1GB83" product
@@ -155,7 +155,7 @@ Feature: Override product variations functionality
     Then I should see "Content Node has been saved" flash message
 
     When I proceed as the Buyer
-    And I click "TEST"
+    And I click "TEST" in hamburger menu
     Then I should not see "1GB81" product
     And I should not see "1GB82" product
     And I should see "1GB83" product
@@ -204,7 +204,7 @@ Feature: Override product variations functionality
     And I should see "1GB83" product
 
   Scenario: Show that manually added products functionality does not affects on All Products page
-    When I click "ALL PRODUCTS"
+    When I click "ALL PRODUCTS" in hamburger menu
     Then I should not see "1GB81" product
     And I should not see "1GB82" product
     And I should see "1GB83" product
@@ -244,7 +244,7 @@ Feature: Override product variations functionality
     Then I should see "Content Node has been saved" flash message
 
     When I proceed as the Buyer
-    And I click "TEST"
+    And I click "TEST" in hamburger menu
     Then I should see "1GB81" product
     And I should not see "1GB82" product
     And I should see "1GB83" product
@@ -266,7 +266,7 @@ Feature: Override product variations functionality
 
     When I proceed as the Buyer
     And I reload the page
-    And I click "TEST-2"
+    And I click "TEST-2" in hamburger menu
     Then I should not see "1GB81" product
     And I should not see "1GB82" product
     And I should see "1GB83" product
@@ -291,7 +291,7 @@ Feature: Override product variations functionality
     And I should see "1GB83" product
 
   Scenario: Show that override product variant configuration option for category content variant does not affects on All Products page
-    When I click "ALL PRODUCTS"
+    When I click "ALL PRODUCTS" in hamburger menu
     Then I should not see "1GB81" product
     And I should not see "1GB82" product
     And I should see "1GB83" product
@@ -341,11 +341,11 @@ Feature: Override product variations functionality
     Then I should see "Content Node has been saved" flash message
 
     When I proceed as the Buyer
-    And I click "TEST"
+    And I click "TEST" in hamburger menu
     Then I should see "1GB81" product
     And I should see "1GB82" product
     And I should see "1GB83" product
-    When I click "TEST-2"
+    When I click "TEST-2" in hamburger menu
     Then I should see "1GB81" product
     And I should see "1GB82" product
     And I should see "1GB83" product
@@ -383,7 +383,7 @@ Feature: Override product variations functionality
     Then I should see "Content Node has been saved" flash message
 
     When I proceed as the Buyer
-    And I click "TEST"
+    And I click "TEST" in hamburger menu
     Then I should not see "1GB81" product
     And I should not see "1GB82" product
     And I should see "1GB83" product

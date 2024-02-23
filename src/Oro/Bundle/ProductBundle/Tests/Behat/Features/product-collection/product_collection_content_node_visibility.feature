@@ -36,4 +36,5 @@ Feature: Product collection content node visibility
 
   Scenario: Newly created Product Collection Content Node is visible in menu on homepage
     Given I am on the homepage
+    And I click on "Main Menu Button"
     Then I should see "Product Collection Node"

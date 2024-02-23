@@ -60,7 +60,7 @@ Feature: Product attribute string
     And I should not see "SKU456" product
 
   Scenario: Check product grid filter and sorter
-    Given I click "NewCategory"
+    Given I click "NewCategory" in hamburger menu
     And I should see "SKU123" product
     And I should see "SKU456" product
     When I filter StringField as is equal to "TestDaTa"

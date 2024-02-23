@@ -79,32 +79,32 @@ Feature: Configurable product in quick order form
   Scenario: Check validation for configurable products and simple products from the configurable product
     Given I proceed as the User
     And I login as AmandaRCole@example.org buyer
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | Shirt_Sku |
     And I wait for products to load
     Then I should see text matching "Item number cannot be found"
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | EmptyShirt_Sku |
     And I wait for products to load
     Then I should see text matching "Item number cannot be found"
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | Black_Shirt_L_sku |
     And I wait for products to load
     Then I should see text matching "Item number cannot be found"
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Add Copy Paste Form" with:
       | Paste your order | Shirt_Sku 1 |
     And I click "Verify Order"
     Then I should see text matching "Item number cannot be found."
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Add Copy Paste Form" with:
       | Paste your order | EmptyShirt_Sku 1 |
     And I click "Verify Order"
     Then I should see text matching "Item number cannot be found."
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Add Copy Paste Form" with:
       | Paste your order | White_Shirt_L_sku 1 |
     And I click "Verify Order"

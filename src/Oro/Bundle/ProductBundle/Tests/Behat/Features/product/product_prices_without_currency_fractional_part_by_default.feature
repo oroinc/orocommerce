@@ -73,7 +73,7 @@ Feature: Product prices without currency fractional part by default
     And should see "5+ ¥1.6789"
 
   Scenario: Check Quick Order Form
-    Given click "Quick Order Form"
+    Given click "Quick Order"
     And fill "Quick Order Form" with:
       | SKU1 | PSKU1 |
     And I wait for products to load

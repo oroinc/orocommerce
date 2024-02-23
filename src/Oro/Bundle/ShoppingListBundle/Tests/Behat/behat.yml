@@ -219,7 +219,7 @@ oro_behat_extension:
       selector: '.dropdown-search-container .clear-search-button'
 
     Shopping List Quick Search Clear in Mass Menu:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction .dropdown-menu .dropdown-search-container .clear-search-button'
+      selector: '.sticky.sticky--bottom .datagrid-massaction .dropdown-menu .dropdown-search-container .clear-search-button'
 
     Shopping List Quick Search Clear in Dialog:
       selector: '[role="dialog"] .dropdown-search-container .clear-search-button'
@@ -269,9 +269,7 @@ oro_behat_extension:
       selector: '.shopping-list-widget'
 
     Shopping Cart:
-      selector:
-        type: xpath
-        locator: '//div[@class="cart-widget__content"]'
+      selector: '.shopping-list-trigger'
 
     Shopping List Limit Form:
       selector: 'form[name="shopping_list"]'
@@ -464,10 +462,10 @@ oro_behat_extension:
     First Line Item Row Checkbox:
       selector: '.grid-body .grid-row:first-child input[type=checkbox]'
 
-    Shopping Lists Navigation Link:
+    Shopping Lists:
       selector:
         type: xpath
-        locator: '//a[text()="Shopping Lists" and contains(@class,"primary-menu__link")]'
+        locator: '//a[text()="Shopping Lists"]'
 
     Frontend Customer User Shopping Lists Grid:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-lists-grid"]'

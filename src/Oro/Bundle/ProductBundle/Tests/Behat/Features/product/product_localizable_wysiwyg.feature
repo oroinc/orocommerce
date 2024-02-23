@@ -42,12 +42,10 @@ Feature: Product localizable wysiwyg
     Then I should see "Default localization product description"
 
   Scenario: Check product on the storefront for Dutch localization (custom pre-defined value from default value)
-    Given I click "Localization Switcher"
     When I select "Dutch" localization
     Then I should see "Default localization product description"
 
   Scenario: Check product on the storefront for French localization (custom value)
-    Given I click "Localization Switcher"
     When I select "French" localization
     Then I should see "French localization product description"
 
@@ -65,11 +63,9 @@ Feature: Product localizable wysiwyg
 
   Scenario: Check product on the storefront for Dutch localization (default value)
     Given I proceed as the Buyer
-    And I click "Localization Switcher"
     When I select "Dutch" localization
     Then I should see "Default localization product description"
 
   Scenario: Check product on the storefront for French localization (parent localization)
-    Given I click "Localization Switcher"
     When I select "French" localization
     Then I should see "Default localization product description"

@@ -10,10 +10,10 @@ Feature: Quote Product Name Localization
   Scenario: Feature Background
     Given I enable the existing localizations
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I press "Localization Switcher"
     And I select "Localization 1" localization
 
   Scenario: Check product name is localized on quote view page and quote choice page
+    And I click "Account Dropdown"
     Given I click "Quotes"
     When I click view Quote1 in grid
     Then I should see "Product1 (Localization 1)"
