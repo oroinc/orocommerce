@@ -63,6 +63,12 @@
             }
         }
     }
+
+    &__placeholder-label {
+        height: $product-item-placeholder-label-height;
+        display: $product-item-placeholder-label-display;
+        align-items: $product-item-placeholder-label-align-items;
+    }
 }
 
 @media (min-width: 900px) {

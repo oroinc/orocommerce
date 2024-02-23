@@ -1,9 +1,11 @@
 <% var togglerId = _.uniqueId('dropdown-') %>
 <div class="datagrid-massaction">
     <label class="datagrid-massaction-select-all-label">
-        <input type="checkbox" name="is_default"
-                data-input-widget-options="<%- JSON.stringify({checkedParentCssClass:null}) %>"
-                data-select>
-        <span><%- _.__('oro.datagrid.headerCell.selectAllVisible.input.aria_label') %></span>
+        <span class="datagrid-massaction-select-all-label__input">
+           <input type="checkbox" name="is_default"
+                  data-input-widget-options="<%- JSON.stringify({checkedParentCssClass:null}) %>"
+                  data-select>
+        </span>
+        <span class="datagrid-massaction-select-all-label__text"><%- _.__('oro.datagrid.headerCell.selectAllVisible.input.aria_label') %></span>
     </label>
 </div>

@@ -3,7 +3,9 @@
         class: attr.class|default('') ~ " datagrid-toolbar"
     }) %}
     {% set toolbarPosition = attr['data-grid-toolbar'] %}
-
+    {% do block|merge_context({
+        'toolbarPosition': toolbarPosition
+    }) %}
     <div{{ block('block_attributes') }}>
         {% for child in block -%}
             {% if child.vars.visible %}
@@ -15,7 +17,9 @@
 
 {% block __datagrid_toolbar__datagrid_toolbar_leftside_container_widget %}
     {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
-
+    {% do block|merge_context({
+        'toolbarPosition': toolbarPosition
+    }) %}
     <div class="datagrid-toolbar__start" data-section="left-side">
         {% if toolbarPosition == 'top' %}
             <div class="actions-panel" data-grid-extra-actions-panel></div>
@@ -30,14 +34,15 @@
 
 {% block __datagrid_toolbar__datagrid_toolbar_pagination_info_widget %}
     {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
-
+    {% do block|merge_context({
+        'toolbarPosition': toolbarPosition
+    }) %}
     {% if toolbarPosition == 'bottom' %}
         <div data-grid-pagination-info class="datagrid-toolbar-pagination-info"></div>
     {% endif %}
 {% endblock %}
 
 {% block __datagrid_toolbar__datagrid_toolbar_rightside_container_widget %}
-    {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
         <div class="datagrid-toolbar__end" data-section="right-side">
             {% for child in block -%}
                 {% if child.vars.visible %}
