@@ -5,7 +5,7 @@ Feature: Quick order form with Product Kits
 
   Scenario: Product Kit can be selected in Quick Order Form
     Given I login as AmandaRCole@example.org buyer
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | product-kit-01 |
     And I wait for products to load

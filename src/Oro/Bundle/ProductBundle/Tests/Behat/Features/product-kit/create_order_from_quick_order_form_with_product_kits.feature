@@ -6,7 +6,7 @@ Feature: Create Order from Quick order form with Product Kits
 
   Scenario: Product Kit can be selected in Quick Order Form
     Given I login as AmandaRCole@example.org buyer
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     Then I should see an "Enabled Create Order Button" element
     And "Quick Order Form Buttons" should contains "Enabled Create Order Button Wrapper" with attributes:
       | title | ~ |

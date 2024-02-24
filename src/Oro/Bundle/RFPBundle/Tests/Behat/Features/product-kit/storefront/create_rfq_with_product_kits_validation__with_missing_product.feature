@@ -12,7 +12,7 @@ Feature: Create RFQ with Product Kits Validation - with Missing Product
   Scenario: Create RFQ from scratch
     Given I continue as the Buyer
     When I signed in as AmandaRCole@example.org on the store frontend
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"
     And fill form with:

@@ -9,7 +9,7 @@
 
 {% block _line_item_form_fields_quantity_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': 'product-view-line-item__quantity'
+        '~class': 'product-view-line-item__quantity fields-row'
     }) %}
     <div {{ block('block_attributes') }}>
         {% if not isProductUnitSelectionVisible %}
@@ -21,7 +21,9 @@
             {% endif %}
             {{ form_errors(form.quantity) }}
         {% else %}
-            {{ form_widget(form.quantity, { 'attr': {'aria-label': 'oro.product.quantity.aria_label'|trans }}) }}
+            <div data-page-component-view="orofrontend/default/js/app/views/increment-input/increment-input-view">
+                {{ form_widget(form.quantity, { 'attr': {'aria-label': 'oro.product.quantity.aria_label'|trans }}) }}
+            </div>
             <div class="fields-row-error"></div>
         {% endif %}
     </div>

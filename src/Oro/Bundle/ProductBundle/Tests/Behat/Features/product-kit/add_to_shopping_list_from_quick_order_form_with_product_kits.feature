@@ -6,7 +6,7 @@ Feature: Add to Shopping List from Quick order form with Product Kits
 
   Scenario: Product Kit can be selected in Quick Order Form
     Given I login as AmandaRCole@example.org buyer
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Add Copy Paste Form" with:
       | Paste your order | product-kit-01 3\nsimple-product-01 2 |
     And I click "Verify Order"

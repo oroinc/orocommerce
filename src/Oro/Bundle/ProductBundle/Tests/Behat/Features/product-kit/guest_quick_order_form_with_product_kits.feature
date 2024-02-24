@@ -11,7 +11,7 @@ Feature: Guest Quick order form with Product Kits
 
   Scenario: Product Kit can be selected in Quick Order Form
     Given I am on the homepage
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | product-kit-01 |
     And I wait for products to load

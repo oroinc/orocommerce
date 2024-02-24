@@ -21,7 +21,7 @@ Feature: Existing Quote with Product Kits view - with Missing Product
   Scenario: View Quote
     Given I proceed as the Buyer
     When I signed in as AmandaRCole@example.org on the store frontend
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Quotes"
     And I click view PO013 in grid
     Then I should see Quote Frontend Page with data:

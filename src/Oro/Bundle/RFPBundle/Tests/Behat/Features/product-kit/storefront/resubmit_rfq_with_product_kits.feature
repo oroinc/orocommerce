@@ -13,7 +13,7 @@ Feature: Resubmit RFQ with Product Kits
   Scenario: Resubmit RFQ
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    When I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click view PO013 in grid
     And I click "Cancel"
