@@ -29,9 +29,9 @@ $checkout-view-title-font-weight: $headline2-font-weight !default;
 
 $checkout-view-sticky-column-offset: spacing('sm') $checkout-view-column-gap !default;
 
-$checkout-view-sticky-titles-background: get-color('additional-old', 'ultra') !default;
+$checkout-view-sticky-titles-background: get-color('neutral', 'white-100') !default;
 $checkout-view-sticky-titles-z-index: z('fixed') !default;
-$checkout-view-sticky-titles-border-bottom: 1px solid get-color('additional-old', 'light') !default;
+$checkout-view-sticky-titles-border-bottom: 1px solid get-color('neutral', 'grey1') !default;
 
 $checkout-view-sticky-titles-inner-display: flex !default;
 $checkout-view-sticky-titles-inner-max-width: $site-width !default;
@@ -54,7 +54,7 @@ $checkout-view-badge-font-size: $base-font-size !default;
 $checkout-view-badge-margin: 0 spacing('xs') 0 0 !default;
 
 $checkout-view-column-pseudo-width: 1px !default;
-$checkout-view-column-pseudo-background: get-color('additional-old', 'light') !default;
+$checkout-view-column-pseudo-background: get-color('neutral', 'grey1') !default;
 
 $checkout-view-shipping-methods-margin: spacing('base') 0 0 !default;
 $checkout-view-shipping-methods-datepicker-box-max-width: none !default;

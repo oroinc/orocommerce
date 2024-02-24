@@ -2,7 +2,7 @@
 
 $product-view-media-gallery-border-width: 1px !default;
 $product-view-media-gallery-border: $product-view-media-gallery-border-width
-    solid get-color('additional-old', 'light') !default;
+    solid get-color('neutral', 'grey1') !default;
 $product-view-media-gallery-max-height: 380px !default;
 $product-view-media-gallery-image-max-height: $product-view-media-gallery-max-height -
     ($product-view-media-gallery-border-width * 2) !default;
@@ -29,7 +29,7 @@ $product-view-media-gallery-nav-arrow-border-radius: 100% !default;
 $product-view-media-gallery-slick-slide-item-border: 1px solid get-var-color('neutral', 'grey2') !default;
 $product-view-media-gallery-slick-slide-current-item-border: 2px solid get-var-color('primary', 'main') !default;
 
-$product-view-media-gallery-nav-loading-url: get-color('additional-old', 'ultra')
+$product-view-media-gallery-nav-loading-url: get-color('neutral', 'white-100')
     url('#{$global-url}/orofrontend/default/images/loader.svg') no-repeat center center !default;
 
 $product-view-media-gallery-nav-tab-content-max-width: $product-view-media-gallery-tab-content-max-width -

@@ -7,8 +7,8 @@ $grid-line-items-title-font-size: $base-font-size !default;
 $grid-line-items-title-font-w: normal !default;
 $grid-line-items-field-val-offset: 2px !default;
 
-$grid-line-items-errors-color: get-color('ui', 'error-dark') !default;
-$grid-line-items-warnings-color: get-color('ui', 'warning-dark') !default;
+$grid-line-items-errors-color: get-color('destructive', 'dark') !default;
+$grid-line-items-warnings-color: get-color('warning', 'dark') !default;
 
 $grid-line-line-height: 1.45 !default;
 
@@ -16,7 +16,7 @@ $grid-line-clip-none-offset: spacing('sm') !default;
 
 $grid-line-separator-height: 16px !default;
 $grid-line-separator-offset: 0 8px !default;
-$grid-line-separator-background: get-color('additional-old', 'light') !default;
+$grid-line-separator-background: get-color('neutral', 'grey1') !default;
 
 // Tablet
 

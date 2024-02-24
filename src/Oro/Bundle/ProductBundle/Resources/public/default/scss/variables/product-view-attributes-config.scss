@@ -14,7 +14,7 @@ $product-view-attribute-group-content-gap: spacing('md') !default;
 $product-view-attribute-content-gap: spacing('sm') !default;
 
 // Attributes containers
-$product-view-attributes-containers-border-color: get-color('additional-old', 'light') !default;
+$product-view-attributes-containers-border-color: get-color('neutral', 'grey1') !default;
 $product-view-attributes-container-border-radius: 4px !default;
 
 // Attributes panel
@@ -70,7 +70,7 @@ $mobile-big-product-view-attribute-image-size: 100px !default;
 $mobile-product-view-attribute-image-size: 95px !default;
 
 // Image attribute
-$product-view-attribute-image-border: 1px solid get-color('additional-old', 'light') !default;
+$product-view-attribute-image-border: 1px solid get-color('neutral', 'grey1') !default;
 
 // Images attribute
 $product-view-attribute-images-item-space: 8px !default;
@@ -81,6 +81,6 @@ $mobile-product-view-attribute-files-gradient-height: 60px !default;
 $product-view-attribute-files-gradient-background: linear-gradient(
     to bottom, rgba($body-bg-color, 0), $body-bg-color
 ) !default;
-$product-view-attribute-files-icon-color: get-color('ui', 'normal');
+$product-view-attribute-files-icon-color: get-color('secondary', 'c3');
 $mobile-product-view-attribute-files-item-inner-padding: 4px 16px !default;
 $mobile-product-view-attribute-files-item-outer-padding: 18px !default;

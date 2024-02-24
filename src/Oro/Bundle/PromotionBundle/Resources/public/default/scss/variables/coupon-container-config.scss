@@ -3,7 +3,7 @@
 $coupon-container-width: 280px !default;
 $coupon-container-float: right !default;
 $coupon-container-clear: $coupon-container-float !default;
-$coupon-container-padding: 20px !default;
+$coupon-container-padding: spacing('base') 0 !default;
 
 $coupon-container-content-inner-offset: 12px 0 0 !default;
 

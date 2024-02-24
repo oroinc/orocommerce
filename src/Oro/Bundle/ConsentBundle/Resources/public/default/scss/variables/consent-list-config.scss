@@ -11,6 +11,6 @@ $consent-list-status-position: absolute !default;
 $consent-list-status-left: 0 !default;
 
 $consent-list-status-enabled: $fa-var-check !default;
-$consent-list-status-enabled-color: get-color('secondary-old', 'lighten') !default;
+$consent-list-status-enabled-color: get-color('success', 'dark') !default;
 $consent-list-status-disabled: $fa-var-minus-circle !default;
-$consent-list-status-disabled-color: get-color('primary-old', 'dark') !default;
+$consent-list-status-disabled-color: get-color('destructive', 'base') !default;

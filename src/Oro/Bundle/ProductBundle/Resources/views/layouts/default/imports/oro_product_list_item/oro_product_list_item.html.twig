@@ -313,20 +313,3 @@
         {% endif %}
     {% endif %}
 {% endblock %}
-
-{% block __oro_product_list_item__product_more_info_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' oro-more-info-toggler oro-more-info-toggler--{{ class_prefix }}'
-    }) %}
-    <div {{ block('block_attributes') }}>
-        <i class="fa-play"></i>
-        <a href="#" data-more-info-expand>More Info</a>
-        <div class="oro-more-info-toggler__container" data-more-info>
-            <ul class="oro-more-info-toggler__list oro-more-info-toggler__list--{{ class_prefix }}">
-                <li><span class="text-uppercase">Mspr:</span> $24.99</li>
-                <li>Shipping Weight: .08 lbs.</li>
-                <li>80 Items to a Box</li>
-            </ul>
-        </div>
-    </div>
-{% endblock %}

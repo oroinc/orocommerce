@@ -11,7 +11,7 @@ $product-price-value-color: null !default;
 
 $product-price-simple-value-font-size: $base-font-size--large + 2 !default;
 $product-price-simple-value-color: get-var-color('secondary', 'sale') !default;
-$product-price-simple-listed-value-color: get-color('ui', 'normal') !default;
+$product-price-simple-listed-value-color: get-color('primary', 'normal') !default;
 
 $product-price-simple-label-display: none !default;
 $product-price-unit-short-display: none !default;

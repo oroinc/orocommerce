@@ -7,7 +7,7 @@ $matrix-order-widget-base-color: get-color('neutral', 'grey1') !default;
 $matrix-order-widget-light-color: get-color('neutral', 'white-100') !default;
 $matrix-order-widget-dark-color: get-color('neutral', 'dark') !default;
 
-$matrix-order-widget-border: 1px solid get-color('additional-old', 'light') !default;
+$matrix-order-widget-border: 1px solid get-color('neutral', 'grey1') !default;
 $matrix-order-widget-base-gradient-right: linear-gradient(
     to right, rgba($matrix-order-widget-base-color, 1), rgba($matrix-order-widget-base-color, 0)
 ) !default;
@@ -26,7 +26,7 @@ $matrix-order-widget-width: 100% !default;
 $matrix-order-widget-offset: 0 !default;
 
 $matrix-order-widget-not-available-line-height: 40px !default;
-$matrix-order-widget-not-available-background-color: get-color('additional-old', 'base') !default;
+$matrix-order-widget-not-available-background-color: get-color('neutral', 'grey2') !default;
 $matrix-order-widget-not-available-border-radius: 5px !default;
 
 // State Multi line Mode
@@ -269,7 +269,7 @@ $matrix-order-widget-item-content-wrapper-overflow: hidden !default;
 $matrix-order-widget-item-content-wrapper-offset-inner: 10px !default;
 $matrix-order-widget-item-content-wrapper-width: 100% !default;
 
-$matrix-order-widget-fields-row-error-background: get-color('additional-old', 'ultra') !default;
+$matrix-order-widget-fields-row-error-background: get-color('neutral', 'white-100') !default;
 $matrix-order-widget-fields-row-error-max-width: 100% !default;
 $matrix-order-widget-fields-row-error-offset-inner: spacing('sm') 0 !default;
 $matrix-order-widget-fields-row-error-display: inline-block !default;
@@ -298,4 +298,4 @@ $matrix-order-widget-dialog-item-content-mobile-landscape-flex-basis: 33% !defau
 // Mobile variables
 $matrix-order-widget-dialog-item-content-mobile-flex-basis: 50% !default;
 $matrix-order-widget-clear-button-mobile-width: 100% !default;
-$matrix-order-widget-clear-button-mobile-border-color: get-color('additional-old', 'base') !default;
+$matrix-order-widget-clear-button-mobile-border-color: get-color('neutral', 'grey2') !default;

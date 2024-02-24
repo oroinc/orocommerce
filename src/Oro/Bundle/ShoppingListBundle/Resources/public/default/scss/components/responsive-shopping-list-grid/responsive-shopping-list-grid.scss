@@ -94,14 +94,10 @@
 
     .price-value-container {
         position: relative;
-    }
-
-    .prices-hint-toggler {
-        position: absolute;
-        top: 0;
-        padding: 0;
-        line-height: inherit;
-        border-width: 0;
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        gap: spacing('sm');
     }
 
     .grid-scrollable-container {
