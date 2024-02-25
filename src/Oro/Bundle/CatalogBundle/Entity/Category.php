@@ -370,7 +370,7 @@ class Category implements
     /**
      * @var integer
      *
-     * @Gedmo\TreeRoot
+     * @Gedmo\TreeRoot(identifierMethod="getRoot")
      * @ORM\Column(name="tree_root", type="integer", nullable=true)
      * @ConfigField(
      *      defaultValues={
