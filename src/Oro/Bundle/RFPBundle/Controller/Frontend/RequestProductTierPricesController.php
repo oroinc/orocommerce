@@ -6,8 +6,8 @@ use Oro\Bundle\RFPBundle\Entity\Request as RequestEntity;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Provider\RequestProductLineItemTierPricesProvider;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -21,18 +21,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class RequestProductTierPricesController extends AbstractController
 {
     /**
-     * @CsrfProtection()
-     * @Route(
-     *     "/",
-     *     name="oro_rfp_frontend_request_tier_prices",
-     *     methods={"POST"}
-     * )
-     * @AclAncestor("oro_rfp_frontend_request_create")
-     *
      * @param Request $request
      *
      * @return JsonResponse
      */
+    #[Route(path: '/', name: 'oro_rfp_frontend_request_tier_prices', methods: ['POST'])]
+    #[CsrfProtection]
+    #[AclAncestor('oro_rfp_frontend_request_create')]
     public function __invoke(Request $request): JsonResponse
     {
         $requestEntity = new RequestEntity();

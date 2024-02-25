@@ -2,84 +2,53 @@
 
 namespace Oro\Bundle\OrderBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroOrderBundle_Entity_OrderAddress;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CustomerBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
  * Represents billing and shipping address for an order.
- * @ORM\Table("oro_order_address")
- * @ORM\HasLifecycleCallbacks()
- * @Config(
- *       defaultValues={
- *          "entity"={
- *              "icon"="fa-map-marker"
- *          },
- *          "activity"={
- *              "immutable"=true
- *          },
- *          "attachment"={
- *              "immutable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="orders",
- *          }
- *      }
- * )
- * @ORM\Entity
  * @mixin OroOrderBundle_Entity_OrderAddress
  */
+#[ORM\Entity]
+#[ORM\Table('oro_order_address')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    defaultValues: [
+        'entity' => ['icon' => 'fa-map-marker'],
+        'activity' => ['immutable' => true],
+        'attachment' => ['immutable' => true],
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'orders']
+    ]
+)]
 class OrderAddress extends AbstractAddress implements
     AddressPhoneAwareInterface,
     ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var CustomerAddress
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerAddress")
-     * @ORM\JoinColumn(name="customer_address_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $customerAddress;
+    #[ORM\ManyToOne(targetEntity: CustomerAddress::class)]
+    #[ORM\JoinColumn(name: 'customer_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?CustomerAddress $customerAddress = null;
 
-    /**
-     * @var CustomerUserAddress
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress")
-     * @ORM\JoinColumn(name="customer_user_address_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $customerUserAddress;
+    #[ORM\ManyToOne(targetEntity: CustomerUserAddress::class)]
+    #[ORM\JoinColumn(name: 'customer_user_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?CustomerUserAddress $customerUserAddress = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="from_external_source", type="boolean", options={"default"=false})
-     */
-    protected $fromExternalSource = false;
+    #[ORM\Column(name: 'from_external_source', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $fromExternalSource = false;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="phone", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *  defaultValues={
-     *      "entity"={
-     *          "contact_information"="phone"
-     *      }
-     *  }
-     * )
-     */
-    protected $phone;
+    #[ORM\Column(name: 'phone', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['entity' => ['contact_information' => 'phone']])]
+    protected ?string $phone = null;
 
     /**
      * Set customerAddress

@@ -19,7 +19,7 @@ class ShippingMethodsConfigsRuleTest extends \PHPUnit\Framework\TestCase
     public function testProperties()
     {
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['rule', new Rule()],
             ['currency', 'USD'],
             ['organization', new Organization()]

@@ -2,27 +2,22 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeAwareInterface;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerCategoryVisibilityRepository;
 
 /**
- * @ORM\Entity(
- *   repositoryClass="Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerCategoryVisibilityRepository"
- * )
- * @ORM\Table(
- *      name="oro_cus_category_visibility",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(
- *              name="oro_cus_ctgr_vis_uidx",
- *              columns={"category_id", "scope_id"}
- *          )
- *      }
- * )
- * @Config
- */
+* Entity that represents Customer Category Visibility
+*
+*/
+#[ORM\Entity(repositoryClass: CustomerCategoryVisibilityRepository::class)]
+#[ORM\Table(name: 'oro_cus_category_visibility')]
+#[ORM\UniqueConstraint(name: 'oro_cus_ctgr_vis_uidx', columns: ['category_id', 'scope_id'])]
+#[Config]
 class CustomerCategoryVisibility implements VisibilityInterface, ScopeAwareInterface
 {
     const PARENT_CATEGORY = 'parent_category';
@@ -30,37 +25,21 @@ class CustomerCategoryVisibility implements VisibilityInterface, ScopeAwareInter
     const CUSTOMER_GROUP = 'customer_group';
     const VISIBILITY_TYPE = 'customer_category_visibility';
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var Category
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CatalogBundle\Entity\Category")
-     * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $category;
+    #[ORM\ManyToOne(targetEntity: Category::class)]
+    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Category $category = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="visibility", type="string", length=255, nullable=true)
-     */
-    protected $visibility;
+    #[ORM\Column(name: 'visibility', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $visibility = null;
 
-    /**
-     * @var Scope
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
-     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    protected $scope;
+    #[ORM\ManyToOne(targetEntity: Scope::class)]
+    #[ORM\JoinColumn(name: 'scope_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Scope $scope = null;
 
     /**
      * @return int

@@ -13,7 +13,7 @@ class ProductVariantLinkTest extends \PHPUnit\Framework\TestCase
     public function testProperties()
     {
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['parentProduct', new Product()],
             ['product', new Product()],
             ['visible', false, true],

@@ -5,14 +5,14 @@ namespace Oro\Bundle\SaleBundle\Controller\Frontend;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType;
 use Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProviderInterface;
 use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\QuoteDemandSubtotalsCalculatorInterface;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\UIBundle\Tools\FlashMessageHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,20 +28,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class QuoteController extends AbstractController
 {
     /**
-     * @Route("/view/{id}", name="oro_sale_quote_frontend_view", requirements={"id"="\d+"})
-     * @Layout()
-     * @Acl(
-     *      id="oro_sale_quote_frontend_view",
-     *      type="entity",
-     *      class="Oro\Bundle\SaleBundle\Entity\Quote",
-     *      permission="VIEW",
-     *      group_name="commerce"
-     * )
-     * @ParamConverter("quote", options={"repository_method" = "getQuote"})
-     *
      * @param Quote $quote
      * @return array
      */
+    #[Route(path: '/view/{id}', name: 'oro_sale_quote_frontend_view', requirements: ['id' => '\d+'])]
+    #[Layout]
+    #[ParamConverter('quote', options: ['repository_method' => 'getQuote'])]
+    #[Acl(
+        id: 'oro_sale_quote_frontend_view',
+        type: 'entity',
+        class: Quote::class,
+        permission: 'VIEW',
+        groupName: 'commerce'
+    )]
     public function viewAction(Quote $quote)
     {
         if (!$quote->isAcceptable()) {
@@ -56,24 +55,22 @@ class QuoteController extends AbstractController
         ];
     }
 
-    /**
-     * @Route(
-     *     "/{guest_access_id}",
-     *     name="oro_sale_quote_frontend_view_guest",
-     *     requirements={
-     *          "guest_access_id"="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
-     *     }
-     * )
-     * @Layout()
-     * @ParamConverter(
-     *     "quote",
-     *     options={
-     *          "repository_method": "getQuoteByGuestAccessId",
-     *          "mapping": {"guest_access_id": "guestAccessId"},
-     *          "map_method_signature" = true
-     *     }
-     * )
-     */
+    #[Route(
+        path: '/{guest_access_id}',
+        name: 'oro_sale_quote_frontend_view_guest',
+        requirements: [
+            'guest_access_id' => '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}'
+        ]
+    )]
+    #[Layout]
+    #[ParamConverter(
+        'quote',
+        options: [
+            'repository_method' => 'getQuoteByGuestAccessId',
+            'mapping' => ['guest_access_id' => 'guestAccessId'],
+            'map_method_signature' => true
+        ]
+    )]
     public function guestAccessAction(Quote $quote): array
     {
         $accessProvider = $this->container->get(GuestQuoteAccessProviderInterface::class);
@@ -94,18 +91,17 @@ class QuoteController extends AbstractController
     }
 
     /**
-     * @Route("/", name="oro_sale_quote_frontend_index")
-     * @Layout(vars={"entity_class"})
-     * @Acl(
-     *      id="oro_sale_quote_frontend_index",
-     *      type="entity",
-     *      class="Oro\Bundle\SaleBundle\Entity\Quote",
-     *      permission="VIEW",
-     *      group_name="commerce"
-     * )
-     *
      * @return array
      */
+    #[Route(path: '/', name: 'oro_sale_quote_frontend_index')]
+    #[Layout(vars: ['entity_class'])]
+    #[Acl(
+        id: 'oro_sale_quote_frontend_index',
+        type: 'entity',
+        class: Quote::class,
+        permission: 'VIEW',
+        groupName: 'commerce'
+    )]
     public function indexAction()
     {
         return [
@@ -114,20 +110,20 @@ class QuoteController extends AbstractController
     }
 
     /**
-     * @Route("/choice/{id}", name="oro_sale_quote_frontend_choice", requirements={"id"="\d+"})
-     * @Layout()
-     * @Acl(
-     *      id="oro_sale_quote_demand_frontend_view",
-     *      type="entity",
-     *      class="Oro\Bundle\SaleBundle\Entity\QuoteDemand",
-     *      permission="VIEW",
-     *      group_name="commerce"
-     * )
      *
      * @param Request $request
      * @param QuoteDemand $quoteDemand
      * @return array|Response
      */
+    #[Route(path: '/choice/{id}', name: 'oro_sale_quote_frontend_choice', requirements: ['id' => '\d+'])]
+    #[Layout]
+    #[Acl(
+        id: 'oro_sale_quote_demand_frontend_view',
+        type: 'entity',
+        class: QuoteDemand::class,
+        permission: 'VIEW',
+        groupName: 'commerce'
+    )]
     public function choiceAction(Request $request, QuoteDemand $quoteDemand)
     {
         $quote = $quoteDemand->getQuote();
@@ -177,14 +173,14 @@ class QuoteController extends AbstractController
     }
 
     /**
-     * @Route("/subtotals/{id}", name="oro_sale_quote_frontend_subtotals", requirements={"id"="\d+"})
-     * @Layout()
-     * @AclAncestor("oro_sale_quote_demand_frontend_view")
      *
      * @param Request $request
      * @param QuoteDemand $quoteDemand
      * @return array
      */
+    #[Route(path: '/subtotals/{id}', name: 'oro_sale_quote_frontend_subtotals', requirements: ['id' => '\d+'])]
+    #[Layout]
+    #[AclAncestor('oro_sale_quote_demand_frontend_view')]
     public function subtotalsAction(Request $request, QuoteDemand $quoteDemand)
     {
         $form = $this->createForm(QuoteDemandType::class, $quoteDemand);

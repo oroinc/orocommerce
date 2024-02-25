@@ -16,18 +16,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class AjaxEntityTotalsController extends AbstractController
 {
     /**
-     * @Route(
-     *      "/get-totals-for-entity/{entityClassName}/{entityId}",
-     *      name="oro_pricing_entity_totals",
-     *      requirements={"entityId"="\d+"},
-     *      defaults={"entityId"=0, "entityClassName"=""}
-     * )
      *
      * @param string $entityClassName
      * @param integer $entityId
-     *
      * @return JsonResponse
      */
+    #[Route(
+        path: '/get-totals-for-entity/{entityClassName}/{entityId}',
+        name: 'oro_pricing_entity_totals',
+        requirements: ['entityId' => '\d+'],
+        defaults: ['entityId' => 0, 'entityClassName' => '']
+    )]
     public function getEntityTotalsAction($entityClassName, $entityId)
     {
         try {
@@ -43,19 +42,18 @@ class AjaxEntityTotalsController extends AbstractController
     }
 
     /**
-     * @Route(
-     *      "/recalculate-totals-for-entity/{entityClassName}/{entityId}",
-     *      name="oro_pricing_recalculate_entity_totals",
-     *      defaults={"entityId"=0, "entityClassName"=""},
-     *      methods={"POST"}
-     * )
      *
      * @param Request $request
      * @param string $entityClassName
      * @param integer $entityId
-     *
      * @return JsonResponse
      */
+    #[Route(
+        path: '/recalculate-totals-for-entity/{entityClassName}/{entityId}',
+        name: 'oro_pricing_recalculate_entity_totals',
+        defaults: ['entityId' => 0, 'entityClassName' => ''],
+        methods: ['POST']
+    )]
     public function recalculateTotalsAction(Request $request, $entityClassName, $entityId)
     {
         try {

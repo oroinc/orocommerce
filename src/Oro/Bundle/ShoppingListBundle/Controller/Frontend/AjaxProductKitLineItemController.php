@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderFactory\ProductLineItemsHolderFactoryInterface;
 use Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitAvailabilityChecker;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
@@ -69,17 +69,15 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
         $this->validator = $validator;
     }
 
-    /**
-     * @Route(
-     *      "/create/{productId}",
-     *      name="oro_shopping_list_frontend_product_kit_line_item_create",
-     *      requirements={"productId"="\d+"},
-     *      methods={"GET","POST"}
-     * )
-     * @ParamConverter("product", options={"id"="productId"})
-     * @AclAncestor("oro_product_frontend_view")
-     * @Layout()
-     */
+    #[Route(
+        path: '/create/{productId}',
+        name: 'oro_shopping_list_frontend_product_kit_line_item_create',
+        requirements: ['productId' => '\d+'],
+        methods: ['GET', 'POST']
+    )]
+    #[Layout]
+    #[ParamConverter('product', options: ['id' => 'productId'])]
+    #[AclAncestor('oro_product_frontend_view')]
     public function createAction(Product $product, Request $request): Response|array
     {
         /** @var ShoppingList|null $shoppingList */
@@ -95,17 +93,15 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
         return $this->update($productKitLineItem, $request, true);
     }
 
-    /**
-     * @Route(
-     *      "/update/{id}",
-     *      name="oro_shopping_list_frontend_product_kit_line_item_update",
-     *      requirements={"id"="\d+"},
-     *      methods={"GET", "POST"}
-     * )
-     * @ParamConverter("productKitLineItem", options={"id"="id"})
-     * @AclAncestor("oro_shopping_list_frontend_update")
-     * @Layout()
-     */
+    #[Route(
+        path: '/update/{id}',
+        name: 'oro_shopping_list_frontend_product_kit_line_item_update',
+        requirements: ['id' => '\d+'],
+        methods: ['GET', 'POST']
+    )]
+    #[Layout]
+    #[ParamConverter('productKitLineItem', options: ['id' => 'id'])]
+    #[AclAncestor('oro_shopping_list_frontend_update')]
     public function updateAction(LineItem $productKitLineItem, Request $request): Response|array
     {
         $this->productKitLineItemFactory->addKitItemLineItemsAvailableForPurchase($productKitLineItem);
@@ -191,17 +187,15 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
         }
     }
 
-    /**
-     * @Route(
-     *      "/in-shopping-lists/{productId}",
-     *      name="oro_shopping_list_frontend_product_kit_in_shopping_lists",
-     *      requirements={"productId"="\d+"},
-     *      methods={"GET","POST"}
-     * )
-     * @ParamConverter("product", options={"id"="productId"})
-     * @AclAncestor("oro_product_frontend_view")
-     * @Layout()
-     */
+    #[Route(
+        path: '/in-shopping-lists/{productId}',
+        name: 'oro_shopping_list_frontend_product_kit_in_shopping_lists',
+        requirements: ['productId' => '\d+'],
+        methods: ['GET', 'POST']
+    )]
+    #[Layout]
+    #[ParamConverter('product', options: ['id' => 'productId'])]
+    #[AclAncestor('oro_product_frontend_view')]
     public function inShoppingListsAction(Product $product, Request $request): Response|array
     {
         return [

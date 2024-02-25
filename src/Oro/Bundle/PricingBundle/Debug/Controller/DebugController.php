@@ -26,11 +26,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class DebugController extends AbstractController
 {
     /**
-     * @Route("/index", name="oro_pricing_price_product_debug_index")
-     * @Template
      *
      * @return array
      */
+    #[Route(path: '/index', name: 'oro_pricing_price_product_debug_index')]
+    #[Template]
     public function indexAction()
     {
         $widgetRouteParameters = [
@@ -52,33 +52,37 @@ class DebugController extends AbstractController
     }
 
     /**
-     * @Route("/sidebar", name="oro_pricing_price_product_debug_sidebar")
-     * @Template
      *
      * @return array
      */
+    #[Route(path: '/sidebar', name: 'oro_pricing_price_product_debug_sidebar')]
+    #[Template]
     public function sidebarAction()
     {
         return $this->container->get(SidebarFormProvider::class)->getIndexPageSidebarFormElements();
     }
 
     /**
-     * @Route("/sidebar-view/{id}", name="oro_pricing_price_product_debug_sidebar_view", requirements={"id"="\d+"})
-     * @Template
      *
      * @return array
      */
+    #[Route(
+        path: '/sidebar-view/{id}',
+        name: 'oro_pricing_price_product_debug_sidebar_view',
+        requirements: ['id' => '\d+']
+    )]
+    #[Template]
     public function sidebarViewAction(Product $product)
     {
         return $this->container->get(SidebarFormProvider::class)->getViewPageSidebarFormElements($product);
     }
 
     /**
-     * @Route("/trace/{id}", name="oro_pricing_price_product_debug_trace", requirements={"id"="\d+"})
-     * @Template
      *
      * @return array
      */
+    #[Route(path: '/trace/{id}', name: 'oro_pricing_price_product_debug_trace', requirements: ['id' => '\d+'])]
+    #[Template]
     public function traceAction(Product $product)
     {
         $cpl = $this->getPriceListHandler()->getPriceList();
@@ -138,10 +142,10 @@ class DebugController extends AbstractController
     /**
      * Get price list currencies.
      *
-     * @Route("/get-currency-list", name="oro_pricing_price_product_debug_currency_list")
      *
      * @return JsonResponse
      */
+    #[Route(path: '/get-currency-list', name: 'oro_pricing_price_product_debug_currency_list')]
     public function getPriceListCurrencyListAction()
     {
         $currencyNames = Currencies::getNames($this->container->get(LocaleSettings::class)->getLocale());

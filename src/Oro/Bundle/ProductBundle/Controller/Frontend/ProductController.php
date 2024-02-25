@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Layout\AttributeRenderRegistry;
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
@@ -15,8 +15,8 @@ use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductViewFormAvailabilityProv
 use Oro\Bundle\ProductBundle\Provider\PageTemplateProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,12 +30,12 @@ class ProductController extends AbstractController
     /**
      * View list of products
      *
-     * @Route("/", name="oro_product_frontend_product_index")
-     * @Layout(vars={"entity_class", "grid_config", "theme_name", "filters_position"})
-     * @AclAncestor("oro_product_frontend_view")
      *
      * @return array
      */
+    #[Route(path: '/', name: 'oro_product_frontend_product_index')]
+    #[Layout(vars: ['entity_class', 'grid_config', 'theme_name', 'filters_position'])]
+    #[AclAncestor('oro_product_frontend_view')]
     public function indexAction()
     {
         return [
@@ -52,12 +52,12 @@ class ProductController extends AbstractController
     /**
      * Search products
      *
-     * @Route("/search", name="oro_product_frontend_product_search")
-     * @Layout(vars={"entity_class", "grid_config", "theme_name", "filters_position"})
-     * @AclAncestor("oro_product_frontend_view")
      *
      * @return array
      */
+    #[Route(path: '/search', name: 'oro_product_frontend_product_search')]
+    #[Layout(vars: ['entity_class', 'grid_config', 'theme_name', 'filters_position'])]
+    #[AclAncestor('oro_product_frontend_view')]
     public function searchAction()
     {
         return [
@@ -78,10 +78,9 @@ class ProductController extends AbstractController
 
     /**
      * Get data for website search autocomplete
-     *
-     * @Route("/search/autocomplete", name="oro_product_frontend_product_search_autocomplete")
-     * @AclAncestor("oro_product_frontend_view")
      */
+    #[Route(path: '/search/autocomplete', name: 'oro_product_frontend_product_search_autocomplete')]
+    #[AclAncestor('oro_product_frontend_view')]
     public function autocompleteAction(Request $request): JsonResponse
     {
         $searchString = trim($request->get('search'));
@@ -96,21 +95,20 @@ class ProductController extends AbstractController
     /**
      * View list of products
      *
-     * @Route("/view/{id}", name="oro_product_frontend_product_view", requirements={"id"="\d+"})
-     * @Layout(vars={"product_type", "attribute_family", "page_template"})
-     * @Acl(
-     *      id="oro_product_frontend_view",
-     *      type="entity",
-     *      class="Oro\Bundle\ProductBundle\Entity\Product",
-     *      permission="VIEW",
-     *      group_name="commerce"
-     * )
      *
      * @param Request $request
      * @param Product $product
-     *
      * @return array
      */
+    #[Route(path: '/view/{id}', name: 'oro_product_frontend_product_view', requirements: ['id' => '\d+'])]
+    #[Layout(vars: ['product_type', 'attribute_family', 'page_template'])]
+    #[Acl(
+        id: 'oro_product_frontend_view',
+        type: 'entity',
+        class: Product::class,
+        permission: 'VIEW',
+        groupName: 'commerce'
+    )]
     public function viewAction(Request $request, Product $product)
     {
         $data = [

@@ -13,8 +13,8 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -35,19 +35,14 @@ class QuoteController extends AbstractController
     const REDIRECT_BACK_FLAG = 'redirect_back';
 
     /**
-     * @Route("/view/{id}", name="oro_sale_quote_view", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_sale_quote_view",
-     *      type="entity",
-     *      class="Oro\Bundle\SaleBundle\Entity\Quote",
-     *      permission="VIEW"
-     * )
-     * @ParamConverter("quote", options={"repository_method" = "getQuote"})
      *
      * @param Quote $quote
      * @return array
      */
+    #[Route(path: '/view/{id}', name: 'oro_sale_quote_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[ParamConverter('quote', options: ['repository_method' => 'getQuote'])]
+    #[Acl(id: 'oro_sale_quote_view', type: 'entity', class: Quote::class, permission: 'VIEW')]
     public function viewAction(Quote $quote)
     {
         return [
@@ -56,12 +51,12 @@ class QuoteController extends AbstractController
     }
 
     /**
-     * @Route("/", name="oro_sale_quote_index")
-     * @Template
-     * @AclAncestor("oro_sale_quote_view")
      *
      * @return array
      */
+    #[Route(path: '/', name: 'oro_sale_quote_index')]
+    #[Template]
+    #[AclAncestor('oro_sale_quote_view')]
     public function indexAction()
     {
         return [
@@ -70,18 +65,12 @@ class QuoteController extends AbstractController
     }
 
     /**
-     * @Route("/create", name="oro_sale_quote_create")
-     * @Template("@OroSale/Quote/update.html.twig")
-     * @Acl(
-     *     id="oro_sale_quote_create",
-     *     type="entity",
-     *     permission="CREATE",
-     *     class="Oro\Bundle\SaleBundle\Entity\Quote"
-     * )
-     *
      * @param Request $request
      * @return array|Response|RedirectResponse
      */
+    #[Route(path: '/create', name: 'oro_sale_quote_create')]
+    #[Template('@OroSale/Quote/update.html.twig')]
+    #[Acl(id: 'oro_sale_quote_create', type: 'entity', class: Quote::class, permission: 'CREATE')]
     public function createAction(Request $request)
     {
         return $this->createQuote($request);
@@ -89,15 +78,14 @@ class QuoteController extends AbstractController
 
     /**
      * Create sales quote form for customer
-     *
-     * @Route(
-     *     "/create/customer/{customer}",
-     *     name="oro_sale_quote_create_for_customer",
-     *     requirements={"customer"="\d+"}
-     * )
-     * @Template("@OroSale/Quote/update.html.twig")
-     * @AclAncestor("oro_sale_quote_create")
      */
+    #[Route(
+        path: '/create/customer/{customer}',
+        name: 'oro_sale_quote_create_for_customer',
+        requirements: ['customer' => '\d+']
+    )]
+    #[Template('@OroSale/Quote/update.html.twig')]
+    #[AclAncestor('oro_sale_quote_create')]
     public function createQuoteForCustomerAction(
         Request $request,
         Customer $customer
@@ -132,15 +120,14 @@ class QuoteController extends AbstractController
 
     /**
      * Create sales quote form for customer user
-     *
-     * @Route(
-     *     "/create/customer-user/{customerUser}",
-     *     name="oro_sale_quote_create_for_customer_user",
-     *     requirements={"customerUser"="\d+"}
-     * )
-     * @Template("@OroSale/Quote/update.html.twig")
-     * @AclAncestor("oro_sale_quote_create")
      */
+    #[Route(
+        path: '/create/customer-user/{customerUser}',
+        name: 'oro_sale_quote_create_for_customer_user',
+        requirements: ['customerUser' => '\d+']
+    )]
+    #[Template('@OroSale/Quote/update.html.twig')]
+    #[AclAncestor('oro_sale_quote_create')]
     public function createQuoteForCustomerUserAction(
         Request $request,
         CustomerUser $customerUser
@@ -175,34 +162,26 @@ class QuoteController extends AbstractController
     }
 
     /**
-     * @Route("/update/{id}", name="oro_sale_quote_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *     id="oro_sale_quote_update",
-     *     type="entity",
-     *     permission="EDIT",
-     *     class="Oro\Bundle\SaleBundle\Entity\Quote"
-     * )
-     * @ParamConverter("quote", options={"repository_method" = "getQuote"})
-     *
      * @param Quote $quote
      * @param Request $request
-     *
      * @return array|RedirectResponse
      */
+    #[Route(path: '/update/{id}', name: 'oro_sale_quote_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[ParamConverter('quote', options: ['repository_method' => 'getQuote'])]
+    #[Acl(id: 'oro_sale_quote_update', type: 'entity', class: Quote::class, permission: 'EDIT')]
     public function updateAction(Quote $quote, Request $request)
     {
         return $this->update($quote, $request);
     }
 
     /**
-     * @Route("/info/{id}", name="oro_sale_quote_info", requirements={"id"="\d+"})
-     * @Template
-     * @AclAncestor("oro_sale_quote_view")
-     *
      * @param Quote $quote
      * @return array
      */
+    #[Route(path: '/info/{id}', name: 'oro_sale_quote_info', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[AclAncestor('oro_sale_quote_view')]
     public function infoAction(Quote $quote)
     {
         return [

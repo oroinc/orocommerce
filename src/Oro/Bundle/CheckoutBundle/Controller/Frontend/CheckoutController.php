@@ -6,8 +6,8 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper;
 use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\LayoutBundle\Attribute\Layout;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,25 +25,21 @@ class CheckoutController extends AbstractController
     /**
      * Create checkout form
      *
-     * @Route(
-     *     "/{id}",
-     *     name="oro_checkout_frontend_checkout",
-     *     requirements={"id"="\d+"}
-     * )
-     * @Layout(vars={"workflowStepName", "workflowName"})
-     * @Acl(
-     *      id="oro_checkout_frontend_checkout",
-     *      type="entity",
-     *      class="Oro\Bundle\CheckoutBundle\Entity\Checkout",
-     *      permission="EDIT",
-     *      group_name="commerce"
-     * )
      *
      * @param Request $request
      * @param Checkout $checkout
      * @return array|Response
      * @throws \Exception
      */
+    #[Route(path: '/{id}', name: 'oro_checkout_frontend_checkout', requirements: ['id' => '\d+'])]
+    #[Layout(vars: ['workflowStepName', 'workflowName'])]
+    #[Acl(
+        id: 'oro_checkout_frontend_checkout',
+        type: 'entity',
+        class: Checkout::class,
+        permission: 'EDIT',
+        groupName: 'commerce'
+    )]
     public function checkoutAction(Request $request, Checkout $checkout)
     {
         $this->disableGarbageCollector();

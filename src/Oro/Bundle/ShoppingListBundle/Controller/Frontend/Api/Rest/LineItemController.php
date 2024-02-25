@@ -6,7 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerRegistry;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
@@ -29,13 +29,12 @@ class LineItemController extends RestController
      *      description="Delete Line Item",
      *      resource=true
      * )
-     * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param int $id
      * @param int $onlyCurrent
-     *
      * @return Response
      */
+    #[AclAncestor('oro_shopping_list_frontend_update')]
     public function deleteAction(int $id, int $onlyCurrent = 0)
     {
         $success = false;
@@ -69,8 +68,8 @@ class LineItemController extends RestController
      *      description="Delete Line Item",
      *      resource=true
      * )
-     * @AclAncestor("oro_shopping_list_frontend_update")
      */
+    #[AclAncestor('oro_shopping_list_frontend_update')]
     public function deleteConfigurableAction(int $shoppingListId, int $productId, string $unitCode): Response
     {
         $success = false;
@@ -125,13 +124,13 @@ class LineItemController extends RestController
      *      description="Update Line Item",
      *      resource=true
      * )
-     * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param int $id
      *
      * @param Request $request
      * @return Response
      */
+    #[AclAncestor('oro_shopping_list_frontend_update')]
     public function putAction(int $id, Request $request)
     {
         /** @var LineItem $entity */

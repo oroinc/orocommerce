@@ -2,57 +2,38 @@
 
 namespace Oro\Bundle\PricingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * Stores relation between price list and product entities
  * with additional information about type of assignment (auto or manual).
- *
- * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository")
- * @ORM\Table(
- *      name="oro_price_list_to_product",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(
- *              name="oro_price_list_to_product_uidx",
- *              columns={"product_id", "price_list_id"}
- *          )
- *      }
- * )
  */
+#[ORM\Entity(repositoryClass: PriceListToProductRepository::class)]
+#[ORM\Table(name: 'oro_price_list_to_product')]
+#[ORM\UniqueConstraint(name: 'oro_price_list_to_product_uidx', columns: ['product_id', 'price_list_id'])]
 class PriceListToProduct
 {
     /**
      * @var string
-     *
-     * @ORM\Column(name="id", type="guid")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
      */
+    #[ORM\Column(name: 'id', type: Types::GUID)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'UUID')]
     protected $id;
 
-    /**
-     * @var PriceList
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceList")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    protected $priceList;
+    #[ORM\ManyToOne(targetEntity: PriceList::class)]
+    #[ORM\JoinColumn(name: 'price_list_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?PriceList $priceList = null;
 
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    protected $product;
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Product $product = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_manual", type="boolean")
-     */
-    protected $manual = true;
+    #[ORM\Column(name: 'is_manual', type: Types::BOOLEAN)]
+    protected ?bool $manual = true;
 
     /**
      * @return string

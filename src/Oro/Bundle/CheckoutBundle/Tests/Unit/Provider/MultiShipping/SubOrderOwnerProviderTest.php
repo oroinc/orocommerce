@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider\MultiShipping;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product;
@@ -50,8 +49,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         $this->metadataProvider = $this->createMock(OwnershipMetadataProviderInterface::class);
 
         $this->em = $this->getTestEntityManager();
-        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
-            new AnnotationReader(),
+        $this->em->getConfiguration()->setMetadataDriverImpl(new AttributeDriver(
             [dirname((new \ReflectionClass(User::class))->getFileName())]
         ));
 

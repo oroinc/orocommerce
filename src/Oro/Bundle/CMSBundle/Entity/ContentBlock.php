@@ -3,12 +3,15 @@
 namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroCMSBundle_Entity_ContentBlock;
+use Oro\Bundle\CMSBundle\Entity\Repository\ContentBlockRepository;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -20,30 +23,27 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 /**
  * ContentBlock ORM entity.
  *
- * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\ContentBlockRepository")
- * @ORM\Table(name="oro_cms_content_block")
- * @Config(
- *      routeName="oro_cms_content_block_index",
- *      routeView="oro_cms_content_block_view",
- *      routeUpdate="oro_cms_content_block_update",
- *      defaultValues={
- *          "ownership"={
- *              "owner_type"="BUSINESS_UNIT",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="business_unit_owner_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          }
- *     }
- * )
  * @method LocalizedFallbackValue getDefaultTitle()
  * @method LocalizedFallbackValue getTitle(Localization $localization = null)
  * @mixin OroCMSBundle_Entity_ContentBlock
  */
+#[ORM\Entity(repositoryClass: ContentBlockRepository::class)]
+#[ORM\Table(name: 'oro_cms_content_block')]
+#[Config(
+    routeName: 'oro_cms_content_block_index',
+    routeView: 'oro_cms_content_block_view',
+    routeUpdate: 'oro_cms_content_block_update',
+    defaultValues: [
+        'ownership' => [
+            'owner_type' => 'BUSINESS_UNIT',
+            'owner_field_name' => 'owner',
+            'owner_column_name' => 'business_unit_owner_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id'
+        ],
+        'security' => ['type' => 'ACL', 'group_name' => '']
+    ]
+)]
 class ContentBlock implements
     DatesAwareInterface,
     OrganizationAwareInterface,
@@ -53,92 +53,47 @@ class ContentBlock implements
     use DatesAwareTrait;
     use ExtendEntityTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\Column(type: Types::STRING, length: 100, unique: true, nullable: false)]
+    protected ?string $alias = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=100, nullable=false, unique=true)
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $alias;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_cms_content_block_title')]
+    #[ORM\JoinColumn(name: 'content_block_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $titles = null;
 
     /**
-     * @var ArrayCollection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_cms_content_block_title",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="content_block_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, Scope>
      */
-    protected $titles;
+    #[ORM\ManyToMany(targetEntity: Scope::class, fetch: 'EXTRA_LAZY')]
+    #[ORM\JoinTable(name: 'oro_cms_content_block_scope')]
+    #[ORM\JoinColumn(name: 'content_block_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'scope_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Collection $scopes = null;
 
     /**
-     * @var ArrayCollection|Scope[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope",
-     *      fetch="EXTRA_LAZY"
-     * )
-     * @ORM\JoinTable(name="oro_cms_content_block_scope",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="content_block_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="scope_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
+     * @var Collection<int, TextContentVariant>
      */
-    protected $scopes;
+    #[ORM\OneToMany(
+        mappedBy: 'contentBlock',
+        targetEntity: TextContentVariant::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    #[ConfigField(defaultValues: ['entity' => ['actualize_owning_side_on_change' => true]])]
+    protected ?Collection $contentVariants = null;
 
-    /**
-     * @var ArrayCollection|TextContentVariant[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\CMSBundle\Entity\TextContentVariant",
-     *     mappedBy="contentBlock",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "actualize_owning_side_on_change"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $contentVariants;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(type="boolean", options={"default"=true})
-     */
-    protected $enabled = true;
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
+    protected ?bool $enabled = true;
 
     /**
      * {@inheritdoc}

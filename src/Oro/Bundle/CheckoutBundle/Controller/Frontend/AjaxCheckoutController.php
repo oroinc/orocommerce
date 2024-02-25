@@ -6,7 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManager;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,18 +19,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class AjaxCheckoutController extends AbstractController
 {
     /**
-     * @Route(
-     *      "/get-totals-for-checkout/{entityId}",
-     *      name="oro_checkout_frontend_totals",
-     *      requirements={"entityId"="\d+"}
-     * )
-     * @AclAncestor("oro_checkout_frontend_checkout")
      *
      * @param Request $request
      * @param integer $entityId
-     *
      * @return JsonResponse
      */
+    #[Route(
+        path: '/get-totals-for-checkout/{entityId}',
+        name: 'oro_checkout_frontend_totals',
+        requirements: ['entityId' => '\d+']
+    )]
+    #[AclAncestor('oro_checkout_frontend_checkout')]
     public function getTotalsAction(Request $request, $entityId)
     {
         /** @var Checkout $checkout */

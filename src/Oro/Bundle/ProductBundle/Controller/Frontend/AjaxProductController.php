@@ -8,8 +8,8 @@ use Oro\Bundle\ProductBundle\Manager\UserProductFiltersSidebarStateManager;
 use Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Query\Result;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,15 +23,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class AjaxProductController extends AbstractController
 {
     /**
-     * @Route(
-     *      "/names-by-skus",
-     *      name="oro_product_frontend_ajax_names_by_skus",
-     *      methods={"POST"}
-     * )
      *
      * @param Request $request
      * @return JsonResponse
      */
+    #[Route(path: '/names-by-skus', name: 'oro_product_frontend_ajax_names_by_skus', methods: ['POST'])]
     public function productNamesBySkusAction(Request $request)
     {
         $names = [];
@@ -59,19 +55,18 @@ class AjaxProductController extends AbstractController
     }
 
     /**
-     * @Route(
-     *      "/images-by-id/{id}",
-     *      name="oro_product_frontend_ajax_images_by_id",
-     *      requirements={"id"="\d+"},
-     *      methods={"GET"}
-     * )
-     * @AclAncestor("oro_product_frontend_view")
      *
      * @param Request $request
      * @param integer $id
-     *
      * @return JsonResponse
      */
+    #[Route(
+        path: '/images-by-id/{id}',
+        name: 'oro_product_frontend_ajax_images_by_id',
+        requirements: ['id' => '\d+'],
+        methods: ['GET']
+    )]
+    #[AclAncestor('oro_product_frontend_view')]
     public function productImagesByIdAction(Request $request, int $id)
     {
         $productImagesURLsProvider = $this->container->get(ProductImagesURLsProvider::class);
@@ -82,16 +77,16 @@ class AjaxProductController extends AbstractController
     }
 
     /**
-     * @Route(
-     *     "/set-product-filters-sidebar-state",
-     *     name="oro_product_frontend_ajax_set_product_filters_sidebar_state",
-     *     methods={"POST"}
-     * )
-     * @CsrfProtection()
      *
      * @param Request $request
      * @return JsonResponse
      */
+    #[Route(
+        path: '/set-product-filters-sidebar-state',
+        name: 'oro_product_frontend_ajax_set_product_filters_sidebar_state',
+        methods: ['POST']
+    )]
+    #[CsrfProtection()]
     public function setProductFiltersSidebarStateAction(Request $request)
     {
         $this->container->get(UserProductFiltersSidebarStateManager::class)

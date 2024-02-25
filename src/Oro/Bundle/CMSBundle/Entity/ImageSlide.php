@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\CMSBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroCMSBundle_Entity_ImageSlide;
 use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -15,24 +16,6 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 /**
  * Holds image slide data.
  *
- * @ORM\Entity()
- * @ORM\Table(name="oro_cms_image_slide")
- * @Config(
- *      defaultValues={
- *          "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="organization",
- *              "owner_column_name"="organization_id"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          }
- *     }
- * )
  * @method null|File getMainImage()
  * @method ImageSlide setMainImage(File $image)
  * @method null|File getMediumImage()
@@ -41,6 +24,19 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
  * @method ImageSlide setSmallImage(File $image)
  * @mixin OroCMSBundle_Entity_ImageSlide
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_cms_image_slide')]
+#[Config(
+    defaultValues: [
+        'ownership' => [
+            'owner_type' => 'ORGANIZATION',
+            'owner_field_name' => 'organization',
+            'owner_column_name' => 'organization_id'
+        ],
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'dataaudit' => ['auditable' => true]
+    ]
+)]
 class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
 {
     use OrganizationAwareTrait;
@@ -56,113 +52,45 @@ class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
     public const TEXT_ALIGNMENT_BOTTOM_CENTER = 'bottom_center';
     public const TEXT_ALIGNMENT_BOTTOM_RIGHT = 'bottom_right';
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var ContentWidget
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CMSBundle\Entity\ContentWidget")
-     * @ORM\JoinColumn(name="content_widget_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $contentWidget;
+    #[ORM\ManyToOne(targetEntity: ContentWidget::class)]
+    #[ORM\JoinColumn(name: 'content_widget_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?ContentWidget $contentWidget = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="slide_order", type="integer", options={"default"=0})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $slideOrder = 0;
+    #[ORM\Column(name: 'slide_order', type: Types::INTEGER, options: ['default' => 0])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?int $slideOrder = 0;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="url", type="string", length=255, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $url;
+    #[ORM\Column(name: 'url', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $url = null;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="display_in_same_window", type="boolean", nullable=false, options={"default"=true})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $displayInSameWindow = true;
+    #[ORM\Column(name: 'display_in_same_window', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?bool $displayInSameWindow = true;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="title", type="string", length=255, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $title;
+    #[ORM\Column(name: 'title', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $title = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="text", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $text;
+    #[ORM\Column(name: 'text', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $text = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="text_alignment", type="string", length=20, nullable=false, options={"default"="center"})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $textAlignment = self::TEXT_ALIGNMENT_CENTER;
+    #[ORM\Column(
+        name: 'text_alignment',
+        type: Types::STRING,
+        length: 20,
+        nullable: false,
+        options: ['default' => 'center']
+    )]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected string $textAlignment = self::TEXT_ALIGNMENT_CENTER;
 
     public function getId(): ?int
     {

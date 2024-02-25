@@ -2,62 +2,41 @@
 
 namespace Oro\Bundle\TaxBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 
 /**
- * @ORM\Entity
- * @ORM\Table("oro_tax_zip_code")
- * @ORM\HasLifecycleCallbacks
- * @Config(mode="hidden")
- */
+* Entity that represents Zip Code
+*
+*/
+#[ORM\Entity]
+#[ORM\Table('oro_tax_zip_code')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(mode: 'hidden')]
 class ZipCode implements DatesAwareInterface
 {
     use DatesAwareTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="zip_code", type="string", length=255, nullable=true)
-     */
-    protected $zipCode;
+    #[ORM\Column(name: 'zip_code', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $zipCode = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="zip_range_start", type="string", length=255, nullable=true)
-     */
-    protected $zipRangeStart;
+    #[ORM\Column(name: 'zip_range_start', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $zipRangeStart = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="zip_range_end", type="string", length=255, nullable=true)
-     */
-    protected $zipRangeEnd;
+    #[ORM\Column(name: 'zip_range_end', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $zipRangeEnd = null;
 
-    /**
-     * @var TaxJurisdiction
-     *
-     * @ORM\ManyToOne(
-     *      targetEntity="Oro\Bundle\TaxBundle\Entity\TaxJurisdiction",
-     *      inversedBy="zipCodes",
-     *      cascade={"persist"}
-     * )
-     * @ORM\JoinColumn(name="tax_jurisdiction_id", referencedColumnName="id", nullable=false)
-     */
-    protected $taxJurisdiction;
+    #[ORM\ManyToOne(targetEntity: TaxJurisdiction::class, cascade: ['persist'], inversedBy: 'zipCodes')]
+    #[ORM\JoinColumn(name: 'tax_jurisdiction_id', referencedColumnName: 'id', nullable: false)]
+    protected ?TaxJurisdiction $taxJurisdiction = null;
 
     /**
      * @return string

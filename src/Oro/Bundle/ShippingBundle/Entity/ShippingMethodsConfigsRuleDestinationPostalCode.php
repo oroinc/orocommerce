@@ -2,37 +2,28 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
- * @ORM\Table("oro_ship_method_postal_code")
- */
+* Entity that represents Shipping Methods Configs Rule Destination Postal Code
+*
+*/
+#[ORM\Entity]
+#[ORM\Table('oro_ship_method_postal_code')]
 class ShippingMethodsConfigsRuleDestinationPostalCode
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    private ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255, nullable=false)
-     */
-    private $name;
+    #[ORM\Column(name: 'name', type: Types::STRING, length: 255, nullable: false)]
+    private ?string $name = null;
 
-    /**
-     * @var ShippingMethodsConfigsRuleDestination
-     *
-     * @ORM\ManyToOne(targetEntity="ShippingMethodsConfigsRuleDestination", inversedBy="postalCodes")
-     * @ORM\JoinColumn(name="destination_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    private $destination;
+    #[ORM\ManyToOne(targetEntity: ShippingMethodsConfigsRuleDestination::class, inversedBy: 'postalCodes')]
+    #[ORM\JoinColumn(name: 'destination_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    private ?ShippingMethodsConfigsRuleDestination $destination = null;
 
     /**
      * @return int

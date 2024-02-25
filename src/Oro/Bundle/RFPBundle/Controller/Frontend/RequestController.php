@@ -3,13 +3,13 @@
 namespace Oro\Bundle\RFPBundle\Controller\Frontend;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler;
 use Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider;
 use Oro\Bundle\RFPBundle\Model\RequestManager;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SecurityBundle\Util\SameSiteUrlHelper;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,17 +28,15 @@ class RequestController extends AbstractController
 {
     private const LAST_SUCCESS_RFQ_SESSION_NAME = 'last_success_rfq_id';
 
-    /**
-     * @Route("/view/{id}", name="oro_rfp_frontend_request_view", requirements={"id"="\d+"})
-     * @Layout
-     * @Acl(
-     *      id="oro_rfp_frontend_request_view",
-     *      type="entity",
-     *      class="Oro\Bundle\RFPBundle\Entity\Request",
-     *      permission="VIEW",
-     *      group_name="commerce"
-     * )
-     */
+    #[Route(path: '/view/{id}', name: 'oro_rfp_frontend_request_view', requirements: ['id' => '\d+'])]
+    #[Layout]
+    #[Acl(
+        id: 'oro_rfp_frontend_request_view',
+        type: 'entity',
+        class: RFPRequest::class,
+        permission: 'VIEW',
+        groupName: 'commerce'
+    )]
     public function viewAction(RFPRequest $request): array
     {
         $this->assertValidInternalStatus($request);
@@ -50,11 +48,9 @@ class RequestController extends AbstractController
         ];
     }
 
-    /**
-     * @AclAncestor("oro_rfp_frontend_request_view")
-     * @Route("/", name="oro_rfp_frontend_request_index")
-     * @Layout(vars={"entity_class"})
-     */
+    #[Route(path: '/', name: 'oro_rfp_frontend_request_index')]
+    #[Layout(vars: ['entity_class'])]
+    #[AclAncestor('oro_rfp_frontend_request_view')]
     public function indexAction(): array
     {
         return [
@@ -62,17 +58,15 @@ class RequestController extends AbstractController
         ];
     }
 
-    /**
-     * @Acl(
-     *      id="oro_rfp_frontend_request_create",
-     *      type="entity",
-     *      class="Oro\Bundle\RFPBundle\Entity\Request",
-     *      permission="CREATE",
-     *      group_name="commerce"
-     * )
-     * @Route("/create", name="oro_rfp_frontend_request_create")
-     * @Layout
-     */
+    #[Route(path: '/create', name: 'oro_rfp_frontend_request_create')]
+    #[Layout]
+    #[Acl(
+        id: 'oro_rfp_frontend_request_create',
+        type: 'entity',
+        class: RFPRequest::class,
+        permission: 'CREATE',
+        groupName: 'commerce'
+    )]
     public function createAction(Request $request): array|Response
     {
         $rfpRequest = $this->container->get(RequestManager::class)->create();
@@ -87,17 +81,15 @@ class RequestController extends AbstractController
         return ['data' => $response];
     }
 
-    /**
-     * @Route("/update/{id}", name="oro_rfp_frontend_request_update", requirements={"id"="\d+"})
-     * @Layout
-     * @Acl(
-     *      id="oro_rfp_frontend_request_update",
-     *      type="entity",
-     *      class="Oro\Bundle\RFPBundle\Entity\Request",
-     *      permission="EDIT",
-     *      group_name="commerce"
-     * )
-     */
+    #[Route(path: '/update/{id}', name: 'oro_rfp_frontend_request_update', requirements: ['id' => '\d+'])]
+    #[Layout]
+    #[Acl(
+        id: 'oro_rfp_frontend_request_update',
+        type: 'entity',
+        class: RFPRequest::class,
+        permission: 'EDIT',
+        groupName: 'commerce'
+    )]
     public function updateAction(RFPRequest $rfpRequest): array|Response
     {
         $this->assertValidInternalStatus($rfpRequest);
@@ -111,11 +103,9 @@ class RequestController extends AbstractController
         return ['data' => $response];
     }
 
-    /**
-     * @AclAncestor("oro_rfp_frontend_request_create")
-     * @Route("/success", name="oro_rfp_frontend_request_success")
-     * @Layout
-     */
+    #[Route(path: '/success', name: 'oro_rfp_frontend_request_success')]
+    #[Layout]
+    #[AclAncestor('oro_rfp_frontend_request_create')]
     public function successAction(Request $request): array
     {
         $rfqID = $request->getSession()->get(self::LAST_SUCCESS_RFQ_SESSION_NAME);

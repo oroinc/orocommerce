@@ -4,6 +4,10 @@ namespace Oro\Bundle\ShoppingListBundle\Model;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Matrix Row
+ *
+ */
 class MatrixCollectionRow
 {
     /**
@@ -12,8 +16,8 @@ class MatrixCollectionRow
     public $label;
 
     /**
-     * @Assert\Valid
      * @var array|MatrixCollectionColumn[]
      */
+    #[Assert\Valid]
     public $columns = [];
 }

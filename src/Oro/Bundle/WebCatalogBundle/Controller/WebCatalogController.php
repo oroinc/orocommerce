@@ -4,8 +4,8 @@ namespace Oro\Bundle\WebCatalogBundle\Controller;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\UIBundle\Form\Type\TreeMoveType;
 use Oro\Bundle\UIBundle\Model\TreeCollection;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -25,11 +25,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class WebCatalogController extends AbstractController
 {
-    /**
-     * @Route("/", name="oro_web_catalog_index")
-     * @Template
-     * @AclAncestor("oro_web_catalog_view")
-     */
+    #[Route(path: '/', name: 'oro_web_catalog_index')]
+    #[Template]
+    #[AclAncestor('oro_web_catalog_view')]
     public function indexAction(): array
     {
         return [
@@ -37,17 +35,9 @@ class WebCatalogController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/view/{id}", name="oro_web_catalog_view", requirements={"id"="\d+"})
-     *
-     * @Acl(
-     *      id="oro_web_catalog_view",
-     *      type="entity",
-     *      class="Oro\Bundle\WebCatalogBundle\Entity\WebCatalog",
-     *      permission="VIEW"
-     * )
-     * @Template()
-     */
+    #[Route(path: '/view/{id}', name: 'oro_web_catalog_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_web_catalog_view', type: 'entity', class: WebCatalog::class, permission: 'VIEW')]
     public function viewAction(WebCatalog $webCatalog): array
     {
         return [
@@ -55,47 +45,25 @@ class WebCatalogController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/create", name="oro_web_catalog_create")
-     * @Template("@OroWebCatalog/WebCatalog/update.html.twig")
-     * @Acl(
-     *      id="oro_web_catalog_create",
-     *      type="entity",
-     *      class="Oro\Bundle\WebCatalogBundle\Entity\WebCatalog",
-     *      permission="CREATE"
-     * )
-     */
+    #[Route(path: '/create', name: 'oro_web_catalog_create')]
+    #[Template('@OroWebCatalog/WebCatalog/update.html.twig')]
+    #[Acl(id: 'oro_web_catalog_create', type: 'entity', class: WebCatalog::class, permission: 'CREATE')]
     public function createAction(): array|RedirectResponse
     {
         return $this->update(new WebCatalog());
     }
 
-    /**
-     * @Route("/update/{id}", name="oro_web_catalog_update", requirements={"id"="\d+"})
-     *
-     * @Acl(
-     *      id="oro_web_catalog_update",
-     *      type="entity",
-     *      class="Oro\Bundle\WebCatalogBundle\Entity\WebCatalog",
-     *      permission="EDIT"
-     * )
-     * @Template()
-     */
+    #[Route(path: '/update/{id}', name: 'oro_web_catalog_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_web_catalog_update', type: 'entity', class: WebCatalog::class, permission: 'EDIT')]
     public function updateAction(WebCatalog $webCatalog): array|RedirectResponse
     {
         return $this->update($webCatalog);
     }
 
-    /**
-     * @Route("/move/{id}", name="oro_web_catalog_move")
-     * @Template
-     * @Acl(
-     *      id="oro_web_catalog_update",
-     *      type="entity",
-     *      class="Oro\Bundle\WebCatalogBundle\Entity\WebCatalog",
-     *      permission="EDIT"
-     * )
-     */
+    #[Route(path: '/move/{id}', name: 'oro_web_catalog_move')]
+    #[Template]
+    #[Acl(id: 'oro_web_catalog_update', type: 'entity', class: WebCatalog::class, permission: 'EDIT')]
     public function moveAction(Request $request, WebCatalog $webCatalog): array
     {
         $handler = $this->container->get(ContentNodeTreeHandler::class);

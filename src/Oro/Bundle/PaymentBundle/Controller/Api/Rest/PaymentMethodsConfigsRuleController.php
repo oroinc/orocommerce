@@ -6,7 +6,7 @@ use Doctrine\Persistence\ObjectManager;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,11 +22,11 @@ class PaymentMethodsConfigsRuleController extends RestController
      * - HTTP_OK (200)
      *
      * @ApiDoc(description="Enable Payment Rule", resource=true)
-     * @AclAncestor("oro_payment_methods_configs_rule_update")
      *
      * @param int $id
      * @return Response
      */
+    #[AclAncestor('oro_payment_methods_configs_rule_update')]
     public function enableAction(int $id)
     {
         /** @var PaymentMethodsConfigsRule $paymentMethodsConfigsRule */
@@ -64,11 +64,11 @@ class PaymentMethodsConfigsRuleController extends RestController
      * - HTTP_OK (200)
      *
      * @ApiDoc(description="Disable Payment Rule", resource=true)
-     * @AclAncestor("oro_payment_methods_configs_rule_update")
      *
      * @param int $id
      * @return Response
      */
+    #[AclAncestor('oro_payment_methods_configs_rule_update')]
     public function disableAction(int $id)
     {
         /** @var PaymentMethodsConfigsRule $paymentMethodsConfigsRule */

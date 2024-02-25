@@ -4,6 +4,10 @@ namespace Oro\Bundle\RedirectBundle\Entity;
 
 use Oro\Bundle\RedirectBundle\Model\TextSlugPrototypeWithRedirect;
 
+/**
+* TextSlugPrototypeWithRedirectAware trait
+*
+*/
 trait TextSlugPrototypeWithRedirectAwareTrait
 {
     use TextSlugPrototypeAwareTrait;

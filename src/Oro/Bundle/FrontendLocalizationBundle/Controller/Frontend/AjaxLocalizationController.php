@@ -7,7 +7,7 @@ use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Oro\Component\Routing\UrlUtil;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,14 +19,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AjaxLocalizationController extends AbstractController
 {
-    /**
-     * @Route(
-     *     "/set-current-localization",
-     *     name="oro_frontend_localization_frontend_set_current_localization",
-     *     methods={"POST"}
-     * )
-     * @CsrfProtection()
-     */
+    #[Route(
+        path: '/set-current-localization',
+        name: 'oro_frontend_localization_frontend_set_current_localization',
+        methods: ['POST']
+    )]
+    #[CsrfProtection()]
     public function setCurrentLocalizationAction(Request $request): JsonResponse
     {
         $localization = $this->container->get(LocalizationManager::class)

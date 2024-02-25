@@ -7,8 +7,8 @@ use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductKitConfigurationType;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,18 +21,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class RequestProductKitConfigurationPriceController extends AbstractController
 {
     /**
-     * @CsrfProtection()
-     * @Route(
-     *     "/",
-     *     name="oro_rfp_frontend_request_product_kit_configuration_price",
-     *     methods={"POST"}
-     * )
-     * @AclAncestor("oro_rfp_frontend_request_create")
-     *
      * @param Request $request
      *
      * @return JsonResponse
      */
+    #[Route(path: '/', name: 'oro_rfp_frontend_request_product_kit_configuration_price', methods: ['POST'])]
+    #[CsrfProtection]
+    #[AclAncestor('oro_rfp_frontend_request_create')]
     public function __invoke(Request $request): JsonResponse
     {
         $requestProduct = new RequestProduct();

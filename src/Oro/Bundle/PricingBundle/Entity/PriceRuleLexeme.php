@@ -2,59 +2,39 @@
 
 namespace Oro\Bundle\PricingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 
 /**
- * @ORM\Table(name="oro_price_rule_lexeme")
- * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository")
- */
+* Entity that represents Price Rule Lexeme
+*
+*/
+#[ORM\Entity(repositoryClass: PriceRuleLexemeRepository::class)]
+#[ORM\Table(name: 'oro_price_rule_lexeme')]
 class PriceRuleLexeme
 {
-    /**
-     * @var integer $id
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="class_name", type="string", length=255, nullable=false)
-     */
-    protected $className;
+    #[ORM\Column(name: 'class_name', type: Types::STRING, length: 255, nullable: false)]
+    protected ?string $className = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="field_name", type="string", length=255, nullable=false)
-     */
-    protected $fieldName;
+    #[ORM\Column(name: 'field_name', type: Types::STRING, length: 255, nullable: false)]
+    protected ?string $fieldName = null;
 
-    /**
-     * @var PriceRule
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceRule", inversedBy="lexemes")
-     * @ORM\JoinColumn(name="price_rule_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     **/
-    protected $priceRule;
+    #[ORM\ManyToOne(targetEntity: PriceRule::class, inversedBy: 'lexemes')]
+    #[ORM\JoinColumn(name: 'price_rule_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    protected ?PriceRule $priceRule = null;
 
-    /**
-     * @var PriceList
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceList", inversedBy="priceRules")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     **/
-    protected $priceList;
+    #[ORM\ManyToOne(targetEntity: PriceList::class, inversedBy: 'priceRules')]
+    #[ORM\JoinColumn(name: 'price_list_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?PriceList $priceList = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="relation_id", type="integer", nullable=true)
-     */
-    protected $relationId;
+    #[ORM\Column(name: 'relation_id', type: Types::INTEGER, nullable: true)]
+    protected ?int $relationId = null;
 
     /**
      * @return int

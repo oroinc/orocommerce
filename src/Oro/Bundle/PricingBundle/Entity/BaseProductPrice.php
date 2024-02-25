@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\PricingBundle\Model\ProductPriceInterface;
@@ -16,10 +17,9 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
  * Base entity class for product price entities.
- *
- * @ORM\MappedSuperclass()
- * @ORM\HasLifecycleCallbacks()
  */
+#[ORM\MappedSuperclass]
+#[ORM\HasLifecycleCallbacks]
 class BaseProductPrice implements
     ProductUnitHolderInterface,
     ProductHolderInterface,
@@ -30,50 +30,22 @@ class BaseProductPrice implements
     use ExtendEntityTrait;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="id", type="guid")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
+     * @var string|null
      */
+    #[ORM\Column(name: 'id', type: Types::GUID)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'UUID')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
     protected $id;
 
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=10,
-     *              "identity"=true
-     *          }
-     *      }
-     * )
-     **/
-    protected $product;
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 10, 'identity' => true]])]
+    protected ?Product $product = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="product_sku", type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $productSku;
+    #[ORM\Column(name: 'product_sku', type: Types::STRING, length: 255)]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?string $productSku = null;
 
     /**
      * @var BasePriceList
@@ -81,77 +53,35 @@ class BaseProductPrice implements
     protected $priceList;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="quantity", type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=20,
-     *              "identity"=true
-     *          },
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var float|null
      */
+    #[ORM\Column(name: 'quantity', type: Types::FLOAT)]
+    #[ConfigField(
+        defaultValues: ['importexport' => ['order' => 20, 'identity' => true], 'dataaudit' => ['auditable' => true]]
+    )]
     protected $quantity;
 
-    /**
-     * @var ProductUnit
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=30,
-     *              "identity"=true
-     *          },
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     **/
-    protected $unit;
+    #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
+    #[ORM\JoinColumn(name: 'unit_code', referencedColumnName: 'code', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(
+        defaultValues: ['importexport' => ['order' => 30, 'identity' => true], 'dataaudit' => ['auditable' => true]]
+    )]
+    protected ?ProductUnit $unit = null;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="value", type="money")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=40,
-     *              "header"="Price"
-     *          },
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(name: 'value', type: 'money')]
+    #[ConfigField(
+        defaultValues: ['importexport' => ['order' => 40, 'header' => 'Price'], 'dataaudit' => ['auditable' => true]]
+    )]
     protected $value;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", length=3)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=50,
-     *              "identity"=true
-     *          },
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $currency;
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3)]
+    #[ConfigField(
+        defaultValues: ['importexport' => ['order' => 50, 'identity' => true], 'dataaudit' => ['auditable' => true]]
+    )]
+    protected ?string $currency = null;
 
     /**
      * Changes to this value object wont affect entity change set
@@ -278,9 +208,7 @@ class BaseProductPrice implements
         return $this->price;
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    #[ORM\PostLoad]
     public function loadPrice()
     {
         if (null !== $this->value && null !== $this->currency) {
@@ -292,10 +220,8 @@ class BaseProductPrice implements
         return $this;
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updatePrice()
     {
         if ($this->price) {

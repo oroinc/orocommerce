@@ -5,8 +5,8 @@ namespace Oro\Bundle\ConsentBundle\Controller;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Form\Type\ConsentType;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,12 +20,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ConsentController extends AbstractController
 {
     /**
-     * @Route("/", name="oro_consent_index")
-     * @Template
-     * @AclAncestor("oro_consent_view")
      *
      * @return array
      */
+    #[Route(path: '/', name: 'oro_consent_index')]
+    #[Template]
+    #[AclAncestor('oro_consent_view')]
     public function indexAction()
     {
         return [
@@ -36,18 +36,12 @@ class ConsentController extends AbstractController
     /**
      * Create consent
      *
-     * @Route("/create", name="oro_consent_create")
-     * @Template("@OroConsent/Consent/update.html.twig")
-     * @Acl(
-     *      id="oro_consent_create",
-     *      type="entity",
-     *      class="Oro\Bundle\ConsentBundle\Entity\Consent",
-     *      permission="CREATE"
-     * )
      * @param Request $request
-     *
      * @return array|RedirectResponse
      */
+    #[Route(path: '/create', name: 'oro_consent_create')]
+    #[Template('@OroConsent/Consent/update.html.twig')]
+    #[Acl(id: 'oro_consent_create', type: 'entity', class: Consent::class, permission: 'CREATE')]
     public function createAction(Request $request)
     {
         $createMessage = $this->container->get(TranslatorInterface::class)->trans('oro.consent.form.messages.created');
@@ -58,20 +52,14 @@ class ConsentController extends AbstractController
     /**
      * Edit consent form
      *
-     * @Route("/update/{id}", name="oro_consent_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_consent_update",
-     *      type="entity",
-     *      class="Oro\Bundle\ConsentBundle\Entity\Consent",
-     *      permission="EDIT"
-     * )
      *
      * @param Consent $consent
      * @param Request $request
-     *
      * @return array|RedirectResponse
      */
+    #[Route(path: '/update/{id}', name: 'oro_consent_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_consent_update', type: 'entity', class: Consent::class, permission: 'EDIT')]
     public function updateAction(Consent $consent, Request $request)
     {
         $updateMessage = $this->container->get(TranslatorInterface::class)->trans('oro.consent.form.messages.saved');
@@ -100,18 +88,12 @@ class ConsentController extends AbstractController
     }
 
     /**
-     * @Route("/view/{id}", name="oro_consent_view", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_consent_view",
-     *      type="entity",
-     *      class="Oro\Bundle\ConsentBundle\Entity\Consent",
-     *      permission="VIEW"
-     * )
-     *
      * @param Consent $consent
      * @return array
      */
+    #[Route(path: '/view/{id}', name: 'oro_consent_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_consent_view', type: 'entity', class: Consent::class, permission: 'VIEW')]
     public function viewAction(Consent $consent)
     {
         return [
@@ -120,14 +102,12 @@ class ConsentController extends AbstractController
     }
 
     /**
-     * @Route("/info/{id}", name="oro_consent_info", requirements={"id"="\d+"})
-     * @Template
-     * @AclAncestor("oro_consent_view")
-     *
      * @param Consent $consent
-     *
      * @return array
      */
+    #[Route(path: '/info/{id}', name: 'oro_consent_info', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[AclAncestor('oro_consent_view')]
     public function infoAction(Consent $consent)
     {
         return [

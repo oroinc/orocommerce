@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
 /**
@@ -9,20 +11,12 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
  */
 trait BillingAddressTrait
 {
-    /**
-     * @var OrderAddress
-     *
-     * @ORM\OneToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderAddress", cascade={"persist"})
-     * @ORM\JoinColumn(name="billing_address_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $billingAddress;
+    #[ORM\OneToOne(targetEntity: OrderAddress::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'billing_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?OrderAddress $billingAddress = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="save_billing_address", type="boolean", options={"default"=true})
-     */
-    protected $saveBillingAddress = true;
+    #[ORM\Column(name: 'save_billing_address', type: Types::BOOLEAN, options: ['default' => true])]
+    protected ?bool $saveBillingAddress = true;
 
     /**
      * @return OrderAddress

@@ -2,56 +2,50 @@
 
 namespace Oro\Bundle\PromotionBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
+use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
 
 /**
  * Coupon ORM entity
- *
- * @ORM\Table(
- *      name="oro_promotion_coupon",
- *      indexes={
- *          @ORM\Index(name="idx_oro_promotion_coupon_created_at", columns={"created_at"}),
- *          @ORM\Index(name="idx_oro_promotion_coupon_updated_at", columns={"updated_at"}),
- *          @ORM\Index(name="idx_oro_promotion_coupon_code_upper", columns={"code_uppercase"}),
- *      }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository")
- * @ORM\HasLifecycleCallbacks()
- * @Config(
- *      routeName="oro_promotion_coupon_index",
- *      routeView="oro_promotion_coupon_view",
- *      routeCreate="oro_promotion_coupon_create",
- *      routeUpdate="oro_promotion_coupon_update",
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-briefcase"
- *          },
- *          "ownership"={
- *              "owner_type"="BUSINESS_UNIT",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="business_unit_owner_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "permissions"="VIEW;CREATE;EDIT;DELETE",
- *              "group_name"="commerce",
- *              "category"="marketing"
- *          }
- *      }
- * )
  */
+#[ORM\Entity(repositoryClass: CouponRepository::class)]
+#[ORM\Table(name: 'oro_promotion_coupon')]
+#[ORM\Index(columns: ['created_at'], name: 'idx_oro_promotion_coupon_created_at')]
+#[ORM\Index(columns: ['updated_at'], name: 'idx_oro_promotion_coupon_updated_at')]
+#[ORM\Index(columns: ['code_uppercase'], name: 'idx_oro_promotion_coupon_code_upper')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    routeName: 'oro_promotion_coupon_index',
+    routeView: 'oro_promotion_coupon_view',
+    routeCreate: 'oro_promotion_coupon_create',
+    routeUpdate: 'oro_promotion_coupon_update',
+    defaultValues: [
+        'entity' => ['icon' => 'fa-briefcase'],
+        'ownership' => [
+            'owner_type' => 'BUSINESS_UNIT',
+            'owner_field_name' => 'owner',
+            'owner_column_name' => 'business_unit_owner_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id'
+        ],
+        'dataaudit' => ['auditable' => true],
+        'security' => [
+            'type' => 'ACL',
+            'permissions' => 'VIEW;CREATE;EDIT;DELETE',
+            'group_name' => 'commerce',
+            'category' => 'marketing'
+        ]
+    ]
+)]
 class Coupon implements
     DatesAwareInterface,
     OrganizationAwareInterface
@@ -61,205 +55,63 @@ class Coupon implements
 
     const MAX_COUPON_CODE_LENGTH = 255;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="code", type="string", length=255, nullable=false, unique=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "identity"=true,
-     *              "order"=10
-     *          }
-     *      }
-     *  )
-     */
-    protected $code;
+    #[ORM\Column(name: 'code', type: Types::STRING, length: 255, unique: true, nullable: false)]
+    #[ConfigField(
+        defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['identity' => true, 'order' => 10]]
+    )]
+    protected ?string $code = null;
 
-    /**
-     * @var string
-     * @ORM\Column(name="code_uppercase", type="string", length=255, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     *  )
-     */
-    protected $codeUppercase;
+    #[ORM\Column(name: 'code_uppercase', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?string $codeUppercase = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="enabled", type="boolean", nullable=false, options={"default"=false})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=20
-     *          }
-     *      }
-     *  )
-     */
-    protected $enabled = false;
+    #[ORM\Column(name: 'enabled', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 20]])]
+    protected ?bool $enabled = false;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="uses_per_coupon", type="integer", nullable=true, options={"default"=1})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=30
-     *          }
-     *      }
-     *  )
-     */
-    protected $usesPerCoupon = 1;
+    #[ORM\Column(name: 'uses_per_coupon', type: Types::INTEGER, nullable: true, options: ['default' => 1])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 30]])]
+    protected ?int $usesPerCoupon = 1;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="uses_per_person", type="integer", nullable=true, options={"default"=1})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=40
-     *          }
-     *      }
-     *  )
-     */
-    protected $usesPerPerson = 1;
+    #[ORM\Column(name: 'uses_per_person', type: Types::INTEGER, nullable: true, options: ['default' => 1])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 40]])]
+    protected ?int $usesPerPerson = 1;
 
-    /**
-     * @var Promotion
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\Promotion", inversedBy="coupons")
-     * @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=60
-     *          }
-     *      }
-     *  )
-     */
-    protected $promotion;
+    #[ORM\ManyToOne(targetEntity: Promotion::class, inversedBy: 'coupons')]
+    #[ORM\JoinColumn(name: 'promotion_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 60]])]
+    protected ?Promotion $promotion = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(
+        defaultValues: ['entity' => ['label' => 'oro.ui.created_at'], 'importexport' => ['excluded' => true]]
+    )]
+    protected ?\DateTimeInterface $createdAt = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
+    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(
+        defaultValues: ['entity' => ['label' => 'oro.ui.updated_at'], 'importexport' => ['excluded' => true]]
+    )]
+    protected ?\DateTimeInterface $updatedAt = null;
 
-    /**
-     * @var OrganizationInterface
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $organization;
+    #[ORM\ManyToOne(targetEntity: Organization::class)]
+    #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
+    protected ?OrganizationInterface $organization = null;
 
-    /**
-     * @ORM\Column(name="valid_from", type="datetime", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=45
-     *          }
-     *      }
-     *  )
-     *
-     * @var \DateTime|null
-     */
-    protected $validFrom;
+    #[ORM\Column(name: 'valid_from', type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 45]])]
+    protected ?\DateTimeInterface $validFrom = null;
 
-    /**
-     * @ORM\Column(name="valid_until", type="datetime", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=50
-     *          }
-     *      }
-     *  )
-     *
-     * @var \DateTime|null
-     */
-    protected $validUntil;
+    #[ORM\Column(name: 'valid_until', type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 50]])]
+    protected ?\DateTimeInterface $validUntil = null;
 
     /**
      * @return int
@@ -403,9 +255,8 @@ class Coupon implements
 
     /**
      * Pre persist event handler.
-     *
-     * @ORM\PrePersist
      */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         $this->updateCodeUppercase();
@@ -413,9 +264,8 @@ class Coupon implements
 
     /**
      * Pre update event handler.
-     *
-     * @ORM\PreUpdate
      */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->updateCodeUppercase();

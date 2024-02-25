@@ -12,9 +12,9 @@ use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Form\Type\BaseCouponType;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponType;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -31,12 +31,12 @@ class CouponController extends AbstractController
     const COUPONS_GRID = 'promotion-coupons-grid';
 
     /**
-     * @Route("/", name="oro_promotion_coupon_index")
-     * @Template
-     * @AclAncestor("oro_promotion_coupon_view")
      *
      * @return array
      */
+    #[Route(path: '/', name: 'oro_promotion_coupon_index')]
+    #[Template]
+    #[AclAncestor('oro_promotion_coupon_view')]
     public function indexAction()
     {
         return [
@@ -46,66 +46,49 @@ class CouponController extends AbstractController
     }
 
     /**
-     * @Route("/create", name="oro_promotion_coupon_create")
-     * @Template("@OroPromotion/Coupon/update.html.twig")
-     * @Acl(
-     *      id="oro_promotion_coupon_create",
-     *      type="entity",
-     *      class="Oro\Bundle\PromotionBundle\Entity\Coupon",
-     *      permission="CREATE"
-     * )
      * @param Request $request
      * @return array|RedirectResponse
      */
+    #[Route(path: '/create', name: 'oro_promotion_coupon_create')]
+    #[Template('@OroPromotion/Coupon/update.html.twig')]
+    #[Acl(id: 'oro_promotion_coupon_create', type: 'entity', class: Coupon::class, permission: 'CREATE')]
     public function createAction(Request $request)
     {
         return $this->update(new Coupon(), $request);
     }
 
     /**
-     * @Route("/update/{id}", name="oro_promotion_coupon_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_promotion_coupon_update",
-     *      type="entity",
-     *      class="Oro\Bundle\PromotionBundle\Entity\Coupon",
-     *      permission="EDIT"
-     * )
-     * @param \Oro\Bundle\PromotionBundle\Entity\Coupon $coupon
+     * @param Coupon $coupon
      * @param Request $request
      * @return array|RedirectResponse
      */
+    #[Route(path: '/update/{id}', name: 'oro_promotion_coupon_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_promotion_coupon_update', type: 'entity', class: Coupon::class, permission: 'EDIT')]
     public function updateAction(Coupon $coupon, Request $request)
     {
         return $this->update($coupon, $request);
     }
 
     /**
-     * @Route("/view/{id}", name="oro_promotion_coupon_view", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_promotion_coupon_view",
-     *      type="entity",
-     *      class="Oro\Bundle\PromotionBundle\Entity\Coupon",
-     *      permission="VIEW"
-     * )
-     *
      * @param Coupon $coupon
      * @return array
      */
+    #[Route(path: '/view/{id}', name: 'oro_promotion_coupon_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_promotion_coupon_view', type: 'entity', class: Coupon::class, permission: 'VIEW')]
     public function viewAction(Coupon $coupon)
     {
         return ['entity' => $coupon];
     }
 
     /**
-     * @Route("/coupon-mass-edit-widget", name="oro_promotion_coupon_mass_edit_widget")
-     * @AclAncestor("oro_promotion_coupon_edit")
-     * @Template("@OroPromotion/Coupon/widget/mass_update.html.twig")
-     *
      * @param Request $request
      * @return array
      */
+    #[Route(path: '/coupon-mass-edit-widget', name: 'oro_promotion_coupon_mass_edit_widget')]
+    #[Template('@OroPromotion/Coupon/widget/mass_update.html.twig')]
+    #[AclAncestor('oro_promotion_coupon_edit')]
     public function massUpdateWidgetAction(Request $request)
     {
         $responseData = [
@@ -143,12 +126,12 @@ class CouponController extends AbstractController
     }
 
     /**
-     * @Route("/coupon-generation-preview", name="oro_promotion_coupon_generation_preview", methods={"POST"})
-     * @AclAncestor("oro_promotion_coupon_view")
-     * @CsrfProtection()
      * @param Request $request
      * @return JsonResponse
      */
+    #[Route(path: '/coupon-generation-preview', name: 'oro_promotion_coupon_generation_preview', methods: ['POST'])]
+    #[AclAncestor('oro_promotion_coupon_view')]
+    #[CsrfProtection()]
     public function couponGenerationPreview(Request $request)
     {
         $options = new CouponGenerationOptions();

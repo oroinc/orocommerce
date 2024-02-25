@@ -4,9 +4,10 @@ namespace Oro\Bundle\RFPBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -15,84 +16,60 @@ use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 
 /**
  * RFP Request Product entity.
- *
- * @ORM\Table(name="oro_rfp_request_product")
- * @ORM\Entity
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-list-alt"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="quotes"
- *          }
- *      }
- * )
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_rfp_request_product')]
+#[Config(
+    defaultValues: [
+        'entity' => ['icon' => 'fa-list-alt'],
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes']
+    ]
+)]
 class RequestProduct implements ProductHolderInterface, ProductKitItemLineItemsAwareInterface, ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Request::class, inversedBy: 'requestProducts')]
+    #[ORM\JoinColumn(name: 'request_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Request $request = null;
+
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?Product $product = null;
+
+    #[ORM\Column(name: 'product_sku', type: Types::STRING, length: 255)]
+    protected ?string $productSku = null;
+
+    #[ORM\Column(name: 'comment', type: Types::TEXT, nullable: true)]
+    protected ?string $comment = null;
 
     /**
-     * @var Request
-     *
-     * @ORM\ManyToOne(targetEntity="Request", inversedBy="requestProducts")
-     * @ORM\JoinColumn(name="request_id", referencedColumnName="id", onDelete="CASCADE")
+     * @var Collection<int, RequestProductItem>
      */
-    protected $request;
-
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $product;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="product_sku", type="string", length=255)
-     */
-    protected $productSku;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="comment", type="text", nullable=true)
-     */
-    protected $comment;
-
-    /**
-     * @var Collection|RequestProductItem[]
-     *
-     * @ORM\OneToMany(targetEntity="RequestProductItem", mappedBy="requestProduct", cascade={"ALL"}, orphanRemoval=true)
-     */
-    protected $requestProductItems;
+    #[ORM\OneToMany(
+        mappedBy: 'requestProduct',
+        targetEntity: RequestProductItem::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    protected ?Collection $requestProductItems = null;
 
     /**
      * @var Collection<RequestProductKitItemLineItem>
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="RequestProductKitItemLineItem",
-     *     mappedBy="requestProduct",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true,
-     *     indexBy="kitItemId"
-     * )
-     * @OrderBy({"sortOrder"="ASC"})
      */
+    #[ORM\OneToMany(
+        mappedBy: 'requestProduct',
+        targetEntity: RequestProductKitItemLineItem::class,
+        cascade: ['ALL'],
+        orphanRemoval: true,
+        indexBy: 'kitItemId'
+    )]
+    #[OrderBy(['sortOrder' => 'ASC'])]
     protected $kitItemLineItems;
 
     /**

@@ -10,7 +10,7 @@ trait AppliedCouponsTrait
     /**
      * @var Collection|AppliedCoupon[]
      */
-    protected $appliedCoupons;
+    protected ?Collection $appliedCoupons = null;
 
     /**
      * {@inheritdoc}

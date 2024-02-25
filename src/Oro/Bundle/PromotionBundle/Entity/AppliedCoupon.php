@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\PromotionBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroPromotionBundle_Entity_AppliedCoupon;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -14,54 +15,36 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 /**
  * Store Applied Coupon in database.
  *
- * @Config()
- * @ORM\Table(name="oro_promotion_applied_coupon")
- * @ORM\Entity
  *
  * @method Order getOrder()
  * @method setOrder(Order $order)
  * @mixin OroPromotionBundle_Entity_AppliedCoupon
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_promotion_applied_coupon')]
+#[Config]
 class AppliedCoupon implements CreatedAtAwareInterface, ExtendEntityInterface
 {
     use CreatedAtAwareTrait;
     use ExtendEntityTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer", name="id")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     *
-     * @var integer
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @ORM\Column(name="coupon_code", type="string", length=255, nullable=false)
-     *
-     * @var string
-     */
-    protected $couponCode;
+    #[ORM\Column(name: 'coupon_code', type: Types::STRING, length: 255, nullable: false)]
+    protected ?string $couponCode = null;
 
-    /**
-     * @ORM\Column(name="source_promotion_id", type="integer", nullable=false)
-     * @var int
-     */
-    protected $sourcePromotionId;
+    #[ORM\Column(name: 'source_promotion_id', type: Types::INTEGER, nullable: false)]
+    protected ?int $sourcePromotionId = null;
 
-    /**
-     * @ORM\Column(name="source_coupon_id", type="integer", nullable=false)
-     * @var int|null
-     */
-    protected $sourceCouponId;
+    #[ORM\Column(name: 'source_coupon_id', type: Types::INTEGER, nullable: false)]
+    protected ?int $sourceCouponId = null;
 
-    /**
-     * @var AppliedPromotion|null
-     *
-     * @ORM\OneToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\AppliedPromotion", inversedBy="appliedCoupon")
-     * @ORM\JoinColumn(name="applied_promotion_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
-     */
-    protected $appliedPromotion;
+    #[ORM\OneToOne(inversedBy: 'appliedCoupon', targetEntity: AppliedPromotion::class)]
+    #[ORM\JoinColumn(name: 'applied_promotion_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    protected ?AppliedPromotion $appliedPromotion = null;
 
     /**
      * @return int

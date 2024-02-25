@@ -16,9 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class WysiwygContentController extends AbstractController
 {
-    /**
-     * @Route("/validate", name="oro_cms_wysiwyg_content_validate", methods={"POST"})
-     */
+    #[Route(path: '/validate', name: 'oro_cms_wysiwyg_content_validate', methods: ['POST'])]
     public function validateAction(Request $request): Response
     {
         $className = $request->get('className');
@@ -37,9 +35,7 @@ class WysiwygContentController extends AbstractController
         return new JsonResponse(['success' => !$errors, 'errors' => $errors]);
     }
 
-    /**
-     * @Route("/resolve", name="oro_cms_wysiwyg_content_resolve", methods={"POST"})
-     */
+    #[Route(path: '/resolve', name: 'oro_cms_wysiwyg_content_resolve', methods: ['POST'])]
     public function resolveAction(Request $request): Response
     {
         $success = true;

@@ -2,74 +2,49 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
 
 /**
  * Entity for a caching shopping list subtotals data by currency
  * If isValid=false values should be recalculated
- *
- * @ORM\Table(
- *     name="oro_shopping_list_total",
- *     uniqueConstraints={
- *          @ORM\UniqueConstraint(name="unique_shopping_list_currency_customer_user", columns={
- *              "shopping_list_id",
- *              "currency",
- *              "customer_user_id"
- *          })
- *      }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository")
  **/
+#[ORM\Entity(repositoryClass: ShoppingListTotalRepository::class)]
+#[ORM\Table(name: 'oro_shopping_list_total')]
+#[ORM\UniqueConstraint(
+    name: 'unique_shopping_list_currency_customer_user',
+    columns: ['shopping_list_id', 'currency', 'customer_user_id']
+)]
 class ShoppingListTotal
 {
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var ShoppingList
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingList", inversedBy="totals")
-     * @ORM\JoinColumn(name="shopping_list_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     */
-    protected $shoppingList;
+    #[ORM\ManyToOne(targetEntity: ShoppingList::class, inversedBy: 'totals')]
+    #[ORM\JoinColumn(name: 'shopping_list_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?ShoppingList $shoppingList = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", length=255, nullable=false)
-     */
-    protected $currency;
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 255, nullable: false)]
+    protected ?string $currency = null;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="subtotal_value", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'subtotal_value', type: 'money', nullable: true)]
     protected $subtotalValue;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_valid", type="boolean")
-     */
-    protected $valid = false;
+    #[ORM\Column(name: 'is_valid', type: Types::BOOLEAN)]
+    protected ?bool $valid = false;
 
-    /**
-     * @var CustomerUser
-
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
-     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
-     */
-    protected $customerUser;
+    #[ORM\ManyToOne(targetEntity: CustomerUser::class)]
+    #[ORM\JoinColumn(name: 'customer_user_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    protected ?CustomerUser $customerUser = null;
 
     /**
      * @param ShoppingList $shoppingList

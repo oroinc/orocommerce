@@ -21,9 +21,7 @@ class ProductVariantsChangedListener
         $this->productReindexManager = $productReindexManager;
     }
 
-    /** @ORM\PrePersist()
-     *
-     */
+    #[ORM\PrePersist]
     public function prePersist(ProductVariantLink $productVariantLink, LifecycleEventArgs $event)
     {
         if ($this->isSupported($productVariantLink)) {
@@ -31,9 +29,7 @@ class ProductVariantsChangedListener
         }
     }
 
-    /** @ORM\PreRemove()
-     *
-     */
+    #[ORM\PreRemove]
     public function preRemove(ProductVariantLink $productVariantLink)
     {
         if ($this->isSupported($productVariantLink)) {

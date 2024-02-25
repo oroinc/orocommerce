@@ -16,8 +16,8 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\OrderBundle\Provider\TotalProvider;
 use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,17 +35,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class OrderController extends AbstractController
 {
-    /**
-     * @Route("/view/{id}", name="oro_order_view", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_order_view",
-     *      type="entity",
-     *      class="Oro\Bundle\OrderBundle\Entity\Order",
-     *      permission="VIEW",
-     *      category="orders"
-     * )
-     */
+    #[Route(path: '/view/{id}', name: 'oro_order_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_order_view', type: 'entity', class: Order::class, permission: 'VIEW', category: 'orders')]
     public function viewAction(Order $order): array
     {
         return [
@@ -55,11 +47,9 @@ class OrderController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/info/{id}", name="oro_order_info", requirements={"id"="\d+"})
-     * @Template
-     * @AclAncestor("oro_order_view")
-     */
+    #[Route(path: '/info/{id}', name: 'oro_order_info', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[AclAncestor('oro_order_view')]
     public function infoAction(Order $order): array
     {
         if ($order->getSourceEntityClass() && $order->getSourceEntityId()) {
@@ -74,11 +64,9 @@ class OrderController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/", name="oro_order_index")
-     * @Template
-     * @AclAncestor("oro_order_view")
-     */
+    #[Route(path: '/', name: 'oro_order_index')]
+    #[Template]
+    #[AclAncestor('oro_order_view')]
     public function indexAction(): array
     {
         return [
@@ -88,16 +76,10 @@ class OrderController extends AbstractController
 
     /**
      * Create order form
-     *
-     * @Route("/create", name="oro_order_create")
-     * @Template("@OroOrder/Order/update.html.twig")
-     * @Acl(
-     *      id="oro_order_create",
-     *      type="entity",
-     *      class="Oro\Bundle\OrderBundle\Entity\Order",
-     *      permission="CREATE"
-     * )
      */
+    #[Route(path: '/create', name: 'oro_order_create')]
+    #[Template('@OroOrder/Order/update.html.twig')]
+    #[Acl(id: 'oro_order_create', type: 'entity', class: Order::class, permission: 'CREATE')]
     public function createAction(Request $request): array|RedirectResponse
     {
         $order = new Order();
@@ -107,15 +89,14 @@ class OrderController extends AbstractController
 
     /**
      * Create order form for customer
-     *
-     * @Route(
-     *     "/create/customer/{customer}",
-     *     name="oro_order_create_for_customer",
-     *     requirements={"customer"="\d+"}
-     * )
-     * @Template("@OroOrder/Order/update.html.twig")
-     * @AclAncestor("oro_order_create")
      */
+    #[Route(
+        path: '/create/customer/{customer}',
+        name: 'oro_order_create_for_customer',
+        requirements: ['customer' => '\d+']
+    )]
+    #[Template('@OroOrder/Order/update.html.twig')]
+    #[AclAncestor('oro_order_create')]
     public function createOrderForCustomerAction(
         Request $request,
         Customer $customer
@@ -149,15 +130,14 @@ class OrderController extends AbstractController
 
     /**
      * Create order form with defined customer user
-     *
-     * @Route(
-     *     "/create/customer-user/{customerUser}",
-     *     name="oro_order_create_for_customer_user",
-     *     requirements={"customerUser"="\d+"}
-     * )
-     * @Template("@OroOrder/Order/update.html.twig")
-     * @AclAncestor("oro_order_create")
      */
+    #[Route(
+        path: '/create/customer-user/{customerUser}',
+        name: 'oro_order_create_for_customer_user',
+        requirements: ['customerUser' => '\d+']
+    )]
+    #[Template('@OroOrder/Order/update.html.twig')]
+    #[AclAncestor('oro_order_create')]
     public function createOrderForCustomerUserAction(
         Request $request,
         CustomerUser $customerUser
@@ -192,17 +172,11 @@ class OrderController extends AbstractController
 
     /**
      * Edit order form
-     *
-     * @Route("/update/{id}", name="oro_order_update", requirements={"id"="\d+"})
-     * @ParamConverter("order", options={"repository_method" = "getOrderWithRelations"})
-     * @Template
-     * @Acl(
-     *      id="oro_order_update",
-     *      type="entity",
-     *      class="Oro\Bundle\OrderBundle\Entity\Order",
-     *      permission="EDIT"
-     * )
      */
+    #[Route(path: '/update/{id}', name: 'oro_order_update', requirements: ['id' => '\d+'])]
+    #[ParamConverter('order', options: ['repository_method' => 'getOrderWithRelations'])]
+    #[Template]
+    #[Acl(id: 'oro_order_update', type: 'entity', class: Order::class, permission: 'EDIT')]
     public function updateAction(Order $order, Request $request): array|RedirectResponse
     {
         return $this->update($order, $request);

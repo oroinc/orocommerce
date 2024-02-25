@@ -5,150 +5,97 @@ namespace Oro\Bundle\ShippingBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroShippingBundle_Entity_ShippingMethodsConfigsRule;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * Store shipping method config rule in database.
  *
- * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository")
- * @ORM\Table(
- *     name="oro_ship_method_configs_rule"
- * )
- * @Config(
- *      routeName="oro_shipping_methods_configs_rule_index",
- *      routeView="oro_shipping_methods_configs_rule_view",
- *      routeCreate="oro_shipping_methods_configs_rule_create",
- *      routeUpdate="oro_shipping_methods_configs_rule_update",
- *      defaultValues={
- *          "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="organization",
- *              "owner_column_name"="organization_id"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          }
- *      }
- * )
  * @mixin OroShippingBundle_Entity_ShippingMethodsConfigsRule
  */
+#[ORM\Entity(repositoryClass: ShippingMethodsConfigsRuleRepository::class)]
+#[ORM\Table(name: 'oro_ship_method_configs_rule')]
+#[Config(
+    routeName: 'oro_shipping_methods_configs_rule_index',
+    routeView: 'oro_shipping_methods_configs_rule_view',
+    routeCreate: 'oro_shipping_methods_configs_rule_create',
+    routeUpdate: 'oro_shipping_methods_configs_rule_update',
+    defaultValues: [
+        'ownership' => [
+            'owner_type' => 'ORGANIZATION',
+            'owner_field_name' => 'organization',
+            'owner_column_name' => 'organization_id'
+        ],
+        'dataaudit' => ['auditable' => true],
+        'security' => ['type' => 'ACL', 'group_name' => '']
+    ]
+)]
 class ShippingMethodsConfigsRule implements RuleOwnerInterface, ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    private ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Rule::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'rule_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 10]])]
+    private ?Rule $rule = null;
 
     /**
-     * @var RuleInterface
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=10
-     *          }
-     *      }
-     *  )
+     * @var Collection<int, ShippingMethodConfig>
      */
-    private $rule;
+    #[ORM\OneToMany(
+        mappedBy: 'methodConfigsRule',
+        targetEntity: ShippingMethodConfig::class,
+        cascade: ['ALL'],
+        fetch: 'EAGER',
+        orphanRemoval: true
+    )]
+    private ?Collection $methodConfigs = null;
 
     /**
-     * @var Collection|ShippingMethodConfig[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig",
-     *     mappedBy="methodConfigsRule",
-     *     cascade={"ALL"},
-     *     fetch="EAGER",
-     *     orphanRemoval=true
-     * )
+     * @var Collection<int, ShippingMethodsConfigsRuleDestination>
      */
-    private $methodConfigs;
+    #[ORM\OneToMany(
+        mappedBy: 'methodConfigsRule',
+        targetEntity: ShippingMethodsConfigsRuleDestination::class,
+        cascade: ['ALL'],
+        fetch: 'EAGER',
+        orphanRemoval: true
+    )]
+    private ?Collection $destinations = null;
+
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: false)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 20]])]
+    private ?string $currency = null;
+
+    #[ORM\ManyToOne(targetEntity: Organization::class)]
+    #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    private ?Organization $organization = null;
 
     /**
-     * @var Collection|ShippingMethodsConfigsRuleDestination[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination",
-     *     mappedBy="methodConfigsRule",
-     *     cascade={"ALL"},
-     *     fetch="EAGER",
-     *     orphanRemoval=true
-     * )
+     * @var Collection<int, Website>
      */
-    private $destinations;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", length=3, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=20
-     *          }
-     *      }
-     *  )
-     */
-    private $currency;
-
-    /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    private $organization;
-
-    /**
-     * @var Website[]|Collection
-     *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinTable(
-     *      name="oro_ship_mtds_rule_website",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="oro_ship_mtds_cfgs_rl_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
-     */
-    private $websites;
+    #[ORM\ManyToMany(targetEntity: Website::class)]
+    #[ORM\JoinTable(name: 'oro_ship_mtds_rule_website')]
+    #[ORM\JoinColumn(name: 'oro_ship_mtds_cfgs_rl_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'website_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private ?Collection $websites = null;
 
     /**
      * {@inheritdoc}

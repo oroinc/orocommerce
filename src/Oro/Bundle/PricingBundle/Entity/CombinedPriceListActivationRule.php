@@ -2,59 +2,44 @@
 
 namespace Oro\Bundle\PricingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
 
 /**
- * @ORM\Table(name="oro_cpl_activation_rule")
- * @ORM\Entity(
- *     repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository"
- * )
- */
+* Entity that represents Combined Price List Activation Rule
+*
+*/
+#[ORM\Entity(repositoryClass: CombinedPriceListActivationRuleRepository::class)]
+#[ORM\Table(name: 'oro_cpl_activation_rule')]
 class CombinedPriceListActivationRule
 {
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var CombinedPriceList
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\CombinedPriceList")
-     * @ORM\JoinColumn(name="combined_price_list_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $combinedPriceList;
+    #[ORM\ManyToOne(targetEntity: CombinedPriceList::class)]
+    #[ORM\JoinColumn(name: 'combined_price_list_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?CombinedPriceList $combinedPriceList = null;
 
-    /**
-     * @var CombinedPriceList
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\CombinedPriceList")
-     * @ORM\JoinColumn(name="full_combined_price_list_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
-     */
-    protected $fullChainPriceList;
+    #[ORM\ManyToOne(targetEntity: CombinedPriceList::class)]
+    #[ORM\JoinColumn(
+        name: 'full_combined_price_list_id',
+        referencedColumnName: 'id',
+        nullable: true,
+        onDelete: 'CASCADE'
+    )]
+    protected ?CombinedPriceList $fullChainPriceList = null;
 
-    /**
-     * @var \DateTime|null
-     * @ORM\Column(name="expire_at", type="datetime", nullable=true)
-     */
-    protected $expireAt;
+    #[ORM\Column(name: 'expire_at', type: Types::DATETIME_MUTABLE, nullable: true)]
+    protected ?\DateTimeInterface $expireAt = null;
 
-    /**
-     * @var \DateTime|null
-     * @ORM\Column(name="activate_at", type="datetime", nullable=true)
-     */
-    protected $activateAt;
+    #[ORM\Column(name: 'activate_at', type: Types::DATETIME_MUTABLE, nullable: true)]
+    protected ?\DateTimeInterface $activateAt = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_active", type="boolean", nullable=false)
-     */
-    protected $active = false;
+    #[ORM\Column(name: 'is_active', type: Types::BOOLEAN, nullable: false)]
+    protected ?bool $active = false;
 
     /**
      * @return int

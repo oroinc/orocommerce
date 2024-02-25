@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\MatrixGridOrderFormHandler;
@@ -25,21 +25,21 @@ use Symfony\Component\Routing\Annotation\Route;
 class MatrixGridOrderController extends AbstractLineItemController
 {
     /**
-     * @Route("/{productId}", name="oro_shopping_list_frontend_matrix_grid_order")
-     * @ParamConverter("product", options={"id" = "productId"})
-     * @Layout()
-     * @Acl(
-     *      id="oro_shopping_list_frontend_view",
-     *      type="entity",
-     *      class="Oro\Bundle\ShoppingListBundle\Entity\ShoppingList",
-     *      permission="VIEW",
-     *      group_name="commerce"
-     * )
      *
      * @param Request $request
      * @param Product $product
      * @return array | JsonResponse
      */
+    #[Route(path: '/{productId}', name: 'oro_shopping_list_frontend_matrix_grid_order')]
+    #[Layout]
+    #[ParamConverter('product', options: ['id' => 'productId'])]
+    #[Acl(
+        id: 'oro_shopping_list_frontend_view',
+        type: 'entity',
+        class: ShoppingList::class,
+        permission: 'VIEW',
+        groupName: 'commerce'
+    )]
     public function orderAction(Request $request, Product $product)
     {
         $currentShoppingListManager = $this->container->get(CurrentShoppingListManager::class);
@@ -86,12 +86,6 @@ class MatrixGridOrderController extends AbstractLineItemController
     }
 
     /**
-     * @Route("/{shoppingListId}/{productId}/{unitCode}", name="oro_shopping_list_frontend_matrix_grid_update")
-     * @ParamConverter("shoppingList", options={"id" = "shoppingListId"})
-     * @ParamConverter("product", options={"id" = "productId"})
-     * @ParamConverter("unit", options={"id" = "unitCode"})
-     * @Layout()
-     * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param ShoppingList $shoppingList
      * @param Product $product
@@ -99,6 +93,12 @@ class MatrixGridOrderController extends AbstractLineItemController
      * @param Request $request
      * @return array|JsonResponse
      */
+    #[Route(path: '/{shoppingListId}/{productId}/{unitCode}', name: 'oro_shopping_list_frontend_matrix_grid_update')]
+    #[Layout]
+    #[ParamConverter('shoppingList', options: ['id' => 'shoppingListId'])]
+    #[ParamConverter('product', options: ['id' => 'productId'])]
+    #[ParamConverter('unit', options: ['id' => 'unitCode'])]
+    #[AclAncestor('oro_shopping_list_frontend_update')]
     public function updateAction(ShoppingList $shoppingList, Product $product, ProductUnit $unit, Request $request)
     {
         $form = $this->container->get(MatrixGridOrderFormProvider::class)

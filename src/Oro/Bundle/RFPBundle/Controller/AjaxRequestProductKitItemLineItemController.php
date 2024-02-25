@@ -7,7 +7,7 @@ use Oro\Bundle\RFPBundle\Entity\Request as RFQ;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem;
 use Oro\Bundle\RFPBundle\Form\Type\RequestType;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,13 +21,13 @@ use Symfony\Component\Validator\Constraints\GroupSequence;
 class AjaxRequestProductKitItemLineItemController extends AbstractController
 {
     /**
-     * @Route("/entry-point/{id}", name="oro_rfp_request_product_kit_item_line_item_entry_point")
-     * @AclAncestor("oro_rfp_request_update")
      *
      * @param Request $request
      * @param Product $product
      * @return JsonResponse
      */
+    #[Route(path: '/entry-point/{id}', name: 'oro_rfp_request_product_kit_item_line_item_entry_point')]
+    #[AclAncestor('oro_rfp_request_update')]
     public function entryPointAction(Request $request, Product $product)
     {
         $kitItemLineItems = '';

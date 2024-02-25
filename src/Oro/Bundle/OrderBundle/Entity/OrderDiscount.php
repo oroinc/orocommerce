@@ -2,55 +2,40 @@
 
 namespace Oro\Bundle\OrderBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 
 /**
  * Represents discounts that are applied to an order.
- * @ORM\Table("oro_order_discount")
- * @Config(
- *       defaultValues={
- *          "entity"={
- *              "icon"="fa-discount"
- *          }
- *      }
- * )
- * @ORM\Entity
  */
+#[ORM\Entity]
+#[ORM\Table('oro_order_discount')]
+#[Config(defaultValues: ['entity' => ['icon' => 'fa-discount']])]
 class OrderDiscount
 {
     const TYPE_AMOUNT = 'oro_order_discount_item_type_amount';
     const TYPE_PERCENT = 'oro_order_discount_item_type_percent';
 
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="description", type="text", nullable=true)
-     */
-    protected $description;
+    #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
+    protected ?string $description = null;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="percent", type="percent", nullable=true)
      */
+    #[ORM\Column(name: 'percent', type: 'percent', nullable: true)]
     protected $percent;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="amount", type="money", nullable=false)
      */
+    #[ORM\Column(name: 'amount', type: 'money', nullable: false)]
     protected $amount;
 
     /**
@@ -58,20 +43,12 @@ class OrderDiscount
      */
     protected $amountPrice;
 
-    /**
-     * @var Order
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\Order", inversedBy="discounts")
-     * @ORM\JoinColumn(name="order_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     */
-    protected $order;
+    #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'discounts')]
+    #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Order $order = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="type", type="string", length=255, nullable=true)
-     */
-    protected $type;
+    #[ORM\Column(name: 'type', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $type = null;
 
     /**
      * Get id

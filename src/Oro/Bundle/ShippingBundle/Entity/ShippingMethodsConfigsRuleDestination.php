@@ -4,116 +4,59 @@ namespace Oro\Bundle\ShippingBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 
 /**
- * @ORM\Entity
- * @ORM\Table("oro_shipping_rule_destination")
- * @ORM\HasLifecycleCallbacks
- * @Config(
- *     mode="hidden",
- * )
- */
+* Entity that represents Shipping Methods Configs Rule Destination
+*
+*/
+#[ORM\Entity]
+#[ORM\Table('oro_shipping_rule_destination')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(mode: 'hidden')]
 class ShippingMethodsConfigsRuleDestination
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $id = null;
 
     /**
-     * @var Collection|ShippingMethodsConfigsRuleDestinationPostalCode[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="ShippingMethodsConfigsRuleDestinationPostalCode",
-     *     mappedBy="destination",
-     *     cascade={"ALL"},
-     *     fetch="EAGER",
-     *     orphanRemoval=true
-     * )
+     * @var Collection<int, ShippingMethodsConfigsRuleDestinationPostalCode>
      */
-    protected $postalCodes;
+    #[ORM\OneToMany(
+        mappedBy: 'destination',
+        targetEntity: ShippingMethodsConfigsRuleDestinationPostalCode::class,
+        cascade: ['ALL'],
+        fetch: 'EAGER',
+        orphanRemoval: true
+    )]
+    protected ?Collection $postalCodes = null;
 
-    /**
-     * @var Region
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AddressBundle\Entity\Region")
-     * @ORM\JoinColumn(name="region_code", referencedColumnName="combined_code")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=20,
-     *              "short"=true,
-     *              "identity"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $region;
+    #[ORM\ManyToOne(targetEntity: Region::class)]
+    #[ORM\JoinColumn(name: 'region_code', referencedColumnName: 'combined_code')]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 20, 'short' => true, 'identity' => true]])]
+    protected ?Region $region = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="region_text", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=30
-     *          }
-     *      }
-     * )
-     */
-    protected $regionText;
+    #[ORM\Column(name: 'region_text', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 30]])]
+    protected ?string $regionText = null;
 
-    /**
-     * @var Country
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AddressBundle\Entity\Country")
-     * @ORM\JoinColumn(name="country_code", referencedColumnName="iso2_code", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=40,
-     *              "short"=true,
-     *              "identity"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $country;
+    #[ORM\ManyToOne(targetEntity: Country::class)]
+    #[ORM\JoinColumn(name: 'country_code', referencedColumnName: 'iso2_code', nullable: false)]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 40, 'short' => true, 'identity' => true]])]
+    protected ?Country $country = null;
 
-    /**
-     * @var ShippingMethodsConfigsRule
-     *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule",
-     *     inversedBy="destinations"
-     * )
-     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $methodConfigsRule;
+    #[ORM\ManyToOne(targetEntity: ShippingMethodsConfigsRule::class, inversedBy: 'destinations')]
+    #[ORM\JoinColumn(name: 'rule_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?ShippingMethodsConfigsRule $methodConfigsRule = null;
 
     public function __construct()
     {

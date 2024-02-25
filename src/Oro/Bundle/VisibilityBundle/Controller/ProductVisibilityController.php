@@ -6,7 +6,7 @@ use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopedDataType;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -29,11 +29,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProductVisibilityController extends AbstractController
 {
-    /**
-     * @Route("/edit/{id}", name="oro_product_visibility_edit", requirements={"id"="\d+"})
-     * @Template
-     * @AclAncestor("oro_product_update")
-     */
+    #[Route(path: '/edit/{id}', name: 'oro_product_visibility_edit', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[AclAncestor('oro_product_update')]
     public function editAction(Request $request, Product $product): array|RedirectResponse
     {
         $scopes = $this->container->get(VisibilityRootScopesProvider::class)->getScopes($product);
@@ -52,16 +50,14 @@ class ProductVisibilityController extends AbstractController
         );
     }
 
-    /**
-     * @Route(
-     *      "/edit/{productId}/scope/{id}",
-     *      name="oro_product_visibility_scoped",
-     *      requirements={"productId"="\d+", "id"="\d+"}
-     * )
-     * @ParamConverter("product", options={"id" = "productId"})
-     * @Template("@OroVisibility/ProductVisibility/widget/scope.html.twig")
-     * @AclAncestor("oro_product_update")
-     */
+    #[Route(
+        path: '/edit/{productId}/scope/{id}',
+        name: 'oro_product_visibility_scoped',
+        requirements: ['productId' => '\d+', 'id' => '\d+']
+    )]
+    #[ParamConverter('product', options: ['id' => 'productId'])]
+    #[Template('@OroVisibility/ProductVisibility/widget/scope.html.twig')]
+    #[AclAncestor('oro_product_update')]
     public function scopeWidgetAction(Product $product, Scope $scope): array
     {
         /** @var Form $form */

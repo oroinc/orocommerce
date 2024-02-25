@@ -18,10 +18,10 @@ class BrandController extends AbstractController
     /**
      * View list of brands
      *
-     * @Route("/", name="oro_product_frontend_brand_index")
      *
      * @return array
      */
+    #[Route(path: '/', name: 'oro_product_frontend_brand_index')]
     public function indexAction()
     {
         throw new NotFoundHttpException();
@@ -30,13 +30,12 @@ class BrandController extends AbstractController
     /**
      * View list of products for brand
      *
-     * @Route("/view/{id}", name="oro_product_frontend_brand_view", requirements={"id"="\d+"})
      *
      * @param Request $request
      * @param Brand $brand
-     *
      * @return array
      */
+    #[Route(path: '/view/{id}', name: 'oro_product_frontend_brand_view', requirements: ['id' => '\d+'])]
     public function viewAction(Request $request, Brand $brand)
     {
         throw new NotFoundHttpException();

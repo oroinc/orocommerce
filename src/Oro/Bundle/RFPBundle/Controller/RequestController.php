@@ -5,8 +5,8 @@ namespace Oro\Bundle\RFPBundle\Controller;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Form\Type\RequestType;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,16 +20,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class RequestController extends AbstractController
 {
-    /**
-     * @Route("/view/{id}", name="oro_rfp_request_view", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_rfp_request_view",
-     *      type="entity",
-     *      class="Oro\Bundle\RFPBundle\Entity\Request",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/view/{id}', name: 'oro_rfp_request_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_rfp_request_view', type: 'entity', class: RFPRequest::class, permission: 'VIEW')]
     public function viewAction(RFPRequest $rfpRequest): array
     {
         return [
@@ -37,11 +30,9 @@ class RequestController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/info/{id}", name="oro_rfp_request_info", requirements={"id"="\d+"})
-     * @Template
-     * @AclAncestor("oro_rfp_request_view")
-     */
+    #[Route(path: '/info/{id}', name: 'oro_rfp_request_info', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[AclAncestor('oro_rfp_request_view')]
     public function infoAction(RFPRequest $rfpRequest): array
     {
         return [
@@ -49,11 +40,9 @@ class RequestController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/", name="oro_rfp_request_index")
-     * @Template
-     * @AclAncestor("oro_rfp_request_view")
-     */
+    #[Route(path: '/', name: 'oro_rfp_request_index')]
+    #[Template]
+    #[AclAncestor('oro_rfp_request_view')]
     public function indexAction(): array
     {
         return [
@@ -61,16 +50,9 @@ class RequestController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/update/{id}", name="oro_rfp_request_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *     id="oro_rfp_request_update",
-     *     type="entity",
-     *     permission="EDIT",
-     *     class="Oro\Bundle\RFPBundle\Entity\Request"
-     * )
-     */
+    #[Route(path: '/update/{id}', name: 'oro_rfp_request_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_rfp_request_update', type: 'entity', class: RFPRequest::class, permission: 'EDIT')]
     public function updateAction(RFPRequest $rfpRequest): array|RedirectResponse
     {
         return $this->update($rfpRequest);

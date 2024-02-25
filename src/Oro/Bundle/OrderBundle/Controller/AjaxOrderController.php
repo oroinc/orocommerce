@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Controller;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -20,13 +20,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class AjaxOrderController extends AbstractController
 {
     /**
-     * @Route("/entry-point/{id}", name="oro_order_entry_point", defaults={"id" = 0})
-     * @AclAncestor("oro_order_update")
      *
      * @param Request $request
      * @param Order|null $order
      * @return JsonResponse
      */
+    #[Route(path: '/entry-point/{id}', name: 'oro_order_entry_point', defaults: ['id' => 0])]
+    #[AclAncestor('oro_order_update')]
     public function entryPointAction(Request $request, Order $order = null)
     {
         if (!$order) {

@@ -20,7 +20,7 @@ class QuoteDemandTest extends \PHPUnit\Framework\TestCase
     public function testProperties()
     {
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['customer', new Customer()],
             ['customerUser', new CustomerUser()],
             ['visitor', new CustomerVisitor()],

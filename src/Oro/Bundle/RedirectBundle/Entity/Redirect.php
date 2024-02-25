@@ -4,112 +4,63 @@ namespace Oro\Bundle\RedirectBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
  * Stores all redirects for known slugs.
- *
- * @ORM\Table(
- *      name="oro_redirect",
- *      indexes={
- *          @ORM\Index(name="idx_oro_redirect_from_hash", columns={"from_hash"}),
- *          @ORM\Index(name="idx_oro_redirect_redirect_from_prototype", columns={"redirect_from_prototype"}),
- *      }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository")
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="icon-share-sign"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          }
- *      }
- * )
  */
+#[ORM\Entity(repositoryClass: RedirectRepository::class)]
+#[ORM\Table(name: 'oro_redirect')]
+#[ORM\Index(columns: ['from_hash'], name: 'idx_oro_redirect_from_hash')]
+#[ORM\Index(columns: ['redirect_from_prototype'], name: 'idx_oro_redirect_redirect_from_prototype')]
+#[Config(
+    defaultValues: ['entity' => ['icon' => 'icon-share-sign'], 'security' => ['type' => 'ACL', 'group_name' => '']]
+)]
 class Redirect
 {
     const MOVED_PERMANENTLY = 301;
     const MOVED_TEMPORARY = 302;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\Column(name: 'redirect_from_prototype', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $fromPrototype = null;
+
+    #[ORM\Column(name: 'redirect_from', type: Types::STRING, length: 1024)]
+    protected ?string $from = null;
+
+    #[ORM\Column(name: 'from_hash', type: Types::STRING, length: 32)]
+    protected ?string $fromHash = null;
+
+    #[ORM\Column(name: 'redirect_to_prototype', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $toPrototype = null;
+
+    #[ORM\Column(name: 'redirect_to', type: Types::STRING, length: 1024)]
+    protected ?string $to = null;
+
+    #[ORM\Column(name: 'redirect_type', type: Types::INTEGER, nullable: false)]
+    protected ?int $type = null;
 
     /**
-     * @var string
      *
-     * @ORM\Column(name="redirect_from_prototype", type="string", length=255, nullable=true)
+     * @var Collection<int, Scope>
      */
-    protected $fromPrototype;
+    #[ORM\ManyToMany(targetEntity: Scope::class)]
+    #[ORM\JoinTable(name: 'oro_redirect_scope')]
+    #[ORM\JoinColumn(name: 'redirect_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'scope_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Collection $scopes = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="redirect_from", type="string", length=1024)
-     */
-    protected $from;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="from_hash", type="string", length=32)
-     */
-    protected $fromHash;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="redirect_to_prototype", type="string", length=255, nullable=true)
-     */
-    protected $toPrototype;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="redirect_to", type="string", length=1024)
-     */
-    protected $to;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="redirect_type", type="integer", nullable=false)
-     */
-    protected $type;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
-     * @ORM\JoinTable(
-     *      name="oro_redirect_scope",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="redirect_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="scope_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
-     *
-     * @var Scope[]|Collection
-     */
-    protected $scopes;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RedirectBundle\Entity\Slug", inversedBy="redirects")
-     * @ORM\JoinColumn(name="slug_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     *
-     * @var Slug
-     */
-    protected $slug;
+    #[ORM\ManyToOne(targetEntity: Slug::class, inversedBy: 'redirects')]
+    #[ORM\JoinColumn(name: 'slug_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    protected ?Slug $slug = null;
 
     public function __construct()
     {

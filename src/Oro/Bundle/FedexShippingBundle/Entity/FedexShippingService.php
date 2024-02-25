@@ -2,44 +2,31 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="oro_fedex_shipping_service")
- * @ORM\Entity
- */
+* Entity that represents Fedex Shipping Service
+*
+*/
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_fedex_shipping_service')]
 class FedexShippingService
 {
-    /**
-     * @var integer|null
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    private ?int $id = null;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="code", type="string", length=200)
-     */
-    private $code;
+    #[ORM\Column(name: 'code', type: Types::STRING, length: 200)]
+    private ?string $code = null;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="description", type="string", length=200)
-     */
-    private $description;
+    #[ORM\Column(name: 'description', type: Types::STRING, length: 200)]
+    private ?string $description = null;
 
-    /**
-     * @var ShippingServiceRule|null
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule")
-     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", nullable=false)
-     */
-    private $rule;
+    #[ORM\ManyToOne(targetEntity: ShippingServiceRule::class)]
+    #[ORM\JoinColumn(name: 'rule_id', referencedColumnName: 'id', nullable: false)]
+    private ?ShippingServiceRule $rule = null;
 
     /**
      * @return integer

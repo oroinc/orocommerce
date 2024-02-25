@@ -99,8 +99,8 @@ class CategoryControllerTest extends WebTestCase
     {
         $crawler = $this->submitForm(
             'wrong Visibility',
-            '{"wrong_id":{"visibility":"hidden"}}',
-            '{"wrong_id":{"visibility":"hidden"}}'
+            '{809089:{"visibility":"hidden"}}',
+            '{809089:{"visibility":"hidden"}}'
         );
 
         static::assertStringContainsString('The selected choice is invalid.', $crawler->html());

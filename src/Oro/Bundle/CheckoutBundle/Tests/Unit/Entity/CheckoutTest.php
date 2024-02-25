@@ -30,7 +30,7 @@ class CheckoutTest extends \PHPUnit\Framework\TestCase
     {
         $now = new \DateTime('now');
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['billingAddress', new OrderAddress()],
             ['saveBillingAddress', true],
             ['shipToBillingAddress', true],

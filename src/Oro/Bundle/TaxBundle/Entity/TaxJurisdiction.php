@@ -4,109 +4,61 @@ namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 
 /**
  * Entity that represents tax jusrisdiction
- *
- * @ORM\Entity
- * @ORM\Table("oro_tax_jurisdiction")
- * @ORM\HasLifecycleCallbacks
- * @Config(
- *     mode="hidden",
- *     routeName="oro_tax_jurisdiction_index",
- *     routeView="oro_tax_jurisdiction_view",
- *     routeUpdate="oro_tax_jurisdiction_update",
- *     defaultValues={
- *         "security"={
- *             "type"="ACL",
- *             "group_name"=""
- *         },
- *     }
- * )
  */
+#[ORM\Entity]
+#[ORM\Table('oro_tax_jurisdiction')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    mode: 'hidden',
+    routeName: 'oro_tax_jurisdiction_index',
+    routeView: 'oro_tax_jurisdiction_view',
+    routeUpdate: 'oro_tax_jurisdiction_update',
+    defaultValues: ['security' => ['type' => 'ACL', 'group_name' => '']]
+)]
 class TaxJurisdiction implements DatesAwareInterface
 {
     use DatesAwareTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\Column(name: 'code', type: Types::STRING, length: 255, unique: true)]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 10, 'identity' => true]])]
+    protected ?string $code = null;
+
+    #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $description = null;
+
+    #[ORM\ManyToOne(targetEntity: Country::class)]
+    #[ORM\JoinColumn(name: 'country_code', referencedColumnName: 'iso2_code')]
+    protected ?Country $country = null;
+
+    #[ORM\ManyToOne(targetEntity: Region::class)]
+    #[ORM\JoinColumn(name: 'region_code', referencedColumnName: 'combined_code')]
+    protected ?Region $region = null;
+
+    #[ORM\Column(name: 'region_text', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $regionText = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="code", type="string", length=255, unique=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=10,
-     *              "identity"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, ZipCode>
      */
-    protected $code;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="description", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $description;
-
-    /**
-     * @var Country
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AddressBundle\Entity\Country")
-     * @ORM\JoinColumn(name="country_code", referencedColumnName="iso2_code")
-     */
-    protected $country;
-
-    /**
-     * @var Region
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AddressBundle\Entity\Region")
-     * @ORM\JoinColumn(name="region_code", referencedColumnName="combined_code")
-     */
-    protected $region;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="region_text", type="string", length=255, nullable=true)
-     */
-    protected $regionText;
-
-    /**
-     * @var Collection|ZipCode[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\TaxBundle\Entity\ZipCode",
-     *      mappedBy="taxJurisdiction",
-     *      cascade={"all"},
-     *      orphanRemoval=true
-     * )
-     */
-    protected $zipCodes;
+    #[ORM\OneToMany(mappedBy: 'taxJurisdiction', targetEntity: ZipCode::class, cascade: ['all'], orphanRemoval: true)]
+    protected ?Collection $zipCodes = null;
 
     /**
      * Constructor

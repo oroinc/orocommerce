@@ -17,7 +17,7 @@ class PaymentTransactionTest extends \PHPUnit\Framework\TestCase
     public function testProperties()
     {
         $properties = [
-            ['id', '1'],
+            ['id', 1],
             ['reference', 'reference'],
             ['action', 'action'],
             ['entityClass', 'entityClass'],
