@@ -47,7 +47,7 @@ Feature: Show default Shopping List on top of Choose Action drop-down
     Given I set window size to 992x1024
     And I scroll to bottom
     And I check PSKU20 record in "Product Frontend Grid" grid
-    Then I should see "ProductFrontendMassAddPanelInBottomSticky" element inside "Bottom Active Sticky Panel" element
+    Then I should see "ProductFrontendMassAddPanelInBottomSticky" element inside "Bottom Not Active Sticky Panel" element
     And I click "ProductFrontendMassAddPanelInBottomSticky"
     Then I should see "1 product was added" flash message
     And I should not see "ProductFrontendMassClosePanel"

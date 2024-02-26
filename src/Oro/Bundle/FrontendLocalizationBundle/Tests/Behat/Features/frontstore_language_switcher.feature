@@ -9,8 +9,14 @@ Feature: FrontStore language switcher
   As Frontend User
   I need to be able to switch between Localizations
 
+  Scenario: Create different window session
+    Given sessions active:
+      | Admin | first_session  |
+      | User  | second_session |
+
   Scenario: Feature Background
-    Given I login as administrator
+    Given I proceed as the Admin
+    And I login as administrator
     And I disable configuration options:
       | oro_frontend.guest_access_enabled |
     And go to System/ Localization/ Languages
@@ -53,12 +59,15 @@ Feature: FrontStore language switcher
     Then Enabled Localizations field should has [English (United States), Dutch, Japanese] value
 
   Scenario: Verify Switcher for anonymous front-end user
-    Given I am on homepage
-    When I should see that localization switcher contains localizations:
+    Given I proceed as the User
+    When I am on homepage
+    Then I should be on Customer User Login page
+    And I should see that "English (United States)" localization is active
+    And I should see that localization switcher contains localizations:
       | Dutch                   |
       | English (United States) |
       | Japanese                |
-    Then I should see that "English (United States)" localization is active
+
     When I select "Dutch" localization
     Then I should see that localization switcher contains localizations:
       | Dutch                   |

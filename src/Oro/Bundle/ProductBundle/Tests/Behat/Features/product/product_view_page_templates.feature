@@ -329,7 +329,6 @@ Feature: Product View Page Templates
     Then I should see next rows in "Default Page Prices" table in the exact order
       | QTY | Item   | Set     |
       | 1+  | $10.00 | $445.50 |
-    And I click "Remark group"
     And I should see "Wide Template" with "Remark group" containing data:
       | Remark | Test text for configurable product |
 
