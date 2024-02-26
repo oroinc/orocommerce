@@ -2,95 +2,55 @@
 
 namespace Oro\Bundle\CMSBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroCMSBundle_Entity_LoginPage;
 use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
  * Login page entity class.
  *
- * @ORM\Table(name="oro_cms_login_page")
- * @ORM\Entity()
- * @Config(
- *      routeName="oro_cms_loginpage_index",
- *      routeUpdate="oro_cms_loginpage_update",
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-sign-in"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          }
- *      }
- * )
  * @method File getLogoImage()
  * @method LoginPage setLogoImage(File $image)
  * @method File getBackgroundImage()
  * @method LoginPage setBackgroundImage(File $image)
  * @mixin OroCMSBundle_Entity_LoginPage
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_cms_login_page')]
+#[Config(
+    routeName: 'oro_cms_loginpage_index',
+    routeUpdate: 'oro_cms_loginpage_update',
+    defaultValues: [
+        'entity' => ['icon' => 'fa-sign-in'],
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'dataaudit' => ['auditable' => true]
+    ]
+)]
 class LoginPage implements ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="top_content", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $topContent;
+    #[ORM\Column(name: 'top_content', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $topContent = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="bottom_content", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $bottomContent;
+    #[ORM\Column(name: 'bottom_content', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $bottomContent = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="css", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $css;
+    #[ORM\Column(name: 'css', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $css = null;
 
     /**
      * @return string

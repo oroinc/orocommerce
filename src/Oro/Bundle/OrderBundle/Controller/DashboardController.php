@@ -23,27 +23,23 @@ class DashboardController
         $this->salesOrdersNumberChartWidgetProvider = $salesOrdersNumberChartWidgetProvider;
     }
 
-    /**
-     * @Route(
-     *      "/sales-orders-volume",
-     *      name="oro_order_dashboard_sales_orders_volume",
-     *      requirements={"widget"="[\w_-]+"}
-     * )
-     * @Template("@OroOrder/Dashboard/sales_orders_volume.html.twig")
-     */
+    #[Route(
+        path: '/sales-orders-volume',
+        name: 'oro_order_dashboard_sales_orders_volume',
+        requirements: ['widget' => '[\w_-]+']
+    )]
+    #[Template('@OroOrder/Dashboard/sales_orders_volume.html.twig')]
     public function salesOrderVolumeAction(): array
     {
         return $this->salesOrdersVolumeChartWidgetProvider->getChartWidget();
     }
 
-    /**
-     * @Route(
-     *      "/sales-orders-number",
-     *      name="oro_order_dashboard_sales_orders_number",
-     *      requirements={"widget"="[\w_-]+"}
-     * )
-     * @Template("@OroOrder/Dashboard/sales_orders_number.html.twig")
-     */
+    #[Route(
+        path: '/sales-orders-number',
+        name: 'oro_order_dashboard_sales_orders_number',
+        requirements: ['widget' => '[\w_-]+']
+    )]
+    #[Template('@OroOrder/Dashboard/sales_orders_number.html.twig')]
     public function salesOrderNumberAction(): array
     {
         return $this->salesOrdersNumberChartWidgetProvider->getChartWidget();

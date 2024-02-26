@@ -9,7 +9,7 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceR
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Form\Type\ChannelType;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,12 +24,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ValidateConnectionController extends AbstractController
 {
     /**
-     * @Route("/validate-connection/{channelId}/", name="oro_fedex_validate_connection", methods={"POST"})
-     * @ParamConverter("channel", class="Oro\Bundle\IntegrationBundle\Entity\Channel", options={"id" = "channelId"})
-     * @CsrfProtection()
      *
      * @throws \InvalidArgumentException
      */
+    #[Route(path: '/validate-connection/{channelId}/', name: 'oro_fedex_validate_connection', methods: ['POST'])]
+    #[ParamConverter('channel', class: Channel::class, options: ['id' => 'channelId'])]
+    #[CsrfProtection()]
     public function validateConnectionAction(Request $request, Channel $channel = null): JsonResponse
     {
         $translator = $this->container->get(TranslatorInterface::class);

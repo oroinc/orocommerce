@@ -16,7 +16,7 @@ class CategoryTitleTest extends \PHPUnit\Framework\TestCase
         $this->assertPropertyAccessors(
             new CategoryShortDescription(),
             [
-                ['id', '123'],
+                ['id', 123],
                 ['fallback', 'test'],
                 ['string', 'test string'],
                 ['localization',  new Localization()],

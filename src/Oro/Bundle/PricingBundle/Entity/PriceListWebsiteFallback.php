@@ -3,18 +3,15 @@
 namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListWebsiteFallbackRepository;
 
 /**
- * @ORM\Table(
- *      name="oro_price_list_website_fb",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="oro_price_list_website_fb_unq", columns={
- *              "website_id"
- *          })
- *      }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListWebsiteFallbackRepository")
- */
+* Entity that represents Price List Website Fallback
+*
+*/
+#[ORM\Entity(repositoryClass: PriceListWebsiteFallbackRepository::class)]
+#[ORM\Table(name: 'oro_price_list_website_fb')]
+#[ORM\UniqueConstraint(name: 'oro_price_list_website_fb_unq', columns: ['website_id'])]
 class PriceListWebsiteFallback extends PriceListFallback
 {
     const CONFIG = 0;

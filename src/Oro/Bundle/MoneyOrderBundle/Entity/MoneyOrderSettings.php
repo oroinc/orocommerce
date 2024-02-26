@@ -4,69 +4,43 @@ namespace Oro\Bundle\MoneyOrderBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\MoneyOrderBundle\Entity\Repository\MoneyOrderSettingsRepository;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * @ORM\Entity(repositoryClass="Oro\Bundle\MoneyOrderBundle\Entity\Repository\MoneyOrderSettingsRepository")
- */
+* Entity that represents Money Order Settings
+*
+*/
+#[ORM\Entity(repositoryClass: MoneyOrderSettingsRepository::class)]
 class MoneyOrderSettings extends Transport
 {
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="money_order_pay_to", type="string", length=255, nullable=true)
-     */
-    private $payTo;
+    #[ORM\Column(name: 'money_order_pay_to', type: Types::STRING, length: 255, nullable: true)]
+    private ?string $payTo = null;
+
+    #[ORM\Column(name: 'money_order_send_to', type: Types::TEXT, nullable: true)]
+    private ?string $sendTo = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="money_order_send_to", type="text", nullable=true)
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    private $sendTo;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_money_order_trans_label')]
+    #[ORM\JoinColumn(name: 'transport_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    private ?Collection $labels = null;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_money_order_trans_label",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    private $labels;
-
-    /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_money_order_short_label",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     */
-    private $shortLabels;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_money_order_short_label')]
+    #[ORM\JoinColumn(name: 'transport_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    private ?Collection $shortLabels = null;
 
     /**
      * @var ParameterBag

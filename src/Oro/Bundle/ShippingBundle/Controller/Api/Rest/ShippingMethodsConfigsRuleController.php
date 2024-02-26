@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Controller\Api\Rest;
 
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
@@ -24,12 +24,11 @@ class ShippingMethodsConfigsRuleController extends RestController
      * - HTTP_OK (200)
      *
      * @ApiDoc(description="Enable Shipping Rule", resource=true)
-     * @AclAncestor("oro_shipping_methods_configs_rule_update")
      *
      * @param int $id
-     *
      * @return Response
      */
+    #[AclAncestor('oro_shipping_methods_configs_rule_update')]
     public function enableAction(int $id)
     {
         /** @var ShippingMethodsConfigsRule $shippingRule */
@@ -69,12 +68,11 @@ class ShippingMethodsConfigsRuleController extends RestController
      * - HTTP_OK (200)
      *
      * @ApiDoc(description="Disable Shipping Rule", resource=true)
-     * @AclAncestor("oro_shipping_methods_configs_rule_update")
      *
      * @param int $id
-     *
      * @return Response
      */
+    #[AclAncestor('oro_shipping_methods_configs_rule_update')]
     public function disableAction(int $id)
     {
         /** @var ShippingMethodsConfigsRule $shippingRule */

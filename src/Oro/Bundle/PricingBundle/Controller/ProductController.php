@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -25,12 +25,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductController extends AbstractController
 {
     /**
-     * @Route("/sidebar", name="oro_pricing_price_product_sidebar")
-     * @Template
-     *
      * @param Request $request
      * @return array
      */
+    #[Route(path: '/sidebar', name: 'oro_pricing_price_product_sidebar')]
+    #[Template]
     public function sidebarAction(Request $request)
     {
         $sidebarData = [];
@@ -48,15 +47,13 @@ class ProductController extends AbstractController
         return $sidebarData;
     }
 
-    /**
-     * @Route(
-     *     "/widget/prices_update/{unit}/{precision}",
-     *     name="oro_pricing_widget_prices_update",
-     *     requirements={"unit"="\w+", "precision"="\d+"}
-     * )
-     * @Template("@OroPricing/Product/widget/prices_update.html.twig")
-     * @AclAncestor("oro_product_update")
-     */
+    #[Route(
+        path: '/widget/prices_update/{unit}/{precision}',
+        name: 'oro_pricing_widget_prices_update',
+        requirements: ['unit' => '\w+', 'precision' => '\d+']
+    )]
+    #[Template('@OroPricing/Product/widget/prices_update.html.twig')]
+    #[AclAncestor('oro_product_update')]
     public function widgetPricesUpdateAction(ProductUnit $unit, int $precision): array
     {
         $product = new Product();

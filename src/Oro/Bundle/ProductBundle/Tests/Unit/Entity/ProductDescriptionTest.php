@@ -16,7 +16,7 @@ class ProductDescriptionTest extends \PHPUnit\Framework\TestCase
         $this->assertPropertyAccessors(
             new ProductDescription(),
             [
-                ['id', '123'],
+                ['id', 123],
                 ['fallback', 'test'],
                 ['wysiwyg', 'test wysiwyg'],
                 ['wysiwygStyle', 'test style'],

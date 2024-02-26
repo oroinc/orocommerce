@@ -19,7 +19,7 @@ class OroWebsiteSearchBundle extends Bundle
         $container->addCompilerPass(new WebsiteSearchCompilerPass());
 
         $container->addCompilerPass(
-            DoctrineOrmMappingsPass::createAnnotationMappingDriver(
+            DoctrineOrmMappingsPass::createAttributeMappingDriver(
                 ['Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity'],
                 [$this->getPath() . DIRECTORY_SEPARATOR . 'SearchResult' . DIRECTORY_SEPARATOR . 'Entity']
             )

@@ -2,69 +2,46 @@
 
 namespace Oro\Bundle\SaleBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroSaleBundle_Entity_QuoteAddress;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
  * Quote address entity
- * @ORM\Table("oro_quote_address")
- * @ORM\HasLifecycleCallbacks()
- * @Config(
- *       defaultValues={
- *          "entity"={
- *              "icon"="fa-map-marker"
- *          },
- *          "activity"={
- *              "immutable"=true
- *          },
- *          "attachment"={
- *              "immutable"=true
- *          }
- *      }
- * )
- * @ORM\Entity
  * @mixin OroSaleBundle_Entity_QuoteAddress
  */
+#[ORM\Entity]
+#[ORM\Table('oro_quote_address')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    defaultValues: [
+        'entity' => ['icon' => 'fa-map-marker'],
+        'activity' => ['immutable' => true],
+        'attachment' => ['immutable' => true]
+    ]
+)]
 class QuoteAddress extends AbstractAddress implements ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var CustomerAddress
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerAddress")
-     * @ORM\JoinColumn(name="customer_address_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $customerAddress;
+    #[ORM\ManyToOne(targetEntity: CustomerAddress::class)]
+    #[ORM\JoinColumn(name: 'customer_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?CustomerAddress $customerAddress = null;
 
-    /**
-     * @var CustomerUserAddress
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress")
-     * @ORM\JoinColumn(name="customer_user_address_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $customerUserAddress;
+    #[ORM\ManyToOne(targetEntity: CustomerUserAddress::class)]
+    #[ORM\JoinColumn(name: 'customer_user_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?CustomerUserAddress $customerUserAddress = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="phone", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *  defaultValues={
-     *      "entity"={
-     *          "contact_information"="phone"
-     *      }
-     *  }
-     * )
-     */
-    protected $phone;
+    #[ORM\Column(name: 'phone', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['entity' => ['contact_information' => 'phone']])]
+    protected ?string $phone = null;
 
     /**
      * Set customerAddress

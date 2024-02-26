@@ -6,7 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendImportExportBundle\Async\Topic\PreExportTopic;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Oro\Bundle\SecurityBundle\Util\SameSiteUrlHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -24,10 +24,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ExportController extends AbstractController
 {
-    /**
-     * @Route("/", name="oro_product_frontend_export", methods={"POST"})
-     * @CsrfProtection()
-     */
+    #[Route(path: '/', name: 'oro_product_frontend_export', methods: ['POST'])]
+    #[CsrfProtection()]
     public function exportAction(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');

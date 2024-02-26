@@ -4,20 +4,24 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
 
 /**
- * @ORM\Entity(repositoryClass="Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository")
- * @ORM\Table(name="oro_ctgr_vsb_resolv")
- */
+* Entity that represents Category Visibility Resolved
+*
+*/
+#[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[ORM\Table(name: 'oro_ctgr_vsb_resolv')]
 class CategoryVisibilityResolved extends BaseCategoryVisibilityResolved
 {
-    /**
-     * @var CategoryVisibility
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility")
-     * @ORM\JoinColumn(name="source_category_visibility", referencedColumnName="id", onDelete="CASCADE", nullable=true)
-     */
-    protected $sourceCategoryVisibility;
+    #[ORM\ManyToOne(targetEntity: CategoryVisibility::class)]
+    #[ORM\JoinColumn(
+        name: 'source_category_visibility',
+        referencedColumnName: 'id',
+        nullable: true,
+        onDelete: 'CASCADE'
+    )]
+    protected ?CategoryVisibility $sourceCategoryVisibility = null;
 
     /**
      * @return CategoryVisibility

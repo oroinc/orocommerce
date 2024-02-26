@@ -12,14 +12,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ProductKitItemController extends AbstractController
 {
-    /**
-     * @Route(
-     *     "/info/{id}/{state}",
-     *     name="oro_product_kit_item_info",
-     *     requirements={"id"="\d+", "state"="expanded|collapsed|both"}
-     * )
-     * @Template
-     */
+    #[Route(
+        path: '/info/{id}/{state}',
+        name: 'oro_product_kit_item_info',
+        requirements: ['id' => '\d+', 'state' => 'expanded|collapsed|both']
+    )]
+    #[Template]
     public function infoAction(ProductKitItem $kitItem, string $state): array
     {
         $this->denyAccessUnlessGranted('VIEW', $kitItem->getProductKit());

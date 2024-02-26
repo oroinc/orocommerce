@@ -9,7 +9,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,12 +21,12 @@ use Symfony\Component\HttpFoundation\Response;
 class InlineEditProductController extends AbstractFOSRestController
 {
     /**
-     * @AclAncestor("oro_product_update")
      *
      * @param Request $request
      * @param Product $product
      * @return Response
      */
+    #[AclAncestor('oro_product_update')]
     public function patchNameAction(Request $request, Product $product)
     {
         $productName = $request->get('productName');
@@ -64,12 +64,12 @@ class InlineEditProductController extends AbstractFOSRestController
     }
 
     /**
-     * @AclAncestor("oro_product_update")
      *
      * @param Request $request
      * @param Product $product
      * @return Response
      */
+    #[AclAncestor('oro_product_update')]
     public function patchInventoryStatusAction(Request $request, Product $product)
     {
         $inventoryStatusId = $request->get('inventoryStatusId');

@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\ShoppingListBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -16,98 +17,45 @@ use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 
 /**
  * Represents a shopping list line item of a product kit item.
- *
- * @ORM\Table(
- *      name="oro_shopping_list_product_kit_item_line_item"
- * )
- * @ORM\Entity()
- * @Config(
- *      defaultValues={
- *          "dataaudit"={
- *              "auditable"=true
- *          }
- *      }
- * )
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_shopping_list_product_kit_item_line_item')]
+#[Config(defaultValues: ['dataaudit' => ['auditable' => true]])]
 class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLineItemInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected ?int $id = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="LineItem", inversedBy="kitItemLineItems")
-     * @ORM\JoinColumn(name="line_item_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\ManyToOne(targetEntity: LineItem::class, inversedBy: 'kitItemLineItems')]
+    #[ORM\JoinColumn(name: 'line_item_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?LineItem $lineItem = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductKitItem")
-     * @ORM\JoinColumn(name="product_kit_item_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\ManyToOne(targetEntity: ProductKitItem::class)]
+    #[ORM\JoinColumn(name: 'product_kit_item_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?ProductKitItem $kitItem = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?Product $product = null;
 
-    /**
-     * @ORM\Column(name="quantity", type="float", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\Column(name: 'quantity', type: Types::FLOAT, nullable: false)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?float $quantity = 1;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
+    #[ORM\JoinColumn(name: 'unit_code', referencedColumnName: 'code', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?ProductUnit $unit = null;
 
-    /**
-     * @ORM\Column(name="sort_order", type="integer", options={"default"=0}, nullable=false)
-     */
-    protected int $sortOrder = 0;
+    #[ORM\Column(name: 'sort_order', type: Types::INTEGER, nullable: false, options: ['default' => 0])]
+    protected ?int $sortOrder = 0;
 
     public function getId(): ?int
     {

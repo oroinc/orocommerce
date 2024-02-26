@@ -24,7 +24,7 @@ class ShoppingListTest extends \PHPUnit\Framework\TestCase
     {
         $now = new \DateTime('now');
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['label', 'label-test-123'],
             ['notes', 'notes-test-123'],
             ['subtotal', new Subtotal()],

@@ -2,48 +2,35 @@
 
 namespace Oro\Bundle\ProductBundle\Entity\RelatedItem;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\UpsellProductRepository;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemEntityInterface;
 
 /**
- * @ORM\Table(
- *     name="oro_product_upsell_product",
- *     indexes={
- *         @ORM\Index(name="idx_oro_product_upsell_product_product_id", columns={"product_id"}),
- *         @ORM\Index(name="idx_oro_product_upsell_product_related_item_id", columns={"related_item_id"}),
- *     },
- *     uniqueConstraints={
- *          @ORM\UniqueConstraint(
- *              name="idx_oro_product_upsell_product_unique",
- *              columns={"product_id", "related_item_id"}
- *          )
- *     }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\UpsellProductRepository")
+* Entity that represents Upsell Product
+*
 */
+#[ORM\Entity(repositoryClass: UpsellProductRepository::class)]
+#[ORM\Table(name: 'oro_product_upsell_product')]
+#[ORM\Index(columns: ['product_id'], name: 'idx_oro_product_upsell_product_product_id')]
+#[ORM\Index(columns: ['related_item_id'], name: 'idx_oro_product_upsell_product_related_item_id')]
+#[ORM\UniqueConstraint(name: 'idx_oro_product_upsell_product_unique', columns: ['product_id', 'related_item_id'])]
 class UpsellProduct implements RelatedItemEntityInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var Product
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-    */
-    protected $product;
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Product $product = null;
 
-    /**
-     * @var Product
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="related_item_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    protected $relatedItem;
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'related_item_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Product $relatedItem = null;
 
     /**
      * @return int

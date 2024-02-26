@@ -2,46 +2,35 @@
 
 namespace Oro\Bundle\PromotionBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalInterface;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalTrait;
 
 /**
- * @ORM\Table(name="oro_promotion_schedule")
- * @ORM\Entity()
- */
+* Entity that represents Promotion Schedule
+*
+*/
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_promotion_schedule')]
 class PromotionSchedule implements ScheduleIntervalInterface
 {
     use ScheduleIntervalTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var Promotion
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\Promotion", inversedBy="schedules")
-     * @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $promotion;
+    #[ORM\ManyToOne(targetEntity: Promotion::class, inversedBy: 'schedules')]
+    #[ORM\JoinColumn(name: 'promotion_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Promotion $promotion = null;
 
-    /**
-     * @var \DateTime|null
-     * @ORM\Column(name="active_at", type="datetime", nullable=true)
-     */
-    protected $activeAt;
+    #[ORM\Column(name: 'active_at', type: Types::DATETIME_MUTABLE, nullable: true)]
+    protected ?\DateTimeInterface $activeAt = null;
 
-    /**
-     * @var \DateTime|null
-     * @ORM\Column(name="deactivate_at", type="datetime", nullable=true)
-     */
-    protected $deactivateAt;
+    #[ORM\Column(name: 'deactivate_at', type: Types::DATETIME_MUTABLE, nullable: true)]
+    protected ?\DateTimeInterface $deactivateAt = null;
 
     public function __construct(\DateTime $activeAt = null, \DateTime $deactivateAt = null)
     {

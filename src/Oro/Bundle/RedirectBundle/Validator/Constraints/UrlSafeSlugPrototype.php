@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Validator\Constraints;
 
+use Attribute;
 use Symfony\Component\Validator\Constraint;
 
 /**
@@ -9,6 +10,7 @@ use Symfony\Component\Validator\Constraint;
  *
  * @Annotation
  */
+#[Attribute]
 class UrlSafeSlugPrototype extends Constraint
 {
     public bool $allowSlashes = false;

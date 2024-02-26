@@ -2,71 +2,51 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 
 /**
- * @ORM\Table(
- *      name="oro_shipping_product_opts",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(
- *              name="oro_shipping_product_opts_uidx",
- *              columns={"product_id","product_unit_code"}
- *          )
- *      }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository")
- * @ORM\HasLifecycleCallbacks()
- */
+* Entity that represents Product Shipping Options
+*
+*/
+#[ORM\Entity(repositoryClass: ProductShippingOptionsRepository::class)]
+#[ORM\Table(name: 'oro_shipping_product_opts')]
+#[ORM\UniqueConstraint(name: 'oro_shipping_product_opts_uidx', columns: ['product_id', 'product_unit_code'])]
+#[ORM\HasLifecycleCallbacks]
 class ProductShippingOptions implements
     ProductShippingOptionsInterface,
     ProductUnitHolderInterface,
     ProductHolderInterface
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Product $product = null;
+
+    #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
+    #[ORM\JoinColumn(name: 'product_unit_code', referencedColumnName: 'code', nullable: false, onDelete: 'CASCADE')]
+    protected ?ProductUnit $productUnit = null;
 
     /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @return float|null
      */
-    protected $product;
-
-    /**
-     * @var ProductUnit
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="product_unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
-     */
-    protected $productUnit;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="weight_value", type="float", nullable=true)
-     */
+    #[ORM\Column(name: 'weight_value', type: Types::FLOAT, nullable: true)]
     protected $weightValue;
 
-    /**
-     * @var WeightUnit
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShippingBundle\Entity\WeightUnit")
-     * @ORM\JoinColumn(name="weight_unit_code", referencedColumnName="code")
-     */
-    protected $weightUnit;
+    #[ORM\ManyToOne(targetEntity: WeightUnit::class)]
+    #[ORM\JoinColumn(name: 'weight_unit_code', referencedColumnName: 'code')]
+    protected ?WeightUnit $weightUnit = null;
 
     /**
      * @var Weight
@@ -74,46 +54,35 @@ class ProductShippingOptions implements
     protected $weight;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="dimensions_length", type="float", nullable=true)
+     * @return float|null
      */
+    #[ORM\Column(name: 'dimensions_length', type: Types::FLOAT, nullable: true)]
     protected $dimensionsLength;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="dimensions_width", type="float", nullable=true)
+     * @return float|null
      */
+    #[ORM\Column(name: 'dimensions_width', type: Types::FLOAT, nullable: true)]
     protected $dimensionsWidth;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="dimensions_height", type="float", nullable=true)
+     * @return float|null
      */
+    #[ORM\Column(name: 'dimensions_height', type: Types::FLOAT, nullable: true)]
     protected $dimensionsHeight;
 
-    /**
-     * @var LengthUnit
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShippingBundle\Entity\LengthUnit")
-     * @ORM\JoinColumn(name="dimensions_unit_code", referencedColumnName="code")
-     */
-    protected $dimensionsUnit;
+    #[ORM\ManyToOne(targetEntity: LengthUnit::class)]
+    #[ORM\JoinColumn(name: 'dimensions_unit_code', referencedColumnName: 'code')]
+    protected ?LengthUnit $dimensionsUnit = null;
 
     /**
      * @var Dimensions
      */
     protected $dimensions;
 
-    /**
-     * @var FreightClass
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShippingBundle\Entity\FreightClass")
-     * @ORM\JoinColumn(name="freight_class_code", referencedColumnName="code")
-     */
-    protected $freightClass;
+    #[ORM\ManyToOne(targetEntity: FreightClass::class)]
+    #[ORM\JoinColumn(name: 'freight_class_code', referencedColumnName: 'code')]
+    protected ?FreightClass $freightClass = null;
 
     /**
      * @return int
@@ -256,17 +225,13 @@ class ProductShippingOptions implements
         return $this->getProduct()->getSku();
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    #[ORM\PostLoad]
     public function loadWeight()
     {
         $this->weight = Weight::create($this->weightValue, $this->weightUnit);
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    #[ORM\PostLoad]
     public function loadDimensions()
     {
         $this->dimensions = Dimensions::create(
@@ -277,10 +242,8 @@ class ProductShippingOptions implements
         );
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updateWeight()
     {
         if ($this->weight) {
@@ -292,10 +255,8 @@ class ProductShippingOptions implements
         }
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updateDimensions()
     {
         if ($this->dimensions && $this->dimensions->getValue()) {

@@ -14,17 +14,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class AjaxProductUnitController extends AbstractAjaxProductUnitController
 {
     /**
-     * @Route(
-     *      "/product-units/{id}",
-     *      name="oro_product_frontend_ajaxproductunit_productunits",
-     *      requirements={"id"="\d+"}
-     * )
      *
      * @param Request $request
      * @param Product $product
-     *
      * @return JsonResponse
      */
+    #[Route(
+        path: '/product-units/{id}',
+        name: 'oro_product_frontend_ajaxproductunit_productunits',
+        requirements: ['id' => '\d+']
+    )]
     public function productUnitsAction(Request $request, Product $product)
     {
         return $this->getProductUnits($product);

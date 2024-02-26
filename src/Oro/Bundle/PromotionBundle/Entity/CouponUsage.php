@@ -2,47 +2,35 @@
 
 namespace Oro\Bundle\PromotionBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\PromotionBundle\Entity\Repository\CouponUsageRepository;
 
 /**
- * @ORM\Table(name="oro_promotion_coupon_usage")
- * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\CouponUsageRepository")
- */
+* Entity that represents Coupon Usage
+*
+*/
+#[ORM\Entity(repositoryClass: CouponUsageRepository::class)]
+#[ORM\Table(name: 'oro_promotion_coupon_usage')]
 class CouponUsage
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    private ?int $id = null;
 
-    /**
-     * @var Coupon
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\Coupon")
-     * @ORM\JoinColumn(name="coupon_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    private $coupon;
+    #[ORM\ManyToOne(targetEntity: Coupon::class)]
+    #[ORM\JoinColumn(name: 'coupon_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    private ?Coupon $coupon = null;
 
-    /**
-     * @var Promotion
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\Promotion")
-     * @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    private $promotion;
+    #[ORM\ManyToOne(targetEntity: Promotion::class)]
+    #[ORM\JoinColumn(name: 'promotion_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    private ?Promotion $promotion = null;
 
-    /**
-     * @var CustomerUser|null
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
-     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     */
-    private $customerUser;
+    #[ORM\ManyToOne(targetEntity: CustomerUser::class)]
+    #[ORM\JoinColumn(name: 'customer_user_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    private ?CustomerUser $customerUser = null;
 
     /**
      * Get id

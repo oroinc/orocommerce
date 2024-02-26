@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
@@ -9,54 +10,34 @@ use Oro\Bundle\TaxBundle\Model\Result;
 
 /**
  * Represents calculated taxes in database
- *
- * @ORM\Entity
- * @ORM\Table(
- *     name="oro_tax_value",
- *     indexes={
- *         @ORM\Index(name="oro_tax_value_class_id_idx", columns={"entity_class", "entity_id"})
- *     }
- * )
- * @ORM\HasLifecycleCallbacks()
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_tax_value')]
+#[ORM\Index(columns: ['entity_class', 'entity_id'], name: 'oro_tax_value_class_id_idx')]
+#[ORM\HasLifecycleCallbacks]
 class TaxValue implements DatesAwareInterface
 {
     use DatesAwareTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
     /**
      * @var Result
-     *
-     * @ORM\Column(name="result", type="json_array")
      */
+    #[ORM\Column(name: 'result', type: 'json_array')]
     protected $result;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="entity_class", type="string", length=255)
-     */
-    protected $entityClass;
+    #[ORM\Column(name: 'entity_class', type: Types::STRING, length: 255)]
+    protected ?string $entityClass = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="entity_id", type="integer", nullable=true)
-     */
-    protected $entityId;
+    #[ORM\Column(name: 'entity_id', type: Types::INTEGER, nullable: true)]
+    protected ?int $entityId = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="text")
-     */
-    protected $address;
+    #[ORM\Column(type: Types::TEXT)]
+    protected ?string $address = null;
 
     public function __construct()
     {
@@ -162,9 +143,7 @@ class TaxValue implements DatesAwareInterface
         return $this->id;
     }
 
-    /**
-     * @ORM\PostLoad()
-     */
+    #[ORM\PostLoad]
     public function postLoad()
     {
         if (!$this->result instanceof Result) {

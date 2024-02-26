@@ -5,6 +5,8 @@ namespace Oro\Bundle\RedirectBundle\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototype;
+use Symfony\Component\Validator\Constraints\All;
 
 /**
  * Trait for entities which implement LocalizedSlugPrototypeAwareInterface.
@@ -14,21 +16,12 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 trait LocalizedSlugPrototypeAwareTrait
 {
     /**
-     * @var Collection|LocalizedFallbackValue[]
+     * @var Collection<int, LocalizedFallbackValue>
      *
-     * @Symfony\Component\Validator\Constraints\All(
-     *     constraints = {
-     *         @Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototype()
-     *     }
-     * )
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
      */
-    protected $slugPrototypes;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[All(constraints: [new UrlSafeSlugPrototype()])]
+    protected ?Collection $slugPrototypes = null;
 
     /**
      * @return Collection|LocalizedFallbackValue[]

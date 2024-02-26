@@ -2,50 +2,33 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="oro_fedex_ship_service_rule")
- * @ORM\Entity
- */
+* Entity that represents Shipping Service Rule
+*
+*/
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_fedex_ship_service_rule')]
 class ShippingServiceRule
 {
-    /**
-     * @var integer|null
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    private ?int $id = null;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="limitation_expression_lbs", type="string", length=250)
-     */
-    private $limitationExpressionLbs;
+    #[ORM\Column(name: 'limitation_expression_lbs', type: Types::STRING, length: 250)]
+    private ?string $limitationExpressionLbs = null;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="limitation_expression_kg", type="string", length=250)
-     */
-    private $limitationExpressionKg;
+    #[ORM\Column(name: 'limitation_expression_kg', type: Types::STRING, length: 250)]
+    private ?string $limitationExpressionKg = null;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="service_type", type="string", length=250, nullable=true)
-     */
-    private $serviceType;
+    #[ORM\Column(name: 'service_type', type: Types::STRING, length: 250, nullable: true)]
+    private ?string $serviceType = null;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="residential_address", type="boolean", options={"default": false})
-     */
-    private $residentialAddress = false;
+    #[ORM\Column(name: 'residential_address', type: Types::BOOLEAN, options: ['default' => false])]
+    private ?bool $residentialAddress = false;
 
     /**
      * @return integer|null

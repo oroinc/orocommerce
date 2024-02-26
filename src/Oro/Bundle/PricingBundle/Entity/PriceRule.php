@@ -4,109 +4,63 @@ namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleRepository;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
  * This entity represents price rule for price list
- *
- * @ORM\Table(name="oro_price_rule")
- * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleRepository")
  */
+#[ORM\Entity(repositoryClass: PriceRuleRepository::class)]
+#[ORM\Table(name: 'oro_price_rule')]
 class PriceRule
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: true)]
+    protected ?string $currency = null;
+
+    #[ORM\Column(name: 'currency_expression', type: Types::TEXT, nullable: true)]
+    protected ?string $currencyExpression = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     * @return float|null
      */
-    protected $currency;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency_expression", type="text", nullable=true)
-     */
-    protected $currencyExpression;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="quantity", type="float", nullable=true)
-     */
+    #[ORM\Column(name: 'quantity', type: Types::FLOAT, nullable: true)]
     protected $quantity;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="quantity_expression", type="text", nullable=true)
-     */
-    protected $quantityExpression;
+    #[ORM\Column(name: 'quantity_expression', type: Types::TEXT, nullable: true)]
+    protected ?string $quantityExpression = null;
+
+    #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
+    #[ORM\JoinColumn(name: 'product_unit_id', referencedColumnName: 'code', nullable: true, onDelete: 'CASCADE')]
+    protected ?ProductUnit $productUnit = null;
+
+    #[ORM\Column(name: 'product_unit_expression', type: Types::TEXT, nullable: true)]
+    protected ?string $productUnitExpression = null;
+
+    #[ORM\Column(name: 'rule_condition', type: Types::TEXT, nullable: true)]
+    protected ?string $ruleCondition = null;
+
+    #[ORM\Column(name: 'rule', type: Types::TEXT, nullable: false)]
+    protected ?string $rule = null;
 
     /**
-     * @var ProductUnit
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="CASCADE", nullable=true)
-     */
-    protected $productUnit;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="product_unit_expression", type="text", nullable=true)
-     */
-    protected $productUnitExpression;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="rule_condition", type="text", nullable=true)
-     */
-    protected $ruleCondition;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="rule", type="text", nullable=false)
-     */
-    protected $rule;
-
-    /**
-     * @var Collection|PriceRuleLexeme[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme",
-     *      mappedBy="priceRule",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
+     * @var Collection<int, PriceRuleLexeme>
      **/
-    protected $lexemes;
+    #[ORM\OneToMany(mappedBy: 'priceRule', targetEntity: PriceRuleLexeme::class, cascade: ['ALL'], orphanRemoval: true)]
+    protected ?Collection $lexemes = null;
 
-    /**
-     * @var PriceList
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceList", inversedBy="priceRules")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     **/
-    protected $priceList;
+    #[ORM\ManyToOne(targetEntity: PriceList::class, inversedBy: 'priceRules')]
+    #[ORM\JoinColumn(name: 'price_list_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?PriceList $priceList = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="priority", type="integer")
-     */
-    protected $priority;
+    #[ORM\Column(name: 'priority', type: Types::INTEGER)]
+    protected ?int $priority = null;
 
     /**
      * PriceRule constructor

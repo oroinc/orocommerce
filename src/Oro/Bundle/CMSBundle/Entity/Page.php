@@ -4,14 +4,17 @@ namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroCMSBundle_Entity_Page;
+use Oro\Bundle\CMSBundle\Entity\Repository\PageRepository;
+use Oro\Bundle\CMSBundle\Form\Type\PageSelectType;
 use Oro\Bundle\DraftBundle\Entity\DraftableInterface;
 use Oro\Bundle\DraftBundle\Entity\DraftableTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -25,71 +28,6 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 /**
  * Represents CMS Page
  *
- * @ORM\Table(name="oro_cms_page")
- * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\PageRepository")
- * @ORM\AssociationOverrides({
- *      @ORM\AssociationOverride(
- *          name="slugPrototypes",
- *          joinTable=@ORM\JoinTable(
- *              name="oro_cms_page_slug_prototype",
- *              joinColumns={
- *                  @ORM\JoinColumn(name="page_id", referencedColumnName="id", onDelete="CASCADE")
- *              },
- *              inverseJoinColumns={
- *                  @ORM\JoinColumn(
- *                      name="localized_value_id",
- *                      referencedColumnName="id",
- *                      onDelete="CASCADE",
- *                      unique=true
- *                  )
- *              }
- *          )
- *      ),
- *     @ORM\AssociationOverride(
- *          name="slugs",
- *          joinTable=@ORM\JoinTable(
- *              name="oro_cms_page_to_slug",
- *              joinColumns={
- *                  @ORM\JoinColumn(name="page_id", referencedColumnName="id", onDelete="CASCADE")
- *              },
- *              inverseJoinColumns={
- *                  @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
- *              }
- *          )
- *      )
- * })
- * @Config(
- *      routeName="oro_cms_page_index",
- *      routeView="oro_cms_page_view",
- *      routeUpdate="oro_cms_page_update",
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-book"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *         "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="organization",
- *              "owner_column_name"="organization_id"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          },
- *          "form"={
- *              "form_type"="Oro\Bundle\CMSBundle\Form\Type\PageSelectType",
- *              "grid_name"="cms-page-select-grid"
- *          },
- *          "draft"={
- *              "draftable"=true
- *          },
- *          "slug"={
- *              "source"="titles"
- *          }
- *      }
- * )
  * @method LocalizedFallbackValue getTitle(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultTitle()
  * @method LocalizedFallbackValue getSlug(Localization $localization = null)
@@ -99,6 +37,66 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  * @method $this cloneLocalizedFallbackValueAssociations()
  * @mixin OroCMSBundle_Entity_Page
  */
+#[ORM\Entity(repositoryClass: PageRepository::class)]
+#[ORM\Table(name: 'oro_cms_page')]
+#[ORM\AssociationOverrides([
+    new ORM\AssociationOverride(
+        name: 'slugPrototypes',
+        joinColumns: [
+        new ORM\JoinColumn(
+            name: 'page_id',
+            referencedColumnName: 'id',
+            onDelete: 'CASCADE'
+        )
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(
+                name: 'localized_value_id',
+                referencedColumnName: 'id',
+                unique: true,
+                onDelete: 'CASCADE'
+            )
+        ],
+        joinTable: new ORM\JoinTable(name: 'oro_cms_page_slug_prototype')
+    ),
+    new ORM\AssociationOverride(
+        name: 'slugs',
+        joinColumns: [
+        new ORM\JoinColumn(
+            name: 'page_id',
+            referencedColumnName: 'id',
+            onDelete: 'CASCADE'
+        )
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(
+                name: 'slug_id',
+                referencedColumnName: 'id',
+                unique: true,
+                onDelete: 'CASCADE'
+            )
+        ],
+        joinTable: new ORM\JoinTable(name: 'oro_cms_page_to_slug')
+    )
+])]
+#[Config(
+    routeName: 'oro_cms_page_index',
+    routeView: 'oro_cms_page_view',
+    routeUpdate: 'oro_cms_page_update',
+    defaultValues: [
+        'entity' => ['icon' => 'fa-book'],
+        'dataaudit' => ['auditable' => true],
+        'ownership' => [
+            'owner_type' => 'ORGANIZATION',
+            'owner_field_name' => 'organization',
+            'owner_column_name' => 'organization_id'
+        ],
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'form' => ['form_type' => PageSelectType::class, 'grid_name' => 'cms-page-select-grid'],
+        'draft' => ['draftable' => true],
+        'slug' => ['source' => 'titles']
+    ]
+)]
 class Page implements
     DatesAwareInterface,
     SluggableInterface,
@@ -112,63 +110,32 @@ class Page implements
     use DraftableTrait;
     use ExtendEntityTrait;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_cms_page_title",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="page_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "draft"={
-     *              "draftable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $titles;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_cms_page_title')]
+    #[ORM\JoinColumn(name: 'page_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'draft' => ['draftable' => true]])]
+    protected ?Collection $titles = null;
 
     /**
      * @var string
-     *
-     * @ORM\Column(type="wysiwyg", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=false
-     *          },
-     *          "attachment"={
-     *              "acl_protected"=false,
-     *          },
-     *          "draft"={
-     *              "draftable"=true
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(type: 'wysiwyg', nullable: true)]
+    #[ConfigField(
+        defaultValues: [
+            'dataaudit' => ['auditable' => false],
+            'attachment' => ['acl_protected' => false],
+            'draft' => ['draftable' => true]
+        ]
+    )]
     protected $content;
 
     /**

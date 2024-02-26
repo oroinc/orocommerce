@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\CMSBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroCMSBundle_Entity_TabbedContentItem;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -16,26 +17,21 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 /**
  * Holds tabbed content item data.
  *
- * @ORM\Entity()
- * @ORM\Table(name="oro_cms_tabbed_content_item")
- * @Config(
- *      defaultValues={
- *          "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="organization",
- *              "owner_column_name"="organization_id"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          }
- *     }
- * )
  * @mixin OroCMSBundle_Entity_TabbedContentItem
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_cms_tabbed_content_item')]
+#[Config(
+    defaultValues: [
+        'ownership' => [
+            'owner_type' => 'ORGANIZATION',
+            'owner_field_name' => 'organization',
+            'owner_column_name' => 'organization_id'
+        ],
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'dataaudit' => ['auditable' => true]
+    ]
+)]
 class TabbedContentItem implements
     OrganizationAwareInterface,
     DatesAwareInterface,
@@ -45,83 +41,33 @@ class TabbedContentItem implements
     use DatesAwareTrait;
     use ExtendEntityTrait;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected ?int $id = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CMSBundle\Entity\ContentWidget")
-     * @ORM\JoinColumn(name="content_widget_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\ManyToOne(targetEntity: ContentWidget::class)]
+    #[ORM\JoinColumn(name: 'content_widget_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?ContentWidget $contentWidget = null;
 
-    /**
-     * @ORM\Column(name="title", type="string", length=255, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\Column(name: 'title', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?string $title = null;
 
-    /**
-     * @ORM\Column(name="item_order", type="integer", options={"default"=0})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\Column(name: 'item_order', type: Types::INTEGER, options: ['default' => 0])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?int $itemOrder = 0;
 
-    /**
-     * @ORM\Column(name="content", type="wysiwyg", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "attachment"={
-     *              "acl_protected"=false
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\Column(name: 'content', type: 'wysiwyg', nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'attachment' => ['acl_protected' => false]])]
     protected ?string $content = null;
 
-    /**
-     * @ORM\Column(name="content_style", type="wysiwyg_style", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "attachment"={
-     *              "acl_protected"=false
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\Column(name: 'content_style', type: 'wysiwyg_style', nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'attachment' => ['acl_protected' => false]])]
     protected ?string $contentStyle = null;
 
-    /**
-     * @ORM\Column(name="content_properties", type="wysiwyg_properties", nullable=true)
-     */
+    #[ORM\Column(name: 'content_properties', type: 'wysiwyg_properties', nullable: true)]
     protected ?array $contentProperties = null;
 
     public function getId(): ?int

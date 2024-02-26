@@ -15,17 +15,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class AjaxGetProductsCountController extends AbstractController
 {
     /**
-     * @Route(
-     *      "/get-count/{gridName}",
-     *      name="oro_product_datagrid_count_get",
-     *      requirements={"gridName"="[\w\:-]+"}
-     * )
      *
      * @param string $gridName
      * @param Request $request
-     *
      * @return JsonResponse
      */
+    #[Route(
+        path: '/get-count/{gridName}',
+        name: 'oro_product_datagrid_count_get',
+        requirements: ['gridName' => '[\w\:-]+']
+    )]
     public function getAction($gridName, Request $request)
     {
         $params = $request->get('params', []);

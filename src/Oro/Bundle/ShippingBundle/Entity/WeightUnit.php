@@ -2,29 +2,27 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
 /**
- * @ORM\Table(name="oro_shipping_weight_unit")
- * @ORM\Entity
- */
+* Entity that represents Weight Unit
+*
+*/
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_shipping_weight_unit')]
 class WeightUnit implements MeasureUnitInterface
 {
-    /**
-     * @var string
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\Column(name="code", type="string", length=255, nullable=false)
-     */
-    protected $code;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
+    #[ORM\Column(name: 'code', type: Types::STRING, length: 255, nullable: false)]
+    protected ?string $code = null;
 
     /**
      * @var array
-     *
-     * @ORM\Column(name="conversion_rates", type="array", nullable=true)
      */
+    #[ORM\Column(name: 'conversion_rates', type: Types::ARRAY, nullable: true)]
     protected $conversionRates = [];
 
     /**

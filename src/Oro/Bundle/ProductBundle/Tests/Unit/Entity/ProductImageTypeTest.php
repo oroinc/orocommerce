@@ -22,7 +22,7 @@ class ProductImageTypeTest extends \PHPUnit\Framework\TestCase
     public function testProperties()
     {
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['productImage', new ProductImage()],
         ];
 

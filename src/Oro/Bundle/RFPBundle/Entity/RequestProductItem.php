@@ -4,9 +4,10 @@ namespace Oro\Bundle\RFPBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -16,23 +17,16 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
  * RFP Request Product Item entity.
- *
- * @ORM\Table(name="oro_rfp_request_prod_item")
- * @ORM\Entity
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-list-alt"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="quotes"
- *          }
- *      }
- * )
- * @ORM\HasLifecycleCallbacks()
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_rfp_request_prod_item')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    defaultValues: [
+        'entity' => ['icon' => 'fa-list-alt'],
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes']
+    ]
+)]
 class RequestProductItem implements
     ProductLineItemInterface,
     ProductLineItemChecksumAwareInterface,
@@ -41,58 +35,36 @@ class RequestProductItem implements
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: RequestProduct::class, inversedBy: 'requestProductItems')]
+    #[ORM\JoinColumn(name: 'request_product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?RequestProduct $requestProduct = null;
 
     /**
-     * @var RequestProduct
-     *
-     * @ORM\ManyToOne(targetEntity="RequestProduct", inversedBy="requestProductItems")
-     * @ORM\JoinColumn(name="request_product_id", referencedColumnName="id", onDelete="CASCADE")
+     * @var float|null
      */
-    protected $requestProduct;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="quantity", type="float", nullable=true)
-     */
+    #[ORM\Column(name: 'quantity', type: Types::FLOAT, nullable: true)]
     protected $quantity;
 
-    /**
-     * @var ProductUnit
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL")
-     */
-    protected $productUnit;
+    #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
+    #[ORM\JoinColumn(name: 'product_unit_id', referencedColumnName: 'code', onDelete: 'SET NULL')]
+    protected ?ProductUnit $productUnit = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="product_unit_code", type="string", length=255)
-     */
-    protected $productUnitCode;
+    #[ORM\Column(name: 'product_unit_code', type: Types::STRING, length: 255)]
+    protected ?string $productUnitCode = null;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="value", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'value', type: 'money', nullable: true)]
     protected $value;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
-     */
-    protected $currency;
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: true)]
+    protected ?string $currency = null;
 
     /**
      * @var Price
@@ -107,9 +79,8 @@ class RequestProductItem implements
     /**
      * Differentiates the unique constraint allowing to add the same product with the same unit code multiple times,
      * moving the logic of distinguishing of such line items out of the entity class.
-     *
-     * @ORM\Column(name="checksum", type="string", length=40, options={"default"=""}, nullable=false)
      */
+    #[ORM\Column(name: 'checksum', type: 'string', length: 40, nullable: false, options: ['default' => ''])]
     protected string $checksum = '';
 
     public function __construct()
@@ -286,9 +257,7 @@ class RequestProductItem implements
         return $this->price;
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    #[ORM\PostLoad]
     public function loadPrice()
     {
         if ($this->value !== null && $this->currency !== null) {
@@ -296,10 +265,8 @@ class RequestProductItem implements
         }
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updatePrice()
     {
         if ($this->price !== null) {
@@ -325,9 +292,7 @@ class RequestProductItem implements
         return null;
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    #[ORM\PostLoad]
     public function loadKitItemLineItems(): void
     {
         if ($this->requestProduct) {

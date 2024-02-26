@@ -7,7 +7,7 @@ use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Storage\OffersDataStorage;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,10 +17,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class OrderController extends AbstractController
 {
-    /**
-     * @Route("/create/{id}", name="oro_rfp_request_create_order", requirements={"id"="\d+"})
-     * @AclAncestor("oro_order_create")
-     */
+    #[Route(path: '/create/{id}', name: 'oro_rfp_request_create_order', requirements: ['id' => '\d+'])]
+    #[AclAncestor('oro_order_create')]
     public function createAction(RFPRequest $request): Response
     {
         $data = [ProductDataStorage::ENTITY_DATA_KEY => $this->getEntityData($request)];

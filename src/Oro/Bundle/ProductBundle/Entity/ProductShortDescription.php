@@ -2,56 +2,29 @@
 
 namespace Oro\Bundle\ProductBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 
 /**
  * Represents product short description
- *
- * @ORM\Table(
- *      name="oro_product_prod_s_descr",
- *      indexes={
- *          @ORM\Index(name="idx_product_prod_s_descr_fallback", columns={"fallback"})
- *      }
- * )
- * @ORM\Entity
- * @Config()
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_product_prod_s_descr')]
+#[ORM\Index(columns: ['fallback'], name: 'idx_product_prod_s_descr_fallback')]
+#[Config]
 class ProductShortDescription extends AbstractLocalizedFallbackValue
 {
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="text", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "excluded"=false
-     *          }
-     *      }
-     * )
-     */
-    protected $text;
+    #[ORM\Column(name: 'text', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => false]])]
+    protected ?string $text = null;
 
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Product", inversedBy="shortDescriptions")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $product;
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'shortDescriptions')]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?Product $product = null;
 
     public function getProduct(): ?Product
     {

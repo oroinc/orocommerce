@@ -45,7 +45,7 @@ class CategoryDefaultProductOptionsTest extends \PHPUnit\Framework\TestCase
         static::assertNull($this->entity->getUnitPrecision()->getPrecision());
         static::assertNull($this->entity->getUnitPrecision()->getUnit());
 
-        $precision = 11.1;
+        $precision = 11;
         $unit = new ProductUnit();
 
         ReflectionUtil::setPropertyValue($this->entity, 'precision', $precision);

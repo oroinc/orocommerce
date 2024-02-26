@@ -20,7 +20,7 @@ class LoadPaymentMethodsConfigsRuleDestinationData extends AbstractFixture imple
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData',
+            LoadPaymentMethodsConfigsRuleData::class,
         ];
     }
 

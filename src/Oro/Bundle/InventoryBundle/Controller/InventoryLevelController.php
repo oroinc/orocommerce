@@ -12,7 +12,7 @@ use Oro\Bundle\InventoryBundle\Form\Type\InventoryLevelGridType;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -27,16 +27,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class InventoryLevelController extends AbstractController
 {
-    /**
-     * @Route("/", name="oro_inventory_level_index")
-     * @Template
-     * @Acl(
-     *      id="oro_inventory_level_view",
-     *      type="entity",
-     *      class="Oro\Bundle\InventoryBundle\Entity\InventoryLevel",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/', name: 'oro_inventory_level_index')]
+    #[Template]
+    #[Acl(id: 'oro_inventory_level_view', type: 'entity', class: InventoryLevel::class, permission: 'VIEW')]
     public function indexAction(): array
     {
         return [
@@ -50,16 +43,10 @@ class InventoryLevelController extends AbstractController
 
     /**
      * Edit product inventory levels
-     *
-     * @Route("/update/{id}", name="oro_inventory_level_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_product_inventory_update",
-     *      type="entity",
-     *      class="Oro\Bundle\InventoryBundle\Entity\InventoryLevel",
-     *      permission="EDIT"
-     * )
      */
+    #[Route(path: '/update/{id}', name: 'oro_inventory_level_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_product_inventory_update', type: 'entity', class: InventoryLevel::class, permission: 'EDIT')]
     public function updateAction(Product $product, Request $request): array|RedirectResponse
     {
         if (!$this->isGranted('EDIT', $product)) {

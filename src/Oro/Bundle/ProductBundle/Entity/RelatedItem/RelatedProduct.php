@@ -2,67 +2,39 @@
 
 namespace Oro\Bundle\ProductBundle\Entity\RelatedItem;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemEntityInterface;
 
 /**
  * Representation of relations between related products
- *
- * @ORM\Table(
- *     name="oro_product_related_products",
- *     indexes={
- *          @ORM\Index(name="idx_oro_product_related_products_product_id", columns={"product_id"}),
- *          @ORM\Index(name="idx_oro_product_related_products_related_item_id", columns={"related_item_id"})
- *     },
- *     uniqueConstraints={
- *          @ORM\UniqueConstraint(
- *              name="idx_oro_product_related_products_unique",
- *              columns={"product_id", "related_item_id"}
- *          )
- *     }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository")
- * @Config(mode="hidden")
  */
+#[ORM\Entity(repositoryClass: RelatedProductRepository::class)]
+#[ORM\Table(name: 'oro_product_related_products')]
+#[ORM\Index(columns: ['product_id'], name: 'idx_oro_product_related_products_product_id')]
+#[ORM\Index(columns: ['related_item_id'], name: 'idx_oro_product_related_products_related_item_id')]
+#[ORM\UniqueConstraint(name: 'idx_oro_product_related_products_unique', columns: ['product_id', 'related_item_id'])]
+#[Config(mode: 'hidden')]
 class RelatedProduct implements RelatedItemEntityInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var Product
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "identity"=true
-     *          },
-     *      }
-     * )
-     */
-    protected $product;
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['identity' => true]])]
+    protected ?Product $product = null;
 
-    /**
-     * @var Product
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="related_item_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "identity"=true
-     *          },
-     *      }
-     * )
-     */
-    protected $relatedItem;
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'related_item_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['identity' => true]])]
+    protected ?Product $relatedItem = null;
 
     /**
      * {@inheritDoc}

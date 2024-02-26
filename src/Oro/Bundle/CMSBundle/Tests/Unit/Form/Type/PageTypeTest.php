@@ -193,7 +193,7 @@ class PageTypeTest extends FormIntegrationTestCase
     public function testSubmitUpdate(mixed $defaultData, mixed $submittedData, mixed $expectedData)
     {
         $existingPage = new Page();
-        $existingPage->addTitle((new LocalizedFallbackValue())->setString($defaultData['titles']));
+        $existingPage->addTitle((new LocalizedFallbackValue())->setString($defaultData['titles'][0]['string']));
         $existingPage->setContent($defaultData['content']);
         $existingPage->addSlugPrototype((new LocalizedFallbackValue())->setString('slug'));
 

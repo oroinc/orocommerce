@@ -3,50 +3,40 @@
 namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 
 /**
- * @ORM\Table(name="oro_price_list_combined")
- * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository")
- */
+* Entity that represents Combined Price List
+*
+*/
+#[ORM\Entity(repositoryClass: CombinedPriceListRepository::class)]
+#[ORM\Table(name: 'oro_price_list_combined')]
 class CombinedPriceList extends BasePriceList
 {
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_enabled", type="boolean")
-     */
-    protected $enabled = false;
+    #[ORM\Column(name: 'is_enabled', type: Types::BOOLEAN)]
+    protected ?bool $enabled = false;
 
     /**
-     * @var Collection|CombinedProductPrice[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\PricingBundle\Entity\CombinedProductPrice",
-     *      mappedBy="priceList",
-     *      fetch="EXTRA_LAZY"
-     * )
+     * @var Collection<int, CombinedProductPrice>
      */
-    protected $prices;
+    #[ORM\OneToMany(mappedBy: 'priceList', targetEntity: CombinedProductPrice::class, fetch: 'EXTRA_LAZY')]
+    protected ?Collection $prices = null;
 
     /**
-     * @var CombinedPriceListCurrency[]|Collection
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\PricingBundle\Entity\CombinedPriceListCurrency",
-     *      mappedBy="priceList",
-     *      cascade={"all"},
-     *      orphanRemoval=true
-     * )
+     * @var Collection<int, CombinedPriceListCurrency>
      */
-    protected $currencies;
+    #[ORM\OneToMany(
+        mappedBy: 'priceList',
+        targetEntity: CombinedPriceListCurrency::class,
+        cascade: ['all'],
+        orphanRemoval: true
+    )]
+    protected ?Collection $currencies = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_prices_calculated", type="boolean")
-     */
-    protected $pricesCalculated = false;
+    #[ORM\Column(name: 'is_prices_calculated', type: Types::BOOLEAN)]
+    protected ?bool $pricesCalculated = false;
 
     /**
      * @return boolean

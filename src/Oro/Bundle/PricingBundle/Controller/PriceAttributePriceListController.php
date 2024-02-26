@@ -5,8 +5,8 @@ namespace Oro\Bundle\PricingBundle\Controller;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -18,11 +18,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class PriceAttributePriceListController extends AbstractController
 {
-    /**
-     * @Route("/", name="oro_pricing_price_attribute_price_list_index")
-     * @Template
-     * @AclAncestor("oro_pricing_price_attribute_price_list_view")
-     */
+    #[Route(path: '/', name: 'oro_pricing_price_attribute_price_list_index')]
+    #[Template]
+    #[AclAncestor('oro_pricing_price_attribute_price_list_view')]
     public function indexAction(): array
     {
         return [
@@ -30,16 +28,14 @@ class PriceAttributePriceListController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/view/{id}", name="oro_pricing_price_attribute_price_list_view", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_pricing_price_attribute_price_list_view",
-     *      type="entity",
-     *      class="Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/view/{id}', name: 'oro_pricing_price_attribute_price_list_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(
+        id: 'oro_pricing_price_attribute_price_list_view',
+        type: 'entity',
+        class: PriceAttributePriceList::class,
+        permission: 'VIEW'
+    )]
     public function viewAction(PriceAttributePriceList $priceAttribute): array
     {
         return [
@@ -47,31 +43,31 @@ class PriceAttributePriceListController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/create", name="oro_pricing_price_attribute_price_list_create")
-     * @Template("@OroPricing/PriceAttributePriceList/update.html.twig")
-     * @Acl(
-     *      id="oro_pricing_price_attribute_price_list_create",
-     *      type="entity",
-     *      class="Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList",
-     *      permission="CREATE"
-     * )
-     */
+    #[Route(path: '/create', name: 'oro_pricing_price_attribute_price_list_create')]
+    #[Template('@OroPricing/PriceAttributePriceList/update.html.twig')]
+    #[Acl(
+        id: 'oro_pricing_price_attribute_price_list_create',
+        type: 'entity',
+        class: PriceAttributePriceList::class,
+        permission: 'CREATE'
+    )]
     public function createAction(): array|RedirectResponse
     {
         return $this->update(new PriceAttributePriceList());
     }
 
-    /**
-     * @Route("/update/{id}", name="oro_pricing_price_attribute_price_list_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_pricing_price_attribute_price_list_update",
-     *      type="entity",
-     *      class="Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList",
-     *      permission="EDIT"
-     * )
-     */
+    #[Route(
+        path: '/update/{id}',
+        name: 'oro_pricing_price_attribute_price_list_update',
+        requirements: ['id' => '\d+']
+    )]
+    #[Template]
+    #[Acl(
+        id: 'oro_pricing_price_attribute_price_list_update',
+        type: 'entity',
+        class: PriceAttributePriceList::class,
+        permission: 'EDIT'
+    )]
     public function updateAction(PriceAttributePriceList $priceAttribute): array|RedirectResponse
     {
         return $this->update($priceAttribute);
@@ -88,11 +84,9 @@ class PriceAttributePriceListController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/info/{id}", name="oro_pricing_price_attribute_price_list_info", requirements={"id"="\d+"})
-     * @Template("@OroPricing/PriceAttributePriceList/widget/info.html.twig")
-     * @AclAncestor("oro_pricing_price_attribute_price_list_view")
-     */
+    #[Route(path: '/info/{id}', name: 'oro_pricing_price_attribute_price_list_info', requirements: ['id' => '\d+'])]
+    #[Template('@OroPricing/PriceAttributePriceList/widget/info.html.twig')]
+    #[AclAncestor('oro_pricing_price_attribute_price_list_view')]
     public function infoAction(PriceAttributePriceList $priceAttribute): array
     {
         return [

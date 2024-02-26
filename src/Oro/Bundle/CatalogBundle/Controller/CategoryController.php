@@ -11,8 +11,8 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryFormTemplateDataProvider;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\UIBundle\Form\Type\TreeMoveType;
 use Oro\Bundle\UIBundle\Model\TreeCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -29,16 +29,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class CategoryController extends AbstractController
 {
-    /**
-     * @Route("/create/{id}", name="oro_catalog_category_create", requirements={"id"="\d+"})
-     * @Template("@OroCatalog/Category/update.html.twig")
-     * @Acl(
-     *      id="oro_catalog_category_create",
-     *      type="entity",
-     *      class="Oro\Bundle\CatalogBundle\Entity\Category",
-     *      permission="CREATE"
-     * )
-     */
+    #[Route(path: '/create/{id}', name: 'oro_catalog_category_create', requirements: ['id' => '\d+'])]
+    #[Template('@OroCatalog/Category/update.html.twig')]
+    #[Acl(id: 'oro_catalog_category_create', type: 'entity', class: Category::class, permission: 'CREATE')]
     public function createAction(Category $parentCategory, Request $request): array|RedirectResponse
     {
         $category = new Category();
@@ -47,46 +40,25 @@ class CategoryController extends AbstractController
         return $this->update($category, $request);
     }
 
-    /**
-     * @Route("/update/{id}", name="oro_catalog_category_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_catalog_category_update",
-     *      type="entity",
-     *      class="Oro\Bundle\CatalogBundle\Entity\Category",
-     *      permission="EDIT"
-     * )
-     */
+    #[Route(path: '/update/{id}', name: 'oro_catalog_category_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_catalog_category_update', type: 'entity', class: Category::class, permission: 'EDIT')]
     public function updateAction(Category $category, Request $request): array|RedirectResponse
     {
         return $this->update($category, $request);
     }
 
-    /**
-     * @Route("/", name="oro_catalog_category_index")
-     * @Template
-     * @Acl(
-     *      id="oro_catalog_category_view",
-     *      type="entity",
-     *      class="Oro\Bundle\CatalogBundle\Entity\Category",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/', name: 'oro_catalog_category_index')]
+    #[Template]
+    #[Acl(id: 'oro_catalog_category_view', type: 'entity', class: Category::class, permission: 'VIEW')]
     public function indexAction(): array
     {
         return ['rootCategory' => $this->container->get(MasterCatalogRootProvider::class)->getMasterCatalogRoot()];
     }
 
-    /**
-     * @Route("/move", name="oro_catalog_category_move_form")
-     * @Template
-     * @Acl(
-     *      id="oro_catalog_category_update",
-     *      type="entity",
-     *      class="Oro\Bundle\CatalogBundle\Entity\Category",
-     *      permission="EDIT"
-     * )
-     */
+    #[Route(path: '/move', name: 'oro_catalog_category_move_form')]
+    #[Template]
+    #[Acl(id: 'oro_catalog_category_update', type: 'entity', class: Category::class, permission: 'EDIT')]
     public function moveAction(Request $request): array
     {
         $handler = $this->container->get(CategoryTreeHandler::class);
@@ -128,16 +100,9 @@ class CategoryController extends AbstractController
         return array_merge($responseData, ['form' => $form->createView()]);
     }
 
-    /**
-     * @Route("/widget/tree", name="oro_catalog_category_tree_widget")
-     * @Template
-     * @Acl(
-     *      id="oro_catalog_category_view",
-     *      type="entity",
-     *      class="Oro\Bundle\CatalogBundle\Entity\Category",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/widget/tree', name: 'oro_catalog_category_tree_widget')]
+    #[Template]
+    #[Acl(id: 'oro_catalog_category_view', type: 'entity', class: Category::class, permission: 'VIEW')]
     public function treeWidgetAction(): array
     {
         return [];
@@ -168,10 +133,12 @@ class CategoryController extends AbstractController
         return $result;
     }
 
-    /**
-     * @Route("/get-changed-urls/{id}", name="oro_catalog_category_get_changed_slugs", requirements={"id"="\d+"})
-     * @AclAncestor("oro_catalog_category_update")
-     */
+    #[Route(
+        path: '/get-changed-urls/{id}',
+        name: 'oro_catalog_category_get_changed_slugs',
+        requirements: ['id' => '\d+']
+    )]
+    #[AclAncestor('oro_catalog_category_update')]
     public function getChangedSlugsAction(Category $category): JsonResponse
     {
         return new JsonResponse(

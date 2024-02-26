@@ -11,30 +11,18 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Represents entity for Fixed Product shipping method integration settings.
- *
- * @ORM\Entity
  */
+#[ORM\Entity]
 class FixedProductSettings extends Transport
 {
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_fixed_product_transp_label",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    private $labels;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_fixed_product_transp_label')]
+    #[ORM\JoinColumn(name: 'transport_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    private ?Collection $labels = null;
     private ?ParameterBag $settings = null;
 
     public function __construct()
@@ -47,11 +35,6 @@ class FixedProductSettings extends Transport
         return $this->labels;
     }
 
-    /**
-     * @param LocalizedFallbackValue $label
-     *
-     * @return FixedProductSettings
-     */
     public function addLabel(LocalizedFallbackValue $label): self
     {
         if (!$this->labels->contains($label)) {
@@ -61,11 +44,6 @@ class FixedProductSettings extends Transport
         return $this;
     }
 
-    /**
-     * @param LocalizedFallbackValue $label
-     *
-     * @return FixedProductSettings
-     */
     public function removeLabel(LocalizedFallbackValue $label): self
     {
         if ($this->labels->contains($label)) {

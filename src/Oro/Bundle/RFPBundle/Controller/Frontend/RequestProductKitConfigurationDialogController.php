@@ -3,13 +3,13 @@
 namespace Oro\Bundle\RFPBundle\Controller\Frontend;
 
 use Oro\Bundle\FormBundle\Utils\CsrfTokenUtils;
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\RFPBundle\Entity\Request as RequestEntity;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductKitConfigurationType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,16 +21,10 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class RequestProductKitConfigurationDialogController extends AbstractController
 {
-    /**
-     * @CsrfProtection()
-     * @Route(
-     *      "/",
-     *      name="oro_rfp_frontend_request_product_kit_configuration",
-     *      methods={"POST"}
-     * )
-     * @AclAncestor("oro_rfp_frontend_request_create")
-     * @Layout()
-     */
+    #[Route(path: '/', name: 'oro_rfp_frontend_request_product_kit_configuration', methods: ['POST'])]
+    #[CsrfProtection]
+    #[Layout]
+    #[AclAncestor('oro_rfp_frontend_request_create')]
     public function __invoke(Request $request): Response|array
     {
         $isWidgetInit = $request->get('_widgetInit') === '1';

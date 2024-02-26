@@ -6,7 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Form\Type\ChannelType;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResultInterface;
 use Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidator;
@@ -26,14 +26,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class AjaxUPSController extends AbstractController
 {
     /**
-     * @Route("/get-shipping-services-by-country/{code}",
-     *      name="oro_ups_country_shipping_services",
-     *      requirements={"code"="^[A-Z]{2}$"},
-     *      methods={"GET"})
-     * @ParamConverter("country", options={"id" = "code"})
      * @param Country $country
      * @return JsonResponse
      */
+    #[Route(
+        path: '/get-shipping-services-by-country/{code}',
+        name: 'oro_ups_country_shipping_services',
+        requirements: ['code' => '^[A-Z]{2}$'],
+        methods: ['GET']
+    )]
+    #[ParamConverter('country', options: ['id' => 'code'])]
     public function getShippingServicesByCountryAction(Country $country)
     {
         /** @var ShippingServiceRepository $repository */
@@ -49,15 +51,15 @@ class AjaxUPSController extends AbstractController
     }
 
     /**
-     * @Route("/validate-connection/{channelId}/", name="oro_ups_validate_connection", methods={"POST"})
-     * @ParamConverter("channel", class="Oro\Bundle\IntegrationBundle\Entity\Channel", options={"id" = "channelId"})
-     * @CsrfProtection()
      *
      * @param Request      $request
      * @param Channel|null $channel
      *
      * @return JsonResponse
      */
+    #[Route(path: '/validate-connection/{channelId}/', name: 'oro_ups_validate_connection', methods: ['POST'])]
+    #[ParamConverter('channel', class: Channel::class, options: ['id' => 'channelId'])]
+    #[CsrfProtection()]
     public function validateConnectionAction(Request $request, Channel $channel = null)
     {
         if (!$channel) {

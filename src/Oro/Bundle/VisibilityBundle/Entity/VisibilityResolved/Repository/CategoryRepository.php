@@ -72,7 +72,7 @@ class CategoryRepository extends ServiceEntityRepository
         $qb->select('category.id')
             ->from(Category::class, 'category')
             ->leftJoin(
-                'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved',
+                CategoryVisibilityResolved::class,
                 'cvr',
                 Join::WITH,
                 $qb->expr()->eq($this->getRootAlias($qb), 'cvr.category')

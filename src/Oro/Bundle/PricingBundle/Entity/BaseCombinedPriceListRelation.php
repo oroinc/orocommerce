@@ -2,61 +2,41 @@
 
 namespace Oro\Bundle\PricingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * Base class of price list relations.
- *
- * @ORM\MappedSuperclass
  */
+#[ORM\MappedSuperclass]
 class BaseCombinedPriceListRelation implements WebsiteAwareInterface
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var CombinedPriceList
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\CombinedPriceList")
-     * @ORM\JoinColumn(name="combined_price_list_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     */
-    protected $priceList;
+    #[ORM\ManyToOne(targetEntity: CombinedPriceList::class)]
+    #[ORM\JoinColumn(name: 'combined_price_list_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?CombinedPriceList $priceList = null;
 
-    /**
-     * @var Website
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     */
-    protected $website;
+    #[ORM\ManyToOne(targetEntity: Website::class)]
+    #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Website $website = null;
 
-    /**
-     * @var CombinedPriceList
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\CombinedPriceList")
-     * @ORM\JoinColumn(
-     *     name="full_combined_price_list_id",
-     *     referencedColumnName="id",
-     *     onDelete="CASCADE",
-     *     nullable=false
-     * )
-     */
-    protected $fullChainPriceList;
+    #[ORM\ManyToOne(targetEntity: CombinedPriceList::class)]
+    #[ORM\JoinColumn(
+        name: 'full_combined_price_list_id',
+        referencedColumnName: 'id',
+        nullable: false,
+        onDelete: 'CASCADE'
+    )]
+    protected ?CombinedPriceList $fullChainPriceList = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="version", type="integer", nullable=true)
-     */
-    protected $version;
+    #[ORM\Column(name: 'version', type: Types::INTEGER, nullable: true)]
+    protected ?int $version = null;
 
     /**
      * @return CombinedPriceList

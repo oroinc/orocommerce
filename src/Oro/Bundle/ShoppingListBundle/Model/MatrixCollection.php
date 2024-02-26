@@ -13,9 +13,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 class MatrixCollection
 {
     /**
-     * @Assert\Valid
      * @var array|MatrixCollectionRow[]
      */
+    #[Assert\Valid]
     public $rows = [];
 
     /**

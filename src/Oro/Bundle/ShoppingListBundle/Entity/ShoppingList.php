@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroShoppingListBundle_Entity_ShoppingList;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -15,14 +16,15 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerAwareTrait;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteBasedCurrencyAwareInterface;
@@ -31,50 +33,36 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 /**
  * Shopping List entity
  *
- * @ORM\Table(
- *      name="oro_shopping_list",
- *      indexes={
- *          @ORM\Index(name="oro_shop_lst_created_at_idx", columns={"created_at"})
- *      }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository")
- * @Config(
- *      routeName="oro_shopping_list_index",
- *      routeView="oro_shopping_list_view",
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-shopping-cart",
- *              "contact_information"={
- *                  "email"={
- *                      {"fieldName"="contactInformation"}
- *                  }
- *              }
- *          },
- *          "ownership"={
- *              "owner_type"="USER",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="user_owner_id",
- *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="customerUser",
- *              "frontend_owner_column_name"="customer_user_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="shopping"
- *          }
- *      }
- * )
- * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @method ArrayCollection|CustomerVisitor[] getVisitors()
  * @mixin OroShoppingListBundle_Entity_ShoppingList
  */
+#[ORM\Entity(repositoryClass: ShoppingListRepository::class)]
+#[ORM\Table(name: 'oro_shopping_list')]
+#[ORM\Index(columns: ['created_at'], name: 'oro_shop_lst_created_at_idx')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    routeName: 'oro_shopping_list_index',
+    routeView: 'oro_shopping_list_view',
+    defaultValues: [
+        'entity' => [
+            'icon' => 'fa-shopping-cart',
+            'contact_information' => ['email' => [['fieldName' => 'contactInformation']]]
+        ],
+        'ownership' => [
+            'owner_type' => 'USER',
+            'owner_field_name' => 'owner',
+            'owner_column_name' => 'user_owner_id',
+            'frontend_owner_type' => 'FRONTEND_USER',
+            'frontend_owner_field_name' => 'customerUser',
+            'frontend_owner_column_name' => 'customer_user_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id'
+        ],
+        'dataaudit' => ['auditable' => true],
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'shopping']
+    ]
+)]
 class ShoppingList implements
     OrganizationAwareInterface,
     LineItemsNotPricedAwareInterface,
@@ -91,70 +79,30 @@ class ShoppingList implements
     use UserAwareTrait;
     use ExtendEntityTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\Column(name: 'label', type: Types::STRING, length: 255)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $label = null;
+
+    #[ORM\Column(name: 'notes', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $notes = null;
+
+    #[ORM\ManyToOne(targetEntity: Website::class)]
+    #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Website $website = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="label", type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $label;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="notes", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $notes;
-
-    /**
-     * @var Website
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $website;
-
-    /**
-     * @var Collection|LineItem[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\LineItem",
-     *      mappedBy="shoppingList",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\OrderBy({"id" = "ASC"})
+     * @var Collection<int, LineItem>
      **/
-    protected $lineItems;
+    #[ORM\OneToMany(mappedBy: 'shoppingList', targetEntity: LineItem::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\OrderBy(['id' => Criteria::ASC])]
+    protected ?Collection $lineItems = null;
 
     /**
      * @var bool
@@ -162,72 +110,41 @@ class ShoppingList implements
     protected $current = false;
 
     /**
-     * @var Collection|ShoppingListTotal[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal",
-     *      mappedBy="shoppingList",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
+     * @var Collection<int, ShoppingListTotal>
      **/
-    protected $totals;
+    #[ORM\OneToMany(
+        mappedBy: 'shoppingList',
+        targetEntity: ShoppingListTotal::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    protected ?Collection $totals = null;
 
     /**
-     * @var CustomerUser
-     *
      * Overrides $customerUser property defined in {@see AuditableFrontendCustomerUserAwareTrait} to disable cascade
      * persist.
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
-     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
-    protected $customerUser;
+    #[ORM\ManyToOne(targetEntity: CustomerUser::class)]
+    #[ORM\JoinColumn(name: 'customer_user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?CustomerUser $customerUser = null;
 
     /**
-     * @var Customer
-     *
      * Overrides $customer property defined in {@see AuditableFrontendCustomerAwareTrait} to disable cascade persist.
-     *
-     * @ORM\ManyToOne(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer"
-     * )
-     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
-    protected $customer;
+    #[ORM\ManyToOne(targetEntity: Customer::class)]
+    #[ORM\JoinColumn(name: 'customer_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Customer $customer = null;
 
     /**
      * @var Subtotal
      */
     protected $subtotal;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", length=3)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $currency;
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $currency = null;
 
 
     /**
@@ -421,9 +338,8 @@ class ShoppingList implements
 
     /**
      * Pre persist event handler
-     *
-     * @ORM\PrePersist
      */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -432,9 +348,8 @@ class ShoppingList implements
 
     /**
      * Pre update event handler
-     *
-     * @ORM\PreUpdate
      */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));

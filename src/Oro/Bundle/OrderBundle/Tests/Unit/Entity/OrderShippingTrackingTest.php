@@ -13,7 +13,7 @@ class OrderShippingTrackingTest extends \PHPUnit\Framework\TestCase
     public function testProperties()
     {
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['method', 'test_method'],
             ['number', '1F2B3C4A'],
             ['order', new Order()]

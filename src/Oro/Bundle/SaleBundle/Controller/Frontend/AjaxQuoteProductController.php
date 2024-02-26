@@ -19,12 +19,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class AjaxQuoteProductController extends AbstractController
 {
     /**
-     * @Route(
-     *      "/match-offer/{id}/{demandId}",
-     *      name="oro_sale_quote_frontend_quote_product_match_offer",
-     *      requirements={"id"="\d+", "demandId"="\d+"}
-     * )
-     * @ParamConverter("quoteDemand", class="Oro\Bundle\SaleBundle\Entity\QuoteDemand", options={"id" = "demandId"})
      *
      * @param QuoteProduct $quoteProduct
      * @param QuoteDemand $quoteDemand
@@ -32,6 +26,12 @@ class AjaxQuoteProductController extends AbstractController
      *
      * @return JsonResponse
      */
+    #[Route(
+        path: '/match-offer/{id}/{demandId}',
+        name: 'oro_sale_quote_frontend_quote_product_match_offer',
+        requirements: ['id' => '\d+', 'demandId' => '\d+']
+    )]
+    #[ParamConverter('quoteDemand', class: QuoteDemand::class, options: ['id' => 'demandId'])]
     public function matchQuoteProductOfferAction(QuoteProduct $quoteProduct, QuoteDemand $quoteDemand, Request $request)
     {
         $authorizationChecker = $this->container->get('security.authorization_checker');

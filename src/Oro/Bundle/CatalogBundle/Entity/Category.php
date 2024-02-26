@@ -4,97 +4,37 @@ namespace Oro\Bundle\CatalogBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroCatalogBundle_Entity_Category;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope;
 use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
+use Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototype;
 use Oro\Component\Tree\Entity\TreeTrait;
+use Symfony\Component\Validator\Constraints\All;
 
 /**
  * Represents product category
- * @ORM\Table(
- *      name="oro_catalog_category",
- *      indexes={
- *              @ORM\Index(name="idx_oro_category_default_title", columns={"title"})
- *      }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository")
- * @Gedmo\Tree(type="nested")
- * @ORM\AssociationOverrides({
- *      @ORM\AssociationOverride(
- *          name="slugPrototypes",
- *          joinTable=@ORM\JoinTable(
- *              name="oro_catalog_cat_slug_prototype",
- *              joinColumns={
- *                  @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
- *              },
- *              inverseJoinColumns={
- *                  @ORM\JoinColumn(
- *                      name="localized_value_id",
- *                      referencedColumnName="id",
- *                      onDelete="CASCADE",
- *                      unique=true
- *                  )
- *              }
- *          )
- *      ),
- *     @ORM\AssociationOverride(
- *          name="slugs",
- *          joinTable=@ORM\JoinTable(
- *              name="oro_catalog_cat_slug",
- *              joinColumns={
- *                  @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
- *              },
- *              inverseJoinColumns={
- *                  @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
- *              }
- *          )
- *      )
- * })
- * @Config(
- *      routeName="oro_catalog_category_index",
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-folder"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="",
- *              "category"="catalog"
- *          },
- *          "activity"={
- *              "show_on_page"="\Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="organization",
- *              "owner_column_name"="organization_id"
- *          },
- *          "slug"={
- *              "source"="titles"
- *          }
- *      }
- * )
- * @ORM\HasLifecycleCallbacks()
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyFields)
@@ -119,6 +59,68 @@ use Oro\Component\Tree\Entity\TreeTrait;
  * @method $this cloneLocalizedFallbackValueAssociations()
  * @mixin OroCatalogBundle_Entity_Category
  */
+#[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[ORM\Table(name: 'oro_catalog_category')]
+#[ORM\Index(columns: ['title'], name: 'idx_oro_category_default_title')]
+#[ORM\AssociationOverrides([
+    new ORM\AssociationOverride(
+        name: 'slugPrototypes',
+        joinColumns: [
+            new ORM\JoinColumn(
+                name: 'category_id',
+                referencedColumnName: 'id',
+                onDelete: 'CASCADE'
+            )
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(
+                name: 'localized_value_id',
+                referencedColumnName: 'id',
+                unique: true,
+                onDelete: 'CASCADE'
+            )
+        ],
+        joinTable: new ORM\JoinTable(name: 'oro_catalog_cat_slug_prototype')
+    ),
+    new ORM\AssociationOverride(
+        name: 'slugs',
+        joinColumns: [
+        new ORM\JoinColumn(
+            name: 'category_id',
+            referencedColumnName: 'id',
+            onDelete: 'CASCADE'
+        )
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(
+                name: 'slug_id',
+                referencedColumnName: 'id',
+                unique: true,
+                onDelete: 'CASCADE'
+            )
+        ],
+        joinTable: new ORM\JoinTable(name: 'oro_catalog_cat_slug')
+    )
+])]
+#[ORM\HasLifecycleCallbacks]
+#[Gedmo\Tree(type: 'nested')]
+#[Config(
+    routeName: 'oro_catalog_category_index',
+    defaultValues: [
+        'entity' => ['icon' => 'fa-folder'],
+        'security' => ['type' => 'ACL', 'group_name' => '', 'category' => 'catalog'],
+        'activity' => [
+            'show_on_page' => ActivityScope::UPDATE_PAGE
+        ],
+        'dataaudit' => ['auditable' => true],
+        'ownership' => [
+            'owner_type' => 'ORGANIZATION',
+            'owner_field_name' => 'organization',
+            'owner_column_name' => 'organization_id'
+        ],
+        'slug' => ['source' => 'titles']
+    ]
+)]
 class Category implements
     SluggableInterface,
     DatesAwareInterface,
@@ -137,299 +139,137 @@ class Category implements
     const INDEX_DATA_DELIMITER = '|';
     const FIELD_PARENT_CATEGORY = 'parentCategory';
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=false
-     *          },
-     *          "importexport"={
-     *              "identity"=true,
-     *              "order"=10
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(
+        defaultValues: ['dataaudit' => ['auditable' => false], 'importexport' => ['identity' => true, 'order' => 10]]
+    )]
+    protected ?int $id = null;
 
     /**
-     * @var Collection|CategoryTitle[]
-     *
-     * @ORM\OneToMany(targetEntity="CategoryTitle", mappedBy="category", cascade={"ALL"}, orphanRemoval=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=20,
-     *              "full"=true,
-     *              "fallback_field"="string"
-     *          }
-     *      }
-     * )
+     * @var Collection<int, CategoryTitle>
      */
-    protected $titles;
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: CategoryTitle::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ConfigField(
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['order' => 20, 'full' => true, 'fallback_field' => 'string']
+        ]
+    )]
+    protected ?Collection $titles = null;
+
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'childCategories')]
+    #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[Gedmo\TreeParent]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 30]])]
+    protected ?Category $parentCategory = null;
 
     /**
-     * @var Category
-     *
-     * @Gedmo\TreeParent
-     * @ORM\ManyToOne(targetEntity="Category", inversedBy="childCategories")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=30
-     *          }
-     *      }
-     * )
+     * @var Collection<int, Category>
      */
-    protected $parentCategory;
+    #[ORM\OneToMany(mappedBy: 'parentCategory', targetEntity: Category::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['left' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
+    protected ?Collection $childCategories = null;
 
     /**
-     * @var Collection|Category[]
-     *
-     * @ORM\OneToMany(targetEntity="Category", mappedBy="parentCategory", cascade={"persist", "remove"})
-     * @ORM\OrderBy({"left" = "ASC"})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, CategoryShortDescription>
      */
-    protected $childCategories;
+    #[ORM\OneToMany(
+        mappedBy: 'category',
+        targetEntity: CategoryShortDescription::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 50, 'full' => true, 'fallback_field' => 'text']])]
+    protected ?Collection $shortDescriptions = null;
 
     /**
-     * @var Collection|CategoryShortDescription[]
-     *
-     * @ORM\OneToMany(targetEntity="CategoryShortDescription", mappedBy="category", cascade={"ALL"}, orphanRemoval=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=50,
-     *              "full"=true,
-     *              "fallback_field"="text"
-     *          }
-     *      }
-     * )
+     * @var Collection<int, CategoryLongDescription>
      */
-    protected $shortDescriptions;
+    #[ORM\OneToMany(
+        mappedBy: 'category',
+        targetEntity: CategoryLongDescription::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    #[ConfigField(
+        defaultValues: [
+            'importexport' => ['order' => 60, 'full' => true, 'fallback_field' => 'wysiwyg'],
+            'attachment' => ['acl_protected' => false]
+        ]
+    )]
+    protected ?Collection $longDescriptions = null;
 
-    /**
-     * @var Collection|CategoryLongDescription[]
-     *
-     * @ORM\OneToMany(targetEntity="CategoryLongDescription", mappedBy="category", cascade={"ALL"}, orphanRemoval=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=60,
-     *              "full"=true,
-     *              "fallback_field"="wysiwyg"
-     *          },
-     *          "attachment"={
-     *              "acl_protected"=false
-     *          }
-     *      }
-     * )
-     */
-    protected $longDescriptions;
+    #[ORM\OneToOne(targetEntity: CategoryDefaultProductOptions::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(
+        name: 'default_product_options_id',
+        referencedColumnName: 'id',
+        nullable: true,
+        onDelete: 'SET NULL'
+    )]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?CategoryDefaultProductOptions $defaultProductOptions = null;
 
-    /**
-     * @var CategoryDefaultProductOptions
-     *
-     * @ORM\OneToOne(targetEntity="CategoryDefaultProductOptions", cascade={"persist"})
-     * @ORM\JoinColumn(name="default_product_options_id", nullable=true, referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $defaultProductOptions;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="materialized_path", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $materializedPath;
+    #[ORM\Column(name: 'materialized_path', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?string $materializedPath = null;
 
     /**
      * This is a mirror field for performance reasons only.
      * It mirrors getDefaultTitle()->getString()
      *
-     * @var string
-     *
-     * @ORM\Column(name="title", type="string", length=255, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      },
-     *      mode="hidden"
-     * )
      */
-    protected $denormalizedDefaultTitle;
+    #[ORM\Column(name: 'title', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]], mode: 'hidden')]
+    protected ?string $denormalizedDefaultTitle = null;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
+     * @var Collection<int, LocalizedFallbackValue>
      *
-     * @Symfony\Component\Validator\Constraints\All(
-     *     constraints = {
-     *         @Oro\Bundle\RedirectBundle\Validator\Constraints\UrlSafeSlugPrototype(allowSlashes=true)
-     *     }
-     * )
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     *
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=40,
-     *              "full"=true,
-     *              "fallback_field"="string"
-     *          }
-     *      }
-     * )
      */
-    protected $slugPrototypes;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[All(constraints: [new UrlSafeSlugPrototype(['allowSlashes' => true])])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 40, 'full' => true, 'fallback_field' => 'string']])]
+    protected ?Collection $slugPrototypes = null;
 
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeLeft
-     * @ORM\Column(name="tree_left", type="integer")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $left;
+    #[ORM\Column(name: 'tree_left', type: Types::INTEGER)]
+    #[Gedmo\TreeLeft]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $left = null;
 
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeLevel
-     * @ORM\Column(name="tree_level", type="integer")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $level;
+    #[ORM\Column(name: 'tree_level', type: Types::INTEGER)]
+    #[Gedmo\TreeLevel]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $level = null;
 
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeRight
-     * @ORM\Column(name="tree_right", type="integer")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $right;
+    #[ORM\Column(name: 'tree_right', type: Types::INTEGER)]
+    #[Gedmo\TreeRight]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $right = null;
 
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeRoot
-     * @ORM\Column(name="tree_root", type="integer", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $root;
+    #[ORM\Column(name: 'tree_root', type: Types::INTEGER, nullable: true)]
+    #[Gedmo\TreeRoot]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $root = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(
+        defaultValues: ['entity' => ['label' => 'oro.ui.created_at'], 'importexport' => ['excluded' => true]]
+    )]
+    protected ?\DateTimeInterface $createdAt = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
+    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(
+        defaultValues: ['entity' => ['label' => 'oro.ui.updated_at'], 'importexport' => ['excluded' => true]]
+    )]
+    protected ?\DateTimeInterface $updatedAt = null;
 
-    /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=80
-     *          }
-     *      }
-     * )
-     */
-    protected $organization;
+    #[ORM\ManyToOne(targetEntity: Organization::class)]
+    #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 80]])]
+    protected ?OrganizationInterface $organization = null;
 
     /**
      * Property used by {@see \Gedmo\Tree\Entity\Repository\NestedTreeRepository::__call}
@@ -568,17 +408,14 @@ class Category implements
 
     /**
      * Pre persist event handler
-     *
-     * @ORM\PrePersist
      */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         $this->updateDenormalizedProperties();
     }
 
-    /**
-     * @ORM\PreUpdate
-     */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));

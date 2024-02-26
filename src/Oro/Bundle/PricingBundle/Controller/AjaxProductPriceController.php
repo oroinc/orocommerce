@@ -13,8 +13,8 @@ use Oro\Bundle\PricingBundle\Handler\ProductPriceHandler;
 use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,10 +28,10 @@ use Symfony\Component\Routing\Annotation\Route;
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**
-     * @Route("/get-product-prices-by-customer", name="oro_pricing_price_by_customer", methods={"GET"})
      * @param Request $request
      * @return JsonResponse
      */
+    #[Route(path: '/get-product-prices-by-customer', name: 'oro_pricing_price_by_customer', methods: ['GET'])]
     public function getProductPricesByCustomerAction(Request $request)
     {
         return parent::getProductPricesByCustomer($request);
@@ -40,21 +40,16 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     /**
      * Edit product form
      *
-     * @Route(
-     *     "/update/{priceList}/{id}",
-     *     name="oro_product_price_update_widget",
-     *     requirements={"priceListId"="\d+"}
-     * )
-     * @Template("@OroPricing/ProductPrice/widget/update.html.twig")
-     * @Acl(
-     *      id="oro_pricing_product_price_update",
-     *      type="entity",
-     *      class="Oro\Bundle\PricingBundle\Entity\ProductPrice",
-     *      permission="EDIT"
-     * )
      * @param Request $request
      * @return array|RedirectResponse
      */
+    #[Route(
+        path: '/update/{priceList}/{id}',
+        name: 'oro_product_price_update_widget',
+        requirements: ['priceListId' => '\d+']
+    )]
+    #[Template('@OroPricing/ProductPrice/widget/update.html.twig')]
+    #[Acl(id: 'oro_pricing_product_price_update', type: 'entity', class: ProductPrice::class, permission: 'EDIT')]
     public function updateAction(Request $request)
     {
         $priceList = $this->container->get('doctrine')->getRepository(PriceList::class)
@@ -83,22 +78,17 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route(
-     *     "/delete-product-price/{priceListId}/{productPriceId}",
-     *      name="oro_product_price_delete",
-     *      methods={"DELETE"}
-     * )
-     * @ParamConverter("priceList", class="Oro\Bundle\PricingBundle\Entity\PriceList", options={"id" = "priceListId"})
-     * @Acl(
-     *      id="oro_pricing_product_price_delete",
-     *      type="entity",
-     *      class="Oro\Bundle\PricingBundle\Entity\ProductPrice",
-     *      permission="DELETE"
-     * )
-     * @CsrfProtection()
      *
      * {@inheritdoc}
      */
+    #[Route(
+        path: '/delete-product-price/{priceListId}/{productPriceId}',
+        name: 'oro_product_price_delete',
+        methods: ['DELETE']
+    )]
+    #[ParamConverter('priceList', class: PriceList::class, options: ['id' => 'priceListId'])]
+    #[Acl(id: 'oro_pricing_product_price_delete', type: 'entity', class: ProductPrice::class, permission: 'DELETE')]
+    #[CsrfProtection()]
     public function deleteAction(Request $request, PriceList $priceList, $productPriceId)
     {
         /** @var ProductPriceRepository $priceRepository */

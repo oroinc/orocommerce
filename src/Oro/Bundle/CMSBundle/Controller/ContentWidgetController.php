@@ -8,8 +8,8 @@ use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Form\Handler\ContentWidgetHandler;
 use Oro\Bundle\CMSBundle\Form\Type\ContentWidgetType;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -23,11 +23,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ContentWidgetController extends AbstractController
 {
-    /**
-     * @Route("/", name="oro_cms_content_widget_index")
-     * @Template
-     * @AclAncestor("oro_cms_content_widget_view")
-     */
+    #[Route(path: '/', name: 'oro_cms_content_widget_index')]
+    #[Template]
+    #[AclAncestor('oro_cms_content_widget_view')]
     public function indexAction(): array
     {
         return [
@@ -35,16 +33,9 @@ class ContentWidgetController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/view/{id}", name="oro_cms_content_widget_view", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_cms_content_widget_view",
-     *      type="entity",
-     *      class="Oro\Bundle\CMSBundle\Entity\ContentWidget",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/view/{id}', name: 'oro_cms_content_widget_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_cms_content_widget_view', type: 'entity', class: ContentWidget::class, permission: 'VIEW')]
     public function viewAction(ContentWidget $contentWidget): array
     {
         $contentWidgetType = $this->container->get(ContentWidgetTypeRegistry::class)
@@ -77,35 +68,24 @@ class ContentWidgetController extends AbstractController
     }
 
     /**
-     * @Route("/create", name="oro_cms_content_widget_create")
-     * @Template("@OroCMS/ContentWidget/update.html.twig")
-     * @Acl(
-     *      id="oro_cms_content_widget_create",
-     *      type="entity",
-     *      class="Oro\Bundle\CMSBundle\Entity\ContentWidget",
-     *      permission="CREATE"
-     * )
      *
      * @return array|RedirectResponse
      */
+    #[Route(path: '/create', name: 'oro_cms_content_widget_create')]
+    #[Template('@OroCMS/ContentWidget/update.html.twig')]
+    #[Acl(id: 'oro_cms_content_widget_create', type: 'entity', class: ContentWidget::class, permission: 'CREATE')]
     public function createAction()
     {
         return $this->update(new ContentWidget());
     }
 
     /**
-     * @Route("/update/{id}", name="oro_cms_content_widget_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_cms_content_widget_update",
-     *      type="entity",
-     *      class="Oro\Bundle\CMSBundle\Entity\ContentWidget",
-     *      permission="EDIT"
-     * )
-     *
      * @param ContentWidget $contentWidget
      * @return array|RedirectResponse
      */
+    #[Route(path: '/update/{id}', name: 'oro_cms_content_widget_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_cms_content_widget_update', type: 'entity', class: ContentWidget::class, permission: 'EDIT')]
     public function updateAction(ContentWidget $contentWidget)
     {
         return $this->update($contentWidget);

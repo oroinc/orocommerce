@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\CMSBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\FallbackTrait;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -17,129 +18,63 @@ use Oro\Component\Layout\ContextItemInterface;
 
 /**
  * Holds content widget information.
- *
- * @ORM\Entity()
- * @ORM\Table(
- *      name="oro_cms_content_widget",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(
- *              name="uidx_oro_cms_content_widget",
- *              columns={"organization_id","name"}
- *          )
- *      }
- * )
- * @Config(
- *      routeName="oro_cms_content_widget_index",
- *      routeView="oro_cms_content_widget_view",
- *      routeUpdate="oro_cms_content_widget_update",
- *      defaultValues={
- *          "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="organization",
- *              "owner_column_name"="organization_id"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          }
- *     }
- * )
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_cms_content_widget')]
+#[ORM\UniqueConstraint(name: 'uidx_oro_cms_content_widget', columns: ['organization_id', 'name'])]
+#[Config(
+    routeName: 'oro_cms_content_widget_index',
+    routeView: 'oro_cms_content_widget_view',
+    routeUpdate: 'oro_cms_content_widget_update',
+    defaultValues: [
+        'ownership' => [
+            'owner_type' => 'ORGANIZATION',
+            'owner_field_name' => 'organization',
+            'owner_column_name' => 'organization_id'
+        ],
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'dataaudit' => ['auditable' => true]
+    ]
+)]
 class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, ContextItemInterface
 {
     use DatesAwareTrait;
     use OrganizationAwareTrait;
     use FallbackTrait;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?string $name = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?string $description = null;
 
-    /**
-     * @ORM\Column(name="widget_type", type="string", length=255, nullable=false)
-     */
+    #[ORM\Column(name: 'widget_type', type: Types::STRING, length: 255, nullable: false)]
     protected ?string $widgetType = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?string $layout = null;
 
-    /**
-     * @ORM\Column(type = "array")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\Column(type: Types::ARRAY)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected array $settings = [];
 
     /**
      * @var Collection<LocalizedFallbackValue>
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_cms_content_widget_label",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="content_widget_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
-    protected Collection $labels;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_cms_content_widget_label')]
+    #[ORM\JoinColumn(name: 'content_widget_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $labels = null;
 
     public function __construct()
     {

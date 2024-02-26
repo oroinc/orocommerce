@@ -5,25 +5,23 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAwareInterface;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 
 /**
- * @ORM\Table(name="oro_price_list_to_customer", uniqueConstraints={
- *     @ORM\UniqueConstraint(
- *          name="oro_price_list_to_customer_unique_key",
- *          columns={"customer_id", "price_list_id", "website_id"}
- *     )
- * })
- * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository")
- */
+* Entity that represents Price List To Customer
+*
+*/
+#[ORM\Entity(repositoryClass: PriceListToCustomerRepository::class)]
+#[ORM\Table(name: 'oro_price_list_to_customer')]
+#[ORM\UniqueConstraint(
+    name: 'oro_price_list_to_customer_unique_key',
+    columns: ['customer_id', 'price_list_id', 'website_id']
+)]
 class PriceListToCustomer extends BasePriceListRelation implements CustomerAwareInterface
 {
-    /**
-     * @var Customer
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer")
-     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     */
-    protected $customer;
+    #[ORM\ManyToOne(targetEntity: Customer::class)]
+    #[ORM\JoinColumn(name: 'customer_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Customer $customer = null;
 
     /**
      * @return Customer

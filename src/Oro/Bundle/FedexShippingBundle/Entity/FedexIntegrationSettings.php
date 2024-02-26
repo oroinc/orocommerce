@@ -4,6 +4,7 @@ namespace Oro\Bundle\FedexShippingBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -11,9 +12,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * FedexIntegrationSettings ORM entity.
- *
- * @ORM\Entity
  */
+#[ORM\Entity]
 class FedexIntegrationSettings extends Transport
 {
     const PICKUP_TYPE_REGULAR = 'REGULAR_PICKUP';
@@ -28,107 +28,50 @@ class FedexIntegrationSettings extends Transport
     const DIMENSION_CM = 'CM';
     const DIMENSION_IN = 'IN';
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="fedex_test_mode", type="boolean", options={"default"=false})
-     */
-    private $fedexTestMode;
+    #[ORM\Column(name: 'fedex_test_mode', type: Types::BOOLEAN, options: ['default' => false])]
+    private ?bool $fedexTestMode = null;
+
+    #[ORM\Column(name: 'fedex_key', type: Types::STRING, length: 100)]
+    private ?string $key = null;
+
+    #[ORM\Column(name: 'fedex_password', type: Types::STRING, length: 100)]
+    private ?string $password = null;
+
+    #[ORM\Column(name: 'fedex_account_number', type: Types::STRING, length: 100)]
+    private ?string $accountNumber = null;
+
+    #[ORM\Column(name: 'fedex_meter_number', type: Types::STRING, length: 100)]
+    private ?string $meterNumber = null;
+
+    #[ORM\Column(name: 'fedex_pickup_type', type: Types::STRING, length: 100)]
+    private ?string $pickupType = null;
+
+    #[ORM\Column(name: 'fedex_unit_of_weight', type: Types::STRING, length: 3)]
+    private ?string $unitOfWeight = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="fedex_key", type="string", length=100)
+     * @var Collection<int, FedexShippingService>
      */
-    private $key;
+    #[ORM\ManyToMany(targetEntity: FedexShippingService::class, fetch: 'EAGER')]
+    #[ORM\JoinTable(name: 'oro_fedex_transp_ship_service')]
+    #[ORM\JoinColumn(name: 'transport_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'ship_service_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private ?Collection $shippingServices = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="fedex_password", type="string", length=100)
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    private $password;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_fedex_transport_label')]
+    #[ORM\JoinColumn(name: 'transport_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    private ?Collection $labels = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="fedex_account_number", type="string", length=100)
-     */
-    private $accountNumber;
+    #[ORM\Column(name: 'fedex_invalidate_cache_at', type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $invalidateCacheAt = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="fedex_meter_number", type="string", length=100)
-     */
-    private $meterNumber;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="fedex_pickup_type", type="string", length=100)
-     */
-    private $pickupType;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="fedex_unit_of_weight", type="string", length=3)
-     */
-    private $unitOfWeight;
-
-    /**
-     * @var Collection|FedexShippingService[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="FedexShippingService",
-     *      fetch="EAGER"
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_fedex_transp_ship_service",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="ship_service_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
-     */
-    private $shippingServices;
-
-    /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_fedex_transport_label",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     */
-    private $labels;
-
-    /**
-     * @var \DateTime|null $invalidateCacheAt
-     *
-     * @ORM\Column(name="fedex_invalidate_cache_at", type="datetime")
-     */
-    private $invalidateCacheAt;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="fedex_ignore_package_dimension", type="boolean", options={"default"=false})
-     */
-    private $ignorePackageDimensions = false;
+    #[ORM\Column(name: 'fedex_ignore_package_dimension', type: Types::BOOLEAN, options: ['default' => false])]
+    private ?bool $ignorePackageDimensions = false;
 
     public function __construct()
     {

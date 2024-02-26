@@ -11,8 +11,8 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormView;
@@ -31,11 +31,11 @@ class AjaxQuoteController extends AbstractController
     /**
      * Get order related data
      *
-     * @Route("/related-data", name="oro_quote_related_data", methods={"GET"})
-     * @AclAncestor("oro_quote_update")
      *
      * @return JsonResponse
      */
+    #[Route(path: '/related-data', name: 'oro_quote_related_data', methods: ['GET'])]
+    #[AclAncestor('oro_quote_update')]
     public function getRelatedDataAction()
     {
         $quote = new Quote();
@@ -73,15 +73,14 @@ class AjaxQuoteController extends AbstractController
     }
 
     /**
-     * @Route("/entry-point/{id}", name="oro_quote_entry_point", defaults={"id" = 0}, methods={"POST"})
-     * @AclAncestor("oro_quote_update")
-     * @CsrfProtection()
      *
      * @param Request    $request
      * @param Quote|null $quote
-     *
      * @return JsonResponse
      */
+    #[Route(path: '/entry-point/{id}', name: 'oro_quote_entry_point', defaults: ['id' => 0], methods: ['POST'])]
+    #[AclAncestor('oro_quote_update')]
+    #[CsrfProtection()]
     public function entryPointAction(Request $request, Quote $quote = null)
     {
         if (!$quote) {
