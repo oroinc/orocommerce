@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\CMSBundle\Entity;
 
-use Doctrine\DBAL\Types\Types;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
@@ -30,10 +30,10 @@ use Oro\Component\Layout\ContextItemInterface;
         'ownership' => [
             'owner_type' => 'ORGANIZATION',
             'owner_field_name' => 'organization',
-            'owner_column_name' => 'organization_id'
+            'owner_column_name' => 'organization_id',
         ],
         'security' => ['type' => 'ACL', 'group_name' => ''],
-        'dataaudit' => ['auditable' => true]
+        'dataaudit' => ['auditable' => true],
     ]
 )]
 class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, ContextItemInterface
