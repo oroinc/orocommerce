@@ -7,7 +7,7 @@
     overflow: hidden;
     white-space: nowrap;
     min-height: $promo-slider-min-height;
-    margin: 0;
+    margin: $promo-slider-margin;
 
     &__item {
         position: relative;

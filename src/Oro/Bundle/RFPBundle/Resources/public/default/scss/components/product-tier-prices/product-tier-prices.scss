@@ -12,18 +12,3 @@
         }
     }
 }
-
-input {
-    &:hover,
-    &:focus {
-        + .product-tier-prices {
-            border-color: $input-border-color-focus-state;
-        }
-    }
-
-    &.error {
-        + .product-tier-prices {
-            border-color: $input-border-color-error-state;
-        }
-    }
-}

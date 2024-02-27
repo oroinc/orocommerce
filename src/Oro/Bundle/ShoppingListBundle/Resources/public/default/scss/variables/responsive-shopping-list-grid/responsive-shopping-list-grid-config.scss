@@ -1,6 +1,7 @@
 /* @theme: default; */
 $responsive-shopping-list-layout-background: get-color('neutral', 'grey1') !default;
 $responsive-shopping-cell-desktop-offset: 23px !default;
+$responsive-shopping-action-cell-desktop-offset: spacing('sm') !default;
 $responsive-shopping-sub-cell-desktop-offset: 18px !default;
 // Manually calculated a half of cells' height
 $responsive-shopping-cell-half-height: 18px !default;

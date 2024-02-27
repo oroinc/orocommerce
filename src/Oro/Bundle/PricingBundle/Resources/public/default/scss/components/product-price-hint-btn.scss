@@ -2,8 +2,7 @@
 
 .product-price-hint-btn {
     min-height: initial;
-    margin-top: -#{spacing('xs')};
-    padding-block: spacing('xs');
+    padding-block: 0;
 
     &:hover {
         text-decoration: $product-price-hint-btn-text-decoration;

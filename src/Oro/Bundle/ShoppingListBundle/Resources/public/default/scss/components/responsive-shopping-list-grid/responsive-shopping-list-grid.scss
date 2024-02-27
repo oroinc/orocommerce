@@ -118,8 +118,7 @@
         .grid-body-cell-quantity:not(.editable),
         .grid-body-cell-unit,
         .grid-body-cell-price,
-        .grid-body-cell-subtotal,
-        .action-cell {
+        .grid-body-cell-subtotal {
             padding-top: $responsive-shopping-cell-desktop-offset;
         }
 

@@ -16,6 +16,10 @@
     &__container-wrapper {
         margin-bottom: spacing('sm');
 
+        .dropdown-item {
+            align-items: center;
+        }
+
         @include clearfix();
     }
 

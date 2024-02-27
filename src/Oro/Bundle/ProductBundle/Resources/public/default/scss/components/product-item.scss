@@ -299,6 +299,13 @@
             }
         }
     }
+
+    &__number {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: spacing('sm');
+    }
 }
 
 @include breakpoint('desktop-small') {

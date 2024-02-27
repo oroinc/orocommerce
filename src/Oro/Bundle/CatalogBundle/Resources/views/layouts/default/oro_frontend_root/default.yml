@@ -2,10 +2,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '@OroCatalog/layouts/default/oro_frontend_root/default.html.twig'
-        - '@appendOption':
-            id: page_main
-            optionName: attr.class
-            optionValue: ' offset-none'
         - '@addTree':
             items:
                 featured_categories_container:

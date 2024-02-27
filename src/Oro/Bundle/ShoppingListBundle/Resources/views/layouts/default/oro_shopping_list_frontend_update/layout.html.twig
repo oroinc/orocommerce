@@ -24,8 +24,9 @@
 {% endblock %}
 
 {% block _shopping_list_notes_add_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': 'btn btn--no-padding',
+        '~class': 'btn btn--outlined btn--text btn--no-padding',
         'type': 'button',
         'data-role': 'add-notes'
     }) %}
@@ -37,7 +38,7 @@
     {% endif %}
 
     <button {{ block('block_attributes') }}>
-        <span class="fa-file-text-o" aria-hidden="true"></span>
+        {{ renderIcon.icon({name: 'file-text', extraClass: 'theme-icon--small'}) }}
         {{ 'oro.frontend.shoppinglist.note.add_entire_note'|trans }}
     </button>
 {% endblock %}

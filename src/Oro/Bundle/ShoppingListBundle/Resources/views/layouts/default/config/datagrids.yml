@@ -194,7 +194,7 @@ datagrids:
                     - >
                         UPPER(
                             CASE WHEN product.type = 'kit'
-                            THEN 
+                            THEN
                                 CONCAT_WS(
                                     '',
                                     '',
@@ -524,7 +524,7 @@ datagrids:
                     namespace: shopping_list
             move:
                 type: moveproducts
-                icon: level
+                icon: move
                 label: oro.shoppinglist.mass_actions.move_line_items.label
                 entity_name: Oro\Bundle\ShoppingListBundle\Entity\LineItem
                 acl_resource:  oro_shopping_list_frontend_update

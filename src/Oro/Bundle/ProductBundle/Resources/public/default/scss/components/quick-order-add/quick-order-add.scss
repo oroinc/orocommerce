@@ -67,9 +67,7 @@
 
     &__remove-row {
         position: absolute;
-        right: -28px;
-
-        @include fa-icon($fa-var-close, before, true);
+        right: -44px;
     }
 
     &__fields {

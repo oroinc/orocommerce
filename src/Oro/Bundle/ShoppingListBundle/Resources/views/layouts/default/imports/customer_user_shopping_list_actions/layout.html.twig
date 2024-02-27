@@ -26,6 +26,7 @@
 {% endblock %}
 
 {%- block __customer_user_shopping_list_actions__shopping_list_action_list_widget -%}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {%- for button in buttons -%}
         {%- set options = oro_action_frontend_options(button) -%}
         {%- set buttonOptions = options.options -%}
@@ -37,13 +38,15 @@
             data-operation-url="{{ buttonOptions.url }}"
             data-options="{{ buttonOptions|json_encode }}"
             data-page-component-module="oroaction/js/app/components/button-component"
-        ><span class="icon {{ button.icon }}" aria-hidden="true"></span>
+        >
+            {{ renderIcon.icon({name: button.icon, extraClass: 'theme-icon--small'}) }}
             {{- button.label|trans -}}
         </button>
     {%- endfor -%}
 {%- endblock -%}
 
 {% block __customer_user_shopping_list_actions__shopping_list_action_assign_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     <button
         type="button"
         class="action mode-icon-text dropdown-item"
@@ -55,8 +58,8 @@
             dialogTitle: 'oro.frontend.shoppinglist.view.choose_assign_user.label'|trans({'%label%': shoppingList.label}),
             shoppingListOwnerChangeUrl: path('oro_api_set_shopping_list_owner', {id : shoppingList.id})
         }|json_encode }}">
+        {{ renderIcon.icon({name: 'user', extraClass: 'theme-icon--small'}) }}
         {%- apply spaceless -%}
-            <span class="icon fa-user" aria-hidden="true"></span>
             {{ 'oro.frontend.shoppinglist.btn.assign.label'|trans }}
         {%- endapply -%}
     </button>

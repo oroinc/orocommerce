@@ -4,6 +4,5 @@ layout:
             themes: 'inventory_status.html.twig'
         - '@add':
             id: __product_inventory_status_label
-            parentId: __product_specification
+            parentId: __product_sku_container
             blockType: container
-            prepend: true

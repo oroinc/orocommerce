@@ -40,8 +40,6 @@ layout:
                         onLoadingCssClass: 'loading-blur'
                 __header_title_container:
                     blockType: container
-                __header_icon:
-                    blockType: block
                 __header_title_text:
                     blockType: shopping_list_awere_block
                     options:
@@ -117,7 +115,6 @@ layout:
                         __header:
                             __header_title_wrapper:
                                 __header_title_container:
-                                    __header_icon: ~
                                     __header_title_text: ~
                                     __header_status: ~
                             __header_owner_wrapper:

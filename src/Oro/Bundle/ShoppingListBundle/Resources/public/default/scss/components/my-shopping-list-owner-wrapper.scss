@@ -37,4 +37,8 @@
     &.show-separator .separator {
         display: inline-flex;
     }
+
+    .dropdown-item {
+        align-items: center;
+    }
 }

@@ -60,6 +60,7 @@
 
     &__notes-container {
         display: flex;
+        align-items: center;
         margin-top: $grid-line-clip-none-offset;
         line-height: $shopping-lists-notes-line-height;
     }
