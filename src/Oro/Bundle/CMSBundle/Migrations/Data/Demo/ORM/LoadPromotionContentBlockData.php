@@ -40,68 +40,57 @@ class LoadPromotionContentBlockData extends AbstractFixture implements
     {
         $data = Yaml::parseFile($this->getFilePathsFromLocator($this->getDataSource()));
 
-        foreach ($this->getOrganizations($manager) as $organization) {
-            $systemConfigBlock = null;
-            foreach ($data as $alias => $properties) {
-                $blockAlias = sprintf('%s-%d', $alias, $organization->getId());
-                $block = $this->findContentBlock($blockAlias, $manager);
+        $organization = $manager->getRepository(Organization::class)->getFirst();
+        $systemConfigBlock = null;
+        foreach ($data as $blockAlias => $properties) {
+            $block = $this->findContentBlock($blockAlias, $manager);
 
-                if (!$block) {
-                    $title = new LocalizedFallbackValue();
-                    $title->setString($properties['title'] ?? 'Promotional Content');
-                    $manager->persist($title);
+            if (!$block) {
+                $title = new LocalizedFallbackValue();
+                $title->setString($properties['title'] ?? 'Promotional Content');
+                $manager->persist($title);
 
-                    $variant = new TextContentVariant();
-                    $variant->setDefault($properties['variant']['default'] ?? false);
-                    $variant->setContent($properties['variant']['content']);
-                    $manager->persist($variant);
+                $variant = new TextContentVariant();
+                $variant->setDefault($properties['variant']['default'] ?? false);
+                $variant->setContent($properties['variant']['content']);
+                $manager->persist($variant);
 
-                    $block = new ContentBlock();
-                    $block->setOrganization($organization);
-                    $block->setOwner($organization->getBusinessUnits()->first());
-                    $block->setAlias($blockAlias);
-                    $block->addTitle($title);
-                    $block->addContentVariant($variant);
-                    $manager->persist($block);
-                }
-
-                if ($properties['useForSystemConfig'] ?? false) {
-                    $systemConfigBlock = $block;
-                }
-
-                if (!$this->hasReference($blockAlias)) {
-                    $this->setReference($blockAlias, $block);
-                }
+                $block = new ContentBlock();
+                $block->setOrganization($organization);
+                $block->setOwner($organization->getBusinessUnits()->first());
+                $block->setAlias($blockAlias);
+                $block->addTitle($title);
+                $block->addContentVariant($variant);
+                $manager->persist($block);
             }
 
-            if ($systemConfigBlock) {
-                $manager->flush();
-                /** @var ConfigManager $configManager */
-                $configManager = $this->container->get('oro_config.organization');
+            if ($properties['useForSystemConfig'] ?? false) {
+                $systemConfigBlock = $block;
+            }
 
-                $configKey = Configuration::getConfigKeyByName(Configuration::PROMOTIONAL_CONTENT);
-                $value = $configManager->get($configKey, scopeIdentifier: $organization);
-                if (!$value) {
-                    $configManager->set($configKey, $systemConfigBlock->getId(), $organization);
-                    $configManager->flush($organization);
-                }
+            if (!$this->hasReference($blockAlias)) {
+                $this->setReference($blockAlias, $block);
             }
         }
 
         $manager->flush();
+
+        if ($systemConfigBlock) {
+            /** @var ConfigManager $configManager */
+            $configManager = $this->container->get('oro_config.global');
+
+            $configKey = Configuration::getConfigKeyByName(Configuration::PROMOTIONAL_CONTENT);
+            $value = $configManager->get($configKey);
+            if (!$value) {
+                $configManager->set($configKey, $systemConfigBlock->getId());
+                $configManager->flush();
+            }
+        }
     }
 
     protected function getDataSource(): string
     {
         return '@OroCMSBundle/Migrations/Data/Demo/ORM/data/promotional_content.yml';
-    }
-
-    /**
-     * @return Organization[]
-     */
-    protected function getOrganizations(ObjectManager $manager): array
-    {
-        return [$manager->getRepository(Organization::class)->getFirst()];
     }
 
     protected function getFilePathsFromLocator(string $path): string
