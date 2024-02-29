@@ -16,7 +16,7 @@ The current file describes significant changes in the code that may affect the u
 
 ## Changes in the Сommerce package versions
 
-- [6.0.0-BETA](#600-beta-2024-01-08)
+- [6.0.0-RC](#600-rc-2024-02-29)
 - [5.1.0](#510-2023-03-31)
 - [5.0.0](#500-2022-01-26)
 - [4.2.3](#423)
@@ -34,75 +34,8 @@ The current file describes significant changes in the code that may affect the u
 - [1.2.0](#120-2017-06-01)
 - [1.1.0](#110-2017-03-31)
 
-
-# UNRELEASED
-
-### Added
-
-#### ProductBundle
-* Added `\Oro\Bundle\ProductBundle\Form\Type\ProductUnitChoiceType` form type for selecting a product unit from the available product units of a specified product.
-
-#### RFPBundle
-* Added the ability to create on a storefront a request for quote with product kits.
-* Added the ability to edit in a back-office a request for quote with product kits. 
-* Added `\Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem` to represent product kit item line item in `\Oro\Bundle\RFPBundle\Entity\RequestProduct`.
-* Added `\Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemType` form type to decouple it from the form type used in back-office.
-* Added `\Oro\Bundle\RFPBundle\Provider\RequestProductLineItemTierPricesProvider` that provides tier product prices for the request product items of the specified request entity.
-
-#### SaleBundle
-* Added the ability to manage in a back-office a quote with product kits.
-* Added the ability to start on a storefront a checkout from a quote with product kits.
-* Added `\Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem` to represent product kit item line item in `\Oro\Bundle\SaleBundle\Entity\QuoteProduct`.
-* Added `\Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid` (`is_quote_valid`) workflow condition to check a quote could be sent to a customer.
-
-### Changed
-
-#### ProductBundle
-* Decomposed `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface` into `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface`.
-* Decomposed `\Oro\Bundle\ProductBundle\Model\ProductLineItemInterface` into `\Oro\Bundle\ProductBundle\Model\ParentProductAwareInterface`.
-* Added product type to the response of the autocomplete search handler `\Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler`.
-* Added `getProduct` to `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`.
-* Added the ability to specify product unit precision property path in validation constraint `\Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision` and its validator
-
-#### OrderBundle
-* `\Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension` now takes into account kit item line items when creating an order from the product data storage.
-
-#### PricingBundle
-* `\Oro\Bundle\PricingBundle\Provider\ProductLineItemProductPriceProvider` now returns prices for all enabled product units. 
-
-#### RFPBundle
-* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface` in `\Oro\Bundle\RFPBundle\Entity\RequestProduct` so it has the field `$kitItemLineItems` with a collection of kit item line items.
-* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`, `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface` in `\Oro\Bundle\RFPBundle\Entity\RequestProductItem` so it has the property `$kitItemLineItems` with a collection of kit item line items and a checksum.
-* `\Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension` now takes into account kit item line items when creating an RFQ from the product data storage.
-* Decoupled `\Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType` form type from the form type used in back-office.
-* Added additional validation groups `frontend_request_create`, `frontend_request_update` to `\Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider` that creates an RFQ form for a storefront.
-* Updated email template `request_create_confirmation` with the ability to show kit item line items.
-* Updated `\Oro\Bundle\RFPBundle\Twig\RequestProductsExtension` to add kit item line items data to the `rfp_products` TWIG function used in email templates.
-
-#### SaleBundle
-* Updated `\Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter` to enable the start of a checkout from a quote with product kits. 
-* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface` in `\Oro\Bundle\SaleBundle\Entity\QuoteProduct` so it has the field `$kitItemLineItems` with a collection of kit item line items.
-* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`, `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface` in `\Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem` so it has the property `$kitItemLineItems` with a collection of kit item line items and a checksum.
-* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`, `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface` in `\Oro\Bundle\SaleBundle\Entity\QuoteProductDemand` so it has the property `$kitItemLineItems` with a collection of kit item line items and a checksum.
-* `\Oro\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension` now takes into account kit item line items when creating a quote from the product data storage.
-* Added `verify_transition` to the `b2b_quote_backoffice_default` to check a quote could be sent to a customer.
-
-#### ShoppingListBundle
-* `\Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage` now additionally puts kit item line items data into the product data storage.
-
-#### PricingBundle
-* Removed `products-prices-component.js`, decoupled its dependent components.
-
-### Removed
-
-#### SaleBundle
-* Removed unused `tierPrices`, `matchedPrices`, `isShippingAddressGranted` from `\Oro\Bundle\SaleBundle\Form\QuoteFormTemplateDataProvider`.
-* Removed `\Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider` (`oro_sale.provider.quote_product_price`), use `\Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider` (`oro_sale.provider.quote_product_prices`) instead.
-* Removed `\Oro\Bundle\SaleBundle\Quote\Pricing\QuotePriceComparator`, use `\Oro\Bundle\SaleBundle\Quote\Pricing\QuotePricesComparator` (`oro_sale.quote.pricing.comparator`) instead.
-
-
-## 6.0.0-BETA (2024-01-08)
-[Show detailed list of changes](incompatibilities-6-0-beta.md)
+## 6.0.0-RC (2024-02-29)
+[Show detailed list of changes](incompatibilities-6-0-rc.md)
 
 ### Added
 
@@ -140,6 +73,7 @@ The current file describes significant changes in the code that may affect the u
 * Removed the `oro_product.popup_gallery_on_product_view` option from the system configuration.
 * Added new options fields to `product_segment` content widget in `\Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType`.
 * Restored the is_optimized field in quick add forms (for compatibility to older layout themes), but the optimized version is forced. Consider refactoring your templates which rely on this field.
+* Added `\Oro\Bundle\ProductBundle\Form\Type\ProductUnitChoiceType` form type for selecting a product unit from the available product units of a specified product.
 
 #### PaymentBundle
 * Added the new and only way to create a payment line items `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` - see `\Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactoryInterface`.
@@ -148,6 +82,17 @@ The current file describes significant changes in the code that may affect the u
 #### RFPBundle
 * Added `\Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider` instead of the deprecated `\Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider`.
 * Disabled the ability to add a product kit to RFP via `\Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider::setNotAllowedProductTypes`.
+* Added the ability to create on a storefront a request for quote with product kits.
+* Added the ability to edit in a back-office a request for quote with product kits.
+* Added `\Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem` to represent product kit item line item in `\Oro\Bundle\RFPBundle\Entity\RequestProduct`.
+* Added `\Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemType` form type to decouple it from the form type used in back-office.
+* Added `\Oro\Bundle\RFPBundle\Provider\RequestProductLineItemTierPricesProvider` that provides tier product prices for the request product items of the specified request entity.
+
+#### SaleBundle
+* Added the ability to manage in a back-office a quote with product kits.
+* Added the ability to start on a storefront a checkout from a quote with product kits.
+* Added `\Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem` to represent product kit item line item in `\Oro\Bundle\SaleBundle\Entity\QuoteProduct`.
+* Added `\Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid` (`is_quote_valid`) workflow condition to check a quote could be sent to a customer.
 
 #### ShoppingListBundle
 * Added the ability to display product kit line items on the shopping list line items storefront datagrid. See more in [documentation](https://doc.oroinc.com/bundles/commerce/ShoppingListBundle/shopping-list-on-storefront.html).
@@ -200,6 +145,7 @@ The current file describes significant changes in the code that may affect the u
 * Updated order create/update page in back-office with kit item line items form.
 * Updated order view page in back-office with kit item line items data.
 * Updated order view page on storefront with kit item line items data.
+* `\Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension` now takes into account kit item line items when creating an order from the product data storage.
 
 #### PaymentBundle
 * Reworked and simplified the mechanism of creating payment line items `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem`, see section "Removed" for details.
@@ -208,6 +154,9 @@ The current file describes significant changes in the code that may affect the u
 * Changed `\Oro\Bundle\PaymentBundle\Context\PaymentContextInterface::getLineItems` so it returns collection `\Doctrine\Common\Collections\Collection` of `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` entities instead of the removed `\Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface`.
 * Changed `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` - implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`.
 * Changed `\Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory` to make it work with `\Oro\Bundle\PaymentBundle\Context\PaymentKitItemLineItem` models.
+
+#### PricingBundle
+* `\Oro\Bundle\PricingBundle\Provider\ProductLineItemProductPriceProvider` now returns prices for all enabled product units.
 
 #### ProductBundle
 * Decomposed `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface` into `\Oro\Bundle\ProductBundle\Model\ProductKitItemAwareInterface`.
@@ -220,10 +169,30 @@ The current file describes significant changes in the code that may affect the u
   - field `show_dots` renamed to `dots`
   - field `enable_infinite_scroll` renamed to `infinite`
   - field `autoplay_speed` renamed to `autoplaySpeed`
+* Decomposed `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface` into `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface`.
+* Decomposed `\Oro\Bundle\ProductBundle\Model\ProductLineItemInterface` into `\Oro\Bundle\ProductBundle\Model\ParentProductAwareInterface`.
+* Added product type to the response of the autocomplete search handler `\Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler`.
+* Added `getProduct` to `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`.
+* Added the ability to specify product unit precision property path in validation constraint `\Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision` and its validator
+
+#### RFPBundle
+* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface` in `\Oro\Bundle\RFPBundle\Entity\RequestProduct` so it has the field `$kitItemLineItems` with a collection of kit item line items.
+* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`, `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface` in `\Oro\Bundle\RFPBundle\Entity\RequestProductItem` so it has the property `$kitItemLineItems` with a collection of kit item line items and a checksum.
+* `\Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension` now takes into account kit item line items when creating an RFQ from the product data storage.
+* Decoupled `\Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType` form type from the form type used in back-office.
+* Added additional validation groups `frontend_request_create`, `frontend_request_update` to `\Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider` that creates an RFQ form for a storefront.
+* Updated email template `request_create_confirmation` with the ability to show kit item line items.
+* Updated `\Oro\Bundle\RFPBundle\Twig\RequestProductsExtension` to add kit item line items data to the `rfp_products` TWIG function used in email templates.
 
 #### SaleBundle
 * Changed `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\FirstOffers\FirstOffersQuoteToShippingLineItemConverter` and `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\SelectedOffers\SelectedOffersQuoteToShippingLineItemConverter` to make them work with the new shipping line item factory `\Oro\Bundle\SaleBundle\Quote\Shipping\Context\LineItem\Factory\ShippingLineItemFromQuoteProductDemandFactory`. 
 * Changed `\Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface::convertLineItems` so it returns a collection `\Doctrine\Common\Collections\Collection` of `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem` instead of the removed `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface`.
+* Updated `\Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter` to enable the start of a checkout from a quote with product kits.
+* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface` in `\Oro\Bundle\SaleBundle\Entity\QuoteProduct` so it has the field `$kitItemLineItems` with a collection of kit item line items.
+* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`, `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface` in `\Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem` so it has the property `$kitItemLineItems` with a collection of kit item line items and a checksum.
+* Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`, `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface` in `\Oro\Bundle\SaleBundle\Entity\QuoteProductDemand` so it has the property `$kitItemLineItems` with a collection of kit item line items and a checksum.
+* `\Oro\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension` now takes into account kit item line items when creating a quote from the product data storage.
+* Added `verify_transition` to the `b2b_quote_backoffice_default` to check a quote could be sent to a customer.
 
 #### ShippingBundle
 * Reworked and simplified the mechanism of creating shipping line items `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem`, see section "Removed" for details.
@@ -235,6 +204,8 @@ The current file describes significant changes in the code that may affect the u
 #### ShoppingListBundle
 * Made use of `\Symfony\Component\Validator\Constraints\GroupSequence` in `\Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController` when creating/updating a product kit line item.
 * Made use of nested validation groups transforming into `\Symfony\Component\Validator\Constraints\GroupSequence` for `shoppinglistitem` and `shoppinglistkititem` storefront API resources.
+* `\Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage` now additionally puts kit item line items data into the product data storage.
+
 
 #### CMSBundle
 * Renamed field `title` to `altImageText`.
@@ -278,6 +249,14 @@ The current file describes significant changes in the code that may affect the u
 * Removed `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface` and `\Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection`, use collection `\Doctrine\Common\Collections\Collection` of `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` entities instead.
 * Removed `\Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItemCollectionFactoryInterface` and `\Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\Factory\DoctrinePaymentLineItemCollectionFactory`, use `\Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactoryInterface::createCollection` instead.
 * Removed `\Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Factory\PaymentLineItemBuilderFactoryInterface`, `\Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Basic\Factory\BasicPaymentLineItemBuilderFactory`, `\Oro\Bundle\PaymentBundle\Context\LineItem\Builder\PaymentLineItemBuilderInterface`, `\Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Basic\BasicPaymentLineItemBuilder`. Use `\Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactory` instead.
+
+#### PricingBundle
+* Removed `products-prices-component.js`, decoupled its dependent components.
+
+#### SaleBundle
+* Removed unused `tierPrices`, `matchedPrices`, `isShippingAddressGranted` from `\Oro\Bundle\SaleBundle\Form\QuoteFormTemplateDataProvider`.
+* Removed `\Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider` (`oro_sale.provider.quote_product_price`), use `\Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider` (`oro_sale.provider.quote_product_prices`) instead.
+* Removed `\Oro\Bundle\SaleBundle\Quote\Pricing\QuotePriceComparator`, use `\Oro\Bundle\SaleBundle\Quote\Pricing\QuotePricesComparator` (`oro_sale.quote.pricing.comparator`) instead.
 
 #### ShippingBundle
 * Removed `\Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface`, use `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem` instead.
