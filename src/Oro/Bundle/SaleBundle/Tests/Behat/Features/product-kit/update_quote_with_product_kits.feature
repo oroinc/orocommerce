@@ -15,14 +15,15 @@ Feature: Update Quote with Product Kits
       | Line Item 2 Product  | product-kit-01 |
       | Line Item 2 Quantity | 1              |
       | Line Item 2 Unit     | piece          |
-      | Line Item 2 Price    | 104.69         |
+  #   TODO: Should be uncommented after implementation BB-23120 feature
+#      | Line Item 2 Price    | 104.69         |
     Then I should see "Optional Item" in the "Quote Form Line Item 2 Kit Item 1 Label" element
     And I should see "Mandatory Item *" in the "Quote Form Line Item 2 Kit Item 2 Label" element
     And the "Line Item 2 Item 1 Quantity" field should be disabled in form "Quote Form"
     And "Quote Form" must contains values:
       | Line Item 2 Product         | product-kit-01 - Product Kit 01       |
       | Line Item 2 Quantity        | 1                                     |
-      | Line Item 2 Price           | 104.69                                |
+      | Line Item 2 Price           | 124.69                                |
       | Line Item 2 Item 1 Product  | None                                  |
       | Line Item 2 Item 1 Quantity |                                       |
       | Line Item 2 Item 2 Product  | simple-product-01 - Simple Product 01 |
@@ -32,6 +33,7 @@ Feature: Update Quote with Product Kits
     And I should see the following options for "Line Item 2 Item 2 Product" select in form "Quote Form":
       | simple-product-01 - Simple Product 01 |
       | simple-product-02 - Simple Product 02 |
+    And the "LineItemPrice2" field should be readonly in form "Quote Form"
     When I click on "Quote Form Line Item 2 Kit Item 1 Quantity Label Tooltip"
     Then I should see "The quantity of product kit item units to be purchased: piece (whole numbers)" in the "Tooltip Popover Content" element
 
@@ -49,17 +51,20 @@ Feature: Update Quote with Product Kits
     And fill "Quote Form" with:
       | Line Item 3 Quantity        | 2                                     |
       | Line Item 3 Unit            | piece                                 |
-      | Line Item 3 Price           | 106.94                                |
+#   TODO: Should be uncommented after implementation BB-23120 feature
+#      | Line Item 3 Price           | 106.94                                |
       | Line Item 3 Item 1 Product  | simple-product-03 - Simple Product 03 |
       | Line Item 3 Item 1 Quantity | 3                                     |
     Then "Quote Form" must contains values:
       | Line Item 3 Product         | product-kit-01 - Product Kit 01       |
       | Line Item 3 Quantity        | 2                                     |
-      | Line Item 3 Price           | 106.94                                |
+      | Line Item 3 Price           | 128.39                                |
       | Line Item 3 Item 1 Product  | simple-product-03 - Simple Product 03 |
       | Line Item 3 Item 1 Quantity | 3                                     |
       | Line Item 3 Item 2 Product  | simple-product-01 - Simple Product 01 |
       | Line Item 3 Item 2 Quantity | 1                                     |
+    And the "LineItemPrice2" field should be readonly in form "Quote Form"
+    And the "LineItemPrice3" field should be readonly in form "Quote Form"
 
   Scenario: Save Quote and check the view page
     When I click "Submit"
@@ -72,8 +77,8 @@ Feature: Update Quote with Product Kits
     And I should see next rows in "Quote Line Items Table" table
       | SKU               | Product                                                                                                 | Quantity      | Price   |
       | simple-product-01 | Simple Product 01                                                                                       | 1 pc or more  | $2.00   |
-      | product-kit-01    | Product Kit 01 Mandatory Item [piece x 1] Simple Product 01                                             | 1 pc or more  | $104.69 |
-      | product-kit-01    | Product Kit 01 Optional Item [piece x 3] Simple Product 03 Mandatory Item [piece x 1] Simple Product 01 | 2 pcs or more | $106.94 |
+      | product-kit-01    | Product Kit 01 Mandatory Item [piece x 1] Simple Product 01                                             | 1 pc or more  | $124.69 |
+      | product-kit-01    | Product Kit 01 Optional Item [piece x 3] Simple Product 03 Mandatory Item [piece x 1] Simple Product 01 | 2 pcs or more | $128.39 |
 
   Scenario: Change product of a kit item line item
     When I click "Edit"
@@ -81,14 +86,16 @@ Feature: Update Quote with Product Kits
       | Line Item 2 Item 2 Product | simple-product-02 - Simple Product 02 |
     Then "Quote Form" must contains values:
       | Line Item 2 Item 2 Quantity | 1 |
+    And the "LineItemPrice2" field should be readonly in form "Quote Form"
+    And the "LineItemPrice3" field should be readonly in form "Quote Form"
     When I click "Submit"
     And agree that shipping cost may have changed
     Then should see "Quote #Quote1 successfully updated" flash message
     And I should see next rows in "Quote Line Items Table" table
       | SKU               | Product                                                                                                 | Quantity      | Price   |
       | simple-product-01 | Simple Product 01                                                                                       | 1 pc or more  | $2.00   |
-      | product-kit-01    | Product Kit 01 Mandatory Item [piece x 1] Simple Product 02                                             | 1 pc or more  | $104.69 |
-      | product-kit-01    | Product Kit 01 Optional Item [piece x 3] Simple Product 03 Mandatory Item [piece x 1] Simple Product 01 | 2 pcs or more | $106.94 |
+      | product-kit-01    | Product Kit 01 Mandatory Item [piece x 1] Simple Product 02                                             | 1 pc or more  | $124.69 |
+      | product-kit-01    | Product Kit 01 Optional Item [piece x 3] Simple Product 03 Mandatory Item [piece x 1] Simple Product 01 | 2 pcs or more | $128.39 |
 
   Scenario: Change quantity of a kit item line item
     When I click "Edit"
@@ -96,35 +103,40 @@ Feature: Update Quote with Product Kits
       | Line Item 2 Item 2 Quantity | 2 |
     Then "Quote Form" must contains values:
       | Line Item 2 Item 2 Quantity | 2 |
+    And the "LineItemPrice2" field should be readonly in form "Quote Form"
+    And the "LineItemPrice3" field should be readonly in form "Quote Form"
     When I click "Submit"
     And agree that shipping cost may have changed
     Then should see "Quote #Quote1 successfully updated" flash message
     And I should see next rows in "Quote Line Items Table" table
       | SKU               | Product                                                                                                 | Quantity | Price |
       | simple-product-01 | Simple Product 01                                                                                       | 1 pc or more               | $2.00        |
-      | product-kit-01    | Product Kit 01 Mandatory Item [piece x 2] Simple Product 02                                             | 1 pc or more               | $104.69      |
-      | product-kit-01    | Product Kit 01 Optional Item [piece x 3] Simple Product 03 Mandatory Item [piece x 1] Simple Product 01 | 2 pcs or more              | $106.94      |
+      | product-kit-01    | Product Kit 01 Mandatory Item [piece x 2] Simple Product 02                                             | 1 pc or more               | $124.69      |
+      | product-kit-01    | Product Kit 01 Optional Item [piece x 3] Simple Product 03 Mandatory Item [piece x 1] Simple Product 01 | 2 pcs or more              | $128.39      |
 
   Scenario: Remove optional kit item line item
     When I click "Edit"
     And I clear "Line Item 3 Item 1 Product" field in form "Quote Form"
     Then the "Line Item 3 Item 1 Quantity" field should be disabled in form "Quote Form"
+    And the "LineItemPrice2" field should be readonly in form "Quote Form"
+    And the "LineItemPrice3" field should be readonly in form "Quote Form"
     When I click "Submit"
     And agree that shipping cost may have changed
     Then should see "Quote #Quote1 successfully updated" flash message
     And I should see next rows in "Quote Line Items Table" table
       | SKU               | Product                                                     | Quantity | Price |
       | simple-product-01 | Simple Product 01                                           | 1 pc or more               | $2.00        |
-      | product-kit-01    | Product Kit 01 Mandatory Item [piece x 2] Simple Product 02 | 1 pc or more               | $104.69      |
-      | product-kit-01    | Product Kit 01 Mandatory Item [piece x 1] Simple Product 01 | 2 pcs or more              | $106.94      |
+      | product-kit-01    | Product Kit 01 Mandatory Item [piece x 2] Simple Product 02 | 1 pc or more               | $124.69      |
+      | product-kit-01    | Product Kit 01 Mandatory Item [piece x 1] Simple Product 01 | 2 pcs or more              | $128.39      |
 
   Scenario: Remove a line item
     When I click "Edit"
     And I click on "Quote Form Line Item 3 Remove"
+    And the "LineItemPrice2" field should be readonly in form "Quote Form"
     And I click "Submit"
     And agree that shipping cost may have changed
     Then should see "Quote #Quote1 successfully updated" flash message
     And I should see next rows in "Quote Line Items Table" table
       | SKU               | Product                                                     | Quantity | Price |
       | simple-product-01 | Simple Product 01                                           | 1 pc or more               | $2.00        |
-      | product-kit-01    | Product Kit 01 Mandatory Item [piece x 2] Simple Product 02 | 1 pc or more               | $104.69      |
+      | product-kit-01    | Product Kit 01 Mandatory Item [piece x 2] Simple Product 02 | 1 pc or more               | $124.69      |

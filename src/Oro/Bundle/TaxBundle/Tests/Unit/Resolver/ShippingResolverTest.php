@@ -15,23 +15,20 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Model\TaxCodes;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Resolver\ShippingResolver;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ShippingResolverTest extends \PHPUnit\Framework\TestCase
+class ShippingResolverTest extends TestCase
 {
-    /** @var TaxCalculatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $excTaxCalculator;
+    private TaxCalculatorInterface|MockObject $excTaxCalculator;
 
-    /** @var TaxCalculatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $incTaxCalculator;
+    private TaxCalculatorInterface|MockObject $incTaxCalculator;
 
-    /** @var MatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $matcher;
+    private MatcherInterface|MockObject $matcher;
 
-    /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $taxationSettingsProvider;
+    private TaxationSettingsProvider|MockObject $taxationSettingsProvider;
 
-    /** @var ShippingResolver */
-    private $resolver;
+    private ShippingResolver $resolver;
 
     protected function setUp(): void
     {
@@ -48,7 +45,7 @@ class ShippingResolverTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testTaxableWithoutItems()
+    public function testTaxableWithoutItems(): void
     {
         $taxable = new Taxable();
 
@@ -64,7 +61,7 @@ class ShippingResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    public function testTaxableResultLocked()
+    public function testTaxableResultLocked(): void
     {
         $taxable = new Taxable();
         $item = new Taxable();
@@ -83,7 +80,7 @@ class ShippingResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    public function testShippingRatesIncludeTaxes()
+    public function testShippingRatesIncludeTaxes(): void
     {
         $taxable = new Taxable();
         $item = new Taxable();
@@ -119,7 +116,7 @@ class ShippingResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    public function testTaxableWithoutShippingCost()
+    public function testTaxableWithoutShippingCost(): void
     {
         $taxable = new Taxable();
         $item = new Taxable();
@@ -142,7 +139,7 @@ class ShippingResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    public function testTaxableWithoutAddress()
+    public function testTaxableWithoutAddress(): void
     {
         $taxable = new Taxable();
         $item = new Taxable();
@@ -163,7 +160,7 @@ class ShippingResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    public function testTaxableNegativeShippingCost()
+    public function testTaxableNegativeShippingCost(): void
     {
         $taxable = new Taxable();
         $item = new Taxable();
@@ -187,7 +184,7 @@ class ShippingResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    public function testResolve()
+    public function testResolve(): void
     {
         $taxable = new Taxable();
         $item = new Taxable();

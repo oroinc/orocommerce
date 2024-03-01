@@ -245,12 +245,14 @@ define(function(require) {
             this.$el.find(this.options.selectors.productSku).text(data.sku || null);
 
             mediator.once('entry-point:order:load:before', this.showLoadingMask.bind(this));
-            mediator.once('entry-point:order:load', this.updateKitItemLineItems.bind(this));
+            mediator.once('entry-point:order:load', this.updateKitLineItem.bind(this));
             mediator.once('entry-point:order:load:after', this.hideLoadingMask.bind(this));
         },
 
-        updateKitItemLineItems: function(response) {
+        updateKitLineItem: function(response) {
             mediator.trigger('entry-point:interrupt:postpone');
+
+            this.disableProductKitPrice(response);
 
             this.getElement('kitItemLineItems')
                 .html(response.kitItemLineItems[this.options.fullName] || '')
@@ -269,6 +271,11 @@ define(function(require) {
 
         lineItemProductPriceUnlock: function() {
             this.getElement('isPriceChanged').val(0);
+        },
+
+        disableProductKitPrice: function(response) {
+            const value = response.disabledKitPrices[this.options.fullName] || false;
+            this.getElement('priceValue').attr('readonly', value);
         }
     });
 

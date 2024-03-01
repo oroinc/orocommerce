@@ -43,6 +43,7 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
     ]
 )]
 class OrderLineItem implements
+    OrderHolderInterface,
     ProductLineItemInterface,
     ProductLineItemChecksumAwareInterface,
     ProductKitItemLineItemsAwareInterface,
@@ -188,25 +189,14 @@ class OrderLineItem implements
         return $this->id;
     }
 
-    /**
-     * Set order
-     *
-     * @param Order|null $order
-     * @return $this
-     */
-    public function setOrder(Order $order = null)
+    public function setOrder(Order $order = null): self
     {
         $this->order = $order;
 
         return $this;
     }
 
-    /**
-     * Get order
-     *
-     * @return Order
-     */
-    public function getOrder()
+    public function getOrder(): ?Order
     {
         return $this->order;
     }

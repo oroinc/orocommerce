@@ -244,8 +244,8 @@ class OrderTest extends RestJsonApiTestCase
         /** @var Order $item */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals('2345678', $order->getPoNumber());
-        self::assertSame('1210.0000', $order->getSubtotal());
-        self::assertSame('1210.0000', $order->getTotal());
+        self::assertSame('73.5400', $order->getSubtotal());
+        self::assertSame('73.5400', $order->getTotal());
         self::assertNull($order->getTotalDiscounts());
         self::assertEquals('USD', $order->getCurrency());
         self::assertNotEmpty($order->getOwner()->getId());
@@ -478,6 +478,10 @@ class OrderTest extends RestJsonApiTestCase
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_4);
         $orderId = $order->getId();
+
+        $data = $this->getRequestData('add_product_kit_line_item_to_order.yml');
+        // Oro doesn't take into account order line item price from request body if product with type kit
+        $this->assertEquals(200, $data['included'][0]['attributes']['value']);
 
         $response = $this->patch(
             ['entity' => 'orders', 'id' => $orderId],

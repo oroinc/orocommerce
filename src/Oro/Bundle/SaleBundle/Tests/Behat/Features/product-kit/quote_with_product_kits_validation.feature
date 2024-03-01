@@ -16,12 +16,14 @@ Feature: Quote with Product Kits Validation
       | Line Item 2 Product        | product-kit-01                        |
       | Line Item 2 Quantity       | 1                                     |
       | Line Item 2 Unit           | piece                                 |
-      | Line Item 2 Price          | 104.69                                |
+#   TODO: Should be uncommented after implementation BB-23120 feature
+#      | Line Item 2 Price    | 104.69         |
       | Line Item 2 Item 1 Product | simple-product-03 - Simple Product 03 |
       | Line Item 2 Item 2 Product | simple-product-01 - Simple Product 01 |
     Then "Quote Form" must contains values:
       | Line Item 2 Item 1 Quantity | 2 |
       | Line Item 2 Item 2 Quantity | 3 |
+    And the "LineItemPrice2" field should be readonly in form "Quote Form"
 
   Scenario Outline: Set product kit line item quantity with violation (without page reload)
     When fill "Quote Form" with:
@@ -30,6 +32,7 @@ Feature: Quote with Product Kits Validation
     Then I should see "Quote Form" validation errors:
       | Line Item 2 Item 1 Quantity | <Item 1 Quantity validation message> |
       | Line Item 2 Item 2 Quantity | <Item 2 Quantity validation message> |
+    And the "LineItemPrice2" field should be readonly in form "Quote Form"
 
     Examples:
       | Item 1 Quantity | Item 2 Quantity | Item 1 Quantity validation message     | Item 2 Quantity validation message      |
@@ -49,6 +52,7 @@ Feature: Quote with Product Kits Validation
     Then I should see "Quote Form" validation errors:
       | Line Item 2 Item 1 Quantity | <Item 1 Quantity validation message> |
       | Line Item 2 Item 2 Quantity | <Item 2 Quantity validation message> |
+    And the "LineItemPrice2" field should be readonly in form "Quote Form"
 
     Examples:
       | Item 1 Quantity | Item 2 Quantity | Item 1 Quantity validation message                | Item 2 Quantity validation message              |

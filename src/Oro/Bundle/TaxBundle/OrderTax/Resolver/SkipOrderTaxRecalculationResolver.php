@@ -21,38 +21,25 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class SkipOrderTaxRecalculationResolver implements ResolverInterface
 {
-    private ManagerRegistry $doctrine;
-
-    private TaxManager $taxManager;
-
-    private FrontendHelper $frontendHelper;
-
-    private EventDispatcherInterface $eventDispatcher;
-
     public function __construct(
-        ManagerRegistry $doctrine,
-        TaxManager $taxManager,
-        FrontendHelper $frontendHelper,
-        EventDispatcherInterface $eventDispatcher
+        private ManagerRegistry $doctrine,
+        private TaxManager $taxManager,
+        private FrontendHelper $frontendHelper,
+        private EventDispatcherInterface $eventDispatcher
     ) {
-        $this->doctrine = $doctrine;
-        $this->taxManager = $taxManager;
-        $this->frontendHelper = $frontendHelper;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
-     * {@inheritDoc}
      * @throws StopPropagationException
      */
-    public function resolve(Taxable $taxable)
+    public function resolve(Taxable $taxable): void
     {
         if (!$taxable->getIdentifier() || !$taxable->getClassName()) {
             return;
         }
 
         if ($this->frontendHelper->isFrontendRequest()) {
-            // Order tax recalculation check is not needed on store front.
+            // Order tax recalculation check is not needed on storefront.
             return;
         }
 

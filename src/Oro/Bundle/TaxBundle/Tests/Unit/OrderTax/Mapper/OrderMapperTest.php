@@ -88,6 +88,7 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $taxable->getItems());
         $this->assertInstanceOf(Taxable::class, $taxable->getItems()->current());
         $this->assertEquals('20', $taxable->getShippingCost());
+        $this->assertEquals(false, $taxable->isKitTaxable());
     }
 
     private function createOrder(int $id, float $subtotal): Order

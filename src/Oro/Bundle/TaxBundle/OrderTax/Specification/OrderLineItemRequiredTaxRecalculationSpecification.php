@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\OrderTax\Specification;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
@@ -13,17 +14,20 @@ class OrderLineItemRequiredTaxRecalculationSpecification implements Specificatio
 {
     use OriginalDataAccessorTrait;
 
+    private SpecificationInterface $kitLineItemTaxRecalculationSpecification;
+
     public function __construct(UnitOfWork $unitOfWork)
     {
         $this->unitOfWork = $unitOfWork;
+        $this->kitLineItemTaxRecalculationSpecification = new OrderKitLineItemRequiredTaxRecalculationSpecification(
+            $unitOfWork
+        );
     }
 
     /**
-     * @param OrderLineItem $orderLineItem
-     *
-     * @return bool
+     * @param OrderLineItem|object $orderLineItem
      */
-    public function isSatisfiedBy($orderLineItem): bool
+    public function isSatisfiedBy(object $orderLineItem): bool
     {
         if (!$orderLineItem instanceof OrderLineItem) {
             return false;
@@ -55,7 +59,11 @@ class OrderLineItemRequiredTaxRecalculationSpecification implements Specificatio
             return true;
         }
 
-        return $this->isQuantityChanged($orderLineItem, $originalData);
+        if ($this->isQuantityChanged($orderLineItem, $originalData)) {
+            return true;
+        }
+
+        return $this->isKitItemsCollectionChanged($orderLineItem->getKitItemLineItems());
     }
 
     private function isProductChanged(OrderLineItem $orderLineItem, array $originalData): bool
@@ -82,24 +90,14 @@ class OrderLineItemRequiredTaxRecalculationSpecification implements Specificatio
         return $newProductUnitCode != $oldProductUnitCode;
     }
 
-    private function isPriceChanged(OrderLineItem $orderLineItem, array $originalData): bool
+    private function isKitItemsCollectionChanged(Collection $orderKitLineItems): bool
     {
-        $newPrice = $orderLineItem->getPrice()
-            ? $orderLineItem->getPrice()->getValue()
-            : $orderLineItem->getValue();
+        foreach ($orderKitLineItems as $kitLineItem) {
+            if ($this->kitLineItemTaxRecalculationSpecification->isSatisfiedBy($kitLineItem)) {
+                return true;
+            }
+        }
 
-        $originalPrice = $originalData['value'] ?? null;
-        /**
-         * Comparison should not be strict because value in `$originalOrderData` could be a string and
-         * `$orderLineItem->getPrice()->getValue()` will return float
-         */
-        return $newPrice != $originalPrice;
-    }
-
-    private function isQuantityChanged(OrderLineItem $orderLineItem, array $originalData): bool
-    {
-        $originalQuantity = $originalData['quantity'] ?? null;
-
-        return $orderLineItem->getQuantity() != $originalQuantity;
+        return false;
     }
 }

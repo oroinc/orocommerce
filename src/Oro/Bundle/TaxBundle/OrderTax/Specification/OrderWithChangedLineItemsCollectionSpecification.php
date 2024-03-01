@@ -16,22 +16,15 @@ class OrderWithChangedLineItemsCollectionSpecification implements SpecificationI
 {
     use OriginalDataAccessorTrait;
 
-    /**
-     * @var OrderLineItemRequiredTaxRecalculationSpecification
-     */
-    protected $specification;
-
     public function __construct(UnitOfWork $unitOfWork)
     {
         $this->unitOfWork = $unitOfWork;
     }
 
     /**
-     * @param Order $order
-     *
-     * @return bool
+     * @param Order|object $order
      */
-    public function isSatisfiedBy($order): bool
+    public function isSatisfiedBy(object $order): bool
     {
         if (!$order instanceof Order) {
             return false;
@@ -56,7 +49,7 @@ class OrderWithChangedLineItemsCollectionSpecification implements SpecificationI
     /**
      * Check if some item removed or added to the collection
      */
-    protected function isCollectionChanged(Collection $orderLineItems, ?PersistentCollection $originalCollection): bool
+    private function isCollectionChanged(Collection $orderLineItems, ?PersistentCollection $originalCollection): bool
     {
         if ($orderLineItems instanceof PersistentCollection) {
             return $orderLineItems->isDirty();

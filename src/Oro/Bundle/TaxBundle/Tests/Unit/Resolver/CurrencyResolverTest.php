@@ -8,8 +8,9 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Resolver\CurrencyResolver;
 use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
+use PHPUnit\Framework\TestCase;
 
-class CurrencyResolverTest extends \PHPUnit\Framework\TestCase
+class CurrencyResolverTest extends TestCase
 {
     use ResultComparatorTrait;
 
@@ -22,7 +23,10 @@ class CurrencyResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver = new CurrencyResolver();
     }
 
-    public function testResolve()
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testResolve(): void
     {
         $taxable = new Taxable();
         $taxable->setCurrency(self::CURRENCY);
@@ -38,6 +42,7 @@ class CurrencyResolverTest extends \PHPUnit\Framework\TestCase
         );
         $itemTaxable = new Taxable();
         $itemTaxable->setCurrency(self::CURRENCY);
+        $itemTaxable->setKitTaxable(true);
         $itemTaxable->setResult(
             new Result(
                 [
@@ -50,6 +55,21 @@ class CurrencyResolverTest extends \PHPUnit\Framework\TestCase
             )
         );
         $taxable->addItem($itemTaxable);
+
+        $kitItemTaxable = new Taxable();
+        $kitItemTaxable->setResult(
+            new Result(
+                [
+                    Result::UNIT => ResultElement::create('3', '2', '1', '0'),
+                    Result::ROW => ResultElement::create('3', '2', '1', '0'),
+                    Result::TAXES => [
+                        TaxResultElement::create('1', '0.5', '2', '1'),
+                    ],
+                ]
+            )
+        );
+
+        $itemTaxable->addItem($kitItemTaxable);
 
         $this->resolver->resolve($taxable);
 
@@ -88,6 +108,26 @@ class CurrencyResolverTest extends \PHPUnit\Framework\TestCase
                 ]
             ),
             $itemTaxable->getResult()
+        );
+
+        $resultKitItemUnit = ResultElement::create('3', '2', '1', '0')
+            ->setCurrency(self::CURRENCY);
+        $resultKitItemRow = ResultElement::create('3', '2', '1', '0')
+            ->setCurrency(self::CURRENCY);
+        $resultKitItemTax = TaxResultElement::create('1', '0.5', '2', '1')
+            ->setCurrency(self::CURRENCY);
+
+        $this->compareResult(
+            new Result(
+                [
+                    Result::UNIT => $resultKitItemUnit,
+                    Result::ROW => $resultKitItemRow,
+                    Result::TAXES => [
+                        $resultKitItemTax,
+                    ],
+                ]
+            ),
+            $kitItemTaxable->getResult()
         );
     }
 }

@@ -42,7 +42,10 @@ class OrderProductKitLineItemListenerTest extends TestCase
 
         $this->listener->onOrderEvent($event);
 
-        self::assertEquals(new \ArrayObject(['kitItemLineItems' => [], 'checksum' => []]), $event->getData());
+        self::assertEquals(
+            new \ArrayObject(['kitItemLineItems' => [], 'checksum' => [], 'disabledKitPrices' => []]),
+            $event->getData()
+        );
     }
 
     public function testOnOrderEventWhenHasLineItemWithoutData(): void
@@ -60,7 +63,10 @@ class OrderProductKitLineItemListenerTest extends TestCase
 
         $this->listener->onOrderEvent($event);
 
-        self::assertEquals(new \ArrayObject(['kitItemLineItems' => [], 'checksum' => []]), $event->getData());
+        self::assertEquals(
+            new \ArrayObject(['kitItemLineItems' => [], 'checksum' => [], 'disabledKitPrices' => []]),
+            $event->getData()
+        );
     }
 
     public function testOnOrderEventWhenHasLineItemWithoutProduct(): void
@@ -86,7 +92,10 @@ class OrderProductKitLineItemListenerTest extends TestCase
 
         $this->listener->onOrderEvent($event);
 
-        self::assertEquals(new \ArrayObject(['kitItemLineItems' => [], 'checksum' => []]), $event->getData());
+        self::assertEquals(
+            new \ArrayObject(['kitItemLineItems' => [], 'checksum' => [], 'disabledKitPrices' => []]),
+            $event->getData()
+        );
     }
 
     public function testOnOrderEventWhenHasLineItemWithNotProductKit(): void
@@ -113,7 +122,10 @@ class OrderProductKitLineItemListenerTest extends TestCase
 
         $this->listener->onOrderEvent($event);
 
-        self::assertEquals(new \ArrayObject(['kitItemLineItems' => [], 'checksum' => []]), $event->getData());
+        self::assertEquals(
+            new \ArrayObject(['kitItemLineItems' => [], 'checksum' => [], 'disabledKitPrices' => []]),
+            $event->getData()
+        );
     }
 
     public function testOnOrderEventWhenHasLineItemWithProductKit(): void
@@ -160,6 +172,7 @@ class OrderProductKitLineItemListenerTest extends TestCase
                 [
                     'kitItemLineItems' => [$formView->vars['full_name'] => $html],
                     'checksum' => [$formView->vars['full_name'] => $lineItem->getChecksum()],
+                    'disabledKitPrices' => [$formView->vars['full_name'] => true],
                 ]
             ),
             $event->getData()

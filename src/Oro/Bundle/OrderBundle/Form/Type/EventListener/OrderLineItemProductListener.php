@@ -12,9 +12,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 /**
- * Updates "kitItemLineItems" form field according to the selected product.
+ * Updates "kitItemLineItems" and "price" form fields according to the selected product.
  */
 class OrderLineItemProductListener implements EventSubscriberInterface
 {
@@ -43,6 +44,8 @@ class OrderLineItemProductListener implements EventSubscriberInterface
             'required' => $product?->isKit() === true,
             'product' => $product,
         ]);
+
+        $this->setReadonlyForPriceField($product, $form);
     }
 
     public function onPostSubmit(FormEvent $event): void
@@ -67,6 +70,16 @@ class OrderLineItemProductListener implements EventSubscriberInterface
             }
         }
 
+        $this->setReadonlyForPriceField($product, $form);
         FormUtils::replaceField($form->getParent(), 'kitItemLineItems', $modifyOptions);
+    }
+
+    private function setReadonlyForPriceField(?Product $product, FormInterface $form): void
+    {
+        if ($product?->isKit()) {
+            FormUtils::replaceField($form->getParent(), 'price', [
+                'readonly' => true
+            ]);
+        }
     }
 }

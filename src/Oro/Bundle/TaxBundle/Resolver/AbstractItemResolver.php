@@ -8,38 +8,30 @@ use Oro\Bundle\TaxBundle\Model\TaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Model\TaxCodes;
 
+/**
+ * Provide basic methods for resolvers.
+ */
 abstract class AbstractItemResolver implements ResolverInterface
 {
-    /**
-     * @var UnitResolver
-     */
-    protected $unitResolver;
-
-    /**
-     * @var RowTotalResolver
-     */
-    protected $rowTotalResolver;
-
-    /**
-     * @var MatcherInterface
-     */
-    protected $matcher;
-
     public function __construct(
-        UnitResolver $unitResolver,
-        RowTotalResolver $rowTotalResolver,
-        MatcherInterface $matcher
+        protected UnitResolver $unitResolver,
+        protected RowTotalResolver $rowTotalResolver,
+        protected MatcherInterface $matcher
     ) {
-        $this->unitResolver = $unitResolver;
-        $this->rowTotalResolver = $rowTotalResolver;
-        $this->matcher = $matcher;
     }
 
-    /**
-     * @param Taxable $taxable
-     * @return TaxCodes
-     */
-    protected function getTaxCodes(Taxable $taxable)
+    protected function calculateUnitPriceAndRowTotal(Taxable $taxable): void
+    {
+        $result = $taxable->getResult();
+        $taxRules = $this->matcher->match($taxable->getTaxationAddress(), $this->getTaxCodes($taxable));
+
+        $this->unitResolver->resolveUnitPrice($result, $taxRules, $taxable->getPrice());
+        $this->rowTotalResolver->resolveRowTotal($result, $taxRules, $taxable->getPrice(), $taxable->getQuantity());
+
+        $result->lockResult();
+    }
+
+    protected function getTaxCodes(Taxable $taxable): TaxCodes
     {
         $taxCodes = [];
 

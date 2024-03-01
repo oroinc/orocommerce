@@ -2,10 +2,29 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+# UNRELEASED
+
 ### Added
 
 #### ProductBundle
 * "wide", "tabs" product templates were added.
+
+#### OrderBundle
+* Added `\Oro\Bundle\OrderBundle\Entity\OrderHolderInterface` to represent order holder classes.
+* Added the `readonly` attribute for the price field of the product kit line item in the order form.
+* Added new price calculation logic for product kit line item for the `orderlineitems` and `orderproductkititemlineitems` API backend resources.
+
+#### SaleBundle
+* Added the `readonly` attribute for the price field of the product kit line item in the quote form.
+
+#### TaxBundle
+* Added new tax calculation logic for product kits. Now the total tax for the product kit is the sum of the taxes for the kit and its items.
+* Added `\Oro\Bundle\TaxBundle\Resolver\KitAdjustResolver` resolver to adjust tax amount for product kits.
+
+### Changed
+
+#### PromotionBundle
+* `\Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderLineItemAfterDiscountsMapper` now takes into account product kits and proportionally distributes its discounts subtotal among the product kit subtotal when the Calculate Taxes After Promotions option is enabled.
 
 ### Removed
 

@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
@@ -23,7 +24,11 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
     private const DATA = [
         self::TAX_1 => [
             'description' => 'Tax description 1',
-            'products'    => [LoadProductData::PRODUCT_1, LoadProductData::PRODUCT_2]
+            'products'    => [
+                LoadProductData::PRODUCT_1,
+                LoadProductData::PRODUCT_2,
+                LoadProductKitData::PRODUCT_KIT_2
+            ]
         ],
         self::TAX_2 => [
             'description' => 'Tax description 2',
@@ -40,7 +45,10 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
      */
     public function getDependencies(): array
     {
-        return [LoadProductData::class];
+        return [
+            LoadProductData::class,
+            LoadProductKitData::class
+        ];
     }
 
     /**

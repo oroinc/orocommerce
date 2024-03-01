@@ -6,26 +6,32 @@ use Oro\Bundle\TaxBundle\Model\AbstractResult;
 use Oro\Bundle\TaxBundle\Model\AbstractResultElement;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 
+/**
+ * Update currency for Taxable.
+ */
 class CurrencyResolver implements ResolverInterface
 {
-    /** {@inheritdoc} */
-    public function resolve(Taxable $taxable)
+    public function resolve(Taxable $taxable): void
     {
         $this->walk($taxable->getResult(), $taxable);
 
         foreach ($taxable->getItems() as $taxableItem) {
             $this->walk($taxableItem->getResult(), $taxable);
+
+            if ($taxableItem->isKitTaxable()) {
+                foreach ($taxableItem->getItems() as $taxableKitItem) {
+                    $this->walk($taxableKitItem->getResult(), $taxableItem);
+                }
+            }
         }
     }
 
     /**
      * @param AbstractResult|array $result
-     * @param Taxable $taxable
      */
-    protected function walk($result, Taxable $taxable)
+    protected function walk($result, Taxable $taxable): void
     {
         if ($result instanceof AbstractResultElement) {
-            /** @var AbstractResultElement $resultElement */
             $resultElement = $result;
             if (!$resultElement->getCurrency()) {
                 $resultElement->setCurrency($taxable->getCurrency());

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -466,5 +467,14 @@ class OrderProductKitItemLineItemTest extends TestCase
         self::assertSame($price->getCurrency(), $entity->getCurrency());
         self::assertSame(0.0, $entity->getValue());
         self::assertSame($price, $entity->getPrice());
+    }
+
+    public function testGetOrder(): void
+    {
+        $order = new Order();
+        $entity = new OrderProductKitItemLineItem();
+        $entity->setLineItem((new OrderLineItem())->setOrder($order));
+
+        self::assertEquals($order, $entity->getOrder());
     }
 }

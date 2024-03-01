@@ -48,7 +48,7 @@ class QuoteProductKitLineItemListenerTest extends TestCase
 
         $this->listener->onQuoteEvent($event);
 
-        self::assertEquals(new \ArrayObject(['kitItemLineItems' => []]), $event->getData());
+        self::assertEquals(new \ArrayObject(['kitItemLineItems' => [], 'disabledKitPrices' => []]), $event->getData());
     }
 
     public function testOnQuoteEventWhenHasQuoteProductWithoutData(): void
@@ -72,7 +72,7 @@ class QuoteProductKitLineItemListenerTest extends TestCase
 
         $this->listener->onQuoteEvent($event);
 
-        self::assertEquals(new \ArrayObject(['kitItemLineItems' => []]), $event->getData());
+        self::assertEquals(new \ArrayObject(['kitItemLineItems' => [], 'disabledKitPrices' => []]), $event->getData());
     }
 
     public function testOnQuoteEventWhenHasQuoteProductWithoutProduct(): void
@@ -101,7 +101,7 @@ class QuoteProductKitLineItemListenerTest extends TestCase
 
         $this->listener->onQuoteEvent($event);
 
-        self::assertEquals(new \ArrayObject(['kitItemLineItems' => []]), $event->getData());
+        self::assertEquals(new \ArrayObject(['kitItemLineItems' => [], 'disabledKitPrices' => []]), $event->getData());
     }
 
     public function testOnQuoteEventWhenHasQuoteProductWithNotProductKit(): void
@@ -131,7 +131,7 @@ class QuoteProductKitLineItemListenerTest extends TestCase
 
         $this->listener->onQuoteEvent($event);
 
-        self::assertEquals(new \ArrayObject(['kitItemLineItems' => []]), $event->getData());
+        self::assertEquals(new \ArrayObject(['kitItemLineItems' => [], 'disabledKitPrices' => []]), $event->getData());
     }
 
     public function testOnQuoteEventWhenHasQuoteProductWithProductKit(): void
@@ -179,6 +179,7 @@ class QuoteProductKitLineItemListenerTest extends TestCase
             new \ArrayObject(
                 [
                     'kitItemLineItems' => [$formView->vars['full_name'] => $html],
+                    'disabledKitPrices' => [$formView->vars['full_name'] => true],
                 ]
             ),
             $event->getData()

@@ -12,9 +12,10 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 /**
- * Updates "kitItemLineItems" form field according to the selected product.
+ * Updates "kitItemLineItems" and "quoteProductOffers" form field according to the selected product.
  */
 class QuoteProductProductListener implements EventSubscriberInterface
 {
@@ -43,6 +44,7 @@ class QuoteProductProductListener implements EventSubscriberInterface
             'required' => $product?->isKit() === true,
             'product' => $product,
         ]);
+        $this->setForbidPricesOverride($product, $form->getParent());
     }
 
     public function onPostSubmit(FormEvent $event): void
@@ -68,5 +70,15 @@ class QuoteProductProductListener implements EventSubscriberInterface
         }
 
         FormUtils::replaceField($form->getParent(), 'kitItemLineItems', $modifyOptions);
+        $this->setForbidPricesOverride($product, $form->getParent());
+    }
+
+    private function setForbidPricesOverride(?Product $product, FormInterface $form): void
+    {
+        if ($product?->isKit()) {
+            FormUtils::replaceFieldOptionsRecursive($form, 'quoteProductOffers', [
+                'entry_options' => ['allow_prices_override' => false]
+            ]);
+        }
     }
 }

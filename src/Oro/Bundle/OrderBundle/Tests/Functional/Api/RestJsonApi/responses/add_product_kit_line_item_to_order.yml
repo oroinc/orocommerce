@@ -7,8 +7,8 @@ data:
           customerNotes: null
           shipUntil: '@simple_order4->shipUntil->format("Y-m-d")'
           currency: 'USD'
-          subtotalValue: '1200.0000'
-          totalValue: '1200.0000'
+          subtotalValue: '63.5400'
+          totalValue: '63.5400'
           shippingMethod: null
           shippingMethodType: null
           estimatedShippingCostAmount: null

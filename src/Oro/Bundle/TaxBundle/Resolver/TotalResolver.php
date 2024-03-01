@@ -15,26 +15,17 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
  */
 class TotalResolver implements ResolverInterface
 {
-    /** @var TaxationSettingsProvider */
-    protected $settingsProvider;
+    use TaxCalculateResolverTrait;
 
-    /**  @var RoundingResolver */
-    protected $roundingResolver;
-
-    public function __construct(TaxationSettingsProvider $settingsProvider, RoundingResolver $roundingResolver)
-    {
-        $this->settingsProvider = $settingsProvider;
-        $this->roundingResolver = $roundingResolver;
+    public function __construct(
+        private TaxationSettingsProvider $settingsProvider,
+        private RoundingResolver $roundingResolver
+    ) {
     }
 
-    /** {@inheritdoc} */
-    public function resolve(Taxable $taxable)
+    public function resolve(Taxable $taxable): void
     {
-        if (!$taxable->getItems()->count()) {
-            return;
-        }
-
-        if ($taxable->getResult()->isResultLocked()) {
+        if (!$this->isApplicable($taxable)) {
             return;
         }
 
@@ -70,10 +61,9 @@ class TotalResolver implements ResolverInterface
 
     /**
      * @param TaxResultElement[] $taxResults
-     * @param Result $taxableItemResult
      * @return TaxResultElement[]
      */
-    protected function mergeTaxResultElements(array $taxResults, Result $taxableItemResult)
+    protected function mergeTaxResultElements(array $taxResults, Result $taxableItemResult): array
     {
         foreach ($taxableItemResult->getTaxes() as $appliedTax) {
             $taxCode = (string)$appliedTax->getTax();
@@ -96,32 +86,7 @@ class TotalResolver implements ResolverInterface
         return $taxResults;
     }
 
-    /**
-     * @param ResultElement $target
-     * @param ResultElement $source
-     * @return ResultElement
-     */
-    protected function mergeData(ResultElement $target, ResultElement $source)
-    {
-        $currentData = new ResultElement($target->getArrayCopy());
-
-        foreach ($source as $key => $value) {
-            if ($currentData->offsetExists($key)) {
-                $currentValue = BigDecimal::of($currentData->offsetGet($key));
-                $currentValue = $currentValue->plus($value);
-                $currentData->offsetSet($key, (string)$currentValue);
-            }
-        }
-
-        return $currentData;
-    }
-
-    /**
-     * @param Taxable $taxable
-     * @param ResultElement $target
-     * @return ResultElement
-     */
-    protected function mergeShippingData(Taxable $taxable, ResultElement $target)
+    protected function mergeShippingData(Taxable $taxable, ResultElement $target): ResultElement
     {
         if (!$taxable->getResult()->offsetExists(Result::SHIPPING)) {
             return $target;
@@ -130,5 +95,12 @@ class TotalResolver implements ResolverInterface
         $resultElement = $taxable->getResult()->offsetGet(Result::SHIPPING);
 
         return $this->mergeData($target, $resultElement);
+    }
+
+    private function isApplicable(Taxable $taxable): bool
+    {
+        return $taxable->getItems()->count() &&
+            !$taxable->isKitTaxable() &&
+            !$taxable->getResult()->isResultLocked();
     }
 }

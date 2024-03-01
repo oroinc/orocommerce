@@ -8,20 +8,19 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\TaxBundle\Model\Address;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver;
+use Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalKitItemResolver;
+use PHPUnit\Framework\TestCase;
 
-class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
+class DigitalItemResolverTest extends TestCase
 {
-    /**
-     * @var DigitalItemResolver
-     */
-    protected $resolver;
+    private DigitalItemResolver $resolver;
 
     protected function setUp(): void
     {
-        $this->resolver = new DigitalItemResolver();
+        $this->resolver = new DigitalItemResolver(new DigitalKitItemResolver());
     }
 
-    public function testResolver()
+    public function testResolver(): void
     {
         $taxable = new Taxable();
         $address = new OrderAddress();
@@ -39,7 +38,34 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($taxable->getResult()->isResultLocked());
     }
 
-    public function testResultLocked()
+    public function testKitTaxable(): void
+    {
+        $taxable = new Taxable();
+        $taxableItem = new Taxable();
+        $address = new OrderAddress();
+        $address
+            ->setCountry(new Country('US'))
+            ->setRegion((new Region('US-CA'))->setCode('CA'));
+
+        $taxableItem
+            ->setPrice('10')
+            ->setDestination($address)
+            ->addContext(Taxable::DIGITAL_PRODUCT, true);
+
+        $taxable
+            ->setKitTaxable(true)
+            ->setPrice('19.99')
+            ->setDestination($address)
+            ->addContext(Taxable::DIGITAL_PRODUCT, true)
+            ->addItem($taxableItem);
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertTrue($taxable->getResult()->isResultLocked());
+        $this->assertTrue($taxable->getItems()->current()->getResult()->isResultLocked());
+    }
+
+    public function testResultLocked(): void
     {
         $taxable = new Taxable();
         $address = new OrderAddress();
@@ -61,9 +87,14 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($taxable->getResult()->getRow()->getExcludingTax());
     }
 
-    public function testEmptyData()
+    public function testIsApplicable(): void
     {
         $taxable = new Taxable();
+        $this->resolver->resolve($taxable);
+
+        $this->assertFalse($taxable->getResult()->isResultLocked());
+
+        $taxable->setKitTaxable(true);
         $this->resolver->resolve($taxable);
 
         $this->assertFalse($taxable->getResult()->isResultLocked());
@@ -73,13 +104,32 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->assertFalse($taxable->getResult()->isResultLocked());
 
+        $taxable->addContext(Taxable::DIGITAL_PRODUCT, true);
+        $this->resolver->resolve($taxable);
+
+        $this->assertFalse($taxable->getResult()->isResultLocked());
+
         $taxable->addItem(new Taxable());
         $this->resolver->resolve($taxable);
 
         $this->assertFalse($taxable->getResult()->isResultLocked());
+
+        $address = new OrderAddress();
+        $taxable->setDestination($address);
+        $this->resolver->resolve($taxable);
+
+        $this->assertFalse($taxable->getResult()->isResultLocked());
+
+        $address
+            ->setCountry(new Country('US'))
+            ->setRegion((new Region('US-CA'))->setCode('CA'));
+
+        $this->resolver->resolve($taxable);
+
+        $this->assertTrue($taxable->getResult()->isResultLocked());
     }
 
-    public function testDestinationAddressForDigitalProductsAndStateWithoutDigitalTax()
+    public function testDestinationAddressForDigitalProductsAndStateWithoutDigitalTax(): void
     {
         $taxable = new Taxable();
         $address = new OrderAddress();
@@ -104,7 +154,7 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($address, $taxable->getTaxationAddress());
     }
 
-    public function testOriginAddressForNonDigitalProductsAndStateWithoutDigitalTax()
+    public function testOriginAddressForNonDigitalProductsAndStateWithoutDigitalTax(): void
     {
         $taxable = new Taxable();
         $address = new OrderAddress();
@@ -129,7 +179,7 @@ class DigitalItemResolverTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($origin, $taxable->getTaxationAddress());
     }
 
-    public function testOriginAddressForDigitalProductsAndStateWithDigitalTax()
+    public function testOriginAddressForDigitalProductsAndStateWithDigitalTax(): void
     {
         $taxable = new Taxable();
         $address = new OrderAddress();

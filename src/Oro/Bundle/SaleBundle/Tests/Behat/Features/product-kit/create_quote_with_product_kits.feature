@@ -27,6 +27,7 @@ Feature: Create Quote with Product Kits
       | Line Item 1 Item 1 Quantity |                                       |
       | Line Item 1 Item 2 Product  | simple-product-01 - Simple Product 01 |
       | Line Item 1 Item 2 Quantity | 1                                     |
+    And the "LineItemPrice" field should be readonly in form "Quote Form"
     When I click on "Quote Form Line Item 1 Kit Item 1 Quantity Label Tooltip"
     Then I should see "The quantity of product kit item units to be purchased: piece (whole numbers)" in the "Tooltip Popover Content" element
 
@@ -53,6 +54,8 @@ Feature: Create Quote with Product Kits
       | Line Item 2 Item 1 Quantity | 3                                     |
       | Line Item 2 Item 2 Product  | simple-product-01 - Simple Product 01 |
       | Line Item 2 Item 2 Quantity | 1                                     |
+    And the "LineItemPrice" field should be readonly in form "Quote Form"
+    And the "LineItemPrice2" field should be readonly in form "Quote Form"
 
   Scenario: Save Quote and check the view page
     When I save and close form

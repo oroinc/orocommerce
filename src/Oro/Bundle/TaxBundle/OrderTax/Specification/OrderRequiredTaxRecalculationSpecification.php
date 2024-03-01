@@ -18,10 +18,7 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
 {
     use OriginalDataAccessorTrait;
 
-    /**
-     * @var OrderWithChangedLineItemsCollectionSpecification
-     */
-    protected $orderLineItemsCollectionChangedSpecification;
+    private SpecificationInterface $orderLineItemsCollectionChangedSpecification;
 
     public function __construct(UnitOfWork $unitOfWork)
     {
@@ -32,11 +29,9 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
     }
 
     /**
-     * @param Order|OrderLineItem $entity
-     *
-     * @return bool
+     * @param Order|OrderLineItem|object $entity
      */
-    public function isSatisfiedBy($entity): bool
+    public function isSatisfiedBy(object $entity): bool
     {
         if (!$entity instanceof Order) {
             return false;
@@ -80,13 +75,7 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
             || ($order->getEstimatedShippingCostAmount() !== $originalOrderData['estimatedShippingCostAmount']);
     }
 
-    /**
-     * @param OrderAddress|null $newAddress
-     * @param OrderAddress|null $oldAddress
-     *
-     * @return bool
-     */
-    protected function isOrderAddressChanged(?OrderAddress $newAddress, ?OrderAddress $oldAddress)
+    private function isOrderAddressChanged(?OrderAddress $newAddress, ?OrderAddress $oldAddress): bool
     {
         if (null === $newAddress && null === $oldAddress) {
             return false;
@@ -119,7 +108,7 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
         return $newCustomerUserAddressId !== $oldCustomerUserAddressId;
     }
 
-    private function isCustomerAddressChanged(OrderAddress $newAddress, OrderAddress $oldAddress)
+    private function isCustomerAddressChanged(OrderAddress $newAddress, OrderAddress $oldAddress): bool
     {
         $newCustomerAddressId = $newAddress->getCustomerAddress()
             ? $newAddress->getCustomerAddress()->getId()
@@ -131,13 +120,7 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
         return $newCustomerAddressId !== $oldCustomerAddressId;
     }
 
-    /**
-     * @param AbstractAddress|null $newAddress
-     * @param AbstractAddress|null $oldAddress
-     *
-     * @return bool
-     */
-    private function isAddressChanged(?AbstractAddress $newAddress, ?AbstractAddress $oldAddress)
+    private function isAddressChanged(?AbstractAddress $newAddress, ?AbstractAddress $oldAddress): bool
     {
         if (null === $newAddress && null === $oldAddress) {
             return false;

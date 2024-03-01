@@ -44,7 +44,6 @@ abstract class AbstractFillLineItemPrice implements ProcessorInterface
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
-
         if (!$context->getForm()->isValid()) {
             return;
         }

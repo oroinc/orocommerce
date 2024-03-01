@@ -35,6 +35,7 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitPrecisionAwareInterface;
     ]
 )]
 class OrderProductKitItemLineItem implements
+    OrderHolderInterface,
     ProductKitItemLineItemPriceAwareInterface,
     ProductUnitPrecisionAwareInterface,
     ExtendEntityInterface
@@ -477,5 +478,10 @@ class OrderProductKitItemLineItem implements
         $this->createPrice();
 
         return $this;
+    }
+
+    public function getOrder(): ?Order
+    {
+        return $this->getLineItem()?->getOrder();
     }
 }

@@ -1,0 +1,216 @@
+method: getTax
+reference: kit_order
+configuration:
+    use_as_base_by_default: destination
+    calculate_taxes_after_promotions: true
+    product_prices_include_tax: true
+databaseBefore:
+    Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+        promotionLabel:
+            string: 'Free Promotion'
+
+    Oro\Bundle\RuleBundle\Entity\Rule:
+        discountPromotionRule:
+            enabled: true
+            sortOrder: 1
+            name: 'Free Promotion'
+
+    Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+        discountConfiguration:
+            type: 'line_item'
+            options:
+                discount_product_unit_code: 'milliliter'
+                discount_type: 'percent'
+                discount_currency: 'USD'
+                discount_value: 0.1
+                apply_to: 'each_item'
+
+    Oro\Bundle\SegmentBundle\Entity\Segment:
+        discountPromotionSegment:
+            name: 'Free Promotion'
+            type: {class: 'Oro\Bundle\SegmentBundle\Entity\SegmentType', query: { name: 'dynamic' }}
+            entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+            definition: <('{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"value":0,"type":"2"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+
+    Oro\Bundle\PromotionBundle\Entity\Promotion:
+        free_promotion:
+            rule: '@discountPromotionRule'
+            discountConfiguration: '@discountConfiguration'
+            productsSegment: '@discountPromotionSegment'
+            __calls:
+                - addLabel: ['@promotionLabel']
+
+databaseBeforeSecondPart:
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        us_al_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        kit_order:
+            poNumber: kit_order
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
+            currency: USD
+            billingAddress: '@us_al_billing_address'
+            shippingAddress: '@us_al_billing_address'
+            __calls:
+                - addLineItem: ['@order_line_item_1']
+                - addLineItem: ['@order_line_item_2']
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_15.99:
+            value: 15.99
+            currency: USD
+        usd_price_25.55:
+            value: 25.55
+            currency: USD
+        usd_price_5.55:
+            value: 5.55
+            currency: USD
+        usd_price_1.99:
+            value: 1.99
+            currency: USD
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
+        order_line_item_1:
+            productSku: order_line_item_1
+            order: '@kit_order'
+            quantity: 1
+            price: '@usd_price_15.99'
+            productUnit: { class: 'Oro\Bundle\ProductBundle\Entity\ProductUnit', query: { code: 'milliliter' } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
+        order_line_item_2:
+            productSku: order_line_item_2
+            order: '@kit_order'
+            quantity: 2
+            price: '@usd_price_25.55'
+            productUnit: { class: 'Oro\Bundle\ProductBundle\Entity\ProductUnit', query: { code: 'milliliter' } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-kit-2' } }
+            __calls:
+                - addKitItemLineItem: ['@order_line_item_2_kit_item_1']
+                - addKitItemLineItem: ['@order_line_item_2_kit_item_2']
+                - addKitItemLineItem: ['@order_line_item_2_kit_item_3']
+    'Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem':
+        order_line_item_2_kit_item_1:
+            lineItem: '@order_line_item_2'
+            productSku: product-1
+            kitItemLabel: order_line_item_2_kit_item_1
+            kitItemId: '1'
+            quantity: 2
+            productUnit: { class: 'Oro\Bundle\ProductBundle\Entity\ProductUnit', query: { code: 'milliliter' } }
+            price: '@usd_price_5.55'
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
+        order_line_item_2_kit_item_2:
+            lineItem: '@order_line_item_2'
+            productSku: product-2
+            kitItemLabel: order_line_item_2_kit_item_2
+            kitItemId: '2'
+            quantity: 2
+            productUnit: { class: 'Oro\Bundle\ProductBundle\Entity\ProductUnit', query: { code: 'milliliter' } }
+            price: '@usd_price_1.99'
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
+        order_line_item_2_kit_item_3:
+            lineItem: '@order_line_item_2'
+            productSku: product-3
+            kitItemLabel: order_line_item_2_kit_item_3
+            kitItemId: '3'
+            quantity: 1
+            productUnit: { class: 'Oro\Bundle\ProductBundle\Entity\ProductUnit', query: { code: 'milliliter' } }
+            price: '@usd_price_1.99'
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-3' } }
+disableTaxCalculation: false
+expectedResult:
+    total:
+        includingTax: '60.39'
+        excludingTax: '55.04'
+        taxAmount: '5.35'
+        adjustment: '-0.008334'
+        currency: 'USD'
+    items:
+        -
+            row:
+                includingTax: '14.39'
+                excludingTax: '13.03'
+                taxAmount: '1.36'
+                adjustment: '-0.00442'
+                currency: 'USD'
+                discountsIncluded: '1'
+            unit:
+                includingTax: '14.39'
+                excludingTax: '13.04'
+                taxAmount: '1.36'
+                adjustment: '-0.004326'
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '13.03', taxAmount: '1.36', currency: 'USD' }
+        -
+            row:
+                includingTax: '46'
+                excludingTax: '42'
+                taxAmount: '4'
+                adjustment: '-0.003914'
+                currency: 'USD'
+                discountsIncluded: '1'
+            unit:
+                includingTax: '23'
+                excludingTax: '21'
+                taxAmount: '2'
+                adjustment: '-0.002523'
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.104', taxableAmount: '38.42', taxAmount: '4', currency: 'USD' }
+            items:
+                -
+                    row:
+                        includingTax: '10'
+                        excludingTax: '9.06'
+                        taxAmount: '0.94'
+                        adjustment: '0.002029'
+                        currency: 'USD'
+                        discountsIncluded: '1'
+                    unit:
+                        includingTax: '5'
+                        excludingTax: '4.52'
+                        taxAmount: '0.47'
+                        adjustment: '0.000543'
+                        currency: 'USD'
+                    taxes:
+                        - { tax: 'TAX1', rate: '0.104', taxableAmount: '9.06', taxAmount: '0.94', currency: 'USD' }
+                -
+                    row:
+                        includingTax: '3.58'
+                        excludingTax: '3.24'
+                        taxAmount: '0.34'
+                        adjustment: '-0.002754'
+                        currency: 'USD'
+                        discountsIncluded: '1'
+                    unit:
+                        includingTax: '1.79'
+                        excludingTax: '1.62'
+                        taxAmount: '0.17'
+                        adjustment: '-0.001283'
+                        currency: 'USD'
+                    taxes:
+                        - { tax: 'TAX1', rate: '0.104', taxableAmount: '3.24', taxAmount: '0.34', currency: 'USD' }
+                -
+                    row:
+                        includingTax: '1.79'
+                        excludingTax: '1.79'
+                        taxAmount: '0'
+                        adjustment: '0'
+                        currency: 'USD'
+                        discountsIncluded: '1'
+                    unit:
+                        includingTax: '1.79'
+                        excludingTax: '1.79'
+                        taxAmount: '0'
+                        adjustment: '0'
+                        currency: 'USD'
+                    taxes: {}
+    taxes:
+        - { tax: 'TAX1', rate: '0.104', taxableAmount: '51.46', taxAmount: '5.35', currency: 'USD' }
+    shipping:
+        includingTax: 0
+        excludingTax: 0
+        taxAmount: 0
+        adjustment: 0
+        currency: 'USD'
+databaseAfter: []
+enablePromotion: true

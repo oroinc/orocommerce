@@ -9,6 +9,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItemInterface;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
+use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Component\Math\RoundingMode;
 
@@ -17,26 +18,19 @@ use Oro\Component\Math\RoundingMode;
  */
 class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
 {
-    private TaxMapperInterface $innerMapper;
-    private TaxationSettingsProvider $taxationSettingsProvider;
-    private PromotionExecutor $promotionExecutor;
     private ?DiscountContextInterface $discountContext = null;
 
     public function __construct(
-        TaxMapperInterface $innerMapper,
-        TaxationSettingsProvider $taxationSettingsProvider,
-        PromotionExecutor $promotionExecutor
+        private TaxMapperInterface $innerMapper,
+        private TaxationSettingsProvider $taxationSettingsProvider,
+        private PromotionExecutor $promotionExecutor
     ) {
-        $this->innerMapper = $innerMapper;
-        $this->taxationSettingsProvider = $taxationSettingsProvider;
-        $this->promotionExecutor = $promotionExecutor;
     }
 
     /**
-     * {@inheritdoc}
-     * @param OrderLineItem $lineItem
+     * @param object|OrderLineItem $lineItem
      */
-    public function map($lineItem)
+    public function map(object $lineItem): Taxable
     {
         $taxable = $this->innerMapper->map($lineItem);
 
@@ -51,14 +45,7 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
             /** @var DiscountLineItemInterface $discountLineItem */
             foreach ($discountContext->getLineItems() as $discountLineItem) {
                 if ($discountLineItem->getSourceLineItem() === $lineItem) {
-                    $newPrice = BigDecimal::of($discountLineItem->getSubtotalAfterDiscounts())
-                        ->dividedBy(
-                            $taxable->getQuantity(),
-                            TaxationSettingsProvider::CALCULATION_SCALE,
-                            RoundingMode::HALF_UP
-                        );
-
-                    $taxable->setPrice($newPrice);
+                    $this->adjustTaxable($taxable, $discountLineItem);
                     break;
                 }
             }
@@ -74,5 +61,56 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
         }
 
         return $this->discountContext;
+    }
+
+    private function adjustTaxable(Taxable $taxable, DiscountLineItemInterface $discountLineItem): void
+    {
+        $newPrice = BigDecimal::of($discountLineItem->getSubtotalAfterDiscounts())
+            ->dividedBy(
+                $taxable->getQuantity(),
+                TaxationSettingsProvider::CALCULATION_SCALE,
+                RoundingMode::HALF_UP
+            );
+
+        if (!$taxable->isKitTaxable()) {
+            $taxable->setPrice($newPrice);
+            return;
+        }
+
+        $delimiter = BigDecimal::of($discountLineItem->getPrice()->getValue());
+        // Calculate general discount
+        $discountPrice = $delimiter->minus($newPrice);
+
+        // Calculate discount for kit taxable
+        $kitDiscount = $taxable->getPrice()
+            ->dividedBy(
+                $delimiter,
+                TaxationSettingsProvider::CALCULATION_SCALE,
+                RoundingMode::HALF_UP
+            )->multipliedBy($discountPrice);
+
+        // Calculate new kit taxable price
+        $newKitPrice = $taxable->getPrice()->minus($kitDiscount);
+        $taxable->setPrice($newKitPrice);
+
+        foreach ($taxable->getItems() as $item) {
+            // Calculate discount for kit item taxable
+            $kitItemDiscount = $item->getPrice()
+                ->multipliedBy($item->getQuantity())
+                ->dividedBy(
+                    $delimiter,
+                    TaxationSettingsProvider::CALCULATION_SCALE,
+                    RoundingMode::HALF_UP
+                )->multipliedBy($discountPrice);
+
+            // Calculate new kit item taxable price
+            $newKitItemPrice = $item->getPrice()
+                ->minus($kitItemDiscount->dividedBy(
+                    $item->getQuantity(),
+                    TaxationSettingsProvider::CALCULATION_SCALE,
+                    RoundingMode::HALF_UP
+                ));
+            $item->setPrice($newKitItemPrice);
+        }
     }
 }

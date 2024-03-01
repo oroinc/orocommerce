@@ -131,7 +131,7 @@ class QuoteProductTypeTest extends WebTestCase
         $formFactory = self::getContainer()->get('form.factory');
         $form = $formFactory->create(QuoteProductType::class, $quoteProduct, ['csrf_protection' => false]);
 
-        $this->assertSimpleProductFormFields($form);
+        $this->assertSimpleProductFormFields($form, false, false);
 
         self::assertTrue($form->has('kitItemLineItems'));
         self::assertArrayIntersectEquals(
@@ -467,8 +467,11 @@ class QuoteProductTypeTest extends WebTestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    private function assertSimpleProductFormFields(FormInterface $form, bool $isCompactUnits = false): void
-    {
+    private function assertSimpleProductFormFields(
+        FormInterface $form,
+        bool $isCompactUnits = false,
+        bool $allowPricesOverride = true,
+    ): void {
         self::assertArrayIntersectEquals(
             [
                 'data_class' => QuoteProduct::class,
@@ -547,7 +550,7 @@ class QuoteProductTypeTest extends WebTestCase
                 'required' => true,
                 'entry_options' => [
                     'compact_units' => $isCompactUnits,
-                    'allow_prices_override' => true,
+                    'allow_prices_override' => $allowPricesOverride,
                 ],
             ],
             $form->get('quoteProductOffers')->getConfig()->getOptions()

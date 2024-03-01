@@ -16,10 +16,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
 {
-    /**
-     * @var OrderRequiredTaxRecalculationSpecification
-     */
-    protected $specification;
+    private OrderRequiredTaxRecalculationSpecification $specification;
 
     protected function setUp(): void
     {
@@ -44,7 +41,7 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         self::assertFalse($this->specification->isSatisfiedBy($order));
     }
 
-    public function testOrderWithChangedCustomerWillRequireTaxRecalculation()
+    public function testOrderWithChangedCustomerWillRequireTaxRecalculation(): void
     {
         /**
          * @var Order $order
@@ -55,7 +52,7 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         self::assertTrue($this->specification->isSatisfiedBy($order));
     }
 
-    public function testOrderWithChangedCustomerUserWillNotRequireTaxRecalculation()
+    public function testOrderWithChangedCustomerUserWillNotRequireTaxRecalculation(): void
     {
         /**
          * @var Order $order
@@ -66,7 +63,7 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         self::assertFalse($this->specification->isSatisfiedBy($order));
     }
 
-    public function testOrderWithChangedLineItemsCollectionWillRequireTaxRecalculation()
+    public function testOrderWithChangedLineItemsCollectionWillRequireTaxRecalculation(): void
     {
         /**
          * @var Order $order
@@ -78,7 +75,7 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         self::assertTrue($this->specification->isSatisfiedBy($order));
     }
 
-    public function testOrderWithChangedBillingAddressZipWillRequireTaxRecalculation()
+    public function testOrderWithChangedBillingAddressZipWillRequireTaxRecalculation(): void
     {
         /**
          * @var Order $order
@@ -89,7 +86,7 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         self::assertTrue($this->specification->isSatisfiedBy($order));
     }
 
-    public function testOrderWithChangedBillingAddressStateWillRequireTaxRecalculation()
+    public function testOrderWithChangedBillingAddressStateWillRequireTaxRecalculation(): void
     {
         /**
          * @var Order $order
@@ -100,7 +97,7 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         self::assertTrue($this->specification->isSatisfiedBy($order));
     }
 
-    public function testOrderWithChangedBillingAddressCountryWillRequireTaxRecalculation()
+    public function testOrderWithChangedBillingAddressCountryWillRequireTaxRecalculation(): void
     {
         /**
          * @var Order $order
@@ -111,7 +108,7 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         self::assertTrue($this->specification->isSatisfiedBy($order));
     }
 
-    public function testOrderWithChangedShippingAddressZipWillRequireTaxRecalculation()
+    public function testOrderWithChangedShippingAddressZipWillRequireTaxRecalculation(): void
     {
         /**
          * @var Order $order
@@ -122,7 +119,7 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         self::assertTrue($this->specification->isSatisfiedBy($order));
     }
 
-    public function testOrderWithChangedShippingAddressStateWillRequireTaxRecalculation()
+    public function testOrderWithChangedShippingAddressStateWillRequireTaxRecalculation(): void
     {
         /**
          * @var Order $order
@@ -133,7 +130,7 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         self::assertTrue($this->specification->isSatisfiedBy($order));
     }
 
-    public function testOrderWithChangedShippingAddressCountryWillRequireTaxRecalculation()
+    public function testOrderWithChangedShippingAddressCountryWillRequireTaxRecalculation(): void
     {
         /**
          * @var Order $order
@@ -144,7 +141,7 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         self::assertTrue($this->specification->isSatisfiedBy($order));
     }
 
-    public function testOrderWithChangedLineItemWillNotRequireTaxRecalculationIfNoChangesRelatedToTaxMade()
+    public function testOrderWithChangedLineItemWillNotRequireTaxRecalculationIfNoChangesRelatedToTaxMade(): void
     {
         /**
          * @var Order $order
@@ -157,7 +154,7 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         self::assertFalse($this->specification->isSatisfiedBy($order));
     }
 
-    public function testOrderWithChangedOverriddenShippingCostAmountWillRequireTaxRecalculation()
+    public function testOrderWithChangedOverriddenShippingCostAmountWillRequireTaxRecalculation(): void
     {
         /**
          * @var Order $order
@@ -168,7 +165,7 @@ class OrderRequiredTaxRecalculationSpecificationTest extends WebTestCase
         self::assertTrue($this->specification->isSatisfiedBy($order));
     }
 
-    public function testOrderWithChangedEstimatedShippingCostAmountWillRequireTaxRecalculation()
+    public function testOrderWithChangedEstimatedShippingCostAmountWillRequireTaxRecalculation(): void
     {
         /**
          * @var Order $order

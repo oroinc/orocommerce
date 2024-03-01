@@ -7,77 +7,45 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 /**
  * Object which holds all data related to tax such as line items, destination, amount, etc.
+ *
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Taxable
 {
-    const DIGITAL_PRODUCT = 'digital_product';
-    const PRODUCT_TAX_CODE = 'product_tax_code';
-    const ACCOUNT_TAX_CODE = 'customer_tax_code';
+    public const DIGITAL_PRODUCT = 'digital_product';
+    public const PRODUCT_TAX_CODE = 'product_tax_code';
+    public const ACCOUNT_TAX_CODE = 'customer_tax_code';
 
-    /**
-     * @var int
-     */
-    protected $identifier;
+    protected ?int $identifier = null;
 
-    /**
-     * @var string
-     */
-    protected $className;
+    protected ?string $className = null;
 
-    /**
-     * @var AbstractAddress
-     */
-    protected $origin;
+    protected ?AbstractAddress $origin = null;
 
-    /**
-     * @var AbstractAddress
-     */
-    protected $destination;
+    protected ?AbstractAddress $destination = null;
 
-    /**
-     * @var AbstractAddress
-     */
-    protected $taxationAddress;
+    protected ?AbstractAddress $taxationAddress = null;
 
-    /**
-     * @var BigDecimal
-     */
-    protected $quantity;
+    protected BigDecimal $quantity;
 
-    /**
-     * @var BigDecimal
-     */
-    protected $price;
+    protected BigDecimal $price;
 
-    /**
-     * @var BigDecimal
-     */
-    protected $amount;
+    protected BigDecimal $amount;
 
-    /**
-     * @var BigDecimal|null
-     */
-    protected $shippingCost;
+    protected ?BigDecimal $shippingCost = null;
 
     /**
      * @var \SplObjectStorage|Taxable[]
      */
-    protected $items;
+    protected \SplObjectStorage $items;
 
-    /**
-     * @var Result
-     */
-    protected $result;
+    protected Result $result;
 
-    /**
-     * @var string
-     */
-    protected $currency;
+    protected ?string $currency = null;
 
-    /**
-     * @var \ArrayObject
-     */
-    protected $context;
+    protected \ArrayObject $context;
+
+    protected bool $kitTaxable = false;
 
     public function __construct()
     {
@@ -91,165 +59,105 @@ class Taxable
         $this->context = new \ArrayObject();
     }
 
-    /**
-     * @return int
-     */
-    public function getIdentifier()
+    public function getIdentifier(): ?int
     {
         return $this->identifier;
     }
 
-    /**
-     * @param int $identifier
-     * @return Taxable
-     */
-    public function setIdentifier($identifier)
+    public function setIdentifier(?int $identifier): self
     {
         $this->identifier = $identifier;
 
         return $this;
     }
 
-    /**
-     * @return AbstractAddress
-     */
-    public function getOrigin()
+    public function getOrigin(): ?AbstractAddress
     {
         return $this->origin;
     }
 
-    /**
-     * @param AbstractAddress|null $origin
-     * @return Taxable
-     */
-    public function setOrigin(AbstractAddress $origin = null)
+    public function setOrigin(?AbstractAddress $origin = null): self
     {
         $this->origin = $origin;
 
         return $this;
     }
 
-    /**
-     * @return AbstractAddress
-     */
-    public function getDestination()
+    public function getDestination(): ?AbstractAddress
     {
         return $this->destination;
     }
 
-    /**
-     * @param AbstractAddress|null $destination
-     * @return Taxable
-     */
-    public function setDestination(AbstractAddress $destination = null)
+    public function setDestination(?AbstractAddress $destination = null): self
     {
         $this->destination = $destination;
 
         return $this;
     }
 
-    /**
-     * @return BigDecimal
-     */
-    public function getQuantity()
+    public function getQuantity(): BigDecimal
     {
         return $this->quantity;
     }
 
-    /**
-     * @param string $quantity
-     * @return Taxable
-     */
-    public function setQuantity($quantity)
+    public function setQuantity(BigDecimal|float|int|string $quantity): self
     {
         $this->quantity = BigDecimal::of($quantity);
 
         return $this;
     }
 
-    /**
-     * @return BigDecimal
-     */
-    public function getPrice()
+    public function getPrice(): BigDecimal
     {
         return $this->price;
     }
 
-    /**
-     * @param string $price
-     * @return Taxable
-     */
-    public function setPrice($price)
+    public function setPrice(BigDecimal|float|int|string $price): self
     {
         $this->price = BigDecimal::of($price);
 
         return $this;
     }
 
-    /**
-     * @return BigDecimal
-     */
-    public function getAmount()
+    public function getAmount(): BigDecimal
     {
         return $this->amount;
     }
 
-    /**
-     * @param string $amount
-     * @return Taxable
-     */
-    public function setAmount($amount)
+    public function setAmount(BigDecimal|float|int|string $amount): self
     {
         $this->amount = BigDecimal::of($amount);
 
         return $this;
     }
 
-    /**
-     * @return BigDecimal|null
-     */
-    public function getShippingCost()
+    public function getShippingCost(): ?BigDecimal
     {
         return $this->shippingCost;
     }
 
-    /**
-     * @param string $shippingCost
-     * @return Taxable
-     */
-    public function setShippingCost($shippingCost)
+    public function setShippingCost(BigDecimal|float|int|string $shippingCost): self
     {
         $this->shippingCost = BigDecimal::of($shippingCost);
 
         return $this;
     }
 
-    /**
-     * @return \SplObjectStorage|Taxable[]
-     */
-    public function getItems()
+    public function getItems(): \SplObjectStorage
     {
         $this->items->rewind();
 
         return $this->items;
     }
 
-    /**
-     * @param \SplObjectStorage $items
-     * @return Taxable
-     */
-    public function setItems(\SplObjectStorage $items)
+    public function setItems(\SplObjectStorage $items): self
     {
         $this->items = $items;
 
         return $this;
     }
 
-    /**
-     * @param Taxable $item
-     * @return Taxable
-     */
-    public function addItem(Taxable $item)
+    public function addItem(Taxable $item): self
     {
         if (!$this->items->contains($item)) {
             $this->items->attach($item);
@@ -258,11 +166,7 @@ class Taxable
         return $this;
     }
 
-    /**
-     * @param Taxable $item
-     * @return Taxable
-     */
-    public function removeItem(Taxable $item)
+    public function removeItem(Taxable $item): self
     {
         if ($this->items->contains($item)) {
             $this->items->detach($item);
@@ -271,38 +175,24 @@ class Taxable
         return $this;
     }
 
-    /**
-     * @param string $className
-     * @return Taxable
-     */
-    public function setClassName($className)
+    public function setClassName(string $className): self
     {
-        $this->className = (string)$className;
+        $this->className = $className;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getClassName()
+    public function getClassName(): ?string
     {
         return $this->className;
     }
 
-    /**
-     * @return Result
-     */
-    public function getResult()
+    public function getResult(): Result
     {
         return $this->result;
     }
 
-    /**
-     * @param Result $result
-     * @return Taxable
-     */
-    public function setResult(Result $result)
+    public function setResult(Result $result): self
     {
         if ($this->result->count() === 0) {
             $this->result = $result;
@@ -311,61 +201,38 @@ class Taxable
         return $this;
     }
 
-    /**
-     * @param \ArrayObject $arrayObject
-     * @return Taxable
-     */
-    public function setContext(\ArrayObject $arrayObject)
+    public function setContext(\ArrayObject $arrayObject): self
     {
         $this->context = $arrayObject;
 
         return $this;
     }
 
-    /**
-     * @param string $keyName
-     * @param mixed  $value
-     * @return Taxable
-     */
-    public function addContext($keyName, $value)
+    public function addContext(string $keyName, mixed $value): self
     {
         $this->context->offsetSet($keyName, $value);
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCurrency()
+    public function getCurrency(): ?string
     {
         return $this->currency;
     }
 
-    /**
-     * @param string $currency
-     * @return Taxable
-     */
-    public function setCurrency($currency)
+    public function setCurrency(?string $currency): self
     {
         $this->currency = $currency;
 
         return $this;
     }
 
-    /**
-     * @return \ArrayObject
-     */
-    public function getContext()
+    public function getContext(): \ArrayObject
     {
         return $this->context;
     }
 
-    /**
-     * @param string $keyName
-     * @return mixed
-     */
-    public function getContextValue($keyName)
+    public function getContextValue(string $keyName): mixed
     {
         if ($this->context->offsetExists($keyName)) {
             return $this->context->offsetGet($keyName);
@@ -374,41 +241,40 @@ class Taxable
         return null;
     }
 
-    /**
-     * @return AbstractAddress
-     */
-    public function getTaxationAddress()
+    public function getTaxationAddress(): ?AbstractAddress
     {
         return $this->taxationAddress;
     }
 
-    /**
-     * @param AbstractAddress|null $taxationAddress
-     * @return Taxable
-     */
-    public function setTaxationAddress(AbstractAddress $taxationAddress = null)
+    public function setTaxationAddress(AbstractAddress $taxationAddress = null): self
     {
         $this->taxationAddress = $taxationAddress;
 
         return $this;
     }
 
-    /**
-     * @return Taxable
-     */
-    public function makeDestinationAddressTaxable()
+    public function makeDestinationAddressTaxable(): self
     {
         $this->taxationAddress = $this->destination;
 
         return $this;
     }
 
-    /**
-     * @return Taxable
-     */
-    public function makeOriginAddressTaxable()
+    public function makeOriginAddressTaxable(): self
     {
         $this->taxationAddress = $this->origin;
+
+        return $this;
+    }
+
+    public function isKitTaxable(): bool
+    {
+        return $this->kitTaxable;
+    }
+
+    public function setKitTaxable(bool $kitTaxable): self
+    {
+        $this->kitTaxable = $kitTaxable;
 
         return $this;
     }

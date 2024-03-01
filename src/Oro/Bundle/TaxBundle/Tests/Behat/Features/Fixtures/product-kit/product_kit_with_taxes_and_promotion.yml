@@ -4,13 +4,13 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         organization: '@organization'
         owner: '@admin'
         taxCode: '@customer_tax_code_non_exempt'
+        payment_term_7c4f1e8e: '@paymentTerm'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     amanda:
         email: 'AmandaRCole@example.org'
         username: 'AmandaRCole@example.org'
-        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
-        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        password: <userPassword(@amanda->username)>
         firstName: 'Amanda'
         lastName: 'Cole'
         enabled: '1'
@@ -72,6 +72,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         primaryUnitPrecision: '@simple_product_precision<current()>'
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        taxCode: '<($current > 1 ? @taxable_product_kits : null)>'
         __calls:
             - setDefaultName: ['Simple Product <sprintf("%02d", $current)>']
 
@@ -180,3 +181,39 @@ Oro\Bundle\TaxBundle\Entity\ZipCode:
         taxJurisdiction: '@tax_jurisdiction_florida'
         zipRangeStart: '00001'
         zipRangeEnd: '99999'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    product_kit_line_item_discount_promotion_segment:
+        name: 'Product Kit Promotion Segment'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"product-kit","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    product_kit_line_item_discount_promotion_config:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_currency: 'USD'
+            discount_product_unit_code: 'piece'
+            discount_value: 0.1
+            apply_to: 'each_item'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    product_kit_line_item_discount_promotion_rule:
+        enabled: true
+        sortOrder: 1
+        name: 'Product Kit Line Item Discount Promotion'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    product_kit_line_item_discount_promotion:
+        __calls:
+            - addScope: ['@default_scope']
+        productsSegment: '@product_kit_line_item_discount_promotion_segment'
+        rule: '@product_kit_line_item_discount_promotion_rule'
+        discountConfiguration: '@product_kit_line_item_discount_promotion_config'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false

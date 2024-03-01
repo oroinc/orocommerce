@@ -321,7 +321,7 @@ define(function(require) {
                 this.updateSkuLabelAndValue();
 
                 this.listenToOnce(mediator, this.options.events.before, this.showLoadingMask);
-                this.listenToOnce(mediator, this.options.events.load, this.updateKitItemLineItems);
+                this.listenToOnce(mediator, this.options.events.load, this.updateKitLineItem);
                 this.listenToOnce(mediator, this.options.events.after, this.hideLoadingMask);
 
                 mediator.trigger(this.options.events.trigger);
@@ -336,10 +336,17 @@ define(function(require) {
             this.loadingMask.hide();
         },
 
-        updateKitItemLineItems: function(response) {
+        updateKitLineItem: function(response) {
+            this.disableProductKitPrice(response);
+
             this.$el.find(this.options.kitItemLineItems)
                 .html(response.kitItemLineItems[this.options.fullName] || '')
                 .trigger('content:changed');
+        },
+
+        disableProductKitPrice: function(response) {
+            const value = response.disabledKitPrices[this.options.fullName] || false;
+            this.$el.find(this.options.offersPriceValueSelector).prop('readonly', value);
         },
 
         /**

@@ -27,6 +27,7 @@ class TaxableTest extends \PHPUnit\Framework\TestCase
             ['context', new \ArrayObject(), false],
             ['className', '\stdClass'],
             ['shippingCost', BigDecimal::of('10'), false],
+            ['kitTaxable', true, false],
         ];
 
         $this->assertPropertyAccessors($this->createTaxable(), $properties);

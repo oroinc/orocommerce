@@ -5,6 +5,7 @@ namespace Oro\Bundle\PromotionBundle\OrderTax\Mapper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
+use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 /**
@@ -12,25 +13,17 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
  */
 class OrderAfterDiscountsMapper implements TaxMapperInterface
 {
-    private TaxMapperInterface $innerMapper;
-    private TaxationSettingsProvider $taxationSettingsProvider;
-    private PromotionExecutor $promotionExecutor;
-
     public function __construct(
-        TaxMapperInterface $innerMapper,
-        TaxationSettingsProvider $taxationSettingsProvider,
-        PromotionExecutor $promotionExecutor
+        private TaxMapperInterface $innerMapper,
+        private TaxationSettingsProvider $taxationSettingsProvider,
+        private PromotionExecutor $promotionExecutor
     ) {
-        $this->innerMapper = $innerMapper;
-        $this->taxationSettingsProvider = $taxationSettingsProvider;
-        $this->promotionExecutor = $promotionExecutor;
     }
 
     /**
-     * {@inheritdoc}
-     * @param Order $order
+     * @param object|Order $order
      */
-    public function map($order)
+    public function map(object $order): Taxable
     {
         $taxable = $this->innerMapper->map($order);
 

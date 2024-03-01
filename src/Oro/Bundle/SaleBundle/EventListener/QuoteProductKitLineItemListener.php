@@ -11,6 +11,7 @@ use Twig\Environment;
 /**
  * Adds the rendered kitItemLineItems form collection to the {@see QuoteEvent} data
  * for each quote product kit line item.
+ * Also, adds a disabled flag for the price field.
  */
 class QuoteProductKitLineItemListener
 {
@@ -30,7 +31,7 @@ class QuoteProductKitLineItemListener
 
     public function onQuoteEvent(QuoteEvent $event): void
     {
-        $kitItemLineItems = [];
+        $kitItemLineItems = $disabledKitPrices = [];
         $quoteProductsForm = $event->getForm()->get('quoteProducts')->all();
         foreach ($quoteProductsForm as $quoteProductForm) {
             /** @var QuoteProduct|null $quoteProduct */
@@ -45,8 +46,13 @@ class QuoteProductKitLineItemListener
                 $this->kitItemLineItemsTemplate,
                 ['form' => $formView['kitItemLineItems']]
             );
+
+            if ($quoteProduct?->getProduct()?->isKit()) {
+                $disabledKitPrices[$fullName] = true;
+            }
         }
 
         $event->getData()->offsetSet('kitItemLineItems', $kitItemLineItems);
+        $event->getData()->offsetSet('disabledKitPrices', $disabledKitPrices);
     }
 }

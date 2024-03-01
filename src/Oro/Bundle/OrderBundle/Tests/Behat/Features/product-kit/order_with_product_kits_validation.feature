@@ -17,6 +17,7 @@ Feature: Order with Product Kits Validation
       | ProductKitItem1Quantity | 6                                     |
       | ProductKitItem2Product  | simple-product-01 - Simple Product 01 |
       | ProductKitItem2Quantity | 11                                    |
+    And the "Price" field should be readonly in form "Order Form"
     And click "Calculate Shipping Button"
     And I save form
     Then I should see "Order Form" validation errors:
@@ -25,6 +26,7 @@ Feature: Order with Product Kits Validation
     And fill "Order Form" with:
       | ProductKitItem1Quantity | 2 |
       | ProductKitItem2Quantity | 3 |
+    And the "Price" field should be readonly in form "Order Form"
 
   Scenario: Add a product kit line item with min quantity violation
     When fill "Order Form" with:
@@ -38,6 +40,7 @@ Feature: Order with Product Kits Validation
     And fill "Order Form" with:
       | ProductKitItem1Quantity | 2 |
       | ProductKitItem2Quantity | 3 |
+    And the "Price" field should be readonly in form "Order Form"
 
   Scenario: Check unit precisions in the Quantity tooltip
     When I click on "Order Form Line Item 1 Kit Item 1 Quantity Label Tooltip"
@@ -59,6 +62,7 @@ Feature: Order with Product Kits Validation
     And fill "Order Form" with:
       | ProductKitItem1Quantity | 2 |
       | ProductKitItem2Quantity | 3 |
+    And the "Price" field should be readonly in form "Order Form"
 
   Scenario: Add a product kit line item with non-numeric quantity violation
     When fill "Order Form" with:
@@ -67,18 +71,22 @@ Feature: Order with Product Kits Validation
     Then I should see "Order Form" validation errors:
       | ProductKitItem1Quantity | This value should be decimal number. |
       | ProductKitItem2Quantity | This value should be decimal number. |
+    And the "Price" field should be readonly in form "Order Form"
     And fill "Order Form" with:
       | ProductKitItem1Quantity | 2 |
       | ProductKitItem2Quantity | 3 |
+    And the "Price" field should be readonly in form "Order Form"
 
   Scenario: Add a product kit line item with missing price violation
     When fill "Order Form" with:
       | ProductKitItem2Product | simple-product-02 - Simple Product 02 |
     Then "Order Form" must contains values:
       | ProductKitItem2Price |  |
+    And the "Price" field should be readonly in form "Order Form"
     When I save form
     Then I should see "Order Form" validation errors:
       | ProductKitItem2Price | Price value should not be blank. |
+    And the "Price" field should be readonly in form "Order Form"
 
   Scenario: Add a product kit line item with empty price violation
     When fill "Order Form" with:
@@ -87,6 +95,7 @@ Feature: Order with Product Kits Validation
     Then I should see "Order Form" validation errors:
       | ProductKitItem1Price | Price value should not be blank. |
       | ProductKitItem2Price | Price value should not be blank. |
+    And the "Price" field should be readonly in form "Order Form"
 
   Scenario: Add a product kit line item with negative price violation
     When fill "Order Form" with:
@@ -95,6 +104,7 @@ Feature: Order with Product Kits Validation
     Then I should see "Order Form" validation errors:
       | ProductKitItem1Price | This value should be 0 or more. |
       | ProductKitItem2Price | This value should be 0 or more. |
+    And the "Price" field should be readonly in form "Order Form"
 
   Scenario: Add a product kit line item with non-numeric price violation
     When fill "Order Form" with:
@@ -103,6 +113,7 @@ Feature: Order with Product Kits Validation
     Then I should see "Order Form" validation errors:
       | ProductKitItem1Price | This value should be of type numeric. |
       | ProductKitItem2Price | This value should be of type numeric. |
+    And the "Price" field should be readonly in form "Order Form"
 
   Scenario: Check that zero kit item prices are still valid
     When fill "Order Form" with:
@@ -111,6 +122,7 @@ Feature: Order with Product Kits Validation
     And I click "Order Form Line Item 1 Price Overridden"
     And I click "Reset price"
     And I click on empty space
+    And the "Price" field should be readonly in form "Order Form"
     And click "Calculate Shipping Button"
     And I save and close form
     Then I should see Order with:

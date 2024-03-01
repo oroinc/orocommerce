@@ -74,8 +74,14 @@ class TaxManagerTest extends WebTestCase
         array  $databaseBeforeSecondPart,
         bool   $disableTaxCalculation,
         array  $expectedResult = [],
-        array  $databaseAfter = []
+        array  $databaseAfter = [],
+        bool   $enablePromotion = false
     ) {
+        if ($enablePromotion) {
+            $this->initClient([], self::generateBasicAuthHeader());
+            $this->updateUserSecurityToken(self::AUTH_USER);
+        }
+
         $this->loadFixtures([LoadTaxRules::class]);
 
         foreach ($configuration as $key => $value) {

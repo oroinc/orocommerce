@@ -7,10 +7,5 @@ namespace Oro\Bundle\TaxBundle\OrderTax\Specification;
  */
 interface SpecificationInterface
 {
-    /**
-     * @param object $entity
-     *
-     * @return bool
-     */
-    public function isSatisfiedBy($entity): bool;
+    public function isSatisfiedBy(object $entity): bool;
 }

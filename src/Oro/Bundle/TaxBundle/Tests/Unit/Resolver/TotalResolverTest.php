@@ -10,16 +10,16 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Resolver\RoundingResolver;
 use Oro\Bundle\TaxBundle\Resolver\TotalResolver;
 use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class TotalResolverTest extends \PHPUnit\Framework\TestCase
+class TotalResolverTest extends TestCase
 {
     use ResultComparatorTrait;
 
-    /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $settingsProvider;
+    private TaxationSettingsProvider|MockObject $settingsProvider;
 
-    /** @var TotalResolver */
-    private $resolver;
+    private TotalResolver $resolver;
 
     protected function setUp(): void
     {
@@ -28,7 +28,7 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver = new TotalResolver($this->settingsProvider, new RoundingResolver());
     }
 
-    public function testResolveEmptyItems()
+    public function testResolveEmptyItems(): void
     {
         $taxable = new Taxable();
 
@@ -39,7 +39,7 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
         $this->compareResult([], $taxable->getResult());
     }
 
-    public function testResolveLockedResult()
+    public function testResolveLockedResult(): void
     {
         $taxable = new Taxable();
         $taxable->addItem(new Taxable());
@@ -60,7 +60,7 @@ class TotalResolverTest extends \PHPUnit\Framework\TestCase
         ResultElement $expectedTotalResult,
         array $expectedTaxes,
         bool $startOnItem = false
-    ) {
+    ): void {
         $this->settingsProvider->expects($this->any())
             ->method('isStartCalculationOnItem')
             ->willReturn($startOnItem);

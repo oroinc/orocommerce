@@ -83,6 +83,9 @@ class OrderProductKitItemLineItemTest extends RestJsonApiTestCase
         self::assertEquals('101.54', $order->getSubtotal());
         self::assertEquals('101.54', $order->getTotal());
 
+        $orderLineItem = $this->getReference('product_kit_2_line_item.1');
+        self::assertEquals('20.5900', $orderLineItem->getValue());
+
         $response = $this->post(
             ['entity' => 'orderproductkititemlineitems'],
             'create_product_kit_item_line_item.yml'
@@ -94,21 +97,38 @@ class OrderProductKitItemLineItemTest extends RestJsonApiTestCase
 
         /** @var OrderProductKitItemLineItem $kitItemLineItem */
         $kitItemLineItem = $this->getEntityManager()->find(OrderProductKitItemLineItem::class, $kitItemLineItemId);
-        $order = $kitItemLineItem->getLineItem()->getOrder();
+        $actualLineItem = $kitItemLineItem->getLineItem();
 
-        // Price should not be changed because we changed configuration of already saved Line Item
-        self::assertEquals('101.5400', $order->getSubtotal());
-        self::assertEquals('101.5400', $order->getTotal());
+        // Price should be changed
+        self::assertEquals($orderLineItem->getId(), $actualLineItem->getId());
+        self::assertEquals('33.7700', $actualLineItem->getValue());
+        self::assertEquals('114.7200', $actualLineItem->getOrder()->getSubtotal());
+        self::assertEquals('114.7200', $actualLineItem->getOrder()->getTotal());
     }
 
     public function testCreateWithProductSku(): void
     {
+        $orderLineItem = $this->getReference('product_kit_2_line_item.1');
+        self::assertEquals('20.5900', $orderLineItem->getValue());
+
         $response = $this->post(
             ['entity' => 'orderproductkititemlineitems'],
             'create_product_kit_item_line_item_with_product_sku.yml'
         );
 
         $this->assertResponseContains('create_product_kit_item_line_item.yml', $response);
+
+        $kitItemLineItemId = (int)$this->getResourceId($response);
+
+        /** @var OrderProductKitItemLineItem $kitItemLineItem */
+        $kitItemLineItem = $this->getEntityManager()->find(OrderProductKitItemLineItem::class, $kitItemLineItemId);
+        $actualLineItem = $kitItemLineItem->getLineItem();
+
+        // Price should be changed
+        self::assertEquals($orderLineItem->getId(), $actualLineItem->getId());
+        self::assertEquals('33.7700', $actualLineItem->getValue());
+        self::assertEquals('114.7200', $actualLineItem->getOrder()->getSubtotal());
+        self::assertEquals('114.7200', $actualLineItem->getOrder()->getTotal());
     }
 
     public function testTryToCreateEmptyCurrency(): void
@@ -160,14 +180,16 @@ class OrderProductKitItemLineItemTest extends RestJsonApiTestCase
         self::assertEquals('101.54', $order->getSubtotal());
         self::assertEquals('101.54', $order->getTotal());
 
-        $kitItemLineItemId = $this->getReference('order_product_kit_2_line_item.1_kit_item_line_item.1')->getId();
+        $kitItemLineItem = $this->getReference('order_product_kit_2_line_item.1_kit_item_line_item.1');
+        $lineItem = $kitItemLineItem->getLineItem();
+        self::assertEquals('20.5900', $lineItem->getValue());
 
         $response = $this->patch(
-            ['entity' => 'orderproductkititemlineitems', 'id' => (string)$kitItemLineItemId],
+            ['entity' => 'orderproductkititemlineitems', 'id' => (string)$kitItemLineItem->getId()],
             [
                 'data' => [
                     'type' => 'orderproductkititemlineitems',
-                    'id' => (string)$kitItemLineItemId,
+                    'id' => (string)$kitItemLineItem->getId(),
                     'attributes' => [
                         'quantity' => 50,
                         'value' => 100,
@@ -185,10 +207,12 @@ class OrderProductKitItemLineItemTest extends RestJsonApiTestCase
         $kitItemLineItem = $this->getEntityManager()->find(OrderProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertEquals(Price::create(100, 'EUR'), $kitItemLineItem->getPrice());
 
-        $order = $kitItemLineItem->getLineItem()->getOrder();
-        // Price should not be changed because we changed configuration of already saved Line Item
-        self::assertEquals('101.5400', $order->getSubtotal());
-        self::assertEquals('101.5400', $order->getTotal());
+        $actualLineItem = $kitItemLineItem->getLineItem();
+        // Price should be changed
+        self::assertEquals($lineItem->getId(), $actualLineItem->getId());
+        self::assertEquals('5000.0000', $actualLineItem->getValue());
+        self::assertEquals('5080.9500', $actualLineItem->getOrder()->getSubtotal());
+        self::assertEquals('5080.9500', $actualLineItem->getOrder()->getTotal());
     }
 
     public function testGetSubresourceForLineItem(): void
