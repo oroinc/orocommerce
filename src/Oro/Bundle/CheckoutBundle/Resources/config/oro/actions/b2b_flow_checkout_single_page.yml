@@ -64,10 +64,11 @@ operations:
                 action_group: b2b_flow_checkout_update_shipping_address
                 parameters_mapping:
                     checkout: $.data
-            - '@run_action_group':
-                action_group: b2b_flow_checkout_update_shipping_method
-                parameters_mapping:
-                    checkout: $.data
+            - '@call_service_method':
+                service: oro_checkout.shipping_method.provider_main
+                method: getPrice
+                method_parameters: [$.data]
+                attribute: $.data.shippingCost
             - '@tree':
                 conditions:
                     '@empty': $.data.shippingCost
@@ -113,10 +114,11 @@ operations:
                     - '@assign_value': [$.save_address, $.data.saveShippingAddress]
         actions:
             - '@assign_value': [$.data.saveShippingAddress, $.save_address]
-            - '@run_action_group':
-                action_group: b2b_flow_checkout_update_shipping_method
-                parameters_mapping:
-                    checkout: $.data
+            - '@call_service_method':
+                service: oro_checkout.shipping_method.provider_main
+                method: getPrice
+                method_parameters: [$.data]
+                attribute: $.data.shippingCost
             - '@tree':
                 conditions:
                     '@empty': $.data.shippingCost

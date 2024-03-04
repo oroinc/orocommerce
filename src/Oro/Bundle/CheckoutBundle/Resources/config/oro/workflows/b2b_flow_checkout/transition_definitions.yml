@@ -7,9 +7,9 @@ workflows:
                         conditions:
                             '@and':
                                 - '@current_step_name_is_equal':
-                                      main_entity: $checkout
-                                      step_name: 'enter_credentials_step'
-                                      workflow: $.definition.name
+                                    main_entity: $checkout
+                                    step_name: 'enter_credentials_step'
+                                    workflow: $.definition.name
                                 - '@not_empty': $checkout.customerUser
                                 - '@not_equal': [$checkout.customerUser.isGuest, true]
                         parameters:
@@ -48,13 +48,12 @@ workflows:
                 actions:
                     - '@save_accepted_consents':
                         acceptedConsents: $customerConsents
-                    - '@tree':
-                          conditions:
-                              '@and': #For logged customer user only
-                                  - '@not_empty': $checkout.customerUser
-                                  - '@equal': [$checkout.customerUser.isGuest, false]
-                          actions:
-                              - '@assign_value': [$customerConsents, null]
+                    - '@assign_value':
+                        conditions:
+                            '@and': #For logged customer user only
+                                - '@not_empty': $checkout.customerUser
+                                - '@equal': [$checkout.customerUser.isGuest, false]
+                        parameters: [$customerConsents, null]
                     - '@generate_uuid': $state_token
 
             verify_customer_consents_definition:
@@ -130,9 +129,9 @@ workflows:
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_update_guest_customer_user
                         parameters_mapping:
-                          checkout: $checkout
-                          email: $email
-                          billing_address: $billing_address
+                            checkout: $checkout
+                            email: $email
+                            billing_address: $billing_address
 
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_create_guest_customer_user
@@ -144,32 +143,30 @@ workflows:
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_update_billing_address
                         parameters_mapping:
-                          checkout: $checkout
-                          disallow_shipping_address_edit: $disallow_shipping_address_edit
+                            checkout: $checkout
+                            disallow_shipping_address_edit: $disallow_shipping_address_edit
                         results:
-                          data.billing_address_has_shipping: $.billing_address_has_shipping
+                            data.billing_address_has_shipping: $.billing_address_has_shipping
 
                     - '@save_accepted_consents':
                         acceptedConsents: $customerConsents
 
-                    - '@tree':
-                          conditions:
-                              '@and': #For logged customer user only
-                                  - '@not_empty': $checkout.customerUser
-                                  - '@equal': [$checkout.customerUser.isGuest, false]
-                          actions:
-                              - '@assign_value': [$customerConsents, null]
+                    - '@assign_value':
+                        conditions:
+                            '@and': #For logged customer user only
+                                - '@not_empty': $checkout.customerUser
+                                - '@equal': [$checkout.customerUser.isGuest, false]
+                        parameters: [$customerConsents, null]
 
                     - '@generate_uuid': $state_token
 
-                    - '@tree':
+                    - '@transit_workflow':
                         conditions:
                             '@equal': [true, $ship_to_billing_address]
-                        actions:
-                            - '@transit_workflow':
-                                entity: $checkout
-                                transition: continue_to_shipping_method
-                                workflow: $.definition.name
+                        parameters:
+                            entity: $checkout
+                            transition: continue_to_shipping_method
+                            workflow: $.definition.name
 
             continue_to_shipping_method_definition:
                 preactions:
@@ -215,14 +212,13 @@ workflows:
                         service: oro_checkout.action.default_shipping_method_setter
                         method: setDefaultShippingMethod
                         method_parameters: [$checkout]
-                    - '@tree':
+                    - '@call_service_method':
                         conditions:
                             '@is_multishipping_enabled': ~
-                        actions:
-                            - '@call_service_method':
-                                service: oro_checkout.action.multi_shipping.default_shipping_method_setter
-                                method: setDefaultShippingMethods
-                                method_parameters: [$checkout]
+                        parameters:
+                            service: oro_checkout.action.multi_shipping.default_shipping_method_setter
+                            method: setDefaultShippingMethods
+                            method_parameters: [$checkout]
                     - '@generate_uuid': $state_token
 
             continue_to_payment_definition:
@@ -238,15 +234,14 @@ workflows:
                           service: oro_checkout.action.default_shipping_method_setter
                           method: setDefaultShippingMethod
                           method_parameters: [$checkout]
-                    - '@tree':
+                    # Sync actual shipping values for cases if new line items has been added.
+                    - '@call_service_method':
                         conditions:
                             '@is_multishipping_enabled': ~
-                        actions:
-                            # Sync actual shipping values for cases if new line items has been added.
-                            - '@call_service_method':
-                                service: oro_checkout.action.multi_shipping.default_shipping_method_setter
-                                method: setDefaultShippingMethods
-                                method_parameters: [$checkout, $line_items_shipping_methods, true]
+                        parameters:
+                            service: oro_checkout.action.multi_shipping.default_shipping_method_setter
+                            method: setDefaultShippingMethods
+                            method_parameters: [$checkout, $line_items_shipping_methods, true]
                     - '@tree':
                         conditions:
                             '@blank': $.result.checkoutHasApplicableShippingMethods
@@ -297,19 +292,18 @@ workflows:
                                         message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                                         entity: $checkout
                 actions:
-                    - '@tree':
+                    - '@call_service_method':
                         conditions:
                             '@is_multishipping_enabled': ~
-                        actions:
-                            - '@call_service_method':
-                                service: oro_checkout.manager.multi_shipping.checkout_line_items_shipping
-                                method: updateLineItemsShippingPrices
-                                method_parameters: [$checkout]
-                    - '@run_action_group':
-                        action_group: b2b_flow_checkout_update_shipping_method
-                        parameters_mapping:
-                            checkout: $checkout
-
+                        parameters:
+                            service: oro_checkout.manager.multi_shipping.checkout_line_items_shipping
+                            method: updateLineItemsShippingPrices
+                            method_parameters: [$checkout]
+                    - '@call_service_method':
+                        service: oro_checkout.shipping_method.provider_main
+                        method: getPrice
+                        method_parameters: [$checkout]
+                        attribute: $checkout.shippingCost
                     - '@assign_value': [$.result.shippingPriceUpdated, true]
                     - '@call_service_method':
                           service: oro_checkout.action.default_payment_method_setter
@@ -338,26 +332,23 @@ workflows:
                             method: setDefaultShippingMethods
                             method_parameters: [$checkout, $line_items_shipping_methods]
 
-                    - '@tree':
+                    - '@assign_value':
                         conditions:
                             '@blank': $.result.shippingMethodHasEnabledShippingRules
-                        actions:
-                            - '@assign_value': [$.result.shippingMethodHasEnabledShippingRules, false]
-                    - '@tree':
+                        parameters: [$.result.shippingMethodHasEnabledShippingRules, false]
+                    - '@assign_value':
                         conditions:
                             '@and':
                                 - '@not':
                                     - '@is_multishipping_enabled': ~
                                 - '@shipping_method_has_enabled_shipping_rules': $checkout.shippingMethod
-                        actions:
-                            - '@assign_value': [$.result.shippingMethodHasEnabledShippingRules, true]
-                    - '@tree':
+                        parameters: [$.result.shippingMethodHasEnabledShippingRules, true]
+                    - '@assign_value':
                         conditions:
                             '@and':
                                 - '@is_multishipping_enabled': ~
                                 - '@line_items_shipping_methods_has_enabled_shipping_rules': $checkout
-                        actions:
-                            - '@assign_value': [$.result.shippingMethodHasEnabledShippingRules, true]
+                        parameters: [$.result.shippingMethodHasEnabledShippingRules, true]
                     - '@call_service_method':
                         conditions:
                             '@blank': $.result.paymentContext
@@ -517,7 +508,7 @@ workflows:
                     - '@call_service_method':
                         conditions:
                             '@and':
-                                - '@not_empty': [$.id]
+                                - '@not_empty': $.id
                                 - '@empty': $.result.paymentContext
                         parameters:
                             service: oro_checkout.provider.payment_context
@@ -635,18 +626,18 @@ workflows:
                           method: isCreateSubOrdersForEachGroupEnabled
                           method_parameters: []
                           attribute: $.result.createSubOrdersForLineItemsGroup
-                    - '@tree':
+
+                    - '@run_action_group':
                         conditions:
                             '@and':
                                 - '@equal': [$.result.createSubOrdersForLineItemsGroup, true]
                                 - '@not_empty': $grouped_line_items
-                        actions:
-                            - '@run_action_group':
-                                action_group: b2b_flow_checkout_create_child_orders
-                                parameters_mapping:
-                                    checkout: $checkout
-                                    order: $order
-                                    groupedLineItemsIds: $grouped_line_items
+                        parameters:
+                            action_group: b2b_flow_checkout_create_child_orders
+                            parameters_mapping:
+                                checkout: $checkout
+                                order: $order
+                                groupedLineItemsIds: $grouped_line_items
 
                     - '@assign_value': [$payment_in_progress, true]
 
@@ -760,7 +751,7 @@ workflows:
             finish_checkout_definition:
                 conditions:
                     '@and':
-                        - '@not_empty': [$order]
+                        - '@not_empty': $order
                         - '@equal': [$payment_in_progress, true]
 
                 actions:

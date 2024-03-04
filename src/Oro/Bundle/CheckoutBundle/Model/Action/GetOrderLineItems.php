@@ -70,7 +70,7 @@ class GetOrderLineItems extends AbstractAction
             $arguments[] = $configVisibilityPath;
         }
 
-        $lineItems = call_user_func_array([$this->checkoutLineItemsManager, 'getData'], $arguments);
+        $lineItems = $this->checkoutLineItemsManager->getData(...$arguments);
 
         $this->contextAccessor->setValue($context, $this->options['attribute'], $lineItems);
     }

@@ -102,10 +102,8 @@ workflows:
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
-                            options:
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
-                            options:
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                         email:

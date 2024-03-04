@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Operation;
 
+use Oro\Bundle\CheckoutBundle\Action\B2bFlowCheckout\ActionGroup\AddressActions;
+use Oro\Bundle\CheckoutBundle\Action\B2bFlowCheckout\ActionGroup\CheckoutActions;
+use Oro\Bundle\CheckoutBundle\Action\B2bFlowCheckout\ActionGroup\OrderActions;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
@@ -34,8 +37,11 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
     {
         $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
-            'Trying to execute ActionGroup "b2b_flow_checkout_update_billing_address" '
-            . 'with invalid or missing parameter(s): "checkout"'
+            sprintf(
+                'Trying to execute ActionGroup "%s" '
+                . 'with invalid or missing parameter(s): "checkout"',
+                'service:' . AddressActions::class . '::updateBillingAddress'
+            )
         );
 
         $this->executeActionGroup('b2b_flow_checkout_update_billing_address');
@@ -110,8 +116,11 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
     {
         $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
-            'Trying to execute ActionGroup "b2b_flow_checkout_update_shipping_address" '
-            . 'with invalid or missing parameter(s): "checkout"'
+            sprintf(
+                'Trying to execute ActionGroup "%s" '
+                . 'with invalid or missing parameter(s): "checkout"',
+                'service:' . AddressActions::class . '::updateShippingAddress'
+            )
         );
 
         $this->executeActionGroup('b2b_flow_checkout_update_shipping_address');
@@ -179,8 +188,11 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
     {
         $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
-            'Trying to execute ActionGroup "b2b_flow_checkout_place_order" ' .
-            'with invalid or missing parameter(s): "checkout"'
+            sprintf(
+                'Trying to execute ActionGroup "%s" '
+                . 'with invalid or missing parameter(s): "checkout"',
+                'service:' . OrderActions::class . '::placeOrder'
+            )
         );
 
         $this->executeActionGroup('b2b_flow_checkout_place_order');
@@ -235,8 +247,11 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
     {
         $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
-            'Trying to execute ActionGroup "b2b_flow_checkout_purchase" '
-            . 'with invalid or missing parameter(s): "checkout", "order"'
+            sprintf(
+                'Trying to execute ActionGroup "%s" '
+                . 'with invalid or missing parameter(s): "checkout"',
+                'service:' . CheckoutActions::class . '::purchase'
+            )
         );
 
         $this->executeActionGroup('b2b_flow_checkout_purchase');
@@ -280,8 +295,11 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
     {
         $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
-            'Trying to execute ActionGroup "b2b_flow_checkout_finish_checkout" '
-            . 'with invalid or missing parameter(s): "checkout", "order"'
+            sprintf(
+                'Trying to execute ActionGroup "%s" '
+                . 'with invalid or missing parameter(s): "checkout"',
+                'service:' . CheckoutActions::class . '::finishCheckout'
+            )
         );
 
         $this->executeActionGroup('b2b_flow_checkout_finish_checkout');

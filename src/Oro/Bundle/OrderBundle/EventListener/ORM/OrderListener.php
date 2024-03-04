@@ -24,8 +24,10 @@ class OrderListener
     public function postPersist(Order $entity, LifecycleEventArgs $args)
     {
         if (!$entity->getIdentifier()) {
+            $identifier = $this->idGenerator->generate($entity);
+            $entity->setIdentifier($identifier);
             $changeSet = [
-                'identifier' => [null, $this->idGenerator->generate($entity)],
+                'identifier' => [null, $identifier],
             ];
 
             $args->getObjectManager()->getUnitOfWork()->scheduleExtraUpdate($entity, $changeSet);
