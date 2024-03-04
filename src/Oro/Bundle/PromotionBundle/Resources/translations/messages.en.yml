@@ -56,9 +56,13 @@ oro:
         descriptions.label: Descriptions
         descriptions.tooltip: This description will be displayed to user
         discount_configuration.label: Discount Configuration
-        labels.label: Labels
-        labels.tooltip: This label will be displayed to user
+        labels:
+            label: Storefront Labels
+            tooltip: This label will be displayed to customer user.
         name.tooltip: The promotion name will show in the order details.
+        enabled.tooltip: Enable the checkbox to activate the promotion. To deactivate it, clear the checkbox.
+        sort_order.tooltip:  Enter the sort order to set the priority compared to other available promotions. The lower is the number, the higher is the priority.
+        stop_processing.tooltip: Select this option if you wish to prevent applying other promotions with lower priority.
         organization.label: Organization
         owner.label: Owner
         products_segment.label: Product Segment
@@ -110,7 +114,6 @@ oro:
             schedules: Schedules
             conditions: Conditions
             matching_items: Items To Discount
-            store_frontend: Store Frontend
 
         discount:
             free_shipping:

@@ -92,9 +92,9 @@ Feature: Promotions for multi shipping checkout percent
     When I click view "$51.00" in grid
     And I click "Promotions and Discounts"
     Then I should see following rows in "Promotions" table
-      | Promotion                     | Type            | Status | Discount |
-      | lineItemDiscountPromotionRule | Order Line Item | Active | -$5.00   |
-      | Shipping Discount             | Shipping        | Active | -$3.00   |
+      | Code                  | Promotion                               | Type        | Status | Discount |
+      |                       | Shipping Discount                       | Shipping    | Active | -$3.00   |
+      | multi-shipping-coupon | MultiShippingOrderDiscountPromotionRule | Order Total | Active | -$5.00   |
     And I see following subtotals for "Backend Order":
       | Subtotal          | Amount |
       | Subtotal          | $50.00 |

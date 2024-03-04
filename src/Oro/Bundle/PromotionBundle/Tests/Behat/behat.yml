@@ -59,8 +59,7 @@ oro_behat_extension:
           Deactivate At (first):
             type: 'css'
             locator: '.schedule-intervals [name$="[deactivateAt]"]:first-child'
-          Labels: 'oro_promotion[labels][values][default]'
-          Descriptions: 'oro_promotion[descriptions][values][default]'
+          Storefront Labels: 'oro_promotion[labels][values][default]'
           Discount: 'oro_promotion[discountConfiguration][type]'
           Type: 'oro_promotion[discountConfiguration][options][discount_type]'
           Currency: 'oro_promotion[discountConfiguration][options][amount_discount_value][currency]'

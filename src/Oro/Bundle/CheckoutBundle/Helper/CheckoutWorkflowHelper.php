@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\Helper;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\ActionBundle\Exception\ForbiddenActionGroupException;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
@@ -19,12 +18,9 @@ use Oro\Bundle\CustomerBundle\Handler\CustomerRegistrationHandler;
 use Oro\Bundle\CustomerBundle\Handler\ForgotPasswordHandler;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
-use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\Exception\AlreadySubmittedException;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -36,38 +32,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class CheckoutWorkflowHelper
 {
-    /** @var EventDispatcherInterface  */
-    private $eventDispatcher;
-
-    /** @var WorkflowManager  */
-    private $workflowManager;
-
-    /** @var TransitionProvider  */
-    private $transitionProvider;
-
-    /** @var TransitionFormProvider  */
-    private $transitionFormProvider;
-
-    /** @var CheckoutLineItemsManager  */
-    private $lineItemsManager;
-
-    /** @var CheckoutLineItemGroupingInvalidationHelper */
-    private $checkoutLineItemGroupingInvalidationHelper;
-
-    /** @var CustomerRegistrationHandler  */
-    private $registrationHandler;
-
-    /** @var ActionGroupRegistry */
-    private $actionGroupRegistry;
-
-    /** @var ForgotPasswordHandler  */
-    private $forgotPasswordHandler;
-
-    /** @var CheckoutErrorHandler  */
-    private $errorHandler;
-
-    /** @var TranslatorInterface  */
-    private $translator;
+    private EventDispatcherInterface $eventDispatcher;
+    private WorkflowManager $workflowManager;
+    private TransitionProvider $transitionProvider;
+    private TransitionFormProvider $transitionFormProvider;
+    private CheckoutLineItemsManager $lineItemsManager;
+    private CheckoutLineItemGroupingInvalidationHelper $checkoutLineItemGroupingInvalidationHelper;
+    private CustomerRegistrationHandler $registrationHandler;
+    private ActionGroupRegistry $actionGroupRegistry;
+    private ForgotPasswordHandler $forgotPasswordHandler;
+    private CheckoutErrorHandler $errorHandler;
+    private TranslatorInterface $translator;
+    private array $workflowItems = [];
 
     public function __construct(
         WorkflowManager $workflowManager,
@@ -95,14 +71,7 @@ class CheckoutWorkflowHelper
         $this->translator = $translator;
     }
 
-    /**
-     * @param Request  $request
-     * @param Checkout $checkout
-     *
-     * @return WorkflowStep
-     * @throws WorkflowException
-     */
-    public function processWorkflowAndGetCurrentStep(Request $request, Checkout $checkout)
+    public function processWorkflowAndGetCurrentStep(Request $request, Checkout $checkout): WorkflowStep
     {
         $this->actionGroupRegistry->findByName('actualize_currency')
             ->execute(new ActionData(['checkout' => $checkout]));
@@ -127,21 +96,29 @@ class CheckoutWorkflowHelper
         return $currentStep;
     }
 
-    /**
-     * @param CheckoutInterface $checkout
-     * @return WorkflowItem
-     *
-     * @throws WorkflowException
-     */
-    public function getWorkflowItem(CheckoutInterface $checkout)
+    public function getWorkflowItem(CheckoutInterface $checkout): WorkflowItem
     {
-        $items = $this->workflowManager->getWorkflowItemsByEntity($checkout);
-
-        if (count($items) !== 1) {
+        $items = $this->findWorkflowItems($checkout);
+        if (\count($items) !== 1) {
             throw new NotFoundHttpException('Unable to find correct WorkflowItem for current checkout');
         }
 
         return reset($items);
+    }
+
+    /**
+     * @param CheckoutInterface $checkout
+     *
+     * @return WorkflowItem[]
+     */
+    public function findWorkflowItems(CheckoutInterface $checkout): array
+    {
+        $checkoutId = $checkout->getId();
+        if (!isset($this->workflowItems[$checkoutId])) {
+            $this->workflowItems[$checkoutId] = $this->workflowManager->getWorkflowItemsByEntity($checkout);
+        }
+
+        return $this->workflowItems[$checkoutId];
     }
 
     protected function checkLineItemsCount(Checkout $checkout, Request $request): void
@@ -170,12 +147,7 @@ class CheckoutWorkflowHelper
         }
     }
 
-    /**
-     * @throws ForbiddenActionGroupException
-     * @throws \Exception
-     * @throws AlreadySubmittedException
-     */
-    protected function handlePostTransition(WorkflowItem $workflowItem, Request $request)
+    protected function handlePostTransition(WorkflowItem $workflowItem, Request $request): void
     {
         $transition = $this->getContinueTransition($workflowItem, (string) $request->get('transition'));
         if (!$transition) {
@@ -207,20 +179,12 @@ class CheckoutWorkflowHelper
         }
 
         $this->eventDispatcher->dispatch(
-            new CheckoutTransitionAfterEvent(
-                $workflowItem,
-                $transition,
-                $isAllowed,
-                $errors
-            )
+            new CheckoutTransitionAfterEvent($workflowItem, $transition, $isAllowed, $errors)
         );
 
         $this->transitionProvider->clearCache();
     }
 
-    /**
-     * @throws WorkflowException
-     */
     private function getTransition(WorkflowItem $workflowItem, string $transitionName): ?Transition
     {
         $workflow = $this->workflowManager->getWorkflow($workflowItem);
@@ -232,9 +196,6 @@ class CheckoutWorkflowHelper
         return $transition;
     }
 
-    /**
-     * @throws WorkflowException
-     */
     private function getContinueTransition(WorkflowItem $workflowItem, string $transitionName): ?Transition
     {
         if ($transitionName) {
@@ -252,7 +213,7 @@ class CheckoutWorkflowHelper
         return $transition ?? null;
     }
 
-    protected function handleGetTransition(WorkflowItem $workflowItem, Request $request)
+    protected function handleGetTransition(WorkflowItem $workflowItem, Request $request): void
     {
         if ($request->query->has('transition')) {
             $transition = $request->get('transition');
@@ -265,12 +226,7 @@ class CheckoutWorkflowHelper
         }
     }
 
-    /**
-     * @param WorkflowItem $workflowItem
-     *
-     * @return WorkflowStep
-     */
-    protected function validateStep(WorkflowItem $workflowItem)
+    protected function validateStep(WorkflowItem $workflowItem): WorkflowStep
     {
         $verifyTransition = null;
         $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
@@ -289,25 +245,18 @@ class CheckoutWorkflowHelper
         return $workflowItem->getCurrentStep();
     }
 
-    protected function handleRegistration(WorkflowItem $workflowItem, Request $request)
+    protected function handleRegistration(WorkflowItem $workflowItem, Request $request): void
     {
         if ($request->isMethod(Request::METHOD_POST)) {
             $this->registrationHandler->handleRegistration($request);
-            /** @var FormInterface $form */
             $form = $this->registrationHandler->getForm();
-
             if ($form->isSubmitted() && $form->isValid()) {
                 $this->handleGetTransition($workflowItem, $request);
             }
         }
     }
 
-    /**
-     * @param WorkflowItem $workflowItem
-     *
-     * @return bool
-     */
-    private function stopPropagation(WorkflowItem $workflowItem)
+    private function stopPropagation(WorkflowItem $workflowItem): bool
     {
         $stopPropagation = false;
         $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
@@ -325,7 +274,7 @@ class CheckoutWorkflowHelper
         return $stopPropagation;
     }
 
-    private function addTransitionErrors(TransitionData $continueTransition, Request $request)
+    private function addTransitionErrors(TransitionData $continueTransition, Request $request): void
     {
         $errors = $continueTransition->getErrors();
         foreach ($errors as $error) {
@@ -336,14 +285,7 @@ class CheckoutWorkflowHelper
         }
     }
 
-    /**
-     * @param Checkout $checkout
-     * @param WorkflowItem $workflowItem
-     * @param Request $request
-     *
-     * @return bool
-     */
-    private function isValidationNeeded(Checkout $checkout, WorkflowItem $workflowItem, Request $request)
+    private function isValidationNeeded(Checkout $checkout, WorkflowItem $workflowItem, Request $request): bool
     {
         if (!$checkout->getId()) {
             return false;
@@ -359,7 +301,7 @@ class CheckoutWorkflowHelper
         }
 
         $frontendOptions = $continueTransition->getTransition()->getFrontendOptions();
-        if (!array_key_exists('is_checkout_show_errors', $frontendOptions)) {
+        if (!\array_key_exists('is_checkout_show_errors', $frontendOptions)) {
             return false;
         }
 
@@ -373,7 +315,7 @@ class CheckoutWorkflowHelper
         return true;
     }
 
-    private function processHandlers(WorkflowItem $workflowItem, Request $request)
+    private function processHandlers(WorkflowItem $workflowItem, Request $request): void
     {
         if ($this->registrationHandler->isRegistrationRequest($request)) {
             $this->handleRegistration($workflowItem, $request);
@@ -384,12 +326,7 @@ class CheckoutWorkflowHelper
         }
     }
 
-    /**
-     * @throws ForbiddenActionGroupException
-     * @throws \Exception
-     * @throws AlreadySubmittedException
-     */
-    private function handleTransition(WorkflowItem $workflowItem, Request $request)
+    private function handleTransition(WorkflowItem $workflowItem, Request $request): void
     {
         if ($request->isMethod(Request::METHOD_GET)) {
             $this->handleGetTransition($workflowItem, $request);

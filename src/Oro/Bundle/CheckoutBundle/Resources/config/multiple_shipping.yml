@@ -198,7 +198,7 @@ services:
     oro_checkout.provider.multi_shipping.promotion.split_checkout:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitCheckoutProvider
         arguments:
-            - '@doctrine'
+            - '@oro_checkout.helper.checkout_workflow_helper'
             - '@oro_checkout.splitter.checkout_splitter'
             - '@oro_checkout.provider.grouped_line_items'
             - '@oro_checkout.provider.multi_shipping_config'
