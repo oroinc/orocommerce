@@ -202,6 +202,8 @@ services:
             - '@oro_checkout.splitter.checkout_splitter'
             - '@oro_checkout.provider.grouped_line_items'
             - '@oro_checkout.provider.multi_shipping_config'
+        calls:
+            - [setCheckoutWorkflowHelper, ["@oro_checkout.helper.checkout_workflow_helper"]]
 
     oro_checkout.provider.main_order_promotion_discounts_provider_decorator:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\Promotion\MainOrderPromotionDiscountsProviderDecorator

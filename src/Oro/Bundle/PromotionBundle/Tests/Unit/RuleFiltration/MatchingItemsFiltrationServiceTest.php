@@ -8,7 +8,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
-use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
+use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProviderInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
@@ -25,7 +25,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
     /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $filtrationService;
 
-    /** @var MatchingProductsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var MatchingProductsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $matchingProductsProvider;
 
     /** @var MatchingItemsFiltrationService */
@@ -34,7 +34,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
-        $this->matchingProductsProvider = $this->createMock(MatchingProductsProvider::class);
+        $this->matchingProductsProvider = $this->createMock(MatchingProductsProviderInterface::class);
 
         $this->matchingItemsFiltrationService = new MatchingItemsFiltrationService(
             $this->filtrationService,
@@ -91,7 +91,10 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 
         $this->matchingProductsProvider->expects($this->exactly(2))
             ->method('getMatchingProducts')
-            ->withConsecutive([$firstPromotionSegment, $lineItems], [$secondPromotionSegment, $lineItems])
+            ->withConsecutive(
+                [$firstPromotionSegment, $lineItems],
+                [$secondPromotionSegment, $lineItems]
+            )
             ->willReturn([]);
 
         $this->assertEmpty(

@@ -92,6 +92,8 @@ services:
             - '@oro_security.token_accessor'
             - '@oro_promotion.promotion_provider.memory_cache'
             - '@oro_promotion.entity_promotion_aware_helper'
+        calls:
+            - ['setAvailablePromotionProvider', ['@oro_promotion.available_promotion_provider']]
 
     oro_promotion.shipping_promotion_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionProvider
@@ -103,6 +105,14 @@ services:
             - '@oro_security.token_accessor'
             - '@oro_promotion.promotion_provider.memory_cache'
             - '@oro_promotion.entity_promotion_aware_helper'
+        calls:
+            - ['setAvailablePromotionProvider', ['@oro_promotion.available_promotion_provider']]
+
+    oro_promotion.available_promotion_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\AvailablePromotionProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_security.token_accessor'
 
     oro_promotion.promotion_provider.memory_cache:
         parent: oro.cache.provider.memory_cache
@@ -657,6 +667,13 @@ services:
             - '@oro_promotion.promotion_provider'
             - '@oro_promotion.provider.entity_coupons_provider'
             - '@oro_promotion.entity_promotion_aware_helper'
+        calls:
+            - [setCouponValidators, [!tagged_iterator oro_promotion.coupon_validator]]
+
+    oro_promotion.coupon_validator.organization_validator:
+        class: Oro\Bundle\PromotionBundle\ValidationService\OrganizationCouponValidator
+        tags:
+            - {name: oro_promotion.coupon_validator}
 
     oro_promotion.rule_normalizer:
         public: false
@@ -873,3 +890,8 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: preUpdate }
+
+    oro_promotion.event_listener.promotion_products_collection_grid_listener:
+        class: Oro\Bundle\PromotionBundle\EventListener\PromotionProductsCollectionGridListener
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.promotion-products-collection-grid, method: onBuildAfter }

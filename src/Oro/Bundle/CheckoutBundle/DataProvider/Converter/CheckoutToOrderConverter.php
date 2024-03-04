@@ -48,7 +48,7 @@ class CheckoutToOrderConverter
 
         // Check if grouping line items is enabled and subOrders should be created.
         if ($checkout->getId()) {
-            $splitCheckout = $this->splitCheckoutProvider->getSubCheckouts($checkout, false);
+            $splitCheckout = $this->splitCheckoutProvider->getSubCheckouts($checkout);
             if (!empty($splitCheckout)) {
                 foreach ($splitCheckout as $subCheckout) {
                     $order->addSubOrder($this->getOrder($subCheckout));

@@ -12,6 +12,7 @@ use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order as OrderStub;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
+use Oro\Bundle\PromotionBundle\ValidationService\CouponValidatorInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class CouponApplicabilityValidationServiceTest extends \PHPUnit\Framework\TestCase
@@ -33,6 +34,8 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit\Framework\TestCa
      */
     private $entityCouponsProvider;
 
+    private $couponValidator;
+
     /**
      * @var CouponApplicabilityValidationService
      */
@@ -49,6 +52,7 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit\Framework\TestCa
             ->disableOriginalConstructor()
             ->onlyMethods(['isCouponAware'])
             ->getMock();
+        $this->couponValidator = $this->createMock(CouponValidatorInterface::class);
 
         $this->couponApplicabilityValidationService = new CouponApplicabilityValidationService(
             $this->couponValidationService,
@@ -56,6 +60,7 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit\Framework\TestCa
             $this->entityCouponsProvider,
             $this->promotionAwareHelper
         );
+        $this->couponApplicabilityValidationService->setCouponValidators([$this->couponValidator]);
     }
 
     public function testGetViolationsWhenCouponIsNotValid()
@@ -71,9 +76,37 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit\Framework\TestCa
             ->with($coupon, $customerUser)
             ->willReturn($errorMessages);
 
+        $this->couponValidator->expects(self::once())
+            ->method('getViolation')
+            ->with($coupon, $entity)
+            ->willReturn(null);
+
         $this->promotionAwareHelper->expects($this->once())->method('isCouponAware')->willReturn(true);
         $this->assertEquals(
             $errorMessages,
+            $this->couponApplicabilityValidationService->getViolations($coupon, $entity)
+        );
+    }
+
+    public function testGetViolationsWhenCouponIsNotValidByValidator()
+    {
+        $coupon = new Coupon();
+        $customerUser = $this->createMock(CustomerUser::class);
+        $entity = (new OrderStub())->setCustomerUser($customerUser);
+
+        $this->couponValidationService->expects($this->once())
+            ->method('getViolations')
+            ->with($coupon, $customerUser)
+            ->willReturn([]);
+
+        $this->couponValidator->expects(self::once())
+            ->method('getViolation')
+            ->with($coupon, $entity)
+            ->willReturn('oro.order.some_error_message');
+
+        $this->promotionAwareHelper->expects($this->once())->method('isCouponAware')->willReturn(true);
+        $this->assertEquals(
+            ['oro.order.some_error_message'],
             $this->couponApplicabilityValidationService->getViolations($coupon, $entity)
         );
     }
@@ -92,6 +125,11 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit\Framework\TestCa
             ->method('getViolations')
             ->with($coupon, $customerUser)
             ->willReturn([]);
+
+        $this->couponValidator->expects(self::once())
+            ->method('getViolation')
+            ->with($coupon, $entity)
+            ->willReturn(null);
 
         $this->promotionAwareHelper->expects($this->once())->method('isCouponAware')->willReturn(true);
         $this->assertEquals(
@@ -112,6 +150,11 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit\Framework\TestCa
             ->method('getViolations')
             ->with($coupon, $customerUser)
             ->willReturn([]);
+
+        $this->couponValidator->expects(self::once())
+            ->method('getViolation')
+            ->with($coupon, $entity)
+            ->willReturn(null);
 
         $this->promotionProvider
             ->expects($this->once())
@@ -138,6 +181,11 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit\Framework\TestCa
             ->method('getViolations')
             ->with($coupon, $customerUser)
             ->willReturn([]);
+
+        $this->couponValidator->expects(self::once())
+            ->method('getViolation')
+            ->with($coupon, $entity)
+            ->willReturn(null);
 
         $this->promotionProvider
             ->expects($this->once())
@@ -171,6 +219,11 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit\Framework\TestCa
             ->with($coupon, $customerUser)
             ->willReturn([]);
 
+        $this->couponValidator->expects(self::once())
+            ->method('getViolation')
+            ->with($coupon, $entity)
+            ->willReturn(null);
+
         $this->promotionProvider
             ->expects($this->once())
             ->method('isPromotionApplied')
@@ -199,6 +252,11 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit\Framework\TestCa
             ->method('getViolations')
             ->with($coupon, $customerUser)
             ->willReturn([]);
+
+        $this->couponValidator->expects(self::once())
+            ->method('getViolation')
+            ->with($coupon, $entity)
+            ->willReturn(null);
 
         $this->promotionProvider
             ->expects($this->once())

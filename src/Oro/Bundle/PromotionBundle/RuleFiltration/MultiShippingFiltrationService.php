@@ -48,13 +48,42 @@ class MultiShippingFiltrationService extends AbstractSkippableFiltrationService
 
     private function filterMultiShippingRuleOwners(array $ruleOwners, array $context): array
     {
-        /** @var DiscountLineItem[] $filteredLineItems */
-        $filteredLineItems = $this->filterLineItems($context[ContextDataConverterInterface::LINE_ITEMS]);
-        if (!$filteredLineItems) {
-            return [];
+        $shippingRuleOwners = [];
+        $otherRuleOwners = [];
+        foreach ($ruleOwners as $ruleOwner) {
+            if ($ruleOwner instanceof PromotionDataInterface
+                && ShippingDiscount::NAME === $ruleOwner->getDiscountConfiguration()->getType()
+            ) {
+                $shippingRuleOwners[] = $ruleOwner;
+            } else {
+                $otherRuleOwners[] = $ruleOwner;
+            }
         }
 
         $filteredRuleOwners = [];
+        if ($otherRuleOwners) {
+            $filteredRuleOwners = $this->baseFiltrationService->getFilteredRuleOwners($otherRuleOwners, $context);
+        }
+
+        if ($shippingRuleOwners) {
+            /** @var DiscountLineItem[] $filteredLineItems */
+            $filteredLineItems = $this->filterLineItems($context[ContextDataConverterInterface::LINE_ITEMS]);
+            if ($filteredLineItems) {
+                $filteredRuleOwners = array_merge(
+                    $filteredRuleOwners,
+                    $this->filterShippingRuleOwners($filteredLineItems, $shippingRuleOwners, $context)
+                );
+            }
+        }
+
+        return $filteredRuleOwners;
+    }
+
+    private function filterShippingRuleOwners(
+        array $filteredLineItems,
+        array $shippingRuleOwners,
+        array $context
+    ): array {
         $filteredShippingRuleOwners = [];
         foreach ($filteredLineItems as $lineItem) {
             /** @var OrderLineItem $sourceLineItem */
@@ -68,17 +97,16 @@ class MultiShippingFiltrationService extends AbstractSkippableFiltrationService
             unset($lineItemContext[ContextDataConverterInterface::APPLIED_COUPONS]);
 
             /** @var PromotionDataInterface[] $lineItemRuleOwners */
-            $lineItemRuleOwners = $this->baseFiltrationService->getFilteredRuleOwners($ruleOwners, $lineItemContext);
+            $lineItemRuleOwners = $this->baseFiltrationService->getFilteredRuleOwners(
+                $shippingRuleOwners,
+                $lineItemContext
+            );
             foreach ($lineItemRuleOwners as $lineItemRuleOwner) {
-                if (ShippingDiscount::NAME === $lineItemRuleOwner->getDiscountConfiguration()->getType()) {
-                    $filteredShippingRuleOwners[] = new MultiShippingPromotionData($lineItemRuleOwner, [$lineItem]);
-                } else {
-                    $filteredRuleOwners[$lineItemRuleOwner->getId()] = $lineItemRuleOwner;
-                }
+                $filteredShippingRuleOwners[] = new MultiShippingPromotionData($lineItemRuleOwner, [$lineItem]);
             }
         }
 
-        return array_merge(array_values($filteredRuleOwners), $filteredShippingRuleOwners);
+        return $filteredShippingRuleOwners;
     }
 
     private function filterLineItems(array $lineItems): array

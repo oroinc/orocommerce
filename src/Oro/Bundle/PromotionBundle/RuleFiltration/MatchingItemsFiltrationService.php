@@ -6,12 +6,13 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface as UnitCodeAwareInterface;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
-use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
+use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProviderInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 /**
- * This class filters out promotions which are not applicable to current context (i.e. such promotions cannot be
+ * Filters out promotions which are not applicable to current context (i.e. such promotions cannot be
  * applied to any product of lineItems from context).
  */
 class MatchingItemsFiltrationService extends AbstractSkippableFiltrationService
@@ -22,13 +23,13 @@ class MatchingItemsFiltrationService extends AbstractSkippableFiltrationService
     private $filtrationService;
 
     /**
-     * @var MatchingProductsProvider
+     * @var MatchingProductsProviderInterface
      */
     private $matchingProductsProvider;
 
     public function __construct(
         RuleFiltrationServiceInterface $filtrationService,
-        MatchingProductsProvider $matchingProductsProvider
+        MatchingProductsProviderInterface $matchingProductsProvider
     ) {
         $this->filtrationService = $filtrationService;
         $this->matchingProductsProvider = $matchingProductsProvider;
@@ -53,7 +54,11 @@ class MatchingItemsFiltrationService extends AbstractSkippableFiltrationService
             $discountOptions = $ruleOwner->getDiscountConfiguration()->getOptions();
 
             $matchingProducts = $this->matchingProductsProvider
-                ->getMatchingProducts($ruleOwner->getProductsSegment(), $lineItems);
+                ->getMatchingProducts(
+                    $ruleOwner->getProductsSegment(),
+                    $lineItems,
+                    $ruleOwner instanceof Promotion ? $ruleOwner->getOrganization() : null
+                );
 
             if (!$matchingProducts) {
                 return false;

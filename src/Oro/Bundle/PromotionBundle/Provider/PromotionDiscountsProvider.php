@@ -5,6 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Provider;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Model\MultiShippingPromotionData;
 
@@ -24,14 +25,14 @@ class PromotionDiscountsProvider implements PromotionDiscountsProviderInterface
     private $discountFactory;
 
     /**
-     * @var MatchingProductsProvider
+     * @var MatchingProductsProviderInterface
      */
     private $matchingProductsProvider;
 
     public function __construct(
         PromotionProvider $promotionProvider,
         DiscountFactory $discountFactory,
-        MatchingProductsProvider $matchingProductsProvider
+        MatchingProductsProviderInterface $matchingProductsProvider
     ) {
         $this->promotionProvider = $promotionProvider;
         $this->discountFactory = $discountFactory;
@@ -66,7 +67,8 @@ class PromotionDiscountsProvider implements PromotionDiscountsProviderInterface
     {
         return $this->matchingProductsProvider->getMatchingProducts(
             $promotion->getProductsSegment(),
-            $promotion instanceof MultiShippingPromotionData ? $promotion->getLineItems() : $context->getLineItems()
+            $promotion instanceof MultiShippingPromotionData ? $promotion->getLineItems() : $context->getLineItems(),
+            $promotion instanceof Promotion ? $promotion->getOrganization() : null
         );
     }
 }

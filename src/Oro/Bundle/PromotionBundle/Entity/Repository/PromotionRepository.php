@@ -42,17 +42,18 @@ class PromotionRepository extends ServiceEntityRepository
         $queryBuilder->select('promotion, rule, config');
 
         // Organization filtration.
-        $queryBuilder
-            ->where('promotion.organization = :organization')
-            ->setParameter('organization', $organization);
+        if (null !== $organization) {
+            $queryBuilder
+                ->where('promotion.organization = :organizationId')
+                ->setParameter('organizationId', $organization);
+        }
 
         // Enabled filtration.
-        $expr = $queryBuilder->expr();
         $queryBuilder
             ->join('promotion.rule', 'rule')
-            ->andWhere($expr->eq('rule.enabled', ':enabled'))
+            ->andWhere('rule.enabled = :enabled')
             ->setParameter('enabled', true, Types::BOOLEAN)
-            ->addOrderBy($queryBuilder->expr()->asc('rule.sortOrder'));
+            ->addOrderBy('rule.sortOrder');
 
         // Scope filtration.
         $queryBuilder->leftJoin('promotion.scopes', 'scopes', Join::WITH);
@@ -64,19 +65,16 @@ class PromotionRepository extends ServiceEntityRepository
         $queryBuilder
             ->join('promotion.discountConfiguration', 'config')
             ->andWhere(
-                $expr->orX(
-                    $expr->notLike('decode(config.options)', ':discountType'),
-                    $expr->like('decode(config.options)', ':discountCurrency')
-                )
+                'DECODE(config.options) NOT LIKE :discountType OR DECODE(config.options) LIKE :discountCurrency'
             )
             ->setParameter(
                 'discountType',
-                sprintf('%%"%s";s:6:"%s"%%', AbstractDiscount::DISCOUNT_TYPE, DiscountInterface::TYPE_AMOUNT),
+                self::getDiscountConfigParamValue(AbstractDiscount::DISCOUNT_TYPE, DiscountInterface::TYPE_AMOUNT),
                 Types::STRING
             )
             ->setParameter(
                 'discountCurrency',
-                sprintf('%%"%s";s:3:"%s"%%', AbstractDiscount::DISCOUNT_CURRENCY, $currency),
+                self::getDiscountConfigParamValue(AbstractDiscount::DISCOUNT_CURRENCY, $currency),
                 Types::STRING
             );
 
@@ -84,29 +82,21 @@ class PromotionRepository extends ServiceEntityRepository
         $queryBuilder
             ->leftJoin('promotion.schedules', 'schedule')
             ->andWhere(
-                $expr->andX(
-                    $expr->orX(
-                        $expr->isNull('schedule.activeAt'),
-                        $expr->lte('schedule.activeAt', ':now')
-                    ),
-                    $expr->orX(
-                        $expr->isNull('schedule.deactivateAt'),
-                        $expr->gte('schedule.deactivateAt', ':now')
-                    )
-                )
+                'schedule.activeAt IS NULL OR schedule.activeAt <= :now'
+                . ' AND schedule.deactivateAt IS NULL OR schedule.deactivateAt >= :now'
             )
             ->setParameter('now', new \DateTime('now', new \DateTimeZone('UTC')));
 
-        $queryBuilder->addOrderBy($queryBuilder->expr()->asc('promotion.id'));
+        $queryBuilder->addOrderBy('promotion.id');
 
         return $queryBuilder;
     }
 
     public function getAvailablePromotions(mixed $criteria, ?string $currency, int $organization = null): array
     {
-        $queryBuilder = $this->getAvailablePromotionsQueryBuilder($criteria, $currency, $organization);
-
-        return $queryBuilder->getQuery()->getResult();
+        return $this->getAvailablePromotionsQueryBuilder($criteria, $currency, $organization)
+            ->getQuery()
+            ->getResult();
     }
 
     public function findPromotionByProductSegment(Segment $segment): ?Promotion
@@ -158,5 +148,14 @@ class PromotionRepository extends ServiceEntityRepository
             ->getArrayResult();
 
         return array_column($rows, 'name', 'id');
+    }
+
+    private static function getDiscountConfigParamValue(string $name, ?string $value): string
+    {
+        if (null === $value) {
+            return sprintf('%%"%s";N:%%', $name);
+        }
+
+        return sprintf('%%"%s";s:%d:"%s"%%', $name, \strlen($value), $value);
     }
 }

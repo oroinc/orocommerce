@@ -10,11 +10,13 @@ use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Context\OrderContextDataConverter;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Model\MultiShippingPromotionData;
 use Oro\Bundle\PromotionBundle\RuleFiltration\MultiShippingFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethodProvider;
+use Oro\Component\Testing\ReflectionUtil;
 
 class MultiShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
@@ -40,13 +42,9 @@ class MultiShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             $discountConfiguration->setType($type);
         }
 
-        $ruleOwner = $this->createMock(PromotionDataInterface::class);
-        $ruleOwner->expects(self::any())
-            ->method('getId')
-            ->willReturn($id);
-        $ruleOwner->expects(self::any())
-            ->method('getDiscountConfiguration')
-            ->willReturn($discountConfiguration);
+        $ruleOwner = new Promotion();
+        ReflectionUtil::setId($ruleOwner, $id);
+        $ruleOwner->setDiscountConfiguration($discountConfiguration);
 
         return $ruleOwner;
     }
@@ -211,6 +209,8 @@ class MultiShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             $this->getRuleOwner(5),
             $this->getRuleOwner(6)
         ];
+        $shippingRuleOwners = [$ruleOwners[1], $ruleOwners[2], $ruleOwners[3]];
+        $otherRuleOwners = [$ruleOwners[0], $ruleOwners[4], $ruleOwners[5]];
         $context = [
             ContextDataConverterInterface::SHIPPING_METHOD => self::MULTI_SHIPPING,
             ContextDataConverterInterface::SHIPPING_COST   => Price::create(20, 'USD'),
@@ -220,11 +220,12 @@ class MultiShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             'key'                                          => 'val'
         ];
 
-        $this->baseFiltrationService->expects(self::exactly(3))
+        $this->baseFiltrationService->expects(self::exactly(4))
             ->method('getFilteredRuleOwners')
             ->withConsecutive(
+                [$otherRuleOwners, $context],
                 [
-                    $ruleOwners,
+                    $shippingRuleOwners,
                     [
                         ContextDataConverterInterface::SHIPPING_METHOD => 'shipping_method_1',
                         ContextDataConverterInterface::SHIPPING_COST   => Price::create(11, 'USD'),
@@ -234,7 +235,7 @@ class MultiShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
                     ]
                 ],
                 [
-                    $ruleOwners,
+                    $shippingRuleOwners,
                     [
                         ContextDataConverterInterface::SHIPPING_METHOD => 'shipping_method_1',
                         ContextDataConverterInterface::SHIPPING_COST   => Price::create(12, 'USD'),
@@ -244,7 +245,7 @@ class MultiShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
                     ]
                 ],
                 [
-                    $ruleOwners,
+                    $shippingRuleOwners,
                     [
                         ContextDataConverterInterface::SHIPPING_METHOD => 'shipping_method_2',
                         ContextDataConverterInterface::SHIPPING_COST   => Price::create(13, 'USD'),
@@ -255,17 +256,21 @@ class MultiShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
                 ]
             )
             ->willReturnOnConsecutiveCalls(
-                [$ruleOwners[0]],
-                [$ruleOwners[0], $ruleOwners[2]],
-                [$ruleOwners[1], $ruleOwners[5]]
+                [$otherRuleOwners[0], $otherRuleOwners[1]],
+                [$shippingRuleOwners[0]],
+                [$shippingRuleOwners[0], $shippingRuleOwners[2]],
+                [$shippingRuleOwners[1], $shippingRuleOwners[2]]
             );
 
         self::assertEquals(
             [
-                $ruleOwners[0],
-                $ruleOwners[5],
-                new MultiShippingPromotionData($ruleOwners[2], [$lineItem2]),
-                new MultiShippingPromotionData($ruleOwners[1], [$lineItem3]),
+                $otherRuleOwners[0],
+                $otherRuleOwners[1],
+                new MultiShippingPromotionData($shippingRuleOwners[0], [$lineItem1]),
+                new MultiShippingPromotionData($shippingRuleOwners[0], [$lineItem2]),
+                new MultiShippingPromotionData($shippingRuleOwners[2], [$lineItem2]),
+                new MultiShippingPromotionData($shippingRuleOwners[1], [$lineItem3]),
+                new MultiShippingPromotionData($shippingRuleOwners[2], [$lineItem3]),
             ],
             $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)
         );

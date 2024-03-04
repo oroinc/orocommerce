@@ -19,12 +19,19 @@ class CouponApplicabilityValidationService
     const MESSAGE_PROMOTION_ALREADY_APPLIED = 'oro.promotion.coupon.violation.coupon_promotion_already_applied';
     const MESSAGE_PROMOTION_NOT_APPLICABLE = 'oro.promotion.coupon.violation.coupon_promotion_not_applicable';
 
+    private iterable $couponValidators;
+
     public function __construct(
         private CouponValidationService    $couponValidationService,
         private PromotionProvider          $promotionProvider,
         private EntityCouponsProvider      $entityCouponsProvider,
         private PromotionAwareEntityHelper $promotionAwareHelper
     ) {
+    }
+
+    public function setCouponValidators(iterable $couponValidators): void
+    {
+        $this->couponValidators = $couponValidators;
     }
 
     /**
@@ -43,8 +50,7 @@ class CouponApplicabilityValidationService
             );
         }
 
-        $violations = $this->couponValidationService->getViolations($coupon, $entity->getCustomerUser());
-
+        $violations = $this->getViolationsByCouponValidators($coupon, $entity);
         if (!empty($violations)) {
             return $violations;
         }
@@ -68,5 +74,19 @@ class CouponApplicabilityValidationService
         $entity->removeAppliedCoupon($appliedCoupon);
 
         return [];
+    }
+
+    private function getViolationsByCouponValidators(Coupon $coupon, $entity): array
+    {
+        $violations = $this->couponValidationService->getViolations($coupon, $entity->getCustomerUser());
+        /** @var CouponValidatorInterface $validator */
+        foreach ($this->couponValidators as $validator) {
+            $violation = $validator->getViolation($coupon, $entity);
+            if (null !== $violation) {
+                $violations[] = $violation;
+            }
+        }
+
+        return $violations;
     }
 }
