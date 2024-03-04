@@ -61,7 +61,7 @@ class OrderActions
     {
         $em = $this->registry->getManagerForClass(Order::class);
         $em->persist($order);
-        $em->flush();
+        $em->flush($order);
     }
 
     public function createOrderByCheckout(
@@ -78,11 +78,12 @@ class OrderActions
         // Get order line items
         $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
 
+        $sourceEntity = $checkout->getSourceEntity();
         // Create order
         $additionalData = [
             'billingAddress' => $orderBillingAddress,
             'shippingAddress' => $orderShippingAddress,
-            'sourceEntityClass' => ClassUtils::getClass($checkout->getSourceEntity()),
+            'sourceEntityClass' => is_object($sourceEntity) ? ClassUtils::getClass($sourceEntity) : null,
             'paymentTerm' => $paymentTerm,
             'lineItems' => $orderLineItems
         ];

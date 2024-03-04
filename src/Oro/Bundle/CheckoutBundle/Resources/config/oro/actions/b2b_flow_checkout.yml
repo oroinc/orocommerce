@@ -1,5 +1,4 @@
 action_groups:
-    # TODO: Find a way how to work with result/results of action group when dealing with a services
     # TODO: ??? Do we need context in service, or let's keep it not connected to action bundle at all to be able to reuse??
     b2b_flow_checkout_duplicate_address:
         service: oro_checkout.action_group.b2b_flow_checkout.address_actions
