@@ -16,6 +16,8 @@ Oro\Bundle\OrderBundle\Entity\Order:
                     # Used in UPDATE action by orderlineitems storefront API resource
                     - api_frontend_order_update
     properties:
+        createdBy:
+            -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField: ~
         poNumber:
             -   Length:
                     max: 255
