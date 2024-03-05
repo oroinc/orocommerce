@@ -7,6 +7,8 @@ use Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadSegmentData;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -26,12 +28,54 @@ class PromotionRepositoryTest extends WebTestCase
         return $this->getReference($reference);
     }
 
-    public function testGetAllPromotions(): void
+    private function getPromotionIds(array $promotions): array
     {
-        $promotions = $this->repository->getAllPromotions(
-            $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getOrganization()->getId()
+        return array_map(fn (Promotion $promotion) => $promotion->getId(), $promotions);
+    }
+
+    private function getScopeManager(): ScopeManager
+    {
+        return self::getContainer()->get('oro_scope.scope_manager');
+    }
+
+    private function getCriteria(): ScopeCriteria
+    {
+        return $this->getScopeManager()->getCriteria('promotion');
+    }
+
+    public function testGetAvailablePromotions(): void
+    {
+        $promotions = $this->repository->getAvailablePromotions($this->getCriteria(), 'USD');
+        self::assertEquals(
+            [
+                $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId(),
+                $this->getPromotion(LoadPromotionData::ORDER_AMOUNT_PROMOTION)->getId(),
+                $this->getPromotion(LoadPromotionData::SHIPPING_PROMOTION)->getId()
+            ],
+            $this->getPromotionIds($promotions)
         );
-        self::assertCount(3, $promotions);
+    }
+
+    public function testGetAvailablePromotionsForAnotherCurrency(): void
+    {
+        $promotions = $this->repository->getAvailablePromotions($this->getCriteria(), 'EUR');
+        self::assertEquals(
+            [
+                $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId()
+            ],
+            $this->getPromotionIds($promotions)
+        );
+    }
+
+    public function testGetAvailablePromotionsWithNullCurrency(): void
+    {
+        $promotions = $this->repository->getAvailablePromotions($this->getCriteria(), null);
+        self::assertEquals(
+            [
+                $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId()
+            ],
+            $this->getPromotionIds($promotions)
+        );
     }
 
     public function testFindPromotionByProductSegment(): void
@@ -68,13 +112,13 @@ class PromotionRepositoryTest extends WebTestCase
         );
     }
 
-    public function testGetPromotionsNamesWhenNoPromotions(): void
+    public function testGetPromotionsNamesByIdsWhenNoPromotions(): void
     {
         $actual = $this->repository->getPromotionsNamesByIds([PHP_INT_MAX]);
         self::assertEquals([], $actual);
     }
 
-    public function testGetPromotionsNamesWhenNoIds(): void
+    public function testGetPromotionsNamesByIdsWhenNoIds(): void
     {
         $actual = $this->repository->getPromotionsNamesByIds([]);
         self::assertEquals([], $actual);
