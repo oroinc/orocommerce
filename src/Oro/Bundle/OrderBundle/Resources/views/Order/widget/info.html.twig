@@ -43,6 +43,11 @@
             {{ UI.renderProperty('oro.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
             {{ UI.renderHtmlProperty('oro.order.source_document.label'|trans, sourceEntityBlock) }}
 
+            {{ UI.renderHtmlProperty(
+                'oro.order.created_by.label'|trans,
+                UI.entityViewLink(order.createdBy, order.createdBy|oro_format_name, 'oro_user_view')
+            ) }}
+
             {% if order.parent %}
                 {{ UI.renderHtmlProperty(
                     'oro.order.parent.label'|trans,
