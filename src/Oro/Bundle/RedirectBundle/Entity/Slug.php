@@ -26,7 +26,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  *     },
  *     uniqueConstraints={
  *         @ORM\UniqueConstraint(
- *             name="oro_redirect_slug_uidx",
+ *             name="oro_redirect_slug_deferrable_uidx",
  *             columns={"organization_id","url_hash","scopes_hash"}
  *         )
  *     }

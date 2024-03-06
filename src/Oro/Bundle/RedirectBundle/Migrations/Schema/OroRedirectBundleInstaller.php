@@ -16,7 +16,7 @@ class OroRedirectBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_7_1';
     }
 
     /**
@@ -35,6 +35,7 @@ class OroRedirectBundleInstaller implements Installation
         $this->addOroSlugScopeForeignKeys($schema);
         $this->addOroRedirectScopeForeignKeys($schema);
         $this->addOroRedirectSlugForeignKeys($schema);
+        $this->addUniqueConstraintToOroRedirectTable($queries);
     }
 
     /**
@@ -58,15 +59,20 @@ class OroRedirectBundleInstaller implements Installation
         $table->addIndex(['route_name'], 'oro_redirect_slug_route', []);
         $table->addIndex(['slug_prototype'], 'oro_redirect_slug_slug', []);
         $table->addIndex(['parameters_hash'], 'oro_redirect_slug_parameters_hash_idx', []);
+
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
-        $table->addUniqueIndex(
-            ['organization_id', 'url_hash', 'scopes_hash'],
-            'oro_redirect_slug_uidx'
+    }
+
+    private function addUniqueConstraintToOroRedirectTable(QueryBag $queries): void
+    {
+        $queries->addPostQuery(
+            'ALTER TABLE oro_redirect_slug ADD CONSTRAINT oro_redirect_slug_deferrable_uidx ' .
+            'UNIQUE(organization_id, url_hash, scopes_hash) DEFERRABLE INITIALLY DEFERRED'
         );
     }
 
