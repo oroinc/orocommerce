@@ -44,7 +44,7 @@ api:
                 shippingMethod:
                     data_type: object
                     property_path: _
-                    depends_on: [shippingMethod, shippingMethodType]
+                    depends_on: [shippingMethod, shippingMethodType, organization.id]
                     exclusion_policy: all
                     fields:
                         code:

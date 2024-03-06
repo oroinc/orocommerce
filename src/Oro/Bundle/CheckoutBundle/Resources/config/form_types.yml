@@ -48,3 +48,10 @@ services:
             - '@oro_checkout.manager.multi_shipping.checkout_line_items_shipping'
         tags:
             - { name: form.type }
+
+    oro_checkout.form.type.line_item_groups_shipping_methods:
+        class: Oro\Bundle\CheckoutBundle\Form\Type\LineItemGroupShippingMethodsType
+        arguments:
+            - '@oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping'
+        tags:
+            - { name: form.type }

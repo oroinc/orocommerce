@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\Handler;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
@@ -16,8 +17,8 @@ class RulesShippingMethodDisableHandlerDecoratorTest extends \PHPUnit\Framework\
     /** @var ShippingMethodDisableHandlerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $handler;
 
-    /** @var ShippingMethodsConfigsRuleRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $repository;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
     /** @var ShippingMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingMethodProvider;
@@ -28,12 +29,12 @@ class RulesShippingMethodDisableHandlerDecoratorTest extends \PHPUnit\Framework\
     protected function setUp(): void
     {
         $this->handler = $this->createMock(ShippingMethodDisableHandlerInterface::class);
-        $this->repository = $this->createMock(ShippingMethodsConfigsRuleRepository::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
 
         $this->decorator = new RulesShippingMethodDisableHandlerDecorator(
             $this->handler,
-            $this->repository,
+            $this->doctrine,
             $this->shippingMethodProvider
         );
     }
@@ -41,7 +42,7 @@ class RulesShippingMethodDisableHandlerDecoratorTest extends \PHPUnit\Framework\
     /**
      * @dataProvider testHandleMethodDisableProvider
      */
-    public function testHandleMethodDisable(string $disabledMethodId, array $configs, array $registryMap)
+    public function testHandleMethodDisable(string $disabledMethodId, array $configs, array $registryMap): void
     {
         $this->handler->expects(self::once())
             ->method('handleMethodDisable')
@@ -89,7 +90,12 @@ class RulesShippingMethodDisableHandlerDecoratorTest extends \PHPUnit\Framework\
             ->method('getShippingMethod')
             ->willReturnMap($registryMapValues);
 
-        $this->repository->expects(self::once())
+        $repository = $this->createMock(ShippingMethodsConfigsRuleRepository::class);
+        $this->doctrine->expects(self::once())
+            ->method('getRepository')
+            ->with(ShippingMethodsConfigsRule::class)
+            ->willReturn($repository);
+        $repository->expects(self::once())
              ->method('getEnabledRulesByMethod')
              ->willReturn($enabledRules);
 

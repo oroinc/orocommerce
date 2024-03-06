@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Twig;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
@@ -54,9 +56,9 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('get_shipping_method_label', [$this, 'formatShippingMethodLabel']),
@@ -68,9 +70,9 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             new TwigFilter('oro_dimensions_unit_format_value', [$this, 'formatDimensionsUnitValue']),
@@ -85,66 +87,59 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
         ];
     }
 
-    /**
-     * @param string $shippingMethodName
-     *
-     * @return string
-     */
-    public function formatShippingMethodLabel($shippingMethodName)
-    {
-        return $this->getShippingMethodLabelFormatter()->formatShippingMethodLabel($shippingMethodName);
+    public function formatShippingMethodLabel(
+        ?string $shippingMethod,
+        Organization|int|null $organization = null
+    ): string {
+        return $this->getShippingMethodLabelFormatter()->formatShippingMethodLabel(
+            $shippingMethod,
+            \is_int($organization) ? $this->getOrganization($organization) : $organization
+        );
+    }
+
+    public function formatShippingMethodTypeLabel(
+        ?string $shippingMethod,
+        ?string $shippingMethodType,
+        Organization|int|null $organization = null
+    ): string {
+        return $this->getShippingMethodLabelFormatter()->formatShippingMethodTypeLabel(
+            $shippingMethod,
+            $shippingMethodType,
+            \is_int($organization) ? $this->getOrganization($organization) : $organization
+        );
+    }
+
+    public function formatShippingMethodWithTypeLabel(
+        ?string $shippingMethod,
+        ?string $shippingMethodType,
+        Organization|int|null $organization = null
+    ): string {
+        return $this->getShippingMethodLabelFormatter()->formatShippingMethodWithTypeLabel(
+            $shippingMethod,
+            $shippingMethodType,
+            \is_int($organization) ? $this->getOrganization($organization) : $organization
+        );
     }
 
     /**
-     * @param string $shippingMethodName
-     * @param string $shippingTypeName
-     *
-     * @return string
+     * Gets shipping method config template path.
      */
-    public function formatShippingMethodTypeLabel($shippingMethodName, $shippingTypeName)
+    public function getShippingMethodConfigRenderData(string $shippingMethod): string
     {
-        return $this->getShippingMethodLabelFormatter()
-            ->formatShippingMethodTypeLabel($shippingMethodName, $shippingTypeName);
-    }
-
-    /**
-     * @param string $shippingMethodName
-     * @param string $shippingTypeName
-     *
-     * @return string
-     */
-    public function formatShippingMethodWithTypeLabel($shippingMethodName, $shippingTypeName)
-    {
-        return $this->getShippingMethodLabelFormatter()
-            ->formatShippingMethodWithTypeLabel($shippingMethodName, $shippingTypeName);
-    }
-
-    /**
-     * @param string $shippingMethodName
-     *
-     * @return string Shipping Method config template path
-     */
-    public function getShippingMethodConfigRenderData($shippingMethodName)
-    {
-        $event = new ShippingMethodConfigDataEvent($shippingMethodName);
-        if (!\array_key_exists($shippingMethodName, $this->shippingMethodConfigCache)) {
+        $event = new ShippingMethodConfigDataEvent($shippingMethod);
+        if (!\array_key_exists($shippingMethod, $this->shippingMethodConfigCache)) {
             $this->getEventDispatcher()->dispatch($event, ShippingMethodConfigDataEvent::NAME);
             $template = $event->getTemplate();
             if (!$template) {
                 $template = self::DEFAULT_METHOD_CONFIG_TEMPLATE;
             }
-            $this->shippingMethodConfigCache[$shippingMethodName] = $template;
+            $this->shippingMethodConfigCache[$shippingMethod] = $template;
         }
 
-        return $this->shippingMethodConfigCache[$shippingMethodName];
+        return $this->shippingMethodConfigCache[$shippingMethod];
     }
 
-    /**
-     * @param string $methodIdentifier
-     *
-     * @return bool
-     */
-    public function isShippingMethodEnabled($methodIdentifier)
+    public function isShippingMethodEnabled(string $methodIdentifier): bool
     {
         return $this->getShippingMethodChecker()->isEnabled($methodIdentifier);
     }
@@ -254,7 +249,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices(): array
     {
@@ -267,6 +262,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
             'oro_shipping.formatter.length_unit_label' => UnitLabelFormatterInterface::class,
             'oro_shipping.formatter.freight_class_label' => UnitLabelFormatterInterface::class,
             EventDispatcherInterface::class,
+            DoctrineHelper::class
         ];
     }
 
@@ -308,5 +304,15 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
     private function getEventDispatcher(): EventDispatcherInterface
     {
         return $this->container->get(EventDispatcherInterface::class);
+    }
+
+    private function getDoctrineHelper(): DoctrineHelper
+    {
+        return $this->container->get(DoctrineHelper::class);
+    }
+
+    private function getOrganization(int $organizationId): Organization
+    {
+        return $this->getDoctrineHelper()->getEntityReference(Organization::class, $organizationId);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Formatter;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodOrganizationProvider;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
@@ -14,32 +16,44 @@ class ShippingMethodLabelFormatter
     private const EMPTY_STRING = '';
 
     private ShippingMethodProviderInterface $shippingMethodProvider;
+    private ShippingMethodOrganizationProvider $organizationProvider;
 
-    public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
-    {
+    public function __construct(
+        ShippingMethodProviderInterface $shippingMethodProvider,
+        ShippingMethodOrganizationProvider $organizationProvider
+    ) {
         $this->shippingMethodProvider = $shippingMethodProvider;
+        $this->organizationProvider = $organizationProvider;
     }
 
-    public function formatShippingMethodLabel(?string $shippingMethodName): string
-    {
-        return $this->doFormatShippingMethodLabel($this->getShippingMethod($shippingMethodName));
+    public function formatShippingMethodLabel(
+        ?string $shippingMethodName,
+        ?Organization $organization = null
+    ): string {
+        return $this->doFormatShippingMethodLabel($this->getShippingMethod($shippingMethodName, $organization));
     }
 
-    public function formatShippingMethodTypeLabel(?string $shippingMethodName, ?string $shippingTypeName): string
-    {
+    public function formatShippingMethodTypeLabel(
+        ?string $shippingMethodName,
+        ?string $shippingTypeName,
+        ?Organization $organization = null
+    ): string {
         if (!$shippingTypeName) {
             return self::EMPTY_STRING;
         }
 
         return $this->doFormatShippingMethodTypeLabel(
-            $this->getShippingMethod($shippingMethodName),
+            $this->getShippingMethod($shippingMethodName, $organization),
             $shippingTypeName
         );
     }
 
-    public function formatShippingMethodWithTypeLabel(?string $shippingMethodName, ?string $shippingTypeName): string
-    {
-        $shippingMethod = $this->getShippingMethod($shippingMethodName);
+    public function formatShippingMethodWithTypeLabel(
+        ?string $shippingMethodName,
+        ?string $shippingTypeName,
+        ?Organization $organization = null
+    ): string {
+        $shippingMethod = $this->getShippingMethod($shippingMethodName, $organization);
         $methodLabel = $this->doFormatShippingMethodLabel($shippingMethod);
         $methodTypeLabel = $shippingTypeName
             ? $this->doFormatShippingMethodTypeLabel($shippingMethod, $shippingTypeName)
@@ -50,13 +64,25 @@ class ShippingMethodLabelFormatter
             : $methodLabel . self::DELIMITER . $methodTypeLabel;
     }
 
-    private function getShippingMethod(?string $shippingMethodName): ?ShippingMethodInterface
-    {
+    private function getShippingMethod(
+        ?string $shippingMethodName,
+        ?Organization $organization
+    ): ?ShippingMethodInterface {
         if (!$shippingMethodName) {
             return null;
         }
 
-        return $this->shippingMethodProvider->getShippingMethod($shippingMethodName);
+        if (null === $organization) {
+            return $this->shippingMethodProvider->getShippingMethod($shippingMethodName);
+        }
+
+        $previousOrganization = $this->organizationProvider->getOrganization();
+        $this->organizationProvider->setOrganization($organization);
+        try {
+            return $this->shippingMethodProvider->getShippingMethod($shippingMethodName);
+        } finally {
+            $this->organizationProvider->setOrganization($previousOrganization);
+        }
     }
 
     private function doFormatShippingMethodLabel(?ShippingMethodInterface $shippingMethod): string

@@ -3,5 +3,7 @@ workflows:
         attributes:
             line_items_shipping_methods:
                 type: array
+            line_item_groups_shipping_methods:
+                type: array
             grouped_line_items:
                 type: array

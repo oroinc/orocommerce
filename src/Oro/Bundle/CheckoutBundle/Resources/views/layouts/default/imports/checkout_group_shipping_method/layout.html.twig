@@ -1,0 +1,70 @@
+{% block __checkout_group_shipping_method__shipping_methods_widget %}
+    {% import '@OroFrontend/layouts/default/utils.html.twig' as utils %}
+
+    {% set shippingMethodsTemplate %}
+        {% apply spaceless %}
+            {{ block_widget(block) }}
+        {% endapply %}
+    {% endset %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'oroshipping/js/app/views/group-shipping-methods-view',
+            data: {
+                groupId: acceptableGroupId,
+                methods: groupedMethods[acceptableGroupId] ?? [],
+                currentShippingMethod: currentShippingMethods[acceptableGroupId]['method'] ?? null,
+                currentShippingMethodType: currentShippingMethods[acceptableGroupId]['type'] ?? null
+            },
+            template: utils.underscoreRaw('<%#' ~ shippingMethodsTemplate ~ '#%>')
+        },
+        'data-shipping-method-forms': '',
+        'role': 'group',
+        '~class': ' grid-col-12 checkout-group-shipping-methods'
+    }) %}
+
+    <div class="{{ class_prefix }}-form grid" data-content="shipping_method_form">
+        <div {{ block('block_attributes') }}></div>
+    </div>
+{% endblock %}
+
+{% block __checkout_group_shipping_method__shipping_methods_template_widget %}
+    <% if (!_.isEmpty(methods)) { %>
+        {{ block_widget(block) }}
+    <% } else { %>
+        <div class="notification notification--alert" role="alert">
+            <span class="notification__text">{{ 'oro.shipping.methods.no_method'|trans }}</span>
+        </div>
+    <% } %>
+{% endblock %}
+
+{% block __checkout_group_shipping_method__shipping_methods_template_methods_widget %}
+    <span class="label label--full">{{ 'oro.shipping.methods.select_method'|trans }}<sup class="checkout-form__asterix" aria-hidden="true">*</sup></span>
+    <% _.each(methods, function(method, key) { %>
+        <% if (method.types) { %>
+            <% _.each(method.types, function(type, key) { %>
+                <% if (type.price) { %>
+                    <% var selected = currentShippingMethodType === type.identifier && currentShippingMethod === method.identifier %>
+                    <div class="{{ class_prefix }}-form__radio" data-item-container>
+                        <label class="checkbox-label" data-radio>
+                            <input type="radio"
+                                   name="shippingMethodType[<%- groupId %>]"
+                                   value="<%- type.identifier %>-<%- method.identifier %>"
+                                   data-shipping-type="<%- type.identifier %>"
+                                   data-shipping-method="<%- method.identifier %>"
+                                   data-shipping-price="<%- type.price.value %>"
+                                   data-choice="<%- type.identifier %>"
+                                   data-item-id="<%- groupId %>"
+                                   <% if (selected) { %>checked="checked"<% } %>>
+                            <%- _.__('oro.shipping.method_type.backend.method_type_and_price.label', {
+                                'translatedMethodType': type.label,
+                                'price': formatter.formatCurrency(type.price.value, type.price.currency)
+                            }) %>
+                        </label>
+                    </div>
+                <% } %>
+            <% }); %>
+        <% } %>
+    <% }); %>
+{% endblock %}

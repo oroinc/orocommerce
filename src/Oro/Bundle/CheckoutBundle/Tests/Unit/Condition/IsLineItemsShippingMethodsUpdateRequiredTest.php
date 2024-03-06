@@ -7,32 +7,28 @@ use Oro\Bundle\CheckoutBundle\Condition\IsLineItemsShippingMethodsUpdateRequired
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Component\ConfigExpression\ContextAccessorInterface;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class IsLineItemsShippingMethodsUpdateRequiredTest extends TestCase
+class IsLineItemsShippingMethodsUpdateRequiredTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var ContextAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $contextAccessor;
 
-    private ContextAccessorInterface|MockObject $contextAccessor;
-    private IsLineItemsShippingMethodsUpdateRequired $condition;
+    /** @var IsLineItemsShippingMethodsUpdateRequired */
+    private $condition;
 
     protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessorInterface::class);
+
         $this->condition = new IsLineItemsShippingMethodsUpdateRequired();
         $this->condition->setContextAccessor($this->contextAccessor);
     }
 
-    public function testConditionReturnTrue()
+    public function testConditionReturnTrue(): void
     {
         $lineItemsShippingData = [
-            'sku-1:item' => [
-                'method' => 'SHIPPING_METHOD',
-                'type' => 'SHIPPING_METHOD_TYPE'
-            ]
+            'sku-1:item' => ['method' => 'method1', 'type' => 'type1']
         ];
 
         $lineItems = new ArrayCollection([new CheckoutLineItem()]);
@@ -49,7 +45,7 @@ class IsLineItemsShippingMethodsUpdateRequiredTest extends TestCase
         $this->assertTrue($this->condition->evaluate([]));
     }
 
-    public function testConditionReturnFalseIfLineItemsDataEmpty()
+    public function testConditionReturnFalseWhenLineItemsShippingDataEmpty(): void
     {
         $this->contextAccessor->expects($this->once())
             ->method('getValue')
@@ -63,20 +59,16 @@ class IsLineItemsShippingMethodsUpdateRequiredTest extends TestCase
         $this->assertFalse($this->condition->evaluate([]));
     }
 
-    public function testConditionReturnFalseWhenLineItemsHasShippingMethods()
+    public function testConditionReturnFalseWhenLineItemsHasShippingMethods(): void
     {
-        $lineItem = $this->getEntity(CheckoutLineItem::class, [
-            'shippingMethod' => 'SHIPPING_METHOD',
-            'shippingMethodType' => 'SHIPPING_METHOD_TYPE'
-        ]);
+        $lineItem = new CheckoutLineItem();
+        $lineItem->setShippingMethod('method1');
+        $lineItem->setShippingMethodType('type1');
 
         $lineItems = new ArrayCollection([$lineItem]);
 
         $lineItemsShippingData = [
-            'sku-1:item' => [
-                'method' => 'SHIPPING_METHOD',
-                'type' => 'SHIPPING_METHOD_TYPE'
-            ]
+            'sku-1:item' => ['method' => 'method1', 'type' => 'type1']
         ];
 
         $this->contextAccessor->expects($this->exactly(2))
@@ -91,31 +83,29 @@ class IsLineItemsShippingMethodsUpdateRequiredTest extends TestCase
         $this->assertFalse($this->condition->evaluate([]));
     }
 
-    public function testInitializeSuccess()
+    public function testInitializeSuccess(): void
     {
-        $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
-            $this->condition->initialize([new PropertyPath('line_items'), new PropertyPath('line_items_shipping_data')])
+        $this->assertSame(
+            $this->condition,
+            $this->condition->initialize([
+                new PropertyPath('line_items'),
+                new PropertyPath('line_items_shipping_data')
+            ])
         );
     }
 
     /**
-     * @param $options
-     * @param $expectedMessage
-     * @dataProvider getTestInitializeThrowsExceptionData
+     * @dataProvider initializeThrowsExceptionDataProvider
      */
-    public function testInitializeThrowsException($options, $expectedMessage)
+    public function testInitializeThrowsException(array $options, string $expectedMessage): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($expectedMessage);
 
-        $this->assertInstanceOf(
-            'Oro\Component\ConfigExpression\Condition\AbstractCondition',
-            $this->condition->initialize($options)
-        );
+        $this->condition->initialize($options);
     }
 
-    public function getTestInitializeThrowsExceptionData()
+    public function initializeThrowsExceptionDataProvider(): array
     {
         return [
             [
@@ -137,7 +127,12 @@ class IsLineItemsShippingMethodsUpdateRequiredTest extends TestCase
         ];
     }
 
-    public function testToArray()
+    public function testGetName(): void
+    {
+        self::assertEquals('is_line_items_shipping_methods_update_required', $this->condition->getName());
+    }
+
+    public function testToArray(): void
     {
         $lineItems = new \stdClass();
         $lineItemsShippingData = [];
@@ -157,7 +152,7 @@ class IsLineItemsShippingMethodsUpdateRequiredTest extends TestCase
         $this->assertContains($lineItemsShippingData, $resultSection['parameters']);
     }
 
-    public function testCompile()
+    public function testCompile(): void
     {
         $stdClass = new ToStringStub();
         $lineItemsShippingData = new PropertyPath('line_items_shipping_data');

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierCheckerInterface;
@@ -22,6 +24,9 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
 
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dispatcher;
+
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
     /** @var ShippingMethodLabelFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingMethodLabelFormatter;
@@ -50,6 +55,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->shippingMethodLabelFormatter = $this->createMock(ShippingMethodLabelFormatter::class);
         $this->shippingMethodChecker = $this->createMock(ShippingMethodEnabledByIdentifierCheckerInterface::class);
         $this->dimensionsUnitValueFormatter = $this->createMock(UnitValueFormatterInterface::class);
@@ -60,6 +66,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
 
         $container = self::getContainerBuilder()
             ->add(EventDispatcherInterface::class, $this->dispatcher)
+            ->add(DoctrineHelper::class, $this->doctrineHelper)
             ->add('oro_shipping.formatter.shipping_method_label', $this->shippingMethodLabelFormatter)
             ->add('oro_shipping.checker.shipping_method_enabled', $this->shippingMethodChecker)
             ->add('oro_shipping.formatter.dimensions_unit_value', $this->dimensionsUnitValueFormatter)
@@ -74,8 +81,8 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testFormatShippingMethodLabel(): void
     {
-        $shippingMethodName = 'test_shipping_method';
-        $shippingMethodLabel = 'test_shipping_method_label';
+        $shippingMethodName = 'method';
+        $shippingMethodLabel = 'label';
 
         $this->shippingMethodLabelFormatter->expects(self::once())
             ->method('formatShippingMethodLabel')
@@ -84,19 +91,71 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals(
             $shippingMethodLabel,
-            self::callTwigFunction($this->extension, 'get_shipping_method_label', [$shippingMethodName])
+            self::callTwigFunction(
+                $this->extension,
+                'get_shipping_method_label',
+                [$shippingMethodName]
+            )
         );
     }
 
-    public function testFormatShippingMethodTypeLabel(): void
+    public function testFormatShippingMethodLabelWithOrganization(): void
     {
-        $shippingMethodName = 'test_shipping_method';
-        $shippingTypeName  = 'test_shipping_method_type';
-        $shippingMethodTypeLabel = 'test_shipping_method_type_label';
+        $organization = $this->createMock(Organization::class);
+        $shippingMethodName = 'method';
+        $shippingMethodLabel = 'label';
+
+        $this->shippingMethodLabelFormatter->expects(self::once())
+            ->method('formatShippingMethodLabel')
+            ->with($shippingMethodName, self::identicalTo($organization))
+            ->willReturn($shippingMethodLabel);
+
+        self::assertEquals(
+            $shippingMethodLabel,
+            self::callTwigFunction(
+                $this->extension,
+                'get_shipping_method_label',
+                [$shippingMethodName, $organization]
+            )
+        );
+    }
+
+    public function testFormatShippingMethodLabelWithOrganizationId(): void
+    {
+        $organizationId = 123;
+        $organization = $this->createMock(Organization::class);
+        $shippingMethodName = 'method';
+        $shippingMethodLabel = 'label';
+
+        $this->doctrineHelper->expects(self::once())
+            ->method('getEntityReference')
+            ->with(Organization::class, $organizationId)
+            ->willReturn($organization);
+
+        $this->shippingMethodLabelFormatter->expects(self::once())
+            ->method('formatShippingMethodLabel')
+            ->with($shippingMethodName, self::identicalTo($organization))
+            ->willReturn($shippingMethodLabel);
+
+        self::assertEquals(
+            $shippingMethodLabel,
+            self::callTwigFunction(
+                $this->extension,
+                'get_shipping_method_label',
+                [$shippingMethodName, $organizationId]
+            )
+        );
+    }
+
+    public function testFormatShippingMethodTypeLabelWhenNoShippingMethod(): void
+    {
+        $shippingMethod = null;
+        $shippingMethodType  = null;
+        $shippingMethodTypeLabel = 'label';
 
         $this->shippingMethodLabelFormatter->expects(self::once())
             ->method('formatShippingMethodTypeLabel')
-            ->with($shippingMethodName, $shippingTypeName)
+            ->with($shippingMethod, $shippingMethodType, self::isNull())
             ->willReturn($shippingMethodTypeLabel);
 
         self::assertEquals(
@@ -104,20 +163,70 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
             self::callTwigFunction(
                 $this->extension,
                 'get_shipping_method_type_label',
-                [$shippingMethodName, $shippingTypeName]
+                [$shippingMethod, $shippingMethodType]
             )
         );
     }
 
-    public function testFormatShippingMethodWithTypeLabel(): void
+    public function testFormatShippingMethodTypeLabelWithOrganization(): void
     {
-        $shippingMethodName = 'test_shipping_method';
-        $shippingTypeName  = 'test_shipping_method_type';
-        $shippingMethodWithTypeLabel = 'test_shipping_method_with_type_label';
+        $organization = $this->createMock(Organization::class);
+        $shippingMethod = 'method';
+        $shippingMethodType  = 'type';
+        $shippingMethodTypeLabel = 'label';
+
+        $this->shippingMethodLabelFormatter->expects(self::once())
+            ->method('formatShippingMethodTypeLabel')
+            ->with($shippingMethod, $shippingMethodType, self::identicalTo($organization))
+            ->willReturn($shippingMethodTypeLabel);
+
+        self::assertEquals(
+            $shippingMethodTypeLabel,
+            self::callTwigFunction(
+                $this->extension,
+                'get_shipping_method_type_label',
+                [$shippingMethod, $shippingMethodType, $organization]
+            )
+        );
+    }
+
+    public function testFormatShippingMethodTypeLabelWithOrganizationId(): void
+    {
+        $organizationId = 123;
+        $organization = $this->createMock(Organization::class);
+        $shippingMethod = 'method';
+        $shippingMethodType  = 'type';
+        $shippingMethodTypeLabel = 'label';
+
+        $this->doctrineHelper->expects(self::once())
+            ->method('getEntityReference')
+            ->with(Organization::class, $organizationId)
+            ->willReturn($organization);
+
+        $this->shippingMethodLabelFormatter->expects(self::once())
+            ->method('formatShippingMethodTypeLabel')
+            ->with($shippingMethod, $shippingMethodType, self::identicalTo($organization))
+            ->willReturn($shippingMethodTypeLabel);
+
+        self::assertEquals(
+            $shippingMethodTypeLabel,
+            self::callTwigFunction(
+                $this->extension,
+                'get_shipping_method_type_label',
+                [$shippingMethod, $shippingMethodType, $organizationId]
+            )
+        );
+    }
+
+    public function testFormatShippingMethodWithTypeLabelWhenNoShippingMethod(): void
+    {
+        $shippingMethod = null;
+        $shippingMethodType  = null;
+        $shippingMethodWithTypeLabel = 'label';
 
         $this->shippingMethodLabelFormatter->expects(self::once())
             ->method('formatShippingMethodWithTypeLabel')
-            ->with($shippingMethodName, $shippingTypeName)
+            ->with($shippingMethod, $shippingMethodType, self::isNull())
             ->willReturn($shippingMethodWithTypeLabel);
 
         self::assertEquals(
@@ -125,20 +234,70 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
             self::callTwigFunction(
                 $this->extension,
                 'oro_shipping_method_with_type_label',
-                [$shippingMethodName, $shippingTypeName]
+                [$shippingMethod, $shippingMethodType]
+            )
+        );
+    }
+
+    public function testFormatShippingMethodWithTypeLabelWithOrganization(): void
+    {
+        $organization = $this->createMock(Organization::class);
+        $shippingMethod = 'method';
+        $shippingMethodType  = 'type';
+        $shippingMethodWithTypeLabel = 'label';
+
+        $this->shippingMethodLabelFormatter->expects(self::once())
+            ->method('formatShippingMethodWithTypeLabel')
+            ->with($shippingMethod, $shippingMethodType, self::identicalTo($organization))
+            ->willReturn($shippingMethodWithTypeLabel);
+
+        self::assertEquals(
+            $shippingMethodWithTypeLabel,
+            self::callTwigFunction(
+                $this->extension,
+                'oro_shipping_method_with_type_label',
+                [$shippingMethod, $shippingMethodType, $organization]
+            )
+        );
+    }
+
+    public function testFormatShippingMethodWithTypeLabelWithOrganizationId(): void
+    {
+        $organizationId = 123;
+        $organization = $this->createMock(Organization::class);
+        $shippingMethod = 'method';
+        $shippingMethodType  = 'type';
+        $shippingMethodWithTypeLabel = 'label';
+
+        $this->doctrineHelper->expects(self::once())
+            ->method('getEntityReference')
+            ->with(Organization::class, $organizationId)
+            ->willReturn($organization);
+
+        $this->shippingMethodLabelFormatter->expects(self::once())
+            ->method('formatShippingMethodWithTypeLabel')
+            ->with($shippingMethod, $shippingMethodType, self::identicalTo($organization))
+            ->willReturn($shippingMethodWithTypeLabel);
+
+        self::assertEquals(
+            $shippingMethodWithTypeLabel,
+            self::callTwigFunction(
+                $this->extension,
+                'oro_shipping_method_with_type_label',
+                [$shippingMethod, $shippingMethodType, $organizationId]
             )
         );
     }
 
     public function testGetShippingMethodConfigRenderDataDefault(): void
     {
-        $methodName = 'method_1';
+        $shippingMethod = 'method';
 
         $this->dispatcher->expects(self::once())
             ->method('dispatch')
             ->with(self::isInstanceOf(ShippingMethodConfigDataEvent::class), ShippingMethodConfigDataEvent::NAME)
-            ->willReturnCallback(function (ShippingMethodConfigDataEvent $event) use ($methodName) {
-                self::assertEquals($methodName, $event->getMethodIdentifier());
+            ->willReturnCallback(function (ShippingMethodConfigDataEvent $event) use ($shippingMethod) {
+                self::assertEquals($shippingMethod, $event->getMethodIdentifier());
                 $event->setTemplate('@OroShipping/ShippingMethodsConfigsRule/shippingMethodWithOptions.html.twig');
 
                 return $event;
@@ -146,26 +305,26 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals(
             '@OroShipping/ShippingMethodsConfigsRule/shippingMethodWithOptions.html.twig',
-            self::callTwigFunction($this->extension, 'oro_shipping_method_config_template', [$methodName])
+            self::callTwigFunction($this->extension, 'oro_shipping_method_config_template', [$shippingMethod])
         );
 
         //test cache
         self::assertEquals(
             '@OroShipping/ShippingMethodsConfigsRule/shippingMethodWithOptions.html.twig',
-            self::callTwigFunction($this->extension, 'oro_shipping_method_config_template', [$methodName])
+            self::callTwigFunction($this->extension, 'oro_shipping_method_config_template', [$shippingMethod])
         );
     }
 
     public function testGetShippingMethodConfigRenderData(): void
     {
-        $methodName = 'method_1';
+        $shippingMethod = 'method';
         $template = '@FooBar/template.html.twig';
 
         $this->dispatcher->expects(self::once())
             ->method('dispatch')
             ->with(self::isInstanceOf(ShippingMethodConfigDataEvent::class), ShippingMethodConfigDataEvent::NAME)
-            ->willReturnCallback(function (ShippingMethodConfigDataEvent $event) use ($methodName, $template) {
-                self::assertEquals($methodName, $event->getMethodIdentifier());
+            ->willReturnCallback(function (ShippingMethodConfigDataEvent $event) use ($shippingMethod, $template) {
+                self::assertEquals($shippingMethod, $event->getMethodIdentifier());
                 $event->setTemplate($template);
 
                 return $event;
@@ -173,7 +332,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals(
             $template,
-            self::callTwigFunction($this->extension, 'oro_shipping_method_config_template', [$methodName])
+            self::callTwigFunction($this->extension, 'oro_shipping_method_config_template', [$shippingMethod])
         );
     }
 

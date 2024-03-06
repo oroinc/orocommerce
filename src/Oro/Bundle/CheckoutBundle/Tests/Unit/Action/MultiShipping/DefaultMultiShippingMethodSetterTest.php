@@ -13,7 +13,6 @@ use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInt
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\MultiShippingMethodType;
-use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class DefaultMultiShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
@@ -24,14 +23,14 @@ class DefaultMultiShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingPriceProvider;
 
-    /** @var CheckoutLineItemsShippingManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $lineItemsShippingManager;
-
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
+    /** @var CheckoutLineItemsShippingManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemsShippingManager;
+
     /** @var DefaultMultiShippingMethodSetter  */
-    private $defaultMultiShippingMethodSetter;
+    private $setter;
 
     protected function setUp(): void
     {
@@ -42,7 +41,7 @@ class DefaultMultiShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
         $this->lineItemsShippingManager = $this->createMock(CheckoutLineItemsShippingManager::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
 
-        $this->defaultMultiShippingMethodSetter = new DefaultMultiShippingMethodSetter(
+        $this->setter = new DefaultMultiShippingMethodSetter(
             $this->multiShippingMethodProvider,
             $this->shippingPriceProvider,
             $this->doctrine,
@@ -50,134 +49,118 @@ class DefaultMultiShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testSetDefaultShippingMethods()
+    private function getMultiShippingMethod(): MultiShippingMethod
     {
-        $lineItem1 = new CheckoutLineItem();
-        ReflectionUtil::setId($lineItem1, 1);
-
-        $checkout = new Checkout();
-        $checkout->setLineItems(new ArrayCollection([$lineItem1]));
-
-        $lineItemsShippingMethods = [
-            'sku-1:item' => [
-                'method' => 'flat_rate_1',
-                'type' => 'primary',
-            ],
-            'sku-2:item' => [
-                'identifier' => 'flat_rate_2',
-                'type' => 'primary'
-            ],
-        ];
-
-        $multiShippingMethod = $this->createMock(MultiShippingMethod::class);
         $multiShippingMethodType = $this->createMock(MultiShippingMethodType::class);
-        $multiShippingMethodType->expects($this->once())
+        $multiShippingMethodType->expects(self::once())
             ->method('getIdentifier')
             ->willReturn('multi_shipping_type');
 
-        $multiShippingMethod->expects($this->once())
+        $multiShippingMethod = $this->createMock(MultiShippingMethod::class);
+        $multiShippingMethod->expects(self::once())
+            ->method('getIdentifier')
+            ->willReturn('multi_shipping');
+        $multiShippingMethod->expects(self::once())
             ->method('getTypes')
             ->willReturn([$multiShippingMethodType]);
 
-        $multiShippingMethod->expects($this->once())
-            ->method('getIdentifier')
-            ->willReturn('multi_shipping');
+        return $multiShippingMethod;
+    }
 
-        $this->multiShippingMethodProvider->expects($this->once())
+    /**
+     * @dataProvider lineItemsShippingMethodsDataProvider
+     */
+    public function testSetDefaultShippingMethods(?array $lineItemsShippingMethods): void
+    {
+        $checkout = new Checkout();
+        $checkout->setLineItems(new ArrayCollection([new CheckoutLineItem()]));
+
+        $this->multiShippingMethodProvider->expects(self::once())
             ->method('getShippingMethod')
-            ->willReturn($multiShippingMethod);
+            ->willReturn($this->getMultiShippingMethod());
 
-        $this->lineItemsShippingManager->expects($this->once())
+        $this->lineItemsShippingManager->expects(self::once())
             ->method('updateLineItemsShippingMethods')
             ->with($lineItemsShippingMethods, $checkout, true);
 
-        $this->lineItemsShippingManager->expects($this->once())
+        $this->lineItemsShippingManager->expects(self::once())
             ->method('updateLineItemsShippingPrices')
             ->with($checkout);
 
-        $this->shippingPriceProvider->expects($this->once())
+        $this->shippingPriceProvider->expects(self::once())
             ->method('getPrice')
             ->with($checkout)
-            ->willReturn(Price::create(15.00, 'USD'));
+            ->willReturn(Price::create(15.0, 'USD'));
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
-            ->with(CheckoutLineItem::class)
+            ->with(Checkout::class)
             ->willReturn($em);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('flush');
 
-        $this->defaultMultiShippingMethodSetter->setDefaultShippingMethods($checkout, $lineItemsShippingMethods, true);
+        $this->setter->setDefaultShippingMethods($checkout, $lineItemsShippingMethods, true);
 
-        $this->assertEquals('multi_shipping', $checkout->getShippingMethod());
-        $this->assertEquals('multi_shipping_type', $checkout->getShippingMethodType());
-        $this->assertEquals(15.00, $checkout->getShippingCost()->getValue());
-        $this->assertEquals('USD', $checkout->getShippingCost()->getCurrency());
+        self::assertEquals('multi_shipping', $checkout->getShippingMethod());
+        self::assertEquals('multi_shipping_type', $checkout->getShippingMethodType());
+        self::assertEquals(15.0, $checkout->getShippingCost()->getValue());
+        self::assertEquals('USD', $checkout->getShippingCost()->getCurrency());
     }
 
-    public function testSetDefaultShippingMethodWithoutShippingCost()
+    public static function lineItemsShippingMethodsDataProvider(): array
     {
-        $lineItem1 = new CheckoutLineItem();
-        ReflectionUtil::setId($lineItem1, 1);
+        return [
+            [
+                [
+                    'sku-1:item' => ['method' => 'method1', 'type' => 'type1'],
+                    'sku-2:item' => ['identifier' => 'method2', 'type' => 'type2']
+                ]
+            ],
+            [[]],
+            [null]
+        ];
+    }
 
+    public function testSetDefaultShippingMethodWithoutShippingCost(): void
+    {
         $checkout = new Checkout();
-        $checkout->setLineItems(new ArrayCollection([$lineItem1]));
+        $checkout->setLineItems(new ArrayCollection([new CheckoutLineItem()]));
 
         $lineItemsShippingMethods = [
-            'sku-1:item' => [
-                'method' => 'flat_rate_1',
-                'type' => 'primary',
-            ],
-            'sku-2:item' => [
-                'identifier' => 'flat_rate_2',
-                'type' => 'primary'
-            ],
+            'sku-1:item' => ['method' => 'method1', 'type' => 'type1'],
+            'sku-2:item' => ['identifier' => 'method2', 'type' => 'type2']
         ];
 
-        $multiShippingMethod = $this->createMock(MultiShippingMethod::class);
-        $multiShippingMethodType = $this->createMock(MultiShippingMethodType::class);
-        $multiShippingMethodType->expects($this->once())
-            ->method('getIdentifier')
-            ->willReturn('multi_shipping_type');
-
-        $multiShippingMethod->expects($this->once())
-            ->method('getTypes')
-            ->willReturn([$multiShippingMethodType]);
-
-        $multiShippingMethod->expects($this->once())
-            ->method('getIdentifier')
-            ->willReturn('multi_shipping');
-
-        $this->multiShippingMethodProvider->expects($this->once())
+        $this->multiShippingMethodProvider->expects(self::once())
             ->method('getShippingMethod')
-            ->willReturn($multiShippingMethod);
+            ->willReturn($this->getMultiShippingMethod());
 
-        $this->lineItemsShippingManager->expects($this->once())
+        $this->lineItemsShippingManager->expects(self::once())
             ->method('updateLineItemsShippingMethods')
             ->with($lineItemsShippingMethods, $checkout, false);
 
-        $this->lineItemsShippingManager->expects($this->once())
+        $this->lineItemsShippingManager->expects(self::once())
             ->method('updateLineItemsShippingPrices')
             ->with($checkout);
 
-        $this->shippingPriceProvider->expects($this->once())
+        $this->shippingPriceProvider->expects(self::once())
             ->method('getPrice')
             ->with($checkout)
             ->willReturn(null);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
-            ->with(CheckoutLineItem::class)
+            ->with(Checkout::class)
             ->willReturn($em);
-        $em->expects($this->once())
+        $em->expects(self::once())
             ->method('flush');
 
-        $this->defaultMultiShippingMethodSetter->setDefaultShippingMethods($checkout, $lineItemsShippingMethods, false);
+        $this->setter->setDefaultShippingMethods($checkout, $lineItemsShippingMethods);
 
-        $this->assertEquals('multi_shipping', $checkout->getShippingMethod());
-        $this->assertEquals('multi_shipping_type', $checkout->getShippingMethodType());
-        $this->assertNull($checkout->getShippingCost());
+        self::assertEquals('multi_shipping', $checkout->getShippingMethod());
+        self::assertEquals('multi_shipping_type', $checkout->getShippingMethodType());
+        self::assertNull($checkout->getShippingCost());
     }
 }

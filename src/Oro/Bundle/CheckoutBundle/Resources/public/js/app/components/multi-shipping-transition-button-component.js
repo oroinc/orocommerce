@@ -5,7 +5,7 @@ define(function(require) {
     const $ = require('jquery');
     const mediator = require('oroui/js/mediator');
 
-    const MultiShippingTransitionButtonComponent = TransitionButtonComponent.extend(/** @lends ShippingTransitionButtonComponent.prototype */{
+    const MultiShippingTransitionButtonComponent = TransitionButtonComponent.extend(/** @lends MultiShippingTransitionButtonComponent.prototype */{
         selectedShippingMethods: null,
 
         defaults: $.extend(true, {}, TransitionButtonComponent.prototype.defaults, {

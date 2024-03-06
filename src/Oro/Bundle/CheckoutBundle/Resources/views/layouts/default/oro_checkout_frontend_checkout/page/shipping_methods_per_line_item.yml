@@ -15,6 +15,6 @@ layout:
             optionValue: '=data["oro_checkout_continue_transition_data"].getContinueTransition(data["workflowItem"])'
 
         - '@remove':
-            id: shipping_methods
+              id: shipping_methods
 
-    conditions: 'context["workflowStepName"]=="enter_shipping_method" && context["multi_shipping_enabled"] && context["workflowName"]=="b2b_flow_checkout"'
+    conditions: 'context["workflowStepName"]=="enter_shipping_method" && context["multi_shipping_type"]=="per_line_item" && context["workflowName"]=="b2b_flow_checkout"'

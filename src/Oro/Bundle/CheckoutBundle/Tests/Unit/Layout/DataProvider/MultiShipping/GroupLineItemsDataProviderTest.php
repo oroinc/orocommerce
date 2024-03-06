@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\MultiShipping\GroupLineItemsDataProvider;
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemGroupTitleProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -19,9 +18,6 @@ class GroupLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var LineItemGroupTitleProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $titleProvider;
 
-    /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $configProvider;
-
     /** @var GroupedCheckoutLineItemsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $groupedLineItemsProvider;
 
@@ -31,12 +27,10 @@ class GroupLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->titleProvider = $this->createMock(LineItemGroupTitleProvider::class);
-        $this->configProvider = $this->createMock(ConfigProvider::class);
         $this->groupedLineItemsProvider = $this->createMock(GroupedCheckoutLineItemsProvider::class);
 
         $this->groupLineItemsDataProvider = new GroupLineItemsDataProvider(
             $this->titleProvider,
-            $this->configProvider,
             $this->groupedLineItemsProvider
         );
     }
@@ -190,7 +184,7 @@ class GroupLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
             ->willThrowException(new NoSuchPropertyException());
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Unable to get title for the checkout line items group');
+        $this->expectExceptionMessage('Unable to get title for the checkout line items group "product.owner:1".');
 
         $this->groupLineItemsDataProvider->getGroupedLineItemsTitles($workflowItem, $checkout);
     }

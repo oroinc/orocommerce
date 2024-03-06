@@ -50,19 +50,13 @@ class LineItemShippingMethodsTypeTest extends FormIntegrationTestCase
         $checkout->addLineItem($lineItem2);
 
         $submitData = [
-            1 => [
-                'method' => 'SHIPPING_METHOD',
-                'type' => 'SHIPPING_METHOD_TYPE'
-            ],
-            2 => [
-                'method' => 'SHIPPING_METHOD_2',
-                'type' => 'SHIPPING_METHOD_TYPE_2'
-            ],
+            'PRODUCT1:item' => ['method' => 'method1', 'type' => 'type1'],
+            'PRODUCT2:item' => ['method' => 'method2', 'type' => 'type2']
         ];
 
-        $this->shippingManager->expects($this->once())
+        $this->shippingManager->expects(self::once())
             ->method('updateLineItemsShippingMethods')
-            ->with($submitData, $checkout);
+            ->with($submitData, self::identicalTo($checkout));
 
         $form = $this->factory->create(LineItemShippingMethodsType::class, null, [
             'checkout' => $checkout,
@@ -70,17 +64,17 @@ class LineItemShippingMethodsTypeTest extends FormIntegrationTestCase
         ]);
         $form->submit(json_encode($submitData, JSON_THROW_ON_ERROR));
 
-        $this->assertTrue($form->isValid());
-        $this->assertTrue($form->isSynchronized());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
     }
 
     public function testGetBlockPrefix(): void
     {
-        $this->assertEquals('oro_checkout_line_items_shipping_methods', $this->formType->getBlockPrefix());
+        self::assertEquals('oro_checkout_line_items_shipping_methods', $this->formType->getBlockPrefix());
     }
 
     public function testGetParent(): void
     {
-        $this->assertEquals(HiddenType::class, $this->formType->getParent());
+        self::assertEquals(HiddenType::class, $this->formType->getParent());
     }
 }

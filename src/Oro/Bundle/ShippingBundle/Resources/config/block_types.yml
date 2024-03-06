@@ -12,3 +12,16 @@ services:
             - [setName, ['shipping_methods']]
         tags:
             - { name: layout.block_type, alias: shipping_methods }
+
+    oro_shipping.layout.block_type.group_shipping_methods:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        groupedMethods: {required: true}
+                        currentShippingMethods: {required: true}
+            - [setName, ['group_shipping_methods']]
+        tags:
+            - { name: layout.block_type, alias: group_shipping_methods }

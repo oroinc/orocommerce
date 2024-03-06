@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\Provider\MultiShipping;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemsGrouping\GroupLineItemsByConfiguredFields;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+use Oro\Bundle\ShippingBundle\Provider\GroupLineItemHelper;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -30,13 +30,13 @@ class LineItemGroupTitleProvider
         $this->translator = $translator;
     }
 
-    public function getTitle(string $groupingPath, CheckoutLineItem $lineItem): string
+    public function getTitle(string $lineItemGroupKey, CheckoutLineItem $lineItem): string
     {
-        if (GroupLineItemsByConfiguredFields::OTHER_ITEMS_KEY === $groupingPath) {
+        if (GroupLineItemHelper::OTHER_ITEMS_KEY === $lineItemGroupKey) {
             return $this->translator->trans('oro.checkout.line_items_grouping.other_items_group.title');
         }
 
-        $paths = explode(':', $groupingPath);
+        $paths = explode(GroupLineItemHelper::GROUPING_DELIMITER, $lineItemGroupKey);
         $propertyPath = $paths[0];
         if (\array_key_exists($propertyPath, $this->titlePathMapping)) {
             $propertyPath = $this->titlePathMapping[$propertyPath];

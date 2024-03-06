@@ -3,6 +3,8 @@
 namespace Oro\Bundle\OrderBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
+use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -15,10 +17,14 @@ class ComputeOrderShipping implements ProcessorInterface
     private const SHIPPING_METHOD_FIELD_NAME = 'shippingMethod';
     private const SHIPPING_COST_FIELD_NAME = 'shippingCostAmount';
 
+    private DoctrineHelper $doctrineHelper;
     private ShippingMethodLabelTranslator $shippingMethodLabelTranslator;
 
-    public function __construct(ShippingMethodLabelTranslator $shippingMethodLabelTranslator)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        ShippingMethodLabelTranslator $shippingMethodLabelTranslator
+    ) {
+        $this->doctrineHelper = $doctrineHelper;
         $this->shippingMethodLabelTranslator = $shippingMethodLabelTranslator;
     }
 
@@ -42,10 +48,14 @@ class ComputeOrderShipping implements ProcessorInterface
             $code = $context->getResultFieldValue('shippingMethod', $data);
             $type = $context->getResultFieldValue('shippingMethodType', $data);
             $shippingMethod = null;
-            if (null !== $code || null !== $type) {
+            if (null !== $code) {
                 $shippingMethod = [
                     'code'  => $code,
-                    'label' => $this->getShippingMethodLabel($code, $type)
+                    'label' => $this->getShippingMethodLabel(
+                        $code,
+                        $type,
+                        $context->getResultFieldValueByPropertyPath('organization.id', $data)
+                    )
                 ];
             }
             $data[self::SHIPPING_METHOD_FIELD_NAME] = $shippingMethod;
@@ -54,12 +64,14 @@ class ComputeOrderShipping implements ProcessorInterface
         $context->setData($data);
     }
 
-    private function getShippingMethodLabel(?string $code, ?string $type): ?string
+    private function getShippingMethodLabel(?string $code, ?string $type, ?int $organizationId): ?string
     {
-        if (null === $code || null === $type) {
-            return null;
-        }
-
-        return $this->shippingMethodLabelTranslator->getShippingMethodWithTypeLabel($code, $type);
+        return $this->shippingMethodLabelTranslator->getShippingMethodWithTypeLabel(
+            $code,
+            $type,
+            null !== $organizationId
+                ? $this->doctrineHelper->getEntityReference(Organization::class, $organizationId)
+                : null
+        );
     }
 }

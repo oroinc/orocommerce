@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
@@ -19,26 +20,20 @@ use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
  */
 class FrontendLineItemsGridExtension extends AbstractExtension
 {
-    /** @var string[] */
-    private const SUPPORTED_GRIDS = [
-        'frontend-checkout-line-items-grid',
-        'frontend-single-page-checkout-line-items-grid',
-    ];
-
-    private ManagerRegistry $registry;
-
+    private array $supportedGrids;
+    private ManagerRegistry $doctrine;
     private ConfigManager $configManager;
-
     private CheckoutLineItemsProvider $checkoutLineItemsProvider;
-
     private array $cache = [];
 
     public function __construct(
-        ManagerRegistry $registry,
+        array $supportedGrids,
+        ManagerRegistry $doctrine,
         ConfigManager $configManager,
         CheckoutLineItemsProvider $checkoutLineItemsProvider
     ) {
-        $this->registry = $registry;
+        $this->supportedGrids = $supportedGrids;
+        $this->doctrine = $doctrine;
         $this->configManager = $configManager;
         $this->checkoutLineItemsProvider = $checkoutLineItemsProvider;
     }
@@ -48,7 +43,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
      */
     public function isApplicable(DatagridConfiguration $config): bool
     {
-        return \in_array($config->getName(), static::SUPPORTED_GRIDS, true) && parent::isApplicable($config);
+        return \in_array($config->getName(), $this->supportedGrids, true) && parent::isApplicable($config);
     }
 
     /**
@@ -59,11 +54,9 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         if ($parameters->has(ParameterBag::MINIFIED_PARAMETERS)) {
             $minifiedParameters = $parameters->get(ParameterBag::MINIFIED_PARAMETERS);
             $additional = $parameters->get(ParameterBag::ADDITIONAL_PARAMETERS, []);
-
-            if (array_key_exists('g', $minifiedParameters)) {
+            if (\array_key_exists('g', $minifiedParameters)) {
                 $additional['group'] = $minifiedParameters['g']['group'] ?? false;
             }
-
             $parameters->set(ParameterBag::ADDITIONAL_PARAMETERS, $additional);
         }
 
@@ -72,6 +65,8 @@ class FrontendLineItemsGridExtension extends AbstractExtension
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function processConfigs(DatagridConfiguration $config): void
     {
@@ -92,7 +87,9 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         }
 
         $checkout = $this->getCheckout($checkoutId);
-        $orderLineItems = $checkout ? $this->checkoutLineItemsProvider->getCheckoutLineItems($checkout) : [];
+        $orderLineItems = null !== $checkout
+            ? $this->checkoutLineItemsProvider->getCheckoutLineItems($checkout)
+            : new ArrayCollection([]);
         $maxLineItemsPerPage = $this->configManager->get('oro_checkout.checkout_max_line_items_per_page');
         if ($orderLineItems->count() <= $maxLineItemsPerPage) {
             $maxLineItemsPerPage = [
@@ -110,12 +107,18 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         );
 
         $unacceptableIds = [];
-        foreach ($checkout->getLineItems() as $key => $lineItem) {
-            if (!isset($orderLineItems[$key])) {
-                $unacceptableIds[] = $lineItem->getId();
+        if (null !== $checkout) {
+            $orderLineItemMap = [];
+            foreach ($orderLineItems as $orderLineItem) {
+                $orderLineItemMap[$orderLineItem->getId()] = true;
+            }
+            foreach ($checkout->getLineItems() as $lineItem) {
+                $lineItemId = $lineItem->getId();
+                if (!isset($orderLineItemMap[$lineItemId])) {
+                    $unacceptableIds[] = $lineItemId;
+                }
             }
         }
-
         $this->parameters->set('unacceptable_ids', $unacceptableIds);
 
         if ($this->parameters->get('acceptable_ids')) {
@@ -155,14 +158,14 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         $result->offsetAddToArrayByPath(
             '[metadata]',
             [
-                'canBeGrouped' => $this->canBeGrouped($checkoutId),
+                'canBeGrouped' => $this->canBeGrouped($checkoutId)
             ]
         );
     }
 
     private function getCheckoutId(): int
     {
-        return (int) $this->parameters->get('checkout_id');
+        return (int)$this->parameters->get('checkout_id');
     }
 
     private function isLineItemsGrouped(): bool
@@ -174,25 +177,25 @@ class FrontendLineItemsGridExtension extends AbstractExtension
 
     private function canBeGrouped(int $checkoutId): bool
     {
-        if (!isset($this->cache['canBeGrouped'][$checkoutId])) {
-            $this->cache['canBeGrouped'][$checkoutId] = $this->registry
-                ->getManagerForClass(CheckoutLineItem::class)
-                ->getRepository(CheckoutLineItem::class)
-                ->canBeGrouped($checkoutId);
+        if (isset($this->cache['canBeGrouped'][$checkoutId])) {
+            return $this->cache['canBeGrouped'][$checkoutId];
         }
 
-        return $this->cache['canBeGrouped'][$checkoutId];
+        $canBeGrouped = $this->doctrine->getRepository(CheckoutLineItem::class)->canBeGrouped($checkoutId);
+        $this->cache['canBeGrouped'][$checkoutId] = $canBeGrouped;
+
+        return $canBeGrouped;
     }
 
     private function getCheckout(int $checkoutId): ?Checkout
     {
-        if (!isset($this->cache['checkouts'][$checkoutId])) {
-            $this->cache['checkouts'][$checkoutId] = $this->registry
-                ->getManagerForClass(Checkout::class)
-                ->getRepository(Checkout::class)
-                ->find($checkoutId);
+        if (isset($this->cache['checkouts']) && \array_key_exists($checkoutId, $this->cache['checkouts'])) {
+            return $this->cache['checkouts'][$checkoutId];
         }
 
-        return $this->cache['checkouts'][$checkoutId];
+        $checkout = $this->doctrine->getRepository(Checkout::class)->find($checkoutId);
+        $this->cache['checkouts'][$checkoutId] = $checkout;
+
+        return $checkout;
     }
 }

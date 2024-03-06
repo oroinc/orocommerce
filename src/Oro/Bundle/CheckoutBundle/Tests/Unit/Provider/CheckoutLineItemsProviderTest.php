@@ -8,14 +8,14 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
-class CheckoutLineItemsProviderTest extends TestCase
+class CheckoutLineItemsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    private CheckoutLineItemsManager|MockObject $checkoutLineItemsManager;
+    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutLineItemsManager;
 
-    private CheckoutLineItemsProvider $provider;
+    /** @var CheckoutLineItemsProvider */
+    private $provider;
 
     protected function setUp(): void
     {
@@ -30,11 +30,13 @@ class CheckoutLineItemsProviderTest extends TestCase
         float $quantity,
         string $checksum
     ): CheckoutLineItem {
-        return (new CheckoutLineItem())
-            ->setProductSku($sku)
-            ->setProductUnitCode($productUnitCode)
-            ->setQuantity($quantity)
-            ->setChecksum($checksum);
+        $lineItem = new CheckoutLineItem();
+        $lineItem->setProductSku($sku);
+        $lineItem->setProductUnitCode($productUnitCode);
+        $lineItem->setQuantity($quantity);
+        $lineItem->setChecksum($checksum);
+
+        return $lineItem;
     }
 
     private function getOrderLineItem(
@@ -43,11 +45,13 @@ class CheckoutLineItemsProviderTest extends TestCase
         float $quantity,
         string $checksum
     ): OrderLineItem {
-        return (new OrderLineItem())
-            ->setProductSku($sku)
-            ->setProductUnitCode($productUnitCode)
-            ->setQuantity($quantity)
-            ->setChecksum($checksum);
+        $lineItem = new OrderLineItem();
+        $lineItem->setProductSku($sku);
+        $lineItem->setProductUnitCode($productUnitCode);
+        $lineItem->setQuantity($quantity);
+        $lineItem->setChecksum($checksum);
+
+        return $lineItem;
     }
 
     public function testGetProductSkusWithDifferences(): void

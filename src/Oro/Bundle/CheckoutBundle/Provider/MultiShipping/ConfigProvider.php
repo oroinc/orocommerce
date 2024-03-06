@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Provider\MultiShipping;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 /**
- * Provides configured values related to multi shipping functionality.
+ * Provides configured values related to Multi Shipping functionality.
  */
 class ConfigProvider
 {
@@ -18,9 +18,7 @@ class ConfigProvider
 
     public function isLineItemsGroupingEnabled(): bool
     {
-        return
-            $this->isShippingSelectionByLineItemEnabled()
-            && $this->configManager->get('oro_checkout.enable_line_item_grouping');
+        return $this->configManager->get('oro_checkout.enable_line_item_grouping');
     }
 
     public function getGroupLineItemsByField(): ?string
@@ -57,6 +55,11 @@ class ConfigProvider
     public function isShippingSelectionByLineItemEnabled(): bool
     {
         return $this->configManager->get('oro_checkout.enable_shipping_method_selection_per_line_item');
+    }
+
+    public function isMultiShippingEnabled(): bool
+    {
+        return $this->isLineItemsGroupingEnabled() || $this->isShippingSelectionByLineItemEnabled();
     }
 
     /**

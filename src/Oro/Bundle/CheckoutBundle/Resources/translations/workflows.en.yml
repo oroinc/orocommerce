@@ -95,6 +95,8 @@ oro:
                     label: 'Is consents available'
                 line_items_shipping_methods:
                     label: 'Line items shipping methods'
+                line_item_groups_shipping_methods:
+                    label: 'Line item groups shipping methods'
                 grouped_line_items:
                     label: 'Grouped line items'
             transition:

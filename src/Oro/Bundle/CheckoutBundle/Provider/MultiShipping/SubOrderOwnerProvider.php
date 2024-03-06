@@ -7,11 +7,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemsGrouping\GroupLineItemsByConfiguredFields;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataProviderInterface;
+use Oro\Bundle\ShippingBundle\Provider\GroupLineItemHelper;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Security\Acl\Util\ClassUtils;
@@ -45,19 +45,19 @@ class SubOrderOwnerProvider implements SubOrderOwnerProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function getOwner(Collection $lineItems, string $groupingPath): User
+    public function getOwner(Collection $lineItems, string $lineItemGroupKey): User
     {
         /** @var CheckoutLineItem|false $lineItem */
         $lineItem = $lineItems->first();
 
         $owner = null;
         if ($lineItem) {
-            $ownerSource = $this->getOwnerSource($lineItem, $groupingPath);
+            $ownerSource = $this->getOwnerSource($lineItem, $lineItemGroupKey);
             if ($ownerSource instanceof User) {
                 $owner = $ownerSource;
             } else {
                 $owner = $this->getConfiguredOwner(
-                    $this->subOrderOrganizationProvider->getOrganization($lineItems, $groupingPath)
+                    $this->subOrderOrganizationProvider->getOrganization($lineItems, $lineItemGroupKey)
                 );
                 if (null === $owner) {
                     $owner = $this->determineOwner($ownerSource);
@@ -71,11 +71,11 @@ class SubOrderOwnerProvider implements SubOrderOwnerProviderInterface
         return $owner;
     }
 
-    private function getOwnerSource(CheckoutLineItem $lineItem, string $groupingPath): ?object
+    private function getOwnerSource(CheckoutLineItem $lineItem, string $lineItemGroupKey): ?object
     {
         $propertyPath = null;
-        if (GroupLineItemsByConfiguredFields::OTHER_ITEMS_KEY !== $groupingPath) {
-            $paths = explode(':', $groupingPath, 2);
+        if (GroupLineItemHelper::OTHER_ITEMS_KEY !== $lineItemGroupKey) {
+            $paths = explode(GroupLineItemHelper::GROUPING_DELIMITER, $lineItemGroupKey, 2);
             $propertyPath = $paths[0];
         }
 

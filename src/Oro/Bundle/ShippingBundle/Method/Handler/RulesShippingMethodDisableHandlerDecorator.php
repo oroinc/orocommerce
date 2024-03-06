@@ -2,66 +2,52 @@
 
 namespace Oro\Bundle\ShippingBundle\Method\Handler;
 
-use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
+/**
+ * Handles shipping rules when an integration is disabled.
+ */
 class RulesShippingMethodDisableHandlerDecorator implements ShippingMethodDisableHandlerInterface
 {
-    /**
-     * @var ShippingMethodDisableHandlerInterface
-     */
-    private $handler;
-
-    /**
-     * @var ShippingMethodsConfigsRuleRepository
-     */
-    private $repository;
-
-    /**
-     * @var ShippingMethodProviderInterface
-     */
-    private $shippingMethodProvider;
+    private ShippingMethodDisableHandlerInterface $handler;
+    private ManagerRegistry $doctrine;
+    private ShippingMethodProviderInterface $shippingMethodProvider;
 
     public function __construct(
         ShippingMethodDisableHandlerInterface $handler,
-        ShippingMethodsConfigsRuleRepository $repository,
+        ManagerRegistry $doctrine,
         ShippingMethodProviderInterface $shippingMethodProvider
     ) {
         $this->handler = $handler;
-        $this->repository = $repository;
+        $this->doctrine = $doctrine;
         $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function handleMethodDisable($methodId)
+    public function handleMethodDisable(string $methodId): void
     {
         $this->handler->handleMethodDisable($methodId);
-        $shippingMethodsConfigsRule = $this->repository->getEnabledRulesByMethod($methodId);
-        foreach ($shippingMethodsConfigsRule as $configRule) {
+        $configRules = $this->doctrine->getRepository(ShippingMethodsConfigsRule::class)
+            ->getEnabledRulesByMethod($methodId);
+        foreach ($configRules as $configRule) {
             if (!$this->configHasEnabledMethod($configRule, $methodId)) {
-                $rule = $configRule->getRule();
-                $rule->setEnabled(false);
+                $configRule->getRule()->setEnabled(false);
             }
         }
     }
 
-    /**
-     * @param ShippingMethodsConfigsRule $configRule
-     * @param string                     $disabledMethodId
-     *
-     * @return bool
-     */
-    private function configHasEnabledMethod(ShippingMethodsConfigsRule $configRule, $disabledMethodId)
+    private function configHasEnabledMethod(ShippingMethodsConfigsRule $configRule, string $disabledMethodId): bool
     {
         $methodConfigs = $configRule->getMethodConfigs();
         foreach ($methodConfigs as $methodConfig) {
             $methodId = $methodConfig->getMethod();
             if ($methodId !== $disabledMethodId) {
                 $method = $this->shippingMethodProvider->getShippingMethod($methodId);
-                if ($method->isEnabled()) {
+                if (null !== $method && $method->isEnabled()) {
                     return true;
                 }
             }

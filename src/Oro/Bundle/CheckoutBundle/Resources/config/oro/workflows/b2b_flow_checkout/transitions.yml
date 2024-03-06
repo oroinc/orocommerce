@@ -162,6 +162,11 @@ workflows:
                             method: getCheckoutLineItemsShippingData
                             method_parameters: [$checkout]
                             attribute: $line_items_shipping_methods
+                        - '@call_service_method':
+                              service: oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping
+                              method: getCheckoutLineItemGroupsShippingData
+                              method_parameters: [$checkout]
+                              attribute: $line_item_groups_shipping_methods
                         - '@run_action_group':
                             action_group: update_checkout_state
                             parameters_mapping:
@@ -181,6 +186,10 @@ workflows:
                                     - NotBlank: ~
                         line_items_shipping_methods:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\LineItemShippingMethodsType
+                            options:
+                                checkout: $checkout
+                        line_item_groups_shipping_methods:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\LineItemGroupShippingMethodsType
                             options:
                                 checkout: $checkout
                         state_token:

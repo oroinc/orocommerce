@@ -9,5 +9,10 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
  */
 interface GroupedLineItemsProviderInterface
 {
+    /**
+     * @param ProductLineItemsHolderInterface $entity
+     *
+     * @return array ['product.category:1' => [line item, ...], ...]
+     */
     public function getGroupedLineItems(ProductLineItemsHolderInterface $entity): array;
 }

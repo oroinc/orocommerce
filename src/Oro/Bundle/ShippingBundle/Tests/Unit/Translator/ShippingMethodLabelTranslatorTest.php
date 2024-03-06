@@ -31,14 +31,14 @@ class ShippingMethodLabelTranslatorTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getShippingMethodWithTypeLabelDataProvider
      */
-    public function testGetShippingMethodWithTypeLabel(?string $shippingMethodName, ?string $shippingTypeName): void
+    public function testGetShippingMethodWithTypeLabel(?string $shippingMethod, ?string $shippingMethodType): void
     {
         $label = 'test';
         $translatedLabel = 'translated';
 
         $this->formatter->expects(self::once())
             ->method('formatShippingMethodWithTypeLabel')
-            ->with($shippingMethodName, $shippingTypeName)
+            ->with($shippingMethod, $shippingMethodType)
             ->willReturn($label);
 
         $this->translator->expects(self::once())
@@ -48,11 +48,11 @@ class ShippingMethodLabelTranslatorTest extends \PHPUnit\Framework\TestCase
 
         self::assertSame(
             $translatedLabel,
-            $this->shippingMethodTranslator->getShippingMethodWithTypeLabel($shippingMethodName, $shippingTypeName)
+            $this->shippingMethodTranslator->getShippingMethodWithTypeLabel($shippingMethod, $shippingMethodType)
         );
     }
 
-    public function getShippingMethodWithTypeLabelDataProvider(): array
+    public static function getShippingMethodWithTypeLabelDataProvider(): array
     {
         return [
             ['method', 'type'],

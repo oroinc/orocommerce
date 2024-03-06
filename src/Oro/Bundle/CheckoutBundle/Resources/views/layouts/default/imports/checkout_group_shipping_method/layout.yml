@@ -1,0 +1,22 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+              themes: 'layout.html.twig'
+        - '@addTree':
+              items:
+                  __shipping_methods:
+                      blockType: group_shipping_methods
+                      prepend: true
+                      options:
+                          class_prefix: 'checkout'
+                          groupedMethods: '=data["checkout_group_shipping_methods"].getGroupedApplicableMethodsViews(data["checkout"], data["oro_checkout_group_line_items"].getGroupedLineItems(data["workflowItem"], data["checkout"]))'
+                          currentShippingMethods: '=data["checkout_group_shipping_methods"].getCurrentShippingMethods(data["checkout"])'
+                  __shipping_methods_template:
+                      blockType: container
+                  __shipping_methods_template_methods:
+                      blockType: container
+              tree:
+                  checkout_order_summary_line_items_container:
+                      __shipping_methods:
+                          __shipping_methods_template:
+                              __shipping_methods_template_methods: ~

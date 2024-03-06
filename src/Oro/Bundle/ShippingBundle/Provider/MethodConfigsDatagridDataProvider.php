@@ -24,7 +24,6 @@ class MethodConfigsDatagridDataProvider
     public function getMethodsConfigs(ResultRecordInterface $record): string
     {
         $previousOrganization = $this->organizationProvider->getOrganization();
-
         $this->organizationProvider->setOrganization($record->getValue('organization'));
         try {
             return $this->twig->render(

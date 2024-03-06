@@ -3,15 +3,9 @@
 namespace Oro\Bundle\ShippingBundle\Method\Handler;
 
 /**
- * ShippingMethodDisableHandlerInterface
- * Handles shipping rules when an integration disabled.
+ * Represents a service that handles shipping rules when an integration is disabled.
  */
 interface ShippingMethodDisableHandlerInterface
 {
-    /**
-     * @param string $methodId
-     *
-     * @return void
-     */
-    public function handleMethodDisable($methodId);
+    public function handleMethodDisable(string $methodId): void;
 }

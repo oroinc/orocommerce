@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\Action\MultiShipping;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManager;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\DefaultMultipleShippingMethodProvider;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
@@ -11,7 +10,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * Sets a default shipping method and a shipping cost for a checkout and its line items
- * when the multi shipping functionality is enabled.
+ * when Multi Shipping Per Line Items functionality is enabled.
  */
 class DefaultMultiShippingMethodSetter
 {
@@ -34,7 +33,7 @@ class DefaultMultiShippingMethodSetter
 
     public function setDefaultShippingMethods(
         Checkout $checkout,
-        array $lineItemsShippingMethods = [],
+        ?array $lineItemsShippingMethods = null,
         bool $useDefaults = false
     ): void {
         $multiShippingMethod = $this->multiShippingMethodProvider->getShippingMethod();
@@ -56,6 +55,6 @@ class DefaultMultiShippingMethodSetter
             $checkout->setShippingCost($price);
         }
 
-        $this->doctrine->getManagerForClass(CheckoutLineItem::class)->flush();
+        $this->doctrine->getManagerForClass(Checkout::class)->flush();
     }
 }

@@ -2,16 +2,19 @@
 
 namespace Oro\Bundle\CheckoutBundle\Condition;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
-use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
 /**
- * Workflow condition to check if line items shipping methods has available shipping rules.
+ * Checks if line items shipping methods has available shipping rules.
+ * Usage:
+ * @line_items_shipping_methods_has_enabled_shipping_rules: $checkout
  */
 class LineItemsShippingMethodsHasEnabledShippingRules extends AbstractCondition implements
     ContextAccessorAwareInterface
@@ -19,17 +22,16 @@ class LineItemsShippingMethodsHasEnabledShippingRules extends AbstractCondition 
     use ContextAccessorAwareTrait;
 
     private const OPTION_ENTITY = 'entity';
-    private const CONDITION_NAME = 'line_items_shipping_methods_has_enabled_shipping_rules';
 
-    private ShippingMethodsConfigsRuleRepository $repository;
+    private ManagerRegistry $doctrine;
     private CheckoutLineItemsProvider $checkoutLineItemsProvider;
     private mixed $entity = null;
 
     public function __construct(
-        ShippingMethodsConfigsRuleRepository $repository,
+        ManagerRegistry $doctrine,
         CheckoutLineItemsProvider $checkoutLineItemsProvider
     ) {
-        $this->repository = $repository;
+        $this->doctrine = $doctrine;
         $this->checkoutLineItemsProvider = $checkoutLineItemsProvider;
     }
 
@@ -42,6 +44,7 @@ class LineItemsShippingMethodsHasEnabledShippingRules extends AbstractCondition 
         $entity = $this->resolveValue($context, $this->entity);
         if ($entity instanceof Checkout) {
             $checkedMethods = [];
+            $repository = $this->doctrine->getRepository(ShippingMethodsConfigsRule::class);
             $lineItems = $this->checkoutLineItemsProvider->getCheckoutLineItems($entity);
             foreach ($lineItems as $lineItem) {
                 $shippingMethod = $lineItem->getShippingMethod();
@@ -54,13 +57,12 @@ class LineItemsShippingMethodsHasEnabledShippingRules extends AbstractCondition 
                     continue;
                 }
 
-                $ruleExists = $this->repository->getEnabledRulesByMethod($shippingMethod);
-                if ($ruleExists) {
-                    $checkedMethods[$shippingMethod] = true;
-                } else {
+                if (!$repository->getEnabledRulesByMethod($shippingMethod)) {
                     $valid = false;
                     break;
                 }
+
+                $checkedMethods[$shippingMethod] = true;
             }
         }
 
@@ -72,7 +74,7 @@ class LineItemsShippingMethodsHasEnabledShippingRules extends AbstractCondition 
      */
     public function getName()
     {
-        return self::CONDITION_NAME;
+        return 'line_items_shipping_methods_has_enabled_shipping_rules';
     }
 
     /**
@@ -83,11 +85,9 @@ class LineItemsShippingMethodsHasEnabledShippingRules extends AbstractCondition 
         if (\array_key_exists(self::OPTION_ENTITY, $options)) {
             $this->entity = $options[self::OPTION_ENTITY];
         }
-
         if (\array_key_exists(0, $options)) {
             $this->entity = $options[0];
         }
-
         if (!$this->entity) {
             throw new InvalidArgumentException(sprintf('Missing "%s" option', self::OPTION_ENTITY));
         }

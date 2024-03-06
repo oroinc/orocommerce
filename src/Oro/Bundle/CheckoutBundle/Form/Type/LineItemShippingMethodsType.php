@@ -27,17 +27,12 @@ class LineItemShippingMethodsType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addViewTransformer(new ArrayToJsonTransformer());
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-            // update each checkout line item with selected shipping methods
             $options = $event->getForm()->getConfig()->getOptions();
-            /** @var Checkout|null $checkout */
-            $checkout = $options['checkout'];
-            if (null !== $checkout) {
-                $this->shippingManager->updateLineItemsShippingMethods($event->getData(), $checkout);
-            }
+            $this->shippingManager->updateLineItemsShippingMethods($event->getData(), $options['checkout']);
         });
     }
 

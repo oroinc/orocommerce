@@ -507,12 +507,32 @@ services:
         tags:
             - { name: layout.data_provider, alias: 'checkout_shipping_methods' }
 
+    oro_checkout.checkout_sub_order_shipping_price_provider:
+        class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutSubOrderShippingPriceProvider'
+        public: true
+        arguments:
+            - '@oro_checkout.shipping_method.provider_main'
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_shipping.method.org_provider'
+
     oro_checkout.condition.checkout_has_applicable_shipping_methods:
         class: 'Oro\Bundle\CheckoutBundle\Condition\CheckoutHasApplicableShippingMethods'
         arguments:
             - '@oro_checkout.available_shipping_method_checker'
         tags:
             - { name: oro_action.condition, alias: 'checkout_has_applicable_shipping_methods' }
+
+    oro_checkout.provider.multi_shipping.group_shipping_methods:
+        class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutGroupShippingMethodsProvider'
+        public: true
+        arguments:
+            - '@oro_checkout.shipping_method.provider_main'
+            - '@oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping'
+            - '@oro_checkout.factory.multi_shipping.checkout_factory'
+            - '@oro_shipping.multi_shipping.group_line_item_helper'
+            - '@oro_shipping.method.org_provider'
+        tags:
+            - { name: layout.data_provider, alias: 'checkout_group_shipping_methods' }
 
     oro_checkout.datagrid.action_permission_provider:
         class: 'Oro\Bundle\CheckoutBundle\Datagrid\ActionPermissionProvider'
@@ -820,8 +840,11 @@ services:
                 - 'b2b_flow_checkout_single_page_start_from_shoppinglist'
 
     oro_checkout.datagrid.extension.frontend_checkout_line_items_grid:
-        class: 'Oro\Bundle\CheckoutBundle\Datagrid\FrontendLineItemsGridExtension'
+        class: Oro\Bundle\CheckoutBundle\Datagrid\FrontendLineItemsGridExtension
         arguments:
+            -
+                - 'frontend-checkout-line-items-grid'
+                - 'frontend-single-page-checkout-line-items-grid'
             - '@doctrine'
             - '@oro_config.manager'
             - '@oro_checkout.provider.checkout_line_items'

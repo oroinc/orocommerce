@@ -14,7 +14,7 @@ class SubOrderOrganizationProvider implements SubOrderOrganizationProviderInterf
     /**
      * {@inheritDoc}
      */
-    public function getOrganization(Collection $lineItems, string $groupingPath): Organization
+    public function getOrganization(Collection $lineItems, string $lineItemGroupKey): Organization
     {
         /** @var CheckoutLineItem|false $lineItem */
         $lineItem = $lineItems->first();
