@@ -13,6 +13,7 @@ use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData;
+use Oro\Bundle\DemoDataBundle\Migrations\Data\Demo\ORM\LoadUserData;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -49,6 +50,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     public function getDependencies(): array
     {
         return [
+            LoadUserData::class,
             LoadCustomerDemoData::class,
             LoadCustomerUserDemoData::class,
             LoadPaymentTermDemoData::class,
@@ -100,6 +102,12 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             $customerUser = $row['isGuest'] ? $guestCustomerUser : $regularCustomerUser;
             $order = new Order();
 
+            $createdByUser = null;
+            if (!empty($row['createdBy'])) {
+                /** @var User $user */
+                $createdByUser = $userRepository->findOneBy(['username' => $row['createdBy']]);
+            }
+
             $billingAddress = $this->getBillingAddressData($row, $customerUser);
             $shippingAddress = $this->getShippingAddressData($row, $customerUser);
 
@@ -115,6 +123,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
 
             $order
                 ->setOwner($user)
+                ->setCreatedBy($createdByUser)
                 ->setCustomer($customerUser->getCustomer())
                 ->setIdentifier($row['identifier'])
                 ->setCustomerUser($customerUser)
