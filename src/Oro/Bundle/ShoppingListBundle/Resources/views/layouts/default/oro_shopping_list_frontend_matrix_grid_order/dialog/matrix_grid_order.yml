@@ -23,7 +23,6 @@ layout:
                     label: '=data["hasLineItems"] ? "oro.shoppinglist.actions.update_shopping_list" : "oro.shoppinglist.actions.add_to_shopping_list"'
                     parameters:
                         '{{ shoppingList }}': '=data["shoppingList"] ? data["shoppingList"].getLabel() : data["translator"].getTrans("oro.shoppinglist.entity_label")'
-                style: auto
         - '@move':
             id: widget_actions
             parentId: matrix_grid_order_wrapper

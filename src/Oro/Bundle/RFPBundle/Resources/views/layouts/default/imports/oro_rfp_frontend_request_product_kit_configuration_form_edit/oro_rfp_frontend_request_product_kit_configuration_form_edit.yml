@@ -38,7 +38,6 @@ layout:
                       blockType: button
                       options:
                           action: submit
-                          style: 'auto'
                   __form_end:
                       blockType: form_end
               tree:

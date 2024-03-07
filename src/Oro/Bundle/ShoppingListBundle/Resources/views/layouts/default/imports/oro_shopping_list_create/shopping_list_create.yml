@@ -39,20 +39,19 @@ layout:
                     options:
                         action: reset
                         text: oro.shoppinglist.create_new_form.cancel_label
-                        style: ''
+                        attr:
+                            'class': 'btn--outlined '
                 form_actions_create:
                     blockType: button
                     options:
                         action: submit
                         text: oro.shoppinglist.create_new_form.create.label
-                        style: auto
                         visible: '=data["createOnly"]==true'
                 form_actions_create_and_add:
                     blockType: button
                     options:
                         action: submit
                         text: oro.shoppinglist.create_new_form.create_and_add.label
-                        style: auto
                         visible: '=data["createOnly"]!=true'
             tree:
                 widget_content:

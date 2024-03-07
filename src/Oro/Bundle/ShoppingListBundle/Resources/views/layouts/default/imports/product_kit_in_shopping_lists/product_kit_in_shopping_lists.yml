@@ -40,7 +40,6 @@ layout:
                           action: reset
                           text:
                               label: 'oro.frontend.shoppinglist.product_kit_line_item.in_shopping_lists_widget.button.close.label'
-                          style: ''
                           attr:
                               data-role: 'cancel'
               tree:
