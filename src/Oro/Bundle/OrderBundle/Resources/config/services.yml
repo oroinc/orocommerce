@@ -200,6 +200,7 @@ services:
             - '@oro_order.factory.shipping_context'
             - '@oro_order.converter.shipping_prices'
             - '@oro_shipping.shipping_price.provider'
+            - '@oro_shipping.method.org_provider'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onEvent }
 

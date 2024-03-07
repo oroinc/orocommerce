@@ -66,7 +66,6 @@ class ShippingMethodsConfigsRuleController extends AbstractController
     {
         $organizationProvider = $this->container->get(ShippingMethodOrganizationProvider::class);
         $previousOrganization = $organizationProvider->getOrganization();
-
         $organizationProvider->setOrganization($shippingRule->getOrganization());
         try {
             return $this->render(

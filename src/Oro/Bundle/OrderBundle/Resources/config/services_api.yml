@@ -114,6 +114,7 @@ services:
     oro_order.api.compute_order_shipping:
         class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderShipping
         arguments:
+            - '@oro_api.doctrine_helper'
             - '@oro_shipping.translator.shipping_method_label'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order }

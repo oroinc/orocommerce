@@ -24,7 +24,10 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 #[ORM\Index(columns: ['slug_prototype'], name: 'oro_redirect_slug_slug')]
 #[ORM\Index(columns: ['route_name'], name: 'oro_redirect_slug_route')]
 #[ORM\Index(columns: ['parameters_hash'], name: 'oro_redirect_slug_parameters_hash_idx')]
-#[ORM\UniqueConstraint(name: 'oro_redirect_slug_uidx', columns: ['organization_id', 'url_hash', 'scopes_hash'])]
+#[ORM\UniqueConstraint(
+    name: 'oro_redirect_slug_deferrable_uidx',
+    columns: ['organization_id', 'url_hash', 'scopes_hash']
+)]
 #[ORM\HasLifecycleCallbacks]
 #[Config(
     defaultValues: [

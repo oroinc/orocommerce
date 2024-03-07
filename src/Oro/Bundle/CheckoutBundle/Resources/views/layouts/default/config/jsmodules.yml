@@ -6,6 +6,7 @@ dynamic-imports:
         - orocheckout/js/app/components/payment-validate-component
         - orocheckout/js/app/components/shipping-transition-button-component
         - orocheckout/js/app/components/multi-shipping-transition-button-component
+        - orocheckout/js/app/components/multi-shipping-per-group-transition-button-component
         - orocheckout/js/app/components/single-page-checkout-component
         - orocheckout/js/app/components/transition-button-component
         - orocheckout/js/app/views/address-view

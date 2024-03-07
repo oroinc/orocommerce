@@ -51,9 +51,10 @@
 
     {% set shippingInformation %}
         {%- if entity.shippingMethod and entity.shippingMethodType -%}
-            {% set shippingMethodLabel = oro_order_shipping_method_label(entity.shippingMethod, entity.shippingMethodType) %}
-
-            {{ UI.renderProperty('oro.order.shipping_method.label'|trans, shippingMethodLabel) }}
+            {{ UI.renderProperty(
+                'oro.order.shipping_method.label'|trans,
+                oro_order_shipping_method_label(entity.shippingMethod, entity.shippingMethodType, entity.organization)
+            ) }}
         {%- endif -%}
 
         {% if entity.shippingCost is not null %}
