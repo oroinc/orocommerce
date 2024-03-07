@@ -29,17 +29,7 @@ workflows:
                             transition: 'back_to_enter_credentials'
                             workflow: $.definition.name
 
-            continue_to_billing_address_as_guest_definition:
-                actions:
-                    - '@transit_workflow':
-                        conditions:
-                            '@not':
-                                - '@is_consents_accepted':
-                                    acceptedConsents: $customerConsents
-                        parameters:
-                            entity: $checkout
-                            transition: 'back_to_customer_consents'
-                            workflow: $.definition.name
+            continue_to_billing_address_as_guest_definition: ~
 
             continue_to_billing_address_definition:
                 preactions:

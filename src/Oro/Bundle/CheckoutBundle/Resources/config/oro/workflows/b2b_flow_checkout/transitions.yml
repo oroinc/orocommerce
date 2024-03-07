@@ -29,6 +29,11 @@ workflows:
 
             continue_to_billing_address_as_guest:
                 step_to: enter_billing_address
+                conditional_steps_to:
+                    customer_consents:
+                        '@not':
+                            - '@is_consents_accepted':
+                                acceptedConsents: $customerConsents
                 transition_definition: continue_to_billing_address_as_guest_definition
                 frontend_options:
                     icon: fa-briefcase
