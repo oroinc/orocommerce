@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\CheckoutBundle\Action\B2bFlowCheckout\ActionGroup;
 
+use Oro\Bundle\CheckoutBundle\Action\MultiShipping\SubOrderMultiShippingMethodSetter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOrganizationProviderInterface;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOwnerProviderInterface;
-use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
+use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutSubOrderShippingPriceProvider;
 use Oro\Bundle\CheckoutBundle\Splitter\MultiShipping\CheckoutSplitter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
@@ -21,7 +22,8 @@ class SplitOrderActions
         private GroupedCheckoutLineItemsProvider $groupedLineItemsProvider,
         private SubOrderOwnerProviderInterface $subOrderOwnerProvider,
         private SubOrderOrganizationProviderInterface $subOrderOrganizationProvider,
-        private CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider,
+        private SubOrderMultiShippingMethodSetter $subOrderMultiShippingMethodSetter,
+        private CheckoutSubOrderShippingPriceProvider $checkoutSubOrderShippingPriceProvider,
         private AppliedPromotionManager $appliedPromotionManager
     ) {
     }
@@ -36,8 +38,14 @@ class SplitOrderActions
         $i = 1;
         $splitCheckouts = $this->splitCheckouts($checkout, $groupedLineItemsIds);
         foreach ($splitCheckouts as $groupingPath => $splitCheckout) {
+            $splitCheckoutLineItems = $splitCheckout->getLineItems();
+            $childOrderOrganization = $this->subOrderOrganizationProvider->getOrganization(
+                $splitCheckoutLineItems,
+                $groupingPath
+            );
+            $this->subOrderMultiShippingMethodSetter->setShippingMethod($checkout, $splitCheckout, $groupingPath);
             $splitCheckout->setShippingCost(
-                $this->checkoutShippingMethodsProvider->getPrice($splitCheckout)
+                $this->checkoutSubOrderShippingPriceProvider->getPrice($splitCheckout, $childOrderOrganization)
             );
 
             $childOrder = $this->orderActions->createOrderByCheckout(
@@ -50,13 +58,8 @@ class SplitOrderActions
             $childOrder->setIdentifier($childOrderIdentifierTemplate . $i);
             $i++;
 
-            $childOrder->setOwner(
-                $this->subOrderOwnerProvider->getOwner($splitCheckout->getLineItems(), $groupingPath)
-            );
-
-            $childOrder->setOrganization(
-                $this->subOrderOrganizationProvider->getOrganization($splitCheckout->getLineItems(), $groupingPath)
-            );
+            $childOrder->setOwner($this->subOrderOwnerProvider->getOwner($splitCheckoutLineItems, $groupingPath));
+            $childOrder->setOrganization($childOrderOrganization);
 
             $this->orderActions->flushOrder($childOrder);
         }

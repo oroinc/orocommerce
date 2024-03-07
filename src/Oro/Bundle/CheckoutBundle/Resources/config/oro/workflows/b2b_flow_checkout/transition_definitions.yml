@@ -208,15 +208,14 @@ workflows:
                         action_group: b2b_flow_checkout_update_shipping_address
                         parameters_mapping:
                             checkout: $checkout
-                    - '@tree':
+                    - '@call_service_method':
                         conditions:
-                          '@not':
-                            - '@is_multishipping_enabled': ~
-                        actions:
-                            - '@call_service_method':
-                                service: oro_checkout.action.default_shipping_method_setter
-                                method: setDefaultShippingMethod
-                                method_parameters: [$checkout]
+                            '@not':
+                                - '@is_multishipping_enabled': ~
+                        parameters:
+                            service: oro_checkout.action.default_shipping_method_setter
+                            method: setDefaultShippingMethod
+                            method_parameters: [$checkout]
                     - '@call_service_method':
                         conditions:
                             '@is_multishipping_enabled_per_line_item': ~
@@ -224,14 +223,13 @@ workflows:
                             service: oro_checkout.action.multi_shipping.default_shipping_method_setter
                             method: setDefaultShippingMethods
                             method_parameters: [$checkout]
-                    - '@tree':
+                    - '@call_service_method':
                         conditions:
                             '@is_multishipping_enabled_per_line_item_group': ~
-                        actions:
-                            - '@call_service_method':
-                                service: oro_checkout.action.multi_shipping.groups_default_shipping_method_setter
-                                method: setDefaultShippingMethods
-                                method_parameters: [$checkout]
+                        parameters:
+                            service: oro_checkout.action.multi_shipping.groups_default_shipping_method_setter
+                            method: setDefaultShippingMethods
+                            method_parameters: [$checkout]
                     - '@generate_uuid': $state_token
 
             continue_to_payment_definition:
@@ -243,33 +241,30 @@ workflows:
                         results:
                             result.orderLineItemsNotEmpty: $.orderLineItemsNotEmpty
                             result.orderLineItemsNotEmptyForRfp: $.orderLineItemsNotEmptyForRfp
-                    - '@tree':
+                    - '@call_service_method':
                         conditions:
-                          '@not':
-                            - '@is_multishipping_enabled': ~
-                        actions:
-                            - '@call_service_method':
-                                service: oro_checkout.action.default_shipping_method_setter
-                                method: setDefaultShippingMethod
-                                method_parameters: [$checkout]
-                    - '@tree':
+                            '@not':
+                                - '@is_multishipping_enabled': ~
+                        parameters:
+                            service: oro_checkout.action.default_shipping_method_setter
+                            method: setDefaultShippingMethod
+                            method_parameters: [$checkout]
+                    # Sync actual shipping values for cases if new line items have been added.
+                    - '@call_service_method':
                         conditions:
                             '@is_multishipping_enabled_per_line_item': ~
-                        actions:
-                            # Sync actual shipping values for cases if new line items have been added.
-                            - '@call_service_method':
-                                service: oro_checkout.action.multi_shipping.default_shipping_method_setter
-                                method: setDefaultShippingMethods
-                                method_parameters: [$checkout, $line_items_shipping_methods, true]
-                    - '@tree':
+                        parameters:
+                            service: oro_checkout.action.multi_shipping.default_shipping_method_setter
+                            method: setDefaultShippingMethods
+                            method_parameters: [$checkout, $line_items_shipping_methods, true]
+                    # Sync actual shipping values for cases if new line items have been added.
+                    - '@call_service_method':
                         conditions:
                             '@is_multishipping_enabled_per_line_item_group': ~
-                        actions:
-                            # Sync actual shipping values for cases if new line items have been added.
-                            - '@call_service_method':
-                                service: oro_checkout.action.multi_shipping.groups_default_shipping_method_setter
-                                method: setDefaultShippingMethods
-                                method_parameters: [$checkout, $line_item_groups_shipping_methods, true]
+                        parameters:
+                            service: oro_checkout.action.multi_shipping.groups_default_shipping_method_setter
+                            method: setDefaultShippingMethods
+                            method_parameters: [$checkout, $line_item_groups_shipping_methods, true]
                     - '@tree':
                         conditions:
                             '@blank': $.result.checkoutHasApplicableShippingMethods
@@ -331,14 +326,13 @@ workflows:
                         parameters:
                             service: oro_checkout.manager.multi_shipping.checkout_line_items_shipping
                             method: updateLineItemsShippingPrices
-                                method_parameters: [$checkout]
-                    - '@tree':
+                            method_parameters: [$checkout]
+                    - '@call_service_method':
                         conditions:
                             '@is_multishipping_enabled_per_line_item_group': ~
-                        actions:
-                            - '@call_service_method':
-                                service: oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping
-                                method: updateLineItemGroupsShippingPrices
+                        parameters:
+                            service: oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping
+                            method: updateLineItemGroupsShippingPrices
                             method_parameters: [$checkout]
                     - '@call_service_method':
                         service: oro_checkout.shipping_method.provider_main
@@ -401,13 +395,12 @@ workflows:
                                 - '@is_multishipping_enabled_per_line_item': ~
                                 - '@line_items_shipping_methods_has_enabled_shipping_rules': $checkout
                         parameters: [$.result.shippingMethodHasEnabledShippingRules, true]
-                    - '@tree':
+                    - '@assign_value':
                         conditions:
                             '@and':
                                 - '@is_multishipping_enabled_per_line_item_group': ~
                                 - '@line_item_groups_shipping_methods_has_enabled_shipping_rules': $checkout
-                        actions:
-                            - '@assign_value': [$.result.shippingMethodHasEnabledShippingRules, true]
+                        parameters: [$.result.shippingMethodHasEnabledShippingRules, true]
                     - '@call_service_method':
                         conditions:
                             '@blank': $.result.paymentContext
@@ -795,15 +788,14 @@ workflows:
                         - [$payment_in_progress, false]
                         - [$shipping_method, null]
                         - [$checkout.shippingCost, null]
-                    - '@tree':
+                    - '@call_service_method':
                         conditions:
-                          '@not':
-                            - '@is_multishipping_enabled': ~
-                        actions:
-                            - '@call_service_method':
-                                service: oro_checkout.action.default_shipping_method_setter
-                                method: setDefaultShippingMethod
-                                method_parameters: [$checkout]
+                            '@not':
+                                - '@is_multishipping_enabled': ~
+                        parameters:
+                            service: oro_checkout.action.default_shipping_method_setter
+                            method: setDefaultShippingMethod
+                            method_parameters: [$checkout]
                     - '@generate_uuid': $state_token
 
             clear_payment_method_and_recalculate_state_definition:

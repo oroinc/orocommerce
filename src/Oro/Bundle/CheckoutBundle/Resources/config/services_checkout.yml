@@ -33,7 +33,8 @@ services:
             - '@oro_checkout.provider.grouped_line_items'
             - '@oro_checkout.provider.multi_shipping.sub_order_owner'
             - '@oro_checkout.provider.multi_shipping.sub_order_organization'
-            - '@oro_checkout.shipping_method.provider_main'
+            - '@oro_checkout.provider.multi_shipping.sub_order_shipping_method_setter'
+            - '@oro_checkout.checkout_sub_order_shipping_price_provider'
             - '@oro_promotion.applied_promotion_manager'
         tags:
             - { name: 'oro_action_group_service' }
