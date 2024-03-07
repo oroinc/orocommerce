@@ -37,6 +37,10 @@
         font-weight: $product-price-value-font-weight;
     }
 
+    &__not_found {
+        font-size: $base-font-size--s;
+    }
+
     // Modifier for simple view(only main price)
     $product-price-selector: &;
     &--simple {

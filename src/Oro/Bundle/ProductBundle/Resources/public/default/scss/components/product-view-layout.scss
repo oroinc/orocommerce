@@ -12,6 +12,7 @@
 
     &__primary {
         display: flex;
+        align-items: center;
         flex-wrap: wrap;
         gap: $product-view-primary-gap;
         margin-bottom: $product-view-primary-bottom-offset;
