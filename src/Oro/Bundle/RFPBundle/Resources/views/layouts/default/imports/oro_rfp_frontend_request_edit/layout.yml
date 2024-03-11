@@ -51,7 +51,6 @@ layout:
                     options:
                         action: submit
                         text: oro.frontend.rfp.request.create_form.send.label
-                        style: auto
             tree:
                 __root:
                     __rfp_form_container:
@@ -62,8 +61,8 @@ layout:
                         __rfp_form_lineitems_container:
                             __rfp_form_lineitems: ~
                         __rfp_form_actions:
-                            __rfp_form_actions_create: ~
                             __rfp_form_actions_back: ~
+                            __rfp_form_actions_create: ~
                         __rfp_form_end: ~
         - '@appendOption':
             id: rfp_form_lineitems_container

@@ -37,7 +37,6 @@ layout:
                       options:
                           action: submit
                           text: 'oro.frontend.shoppinglist.product_kit_line_item.dialog_widget.submit.label'
-                          style: auto
                   __form_end:
                       blockType: form_end
               tree:
