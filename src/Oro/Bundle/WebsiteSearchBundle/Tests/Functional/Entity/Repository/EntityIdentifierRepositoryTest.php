@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\EntityIdentifierRepository;
@@ -23,12 +24,12 @@ class EntityIdentifierRepositoryTest extends WebTestCase
 
         $actual = $repository->getIds(TestEmployee::class);
 
-        $this->assertInstanceOf(\Generator::class, $actual);
+        self::assertInstanceOf(BufferedQueryResultIteratorInterface::class, $actual);
 
         $expected = [
             $this->getReference(LoadEmployeesToIndex::REFERENCE_PERSON1)->getId(),
             $this->getReference(LoadEmployeesToIndex::REFERENCE_PERSON2)->getId(),
         ];
-        $this->assertEquals($expected, iterator_to_array($actual));
+        self::assertEquals($expected, iterator_to_array($actual));
     }
 }

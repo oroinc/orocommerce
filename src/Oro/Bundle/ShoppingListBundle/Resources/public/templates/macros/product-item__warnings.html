@@ -1,8 +1,12 @@
 <% if (warnings && warnings.length) { %>
+<% const oroui = _.macros('oroui'); %>
 <div class="notification notification--warning notification--lite" role="alert">
     <% for (var i = 0; i < warnings.length; i++) { %>
-    <div class="notification__item notification__item--flex">
-        <span class="fa-exclamation-circle" aria-hidden="true"></span>
+    <div class="notification__item">
+        <%= oroui.renderIcon({
+            name: 'alert-triangle',
+            class: 'theme-icon theme-icon--small'
+        }) %>
         <span class="notification__text"><%- warnings[i] %></span>
     </div>
     <% } %>

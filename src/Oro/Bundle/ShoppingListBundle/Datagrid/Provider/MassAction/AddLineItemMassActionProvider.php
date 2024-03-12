@@ -97,7 +97,8 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
                     $name = 'list' . $shoppingList->getId();
 
                     $actions[$name] = $this->getConfig([
-                        'label' => $this->getLabel($shoppingList),
+                        'label' => $this->translator->trans('oro.shoppinglist.actions.add_to_shopping_list_short'),
+                        'entityName' => \strip_tags($shoppingList->getLabel()),
                         'translatable' => false,
                         'route_parameters' => [
                             'shoppingList' => $shoppingList->getId(),
@@ -168,10 +169,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
             'data_identifier' => 'product.id',
             'frontend_type' => 'add-products-mass',
             'handler' => 'oro_shopping_list.mass_action.add_products_handler',
-            'is_current' => false,
-            'launcherOptions' => [
-                'iconClassName' => 'fa-shopping-cart'
-            ]
+            'is_current' => false
         ], $options);
     }
 

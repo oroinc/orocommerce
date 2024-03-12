@@ -8,9 +8,8 @@ use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadAttributeDependentPriceRules;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -26,8 +25,8 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
     {
         $this->initClient();
         $this->loadFixtures([
-            LoadPriceAttributeProductPrices::class,
-            LoadPriceRuleLexemes::class
+            LoadProductData::class,
+            LoadAttributeDependentPriceRules::class
         ]);
         $this->enableMessageBuffering();
     }
@@ -65,15 +64,16 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
                 ]
             ]
         );
+
+        return $price;
     }
 
-    public function testPreUpdate()
+    /**
+     * @depends testPostPersist
+     */
+    public function testPreUpdate(PriceAttributeProductPrice $price)
     {
-        /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
-
-        /** @var PriceAttributeProductPrice $price */
-        $price = $this->getReference('price_attribute_product_price.1');
+        $product = $price->getProduct();
         $price->setPrice(Price::create(1000, 'USD'));
 
         $em = $this->getEntityManager();
@@ -90,15 +90,16 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
                 ]
             ]
         );
+
+        return $price;
     }
 
-    public function testPreRemove()
+    /**
+     * @depends testPreUpdate
+     */
+    public function testPreRemove(PriceAttributeProductPrice $price)
     {
-        /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
-
-        /** @var PriceAttributeProductPrice $price */
-        $price = $this->getReference('price_attribute_product_price.1');
+        $product = $price->getProduct();
 
         $em = $this->getEntityManager();
         $em->remove($price);

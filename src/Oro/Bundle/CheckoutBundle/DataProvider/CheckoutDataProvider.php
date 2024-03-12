@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\DataProvider;
 
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem;
@@ -13,17 +14,16 @@ use Oro\Bundle\PricingBundle\ProductKit\ProductLineItemPrice\ProductKitLineItemP
 use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
-use Oro\Component\Checkout\DataProvider\AbstractCheckoutProvider;
+use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 /**
- * Provides info to build collection of line items by given source entity.
- * Source entity should implement ProductLineItemsHolderInterface.
+ * Provides info to build collection of line items by the given Checkout entity.
  */
-class CheckoutDataProvider extends AbstractCheckoutProvider
+class CheckoutDataProvider implements CheckoutDataProviderInterface
 {
     private ProductLineItemPriceProviderInterface $productLineItemPriceProvider;
     private AuthorizationCheckerInterface $authorizationChecker;
@@ -31,7 +31,7 @@ class CheckoutDataProvider extends AbstractCheckoutProvider
     private ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider;
     private CheckoutValidationGroupsBySourceEntityProvider $validationGroupsProvider;
     private ValidatorInterface $validator;
-
+    private MemoryCacheProviderInterface $memoryCacheProvider;
     /** @var array<string|array<string>>  */
     private array $validationGroups = [['Default', 'checkout_line_items_data']];
 
@@ -41,7 +41,8 @@ class CheckoutDataProvider extends AbstractCheckoutProvider
         CacheInterface $productAvailabilityCache,
         ResolvedProductVisibilityProvider $resolvedProductVisibilityProvider,
         CheckoutValidationGroupsBySourceEntityProvider $checkoutValidationGroupsBySourceEntityProvider,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        MemoryCacheProviderInterface $memoryCacheProvider
     ) {
         $this->productLineItemPriceProvider = $productLineItemPriceProvider;
         $this->authorizationChecker = $authorizationChecker;
@@ -49,6 +50,7 @@ class CheckoutDataProvider extends AbstractCheckoutProvider
         $this->resolvedProductVisibilityProvider = $resolvedProductVisibilityProvider;
         $this->validationGroupsProvider = $checkoutValidationGroupsBySourceEntityProvider;
         $this->validator = $validator;
+        $this->memoryCacheProvider = $memoryCacheProvider;
     }
 
     /**
@@ -57,6 +59,27 @@ class CheckoutDataProvider extends AbstractCheckoutProvider
     public function setValidationGroups(array $validationGroups): void
     {
         $this->validationGroups = $validationGroups;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isEntitySupported(object $entity): bool
+    {
+        return $entity instanceof Checkout;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getData(object $entity): array
+    {
+        return $this->memoryCacheProvider->get(
+            ['checkout' => $entity],
+            function () use ($entity) {
+                return $this->prepareData($entity);
+            }
+        );
     }
 
     /**
@@ -73,7 +96,7 @@ class CheckoutDataProvider extends AbstractCheckoutProvider
      *      // ...
      *  ]
      */
-    protected function prepareData($entity): array
+    protected function prepareData(Checkout $entity): array
     {
         $lineItems = $entity->getLineItems();
         $this->prefetchProductsVisibility($lineItems);
@@ -137,7 +160,7 @@ class CheckoutDataProvider extends AbstractCheckoutProvider
      */
     private function getLineItemsPrices(Collection $lineItems, array &$invalidLineItems): array
     {
-        $lineItemsWithoutFixedPrice = [];
+        $lineItemsToGetPrices = [];
         foreach ($lineItems as $index => $lineItem) {
             if (isset($invalidLineItems[$index])) {
                 continue;
@@ -148,16 +171,23 @@ class CheckoutDataProvider extends AbstractCheckoutProvider
                 continue;
             }
 
-            if ($lineItem->getProduct() && !$lineItem->isPriceFixed() && !$lineItem->getPrice()) {
-                $lineItemsWithoutFixedPrice[$index] = $lineItem;
+            if ($lineItem->getProduct()
+                && (
+                    (!$lineItem->getPrice() && !$lineItem->isPriceFixed())
+                    // We should get prices for Product Kits even if price is fixed,
+                    // because we need prices for Kit Item Line Items
+                    || $lineItem->getProduct()->isKit()
+                )
+            ) {
+                $lineItemsToGetPrices[$index] = $lineItem;
             }
         }
 
-        if (!$lineItemsWithoutFixedPrice) {
+        if (!$lineItemsToGetPrices) {
             return [];
         }
 
-        return $this->productLineItemPriceProvider->getProductLineItemsPrices($lineItemsWithoutFixedPrice);
+        return $this->productLineItemPriceProvider->getProductLineItemsPrices($lineItemsToGetPrices);
     }
 
     /**
@@ -223,13 +253,8 @@ class CheckoutDataProvider extends AbstractCheckoutProvider
         }
     }
 
-    public function isEntitySupported($transformData): bool
-    {
-        return $transformData instanceof Checkout;
-    }
-
     /**
-     * Is Line Item should be included in the results of data preparation
+     * Checks whether the given line item should be included in the results of data preparation.
      */
     protected function isLineItemNeeded(CheckoutLineItem $lineItem): bool
     {

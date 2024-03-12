@@ -27,7 +27,6 @@ class UPSTransportEntityListenerTest extends WebTestCase
         $user = $this->getReference(LoadUser::USER);
         $token = new UsernamePasswordOrganizationToken(
             $user,
-            'password',
             'main',
             $user->getOrganization(),
             $user->getUserRoles()

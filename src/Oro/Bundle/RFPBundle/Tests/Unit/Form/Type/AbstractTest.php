@@ -238,6 +238,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $product = null;
         if ($productId) {
             $product = $this->getEntity(Product::class, $productId);
+            $product->setSku('SKU-' . $productId);
 
             foreach ($this->getProductUnitPrecisions() as $precision) {
                 $product->addUnitPrecision($precision);

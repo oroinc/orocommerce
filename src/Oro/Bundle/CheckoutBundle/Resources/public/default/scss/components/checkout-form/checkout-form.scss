@@ -11,7 +11,7 @@
     &__select {
         &--exp-month {
             flex-basis: $checkout-form-select-exp-month-width;
-            margin: 0 $offset-x-m 0 0;
+            margin: 0 spacing('sm') 0 0;
         }
 
         &--exp-year {
@@ -28,7 +28,7 @@
     &__datepicker,
     &__optional-ref-number,
     &__order-notes {
-        margin: 0 0 $offset-y-m;
+        margin: 0 0 spacing('sm');
     }
 
     &__submit {
@@ -55,13 +55,13 @@
     }
 
     &__payment-methods-authorized-card {
-        margin: 0 0 $offset-y-m;
+        margin: 0 0 spacing('sm');
     }
 
     &__payment-methods-authorized-card-handle,
     &__payment-methods-different-card-handle {
         display: block;
-        margin-bottom: $offset-y;
+        margin-bottom: spacing('base');
     }
 
     &__payment-methods-list {
@@ -78,7 +78,7 @@
 
     &__payment-methods-form {
         .form-row:not(:last-child) {
-            margin-bottom: $offset-y;
+            margin-bottom: spacing('base');
         }
     }
 
@@ -101,7 +101,7 @@
     }
 
     &__radio {
-        margin-bottom: $offset-y-m;
+        margin-bottom: spacing('sm');
 
         &:last-child {
             margin-bottom: 0;
@@ -114,7 +114,11 @@
 
     .form-field-cvv,
     .form-field-CVV2 {
-        margin-right: $offset-x-m;
+        margin-right: spacing('sm');
+    }
+
+    .checkout-group-shipping-methods {
+        margin-bottom: spacing('base');
     }
 }
 

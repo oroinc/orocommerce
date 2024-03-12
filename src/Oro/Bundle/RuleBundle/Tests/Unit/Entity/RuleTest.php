@@ -15,7 +15,7 @@ class RuleTest extends \PHPUnit\Framework\TestCase
     {
         $now = new \DateTime();
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['name', 'Test Rule'],
             ['enabled', true],
             ['sortOrder', 10],

@@ -7,6 +7,11 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -15,17 +20,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Controller for sidebar placeholder shown on product index page.
+ * Controller for sidebar placeholder shown on product index page and product prices widget.
  */
 class ProductController extends AbstractController
 {
     /**
-     * @Route("/sidebar", name="oro_pricing_price_product_sidebar")
-     * @Template
-     *
      * @param Request $request
      * @return array
      */
+    #[Route(path: '/sidebar', name: 'oro_pricing_price_product_sidebar')]
+    #[Template]
     public function sidebarAction(Request $request)
     {
         $sidebarData = [];
@@ -41,6 +45,29 @@ class ProductController extends AbstractController
         }
 
         return $sidebarData;
+    }
+
+    #[Route(
+        path: '/widget/prices_update/{unit}/{precision}',
+        name: 'oro_pricing_widget_prices_update',
+        requirements: ['unit' => '\w+', 'precision' => '\d+']
+    )]
+    #[Template('@OroPricing/Product/widget/prices_update.html.twig')]
+    #[AclAncestor('oro_product_update')]
+    public function widgetPricesUpdateAction(ProductUnit $unit, int $precision): array
+    {
+        $product = new Product();
+
+        $productUnit = new ProductUnitPrecision();
+        $productUnit->setProduct($product)
+            ->setUnit($unit)
+            ->setPrecision($precision);
+
+        $product->setPrimaryUnitPrecision($productUnit);
+
+        $form = $this->createForm(ProductType::class, $product);
+
+        return ['form' => $form->createView()];
     }
 
     /**
@@ -121,7 +148,7 @@ class ProductController extends AbstractController
      */
     protected function getPriceListHandler()
     {
-        return $this->get(PriceListRequestHandlerInterface::class);
+        return $this->container->get(PriceListRequestHandlerInterface::class);
     }
 
     protected function isPriceListsEnabled(): bool

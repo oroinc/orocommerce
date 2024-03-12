@@ -90,7 +90,7 @@ Feature: Previously purchased configurable products
 
   Scenario: Check configurable product is shown in Previously Purchased grid
     Given I proceed as the Buyer
-    When I follow "Account"
+    And I click "Account Dropdown"
     And I click "Previously Purchased"
     Then I should see "ConfigurableProductA"
     And I should not see "Product A 1"
@@ -108,7 +108,7 @@ Feature: Previously purchased configurable products
 
   Scenario: Check no variations appear in Previously Purchased grid
     Given I proceed as the Buyer
-    When I follow "Account"
+    And I click "Account Dropdown"
     And I click "Previously Purchased"
     Then I should not see "Product A 1"
     And I should not see "Product A 2"
@@ -123,7 +123,7 @@ Feature: Previously purchased configurable products
 
   Scenario: Check configurable product is not shown in Previously Purchased grid
     Given I proceed as the Buyer
-    When I follow "Account"
+    And I click "Account Dropdown"
     And I click "Previously Purchased"
     Then I should not see "ConfigurableProductA"
 
@@ -146,7 +146,7 @@ Feature: Previously purchased configurable products
 
   Scenario: Check that simple variation product is shown in Previously Purchased grid
     Given I proceed as the Buyer
-    When I follow "Account"
+    And I click "Account Dropdown"
     And I click "Previously Purchased"
     Then I should see "Product A 1"
     And I should not see "ConfigurableProductA"

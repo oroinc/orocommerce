@@ -1258,7 +1258,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title' => 'form constraint',
-                'detail' => 'This value is not valid.',
+                'detail' => 'Please enter a number.',
                 'source' => ['pointer' => '/data/0/attributes/quantity'],
             ],
             $response
@@ -1277,7 +1277,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title' => 'form constraint',
-                'detail' => 'This value is not valid.',
+                'detail' => 'Please enter a number.',
                 'source' => ['pointer' => '/data/0/attributes/quantity'],
             ],
             $response
@@ -1431,7 +1431,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'form constraint',
-                'detail' => 'This value is not valid.',
+                'detail' => 'Please enter a number.',
                 'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
@@ -1453,7 +1453,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'form constraint',
-                'detail' => 'This value is not valid.',
+                'detail' => 'Please enter a number.',
                 'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response

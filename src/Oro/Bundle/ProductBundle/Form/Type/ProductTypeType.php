@@ -8,6 +8,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for Product type
+ */
 class ProductTypeType extends AbstractType
 {
     const NAME = 'oro_product_type';
@@ -29,7 +32,8 @@ class ProductTypeType extends AbstractType
     {
         $resolver->setDefaults(array(
             'choices' => $this->provider->getAvailableProductTypes(),
-            'preferred_choices' => Product::TYPE_SIMPLE
+            'preferred_choices' => [Product::TYPE_SIMPLE],
+            'duplicate_preferred_choices' => false
         ));
     }
 

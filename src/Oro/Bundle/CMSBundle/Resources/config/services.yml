@@ -497,6 +497,13 @@ services:
         tags:
             - { name: validator.constraint_validator, extended_type: Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType }
 
+    oro_cms.validator.has_at_least_one_size_image:
+        class: Oro\Bundle\CMSBundle\Validator\Constraints\HasAtLeastOneSizeImageValidator
+        arguments:
+            $translator: '@translator.default'
+        tags:
+            - { name: validator.constraint_validator }
+
     oro_cms.content_widget.wysiwyg_widget_icon_renderer:
         class: Oro\Bundle\CMSBundle\ContentWidget\WysiwygWidgetIconRenderer
         arguments:
@@ -506,3 +513,25 @@ services:
         tags:
             - { name: monolog.logger, channel: oro_cms }
 
+    Oro\Bundle\CMSBundle\EventListener\RemoveOrphanMainImageConfigListener:
+        arguments:
+            - '@Oro\Bundle\EntityConfigBundle\Config\ConfigManager'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_migration.post_up, method: onPostUp, priority: -100 }
+            - { name: kernel.event_listener, event: oro_migration.pre_up, method: onPreUp }
+
+    # Component added back for theme layout BC from version 5.0
+    oro_cms.layout_context_configurator.is_updated_after_507:
+        class: Oro\Bundle\CMSBundle\Layout\ContextConfigurator\IsUpdatedAfter507ContextConfigurator
+        arguments:
+            - '@oro_config.global'
+        tags:
+            - { name: layout.context_configurator }
+
+    oro_cms.access_rule.frontend_organization_for_content_block:
+        class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule
+        arguments:
+            - '@oro_organization.organization_restriction_provider'
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\CMSBundle\Entity\ContentBlock, frontend: true }

@@ -2,23 +2,21 @@
 
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_10;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 
 class ChangeCategoryProductRelation implements
     Migration,
@@ -27,60 +25,38 @@ class ChangeCategoryProductRelation implements
     ExtendExtensionAwareInterface,
     DatabasePlatformAwareInterface
 {
-    /**
-     * @var ExtendExtension
-     */
-    private $extendExtension;
+    use DatabasePlatformAwareTrait;
+    use ConnectionAwareTrait;
+    use ExtendExtensionAwareTrait;
 
     /**
-     * @var Connection
+     * {@inheritDoc}
      */
-    private $connection;
-
-    /**
-     * @var AbstractPlatform
-     */
-    private $platform;
-
-    public function setExtendExtension(ExtendExtension $extendExtension)
+    public function getOrder()
     {
-        $this->extendExtension = $extendExtension;
-    }
-
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
-
-    public function setDatabasePlatform(AbstractPlatform $platform)
-    {
-        $this->platform = $platform;
+        return 100;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         $this->addCategoryProductRelation($schema);
 
         if ($this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
-            $updateQuery = new UpdateCategoryIdsInProductsPqSql();
-            $updateQuery->setExtendExtension($this->extendExtension);
-            $queries->addQuery($updateQuery);
+            $queries->addQuery(new UpdateCategoryIdsInProductsPqSql());
         } elseif ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
-            $updateQuery = new UpdateCategoryIdsInProductsMySql();
-            $updateQuery->setExtendExtension($this->extendExtension);
-            $queries->addQuery($updateQuery);
+            $queries->addQuery(new UpdateCategoryIdsInProductsMySql());
         }
 
         $this->removeOldCategoryProductRelation($queries);
     }
 
-    protected function addCategoryProductRelation(Schema $schema)
+    private function addCategoryProductRelation(Schema $schema): void
     {
-        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
-        $targetTable = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('oro_catalog_category');
+        $targetTable = $schema->getTable('oro_product');
 
         $this->extendExtension->addManyToOneRelation(
             $schema,
@@ -121,16 +97,8 @@ class ChangeCategoryProductRelation implements
         );
     }
 
-    protected function removeOldCategoryProductRelation(QueryBag $queries)
+    private function removeOldCategoryProductRelation(QueryBag $queries): void
     {
         $queries->addQuery('DROP TABLE IF EXISTS oro_category_to_product');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
-    {
-        return 100;
     }
 }

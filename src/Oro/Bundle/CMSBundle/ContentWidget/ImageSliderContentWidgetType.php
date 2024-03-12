@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
 use Oro\Bundle\CMSBundle\Form\Type\ImageSlideCollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -24,37 +25,32 @@ use Twig\Environment;
  */
 class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
 {
-    /** @var ManagerRegistry */
-    private $registry;
+    public const SCALING_CROP_IMAGES = 'crop_images';
+    public const SCALING_PROPORTIONAL = 'proportional';
+    public const SCALING_TYPES = [
+        self::SCALING_CROP_IMAGES,
+        self::SCALING_PROPORTIONAL,
+    ];
 
-    /** @var int */
-    private $pointer = 0;
-
-    /** @var array */
-    private $widgetData = [];
+    private ManagerRegistry $registry;
+    private int $pointer = 0;
+    private array $widgetData = [];
 
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
 
-    /** {@inheritdoc} */
     public static function getName(): string
     {
         return 'image_slider';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getLabel(): string
     {
         return 'oro.cms.content_widget_type.image_slider.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBackOfficeViewSubBlocks(ContentWidget $contentWidget, Environment $twig): array
     {
         $data = $this->getWidgetData($contentWidget);
@@ -186,6 +182,23 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                 ]
             )
             ->add(
+                'scaling',
+                OroChoiceType::class,
+                [
+                    'label' => 'oro.cms.content_widget_type.slider_options.scaling.label',
+                    'tooltip' => 'oro.cms.content_widget_type.slider_options.scaling.tooltip',
+                    'required' => true,
+                    'placeholder' => false,
+                    'block' => 'slider_options',
+                    'choices' => [
+                        'oro.cms.content_widget_type.slider_options.scaling.value.crop_images'
+                            => self::SCALING_CROP_IMAGES,
+                        'oro.cms.content_widget_type.slider_options.scaling.value.proportional'
+                            => self::SCALING_PROPORTIONAL,
+                    ],
+                ]
+            )
+            ->add(
                 'imageSlides',
                 ImageSlideCollectionType::class,
                 [
@@ -239,6 +252,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
                     'arrows' => false,
                     'dots' => true,
                     'infinite' => false,
+                    'scaling' => self::SCALING_CROP_IMAGES,
                 ],
                 $settings
             )

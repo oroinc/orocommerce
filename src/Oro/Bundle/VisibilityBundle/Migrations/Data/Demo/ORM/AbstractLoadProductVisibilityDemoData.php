@@ -11,6 +11,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadScopeCustomerGroupDemoData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductKitDemoData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -34,6 +35,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     {
         return [
             LoadProductDemoData::class,
+            LoadProductKitDemoData::class,
             LoadScopeCustomerGroupDemoData::class,
             LoadCategoryVisibilityDemoData::class,
         ];

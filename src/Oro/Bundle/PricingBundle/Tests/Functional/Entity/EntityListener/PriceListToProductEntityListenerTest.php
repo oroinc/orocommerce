@@ -8,9 +8,8 @@ use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Event\PriceListToProductSaveAfterEvent;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadDependentPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -32,8 +31,8 @@ class PriceListToProductEntityListenerTest extends WebTestCase
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
 
         $this->loadFixtures([
-            LoadProductPrices::class,
-            LoadPriceRuleLexemes::class
+            LoadProductData::class,
+            LoadDependentPriceLists::class
         ]);
         $this->enableMessageBuffering();
     }
@@ -76,7 +75,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
             ResolvePriceListAssignedProductsTopic::getName(),
             [
                 'product' => [
-                    $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
+                    $this->getReference(LoadDependentPriceLists::DEPENDENT_PRICE_LIST_1)->getId() => [
                         $product->getId()
                     ]
                 ]
@@ -117,7 +116,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
             ResolvePriceListAssignedProductsTopic::getName(),
             [
                 'product' => [
-                    $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
+                    $this->getReference(LoadDependentPriceLists::DEPENDENT_PRICE_LIST_1)->getId() => [
                         $product->getId()
                     ]
                 ]
@@ -184,7 +183,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
             [
                 [
                     'product' => [
-                        $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
+                        $this->getReference(LoadDependentPriceLists::DEPENDENT_PRICE_LIST_1)->getId() => [
                             $product->getId(),
                             $changedProduct->getId()
                         ]
@@ -301,7 +300,7 @@ class PriceListToProductEntityListenerTest extends WebTestCase
             ResolvePriceListAssignedProductsTopic::getName(),
             [
                 'product' => [
-                    $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId() => [
+                    $this->getReference(LoadDependentPriceLists::DEPENDENT_PRICE_LIST_1)->getId() => [
                         $product->getId()
                     ]
                 ]

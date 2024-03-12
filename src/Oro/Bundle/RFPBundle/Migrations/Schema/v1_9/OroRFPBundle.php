@@ -5,11 +5,11 @@ namespace Oro\Bundle\RFPBundle\Migrations\Schema\v1_9;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveTableQuery;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -19,29 +19,9 @@ use Oro\Bundle\TranslationBundle\Migration\DeleteTranslationKeysQuery;
 
 class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameExtensionAwareInterface
 {
+    use ExtendExtensionAwareTrait;
+    use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
-
-    /** @var ExtendExtension */
-    protected $extendExtension;
-
-    /** @var RenameExtension */
-    private $renameExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * Sets the RenameExtension
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
 
     /**
      * {@inheritdoc}

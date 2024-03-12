@@ -8,17 +8,24 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitForAdditionalOrganizationData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
+/**
+ * @dbIsolationPerTest
+ */
 class ProductStrategyTest extends WebTestCase
 {
     private ProductStrategy $strategy;
@@ -26,7 +33,14 @@ class ProductStrategyTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures([LoadProductData::class, LoadOrganization::class, LoadBusinessUnit::class]);
+        $this->loadFixtures([
+            LoadProductData::class,
+            LoadOrganization::class,
+            LoadBusinessUnit::class,
+            LoadProductKitData::class,
+            LoadProductKitForAdditionalOrganizationData::class
+        ]);
+
         $container = $this->getContainer();
 
         $container->get('oro_importexport.field.database_helper')->onClear();
@@ -104,6 +118,74 @@ class ProductStrategyTest extends WebTestCase
         );
         $this->assertContains($newProductSku, $usedVariantLinksProductSkus);
         $this->assertContains($existingProduct->getSku(), $usedVariantLinksProductSkus);
+    }
+
+    public function testProcessCreateNewKitItemsByIgnoringID(): void
+    {
+        $context = new Context([]);
+        $context->setValue('itemData', []);
+        $this->strategy->setImportExportContext($context);
+
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_2);
+        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
+        $kitItem = $productKit->getKitItems()->current();
+
+        $product->setSku('TEST_KIT');
+        $product->setType(Product::TYPE_KIT);
+        $product->addKitItem($kitItem);
+        $kitItem->setProductKit($product);
+
+        $this->getContainer()->get('oro_entity.helper.field_helper')->setObjectValue($product, 'id', null);
+
+        $this->assertNotEmpty($kitItem->getId());
+
+        $this->strategy->process($product);
+
+        $this->assertEquals(null, $kitItem->getId());
+    }
+
+    public function testBeforeProcessPostponeProductKitRow(): void
+    {
+        $context = new Context([]);
+        $context->setValue('rawItemData', ['sku' => 'SKU']);
+        $this->strategy->setImportExportContext($context);
+
+        $productKitItem = new ProductKitItemProduct();
+        $productKitItem->setProduct((new ProductStub())->setSku('TEST'));
+
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
+        $kitItem = $product->getKitItems()->current();
+        $kitItem->addKitItemProduct($productKitItem);
+
+        $this->strategy->process($product);
+
+        $this->assertEquals([['sku' => 'SKU']], $context->getPostponedRows());
+        $this->assertEquals(0, $context->getValue('postponedRowsDelay'));
+    }
+
+    public function testProcessEnsureProductKitItemBelongsToProductOrganization(): void
+    {
+        $context = new Context([]);
+        $context->setValue('itemData', []);
+        $this->strategy->setImportExportContext($context);
+
+        $productKit1 = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
+        $additionalKit = $this->getReference(LoadProductKitForAdditionalOrganizationData::ADDITIONAL_PRODUCT_KIT);
+
+        foreach ($additionalKit->getKitItems() as $kitItem) {
+            $productKit1->addKitItem($kitItem);
+        }
+
+        $message = sprintf('Error in row #0. Product Kit Item with #%s ID was not found.', $kitItem->getId());
+        $this->assertCount(2, $productKit1->getKitItems());
+
+        $this->strategy->process($productKit1);
+
+        $this->assertCount(1, $productKit1->getKitItems());
+        $this->assertEquals(null, $kitItem->getId());
+        $this->assertEquals([$message], $context->getErrors());
     }
 
     public function testProcessWithEmptyAdditionalUnitPrecisionCode()

@@ -8,8 +8,13 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository;
 
+/**
+ * Class for managing customer-specific visibility settings in category subtrees,
+ * updating both category and product visibilities.
+ */
 class VisibilityChangeCustomerSubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
 {
     /**
@@ -69,10 +74,10 @@ class VisibilityChangeCustomerSubtreeCacheBuilder extends AbstractSubtreeCacheBu
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved')
+            ->getManagerForClass(CustomerProductVisibilityResolved::class)
             ->createQueryBuilder();
 
-        $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved', 'apvr')
+        $qb->update(CustomerProductVisibilityResolved::class, 'apvr')
             ->set('apvr.visibility', ':visibility')
             ->where($qb->expr()->in('apvr.scope', ':scopes'))
             ->andWhere($qb->expr()->in('IDENTITY(apvr.category)', ':categoryIds'))
@@ -87,7 +92,7 @@ class VisibilityChangeCustomerSubtreeCacheBuilder extends AbstractSubtreeCacheBu
     protected function joinCategoryVisibility(QueryBuilder $qb, $target)
     {
         return $qb->leftJoin(
-            'OroVisibilityBundle:Visibility\CustomerCategoryVisibility',
+            CustomerCategoryVisibility::class,
             'cv',
             Join::WITH,
             $qb->expr()->andX(

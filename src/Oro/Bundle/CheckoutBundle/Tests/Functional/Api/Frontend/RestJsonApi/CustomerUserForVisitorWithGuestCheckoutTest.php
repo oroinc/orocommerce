@@ -204,7 +204,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $customerUser = $this->getEntityManager()->find(CustomerUser::class, $customerUserId);
         $customerUserData = $responseContent['data'];
         self::assertEquals($customerUserData['attributes']['email'], $customerUser->getEmail());
-        self::assertEquals($customerUserData['attributes']['email'], $customerUser->getUsername());
+        self::assertEquals($customerUserData['attributes']['email'], $customerUser->getUserIdentifier());
         self::assertNull($customerUser->getFirstName());
         self::assertNull($customerUser->getLastName());
         self::assertNull($customerUser->getMiddleName());
@@ -226,7 +226,6 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
 
         $currentVisitor = $this->getCurrentVisitor();
         $visitor = $this->getEntityManager()->find(CustomerVisitor::class, $currentVisitor->getId());
-        self::assertNotSame($currentVisitor, $visitor); // to be sure that the visitor is loaded from the database
         self::assertSame($customerUserId, $visitor->getCustomerUser()->getId());
     }
 
@@ -264,7 +263,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $customerUser = $this->getEntityManager()->find(CustomerUser::class, $customerUserId);
         $customerUserData = $responseContent['data'];
         self::assertEquals($customerUserData['attributes']['email'], $customerUser->getEmail());
-        self::assertEquals($customerUserData['attributes']['email'], $customerUser->getUsername());
+        self::assertEquals($customerUserData['attributes']['email'], $customerUser->getUserIdentifier());
         self::assertEquals($customerUserData['attributes']['firstName'], $customerUser->getFirstName());
         self::assertEquals($customerUserData['attributes']['lastName'], $customerUser->getLastName());
         self::assertNull($customerUser->getMiddleName());

@@ -4,7 +4,6 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_12;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\SecurityBundle\Migrations\Schema\UpdateOwnershipTypeQuery;
@@ -15,11 +14,11 @@ use Oro\Bundle\SecurityBundle\Migrations\Schema\UpdateOwnershipTypeQuery;
 class AddOrganizationId implements Migration
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
+        $table = $schema->getTable('oro_catalog_category');
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),

@@ -17,7 +17,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 /**
  * @dbIsolationPerTest
  *
- * @covers \Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener
+ * @covers \Oro\Bundle\ProductBundle\ProductKit\EventListener\StatusListener
  * @covers \Oro\Bundle\ProductBundle\ProductKit\Resolver\ProductKitInventoryStatusResolver
  */
 class ProductInventoryStatusListenerTest extends WebTestCase
@@ -102,15 +102,15 @@ class ProductInventoryStatusListenerTest extends WebTestCase
         self::assertEquals(Product::INVENTORY_STATUS_OUT_OF_STOCK, $kit3->getInventoryStatus()->getId());
     }
 
-    public function testStatusChangedIfProductKitItemWithOutOfStockroductIsRemoved(): void
+    public function testStatusChangedIfProductKitItemWithOutOfStockProductIsRemoved(): void
     {
         /** @var Product $productKit */
         $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
         $productKitItems = $productKit->getKitItems()->filter(
             static fn (ProductKitItem $kitItem) => $kitItem->getProducts()->filter(
                 static fn (Product $product) => in_array($product->getSku(), [
-                    LoadProductData::PRODUCT_3,
-                ])
+                    LoadProductData::PRODUCT_3
+                ], true)
             )->count()
         );
         foreach ($productKitItems as $productKitItem) {
@@ -132,7 +132,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
             static fn (ProductKitItem $kitItem) => $kitItem->getProducts()->filter(
                 static fn (Product $product) => in_array($product->getSku(), [
                     LoadProductData::PRODUCT_3,
-                ])
+                ], true)
             )->count()
         );
         foreach ($productKitItems as $productKitItem) {
@@ -156,7 +156,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
                 static fn (Product $product) => in_array($product->getSku(), [
                     LoadProductData::PRODUCT_4,
                     LoadProductData::PRODUCT_3,
-                ])
+                ], true)
             )->count()
         );
         /** @var ProductKitItem $productKitItem */
@@ -165,7 +165,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
                 fn (ProductKitItemProduct $product) => in_array($product->getProduct()->getSku(), [
                     LoadProductData::PRODUCT_4,
                     LoadProductData::PRODUCT_3,
-                ])
+                ], true)
             );
 
             $productKitItemProduct = $productKitItemProduct->first();

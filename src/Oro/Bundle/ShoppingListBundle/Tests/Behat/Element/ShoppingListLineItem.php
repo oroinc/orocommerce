@@ -16,7 +16,7 @@ class ShoppingListLineItem extends Element implements LineItemInterface
 
     public function delete()
     {
-        $deleteButton = $this->find('css', 'span.fa-trash-o');
+        $deleteButton = $this->find('css', '.theme-icon-trash');
         $deleteButton->click();
     }
 }

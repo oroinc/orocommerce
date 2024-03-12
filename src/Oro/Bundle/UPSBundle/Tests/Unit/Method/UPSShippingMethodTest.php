@@ -25,6 +25,7 @@ use Oro\Component\Testing\ReflectionUtil;
 class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
 {
     private const IDENTIFIER = 'ups_1';
+    private const NAME = 'UPS';
     private const LABEL = 'ups_label';
     private const TYPE_IDENTIFIER = '59';
     private const ICON = 'bundles/icon-uri.png';
@@ -77,6 +78,7 @@ class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
             $this->cache,
             true
         );
+        $this->upsShippingMethod->setName(self::NAME);
     }
 
     public function testIsGrouped()
@@ -92,6 +94,11 @@ class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
     public function testGetIdentifier()
     {
         self::assertEquals(self::IDENTIFIER, $this->upsShippingMethod->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        self::assertEquals(self::NAME, $this->upsShippingMethod->getName());
     }
 
     public function testGetLabel()
@@ -387,6 +394,7 @@ class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
             $this->cache,
             true
         );
+        $this->upsShippingMethod->setName(self::NAME);
 
         $optionsByTypes = [
             '01' => ['surcharge' => 20],

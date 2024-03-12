@@ -50,7 +50,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     public function load(ObjectManager $manager): void
     {
         // set default fallback to categories
-        $configVisibilities = $manager->getRepository('OroVisibilityBundle:Visibility\ProductVisibility')
+        $configVisibilities = $manager->getRepository(ProductVisibility::class)
             ->findBy(['visibility' => ProductVisibility::CONFIG]);
         foreach ($configVisibilities as $visibilityEntity) {
             $visibilityEntity->setVisibility(ProductVisibility::CATEGORY);

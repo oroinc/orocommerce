@@ -16,7 +16,7 @@ class ProductShortDescriptionTest extends \PHPUnit\Framework\TestCase
         $this->assertPropertyAccessors(
             new ProductShortDescription(),
             [
-                ['id', '123'],
+                ['id', 123],
                 ['fallback', 'test'],
                 ['text', 'test text'],
                 ['localization',  new Localization()],

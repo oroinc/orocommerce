@@ -2,16 +2,17 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+/**
+* TextSlugPrototypeAware trait
+*
+*/
 trait TextSlugPrototypeAwareTrait
 {
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="text_slug_prototype", type="string", length=128, nullable=true)
-     */
-    protected $textSlugPrototype;
+    #[ORM\Column(name: 'text_slug_prototype', type: Types::STRING, length: 128, nullable: true)]
+    protected ?string $textSlugPrototype = null;
 
     /**
      * @return string

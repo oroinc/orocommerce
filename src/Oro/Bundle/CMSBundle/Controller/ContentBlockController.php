@@ -6,8 +6,8 @@ use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -19,11 +19,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ContentBlockController extends AbstractController
 {
-    /**
-     * @Route("/", name="oro_cms_content_block_index")
-     * @Template
-     * @AclAncestor("oro_cms_content_block_view")
-     */
+    #[Route(path: '/', name: 'oro_cms_content_block_index')]
+    #[Template]
+    #[AclAncestor('oro_cms_content_block_view')]
     public function indexAction(): array
     {
         return [
@@ -31,19 +29,12 @@ class ContentBlockController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/{id}", name="oro_cms_content_block_view", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_cms_content_block_view",
-     *      type="entity",
-     *      class="OroCMSBundle:ContentBlock",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/{id}', name: 'oro_cms_content_block_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_cms_content_block_view', type: 'entity', class: ContentBlock::class, permission: 'VIEW')]
     public function viewAction(ContentBlock $contentBlock): array
     {
-        $scopeEntities = $this->get(ScopeManager::class)->getScopeEntities('cms_content_block');
+        $scopeEntities = $this->container->get(ScopeManager::class)->getScopeEntities('cms_content_block');
 
         return [
             'entity' => $contentBlock,
@@ -51,16 +42,9 @@ class ContentBlockController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/create", name="oro_cms_content_block_create")
-     * @Template("@OroCMS/ContentBlock/update.html.twig")
-     * @Acl(
-     *      id="oro_cms_content_block_create",
-     *      type="entity",
-     *      class="OroCMSBundle:ContentBlock",
-     *      permission="CREATE"
-     * )
-     */
+    #[Route(path: '/create', name: 'oro_cms_content_block_create')]
+    #[Template('@OroCMS/ContentBlock/update.html.twig')]
+    #[Acl(id: 'oro_cms_content_block_create', type: 'entity', class: ContentBlock::class, permission: 'CREATE')]
     public function createAction(): array|RedirectResponse
     {
         $contentBlock = new ContentBlock();
@@ -68,16 +52,9 @@ class ContentBlockController extends AbstractController
         return $this->update($contentBlock);
     }
 
-    /**
-     * @Route("/update/{id}", name="oro_cms_content_block_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_cms_content_block_update",
-     *      type="entity",
-     *      class="OroCMSBundle:ContentBlock",
-     *      permission="EDIT"
-     * )
-     */
+    #[Route(path: '/update/{id}', name: 'oro_cms_content_block_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_cms_content_block_update', type: 'entity', class: ContentBlock::class, permission: 'EDIT')]
     public function updateAction(ContentBlock $contentBlock): array|RedirectResponse
     {
         return $this->update($contentBlock);
@@ -87,10 +64,10 @@ class ContentBlockController extends AbstractController
     {
         $form = $this->createForm(ContentBlockType::class, $contentBlock);
 
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $contentBlock,
             $form,
-            $this->get(TranslatorInterface::class)->trans('oro.cms.controller.contentblock.saved.message')
+            $this->container->get(TranslatorInterface::class)->trans('oro.cms.controller.contentblock.saved.message')
         );
     }
 

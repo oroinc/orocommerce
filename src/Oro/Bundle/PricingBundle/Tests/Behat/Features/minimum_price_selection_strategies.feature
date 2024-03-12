@@ -42,7 +42,7 @@ Feature: Minimum Price Selection Strategies
     Then I should see "Product has been saved" flash message
     When I continue as the Buyer
     And I am on the homepage
-    And I click "NewCategory"
+    And I click "NewCategory" in hamburger menu
     And I click "View Details" for "product2" product
     And I should see "$1.00"
 
@@ -60,7 +60,7 @@ Feature: Minimum Price Selection Strategies
     Then I should see "Product has been saved" flash message
     When I continue as the Buyer
     And I am on the homepage
-    And I click "NewCategory"
+    And I click "NewCategory" in hamburger menu
     And I click "View Details" for "PSKU1" product
     And I should see "$7.00"
 

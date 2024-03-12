@@ -247,6 +247,47 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(null, $result->getRow()->getIncludingTax());
     }
 
+    public function testSaveKitTaxable()
+    {
+        $entity = new \stdClass();
+        $taxValue = new TaxValue();
+
+        $taxable = new Taxable();
+        $taxable->setKitTaxable(true);
+        $taxable->setClassName('stdClass');
+        $taxable->setIdentifier(1);
+        $this->factory->expects($this->exactly(3))
+            ->method('create')
+            ->willReturn($taxable);
+
+        $transformer = $this->createMock(TaxTransformerInterface::class);
+        $transformer->expects($this->once())
+            ->method('reverseTransform')
+            ->willReturnCallback(function (Result $result) use ($taxValue) {
+                $taxValue->setResult($result);
+
+                return $taxValue;
+            });
+        $transformer->expects($this->once())
+            ->method('transform')
+            ->willReturnCallback(function (TaxValue $taxValue) {
+                return $taxValue->getResult();
+            });
+        $this->manager->addTransformer('stdClass', $transformer);
+
+        $this->taxValueManager->expects($this->once())
+            ->method('getTaxValue')
+            ->with($taxable->getClassName(), $taxable->getIdentifier())
+            ->willReturn($taxValue);
+
+        $this->taxValueManager->expects($this->once())
+            ->method('saveTaxValue')
+            ->with($taxValue);
+        $this->configureCacheGetCalls();
+
+        $this->assertEquals($taxValue->getResult(), $this->manager->saveTax($entity, false));
+    }
+
     public function testSaveWithoutItems()
     {
         $entity = new \stdClass();

@@ -26,8 +26,7 @@ layout:
                         microdataWithoutPricesDisabled: '=data["system_config_provider"].getValue("oro_product.microdata_without_prices_disabled")'
                         schemaOrgDescription: '=data["oro_product_schema_org_product_description"].getDescription(data["product"])'
                         productPrices: '=data["frontend_product_prices"].getByProduct(data["oro_product_variant"].getProductVariantOrProduct(data))'
-                product_view_primary_wrapper:
-                    blockType: container
+                        product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
                 product_view_primary_container:
                     blockType: container
                 product_view_aside_container:
@@ -44,12 +43,23 @@ layout:
                     blockType: container
                 product_view_specification_container:
                     blockType: container
+                product_view_details_container:
+                    blockType: container
+                product_view_details_inner_container:
+                    blockType: container
                 product_view_line_item_container:
+                    blockType: container
+                product_view_benefits_container:
                     blockType: container
                 product_view_description_container:
                     blockType: container
                 product_view_brand_container:
                     blockType: container
+                product_view_brand_inventory_status:
+                    blockType: container
+                    options:
+                        vars:
+                            product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
                 product_view_additional_container:
                     blockType: container
                 product_view_attribute_group_general:
@@ -67,32 +77,42 @@ layout:
                 page_content:
                     product_view_container:
                         product_view_microdata_container:
-                            product_view_primary_wrapper:
-                                product_view_primary_container:
-                                    product_sticker_new: ~
-                                product_view_aside_container: ~
+                            product_view_primary_container:
+                                product_sticker_new: ~
+                                product_view_brand_container: ~
+                                product_view_brand_inventory_status: ~
                             product_view_main_container:
+                                product_view_aside_container: ~
                                 product_view_content_container:
-                                    product_view_specification_container:
+                                    product_view_specification_container: ~
+                                    product_view_line_item_container: ~
+                                product_view_details_container:
+                                    product_view_details_inner_container:
+                                        product_view_benefits_container: ~
+                                        product_view_description_container: ~
                                         product_view_attribute_group_general: ~
-                                    product_view_description_container:
-                                        product_view_line_item_container: ~
-                                    product_view_brand_container: ~
-                                    product_view_main_attributes_container: ~
-                            product_view_additional_container: ~
+                                    product_view_additional_container: ~
+        - '@move':
+            id: product_shopping_lists
+            parentId: product_view_media_wrapper
 
         - '@move':
-            id: product_view_attribute_group_general_attribute_text_sku
+            id: product_view_attribute_group_general_attribute_product_brand_brand
             parentId: product_view_primary_container
-            prepend: true
+            siblingId: product_view_brand_inventory_status
+            prepend: false
+
+        - '@move':
+            id: product_view_attribute_group_general_attribute_boolean_featured
+            parentId: product_view_benefits_container
 
         - '@move':
             id: product_view_attribute_group_general_attribute_localized_fallback_descriptions
             parentId: product_view_description_container
 
         - '@move':
-            id: product_view_attribute_group_general_attribute_localized_brand_brand
-            parentId: product_view_brand_container
+            id: product_view_attribute_group_general_attribute_boolean_newArrival
+            parentId: product_view_benefits_container
 
         - '@setOption':
             id: product_view_attribute_group_general_attribute_localized_fallback_shortDescriptions
@@ -127,7 +147,7 @@ layout:
         - '@setOption':
             id: product_sticker_new
             optionName: mode
-            optionValue: icon
+            optionValue: badge
 
         - '@setOption':
             id: product_sticker_new

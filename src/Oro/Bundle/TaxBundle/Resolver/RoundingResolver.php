@@ -12,22 +12,30 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
+/**
+ * Round the taxable amounts.
+ */
 class RoundingResolver implements ResolverInterface
 {
-    /** {@inheritdoc} */
-    public function resolve(Taxable $taxable)
+    public function resolve(Taxable $taxable): void
     {
         $this->walk($taxable->getResult());
 
         foreach ($taxable->getItems() as $taxableItem) {
             $this->walk($taxableItem->getResult());
+
+            if ($taxableItem->isKitTaxable()) {
+                foreach ($taxableItem->getItems() as $taxableKitItem) {
+                    $this->walk($taxableKitItem->getResult());
+                }
+            }
         }
     }
 
     /**
      * @param AbstractResult|array $result
      */
-    protected function walk($result)
+    protected function walk($result): void
     {
         if ($result instanceof AbstractResultElement) {
             $this->round($result);
@@ -40,7 +48,7 @@ class RoundingResolver implements ResolverInterface
         }
     }
 
-    public function round(AbstractResultElement $result)
+    public function round(AbstractResultElement $result): void
     {
         foreach ($result as $key => $value) {
             try {
@@ -49,7 +57,7 @@ class RoundingResolver implements ResolverInterface
                 continue;
             }
 
-            if (!in_array($key, (array)$this->getExcludedKeys(), true)) {
+            if (!in_array($key, $this->getExcludedKeys(), true)) {
                 $value = $value->toScale(TaxationSettingsProvider::SCALE, RoundingMode::HALF_UP);
             }
 
@@ -57,10 +65,7 @@ class RoundingResolver implements ResolverInterface
         }
     }
 
-    /**
-     * @return array
-     */
-    protected function getExcludedKeys()
+    protected function getExcludedKeys(): array
     {
         return [
             TaxResultElement::RATE, // we should not round rates

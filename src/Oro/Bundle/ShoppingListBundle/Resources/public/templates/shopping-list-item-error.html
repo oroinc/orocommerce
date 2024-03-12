@@ -1,5 +1,10 @@
 <tr class="error-row" data-role="error-container">
-    <td colspan="6">
-        <span class="validation-error"><%= message %></span>
+    <td colspan="2" class="error-row-item">
+        <span class="validation-failed">
+            <span class="validation-failed__content">
+                <span class="validation-failed__icon" aria-hidden="true"></span>
+                <span><%- message %></span>
+            </span>
+        </span>
     </td>
 </tr>

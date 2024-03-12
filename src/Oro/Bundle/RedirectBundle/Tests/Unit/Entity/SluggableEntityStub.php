@@ -29,7 +29,7 @@ class SluggableEntityStub implements DatesAwareInterface, SluggableInterface
     /**
      * @var Collection|LocalizedFallbackValue[]
      */
-    protected $titles;
+    protected ?Collection $titles = null;
 
     public function __construct()
     {

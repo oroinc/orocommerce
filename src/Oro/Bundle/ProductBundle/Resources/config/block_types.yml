@@ -16,6 +16,14 @@ services:
         tags:
              - { name: layout.block_type, alias: invalid_items_warning }
 
+    # Component added back for theme layout BC from version 5.0
+    oro_ui.layout.block_type.vertical_container:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setName, ['vertical_container']]
+        tags:
+            - { name: layout.block_type, alias: vertical_container }
+
     oro_product.layout.type.import_validation_items:
         parent: oro_layout.block_type.abstract_configurable
         calls:
@@ -41,10 +49,18 @@ services:
     oro_product.layout.type.product_view_microdata_container:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
-            - [setOptionsConfig, [{microdataWithoutPricesDisabled: {required: true}, schemaOrgDescription: {required: true}, productPrices: {required: true}}]]
+            -
+                - setOptionsConfig
+                -
+                    -
+                        microdataWithoutPricesDisabled: {required: true}
+                        schemaOrgDescriptionEnabled: {default: false} # Component added back for theme layout BC from version 5.0
+                        schemaOrgDescription: {required: true}
+                        productPrices: {required: true}
+                        product: {required: false} # Made false for theme layout BC compatibility, better solutions might exist
             - [setName, ['product_view_microdata_container']]
         tags:
-             - { name: layout.block_type, alias: product_view_microdata_container }
+            - { name: layout.block_type, alias: product_view_microdata_container }
 
     oro_product.layout.type.product_datagrid:
         parent: oro_layout.block_type.abstract_configurable_container
@@ -92,12 +108,22 @@ services:
                 - setOptionsConfig
                 -
                     -
-                        mode: {default: 'icon'}
-                        position: {default: 'top-right'}
+                        mode: {default: 'badge'}
+                        position: {default: 'end-start'}
                         stickers: {default: []}
             - [setName, ['product_sticker']]
         tags:
             - { name: layout.block_type, alias: product_sticker }
+
+    # Component added back for theme layout BC from version 5.0
+    oro_product.block_type.directions:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{method: {required: true, default: 'GET'}}]]
+            - [setName, ['quick_add_form_directions']]
+            - [setParent, ['container']]
+        tags:
+            - { name: layout.block_type, alias: quick_add_form_directions }
 
     oro_product.block_type.product_list_item_image:
         parent: oro_layout.block_type.abstract_configurable

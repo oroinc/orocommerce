@@ -12,6 +12,8 @@ oro.cms:
     image_slider:
         url:
             not_dangerous_protocol.message: '"{{ protocol }}" pseudo-protocol is not allowed in slide URIs.'
+        image:
+            has_at_least_one_size_image.message: 'At least one image is required. [{{ fields }}]'
     wysiwyg:
         field_name_exist: 'This field name cannot be used.'
         not_permitted_content.message: |

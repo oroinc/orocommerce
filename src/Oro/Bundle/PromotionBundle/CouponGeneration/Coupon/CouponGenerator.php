@@ -164,7 +164,7 @@ class CouponGenerator implements CouponGeneratorInterface
 
         $assocCodes = array_flip($codes);
 
-        while ($existingCode = $statement->fetchColumn()) {
+        while ($existingCode = $statement->fetchOne()) {
             unset($assocCodes[$existingCode]);
         }
 
@@ -187,7 +187,7 @@ class CouponGenerator implements CouponGeneratorInterface
             $statement->bindValue('code' . $index, $code);
         }
 
-        return $statement->execute();
+        return $statement->executeQuery();
     }
 
     /**

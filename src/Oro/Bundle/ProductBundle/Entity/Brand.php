@@ -4,13 +4,14 @@ namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroProductBundle_Entity_Brand;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -19,6 +20,8 @@ use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Bundle\ProductBundle\Entity\Repository\BrandRepository;
+use Oro\Bundle\ProductBundle\Form\Type\BrandSelectType;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
@@ -26,76 +29,6 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 /**
  * Brand entity class.
  *
- * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\BrandRepository")
- * @ORM\Table(
- *      name="oro_brand",
- *      indexes={
- *          @ORM\Index(name="idx_oro_brand_created_at", columns={"created_at"}),
- *          @ORM\Index(name="idx_oro_brand_updated_at", columns={"updated_at"}),
- *          @ORM\Index(name="idx_oro_brand_default_title", columns={"default_title"})
- *      }
- * )
- * @ORM\AssociationOverrides({
- *      @ORM\AssociationOverride(
- *          name="slugPrototypes",
- *          joinTable=@ORM\JoinTable(
- *              name="oro_brand_slug_prototype",
- *              joinColumns={
- *                  @ORM\JoinColumn(name="brand_id", referencedColumnName="id", onDelete="CASCADE")
- *              },
- *              inverseJoinColumns={
- *                  @ORM\JoinColumn(
- *                      name="localized_value_id",
- *                      referencedColumnName="id",
- *                      onDelete="CASCADE",
- *                      unique=true
- *                  )
- *              }
- *          )
- *      ),
- *     @ORM\AssociationOverride(
- *          name="slugs",
- *          joinTable=@ORM\JoinTable(
- *              name="oro_brand_slug",
- *              joinColumns={
- *                  @ORM\JoinColumn(name="brand_id", referencedColumnName="id", onDelete="CASCADE")
- *              },
- *              inverseJoinColumns={
- *                  @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
- *              }
- *          )
- *      )
- * })
- * @Config(
- *      routeName="oro_product_brand_index",
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-briefcase"
- *          },
- *          "ownership"={
- *              "owner_type"="BUSINESS_UNIT",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="business_unit_owner_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
- *          },
- *          "form"={
- *              "form_type"="Oro\Bundle\ProductBundle\Form\Type\BrandSelectType",
- *              "grid_name"="brand-select-grid",
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          },
- *          "slug"={
- *              "source"="names"
- *          }
- *      }
- * )
- * @ORM\HasLifecycleCallbacks()
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -119,6 +52,69 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  * @method $this cloneLocalizedFallbackValueAssociations()
  * @mixin OroProductBundle_Entity_Brand
  */
+#[ORM\Entity(repositoryClass: BrandRepository::class)]
+#[ORM\Table(name: 'oro_brand')]
+#[ORM\Index(columns: ['created_at'], name: 'idx_oro_brand_created_at')]
+#[ORM\Index(columns: ['updated_at'], name: 'idx_oro_brand_updated_at')]
+#[ORM\Index(columns: ['default_title'], name: 'idx_oro_brand_default_title')]
+#[ORM\AssociationOverrides([
+    new ORM\AssociationOverride(
+        name: 'slugPrototypes',
+        joinColumns: [
+        new ORM\JoinColumn(
+            name: 'brand_id',
+            referencedColumnName: 'id',
+            onDelete: 'CASCADE'
+        )
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(
+                name: 'localized_value_id',
+                referencedColumnName: 'id',
+                unique: true,
+                onDelete: 'CASCADE'
+            )
+        ],
+        joinTable: new ORM\JoinTable(name: 'oro_brand_slug_prototype')
+    ),
+    new ORM\AssociationOverride(
+        name: 'slugs',
+        joinColumns: [
+        new ORM\JoinColumn(
+            name: 'brand_id',
+            referencedColumnName: 'id',
+            onDelete: 'CASCADE'
+        )
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(
+                name: 'slug_id',
+                referencedColumnName: 'id',
+                unique: true,
+                onDelete: 'CASCADE'
+            )
+        ],
+        joinTable: new ORM\JoinTable(name: 'oro_brand_slug')
+    )
+])]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    routeName: 'oro_product_brand_index',
+    defaultValues: [
+        'entity' => ['icon' => 'fa-briefcase'],
+        'ownership' => [
+            'owner_type' => 'BUSINESS_UNIT',
+            'owner_field_name' => 'owner',
+            'owner_column_name' => 'business_unit_owner_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id'
+        ],
+        'form' => ['form_type' => BrandSelectType::class, 'grid_name' => 'brand-select-grid'],
+        'dataaudit' => ['auditable' => true],
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'slug' => ['source' => 'names']
+    ]
+)]
 class Brand implements
     OrganizationAwareInterface,
     SluggableInterface,
@@ -133,191 +129,81 @@ class Brand implements
     const STATUS_DISABLED = 'disabled';
     const STATUS_ENABLED = 'enabled';
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $id = null;
+
+    #[ORM\Column(name: 'status', type: Types::STRING, length: 16, nullable: false)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 20]])]
+    protected ?string $status = self::STATUS_ENABLED;
+
+    #[ORM\ManyToOne(targetEntity: BusinessUnit::class)]
+    #[ORM\JoinColumn(name: 'business_unit_owner_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
+    protected ?BusinessUnit $owner = null;
+
+    #[ORM\ManyToOne(targetEntity: Organization::class)]
+    #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
+    protected ?OrganizationInterface $organization = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="status", type="string", length=16, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=20
-     *          }
-     *      }
-     *  )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $status = self::STATUS_ENABLED;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_brand_name')]
+    #[ORM\JoinColumn(name: 'brand_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ConfigField(
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['order' => 40, 'full' => true, 'fallback_field' => 'string'],
+            'attribute' => ['is_attribute' => true]
+        ]
+    )]
+    protected ?Collection $names = null;
 
     /**
-     * @var BusinessUnit
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\BusinessUnit")
-     * @ORM\JoinColumn(name="business_unit_owner_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $owner;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_brand_description')]
+    #[ORM\JoinColumn(name: 'brand_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ConfigField(
+        defaultValues: [
+            'importexport' => ['order' => 60, 'full' => true, 'fallback_field' => 'wysiwyg'],
+            'attachment' => ['acl_protected' => false],
+            'attribute' => ['is_attribute' => true]
+        ]
+    )]
+    protected ?Collection $descriptions = null;
 
     /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $organization;
-
-    /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_brand_name",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="brand_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=40,
-     *              "full"=true,
-     *              "fallback_field"="string"
-     *          },
-     *          "attribute"={
-     *              "is_attribute"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $names;
-
-    /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_brand_description",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="brand_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=60,
-     *              "full"=true,
-     *              "fallback_field"="wysiwyg"
-     *          },
-     *          "attachment"={
-     *              "acl_protected"=false
-     *          },
-     *          "attribute"={
-     *              "is_attribute"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $descriptions;
-
-    /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_brand_short_desc",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="brand_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=50,
-     *              "full"=true,
-     *              "fallback_field"="text"
-     *          },
-     *          "attribute"={
-     *              "is_attribute"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $shortDescriptions;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_brand_short_desc')]
+    #[ORM\JoinColumn(name: 'brand_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ConfigField(
+        defaultValues: [
+            'importexport' => ['order' => 50, 'full' => true, 'fallback_field' => 'text'],
+            'attribute' => ['is_attribute' => true]
+        ]
+    )]
+    protected ?Collection $shortDescriptions = null;
 
     /**
      * This field stores default name localized value for optimisation purposes
      *
      * @var string
-     *
-     * @ORM\Column(name="default_title", type="string", length=255, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      },
-     *      mode="hidden"
-     * )
      */
-    protected $defaultTitle;
+    #[ORM\Column(name: 'default_title', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]], mode: 'hidden')]
+    protected ?string $defaultTitle = null;
 
     /**
      * {@inheritdoc}
@@ -527,9 +413,8 @@ class Brand implements
 
     /**
      * Pre persist event handler
-     *
-     * @ORM\PrePersist
      */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -540,9 +425,8 @@ class Brand implements
 
     /**
      * Pre update event handler
-     *
-     * @ORM\PreUpdate
      */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));

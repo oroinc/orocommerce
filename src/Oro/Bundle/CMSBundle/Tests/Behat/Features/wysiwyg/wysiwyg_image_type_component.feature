@@ -4,23 +4,37 @@ Feature: WYSIWYG image type component
   Scenario: Create landing page
     Given I login as administrator
     And go to Marketing / Landing Pages
-    And click "Create Landing Page"
+    When click "Create Landing Page"
     And I fill in Landing Page Titles field with "WYSIWYG UI page"
     And I save form
+    Then I should see "Page has been saved" flash message
+    And I should see URL Slug field filled with "wysiwyg-ui-page"
 
   Scenario: Add new image into canvas
     When I add new component "Image" from panel to editor area
-    And I click on promo-slider-small-6 in grid
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat1.jpg |
+      | Title | cat1.jpg |
+    And I click "Upload"
+    And I click on cat1.jpg in grid
     And I check wysiwyg content in "CMS Page Content":
       | 1 | <picture>                         |
       | 2 | <source type="image/webp"/>       |
-      | 3 | <img alt="promo-slider-small-6"/> |
+      | 3 | <img alt="cat1.jpg"/> |
       | 4 | </picture>                        |
     And I click "WysiwygToolbarActionImageSettings"
     Then I click "Add Source"
-    And I click on promo-slider-medium-5 in grid
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat2.jpg |
+      | Title | cat2.jpg |
+    And I click "Upload"
+    And I click on cat2.jpg in grid
     Then I click "Add Source"
-    And I click on promo-slider-small-4 in grid
+    And I fill "Digital Asset Dialog Form" with:
+      | File  | cat3.jpg |
+      | Title | cat3.jpg |
+    And I click "Upload"
+    And I click on cat3.jpg in grid
     And I click "BreakpointDropdownToggle"
     And I click "breakpointMobileLandscape"
     And I wait for 1 seconds
@@ -30,13 +44,14 @@ Feature: WYSIWYG image type component
       | 2 | <source type="image/webp" media="(max-width: 640px) and (orientation: landscape)"/> |
       | 3 | <source type="image/jpeg"/>                                                         |
       | 4 | <source type="image/jpeg"/>                                                         |
-      | 5 | <img alt="promo-slider-small-6"/>                                                   |
+      | 5 | <img alt="cat1.jpg"/>                                                   |
 
   Scenario: Update main image
     When I select component in canvas by tree:
       | picture | 1 |
       | image   | 1 |
     And I enter to edit mode "SelectedComponent" component in canvas
+    And I filter "Title" as Contains "about_1384"
     And I click on about_1384.jpg in grid
     And I check wysiwyg content in "CMS Page Content":
       | 5 | <img alt="about_1384.jpg"/> |
@@ -89,7 +104,8 @@ Feature: WYSIWYG image type component
 
   Scenario: Add style to image
     When I add new component "Image" from panel to editor area
-    And I click on promo-slider-small-6 in grid
+    And I filter "Title" as Contains "cat1.jpg"
+    And I click on cat1.jpg in grid
     And I select component in canvas by tree:
       | picture | 1 |
       | image   | 1 |

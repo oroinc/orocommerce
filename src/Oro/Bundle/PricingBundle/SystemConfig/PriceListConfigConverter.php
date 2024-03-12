@@ -71,7 +71,7 @@ class PriceListConfigConverter
 
         if (0 !== count($ids)) {
             $priceLists = $this->getManagerForPriceList()
-                ->getRepository('OroPricingBundle:PriceList')
+                ->getRepository(PriceList::class)
                 ->findBy(['id' => $ids]) ?: [];
             foreach ($configs as $config) {
                 $result[] = $this->createPriceListConfig($config, $priceLists);

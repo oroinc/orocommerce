@@ -10,6 +10,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 use Oro\Bundle\SEOBundle\EventListener\ProductDuplicateListener;
 use Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub\ProductStub as Product;
+use Oro\Bundle\TranslationBundle\Entity\Language;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
@@ -171,7 +172,7 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
         if ($locale) {
             $localization = new Localization();
             $localization->setName($locale);
-            $localization->setLanguage($locale);
+            $localization->setLanguage(new Language($locale));
             $localization->setFormattingCode($locale);
 
             $fallbackValue->setLocalization($localization);

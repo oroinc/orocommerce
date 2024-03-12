@@ -1,0 +1,15 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/page_template/tabs/layout.html.twig'
+        - '@add':
+            id: product_main_container
+            parentId: product_view_microdata_container
+            blockType: container
+        - '@move':
+            id: product_view_additional_container
+            parentId: product_main_container
+        - '@move':
+            id: matrix_grid_order_inline
+            parentId: product_view_additional_container
+            prepend: true

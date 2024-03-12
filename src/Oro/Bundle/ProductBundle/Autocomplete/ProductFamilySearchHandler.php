@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Autocomplete;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -15,27 +16,25 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
  */
 class ProductFamilySearchHandler implements SearchHandlerInterface
 {
-    /** @var ManagerRegistry */
-    private $registry;
-
-    /** @var PropertyAccessorInterface */
-    private $propertyAccessor;
-
-    /** @var AclHelper */
-    private $aclHelper;
+    private ManagerRegistry $registry;
+    private PropertyAccessorInterface $propertyAccessor;
+    private AclHelper $aclHelper;
+    private EntityNameResolver $entityNameResolver;
 
     public function __construct(
         ManagerRegistry $registry,
         PropertyAccessorInterface $propertyAccessor,
-        AclHelper $aclHelper
+        AclHelper $aclHelper,
+        EntityNameResolver $entityNameResolver
     ) {
         $this->registry = $registry;
         $this->propertyAccessor = $propertyAccessor;
         $this->aclHelper = $aclHelper;
+        $this->entityNameResolver = $entityNameResolver;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function search($query, $page, $perPage, $searchById = false)
     {
@@ -69,7 +68,7 @@ class ProductFamilySearchHandler implements SearchHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getProperties()
     {
@@ -77,7 +76,7 @@ class ProductFamilySearchHandler implements SearchHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getEntityName()
     {
@@ -85,16 +84,13 @@ class ProductFamilySearchHandler implements SearchHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function convertItem($item)
     {
-        $result = ['id' => $this->propertyAccessor->getValue($item, 'id')];
-
-        foreach ($this->getProperties() as $property) {
-            $result[$property] = (string) $this->propertyAccessor->getValue($item, $property);
-        }
-
-        return $result;
+        return [
+            'id' => $this->propertyAccessor->getValue($item, 'id'),
+            'defaultLabel' => $this->entityNameResolver->getName($item)
+        ];
     }
 }

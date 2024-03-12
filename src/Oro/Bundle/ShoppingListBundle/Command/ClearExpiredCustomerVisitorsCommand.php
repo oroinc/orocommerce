@@ -84,7 +84,7 @@ HELP
                 ->setParameter('expiredLastVisitDate', $expiredLastVisitDate, Types::DATETIME_MUTABLE)
                 ->setMaxResults(self::CHUNK_SIZE);
 
-            $visitorIds = $visitorsQB->execute()->fetchAll(\PDO::FETCH_COLUMN);
+            $visitorIds = $visitorsQB->execute()->fetchFirstColumn();
 
             $deleteQB = $connection->createQueryBuilder();
             $deleteQB->delete('oro_customer_visitor')

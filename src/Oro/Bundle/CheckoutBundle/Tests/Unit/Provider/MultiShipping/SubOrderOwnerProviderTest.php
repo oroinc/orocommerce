@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider\MultiShipping;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Product;
@@ -50,8 +49,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         $this->metadataProvider = $this->createMock(OwnershipMetadataProviderInterface::class);
 
         $this->em = $this->getTestEntityManager();
-        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
-            new AnnotationReader(),
+        $this->em->getConfiguration()->setMetadataDriverImpl(new AttributeDriver(
             [dirname((new \ReflectionClass(User::class))->getFileName())]
         ));
 
@@ -149,14 +147,14 @@ class SubOrderOwnerProviderTest extends OrmTestCase
 
     private function expectsGetConfiguredOwner(
         ArrayCollection $lineItems,
-        string $groupingPath,
+        string $lineItemGroupKey,
         ?int $configuredOwnerId
     ): void {
         $organization = $this->createMock(Organization::class);
 
         $this->subOrderOrganizationProvider->expects(self::once())
             ->method('getOrganization')
-            ->with(self::identicalTo($lineItems), $groupingPath)
+            ->with(self::identicalTo($lineItems), $lineItemGroupKey)
             ->willReturn($organization);
         $this->configManager->expects(self::once())
             ->method('get')
@@ -177,9 +175,9 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         $product->setCategory($category);
         $category->setOrganization($product->getOrganization());
         $lineItems = new ArrayCollection([$this->getLineItem($product)]);
-        $groupingPath = 'product.category:1';
+        $lineItemGroupKey = 'product.category:1';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, null);
 
         $this->metadataProvider->expects(self::once())
             ->method('getMetadata')
@@ -193,7 +191,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
         );
 
-        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        $owner = $this->provider->getOwner($lineItems, $lineItemGroupKey);
         self::assertEquals($userId, $owner->getId());
     }
 
@@ -205,14 +203,14 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         $product->setCategory($category);
         $category->setOrganization($product->getOrganization());
         $lineItems = new ArrayCollection([$this->getLineItem($product)]);
-        $groupingPath = 'product.category:1';
+        $lineItemGroupKey = 'product.category:1';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, $configuredOwnerId);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, $configuredOwnerId);
 
         $this->metadataProvider->expects(self::never())
             ->method('getMetadata');
 
-        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        $owner = $this->provider->getOwner($lineItems, $lineItemGroupKey);
         self::assertEquals($configuredOwnerId, $owner->getId());
     }
 
@@ -222,9 +220,9 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         $product = $this->getProduct(1, 1);
         $product->setSku('sku');
         $lineItems = new ArrayCollection([$this->getLineItem($product)]);
-        $groupingPath = 'product.sku:SKU-TEST';
+        $lineItemGroupKey = 'product.sku:SKU-TEST';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, null);
 
         $this->metadataProvider->expects(self::once())
             ->method('getMetadata')
@@ -238,7 +236,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
         );
 
-        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        $owner = $this->provider->getOwner($lineItems, $lineItemGroupKey);
         self::assertEquals($userId, $owner->getId());
     }
 
@@ -248,14 +246,14 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         $product = $this->getProduct(1, 1);
         $product->setSku('sku');
         $lineItems = new ArrayCollection([$this->getLineItem($product)]);
-        $groupingPath = 'product.sku:SKU-TEST';
+        $lineItemGroupKey = 'product.sku:SKU-TEST';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, $configuredOwnerId);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, $configuredOwnerId);
 
         $this->metadataProvider->expects(self::never())
             ->method('getMetadata');
 
-        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        $owner = $this->provider->getOwner($lineItems, $lineItemGroupKey);
         self::assertEquals($configuredOwnerId, $owner->getId());
     }
 
@@ -267,15 +265,15 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         $lineItem = $this->getLineItem();
         $lineItem->setCheckout($checkout);
         $lineItems = new ArrayCollection([$lineItem]);
-        $groupingPath = 'other-items';
+        $lineItemGroupKey = 'other-items';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, null);
 
         $this->metadataProvider->expects(self::once())
             ->method('getMetadata')
             ->willReturn(new OwnershipMetadata('USER', 'owner', 'user_owner_id'));
 
-        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        $owner = $this->provider->getOwner($lineItems, $lineItemGroupKey);
         self::assertSame($user, $owner);
     }
 
@@ -287,9 +285,9 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         $lineItem = $this->getLineItem($this->getProduct(1, 1));
         $lineItem->setCheckout($checkout);
         $lineItems = new ArrayCollection([$lineItem]);
-        $groupingPath = 'checkout:1';
+        $lineItemGroupKey = 'checkout:1';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, null);
 
         $this->metadataProvider->expects(self::once())
             ->method('getMetadata')
@@ -312,15 +310,15 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         $lineItem2 = $this->getLineItem($this->getProduct(1, 2));
         $lineItem2->setCheckout($checkout);
         $lineItems = new ArrayCollection([$lineItem1, $lineItem2]);
-        $groupingPath = 'checkout:1';
+        $lineItemGroupKey = 'checkout:1';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, null);
 
         $this->metadataProvider->expects(self::once())
             ->method('getMetadata')
             ->willReturn(new OwnershipMetadata('NONE'));
 
-        $this->provider->getOwner($lineItems, $groupingPath);
+        $this->provider->getOwner($lineItems, $lineItemGroupKey);
     }
 
     public function testGetOwnerWhenOwnerSourceHasEmptyOwner(): void
@@ -334,15 +332,15 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         $product2 = $this->getProduct(1, 2);
         $product1->setCategory($category);
         $lineItems = new ArrayCollection([$this->getLineItem($product1), $this->getLineItem($product2)]);
-        $groupingPath = 'product.category:1';
+        $lineItemGroupKey = 'product.category:1';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, null);
 
         $this->metadataProvider->expects(self::once())
             ->method('getMetadata')
             ->willReturn(new OwnershipMetadata('ORGANIZATION', 'organization', 'organization_id'));
 
-        $this->provider->getOwner($lineItems, $groupingPath);
+        $this->provider->getOwner($lineItems, $lineItemGroupKey);
     }
 
     public function testGetOwnerWhenOwnerSourceIsUser(): void
@@ -372,9 +370,9 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         $product1 = $this->getProduct(1, 1);
         $product2 = $this->getProduct(1, 2);
         $lineItems = new ArrayCollection([$this->getLineItem($product1), $this->getLineItem($product2)]);
-        $groupingPath = 'product.owner:1';
+        $lineItemGroupKey = 'product.owner:1';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, null);
 
         $this->metadataProvider->expects(self::never())
             ->method('getMetadata');
@@ -387,7 +385,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
         );
 
-        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        $owner = $this->provider->getOwner($lineItems, $lineItemGroupKey);
         self::assertEquals($userId, $owner->getId());
     }
 
@@ -398,9 +396,9 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             $this->getLineItem($this->getProduct(1, 1)),
             $this->getLineItem($this->getProduct(1, 2))
         ]);
-        $groupingPath = 'product.organization:1';
+        $lineItemGroupKey = 'product.organization:1';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, null);
 
         $this->metadataProvider->expects(self::never())
             ->method('getMetadata');
@@ -413,7 +411,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             [1 => \PDO::PARAM_INT, 2 => \PDO::PARAM_BOOL]
         );
 
-        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        $owner = $this->provider->getOwner($lineItems, $lineItemGroupKey);
         self::assertEquals($userId, $owner->getId());
     }
 
@@ -423,9 +421,9 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         $product1 = $this->getProduct(1, 1);
         $product2 = $this->getProduct(1, 2);
         $lineItems = new ArrayCollection([$this->getLineItem($product1), $this->getLineItem($product2)]);
-        $groupingPath = 'product.owner:1';
+        $lineItemGroupKey = 'product.owner:1';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, null);
 
         $this->metadataProvider->expects(self::never())
             ->method('getMetadata');
@@ -444,7 +442,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         );
         $this->applyQueryExpectations($this->getDriverConnectionMock($this->em));
 
-        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        $owner = $this->provider->getOwner($lineItems, $lineItemGroupKey);
         self::assertEquals($userId, $owner->getId());
     }
 
@@ -455,9 +453,9 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             $this->getLineItem($this->getProduct(1, 1)),
             $this->getLineItem($this->getProduct(1, 2))
         ]);
-        $groupingPath = 'product.organization:1';
+        $lineItemGroupKey = 'product.organization:1';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, null);
 
         $this->metadataProvider->expects(self::never())
             ->method('getMetadata');
@@ -476,7 +474,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         );
         $this->applyQueryExpectations($this->getDriverConnectionMock($this->em));
 
-        $owner = $this->provider->getOwner($lineItems, $groupingPath);
+        $owner = $this->provider->getOwner($lineItems, $lineItemGroupKey);
         self::assertEquals($userId, $owner->getId());
     }
 
@@ -488,9 +486,9 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         $product1 = $this->getProduct(1, 1);
         $product2 = $this->getProduct(1, 2);
         $lineItems = new ArrayCollection([$this->getLineItem($product1), $this->getLineItem($product2)]);
-        $groupingPath = 'product.owner:1';
+        $lineItemGroupKey = 'product.owner:1';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, null);
 
         $this->metadataProvider->expects(self::never())
             ->method('getMetadata');
@@ -509,7 +507,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         );
         $this->applyQueryExpectations($this->getDriverConnectionMock($this->em));
 
-        $this->provider->getOwner($lineItems, $groupingPath);
+        $this->provider->getOwner($lineItems, $lineItemGroupKey);
     }
 
     public function testGetOwnerWhenOwnerSourceIsOrganizationThatDoesNotHaveUsers(): void
@@ -521,9 +519,9 @@ class SubOrderOwnerProviderTest extends OrmTestCase
             $this->getLineItem($this->getProduct(1, 1)),
             $this->getLineItem($this->getProduct(1, 2))
         ]);
-        $groupingPath = 'product.organization:1';
+        $lineItemGroupKey = 'product.organization:1';
 
-        $this->expectsGetConfiguredOwner($lineItems, $groupingPath, null);
+        $this->expectsGetConfiguredOwner($lineItems, $lineItemGroupKey, null);
 
         $this->metadataProvider->expects(self::never())
             ->method('getMetadata');
@@ -542,7 +540,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
         );
         $this->applyQueryExpectations($this->getDriverConnectionMock($this->em));
 
-        $this->provider->getOwner($lineItems, $groupingPath);
+        $this->provider->getOwner($lineItems, $lineItemGroupKey);
     }
 
     public function testGetOwnerNoLineItems(): void

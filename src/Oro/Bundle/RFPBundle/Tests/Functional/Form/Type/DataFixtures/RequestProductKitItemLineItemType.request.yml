@@ -1,0 +1,25 @@
+dependencies:
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
+
+Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem:
+    request_product_kit1_item1_line_item:
+        kitItem: '@product_kit1_item1'
+        productId: '@product_simple1->id'
+        productSku: '@product_simple1->sku'
+        productName: '@product_simple1->name'
+        quantity: 12.3456
+        productUnit: '@item'
+
+Oro\Bundle\RFPBundle\Entity\RequestProduct:
+    request_product_kit1:
+        product: '@product_kit1'
+        __calls:
+            - addRequestProductItem: ['@request_product_kit1_item1']
+            - addKitItemLineItem: ['@request_product_kit1_item1_line_item']
+
+Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+    request_product_kit1_item1:
+        quantity: 23
+        productUnit: '@each'
+        value: 345.6789
+        currency: 'USD'

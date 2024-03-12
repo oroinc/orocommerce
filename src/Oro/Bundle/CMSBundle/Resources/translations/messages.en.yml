@@ -95,6 +95,7 @@ oro.cms:
         widget_type.label: Type
         layout.label: Layout
         settings.label: Settings
+        labels.label: Labels
         feature:
             label: Content Widgets
             description: Enables creating and managing content widgets, such an image slider, contact us form, product mini block, and a product segment.
@@ -128,6 +129,12 @@ oro.cms:
             arrows.label: 'Show Arrows'
             dots.label: 'Show Dots'
             infinite.label: 'Enable Infinite Scroll'
+            scaling:
+                label: 'Scaling'
+                tooltip: 'It controls how the slide images are positioned and scaled when screen width falls in between the optimal image dimensions specified for each image type. The images could be scaled down proportionally (which may cause image blurriness for some images, as well as it will lead to reduction in the overall height of the image slider itself). Alternatively, to preserve image clarity, the image could be cropped on the side opposite to the location of the text (which is controlled by the “Text Alignment” option for each slide individually), or on both the right and the left side in case of center-aligned text.'
+                value:
+                    crop_images: 'Crop Images'
+                    proportional: 'Proportional Scaling'
 
     imageslide:
         entity_label: Image Slide
@@ -138,7 +145,7 @@ oro.cms:
         slide_order.label: Slide Order
         url.label: URL
         display_in_same_window.label: Target Window
-        title.label: Title
+        alt_image_text.label: Alt Image Text
         text.label: Text
         text_alignment:
             label: Text Alignment
@@ -152,21 +159,64 @@ oro.cms:
                 bottom_left: Bottom-Left
                 bottom_center: Bottom-Center
                 bottom_right: Bottom-Right
-        main_image.label: Main Image
+        extra_large_image.label: Extra Large Image
+        extra_large_image2x.label: Extra Large Image 2x
+        extra_large_image3x.label: Extra Large Image 3x
+        large_image.label: Large Image
+        large_image2x.label: Large Image 2x
+        large_image3x.label: Large Image 3x
         medium_image.label: Medium Image
+        medium_image2x.label: Medium Image 2x
+        medium_image3x.label: Medium Image 3x
         small_image.label: Small Image
+        small_image2x.label: Small Image 2x
+        small_image3x.label: Small Image 3x
         organization.label: Organization
+        header.label: Header
+
+        form.table:
+            header:
+                image_type.label: 'Image'
+                image_standart_size:
+                    label: 'Standard'
+                    tooltip: 'The same image can optimized for devices with different pixel densities to provide better image clarity on HiDPI displays. The “Standard” version will be used on regular screens.'
+                image_2x_size:
+                    label: '2x'
+                    tooltip: 'The “2x” version will be used on high DPI screens. Upload an image that has 2x (twice as many) pixels both in width and height.'
+                image_3x_size:
+                    label: '3x'
+                    tooltip: ' The “3x” version will be used on high DPI screens. Upload an image that has 3x (three times as many) pixels both in width and height.'
+            row:
+                extra_large:
+                    label: 'Extra Large'
+                    tooltip: 'This image will be used on screens that are wider then 1280px. Upload an image that is 1864px wide for optimal results. Recommended image height is 444px.'
+                large:
+                    label: 'Large'
+                    tooltip: 'This image will be used on screens that are 769px - 1280px wide. This image will also be automatically resized and used in place of the optimized large, medium and small images if those are not provided. Upload an image that is 1224px wide and 444px tall for optimal results.'
+                medium:
+                    label: 'Medium'
+                    tooltip: 'This image will be used on screens that are 440px - 768px wide. Upload an image that is 736px wide for optimal results. Recommended image height is 444px.'
+                small:
+                    label: 'Small'
+                    tooltip: 'This image will be used on screens that are narrower than 440px. Upload an image that is 328px wide for optimal results. Recommended image height is 240px.'
 
         form.tooltip:
             slide_order.label: When "1" is the leftmost slide, choose the preferred order of slides within the slider.
             url.label: Enter an URL of the page to which a user will be redirected after clicking on the slide.
             display_in_same_window.label: Set how to open the slide link. Select "Same Window" to open it in the current browser window. Select "Blank" to open it in a new browser tab.
-            title.label: Provide alternative text for the slide image. This text is displayed as image "Alt".
+            alt_image_text.label: It helps screen readers describe images to visually impaired users and helps search engines understand image contents.
             text.label: Add text content to the slide.
             text_alignment.label: Set where to position text within the slide.
-            main_image.label: Upload a background image for the slide, or select an existing one.
+            large_image.label: Upload a background image for the slide, or select an existing one.
+            large_image2x.label: Upload a background image for the slide, or select an existing one.
+            large_image3x.label: Upload a background image for the slide, or select an existing one.
             medium_image.label: Upload a background image for the slide, or select an existing one.
+            medium_image2x.label: Upload a background image for the slide, or select an existing one.
+            medium_image3x.label: Upload a background image for the slide, or select an existing one.
             small_image.label: Upload a background image for the slide, or select an existing one.
+            small_image2x.label: Upload a background image for the slide, or select an existing one.
+            small_image3x.label: Upload a background image for the slide, or select an existing one.
+            header.label: If provided it will be accompanied by a styled clickable button.
 
     tabbedcontentitem:
         entity_label: Tabbed Content Item

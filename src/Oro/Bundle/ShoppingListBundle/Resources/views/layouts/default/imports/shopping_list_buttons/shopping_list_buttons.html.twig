@@ -12,12 +12,13 @@
         {% set buttonOptions = {
             dataUrl: 'oro_shopping_list_frontend_add_product',
             dataAttributes: {},
-            btnCss: 'btn--info ',
-            iCss: 'fa fa-shopping-cart fa--fw fa--as-line',
-            labelInIcon: false
         } %}
 
         {% if is_configurable_product_type(product.type) %}
+            {% if matrixFormType is not defined %}
+                {% set matrixFormType = '' %}
+            {% endif %}
+
             {% if matrixFormType == 'popup' %}
                 {% set view = 'oroshoppinglist/js/app/views/matrix-grid-popup-button-view' %}
             {% elseif matrixFormType == 'inline' %}
@@ -29,15 +30,12 @@
 
         {% set removeOptions = buttonOptions|merge({
             dataUrl: 'oro_shopping_list_frontend_remove_product',
-            actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list'|trans,
-            iCss: 'fa fa-remove fa--fw fa--as-line',
-            labelInIcon: false
+            actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list_short'|trans
         }) %}
 
         {% set newOptions = buttonOptions|merge({
             ariaLabel: 'oro.shoppinglist.actions.add_to_new_shopping_list.aria_label'|trans,
-            iCss: 'fa fa-plus fa--fw fa--as-line',
-            labelInIcon: false
+            iconName: 'plus'
         }) %}
 
         {% set options = layout_attr_defaults(attr, {
@@ -52,7 +50,7 @@
                     shopping_lists: productShoppingLists
                 }
             },
-            '~singleButtonACss': 'btn--info'
+            '~singleButtonACss': ''
         } ) %}
         {{ buttons.getButtonsHtml(options) }}
     {% endif %}

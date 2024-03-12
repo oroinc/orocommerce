@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Provider;
 
-use Oro\Bundle\CacheBundle\Tests\Unit\Provider\MemoryCacheProviderAwareTestTrait;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
@@ -13,16 +13,14 @@ use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsR
 
 class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use MemoryCacheProviderAwareTestTrait;
-
     /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentMethodProvider;
 
     /** @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentMethodsConfigsRulesProvider;
 
-    /** @var PaymentContextInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentContext;
+    /** @var MemoryCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $memoryCacheProvider;
 
     /** @var ApplicablePaymentMethodsProvider */
     private $provider;
@@ -33,41 +31,76 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
         $this->paymentMethodsConfigsRulesProvider = $this->createMock(
             MethodsConfigsRulesByContextProviderInterface::class
         );
-        $this->paymentContext = $this->createMock(PaymentContextInterface::class);
+        $this->memoryCacheProvider = $this->createMock(MemoryCacheProviderInterface::class);
 
         $this->provider = new ApplicablePaymentMethodsProvider(
             $this->paymentMethodProvider,
-            $this->paymentMethodsConfigsRulesProvider
+            $this->paymentMethodsConfigsRulesProvider,
+            $this->memoryCacheProvider
         );
     }
 
-    public function testGetApplicablePaymentMethodsWhenCache(): void
+    private function getPaymentMethod(): PaymentMethodInterface
     {
-        $paymentMethods = ['sample_method1'];
-        $this->mockMemoryCacheProvider($paymentMethods);
-        $this->setMemoryCacheProvider($this->provider);
+        $method = $this->createMock(PaymentMethodInterface::class);
+        $method->expects(self::any())
+            ->method('isApplicable')
+            ->willReturn(true);
 
-        $this->assertEquals(
-            $paymentMethods,
-            $this->provider->getApplicablePaymentMethods($this->paymentContext)
-        );
+        return $method;
     }
 
-    public function testGetApplicablePaymentMethods()
+    private function getPaymentMethodConfig(string $configuredMethodType): PaymentMethodConfig
     {
-        $configsRules[] = $this->getPaymentMethodsConfigsRule(['SomeType']);
-        $configsRules[] = $this->getPaymentMethodsConfigsRule(['PayPal', 'SomeOtherType']);
+        $methodConfig = $this->createMock(PaymentMethodConfig::class);
+        $methodConfig->expects(self::any())
+            ->method('getType')
+            ->willReturn($configuredMethodType);
 
-        $this->paymentMethodsConfigsRulesProvider->expects($this->once())
+        return $methodConfig;
+    }
+
+    private function getPaymentMethodsConfigsRule(array $configuredMethodTypes): PaymentMethodsConfigsRule
+    {
+        $methodConfigs = [];
+        foreach ($configuredMethodTypes as $configuredMethodType) {
+            $methodConfigs[] = $this->getPaymentMethodConfig($configuredMethodType);
+        }
+
+        $configsRule = $this->createMock(PaymentMethodsConfigsRule::class);
+        $configsRule->expects(self::any())
+            ->method('getMethodConfigs')
+            ->willReturn($methodConfigs);
+
+        return $configsRule;
+    }
+
+    public function testGetApplicablePaymentMethods(): void
+    {
+        $paymentContext = $this->createMock(PaymentContextInterface::class);
+
+        $configsRules = [
+            $this->getPaymentMethodsConfigsRule(['SomeType']),
+            $this->getPaymentMethodsConfigsRule(['PayPal', 'SomeOtherType'])
+        ];
+
+        $someTypeMethod = $this->getPaymentMethod();
+        $payPalMethod = $this->getPaymentMethod();
+        $someOtherTypeMethod = $this->getPaymentMethod();
+
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->with(self::identicalTo(['payment_context' => $paymentContext]))
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
+
+        $this->paymentMethodsConfigsRulesProvider->expects(self::once())
             ->method('getPaymentMethodsConfigsRules')
-            ->with($this->paymentContext)
+            ->with($paymentContext)
             ->willReturn($configsRules);
 
-        $someTypeMethod = $this->getPaymentMethod('SomeType');
-        $payPalMethod = $this->getPaymentMethod('PayPal');
-        $someOtherTypeMethod = $this->getPaymentMethod('SomeOtherType');
-
-        $this->paymentMethodProvider->expects($this->any())
+        $this->paymentMethodProvider->expects(self::exactly(3))
             ->method('hasPaymentMethod')
             ->willReturnMap([
                 ['SomeType', true],
@@ -75,7 +108,7 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
                 ['SomeOtherType', true],
             ]);
 
-        $this->paymentMethodProvider->expects($this->any())
+        $this->paymentMethodProvider->expects(self::exactly(3))
             ->method('getPaymentMethod')
             ->willReturnMap([
                 ['SomeType', $someTypeMethod],
@@ -89,54 +122,39 @@ class ApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
             'SomeOtherType' => $someOtherTypeMethod,
         ];
 
-        $paymentMethods = $this->provider->getApplicablePaymentMethods($this->paymentContext);
-
-        $this->assertEquals($expectedPaymentMethods, $paymentMethods);
+        self::assertEquals(
+            $expectedPaymentMethods,
+            $this->provider->getApplicablePaymentMethods($paymentContext)
+        );
     }
 
-    public function testGetApplicablePaymentMethodsWhenMemoryCacheProvider(): void
+    public function testGetApplicablePaymentMethodsWhenDataCached(): void
     {
-        $this->mockMemoryCacheProvider();
-        $this->setMemoryCacheProvider($this->provider);
+        $paymentContext = $this->createMock(PaymentContextInterface::class);
 
-        $this->testGetApplicablePaymentMethods();
-    }
+        $cachedPaymentMethods = [
+            'SomeType' => $this->getPaymentMethod()
+        ];
 
-    private function getPaymentMethodsConfigsRule(array $configuredMethodTypes): PaymentMethodsConfigsRule
-    {
-        $methodConfigs = [];
-        foreach ($configuredMethodTypes as $configuredMethodType) {
-            $methodConfigs[] = $this->getPaymentMethodConfig($configuredMethodType);
-        }
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->with(self::identicalTo(['payment_context' => $paymentContext]))
+            ->willReturnCallback(function () use ($cachedPaymentMethods) {
+                return $cachedPaymentMethods;
+            });
 
-        $configsRule = $this->createMock(PaymentMethodsConfigsRule::class);
-        $configsRule->expects($this->once())
-            ->method('getMethodConfigs')
-            ->willReturn($methodConfigs);
+        $this->paymentMethodsConfigsRulesProvider->expects(self::never())
+            ->method('getPaymentMethodsConfigsRules');
 
-        return $configsRule;
-    }
+        $this->paymentMethodProvider->expects(self::never())
+            ->method('hasPaymentMethod');
 
-    private function getPaymentMethodConfig(string $configuredMethodType): PaymentMethodConfig
-    {
-        $methodConfig = $this->createMock(PaymentMethodConfig::class);
-        $methodConfig->expects($this->exactly(2))
-            ->method('getType')
-            ->willReturn($configuredMethodType);
+        $this->paymentMethodProvider->expects(self::never())
+            ->method('getPaymentMethod');
 
-        return $methodConfig;
-    }
-
-    private function getPaymentMethod(string $methodType): PaymentMethodInterface
-    {
-        $method = $this->createMock(PaymentMethodInterface::class);
-        $method->expects($this->never())
-            ->method('getIdentifier')
-            ->willReturn($methodType);
-        $method->expects($this->once())
-            ->method('isApplicable')
-            ->willReturn(true);
-
-        return $method;
+        self::assertEquals(
+            $cachedPaymentMethods,
+            $this->provider->getApplicablePaymentMethods($paymentContext)
+        );
     }
 }

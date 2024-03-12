@@ -36,7 +36,7 @@
         @include badge(
             $checkout-navigation-icon-size,
             $checkout-navigation-icon-font-size,
-            get-color('additional', 'middle')
+            get-color('neutral', 'grey2')
         );
 
         &--current {

@@ -59,7 +59,7 @@ Feature: Price List time schedule configuration
   Scenario: Check that price list with schedule in the past is not available at frontstore
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     Then should not see "Your Price: $3.00 / item" for "PSKU1" product
     And should see "Your Price: $5.00 / item" for "PSKU1" product
 

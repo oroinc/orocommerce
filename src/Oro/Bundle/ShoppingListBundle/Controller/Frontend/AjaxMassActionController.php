@@ -15,13 +15,10 @@ class AjaxMassActionController extends AbstractController
     /**
      * Get grid mass actions
      *
-     * @Route(
-     *      "/get-mass-actions",
-     *      name="oro_shopping_list_frontend_get_mass_actions",
-     * )
      *
      * @return JsonResponse
      */
+    #[Route(path: '/get-mass-actions', name: 'oro_shopping_list_frontend_get_mass_actions')]
     public function getMassActionsAction()
     {
         $massActionProvider = $this->getMassActionProvider();
@@ -32,7 +29,7 @@ class AjaxMassActionController extends AbstractController
 
     private function getMassActionProvider(): AddLineItemMassActionProvider
     {
-        return $this->get(AddLineItemMassActionProvider::class);
+        return $this->container->get(AddLineItemMassActionProvider::class);
     }
 
     /**

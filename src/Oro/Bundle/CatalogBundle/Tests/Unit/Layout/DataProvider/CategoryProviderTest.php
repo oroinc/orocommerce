@@ -8,6 +8,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
+use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProviderBCAdapter;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProviderInterface;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Stub\CategoryStub;
@@ -32,6 +33,7 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
     private MasterCatalogRootProviderInterface|\PHPUnit\Framework\MockObject\MockObject $masterCatalogProvider;
 
     private CategoryProvider $categoryProvider;
+    private CategoryProviderBCAdapter|\PHPUnit\Framework\MockObject\MockObject $categoryProviderBCAdapter;
 
     /**
      * @inheritdoc
@@ -42,6 +44,8 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
         $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        // Component added back for theme layout BC from version 5.0
+        $this->categoryProviderBCAdapter = $this->createMock(CategoryProviderBCAdapter::class);
         $this->masterCatalogProvider = $this->createMock(MasterCatalogRootProviderInterface::class);
 
         $manager = $this->createMock(ObjectManager::class);
@@ -62,7 +66,8 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             $registry,
             $this->categoryTreeProvider,
             $this->tokenAccessor,
-            $this->masterCatalogProvider
+            $this->masterCatalogProvider,
+            $this->categoryProviderBCAdapter,
         );
     }
 

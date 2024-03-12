@@ -12,15 +12,31 @@ oro_behat_extension:
           paths:
             - '@OroFrontendLocalizationBundle/Tests/Behat/Features'
     elements:
-        LocalizationSwitcher:
-            class: Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Element\LocalizationSwitcherElement
-            selector: 'div.oro-localization-switcher .oro-toolbar__content'
+        LocalizationCurrencySwitcher:
+          class: Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Element\LocalizationCurrencySwitcherElement
+          selector: '.localization-currency-switcher'
+          options:
+            selectors:
+              ActiveLocalization: '[data-name="localization-label"]'
+              ActiveCurrency: '[data-name="currency-label"]'
+              MainToggleLink:
+                locator: "//a[contains(text(), '%s')]"
+                type: xpath
+              InternalToggleLabel:
+                locator: "//label[contains(text(), '%s')]"
+                type: xpath
+              FooterExpand: '[data-name="side-panel-footer-expand"]'
+              SelectMainElementContainer: '.currency-localization-btn-wrapper'
+              SelectInternalElementContainer: '[data-control-type="select"]'
+              ToggleMainElementContainer: '.side-panel-currency-localization-info'
+              ToggleInternalElementContainer: '[data-control-type="toggle"]'
+              ToggleVerticalInternalElementContainer: '[data-control-type="toggle-vertical"]'
+              SaveButton:
+                locator: '//button[contains(text(), "Save")]'
+                type: 'xpath'
 
-        LocalizationSwitcherOptions:
-            selector: 'div.oro-localization-switcher ul'
-
-        LocalizationSwitcherActiveOption:
-            selector: 'div.oro-localization-switcher .oro-toolbar__link--active'
+        Localization Switcher:
+            selector: '[name="localization"]'
 
         CreateLocalizationForm:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

@@ -1,3 +1,14 @@
 /* @theme: default; */
 
-$shopping-lists-units-actions-color: get-color('additional', 'middle') !default;
+$shopping-lists-units-inner-offset: 4px 0 !default;
+
+$shopping-lists-units-static-display: flex !default;
+$shopping-lists-units-static-align-items: center !default;
+
+$shopping-lists-units-number-width: 107px !default;
+$shopping-lists-units-number-text-align: right !default;
+
+$shopping-lists-units-actions-outer-offset-left: auto !default;
+
+// Mobile
+$shopping-lists-units-inner-offset-mobile: 4px 0 5px !default;

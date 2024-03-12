@@ -1,0 +1,51 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
+    - Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUser
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quote_product_simple1_item1:
+        quantity: 12.3456
+        productUnit: '@item'
+        value: 234.5678
+        currency: 'USD'
+    quote_product_kit1_item1:
+        quantity: 23
+        productUnit: '@each'
+        value: 345.6789
+        currency: 'USD'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem:
+    quote_product_kit1_item1_line_item:
+        kitItem: '@product_kit1_item1'
+        product: '@product_simple1'
+        quantity: 12.3456
+        productUnit: '@item'
+    quote_product_kit1_item2_line_item:
+        kitItem: '@product_kit1_item2'
+        product: '@product_simple3'
+        quantity: 42
+        productUnit: '@each'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quote_product_simple1:
+        product: '@product_simple1'
+        __calls:
+            - addQuoteProductOffer: ['@quote_product_simple1_item1']
+    quote_product_kit1:
+        product: '@product_kit1'
+        __calls:
+            - addQuoteProductOffer: ['@quote_product_kit1_item1']
+            - addKitItemLineItem: ['@quote_product_kit1_item1_line_item']
+            - addKitItemLineItem: ['@quote_product_kit1_item2_line_item']
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        customerUser: '@customer_user'
+        owner: '@user'
+        organization: '@organization'
+        customer: '@customer1'
+        __calls:
+            - addQuoteProduct: ['@quote_product_simple1']
+            - addQuoteProduct: ['@quote_product_kit1']

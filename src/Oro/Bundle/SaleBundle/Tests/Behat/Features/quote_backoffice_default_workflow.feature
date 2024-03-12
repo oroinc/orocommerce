@@ -36,6 +36,7 @@ Feature: Quote Backoffice Default Workflow
       | Customer Status | N/A |
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     And click "Quotes"
     Then there is no "PO11" in grid
 
@@ -63,6 +64,7 @@ Feature: Quote Backoffice Default Workflow
       | Customer Status | N/A |
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     And click "Quotes"
     Then there is no "PO31" in grid
 
@@ -85,6 +87,7 @@ Feature: Quote Backoffice Default Workflow
       | Customer Status | N/A |
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     And click "Quotes"
     Then there is no "PO12" in grid
 
@@ -106,6 +109,7 @@ Feature: Quote Backoffice Default Workflow
       | Customer Status | N/A |
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     And click "Quotes"
     Then there is no "PO12" in grid
 
@@ -129,6 +133,7 @@ Feature: Quote Backoffice Default Workflow
       | Customer Status | N/A |
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     And click "Quotes"
     And click View PO13 in grid
     Then I should see Quote Frontend Page with data:
@@ -155,6 +160,7 @@ Feature: Quote Backoffice Default Workflow
       | Customer Status | N/A |
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     And click "Quotes"
     And click View PO14 in grid
     Then I should see Quote Frontend Page with data:
@@ -182,6 +188,7 @@ Feature: Quote Backoffice Default Workflow
       | Customer Status | N/A |
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     And click "Quotes"
     And click View PO15 in grid
     Then I should see Quote Frontend Page with data:
@@ -208,6 +215,7 @@ Feature: Quote Backoffice Default Workflow
       | Customer Status | N/A |
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     And I click "Quotes"
     Then there is no "PO16" in grid
 
@@ -247,6 +255,7 @@ Feature: Quote Backoffice Default Workflow
       | Customer Status | N/A |
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     And click "Quotes"
     Then there is no "PO32" in grid
     When I click View PO17 in grid
@@ -295,6 +304,7 @@ Feature: Quote Backoffice Default Workflow
       | Customer Status | N/A |
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     And click "Quotes"
     Then there is no "PO33" in grid
     When I click View PO18 in grid
@@ -325,6 +335,7 @@ Feature: Quote Backoffice Default Workflow
       | Customer Status | N/A |
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     And click "Quotes"
     And click View PO19 in grid
     Then I should see Quote Frontend Page with data:
@@ -352,6 +363,7 @@ Feature: Quote Backoffice Default Workflow
     And click "Submit"
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     When I click "Quotes"
     Then there is no "PO34" in grid
 
@@ -377,6 +389,7 @@ Feature: Quote Backoffice Default Workflow
     And click "Submit"
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     When I click "Quotes"
     Then there is no "PO35" in grid
 
@@ -398,6 +411,7 @@ Feature: Quote Backoffice Default Workflow
       | Customer Status | N/A |
 
     Then I operate as the Buyer
+    And I click "Account Dropdown"
     And click "Quotes"
     Then there is no "PO36" in grid
 
@@ -418,8 +432,9 @@ Feature: Quote Backoffice Default Workflow
     When I click "Declined by Customer"
 
     When I signed in as NancyJSallee@example.org on the store frontend
+    And I click "Account Dropdown"
     And click "Quotes"
     Then I should see following records in grid:
       | POWithoutCustomerUser |
     When I click view POWithoutCustomerUser in grid
-    Then I should see "My Account / Quotes / View"
+    Then I should see "My Account Quotes View"

@@ -1,15 +1,31 @@
 layout:
     actions:
-        - '@add':
-            id: currency_switcher
-            parentId: top_nav_menu_container
-            siblingId: top_nav
-            blockType: currency_switcher
-            options:
-                currencies: '=data["oro_pricing_currency"].getAvailableCurrencies()'
-                selected_currency: '=data["oro_pricing_currency"].getUserCurrency()'
-
         - '@appendOption':
             id: body
             optionName: vars.selected_currency
             optionValue: '=data["oro_pricing_currency"].getUserCurrency()'
+
+        - '@appendOption':
+            id: currency_localization_container
+            optionName: vars.currencies
+            optionValue: '=data["oro_pricing_currency"].getAvailableCurrencies()'
+
+        - '@appendOption':
+            id: currency_localization_container
+            optionName: vars.selected_currency
+            optionValue: '=data["oro_pricing_currency"].getUserCurrency()'
+
+        - '@appendOption':
+            id: currency_localization_container
+            optionName: vars.currency_display
+            optionValue: '=data["system_config_provider"].getValue("oro_currency.currency_display")'
+
+        - '@appendOption':
+            id: currency_localization_container_inner
+            optionName: vars.selected_currency
+            optionValue: '=data["oro_pricing_currency"].getUserCurrency()'
+
+        - '@appendOption':
+            id: currency_localization_container_inner
+            optionName: vars.currencies
+            optionValue: '=data["oro_pricing_currency"].getAvailableCurrencies()'

@@ -2,17 +2,12 @@
 
 namespace Oro\Component\Checkout\DataProvider;
 
+/**
+ * Represents a service to provide info to build collection of line items by the given source entity.
+ */
 interface CheckoutDataProviderInterface
 {
-    /**
-     * @param object|array $entity
-     * @return array
-     */
-    public function getData($entity);
+    public function isEntitySupported(object $entity): bool;
 
-    /**
-     * @param object|array $transformData
-     * @return boolean
-     */
-    public function isEntitySupported($transformData);
+    public function getData(object $entity): array;
 }

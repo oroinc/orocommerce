@@ -34,6 +34,7 @@ class ProductStepOneTypeTest extends WebTestCase
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
 
         $request = Request::createFromGlobals();
+        $request->setSession($this->createSession());
         $this->loginUser(self::AUTH_USER);
         $this->updateUserSecurityToken(self::AUTH_USER);
 

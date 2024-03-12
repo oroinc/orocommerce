@@ -4,12 +4,14 @@ namespace Oro\Bundle\OrderBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
 use Extend\Entity\Autocomplete\OroOrderBundle_Entity_OrderLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
@@ -17,6 +19,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
@@ -24,29 +27,25 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 /**
  * Represents ordered item.
  *
- * @ORM\Table(name="oro_order_line_item")
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-list-alt"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="orders"
- *          }
- *      }
- * )
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @mixin OroOrderBundle_Entity_OrderLineItem
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_order_line_item')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    defaultValues: [
+        'entity' => ['icon' => 'fa-list-alt'],
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'orders']
+    ]
+)]
 class OrderLineItem implements
+    OrderHolderInterface,
     ProductLineItemInterface,
+    ProductLineItemChecksumAwareInterface,
     ProductKitItemLineItemsAwareInterface,
     PriceAwareInterface,
     PriceTypeAwareInterface,
@@ -56,102 +55,59 @@ class OrderLineItem implements
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var Order
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\Order", inversedBy="lineItems")
-     * @ORM\JoinColumn(name="order_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $order;
+    #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'lineItems')]
+    #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Order $order = null;
 
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $product;
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?Product $product = null;
 
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $parentProduct;
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'parent_product_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?Product $parentProduct = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="product_sku", type="string", length=255, nullable=true)
-     */
-    protected $productSku;
+    #[ORM\Column(name: 'product_sku', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $productSku = null;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="product_name", type="string", length=255, nullable=true)
-     */
-    protected $productName;
+    #[ORM\Column(name: 'product_name', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $productName = null;
 
     /**
      * @var array
-     *
-     * @ORM\Column(name="product_variant_fields", type="array", nullable=true)
      */
+    #[ORM\Column(name: 'product_variant_fields', type: Types::ARRAY, nullable: true)]
     protected $productVariantFields = [];
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="free_form_product", type="string", length=255, nullable=true)
-     */
-    protected $freeFormProduct;
+    #[ORM\Column(name: 'free_form_product', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $freeFormProduct = null;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="quantity", type="float", nullable=true)
+     * @var float|null
      */
+    #[ORM\Column(name: 'quantity', type: Types::FLOAT, nullable: true)]
     protected $quantity;
 
-    /**
-     * @var ProductUnit
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL")
-     */
-    protected $productUnit;
+    #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
+    #[ORM\JoinColumn(name: 'product_unit_id', referencedColumnName: 'code', onDelete: 'SET NULL')]
+    protected ?ProductUnit $productUnit = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="product_unit_code", type="string", length=255, nullable=true)
-     */
-    protected $productUnitCode;
+    #[ORM\Column(name: 'product_unit_code', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $productUnitCode = null;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="value", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'value', type: 'money', nullable: true)]
     protected $value;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", nullable=true)
-     */
-    protected $currency;
+    #[ORM\Column(name: 'currency', type: Types::STRING, nullable: true)]
+    protected ?string $currency = null;
 
     /**
      * @var Price
@@ -160,79 +116,55 @@ class OrderLineItem implements
 
     /**
      * @var int
-     *
-     * @ORM\Column(name="price_type", type="integer")
      */
+    #[ORM\Column(name: 'price_type', type: Types::INTEGER)]
     protected $priceType = self::PRICE_TYPE_UNIT;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="ship_by", type="date", nullable=true)
-     */
-    protected $shipBy;
+    #[ORM\Column(name: 'ship_by', type: Types::DATE_MUTABLE, nullable: true)]
+    protected ?\DateTimeInterface $shipBy = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="from_external_source", type="boolean")
-     */
-    protected $fromExternalSource = false;
+    #[ORM\Column(name: 'from_external_source', type: Types::BOOLEAN)]
+    protected ?bool $fromExternalSource = false;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="comment", type="text", nullable=true)
-     */
-    protected $comment;
+    #[ORM\Column(name: 'comment', type: Types::TEXT, nullable: true)]
+    protected ?string $comment = null;
 
     /**
      * @var bool
      */
     protected $requirePriceRecalculation = false;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="shipping_method", type="string", nullable=true)
-     */
-    protected $shippingMethod;
+    #[ORM\Column(name: 'shipping_method', type: Types::STRING, nullable: true)]
+    protected ?string $shippingMethod = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="shipping_method_type", type="string", nullable=true)
-     */
-    protected $shippingMethodType;
+    #[ORM\Column(name: 'shipping_method_type', type: Types::STRING, nullable: true)]
+    protected ?string $shippingMethodType = null;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="shipping_estimate_amount", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'shipping_estimate_amount', type: 'money', nullable: true)]
     protected $shippingEstimateAmount;
 
     /**
-     * @var Collection<OrderProductKitItemLineItem>
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="OrderProductKitItemLineItem",
-     *     mappedBy="lineItem",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true,
-     *     indexBy="kitItemId"
-     * )
-     * @OrderBy({"sortOrder"="ASC"})
+     * @var Collection<int, OrderProductKitItemLineItem>
      */
-    protected $kitItemLineItems;
+    #[ORM\OneToMany(
+        mappedBy: 'lineItem',
+        targetEntity: OrderProductKitItemLineItem::class,
+        cascade: ['ALL'],
+        orphanRemoval: true,
+        indexBy: 'kitItemId'
+    )]
+    #[OrderBy(['sortOrder' => Criteria::ASC])]
+    protected ?Collection $kitItemLineItems = null;
 
     /**
      * Differentiates the unique constraint allowing to add the same product with the same unit code multiple times,
      * moving the logic of distinguishing of such line items out of the entity class.
-     *
-     * @ORM\Column(name="checksum", type="string", length=40, options={"default"=""}, nullable=false)
      */
-    protected string $checksum = '';
+    #[ORM\Column(name: 'checksum', type: Types::STRING, length: 40, nullable: false, options: ['default' => ''])]
+    protected ?string $checksum = '';
 
     public function __construct()
     {
@@ -257,25 +189,14 @@ class OrderLineItem implements
         return $this->id;
     }
 
-    /**
-     * Set order
-     *
-     * @param Order|null $order
-     * @return $this
-     */
-    public function setOrder(Order $order = null)
+    public function setOrder(Order $order = null): self
     {
         $this->order = $order;
 
         return $this;
     }
 
-    /**
-     * Get order
-     *
-     * @return Order
-     */
-    public function getOrder()
+    public function getOrder(): ?Order
     {
         return $this->order;
     }
@@ -677,9 +598,7 @@ class OrderLineItem implements
         return $this->requirePriceRecalculation;
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    #[ORM\PostLoad]
     public function createPrice()
     {
         if (null !== $this->value && null !== $this->currency) {
@@ -687,10 +606,8 @@ class OrderLineItem implements
         }
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function preSave()
     {
         $this->updatePrice();

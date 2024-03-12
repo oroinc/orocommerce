@@ -6,10 +6,9 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper;
 use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\LayoutBundle\Attribute\Layout;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,37 +17,27 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Handles checkout logic
+ * Handles checkout logic.
  */
 class CheckoutController extends AbstractController
 {
     /**
-     * Create checkout form
-     *
-     * @Route(
-     *     "/{id}",
-     *     name="oro_checkout_frontend_checkout",
-     *     requirements={"id"="\d+"}
-     * )
-     * @Layout(vars={"workflowStepName", "workflowName"})
-     * @Acl(
-     *      id="oro_checkout_frontend_checkout",
-     *      type="entity",
-     *      class="OroCheckoutBundle:Checkout",
-     *      permission="EDIT",
-     *      group_name="commerce"
-     * )
-     *
-     * @param Request $request
-     * @param Checkout $checkout
-     * @return array|Response
-     * @throws \Exception
+     * Creates a checkout form.
      */
-    public function checkoutAction(Request $request, Checkout $checkout)
+    #[Route(path: '/{id}', name: 'oro_checkout_frontend_checkout', requirements: ['id' => '\d+'])]
+    #[Layout(vars: ['workflowStepName', 'workflowName'])]
+    #[Acl(
+        id: 'oro_checkout_frontend_checkout',
+        type: 'entity',
+        class: Checkout::class,
+        permission: 'EDIT',
+        groupName: 'commerce'
+    )]
+    public function checkoutAction(Request $request, Checkout $checkout): array|Response
     {
         $this->disableGarbageCollector();
 
-        $this->get(PreloadingManager::class)->preloadInEntities(
+        $this->container->get(PreloadingManager::class)->preloadInEntities(
             $checkout->getLineItems()->toArray(),
             [
                 'product' => [
@@ -99,7 +88,7 @@ class CheckoutController extends AbstractController
             ]
         );
 
-        $currentStep = $this->get(CheckoutWorkflowHelper::class)
+        $currentStep = $this->container->get(CheckoutWorkflowHelper::class)
             ->processWorkflowAndGetCurrentStep($request, $checkout);
 
         $workflowItem = $this->getWorkflowItem($checkout);
@@ -123,36 +112,28 @@ class CheckoutController extends AbstractController
         return [
             'workflowStepName' => $currentStep->getName(),
             'workflowName' => $workflowItem->getWorkflowName(),
-            'data' =>
-                [
-                    'checkout' => $checkout,
-                    'workflowItem' => $workflowItem,
-                    'workflowStep' => $currentStep
-                ]
+            'data' => [
+                'checkout' => $checkout,
+                'workflowItem' => $workflowItem,
+                'workflowStep' => $currentStep
+            ]
         ];
     }
 
     /**
-     *  Disables Garbage collector to improve execution speed of the action which perform a lot of stuff
-     *  Only for Prod mode requests
+     * Disables garbage collector for "prod" mode requests to improve execution speed
+     * of the action which perform a lot of stuff.
      */
-    private function disableGarbageCollector()
+    private function disableGarbageCollector(): void
     {
-        if ($this->get(KernelInterface::class)->getEnvironment() === 'prod') {
+        if ($this->container->get(KernelInterface::class)->getEnvironment() === 'prod') {
             gc_disable();
         }
     }
 
-    /**
-     * @param CheckoutInterface $checkout
-     *
-     * @return mixed|WorkflowItem
-     * @throws WorkflowException
-     */
-    protected function getWorkflowItem(CheckoutInterface $checkout)
+    private function getWorkflowItem(CheckoutInterface $checkout): WorkflowItem
     {
-        $item =  $this->get(CheckoutWorkflowHelper::class)->getWorkflowItem($checkout);
-
+        $item =  $this->container->get(CheckoutWorkflowHelper::class)->getWorkflowItem($checkout);
         if (!$item) {
             throw $this->createNotFoundException('Unable to find correct WorkflowItem for current checkout');
         }
@@ -161,7 +142,7 @@ class CheckoutController extends AbstractController
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices(): array
     {

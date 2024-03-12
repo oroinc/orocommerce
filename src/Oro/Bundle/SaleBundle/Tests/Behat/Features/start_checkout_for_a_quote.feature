@@ -31,6 +31,7 @@ Feature: Start checkout for a quote
   Scenario: Verify "All Quotes" grid
     Given I proceed as the Buyer
     And I am on homepage
+    And I click "Account Dropdown"
     When I click "Quotes"
     Then I shouldn't see "Status" column in frontend grid
     And I shouldn't see "Status" filter in frontend grid

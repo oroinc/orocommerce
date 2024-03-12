@@ -11,6 +11,8 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved;
 
 /**
@@ -125,7 +127,7 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
     ) {
         $configValue = CustomerGroupProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         $qb = $this->getEntityManager()
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupProductVisibility')
+            ->getRepository(CustomerGroupProductVisibility::class)
             ->createQueryBuilder('agpv');
         $qb->select(
             'agpv.id',
@@ -137,15 +139,15 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
         )
         ->innerJoin('agpv.product', 'product')
         ->innerJoin('agpv.scope', 'scope')
-        ->leftJoin('OroScopeBundle:Scope', 'agcvr_scope', 'WITH', 'scope.customerGroup = agcvr_scope.customerGroup')
+        ->leftJoin(Scope::class, 'agcvr_scope', 'WITH', 'scope.customerGroup = agcvr_scope.customerGroup')
         ->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved',
+            CustomerGroupCategoryVisibilityResolved::class,
             'agcvr',
             'WITH',
             'agcvr.scope = agcvr_scope AND agcvr.category = product.category'
         )
         ->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
+            CategoryVisibilityResolved::class,
             'cvr',
             'WITH',
             'cvr.category = product.category'
@@ -172,7 +174,7 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
     protected function getInsertStaticQueryBuilder(Scope $scope = null)
     {
         $queryBuilder = $this->getEntityManager()
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupProductVisibility')
+            ->getRepository(CustomerGroupProductVisibility::class)
             ->createQueryBuilder('agpv')
             ->select(
                 [
@@ -206,7 +208,7 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
     protected function getInsertByProductVisibilityQueryBuilder(Product $product, $visibility, array $productVisibility)
     {
         $qb = $this->getEntityManager()
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupProductVisibility')
+            ->getRepository(CustomerGroupProductVisibility::class)
             ->createQueryBuilder('productVisibility');
         $qb->select([
             'productVisibility.id',
@@ -232,7 +234,7 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
     {
         $configValue = CustomerGroupProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         $qb = $this->getEntityManager()
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupProductVisibility')
+            ->getRepository(CustomerGroupProductVisibility::class)
             ->createQueryBuilder('productVisibility');
         $qb->select([
             'productVisibility.id',
@@ -244,7 +246,7 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
         ])
         ->join('productVisibility.scope', 'scope')
         ->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved',
+            CustomerGroupCategoryVisibilityResolved::class,
             'agcvr',
             'WITH',
             'agcvr.category = :category'
@@ -252,7 +254,7 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
         ->leftJoin('agcvr.scope', 'agcvr_scope')
         ->andWhere('agcvr.visibility IS NULL OR agcvr_scope.customerGroup = scope.customerGroup')
         ->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
+            CategoryVisibilityResolved::class,
             'cvr',
             'WITH',
             'cvr.category = :category'

@@ -31,7 +31,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
     {
         $now = new \DateTime('now');
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['identifier', 'identifier-test-01'],
             ['owner', new User()],
             ['organization', new Organization()],

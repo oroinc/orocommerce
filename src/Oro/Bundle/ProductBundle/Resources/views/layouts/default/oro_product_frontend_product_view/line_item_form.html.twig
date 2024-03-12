@@ -7,47 +7,53 @@
     </div>
 {% endblock %}
 
-{% block _line_item_form_fields_widget %}
-    {% if not isProductUnitSelectionVisible %}
-        <div class="form__col">
+{% block _line_item_form_fields_quantity_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'product-view-line-item__quantity fields-row'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {% if not isProductUnitSelectionVisible %}
             {{ form_label(form.quantity) }}
-            {{ form_widget(form.quantity, {'attr' : {'class': 'input--short'}}) }}
+            {{ form_widget(form.quantity) }}
             {# unit field is also handled in single unit mode, but set as a default one from config #}
-            {{ form_widget(form.unit) }}
-
             {% if isUnitVisible %}
-                <span class="label">
-                    {{ product.primaryUnitPrecision.unit.code|oro_format_product_unit_label }}
-                </span>
+                <span class="label">{{ product.primaryUnitPrecision.unit.code|oro_format_product_unit_label }}</span>
             {% endif %}
             {{ form_errors(form.quantity) }}
-        </div>
-    {% else %}
-        <div class="product-view-quantity fields-row">
-            <div class="product-view-quantity__unit{% if form.unit.vars.choices|length == 1 %} product-view-quantity__unit--half{% endif %}">
-                {% if form.unit.vars.choices|length > 1 %}
-                    {{ form_widget(form.unit) }}
-                {% else %}
-                    <div class="product-view-quantity__unit-label" data-role="unit-label">
-                        {{- product.primaryUnitPrecision.unit.code|oro_format_product_unit_label -}}
-                    </div>
-                    <div class="hidden">
-                        <input type="hidden" name="{{ form.unit.vars.full_name }}" value="{{ product.primaryUnitPrecision.unit.code }}" data-name="{{ form.unit.vars.attr['data-name'] }}" data-unit-precisions="{{ form.unit.vars.attr['data-unit-precisions'] }}" />
-                    </div>
-                {% endif %}
-            </div>
-            <div class="product-view-quantity__value{% if form.unit.vars.choices|length == 1 %} product-view-quantity__value--half{% endif %}">
+        {% else %}
+            <div data-page-component-view="orofrontend/default/js/app/views/increment-input/increment-input-view">
                 {{ form_widget(form.quantity, { 'attr': {'aria-label': 'oro.product.quantity.aria_label'|trans }}) }}
             </div>
             <div class="fields-row-error"></div>
-        </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block _line_item_form_fields_unit_widget %}
+    {% if form.unit.vars.choices|length > 1 %}
+        {% set select2Class = ' select2-plain' %}
+        {% if isLoggedIn is defined and isLoggedIn == true %}
+            {% set select2Class = select2Class ~ ' select2-chosen-slash-prefix'%}
+        {% endif %}
+        {{ form_widget(form.unit, {attr: {
+            'form': form.vars.id,
+            'class': 'select-plain select--inline',
+            'data-input-widget-options': {
+                'containerCssClass': select2Class
+            }|json_encode
+        }}) }}
+    {% else %}
+        {% if isLoggedIn is defined and isLoggedIn == true %}
+            <span class="bold" data-role="unit-label">/{{- product.primaryUnitPrecision.unit.code|oro_format_product_unit_label -}}</span>
+        {% endif %}
+        <input form="{{ form.vars.id }}" type="hidden" name="{{ form.unit.vars.full_name }}" value="{{ product.primaryUnitPrecision.unit.code }}" data-name="{{ form.unit.vars.attr['data-name'] }}" data-unit-precisions="{{ form.unit.vars.attr['data-unit-precisions'] }}" />
     {% endif %}
 {% endblock %}
 
 {% block _product_line_item_form_buttons_widget %}
     {% if block.children is not empty %}
         {% set attr = layout_attr_defaults(attr, {
-            '~class': " form__col"
+            '~class': " product-view-line-item__button"
         }) %}
 
         <div {{ block('block_attributes') }}>
@@ -58,7 +64,8 @@
 
 {% block _line_item_form_start_widget %}
     {% set attr = attr|merge({
-        'data-prevent-submit': ''
+        'data-prevent-submit': '',
+        'class': 'product-view-line-item'
     }) %}
     {{ parent_block_widget(block, {attr: attr}) }}
 {% endblock %}

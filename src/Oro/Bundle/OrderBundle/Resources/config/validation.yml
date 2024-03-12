@@ -146,13 +146,15 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             -   Length:
                     max: 255
         shippingMethod:
-            -   Length:
-                    max: 255
-                    allowEmptyString: true
+            - AtLeastOneOf:
+                -   Blank: ~
+                -   Length:
+                        max: 255
         shippingMethodType:
-            -   Length:
-                    max: 255
-                    allowEmptyString: true
+            - AtLeastOneOf:
+                -   Blank: ~
+                -   Length:
+                        max: 255
         shippingEstimateAmount:
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         kitItemLineItems:
@@ -264,6 +266,7 @@ Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
                         # Used by AdaptivelyValidCollection for OrderLineItem::$kitItemLineItems validation
                         - order_kit_item_line_item_update
             -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision:
+                    unitPrecisionPropertyPath: 'productUnitPrecision'
                     groups:
                         # Used in CREATE action by orderproductkititemlineitems API resource
                         - api_order_kit_item_line_item_create

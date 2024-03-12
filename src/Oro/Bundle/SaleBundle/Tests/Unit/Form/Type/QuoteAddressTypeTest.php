@@ -216,7 +216,7 @@ class QuoteAddressTypeTest extends AddressFormExtensionTestCase
                 ],
                 'expectedData' => new QuoteAddress(),
                 'defaultData' => new QuoteAddress(),
-                'formErrors' => ['country' => 'This value is not valid.'],
+                'formErrors' => ['country' => 'The selected choice is invalid.'],
             ],
             'valid country only' => [
                 'isValid' => true,
@@ -352,7 +352,7 @@ class QuoteAddressTypeTest extends AddressFormExtensionTestCase
                 ],
                 'expectedData' => null,
                 'defaultData' => new QuoteAddress(),
-                'formErrors' => ['customerAddress' => 'This value is not valid.'],
+                'formErrors' => ['customerAddress' => 'The selected choice is invalid.'],
             ],
             'has identifier' => [
                 'isValid' => true,

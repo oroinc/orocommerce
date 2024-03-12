@@ -15,15 +15,4 @@ layout:
               optionName: grid_render_parameters.themeOptions.sidebarExpanded
               optionValue: '=data["oro_product_filters_sidebar_state_data_provider"].isProductFiltersSidebarExpanded()'
 
-        - '@move':
-              id: product_datagrid_toolbar_actions
-              parentId: product_datagrid_toolbar_leftside_container
-              siblingId: product_datagrid_toolbar_sorting
-              prepend: true
-
-        - '@move':
-              id: product_mass_actions_container
-              siblingId: product_datagrid_toolbar_actions
-              prepend: false
-
     conditions: 'context["filters_position"] == "sidebar"'

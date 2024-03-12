@@ -3,12 +3,12 @@
 $coupon-container-width: 280px !default;
 $coupon-container-float: right !default;
 $coupon-container-clear: $coupon-container-float !default;
-$coupon-container-padding: 20px !default;
+$coupon-container-padding: spacing('base') 0 !default;
 
 $coupon-container-content-inner-offset: 12px 0 0 !default;
 
 $coupon-container-input-wrap-width: 240px !default;
-$coupon-container-input-wrap-inner-offset: 0 0 $offset-y-m !default;
+$coupon-container-input-wrap-inner-offset: 0 0 spacing('sm') !default;
 
 // Mobile
 $coupon-container-mobile-width: 100% !default;

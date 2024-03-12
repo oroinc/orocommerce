@@ -31,7 +31,7 @@
 {% endblock %}
 
 {% block __oro_promotion_coupon_form__expand_link_widget %}
-    <button type="button" class="btn btn--link btn--no-x-offset btn--no-y-offset" data-toggle="collapse"
+    <button type="button" class="btn btn--outlined btn--text" data-toggle="collapse"
          data-role="coupon-trigger"
          data-target="{{ '#' ~ _collapseId }}"
          aria-controls="{{ _collapseId }}">
@@ -91,7 +91,7 @@
 
 {% block __oro_promotion_coupon_form__apply_button_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': 'btn btn--size-s btn--action',
+        '~class': 'btn btn--size-small btn--outlined',
         'data-role': 'apply-coupon',
         'aria-label': 'oro.frontend.coupon.widget.apply_button.aria_label'|trans
     }) %}
@@ -173,7 +173,7 @@
 
 {% block __oro_promotion_coupon_form__applied_coupons_list_row_delete_button_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': 'btn btn--size-s btn--link btn--baseline',
+        'class': 'btn btn--size-small btn--baseline',
         'data-object-id': appliedCoupon.id,
         'data-role': 'remove-coupon'
     }) %}

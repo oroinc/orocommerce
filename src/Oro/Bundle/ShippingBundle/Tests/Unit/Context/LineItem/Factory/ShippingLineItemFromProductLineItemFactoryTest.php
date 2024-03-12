@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context\LineItem\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -17,6 +17,7 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingKitItemLineItemFromProductKitItemLineItemFactory;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingLineItemFromProductLineItemFactory;
+use Oro\Bundle\ShippingBundle\Context\LineItem\ShippingLineItemOptionsModifier;
 use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
@@ -32,6 +33,7 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
 {
     private const TEST_QUANTITY = 15;
 
+    private ManagerRegistry|MockObject $managerRegistry;
     private ProductShippingOptionsRepository|MockObject $repository;
 
     private ShippingLineItemFromProductLineItemFactory $factory;
@@ -40,35 +42,18 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
     {
         $this->repository = $this->createMock(ProductShippingOptionsRepository::class);
 
-        $managerRegistry = $this->createMock(ManagerRegistry::class);
-        $managerRegistry
+        $this->managerRegistry = $this->createMock(ManagerRegistry::class);
+        $this->managerRegistry
             ->expects(self::any())
             ->method('getRepository')
             ->with(ProductShippingOptions::class)
             ->willReturn($this->repository);
 
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $managerRegistry
-            ->expects(self::any())
-            ->method('getManagerForClass')
-            ->withConsecutive([WeightUnit::class], [LengthUnit::class])
-            ->willReturn($entityManager);
-
-        $entityManager
-            ->expects(self::any())
-            ->method('getReference')
-            ->willReturnCallback(
-                static function (string $className, ?string $unitCode) {
-                    $unit = new $className();
-                    $unit->setCode($unitCode);
-
-                    return $unit;
-                }
-            );
+        $modifier = new ShippingLineItemOptionsModifier($this->managerRegistry);
 
         $this->factory = new ShippingLineItemFromProductLineItemFactory(
-            $managerRegistry,
-            new ShippingKitItemLineItemFromProductKitItemLineItemFactory()
+            new ShippingKitItemLineItemFromProductKitItemLineItemFactory($modifier),
+            $modifier
         );
     }
 
@@ -106,9 +91,16 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
         );
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testCreate(): void
     {
-        $product = $this->getProduct(1001);
+        $lengthUnit = (new LengthUnit())->setCode('in');
+        $weightUnit = (new WeightUnit())->setCode('kilo');
+
+        $product = $this->getProduct(1001)
+            ->setType(Product::TYPE_KIT);
         $unit = $this->getProductUnit('item');
         $kitItemLineItem = $this->createKitItemLineItem(
             self::TEST_QUANTITY,
@@ -124,6 +116,15 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             [$kitItemLineItem]
         );
 
+        $manager = $this->createMock(EntityManager::class);
+        $this->managerRegistry->expects(self::exactly(2))
+            ->method('getManagerForClass')
+            ->willReturn($manager);
+
+        $manager->expects(self::exactly(2))
+            ->method('getReference')
+            ->willReturnOnConsecutiveCalls($weightUnit, $lengthUnit);
+
         $this->repository->expects(self::once())
             ->method('findIndexedByProductsAndUnits')
             ->willReturn(
@@ -138,6 +139,16 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
                             'weightValue' => 42.0,
                         ],
                     ],
+                    1 => [
+                        'item' => [
+                            'dimensionsHeight' => 1.0,
+                            'dimensionsLength' => 2.0,
+                            'dimensionsWidth' => 3.0,
+                            'dimensionsUnit' => 'in',
+                            'weightUnit' => 'kilo',
+                            'weightValue' => 23.0,
+                        ]
+                    ]
                 ]
             );
 
@@ -148,7 +159,9 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             $kitItemLineItem->getProduct(),
             $kitItemLineItem,
             $kitItemLineItem->getSortOrder(),
-            $kitItemLineItem->getKitItem()
+            $kitItemLineItem->getKitItem(),
+            Dimensions::create(2, 3, 1, $lengthUnit),
+            Weight::create(23, $weightUnit),
         );
         $expectedShippingLineItem = $this->createShippingLineItem(
             $orderLineItem->getQuantity(),
@@ -157,8 +170,8 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             $orderLineItem,
             $orderLineItem->getPrice(),
             $orderLineItem->getProduct(),
-            Dimensions::create(1, 2, 3, (new LengthUnit())->setCode('in')),
-            Weight::create(42, (new WeightUnit())->setCode('kilo')),
+            Dimensions::create(1, 2, 3, $lengthUnit),
+            Weight::create(42, $weightUnit),
             new ArrayCollection([$expectedShippingKitItemLineItem])
         );
 
@@ -173,8 +186,15 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
      */
     public function testCreateCollection(): void
     {
-        $product1 = $this->getProduct(1001);
-        $product2 = $this->getProduct(2002);
+        $lengthUnitIn = (new LengthUnit())->setCode('in');
+        $lengthUnitMeter = (new LengthUnit())->setCode('meter');
+        $weightUnitKilo = (new WeightUnit())->setCode('kilo');
+        $weightUnitLbs = (new WeightUnit())->setCode('lbs');
+
+        $product1 = $this->getProduct(1001)
+            ->setType(Product::TYPE_KIT);
+        $product2 = $this->getProduct(2002)
+            ->setType(Product::TYPE_KIT);
 
         $unit = $this->getProductUnit('item');
         $kitItemLineItem1 = $this->createKitItemLineItem(
@@ -214,7 +234,9 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             $kitItemLineItem1->getProduct(),
             $kitItemLineItem1,
             $kitItemLineItem1->getSortOrder(),
-            $kitItemLineItem1->getKitItem()
+            $kitItemLineItem1->getKitItem(),
+            Dimensions::create(2, 4, 6, $lengthUnitIn),
+            Weight::create(25, $weightUnitKilo),
         );
         $expectedShippingLineItem1 = $this->createShippingLineItem(
             $orderLineItem1->getQuantity(),
@@ -223,8 +245,8 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             $orderLineItem1,
             $orderLineItem1->getPrice(),
             $orderLineItem1->getProduct(),
-            Dimensions::create(1, 2, 3, (new LengthUnit())->setCode('in')),
-            Weight::create(42, (new WeightUnit())->setCode('kilo')),
+            Dimensions::create(1, 2, 3, $lengthUnitIn),
+            Weight::create(42, $weightUnitKilo),
             new ArrayCollection([$expectedShippingKitItemLineItem1])
         );
 
@@ -235,7 +257,9 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             $kitItemLineItem2->getProduct(),
             $kitItemLineItem2,
             $kitItemLineItem2->getSortOrder(),
-            $kitItemLineItem2->getKitItem()
+            $kitItemLineItem2->getKitItem(),
+            Dimensions::create(7, 9, 13, $lengthUnitMeter),
+            Weight::create(75, $weightUnitLbs),
         );
         $expectedShippingLineItem2 = $this->createShippingLineItem(
             $orderLineItem2->getQuantity(),
@@ -244,13 +268,26 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             $orderLineItem2,
             $orderLineItem2->getPrice(),
             $orderLineItem2->getProduct(),
-            Dimensions::create(11, 12, 13, (new LengthUnit())->setCode('meter')),
-            Weight::create(142, (new WeightUnit())->setCode('lbs')),
+            Dimensions::create(11, 12, 13, $lengthUnitMeter),
+            Weight::create(142, $weightUnitLbs),
             new ArrayCollection([$expectedShippingKitItemLineItem2])
         );
 
-        $this->repository
-            ->expects(self::once())
+        $manager = $this->createMock(EntityManager::class);
+        $this->managerRegistry->expects(self::exactly(4))
+            ->method('getManagerForClass')
+            ->willReturn($manager);
+
+        $manager->expects(self::exactly(4))
+            ->method('getReference')
+            ->willReturnOnConsecutiveCalls(
+                $weightUnitKilo,
+                $lengthUnitIn,
+                $weightUnitLbs,
+                $lengthUnitMeter,
+            );
+
+        $this->repository->expects(self::once())
             ->method('findIndexedByProductsAndUnits')
             ->willReturn(
                 [
@@ -274,7 +311,27 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
                             'weightValue' => 142.0,
                         ],
                     ],
-                ]
+                    1 => [
+                        'item' => [
+                            'dimensionsHeight' => 6.0,
+                            'dimensionsLength' => 2.0,
+                            'dimensionsWidth' => 4.0,
+                            'dimensionsUnit' => 'in',
+                            'weightUnit' => 'kilo',
+                            'weightValue' => 25.0,
+                        ]
+                    ],
+                    2 => [
+                        'item' => [
+                            'dimensionsHeight' => 13.0,
+                            'dimensionsLength' => 7.0,
+                            'dimensionsWidth' => 9.0,
+                            'dimensionsUnit' => 'meter',
+                            'weightUnit' => 'lbs',
+                            'weightValue' => 75.0,
+                        ]
+                    ]
+                ],
             );
 
         self::assertEquals(
@@ -409,7 +466,9 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
         ?Product $product,
         ?ProductHolderInterface $productHolder,
         int $sortOrder,
-        ?ProductKitItem $kitItem
+        ?ProductKitItem $kitItem,
+        ?Dimensions $dimensions,
+        ?Weight $weight,
     ): ShippingKitItemLineItem {
         return (new ShippingKitItemLineItem($productHolder))
             ->setProduct($product)
@@ -419,6 +478,8 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
             ->setQuantity($quantity)
             ->setPrice($price)
             ->setKitItem($kitItem)
-            ->setSortOrder($sortOrder);
+            ->setSortOrder($sortOrder)
+            ->setDimensions($dimensions)
+            ->setWeight($weight);
     }
 }

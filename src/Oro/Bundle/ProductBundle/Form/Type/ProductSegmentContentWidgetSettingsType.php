@@ -4,7 +4,9 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Form\Type\SegmentChoiceType;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,6 +23,7 @@ class ProductSegmentContentWidgetSettingsType extends AbstractType
 {
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -31,6 +34,7 @@ class ProductSegmentContentWidgetSettingsType extends AbstractType
                 'label' => 'oro.product.content_widget_type.product_segment.options.segment.label',
                 'tooltip' => 'oro.product.content_widget_type.product_segment.options.segment.tooltip',
                 'required' => true,
+                'priority' => 20,
                 'entityClass' => Product::class,
                 'block' => 'options',
                 'block_config' => [
@@ -114,6 +118,85 @@ class ProductSegmentContentWidgetSettingsType extends AbstractType
             ]
         );
 
+        $builder->add(
+            'autoplay',
+            CheckboxType::class,
+            [
+                'label' => 'oro.product.content_widget_type.product_segment.options.autoplay.label',
+                'required' => false,
+                'block' => 'options',
+                'constraints' => [
+                    new Type('boolean'),
+                ]
+            ]
+        );
+
+        $builder->add(
+            'autoplaySpeed',
+            IntegerType::class,
+            [
+                'label' => 'oro.product.content_widget_type.product_segment.options.autoplay_speed.label',
+                'required' => false,
+                'block' => 'options',
+                'constraints' => [
+                    new Type('integer'),
+                    new GreaterThanZero(),
+                ]
+            ]
+        );
+
+        $builder->add(
+            'arrows',
+            CheckboxType::class,
+            [
+                'label' => 'oro.product.content_widget_type.product_segment.options.arrows.label',
+                'required' => false,
+                'block' => 'options',
+                'constraints' => [
+                    new Type('boolean'),
+                ]
+            ]
+        );
+
+        $builder->add(
+            'show_arrows_on_touchscreens',
+            CheckboxType::class,
+            [
+                'label' => 'oro.product.content_widget_type.product_segment.options.show_arrows_on_touchscreens.label',
+                'required' => false,
+                'block' => 'options',
+                'constraints' => [
+                    new Type('boolean'),
+                ]
+            ]
+        );
+
+        $builder->add(
+            'dots',
+            CheckboxType::class,
+            [
+                'label' => 'oro.product.content_widget_type.product_segment.options.dots.label',
+                'required' => false,
+                'block' => 'options',
+                'constraints' => [
+                    new Type('boolean'),
+                ]
+            ]
+        );
+
+        $builder->add(
+            'infinite',
+            CheckboxType::class,
+            [
+                'label' => 'oro.product.content_widget_type.product_segment.options.infinite.label',
+                'required' => false,
+                'block' => 'options',
+                'constraints' => [
+                    new Type('boolean'),
+                ]
+            ]
+        );
+
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
     }
 
@@ -132,12 +215,20 @@ class ProductSegmentContentWidgetSettingsType extends AbstractType
             $data['minimum_items'] = 3;
         }
 
+        if (!isset($data['autoplaySpeed'])) {
+            $data['autoplaySpeed'] = 4000;
+        }
+
         if (!array_key_exists('use_slider_on_mobile', $data)) {
             $data['use_slider_on_mobile'] = false;
         }
 
         if (!array_key_exists('show_add_button', $data)) {
             $data['show_add_button'] = true;
+        }
+
+        if (!array_key_exists('arrows', $data)) {
+            $data['arrows'] = true;
         }
 
         $event->setData($data);

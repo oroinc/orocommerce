@@ -2,67 +2,43 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\EntityPropertyInfo;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeAwareInterface;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerGroupProductVisibilityRepository;
 
 /**
  * The entity to store configured customer group product visibility rules.
- *
- * @ORM\Entity(
- * repositoryClass="Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerGroupProductVisibilityRepository"
- * )
- * @ORM\Table(
- *      name="oro_cus_grp_prod_visibility",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(
- *              name="oro_cus_grp_prod_vis_uidx",
- *              columns={"product_id", "scope_id"}
- *          )
- *      }
- * )
- * @Config
  */
+#[ORM\Entity(repositoryClass: CustomerGroupProductVisibilityRepository::class)]
+#[ORM\Table(name: 'oro_cus_grp_prod_visibility')]
+#[ORM\UniqueConstraint(name: 'oro_cus_grp_prod_vis_uidx', columns: ['product_id', 'scope_id'])]
+#[Config]
 class CustomerGroupProductVisibility implements VisibilityInterface, ScopeAwareInterface
 {
     const CURRENT_PRODUCT = 'current_product';
     const CATEGORY = 'category';
     const VISIBILITY_TYPE = 'customer_group_product_visibility';
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $product;
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Product $product = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="visibility", type="string", length=255, nullable=true)
-     */
-    protected $visibility;
+    #[ORM\Column(name: 'visibility', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $visibility = null;
 
-    /**
-     * @var Scope
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
-     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    protected $scope;
+    #[ORM\ManyToOne(targetEntity: Scope::class)]
+    #[ORM\JoinColumn(name: 'scope_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Scope $scope = null;
 
     public function __clone()
     {

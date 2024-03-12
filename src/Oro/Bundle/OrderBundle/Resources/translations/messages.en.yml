@@ -489,6 +489,7 @@ oro:
             best_selling_list.description: List of best selling products
             static_reports_tab.label: Reports
             product.previously_purchased.label: Previously Purchased
+            orders.label: Orders
 
         widgets:
             order_discount_form: Special Discount Form

@@ -63,17 +63,58 @@ Feature: Product full description and brand microdata schema org
   Scenario: Check full schema.org product description and brand in featured products on the store frontend
     Given I proceed as the Buyer
     When I go to the homepage
-    Then I should see schema org brand "Test Brand" for "TestSKU456" in "Featured Products Block"
-    And I should see schema org description "Test Product Full Description" for "TestSKU456" in "Featured Products Block"
+    Then "TestSKU456" product in "Featured Products Block" should contains microdata:
+      | Product Type Microdata Declaration  |
+      | Product Brand Microdata Declaration |
+      | SchemaOrg Description               |
+      | SchemaOrg Brand Name                |
+    And "TestSKU456" product in "Featured Products Block" should contains "SchemaOrg Description" with attributes:
+      | content | Test Product Full Description |
+    And "TestSKU456" product in "Featured Products Block" should contains "SchemaOrg Brand Name" with attributes:
+      | content | Test Brand |
 
   Scenario: Check full schema.org product description and brand in search product list on the store frontend
     When I type "TestSKU789" in "search"
     And I click "Search Button"
-    Then I should see schema org brand "Test Brand" for "TestSKU789" in "Product Frontend Grid"
-    And I should see schema org description "Test Product Full Description" for "TestSKU789" in "Product Frontend Grid"
+    Then "TestSKU789" product in "Product Frontend Grid" should contains microdata:
+      | Product Type Microdata Declaration  |
+      | Product Brand Microdata Declaration |
+      | SchemaOrg Description               |
+      | SchemaOrg Brand Name                |
+    And "TestSKU789" product in "Product Frontend Grid" should contains "SchemaOrg Description" with attributes:
+      | content | Test Product Full Description |
+    And "TestSKU789" product in "Product Frontend Grid" should contains "SchemaOrg Brand Name" with attributes:
+      | content | Test Brand |
 
   Scenario: Check full schema.org product description and brand in product view page on the store frontend
-    When I click "View Details"
-    Then I should see schema org description "Test Product Full Description" on page
-    And I should see schema org brand "Test Brand" for "TestSKU123" in "Related Products Block"
-    And I should see schema org description "Test Product Full Description" for "TestSKU123" in "Upsell Products Block"
+    When I click "View Details" for "TestSKU789" product
+    Then "Product Item View" should contains microdata:
+      | Product Type Microdata Declaration  |
+      | Product Brand Microdata Declaration |
+      | SchemaOrg Description               |
+      | SchemaOrg Brand Name                |
+    And "Product Item View" should contains "SchemaOrg Description" with attributes:
+      | content | Test Product Full Description |
+    And "Product Item View" should contains microdata elements with text:
+      | SchemaOrg Brand Name | Test Brand |
+
+    And "TestSKU123" product in "Related Products Block" should contains microdata:
+      | Product Type Microdata Declaration  |
+      | Product Brand Microdata Declaration |
+      | SchemaOrg Description               |
+      | SchemaOrg Brand Name                |
+    And "TestSKU123" product in "Related Products Block" should contains "SchemaOrg Description" with attributes:
+      | content | Test Product Full Description |
+    And "TestSKU123" product in "Related Products Block" should contains "SchemaOrg Brand Name" with attributes:
+      | content | Test Brand |
+
+    And "TestSKU456" product in "Upsell Products Block" should contains microdata:
+      | Product Type Microdata Declaration  |
+      | Product Brand Microdata Declaration |
+      | SchemaOrg Description               |
+      | SchemaOrg Brand Name                |
+    And "TestSKU456" product in "Upsell Products Block" should contains "SchemaOrg Description" with attributes:
+      | content | Test Product Full Description |
+    And "TestSKU456" product in "Upsell Products Block" should contains "SchemaOrg Brand Name" with attributes:
+      | content | Test Brand |
+

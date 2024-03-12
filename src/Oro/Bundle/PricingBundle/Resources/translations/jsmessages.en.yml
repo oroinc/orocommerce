@@ -20,6 +20,8 @@ oro:
             price_not_found: 'Price for requested quantity is not available'
             price_not_found.short_label: N/A
             empty_prices: 'Price not available'
+            product_kit:
+                not_configured: 'The price cannot be displayed for a product kit that has not been configured.'
         price:
             label: Price
             formatted.unit: '{{ formattedUnit }} ({{ formattedPrice }} Each)'
@@ -30,5 +32,10 @@ oro:
         view_all_prices_extended: 'View All Prices for {{ product_attrs }}'
         matched_price: 'List Price'
         per_item: 'per {{ unit }}'
+        frontend:
+            product:
+                quantity:
+                    short_label: 'Qty'
+                    long_label: 'Quantity'
     totals:
         no_data: No data

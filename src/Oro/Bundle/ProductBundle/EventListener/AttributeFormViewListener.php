@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Oro\Bundle\AttachmentBundle\Helper\FieldConfigHelper;
 use Oro\Bundle\CMSBundle\DBAL\Types\WYSIWYGType;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
@@ -178,14 +177,6 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
 
     protected function isSeparateGroup(?string $type): bool
     {
-        return in_array(
-            (string)$type,
-            [
-                WYSIWYGType::TYPE,
-                FieldConfigHelper::MULTI_FILE_TYPE,
-                FieldConfigHelper::MULTI_IMAGE_TYPE
-            ],
-            true
-        );
+        return in_array((string)$type, [WYSIWYGType::TYPE], true);
     }
 }

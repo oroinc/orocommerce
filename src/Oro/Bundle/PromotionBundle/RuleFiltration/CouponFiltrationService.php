@@ -7,6 +7,7 @@ use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
+use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 /**
@@ -15,6 +16,8 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
  */
 class CouponFiltrationService extends AbstractSkippableFiltrationService
 {
+    private array $matchedPromotionIds = [];
+
     public function __construct(
         private RuleFiltrationServiceInterface $baseFiltrationService,
         private ManagerRegistry $doctrine
@@ -76,9 +79,11 @@ class CouponFiltrationService extends AbstractSkippableFiltrationService
     {
         $filteredRuleOwners = [];
         $promotions = [];
+        $promotionIds = [];
         foreach ($ruleOwnersWithCoupons as $ruleOwner) {
             if ($ruleOwner instanceof Promotion) {
                 $promotions[] = $ruleOwner;
+                $promotionIds[] = $ruleOwner->getId();
             } else {
                 $isCouponApplied = false;
                 foreach ($ruleOwner->getCoupons() as $coupon) {
@@ -95,7 +100,9 @@ class CouponFiltrationService extends AbstractSkippableFiltrationService
         }
 
         if ($promotions) {
-            $matchedPromotionIds = $this->getMatchedPromotionsIds($promotions, array_keys($appliedCouponCodes));
+            // ensure that numeric coupon codes are passed as strings
+            $couponCodes = array_map('strval', array_keys($appliedCouponCodes));
+            $matchedPromotionIds = $this->getMatchedPromotionsIds($promotionIds, $couponCodes);
             foreach ($promotions as $promotion) {
                 if (isset($matchedPromotionIds[$promotion->getId()])) {
                     $filteredRuleOwners[] = $promotion;
@@ -106,11 +113,23 @@ class CouponFiltrationService extends AbstractSkippableFiltrationService
         return $filteredRuleOwners;
     }
 
-    private function getMatchedPromotionsIds(array $promotions, array $couponCodes): array
+    private function getMatchedPromotionsIds(array $promotionIds, array $couponCodes): array
     {
-        return array_fill_keys(
-            $this->doctrine->getRepository(Coupon::class)->getPromotionsWithMatchedCoupons($promotions, $couponCodes),
-            true
-        );
+        sort($couponCodes, SORT_STRING);
+        sort($promotionIds, SORT_NUMERIC);
+        $cacheKey = implode(',', $couponCodes) . '|' . implode(',', $promotionIds);
+        if (!isset($this->matchedPromotionIds[$cacheKey])) {
+            $this->matchedPromotionIds[$cacheKey] = array_fill_keys(
+                $this->getCouponRepository()->getPromotionsWithMatchedCoupons($promotionIds, $couponCodes),
+                true
+            );
+        }
+
+        return $this->matchedPromotionIds[$cacheKey];
+    }
+
+    private function getCouponRepository(): CouponRepository
+    {
+        return $this->doctrine->getRepository(Coupon::class);
     }
 }

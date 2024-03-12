@@ -6,14 +6,14 @@ use Oro\Bundle\UserBundle\Tests\Functional\Api\DataFixtures\AbstractLoadUserData
 
 class LoadUserData extends AbstractLoadUserData
 {
-    const USER_NAME_CATALOG_MANAGER = 'system_user_catalog_manager';
-    const USER_PASSWORD_CATALOG_MANAGER = 'system_user_cm_api_key';
-    const ROLE_CATALOG_MANAGER = 'ROLE_CATALOG_MANAGER';
+    public const USER_NAME_CATALOG_MANAGER = 'system_user_catalog_manager';
+    public const USER_PASSWORD_CATALOG_MANAGER = 'system_user_cm_api_key';
+    public const ROLE_CATALOG_MANAGER = 'ROLE_CATALOG_MANAGER';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getUsersData()
+    protected function getUsersData(): array
     {
         return [
             [

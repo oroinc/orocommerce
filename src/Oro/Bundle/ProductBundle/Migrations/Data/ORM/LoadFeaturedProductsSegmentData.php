@@ -12,55 +12,37 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\SegmentBundle\Migrations\Data\ORM\LoadSegmentTypes;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Loads featured products segments.
+ */
 class LoadFeaturedProductsSegmentData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    /**
-     * @internal
-     */
-    const SEGMENT_RECORDS_LIMIT = 10;
+    use ContainerAwareTrait;
 
-    /**
-     * @internal
-     */
-    const FEATURED_PRODUCTS_SEGMENT_NAME_PARAMETER_NAME = 'oro_product.segment.featured_products.name';
-
-    /**
-     * @var string
-     */
-    private $featuredProductsSegmentName;
+    private const SEGMENT_RECORDS_LIMIT = 10;
+    private const FEATURED_PRODUCTS_SEGMENT_NAME_PARAMETER_NAME = 'oro_product.segment.featured_products.name';
 
     /**
      * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->featuredProductsSegmentName = $container->getParameter(
-            self::FEATURED_PRODUCTS_SEGMENT_NAME_PARAMETER_NAME
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadSegmentTypes::class,
-            LoadOrganizationAndBusinessUnitData::class,
+            LoadOrganizationAndBusinessUnitData::class
         ];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $segmentName = $this->featuredProductsSegmentName;
-
+        $segmentName = $this->container->getParameter(self::FEATURED_PRODUCTS_SEGMENT_NAME_PARAMETER_NAME);
         if ($this->isSegmentAlreadyExists($manager, $segmentName)) {
             return;
         }
@@ -81,46 +63,24 @@ class LoadFeaturedProductsSegmentData extends AbstractFixture implements
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string        $name
-     *
-     * @return bool
-     */
-    private function isSegmentAlreadyExists(ObjectManager $manager, $name)
+    private function isSegmentAlreadyExists(ObjectManager $manager, string $name): bool
     {
         $segment = $manager->getRepository(Segment::class)->findOneBy(['name' => $name]);
 
         return (bool)$segment;
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string $name
-     *
-     * @return SegmentType
-     */
-    private function getSegmentType(ObjectManager $manager, $name)
+    private function getSegmentType(ObjectManager $manager, string $name): SegmentType
     {
-        $repository = $manager->getRepository(SegmentType::class);
-
-        return $repository->findOneBy(['name' => $name]);
+        return $manager->getRepository(SegmentType::class)->findOneBy(['name' => $name]);
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return Organization
-     */
-    private function getOrganization(ObjectManager $manager)
+    private function getOrganization(ObjectManager $manager): Organization
     {
-        return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        return $manager->getRepository(Organization::class)->getFirst();
     }
 
-    /**
-     * @return array
-     */
-    private function getDefinition()
+    private function getDefinition(): array
     {
         return [
             'columns' => [

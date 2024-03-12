@@ -17,29 +17,19 @@ use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
  */
 class OrderMapper extends AbstractOrderMapper
 {
-    /** @var TaxMapperInterface */
-    protected $orderLineItemMapper;
-
-    /** @var PreloadingManager */
-    private $preloadingManager;
-
     public function __construct(
         ContextEventDispatcher $contextEventDispatcher,
         TaxationAddressProvider $addressProvider,
-        TaxMapperInterface $orderLineItemMapper,
-        PreloadingManager $preloadingManager
+        private TaxMapperInterface $orderLineItemMapper,
+        private PreloadingManager $preloadingManager
     ) {
         parent::__construct($contextEventDispatcher, $addressProvider);
-
-        $this->orderLineItemMapper = $orderLineItemMapper;
-        $this->preloadingManager = $preloadingManager;
     }
 
     /**
-     * {@inheritdoc}
-     * @param Order $order
+     * @param object|Order $order
      */
-    public function map($order)
+    public function map(object $order): Taxable
     {
         $taxable = (new Taxable())
             ->setIdentifier($order->getId())

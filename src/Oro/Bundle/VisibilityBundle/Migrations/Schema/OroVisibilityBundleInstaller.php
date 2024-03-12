@@ -3,10 +3,8 @@
 namespace Oro\Bundle\VisibilityBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\ScopeBundle\Migrations\Schema\OroScopeBundleInstaller;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -15,44 +13,18 @@ use Oro\Bundle\ScopeBundle\Migrations\Schema\OroScopeBundleInstaller;
  */
 class OroVisibilityBundleInstaller implements Installation
 {
-    const ORO_CATEGORY_VISIBILITY_TABLE_NAME = 'oro_category_visibility';
-    const ORO_CUSTOMER_CATEGORY_VISIBILITY_TABLE_NAME = 'oro_cus_category_visibility';
-    const ORO_CUSTOMER_GROUP_CATEGORY_VISIBILITY_TABLE_NAME = 'oro_cus_grp_ctgr_visibility';
-    const ORO_CATEGORY_TABLE_NAME = 'oro_catalog_category';
-
-    const ORO_PRODUCT_VISIBILITY_TABLE_NAME = 'oro_product_visibility';
-    const ORO_CUSTOMER_PRODUCT_VISIBILITY_TABLE_NAME = 'oro_cus_product_visibility';
-    const ORO_CUSTOMER_GROUP_PRODUCT_VISIBILITY_TABLE_NAME = 'oro_cus_grp_prod_visibility';
-    const ORO_PRODUCT_TABLE_NAME = 'oro_product';
-
-    const ORO_PRODUCT_VISIBILITY_RESOLVED = 'oro_prod_vsb_resolv';
-    const ORO_CUSTOMER_GROUP_PRODUCT_VISIBILITY_RESOLVED = 'oro_cus_grp_prod_vsb_resolv';
-    const ORO_CUSTOMER_PRODUCT_VISIBILITY_RESOLVED = 'oro_cus_prod_vsb_resolv';
-
-    const ORO_CATEGORY_VISIBILITY_RESOLVED = 'oro_ctgr_vsb_resolv';
-    const ORO_CUSTOMER_GROUP_CATEGORY_VISIBILITY_RESOLVED = 'oro_cus_grp_ctgr_vsb_resolv';
-    const ORO_CUSTOMER_CATEGORY_VISIBILITY_RESOLVED = 'oro_cus_ctgr_vsb_resolv';
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_2';
     }
 
     /**
-     * Sets the ExtendExtension
+     * {@inheritDoc}
      */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createOroCategoryVisibilityTable($schema);
         $this->createOroAccountCategoryVisibilityTable($schema);
@@ -90,11 +62,11 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Create oro_prod_vsb_resolv table
      */
-    protected function createOroProductVisibilityResolvedTable(Schema $schema)
+    private function createOroProductVisibilityResolvedTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::ORO_PRODUCT_VISIBILITY_RESOLVED);
-        $table->addColumn('scope_id', 'integer', []);
-        $table->addColumn('product_id', 'integer', []);
+        $table = $schema->createTable('oro_prod_vsb_resolv');
+        $table->addColumn('scope_id', 'integer');
+        $table->addColumn('product_id', 'integer');
         $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
@@ -105,11 +77,11 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Create oro_cus_grp_prod_vsb_resolv table
      */
-    protected function createOroAccountGroupProductVisibilityResolvedTable(Schema $schema)
+    private function createOroAccountGroupProductVisibilityResolvedTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::ORO_CUSTOMER_GROUP_PRODUCT_VISIBILITY_RESOLVED);
-        $table->addColumn('scope_id', 'integer', []);
-        $table->addColumn('product_id', 'integer', []);
+        $table = $schema->createTable('oro_cus_grp_prod_vsb_resolv');
+        $table->addColumn('scope_id', 'integer');
+        $table->addColumn('product_id', 'integer');
         $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
@@ -120,25 +92,24 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Create oro_cus_prod_vsb_resolv table
      */
-    protected function createOroAccountProductVisibilityResolvedTable(Schema $schema)
+    private function createOroAccountProductVisibilityResolvedTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::ORO_CUSTOMER_PRODUCT_VISIBILITY_RESOLVED);
-        $table->addColumn('scope_id', 'integer', []);
-        $table->addColumn('product_id', 'integer', []);
+        $table = $schema->createTable('oro_cus_prod_vsb_resolv');
+        $table->addColumn('scope_id', 'integer');
+        $table->addColumn('product_id', 'integer');
         $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
-
         $table->setPrimaryKey(['scope_id', 'product_id']);
     }
 
     /**
      * Create oro_ctgr_vsb_resolv table
      */
-    protected function createOroCategoryVisibilityResolvedTable(Schema $schema)
+    private function createOroCategoryVisibilityResolvedTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::ORO_CATEGORY_VISIBILITY_RESOLVED);
+        $table = $schema->createTable('oro_ctgr_vsb_resolv');
         $table->addColumn('source_category_visibility', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
@@ -150,9 +121,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Create oro_cus_grp_ctgr_vsb_resolv table
      */
-    protected function createOroAccountGroupCategoryVisibilityResolvedTable(Schema $schema)
+    private function createOroAccountGroupCategoryVisibilityResolvedTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::ORO_CUSTOMER_GROUP_CATEGORY_VISIBILITY_RESOLVED);
+        $table = $schema->createTable('oro_cus_grp_ctgr_vsb_resolv');
         $table->addColumn('source_category_visibility', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
@@ -164,9 +135,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Create oro_cus_ctgr_vsb_resolv table
      */
-    protected function createOroAccountCategoryVisibilityResolvedTable(Schema $schema)
+    private function createOroAccountCategoryVisibilityResolvedTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::ORO_CUSTOMER_CATEGORY_VISIBILITY_RESOLVED);
+        $table = $schema->createTable('oro_cus_ctgr_vsb_resolv');
         $table->addColumn('source_category_visibility', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
@@ -178,9 +149,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Create oro_category_visibility table
      */
-    protected function createOroCategoryVisibilityTable(Schema $schema)
+    private function createOroCategoryVisibilityTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::ORO_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table = $schema->createTable('oro_category_visibility');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
@@ -192,9 +163,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Create oro_cus_category_visibility table
      */
-    protected function createOroAccountCategoryVisibilityTable(Schema $schema)
+    private function createOroAccountCategoryVisibilityTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::ORO_CUSTOMER_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table = $schema->createTable('oro_cus_category_visibility');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
@@ -206,9 +177,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Create oro_cus_grp_ctgr_visibility table
      */
-    protected function createOroAccountGroupCategoryVisibilityTable(Schema $schema)
+    private function createOroAccountGroupCategoryVisibilityTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::ORO_CUSTOMER_GROUP_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table = $schema->createTable('oro_cus_grp_ctgr_visibility');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
@@ -220,9 +191,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Create oro_product_visibility table
      */
-    protected function createOroProductVisibilityTable(Schema $schema)
+    private function createOroProductVisibilityTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::ORO_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table = $schema->createTable('oro_product_visibility');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
@@ -234,9 +205,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Create oro_cus_product_visibility table
      */
-    protected function createOroAccountProductVisibilityTable(Schema $schema)
+    private function createOroAccountProductVisibilityTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::ORO_CUSTOMER_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table = $schema->createTable('oro_cus_product_visibility');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
@@ -248,9 +219,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Create oro_cus_grp_prod_visibility table
      */
-    protected function createOroAccountGroupProductVisibilityTable(Schema $schema)
+    private function createOroAccountGroupProductVisibilityTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::ORO_CUSTOMER_GROUP_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table = $schema->createTable('oro_cus_grp_prod_visibility');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
@@ -262,17 +233,17 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Add oro_category_visibility foreign keys.
      */
-    protected function addOroCategoryVisibilityForeignKeys(Schema $schema)
+    private function addOroCategoryVisibilityForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::ORO_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table = $schema->getTable('oro_category_visibility');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_CATEGORY_TABLE_NAME),
+            $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
+            $schema->getTable('oro_scope'),
             ['scope_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -282,17 +253,17 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Add oro_cus_category_visibility foreign keys.
      */
-    protected function addOroAccountCategoryVisibilityForeignKeys(Schema $schema)
+    private function addOroAccountCategoryVisibilityForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::ORO_CUSTOMER_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table = $schema->getTable('oro_cus_category_visibility');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_CATEGORY_TABLE_NAME),
+            $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
+            $schema->getTable('oro_scope'),
             ['scope_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -302,17 +273,17 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Add oro_cus_grp_ctgr_visibility foreign keys.
      */
-    protected function addOroAccountGroupCategoryVisibilityForeignKeys(Schema $schema)
+    private function addOroAccountGroupCategoryVisibilityForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::ORO_CUSTOMER_GROUP_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table = $schema->getTable('oro_cus_grp_ctgr_visibility');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_CATEGORY_TABLE_NAME),
+            $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
+            $schema->getTable('oro_scope'),
             ['scope_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -322,11 +293,11 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Add oro_product_visibility foreign keys.
      */
-    protected function addOroProductVisibilityForeignKeys(Schema $schema)
+    private function addOroProductVisibilityForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::ORO_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table = $schema->getTable('oro_product_visibility');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_PRODUCT_TABLE_NAME),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -342,11 +313,11 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Add oro_cus_product_visibility foreign keys.
      */
-    protected function addOroAccountProductVisibilityForeignKeys(Schema $schema)
+    private function addOroAccountProductVisibilityForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::ORO_CUSTOMER_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table = $schema->getTable('oro_cus_product_visibility');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_PRODUCT_TABLE_NAME),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -362,11 +333,11 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Add oro_cus_grp_prod_visibility foreign keys.
      */
-    protected function addOroAccountGroupProductVisibilityForeignKeys(Schema $schema)
+    private function addOroAccountGroupProductVisibilityForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::ORO_CUSTOMER_GROUP_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table = $schema->getTable('oro_cus_grp_prod_visibility');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_PRODUCT_TABLE_NAME),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -382,9 +353,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Add oro_prod_vsb_resolv foreign keys.
      */
-    protected function addOroProductVisibilityResolvedForeignKeys(Schema $schema)
+    private function addOroProductVisibilityResolvedForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::ORO_PRODUCT_VISIBILITY_RESOLVED);
+        $table = $schema->getTable('oro_prod_vsb_resolv');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product'),
             ['product_id'],
@@ -414,9 +385,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Add oro_cus_grp_prod_vsb_resolv foreign keys.
      */
-    protected function addOroAccountGroupProductVisibilityResolvedForeignKeys(Schema $schema)
+    private function addOroAccountGroupProductVisibilityResolvedForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::ORO_CUSTOMER_GROUP_PRODUCT_VISIBILITY_RESOLVED);
+        $table = $schema->getTable('oro_cus_grp_prod_vsb_resolv');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product'),
             ['product_id'],
@@ -446,9 +417,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Add oro_cus_prod_vsb_resolv foreign keys.
      */
-    protected function addOroAccountProductVisibilityResolvedForeignKeys(Schema $schema)
+    private function addOroAccountProductVisibilityResolvedForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::ORO_CUSTOMER_PRODUCT_VISIBILITY_RESOLVED);
+        $table = $schema->getTable('oro_cus_prod_vsb_resolv');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product'),
             ['product_id'],
@@ -478,9 +449,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Add oro_ctgr_vsb_resolv foreign keys.
      */
-    protected function addOroCategoryVisibilityResolvedForeignKeys(Schema $schema)
+    private function addOroCategoryVisibilityResolvedForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::ORO_CATEGORY_VISIBILITY_RESOLVED);
+        $table = $schema->getTable('oro_ctgr_vsb_resolv');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_category_visibility'),
             ['source_category_visibility'],
@@ -494,7 +465,7 @@ class OroVisibilityBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
+            $schema->getTable('oro_scope'),
             ['scope_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -504,9 +475,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Add oro_cus_grp_ctgr_vsb_resolv foreign keys.
      */
-    protected function addOroAccountGroupCategoryVisibilityResolvedForeignKeys(Schema $schema)
+    private function addOroAccountGroupCategoryVisibilityResolvedForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::ORO_CUSTOMER_GROUP_CATEGORY_VISIBILITY_RESOLVED);
+        $table = $schema->getTable('oro_cus_grp_ctgr_vsb_resolv');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_cus_grp_ctgr_visibility'),
             ['source_category_visibility'],
@@ -520,7 +491,7 @@ class OroVisibilityBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
+            $schema->getTable('oro_scope'),
             ['scope_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -530,9 +501,9 @@ class OroVisibilityBundleInstaller implements Installation
     /**
      * Add oro_cus_ctgr_vsb_resolv foreign keys.
      */
-    protected function addOroAccountCategoryVisibilityResolvedForeignKeys(Schema $schema)
+    private function addOroAccountCategoryVisibilityResolvedForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::ORO_CUSTOMER_CATEGORY_VISIBILITY_RESOLVED);
+        $table = $schema->getTable('oro_cus_ctgr_vsb_resolv');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_cus_category_visibility'),
             ['source_category_visibility'],
@@ -546,7 +517,7 @@ class OroVisibilityBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
+            $schema->getTable('oro_scope'),
             ['scope_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]

@@ -1,45 +1,83 @@
-{% block __oro_product_price_table__product_price_table_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-prices'
+{% block __oro_product_price_table__product_price_table_container_scroll_widget %}
+    {% set flatData = [] %}
+    {% set uniqueUnits = [] %}
+    {% for price in productPrices %}
+        {% if price.formatted_unit is defined %}
+            {% set itemExisit = flatData|filter(item => item.quantity is defined and item.quantity == price.quantity) %}
+            {% set unit = price.formatted_unit %}
+            {% if itemExisit|length %}
+                {% set itemExisit = itemExisit|first %}
+                {% set item = []|merge({(unit): price}) %}
+                {% set itemExisit = itemExisit|merge({
+                    'units': itemExisit['units']|merge(item)
+                }) %}
+                {% set flatData = flatData|map(item => item.quantity == itemExisit.quantity ? itemExisit : item) %}
+                {% if unit not in uniqueUnits %}
+                    {% set uniqueUnits = uniqueUnits|merge({(unit): price}) %}
+                {% endif %}
+            {% else %}
+                {% set item = {
+                    'quantity': price.quantity,
+                    'units': {
+                        (unit): price
+                    }
+                } %}
+                {% set flatData = flatData|merge([item]) %}
+                {% set uniqueUnits = uniqueUnits|merge({(unit): price}) %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+    {% do block|merge_context({
+        flatData: flatData,
+        uniqueUnits: uniqueUnits
     }) %}
 
-    {% if not is_price_hidden(product, matrixFormType|default(false) == 'none') %}
-        {# Use to modify quantity in case when it not enough quantity to show the price #}
-        {# We use this component as single entry point for price extendability #}
-        {% set attr = layout_attr_defaults(attr, {
-            'data-page-component-module': 'oroui/js/app/components/view-component',
-            '~data-page-component-options': {
-                view: 'oropricing/js/app/views/list-item-product-prices-view',
-                showValuePrice: false,
-                showListedPrice: false,
-                showHint: false,
-                modelAttr: {
-                    prices: productPrices,
-                }
-            },
-        }) %}
-    {% endif %}
-
-    {% if productPrices is not empty %}
-        <div {{ block('block_attributes') }}>
-            <table class="product-prices__table">
-                <thead class="product-prices__thead">
-                <tr class="product-prices__tr">
-                    <th class="product-prices__th text-uppercase" scope="col">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>{# qty #}
-                    <th class="product-prices__th" scope="col">{{ 'oro.pricing.frontend.product.unit_price.long_label'|trans }}</th>{# Unit Price #}
-                </tr>
-                </thead>
+    {% if flatData|length %}
+        <div class="product-prices"
+             data-page-component-view="oropricing/js/app/views/list-item-product-prices-view"
+             data-page-component-options="{{ {
+                 showValuePrice: false,
+                 showListedPrice: false,
+                 showHint: false,
+                 modelAttr: {
+                     prices: productPrices,
+                 }
+             }|json_encode }}"
+        >
+            <div class="scrollable-container styled-scrollbar horizontal-scrolling"
+                 data-page-component-view="orofrontend/js/app/views/scroll-shadow-view"
+                 data-page-component-options="{{ {
+                     scrollOffsets: {
+                         'left': 'th:first'
+                     }
+                 }|json_encode }}"
+                 data-scroll-target=""
+            >
                 {{ block_widget(block) }}
-            </table>
+            </div>
         </div>
     {% endif %}
 {% endblock %}
 
-{% block __oro_product_price_table__product_price_table_body_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-prices__tbody'
-    }) %}
+{% block __oro_product_price_table__product_price_multi_unit_table_widget %}
+    <table class="product-prices-table stick-first-row">
+        <thead class="product-prices-table__thead">
+            <th class="product-prices-table__th text-left" scope="col">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>
+                {% for unit in uniqueUnits %}
+                    <th class="product-prices-table__th text-right" scope="col">
+                        {% set showCurrencySymbol = currencies is defined and currencies|length > 1 %}
+                        {{- (showCurrencySymbol ? oro_currency_symbol(unit.currency) ~ ', ' : '') ~ unit.formatted_unit -}}
+                    </th>
+            {% endfor %}
+        </thead>
+        {{ block_widget(block) }}
+    </table>
+{% endblock %}
 
+{% block __oro_product_price_table__product_price_multi_unit_table_body_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'product-prices-table__tbody'
+    }) %}
     {% if productPrices is not empty %}
         {% set attr = layout_attr_defaults(attr, {
             'itemprop': 'offers',
@@ -48,40 +86,53 @@
         }) %}
     {% endif %}
 
-    <tbody {{ block('block_attributes') }}>
-    {% set currentUnit = '' %}
     {% set priceFormatOptions = {
         attributes: {
             fraction_digits: oro_locale_number_attribute('max_fraction_digits', 'currency')
         }
     } %}
-    {% for price in productPrices %}
-        {% if price.formatted_unit is defined %}
-            {% if currentUnit != price.formatted_unit %}
-                {% set currentUnit = price.formatted_unit %}
-                <tr class="product-prices__tr">
-                    <td colspan="2" class="product-prices__td">
-                        {% if loop.index > 1 %}<br/>{% endif %}
-                        {% if isPriceUnitsVisible %}
-                            <strong>{{ currentUnit|capitalize }}</strong>
-                        {% endif %}
+
+    {% if uniqueUnits is defined and flatData is defined and flatData|length %}
+        <tbody {{ block('block_attributes') }}>
+            {% for dataItem in flatData|sort %}
+                <tr class="product-prices-table__tr">
+                    <td class="product-prices-table__td">
+                        {{ dataItem.quantity ~ '+' }}
                     </td>
+                    {% for unit in uniqueUnits %}
+                        {% set item = dataItem.units|filter(item => item.unit is defined and item.unit == unit.unit)|first %}
+                        <td class="product-prices-table__td text-right">
+                            {% if item %}
+                                <span class="hidden" aria-hidden="true" itemprop="priceSpecification" itemscope
+                                      itemtype="http://schema.org/UnitPriceSpecification">
+                                    <span itemprop="eligibleQuantity" itemscope
+                                          itemtype="http://schema.org/QuantitativeValue">
+                                        <span itemprop="value" content="{{ dataItem.quantity }}">{{ dataItem.quantity }}</span>
+                                        <span class="hidden" aria-hidden="true" itemprop="unitCode">{{ item.formatted_unit }}</span>
+                                    </span>
+                                    <span itemprop="priceCurrency">{{ item.currency }}</span>
+                                    <span itemprop="price">{{ item.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '') }}</span>
+                                </span>
+                                {{- item.formatted_price -}}
+                            {% else %}
+                                {{ '-' }}
+                            {% endif %}
+                        </td>
+                    {% endfor %}
                 </tr>
-            {% endif %}
-            <tr class="product-prices__tr" itemprop="priceSpecification" itemscope
-                itemtype="http://schema.org/UnitPriceSpecification">
-                <td class="product-prices__td" itemprop="eligibleQuantity" itemscope
-                    itemtype="http://schema.org/QuantitativeValue">
-                    <span itemprop="value" content="{{ price.quantity }}">{{ price.quantity }}</span>
-                    <span class="hidden" aria-hidden="true" itemprop="unitCode">{{ currentUnit }}</span>
-                </td>
-                <td class="product-prices__td">
-                    <span class="hidden" aria-hidden="true" itemprop="priceCurrency">{{ price.currency }}</span>
-                    <span class="hidden" aria-hidden="true" itemprop="price">{{ price.price|number_format(priceFormatOptions.attributes.fraction_digits, '.', '') }}</span>
-                    {{- price.formatted_price -}}
-                </td>
-            </tr>
-        {% endif %}
-    {% endfor %}
-    </tbody>
+            {% endfor %}
+        </tbody>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_price_table__product_price_single_unit_table_widget %}
+    {% set avaliablePrices = productPrices|filter(price => price.formatted_unit is defined) %}
+    {% if avaliablePrices|length %}
+        <div data-page-component-view="oropricing/js/app/views/price-single-unit-table-view"
+             data-page-component-options="{{ {
+                 'prices': avaliablePrices,
+                 'showCurrencySymbol': currencies is defined and currencies|length > 1
+             }|json_encode }}"
+        ></div>
+    {% endif %}
 {% endblock %}

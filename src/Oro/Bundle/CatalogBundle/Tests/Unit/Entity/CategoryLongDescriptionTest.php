@@ -16,7 +16,7 @@ class CategoryLongDescriptionTest extends \PHPUnit\Framework\TestCase
         $this->assertPropertyAccessors(
             new CategoryLongDescription(),
             [
-                ['id', '123'],
+                ['id', 123],
                 ['fallback', 'test'],
                 ['wysiwyg', 'test wysiwyg'],
                 ['wysiwygStyle', 'test style'],

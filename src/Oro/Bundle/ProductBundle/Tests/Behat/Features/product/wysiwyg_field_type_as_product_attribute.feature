@@ -72,4 +72,5 @@ Feature: WYSIWYG field type as product attribute
 
   Scenario: Open product view page on Front Store to see created attribute
     When I open product with sku "PSKU1" on the store frontend
+    And I click "WYSIWYG"
     Then I should see "WYSIWYG_video Content here!"

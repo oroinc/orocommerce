@@ -45,5 +45,5 @@ Feature: Product fields website search indexation
   Scenario: Check Product availability for customer user
     Given I proceed as the User
     And I am on the homepage
-    When click "Phones"
+    When click "Phones" in hamburger menu
     Then should see "Xiaomi Redmi 3S"

@@ -46,7 +46,8 @@ class LoadDraftPageData extends AbstractFixture implements DependentFixtureInter
      */
     public function load(ObjectManager $manager)
     {
-        $manager->createQuery('DELETE OroCMSBundle:Page')->execute(); // Remove all built-in pages before tests
+        // Remove all built-in pages before tests
+        $manager->createQuery('DELETE Oro\Bundle\CMSBundle\Entity\Page')->execute();
         $organization = $this->getReference('organization');
         foreach (self::$page as $reference => $data) {
             $entity = new Page();

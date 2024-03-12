@@ -11,18 +11,19 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem;
 use Oro\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
+class RequestToQuoteDataStorageTest extends TestCase
 {
-    /** @var ProductDataStorage|\PHPUnit\Framework\MockObject\MockObject */
-    private $storage;
+    private ProductDataStorage|MockObject $storage;
 
-    /** @var RequestToQuoteDataStorage */
-    private $requestDataStorage;
+    private RequestToQuoteDataStorage $requestDataStorage;
 
     protected function setUp(): void
     {
@@ -38,7 +39,7 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
         array $rfpRequestData,
         array $entityData,
         array $entityItemData
-    ) {
+    ): void {
         $rfpRequest = $this->createRFPRequest($rfpRequestData);
         $rfpRequest->addRequestProduct($this->createRequestProduct($rfpRequestData['requestProductData']));
         $rfpRequest->addRequestProduct($this->createRequestProduct($rfpRequestData['requestProductData']));
@@ -70,18 +71,50 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
                 'comment' => 'Test Comment',
                 'unitCode' => 'kg',
                 'price' => Price::create('99', 'USD'),
+                'kitItemLineItemsData' => [],
             ],
         ];
 
         $entityData = $this->getExpectedEntityData($rfpRequestData);
         $entityItemData = $this->getExpectedEntityItemData($rfpRequestData);
 
-        return [
+        $rfpKitRequestData = array_merge_recursive(
             [
+                'requestProductData' => [
+                    'kitItemLineItemsData' => [
+                        [
+                            'kitItemId' => 1,
+                            'kitItemLabel' => 'Base Unit',
+                            'optional' => false,
+                            'minimumQuantity' => 1,
+                            'maximumQuantity' => 2,
+                            'productId' => 2,
+                            'productName' => 'Product 2',
+                            'productSku' => 'SKUPRODUCT2',
+                            'productUnitCode' => 'kg',
+                            'productUnitPrecision' => 0,
+                            'quantity' => 2,
+                            'sortOrder' => 1,
+                        ],
+                    ],
+                ],
+            ],
+            $rfpRequestData
+        );
+
+        $kitEntityItemData = $this->getExpectedEntityItemData($rfpKitRequestData);
+
+        return [
+            'simple product' => [
                 'rfpRequestData' => $rfpRequestData,
                 'entityData' => $entityData,
                 'entityItemData' => $entityItemData,
-            ]
+            ],
+            'product kit' => [
+                'rfpRequestData' => $rfpKitRequestData,
+                'entityData' => $entityData,
+                'entityItemData' => $kitEntityItemData,
+            ],
         ];
     }
 
@@ -92,7 +125,7 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
         array $rfpRequestData,
         array $entityData,
         array $entityItemData
-    ) {
+    ): void {
         $rfpRequest = $this->createRFPRequest($rfpRequestData);
         $rfpRequest->addRequestProduct($this->createRequestProduct($rfpRequestData['requestProductData']));
 
@@ -123,6 +156,7 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
                 'comment' => 'Test Comment',
                 'unitCode' => 'kg',
                 'price' => null,
+                'kitItemLineItemsData' => [],
             ],
         ];
 
@@ -187,6 +221,27 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
         $requestProduct->setComment($requestProductData['comment']);
         $requestProduct->addRequestProductItem($requestProductItem);
 
+        foreach ($requestProductData['kitItemLineItemsData'] as $kitItemLineItemData) {
+            $kitItemProductUnit = new ProductUnit();
+            $kitItemProductUnit->setCode($kitItemLineItemData['productUnitCode']);
+            $kitItemProductUnit->setDefaultPrecision($kitItemLineItemData['productUnitPrecision']);
+
+            $requestProductKitItemLineItem = (new RequestProductKitItemLineItem())
+                ->setProductId($kitItemLineItemData['productId'])
+                ->setProductSku($kitItemLineItemData['productSku'])
+                ->setProductName($kitItemLineItemData['productName'])
+                ->setProductUnit($kitItemProductUnit)
+                ->setKitItemId($kitItemLineItemData['kitItemId'])
+                ->setKitItemLabel($kitItemLineItemData['kitItemLabel'])
+                ->setMinimumQuantity($kitItemLineItemData['minimumQuantity'])
+                ->setMaximumQuantity($kitItemLineItemData['maximumQuantity'])
+                ->setOptional($kitItemLineItemData['optional'])
+                ->setQuantity($kitItemLineItemData['quantity'])
+                ->setSortOrder($kitItemLineItemData['sortOrder']);
+
+            $requestProduct->addKitItemLineItem($requestProductKitItemLineItem);
+        }
+
         return $requestProduct;
     }
 
@@ -218,7 +273,36 @@ class RequestToQuoteDataStorageTest extends \PHPUnit\Framework\TestCase
                     'requestProductItem' => 1,
                     'quantity' => $rfpRequestData['requestProductData']['quantity'],
                 ],
-            ]
+            ],
+            ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEMS_DATA_KEY => $this->getExpectedKitItemLineItemsData(
+                $rfpRequestData['requestProductData']['kitItemLineItemsData']
+            )
         ];
+    }
+
+    private function getExpectedKitItemLineItemsData(array $kitItemLineItems): array
+    {
+        $kitItemLineItemsData = [];
+        foreach ($kitItemLineItems as $kitItemLineItem) {
+            $kitItemLineItemsData[] = [
+                'kitItem' => $kitItemLineItem['kitItem'] ?? null,
+                'kitItemId' => $kitItemLineItem['kitItemId'],
+                'kitItemLabel' => $kitItemLineItem['kitItemLabel'],
+                'optional' => $kitItemLineItem['optional'],
+                'minimumQuantity' => (float)$kitItemLineItem['minimumQuantity'],
+                'maximumQuantity' => (float)$kitItemLineItem['maximumQuantity'],
+                'product' => $kitItemLineItem['product'] ?? null,
+                'productId' => $kitItemLineItem['productId'],
+                'productName' => $kitItemLineItem['productName'],
+                'productSku' => $kitItemLineItem['productSku'],
+                'productUnit' => $kitItemLineItem['productUnitCode'],
+                'productUnitCode' => $kitItemLineItem['productUnitCode'],
+                'productUnitPrecision' => $kitItemLineItem['productUnitPrecision'],
+                'quantity' => $kitItemLineItem['quantity'],
+                'sortOrder' => $kitItemLineItem['sortOrder'],
+            ];
+        }
+
+        return $kitItemLineItemsData;
     }
 }

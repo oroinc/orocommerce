@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
@@ -12,20 +12,17 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
-class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
+class LoadQuoteProductDemandData extends AbstractFixture implements DependentFixtureInterface
 {
-    const SELECTED_OFFER_1 = 'selected.offer.1';
-    const SELECTED_OFFER_2 = 'selected.offer.2';
-    const SELECTED_OFFER_3 = 'selected.offer.3';
+    public const SELECTED_OFFER_1 = 'selected.offer.1';
+    public const SELECTED_OFFER_2 = 'selected.offer.2';
+    public const SELECTED_OFFER_3 = 'selected.offer.3';
 
-    const QUOTE_DEMAND_1 = 'quote.demand.1';
-    const QUOTE_DEMAND_2 = 'quote.demand.2';
-    const QUOTE_DEMAND_3 = 'quote.demand.3';
+    public const QUOTE_DEMAND_1 = 'quote.demand.1';
+    public const QUOTE_DEMAND_2 = 'quote.demand.2';
+    public const QUOTE_DEMAND_3 = 'quote.demand.3';
 
-    /**
-     * @var array
-     */
-    public static $items = [
+    private static array $items = [
         self::SELECTED_OFFER_1 => [
             'quoteDemandReference' => self::QUOTE_DEMAND_1,
             'quote' => LoadQuoteData::QUOTE1,
@@ -62,34 +59,35 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadCustomerUserData::class,
             LoadCustomers::class,
-            LoadQuoteProductOfferData::class,
+            LoadQuoteProductOfferData::class
         ];
     }
 
     /**
-     * Load data fixtures with the passed EntityManager
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         foreach (self::$items as $key => $item) {
             /** @var Quote $quote */
             $quote = $this->getReference($item['quote']);
             $quoteDemand = new QuoteDemand();
-            $quoteDemand->setQuote($quote)
-                ->setCustomer($this->getReference($item['customer']))
-                ->setCustomerUser($this->getReference($item['customerUser']))
-                ->setSubtotal($item['subtotal'])
-                ->setTotal($item['total'])
-                ->setTotalCurrency($item['currency']);
+            $quoteDemand->setQuote($quote);
+            $quoteDemand->setCustomer($this->getReference($item['customer']));
+            $quoteDemand->setCustomerUser($this->getReference($item['customerUser']));
+            $quoteDemand->setSubtotal($item['subtotal']);
+            $quoteDemand->setTotal($item['total']);
+            $quoteDemand->setTotalCurrency($item['currency']);
             $manager->persist($quoteDemand);
             $this->setReference($item['quoteDemandReference'], $quoteDemand);
+
             /** @var QuoteProductOffer $offer */
             $offer = $this->getReference($item['offer']);
             $selectedOffer = new QuoteProductDemand($quoteDemand, $offer, $item['quantity']);

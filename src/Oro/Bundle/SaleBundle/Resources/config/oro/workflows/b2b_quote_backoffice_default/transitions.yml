@@ -14,6 +14,21 @@ workflows:
                         template: '@OroSale/Quote/update.html.twig'
                         data_provider: quote_update
                         data_attribute: quote
+                destination_page: view
+
+            verify_transition:
+                step_to: draft
+                transition_definition: verify_transition_definition
+                is_hidden: true
+                display_type: page
+                form_type: 'Oro\Bundle\SaleBundle\Form\Type\QuoteType'
+                form_options:
+                    configuration:
+                        handler: default
+                        template: '@OroSale/Quote/update.html.twig'
+                        data_provider: quote_update
+                        data_attribute: quote
+                destination_page: view
 
             clone_transition:
                 step_to: draft

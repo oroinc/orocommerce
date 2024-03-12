@@ -7,8 +7,8 @@ $quick-order-import-button-width: 200px !default;
 $quick-order-import-title-margin: 0 0 10px !default;
 $quick-order-import-link-margin: 8px 0 12px !default;
 $quick-order-import-container-padding: 20px 20px 10px !default;
-$quick-order-import-container-background: get-color('additional', 'light') !default;
+$quick-order-import-container-background: get-color('neutral', 'grey1') !default;
 
 $quick-order-import-uploader-action-background: color.adjust(
-    get-color('additional', 'middle'), $lightness: -44%
+    get-color('neutral', 'grey2'), $lightness: -44%
 ) !default;

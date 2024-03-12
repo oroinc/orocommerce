@@ -239,10 +239,41 @@ Feature: Product View Page Templates
   Scenario: "Product View Page Templates 1A" > Check simple product page with selected: Default template
     Given I open product with sku "gtsh_l" on the store frontend
     Then I should see "Green shirt L"
-    And I should see "Item #: gtsh_l"
-    And I should see the following prices on "Default Page":
-      | Item | $10.00  |
-      | Set  | $445.50 |
+    And I should see "gtsh_l"
+    Then I should see next rows in "Default Page Prices" table in the exact order
+      | QTY | Item   | Set     |
+      | 1+  | $10.00 | $445.50 |
+
+    When I operate as the Admin
+    And go to System / Configuration
+    And I follow "Commerce/Design/Theme" on configuration sidebar
+    And fill "Display Price Tiers" with:
+      | Use Default            | false             |
+      | Display Price Tiers As | Single-unit table |
+    And click "Save settings"
+    And I operate as the Buyer
+    And I reload the page
+    Then I should see next rows in "Default Page Prices" table in the exact order
+      | QTY | Item   |
+      | 1+  | $10.00 |
+    When click on empty space
+    And I type "set" in "Product View Unit"
+    Then I should see next rows in "Default Page Prices" table in the exact order
+      | QTY | Set     |
+      | 1+  | $445.50 |
+
+    When I operate as the Admin
+    And go to System / Configuration
+    And I follow "Commerce/Design/Theme" on configuration sidebar
+    And fill "Display Price Tiers" with:
+      | Display Price Tiers As | Multi-unit table |
+    And click "Save settings"
+    And I operate as the Buyer
+    And I reload the page
+    Then I should see next rows in "Default Page Prices" table in the exact order
+      | QTY | Item   | Set     |
+      | 1+  | $10.00 | $445.50 |
+
     And I should see "Default Page" with "Remark group" containing data:
       | Remark | Test text for Green simple product |
     And I should see "Default Page" with "Color group" containing data:
@@ -253,7 +284,7 @@ Feature: Product View Page Templates
   Scenario: "Product View Page Templates 1B" > Check configurable product page with selected: Default template
     Given I open product with sku "shirt_main" on the store frontend
     Then I should see "Shirt_1"
-    And I should see "Item #: shirt_main"
+    And I should see "shirt_main"
     And I should see the following options for "Color" select:
       | Green |
       | Red   |
@@ -263,114 +294,81 @@ Feature: Product View Page Templates
     And I should see "Default Page" with "Remark group" containing data:
       | Remark | Test text for configurable product |
 
-  Scenario: "Product View Page Templates 2A" > Check simple product page with selected: Short page template
-    Given I operate as the Admin
-    When go to System / Configuration
-    And I follow "Commerce/Design/Theme" on configuration sidebar
-    And fill "Page Templates form" with:
-      | Use Default  | false      |
-      | Product Page | Short page |
-    And save form
-    Then I should see "Configuration saved" flash message
-    And I should see "Short page"
-    And I should see "Short page template of product page (no additional attributes groups are displayed at all)"
-
-    When I operate as the Buyer
-    And I open product with sku "gtsh_l" on the store frontend
-    Then I should see "Green shirt L"
-    And I should see "Item #: gtsh_l"
-    And I should see the following prices on "Short Page":
-      | Price | $10.00 / item |
-    And I should not see "Remark Group"
-    And I should not see "Color Group"
-    And I should not see "Size Group"
-
-  Scenario: "Product View Page Templates 2B" > Check configurable product page with selected: Short page template
-    Given I open product with sku "shirt_main" on the store frontend
-    Then I should see "Shirt_1"
-    And I should see "Item #: shirt_main"
-    And I should see the following options for "Color" select:
-      | Green |
-      | Red   |
-    And I should see the following options for "Size" select:
-      | L |
-      | M |
-    Then I should not see "Remark Group"
-
-  Scenario: "Product View Page Templates 3A" > Check simple product page with selected: Two columns page template
+  Scenario: "Product View Page Templates 3A" > Check simple product page with selected: Wide Template
     Given I operate as the Admin
     When go to System / Configuration
     And I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates form" with:
       | Use Default  | false            |
-      | Product Page | Two columns page |
+      | Product Page | Wide Template    |
     And save form
     Then I should see "Configuration saved" flash message
-    And I should see "Two columns page"
-    And I should see "Two columns template of product page (additional attribute groups are displayed in two columns)"
+    And I should see "Wide Template"
+    And I should see "Wide Template of product page (additional attribute groups are displayed in collapse one below another for full page width)"
 
     When I operate as the Buyer
     And I open product with sku "gtsh_l" on the store frontend
     Then I should see "Green shirt L"
-    And I should see "Item #: gtsh_l"
-    And I should see the following prices on "Two Columns Page":
-      | Listed Price: | [$10.00 / item, $445.50 / set] |
-      | Your Price:   | $10.00 / item                  |
-    And I should see "Two Columns Page" with "Remark group" containing data:
+    And I should see "gtsh_l"
+    Then I should see next rows in "Default Page Prices" table in the exact order
+      | QTY | Item   | Set     |
+      | 1+  | $10.00 | $445.50 |
+    And I should see "Wide Template" with "Remark group" containing data:
       | Remark | Test text for Green simple product |
-    And I should see "Two Columns Page" with "Color group" containing data:
+    And I should see "Wide Template" with "Color group" containing data:
       | Color | Green |
-    And I should see "Two Columns Page" with "Size group" containing data:
+    And I should see "Wide Template" with "Size group" containing data:
       | Size | L |
 
-  Scenario: "Product View Page Templates 3B" > Check configurable product page with selected: Two columns page template
+  Scenario: "Product View Page Templates 3B" > Check configurable product page with selected: Wide Template
     Given I open product with sku "shirt_main" on the store frontend
     When I select "Green" from "Color"
     And I select "L" from "Size"
     Then I should see "Shirt_1"
-    And I should see "Item #: shirt_main"
-    And I should see the following prices on "Two Columns Page":
-      | Listed Price: | [$10.00 / item, $445.50 / set] |
-      | Your Price:   | $10.00 / item                  |
-    And I should see "Two Columns Page" with "Remark group" containing data:
+    And I should see "shirt_main"
+    Then I should see next rows in "Default Page Prices" table in the exact order
+      | QTY | Item   | Set     |
+      | 1+  | $10.00 | $445.50 |
+    And I should see "Wide Template" with "Remark group" containing data:
       | Remark | Test text for configurable product |
 
-  Scenario: "Product View Page Templates 4A" > Check simple product page with selected: List page template
+  Scenario: "Product View Page Templates 4A" > Check simple product page with selected: Tabs Template
     Given I operate as the Admin
     When go to System / Configuration
     And I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates form" with:
       | Use Default  | false     |
-      | Product Page | List page |
+      | Product Page | Tabs Template |
     And save form
     Then I should see "Configuration saved" flash message
-    And I should see "List page"
-    And I should see "List template of product page (additional attribute groups are displayed in column one below another)"
+    And I should see "Tabs Template"
+    And I should see "Tabs template of product page (additional attribute groups are displayed in tabs)"
 
     When I operate as the Buyer
     And I open product with sku "gtsh_l" on the store frontend
     Then I should see "Green shirt L"
-    And I should see "Item #: gtsh_l"
-    And I should see the following prices on "List Page":
-      | Price | $10.00 / item |
-    And I should see "List Page" with "Remark group" containing data:
-      | Remark | Test text for Green simple product |
-    And I should see "List Page" with "Color group" containing data:
-      | Color | Green |
-    And I should see "List Page" with "Size group" containing data:
-      | Size | L |
+    And I should see "gtsh_l"
+    And I click "Remark group"
+    And I should see "Test text for Green simple product"
+    And I click "Color group"
+    And I should see "Green"
+    And I click "Size group"
+    And I should see "L"
+    Then I should see next rows in "Default Page Prices" table in the exact order
+      | QTY | item   | Set     |
+      | 1+  | $10.00 | $445.50 |
 
-  Scenario: "Product View Page Templates 4B" > Check configurable product page with selected: List page template
+  Scenario: "Product View Page Templates 4B" > Check configurable product page with selected: Tabs Template
     Given I open product with sku "shirt_main" on the store frontend
     When I select "Green" from "Color"
     And I select "L" from "Size"
     Then I should see "Shirt_1"
-    And I should see "Item #: shirt_main"
-    And I should see the following prices on "List Page":
-      | Price | $10.00 / item |
-    And I should see "List Page" with "Remark group" containing data:
-      | Remark | Test text for configurable product |
-
+    And I should see "shirt_main"
+    And I click "Remark group"
+    And I should see "Test text for configurable product"
+    Then I should see next rows in "Default Page Prices" table in the exact order
+      | QTY | item   | Set     |
+      | 1+  | $10.00 | $445.50 |
   Scenario: "Product View Page Templates 5A" > Check that the label is hiding if the condition _name
     Given I operate as the Admin
     And go to Products/ Product Attributes
@@ -380,18 +378,20 @@ Feature: Product View Page Templates
     And I save and close form
     When I operate as the Buyer
     And I open product with sku "gtsh_l" on the store frontend
-    Then I should not see "Remark"
+    And I click "Remark group"
+    Then I should not see "Remark:"
     And I should see "Test text for Green simple product"
     When I operate as the Admin
     And go to System / Configuration
     And I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates form" with:
       | Use Default  | false     |
-      | Product Page | List page |
+      | Product Page | Wide Template |
     And save form
     Then I should see "Configuration saved" flash message
-    Then I should see "List page"
+    Then I should see "Wide Template"
     And I operate as the Buyer
     When I open product with sku "gtsh_l" on the store frontend
-    Then I should not see "Remark"
+    And I click "Remark group"
+    Then I should not see "Remark:"
     And I should see "Test text for Green simple product"

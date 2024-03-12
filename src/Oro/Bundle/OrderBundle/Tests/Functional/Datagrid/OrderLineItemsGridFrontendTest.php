@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Datagrid;
 
-use Oro\Bundle\CustomerBundle\Security\Firewall\AnonymousCustomerUserAuthenticationListener;
+use Oro\Bundle\CustomerBundle\Security\AnonymousCustomerUserAuthenticator;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerVisitors;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
@@ -24,7 +24,7 @@ class OrderLineItemsGridFrontendTest extends FrontendWebTestCase
         $visitor = $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR);
         $this->client->getCookieJar()->set(
             new Cookie(
-                AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
+                AnonymousCustomerUserAuthenticator::COOKIE_NAME,
                 base64_encode(\json_encode([$visitor->getId(), $visitor->getSessionId()])),
                 time() + 60
             )

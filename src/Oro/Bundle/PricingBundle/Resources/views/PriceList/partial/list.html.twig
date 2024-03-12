@@ -1,17 +1,44 @@
-{% import '@OroUI/macros.html.twig' as UI %}
+{% set pricing_strategy = oro_config_value('oro_pricing.price_strategy') %}
+{% if scope is not defined %}
+    {% set scope = {} %}
+{% endif %}
 
 {% if feature_enabled('oro_price_lists_combined') %}
-    <div>
-        <p>{{ 'oro.pricing.fallback.label'|trans }}: <strong>{{ fallback|trans }}</strong></p>
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroCron/macros.html.twig' as cronSchedulIntervals %}
+
+    <div class="list-head-container-wrapper">
+        {% if (headLink is defined and headLink) or (fallback is defined and fallback) %}
+            <div class="list-head-container">
+                {% if headLink is defined and headLink %}<div>{{ headLink }}</div>{% endif %}
+                {% if fallback is defined and fallback %}<div>{{ 'oro.pricing.fallback.label'|trans }}: <strong>{{ fallback|trans }}</strong>
+                    {% if fallbackEntityTitle is defined and fallbackEntityTitle %}({{ fallbackEntityTitle }}){% endif %}</div>
+                {% endif %}
+            </div>
+        {% endif %}
+        {% placeholder assigned_price_lists_additional_links with scope %}
     </div>
-    <div class="clearfix">
+
+    <div class="clearfix-oro grid-scrollable-container">
         {% if entities %}
+            {% set scheduleLabels = {
+                wasActivatedLabel: 'oro.pricing.pricelist_schedule.was_activated',
+                activeNowLabel: 'oro.pricing.pricelist_schedule.active_now',
+                notActiveNowLabel: 'oro.pricing.pricelist_schedule.not_active_now',
+                willBeActivatedLabel: 'oro.pricing.pricelist_schedule.will_be_acitivated',
+                wasDeactivatedLabel: 'oro.pricing.pricelist_schedule.was_deactivated',
+                willBeDeactivatedLabel: 'oro.pricing.pricelist_schedule.will_be_deacitivated'
+            } %}
+
             <table class="grid grid-main-container table-hover table table-bordered">
                 <thead>
                 <tr>
-                    <th scope="col">#</th>
+                    <th scope="col" style="width: 50px;">#</th>
                     <th scope="col">{{ 'oro.pricing.pricelist.name.label'|trans }}</th>
+                    {% if pricing_strategy == 'merge_by_priority' %}
                     <th scope="col">{{ 'oro.pricing.pricelist.merge_allowed.label'|trans }}</th>
+                    {% endif %}
+                    <th scope="col" style="width: 400px;">{{ 'oro.pricing.pricelist.status.label'|trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -19,7 +46,22 @@
                     <tr class="price_list{{ entity.priceList.id }}">
                         <td>{{ loop.index }}</td>
                         <td>{{ UI.entityViewLink(entity.priceList, entity.priceList.name, 'oro_pricing_price_list_view') }}</td>
+                        {% if pricing_strategy == 'merge_by_priority' %}
                         <td class="price_list_merge_allowed">{{ entity.mergeAllowed ? 'oro.pricing.pricelist.merge_allowed.yes.label'|trans : 'oro.pricing.pricelist.merge_allowed.no.label'|trans }}</td>
+                        {% endif %}
+                        <td>
+                            {% if not entity.priceList.active %}
+                                <ul class="schedule-list">
+                                    <li>{{ 'oro.pricing.pricelist_schedule.not_active_now'|trans }}</li>
+                                </ul>
+                            {% elseif not entity.priceList.schedules.isEmpty() %}
+                                {{ cronSchedulIntervals.scheduleIntervalsInfo(entity.priceList.schedules, scheduleLabels) }}
+                            {% else %}
+                                <ul class="schedule-list">
+                                    <li>{{ 'oro.pricing.pricelist_schedule.active_now'|trans }}</li>
+                                </ul>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

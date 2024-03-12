@@ -6,10 +6,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddr
 
 class LoadCustomerUserAddresses extends BaseLLoadCustomerUserAddresses
 {
-    /**
-     * @var array
-     */
-    protected $addresses = [
+    protected array $addresses = [
         [
             'customer_user' => 'sale-customer1-user1@example.com',
             'label' => 'sale.grzegorz.brzeczyszczykiewicz@example.com.address_1',
@@ -69,12 +66,10 @@ class LoadCustomerUserAddresses extends BaseLLoadCustomerUserAddresses
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return [
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData'
-        ];
+        return [LoadUserData::class];
     }
 }

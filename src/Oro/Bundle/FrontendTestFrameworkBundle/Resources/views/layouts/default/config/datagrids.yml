@@ -1,0 +1,19 @@
+datagrids:
+    test-theme-aware-grid:
+        source:
+            type: orm
+            query:
+                select:
+                    - item.id
+                    - item.name
+                from:
+                    - { table: Oro\Bundle\TestFrameworkBundle\Entity\TestEntityWithUserOwnership, alias: item }
+        options:
+            frontend: true
+        actions:
+            update:
+                type: navigate
+                link: update_link
+                acl_resource: oro_channel_update
+                icon: edit
+                label: fe-default-theme-grid-update-label

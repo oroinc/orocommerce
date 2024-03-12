@@ -2,17 +2,13 @@
 
 namespace Oro\Bundle\PromotionBundle\Provider;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
-use Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\RuleFiltration\AbstractSkippableFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 /**
  * Provides information about promotions applicable to a specific source entity.
@@ -20,26 +16,29 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 class PromotionProvider
 {
     public function __construct(
-        private ManagerRegistry $doctrine,
-        private RuleFiltrationServiceInterface $ruleFiltrationService,
         private ContextDataConverterInterface $contextDataConverter,
+        private RuleFiltrationServiceInterface $ruleFiltrationService,
         private AppliedPromotionMapper $promotionMapper,
-        private TokenAccessorInterface $tokenAccessor,
-        private MemoryCacheProviderInterface $memoryCacheProvider,
-        private PromotionAwareEntityHelper $promotionAwareHelper
+        private AvailablePromotionProviderInterface $availablePromotionProvider,
+        private PromotionAwareEntityHelper $promotionAwareHelper,
+        private MemoryCacheProviderInterface $memoryCacheProvider
     ) {
     }
 
+    /**
+     * @param object $sourceEntity
+     *
+     * @return PromotionDataInterface[]
+     */
     public function getPromotions(object $sourceEntity): array
     {
         $promotions = [];
-
         if ($this->promotionAwareHelper->isPromotionAware($sourceEntity)) {
             $promotions = $this->getAppliedPromotions($sourceEntity);
         }
+
         $contextData = $this->contextDataConverter->getContextData($sourceEntity);
-        $availablePromotions = $this->getAvailablePromotions($sourceEntity, $contextData);
-        $promotions = array_merge($promotions, $availablePromotions);
+        $promotions = array_merge($promotions, $this->getAvailablePromotions($sourceEntity, $contextData));
 
         return $this->filterPromotions($contextData, $promotions);
     }
@@ -74,21 +73,10 @@ class PromotionProvider
 
     private function getAvailablePromotions(object $sourceEntity, array $contextData): array
     {
-        $organization = $this->tokenAccessor->getOrganizationId();
-        if (null === $organization) {
-            return [];
-        }
-
         return $this->memoryCacheProvider->get(
-            ['entity_hash' => spl_object_hash($sourceEntity)],
-            function () use ($sourceEntity, $contextData, $organization) {
-                $criteria = $contextData[ContextDataConverterInterface::CRITERIA] ?? null;
-                $currentCurrency = $contextData[ContextDataConverterInterface::CURRENCY] ?? null;
-
-                /** @var PromotionRepository $promotionRepository */
-                $promotionRepository = $this->doctrine->getRepository(Promotion::class);
-
-                return $promotionRepository->getAvailablePromotions($criteria, $currentCurrency, $organization);
+            ['entity_hash'  => spl_object_hash($sourceEntity)],
+            function () use ($contextData) {
+                return $this->availablePromotionProvider->getAvailablePromotions($contextData);
             }
         );
     }
@@ -104,14 +92,14 @@ class PromotionProvider
 
     private function getAppliedPromotions(object $sourceEntity): array
     {
-        $appliedPromotions = [];
-        foreach ($sourceEntity->getAppliedPromotions() as $appliedPromotionEntity) {
-            if (!$appliedPromotionEntity->getPromotionData()) {
-                continue;
+        $result = [];
+        $appliedPromotions = $sourceEntity->getAppliedPromotions();
+        foreach ($appliedPromotions as $appliedPromotion) {
+            if ($appliedPromotion->getPromotionData()) {
+                $result[] = $this->promotionMapper->mapAppliedPromotionToPromotionData($appliedPromotion);
             }
-            $appliedPromotions[] = $this->promotionMapper->mapAppliedPromotionToPromotionData($appliedPromotionEntity);
         }
 
-        return $appliedPromotions;
+        return $result;
     }
 }

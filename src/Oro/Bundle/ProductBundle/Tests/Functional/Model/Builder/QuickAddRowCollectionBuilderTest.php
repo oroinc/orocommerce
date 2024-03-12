@@ -70,7 +70,14 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
         $this->assertQuickAddRow($collection->get(2), 2, 'продукт-7', 2.0, 'item', LoadProductData::PRODUCT_7);
         $this->assertQuickAddRow($collection->get(3), 3, '', 1.0, 'item', null);
         $this->assertQuickAddRow($collection->get(4), 10, 'продукт-9', 3.0, 'item', null);
-        $this->assertQuickAddRow($collection->get(5), 11, 'product-kit-1', 3.0, 'milliliter', null);
+        $this->assertQuickAddRow(
+            $collection->get(5),
+            11,
+            'product-kit-1',
+            3.0,
+            'milliliter',
+            LoadProductKitData::PRODUCT_KIT_1
+        );
     }
 
     public function testBuildFromArrayForEmptyData(): void

@@ -1,9 +1,0 @@
-layout:
-    imports:
-        -
-            id: oro_product_price
-            root: product_view_specification_container
-    actions:
-        - '@setBlockTheme':
-            themes: '@OroPricing/layouts/default/oro_product_frontend_product_view/page_template/short/logged.html.twig'
-    conditions: '!context["is_mobile"] && context["is_logged_in"] && context["product_type"] != "kit"'

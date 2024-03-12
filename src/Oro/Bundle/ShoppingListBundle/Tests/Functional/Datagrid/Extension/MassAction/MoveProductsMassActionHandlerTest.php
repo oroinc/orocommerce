@@ -51,9 +51,10 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         $this->ensureSessionIsAvailable();
 
         $container = self::getContainer();
-        $container->get('request_stack')
-            ->getCurrentRequest()
-            ->setMethod(Request::METHOD_POST);
+        $request = $container->get('request_stack')
+            ->getCurrentRequest();
+        $request->setMethod(Request::METHOD_POST);
+        $request->attributes->set('_theme', 'default');
 
         $this->customerUser = $this->getCustomerUser();
         $container->get('security.token_storage')
@@ -70,7 +71,7 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         $result = $this->handler->handle(
             new MassActionHandlerArgs(
                 $this->getMoveProductsMassAction(),
-                $this->getDatagrid($this->customerUser, $sourceShoppingList),
+                $this->getDatagrid($sourceShoppingList),
                 new IterableResult($this->getQuery($sourceShoppingList)),
                 ['shopping_list_id' => $targetShoppingList->getId()]
             )
@@ -95,7 +96,7 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         $sourceShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
         $targetShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
 
-        $datagrid = $this->getDatagrid($this->customerUser, $sourceShoppingList);
+        $datagrid = $this->getDatagrid($sourceShoppingList);
         $lineItem = $this->getReference($lineItemName);
         $result = $this->handler->handle(
             new MassActionHandlerArgs(
@@ -132,7 +133,7 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
         $sourceShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
         $targetShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
 
-        $datagrid = $this->getDatagrid($this->customerUser, $sourceShoppingList);
+        $datagrid = $this->getDatagrid($sourceShoppingList);
         $result = $this->handler->handle(
             new MassActionHandlerArgs(
                 $this->getMoveProductsMassAction(),
@@ -165,14 +166,13 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
     {
         return new UsernamePasswordOrganizationToken(
             $customerUser,
-            false,
             'k',
             $customerUser->getOrganization(),
             $customerUser->getUserRoles()
         );
     }
 
-    private function getDatagrid(CustomerUser $customerUser, ShoppingList $shoppingList): DatagridInterface
+    private function getDatagrid(ShoppingList $shoppingList): DatagridInterface
     {
         return self::getContainer()
             ->get('oro_datagrid.datagrid.manager')

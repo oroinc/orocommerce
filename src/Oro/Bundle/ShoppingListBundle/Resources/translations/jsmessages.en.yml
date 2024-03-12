@@ -17,10 +17,12 @@ oro:
                     all.label: All
         actions:
             add_to_shopping_list: Add to {{ shoppingList }}
+            add_to_shopping_list_short: Add to
             line_items_in_shopping_list: '{{ lineItems }} in {{ shoppingList }}'
-            in_shopping_lists: In Shopping Lists
+            in_shopping_lists: 'In {{ shoppingListsCount }} Shopping Lists'
             in_shopping_list: In Shopping List
             update_shopping_list: Update {{ shoppingList }}
+            update_shopping_list_short: Update
             shopping_list_set_as_default: Shopping list {{ shoppingList }} has been set as default.
             delete_line_item:
                 confirm_title:    'Delete "{{ name }}"'

@@ -4,6 +4,7 @@ oro:
             plural_label: Open Orders
         billing_address.label: Billing Address
         shipping_address.label: Shipping Address
+        please_wait_message: Please wait... your order is currently being processed. You will be notified once it is complete. Please do not reload or close this page
 
         grid:
             toolbar:

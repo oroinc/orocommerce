@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql\MysqlVersionCheckTrait;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractEngine;
@@ -14,6 +15,8 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\AbstractEngineTest;
 class OrmEngineTest extends AbstractEngineTest
 {
     use MysqlVersionCheckTrait;
+
+    private AbstractPlatform $platform;
 
     protected function setUp(): void
     {

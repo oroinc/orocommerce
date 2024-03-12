@@ -37,6 +37,7 @@ class FedexShippingMethod implements
     private FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory;
     private FedexRateServiceBySettingsClientInterface $rateServiceClient;
     private string $identifier;
+    private string $name;
     private string $label;
     private ?string $iconPath;
     private bool $enabled;
@@ -49,6 +50,7 @@ class FedexShippingMethod implements
      * @param FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory
      * @param FedexRateServiceBySettingsClientInterface         $rateServiceClient
      * @param string                                            $identifier
+     * @param string                                            $name
      * @param string                                            $label
      * @param string|null                                       $iconPath
      * @param bool                                              $enabled
@@ -77,6 +79,12 @@ class FedexShippingMethod implements
         $this->types = $types;
     }
 
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -99,6 +107,11 @@ class FedexShippingMethod implements
     public function getIdentifier(): string
     {
         return $this->identifier;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     /**

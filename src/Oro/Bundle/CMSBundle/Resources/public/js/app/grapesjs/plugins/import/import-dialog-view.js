@@ -426,7 +426,7 @@ const ImportDialogView = BaseView.extend({
         }
 
         return this.validateApiAccessor.send({}, {
-            content: this.renderProps.noEscapeStyleTag ? content : content.replace(/<style>(.|\n)*?<\/style>/g, ''),
+            content: this.renderProps.noEscapeStyleTag ? content : content.replace(/<style>|<\/style>/g, ''),
             className: this.entityClass,
             fieldName: this.fieldName
         }).then(({success, errors}) => {

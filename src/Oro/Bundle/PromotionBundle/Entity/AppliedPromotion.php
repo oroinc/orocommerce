@@ -4,103 +4,75 @@ namespace Oro\Bundle\PromotionBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroPromotionBundle_Entity_AppliedPromotion;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository;
 
 /**
  * Represents applied promotions to the order
  *
- * @Config()
- * @ORM\Table(name="oro_promotion_applied")
- * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository")
  *
  * @method Order getOrder()
  * @method setOrder(Order $order)
  * @mixin OroPromotionBundle_Entity_AppliedPromotion
  */
+#[ORM\Entity(repositoryClass: AppliedPromotionRepository::class)]
+#[ORM\Table(name: 'oro_promotion_applied')]
+#[Config]
 class AppliedPromotion implements DatesAwareInterface, ExtendEntityInterface
 {
     use DatesAwareTrait;
     use ExtendEntityTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer", name="id")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     *
-     * @var integer
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\Column(name: 'active', type: Types::BOOLEAN, options: ['default' => true])]
+    protected ?bool $active = true;
+
+    #[ORM\OneToOne(mappedBy: 'appliedPromotion', targetEntity: AppliedCoupon::class, cascade: ['all'])]
+    protected ?AppliedCoupon $appliedCoupon = null;
+
+    #[ORM\Column(name: 'type', type: Types::STRING, length: 255)]
+    protected ?string $type = null;
+
+    #[ORM\Column(name: 'source_promotion_id', type: Types::INTEGER)]
+    protected ?int $sourcePromotionId = null;
+
+    #[ORM\Column(name: 'promotion_name', type: Types::TEXT)]
+    protected ?string $promotionName = null;
 
     /**
-     * @ORM\Column(type="boolean", name="active", options={"default"=true})
-     *
-     * @var bool
-     */
-    protected $active = true;
-
-    /**
-     * @var AppliedCoupon|null
-     *
-     * @ORM\OneToOne(
-     *     targetEntity="Oro\Bundle\PromotionBundle\Entity\AppliedCoupon",
-     *     mappedBy="appliedPromotion",
-     *     cascade={"all"}
-     * )
-     */
-    protected $appliedCoupon;
-
-    /**
-     * @ORM\Column(name="type", type="string", length=255)
-     *
-     * @var string
-     */
-    protected $type;
-
-    /**
-     * @ORM\Column(name="source_promotion_id", type="integer"))
-     * @var int
-     */
-    protected $sourcePromotionId;
-
-    /**
-     * @ORM\Column(name="promotion_name", type="text")
-     *
-     * @var string
-     */
-    protected $promotionName;
-
-    /**
-     * @ORM\Column(name="config_options", type="json_array")
-     *
      * @var array
      */
+    #[ORM\Column(name: 'config_options', type: 'json_array')]
     protected $configOptions = [];
 
     /**
-     * @ORM\Column(name="promotion_data", type="json_array")
-     *
      * @var array
      */
+    #[ORM\Column(name: 'promotion_data', type: 'json_array')]
     protected $promotionData = [];
 
     /**
-     * @var Collection|AppliedDiscount[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\PromotionBundle\Entity\AppliedDiscount",
-     *      mappedBy="appliedPromotion",
-     *      cascade={"persist"},
-     *      orphanRemoval=true
-     * )
+     * @var Collection<int, AppliedDiscount>
      */
-    protected $appliedDiscounts;
+    #[ORM\OneToMany(
+        mappedBy: 'appliedPromotion',
+        targetEntity: AppliedDiscount::class,
+        cascade: ['persist'],
+        orphanRemoval: true
+    )]
+    protected ?Collection $appliedDiscounts = null;
 
     public function __construct()
     {

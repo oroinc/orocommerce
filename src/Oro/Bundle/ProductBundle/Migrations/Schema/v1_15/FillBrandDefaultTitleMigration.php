@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_15;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -13,18 +13,7 @@ use Oro\Bundle\MigrationBundle\Migration\SqlMigrationQuery;
 
 class FillBrandDefaultTitleMigration implements Migration, DatabasePlatformAwareInterface, OrderedMigrationInterface
 {
-    /**
-     * @var AbstractPlatform
-     */
-    private $platform;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDatabasePlatform(AbstractPlatform $platform)
-    {
-        $this->platform = $platform;
-    }
+    use DatabasePlatformAwareTrait;
 
     /**
      * {@inheritdoc}

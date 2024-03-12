@@ -29,10 +29,10 @@ class OnlySimpleProductsInProductKitItemProductsCollectionValidator extends Cons
             throw new UnexpectedValueException($value, ProductKitItem::class);
         }
 
-        foreach ($value->getProducts() as $index => $product) {
-            if ($product->getType() !== Product::TYPE_SIMPLE) {
+        foreach ($value->getKitItemProducts() as $index => $kitItemProduct) {
+            if ($kitItemProduct->getProduct()?->getType() !== Product::TYPE_SIMPLE) {
                 $this->context->buildViolation($constraint->message)
-                    ->atPath('kitItemProducts.' . $index)
+                    ->atPath('kitItemProducts[' . $index .']')
                     ->addViolation();
             }
         }

@@ -23,11 +23,9 @@ class OrderWithChangedPromotionsCollectionSpecification implements Specification
     }
 
     /**
-     * @param Order $order
-     *
-     * @return bool
+     * @param Order|object $order
      */
-    public function isSatisfiedBy($order): bool
+    public function isSatisfiedBy(object $order): bool
     {
         if (!$order instanceof Order) {
             return false;
@@ -48,11 +46,6 @@ class OrderWithChangedPromotionsCollectionSpecification implements Specification
         return $this->isPromotionsChanged($order->getAppliedPromotions());
     }
 
-    /**
-     * @param Collection|array $appliedPromotions
-     *
-     * @return bool
-     */
     private function isPromotionsChanged(Collection|array $appliedPromotions): bool
     {
         if ($appliedPromotions instanceof PersistentCollection && $appliedPromotions->isDirty()) {

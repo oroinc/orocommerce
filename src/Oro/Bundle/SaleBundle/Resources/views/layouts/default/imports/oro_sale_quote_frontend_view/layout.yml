@@ -4,6 +4,10 @@ layout:
             id: oro_customer_toolbar_actions
             root: quote_view_page
             namespace: quote_view_page_toolbar
+        -
+            id: oro_sale_quote_product_kit_configuration
+            root: quote_view_line_items_row_item
+
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'

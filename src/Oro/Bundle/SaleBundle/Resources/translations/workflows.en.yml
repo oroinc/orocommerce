@@ -73,6 +73,8 @@ oro.workflow:
             reopen_transition:
                 label: 'Reopen'
                 warning_message: ''
+            verify_transition:
+                label: 'Edit'
 
     b2b_quote_backoffice_approvals:
         label: 'Backoffice Quote Flow with Approvals'
@@ -181,6 +183,8 @@ oro.workflow:
                         label: 'Copy All Notes'
                     expire_quote:
                         label: 'Expire Existing Quote'
+            verify_transition:
+                label: 'Edit'
         variable:
             price_override_triggers_approval:
                 label: 'Price override requires approval'

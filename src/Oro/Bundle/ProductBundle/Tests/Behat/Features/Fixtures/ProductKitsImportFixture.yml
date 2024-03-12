@@ -1,0 +1,75 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision1:
+    unit: '@set'
+    precision: '1'
+  precision2:
+    unit: '@set'
+    precision: '1'
+  additionalPrecision2:
+    unit: '@item'
+    precision: '1'
+    sell: true
+  precision3:
+    unit: '@set'
+    precision: '1'
+  precision4:
+    unit: '@set'
+    precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product1:
+    sku: 'PSKU1'
+    primaryUnitPrecision: '@precision1'
+    unitPrecisions: ['@precision1']
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - setDefaultName: ['@locvalue1']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    organization: '@organization'
+    owner: '@business_unit'
+  product2:
+    sku: 'PSKU2'
+    primaryUnitPrecision: '@precision2'
+    unitPrecisions: ['@precision2']
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - setDefaultName: ['@locvalue2']
+      - addAdditionalUnitPrecision: ['@additionalPrecision2']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    organization: '@organization'
+    owner: '@business_unit'
+  product3:
+    sku: 'PSKU3'
+    primaryUnitPrecision: '@precision3'
+    unitPrecisions: ['@precision3']
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - setDefaultName: ['@locvalue3']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    organization: '@organization'
+    owner: '@business_unit'
+  product4:
+    sku: 'PSKU4'
+    type: 'configurable'
+    primaryUnitPrecision: '@precision4'
+    unitPrecisions: ['@precision4']
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      - setDefaultName: ['@locvalue4']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    organization: '@organization'
+    owner: '@business_unit'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+  locvalue1:
+    string: 'Product 1'
+  locvalue2:
+    string: 'Product 2'
+  locvalue3:
+    string: 'Product 3'
+  locvalue4:
+    string: 'Product 4'

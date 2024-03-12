@@ -9,7 +9,9 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider;
 use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
@@ -81,7 +83,7 @@ trait ProductVisibilityTrait
         WebsiteInterface $website
     ) {
         $queryBuilder->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved',
+            CustomerGroupProductVisibilityResolved::class,
             'customer_group_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
@@ -115,7 +117,7 @@ trait ProductVisibilityTrait
         WebsiteInterface $website
     ) {
         $queryBuilder->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved',
+            CustomerProductVisibilityResolved::class,
             'customer_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
@@ -182,7 +184,7 @@ TERM;
         WebsiteInterface $website
     ): string {
         $queryBuilder->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved',
+            ProductVisibilityResolved::class,
             'product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(

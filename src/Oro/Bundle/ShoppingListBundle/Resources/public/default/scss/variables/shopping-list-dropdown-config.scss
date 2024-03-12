@@ -3,20 +3,39 @@
 @use 'sass:color';
 
 $shopping-list-dropdown-radio-width: 20px !default;
-$shopping-list-dropdown-item-inner-offset: 10px 9px !default;
-$shopping-list-dropdown-item-border: 1px solid get-color('additional', 'light') !default;
+$shopping-list-dropdown-item-inner-offset: spacing('base') 0 !default;
+$shopping-list-dropdown-item-border: 1px solid get-color('neutral', 'grey2') !default;
 
-$shopping-list-dropdown-info-color: get-color('ui', 'normal') !default;
+$shopping-list-dropdown-info-color: get-color('text', 'link') !default;
+$shopping-list-dropdown-info-color-hover: get-color('text', 'link-hover') !default;
 
-$shopping-list-dropdown-link-color: get-color('additional', 'darker') !default;
+$shopping-list-dropdown-link-color: get-color('text', 'primary') !default;
 
-$shopping-list-dropdown-products-color: color.adjust(get-color('additional', 'middle'), $lightness: -20%);
+$shopping-list-dropdown-name-default-color: get-color('primary', 'main') !default;
+$shopping-list-dropdown-products-color: get-color('text', 'secondary') !default;
 
+$shopping-list-dropdown-item-title-color: get-color('text', 'link') !default;
 $shopping-list-dropdown-item-title-hover-color: null !default;
-$shopping-list-product-sku-value-color: get-color('primary', 'dark') !default;
+$shopping-list-product-sku-value-color: get-color('text', 'secondary') !default;
 
-$shopping-list-dropdown-footer-border: 1px solid get-color('additional', 'light');
+$shopping-list-dropdown-footer-border: 1px solid get-color('neutral', 'grey2');
 
-$shopping-list-dropdown-product-item-border-top: 1px solid get-color('additional', 'light') !default;
+$shopping-list-dropdown-product-item-border-top: 1px solid get-color('neutral', 'grey2') !default;
 
 $shopping-list-dropdown-product-img-border-top: $shopping-list-dropdown-product-item-border-top !default;
+
+$shopping-list-widget-footer-template-areas: #{var(--shopping-list-widget-footer-template-areas, 'total .')} !default;
+$shopping-list-widget-footer-template-columns: #{var(
+    --shopping-list-widget-footer-template-columns,
+    1fr auto
+)} !default;
+$shopping-list-widget-footer-grid-gap: spacing('sm') spacing('base') !default;
+
+$shopping-list-widget-footer-template-areas-stack: #{'"total" "."'} !default;
+$shopping-list-widget-footer-template-columns-stack: 1fr !default;
+
+$shopping-list-widget-footer-template-areas-columns: #{'"total total" ". ."'} !default;
+$shopping-list-widget-footer-template-columns-columns: 1fr 1fr !default;
+
+$shopping-list-widget-footer-template-areas-no-items: '.' !default;
+$shopping-list-widget-footer-template-columns-no-items: 1fr !default;

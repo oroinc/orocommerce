@@ -4,34 +4,30 @@ namespace Oro\Bundle\SaleBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
+use Oro\Bundle\SaleBundle\Entity\Repository\QuoteDemandRepository;
 use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodConfigurationInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * Entity that represents quote demand
- *
- * @ORM\Table(name="oro_quote_demand")
- * @ORM\Entity(repositoryClass="Oro\Bundle\SaleBundle\Entity\Repository\QuoteDemandRepository")
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-list-alt"
- *          }
- *      }
- * )
  */
+#[ORM\Entity(repositoryClass: QuoteDemandRepository::class)]
+#[ORM\Table(name: 'oro_quote_demand')]
+#[Config(defaultValues: ['entity' => ['icon' => 'fa-list-alt']])]
 class QuoteDemand implements
     CheckoutSourceEntityInterface,
     LineItemsAwareInterface,
@@ -46,59 +42,45 @@ class QuoteDemand implements
     use AuditableFrontendCustomerUserAwareTrait;
     use ExtendEntityTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Quote::class, inversedBy: 'demands')]
+    #[ORM\JoinColumn(name: 'quote_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Quote $quote = null;
 
     /**
-     * @var Quote
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SaleBundle\Entity\Quote", inversedBy="demands")
-     * @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
+     * @var Collection<int, QuoteProductDemand>
      */
-    protected $quote;
-
-    /**
-     * @var Collection
-     *
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\SaleBundle\Entity\QuoteProductDemand",
-     *     mappedBy="quoteDemand", cascade={"all"}, orphanRemoval=true)
-     * @ORM\OrderBy({"id" = "ASC"})
-     */
-    protected $demandProducts;
+    #[ORM\OneToMany(
+        mappedBy: 'quoteDemand',
+        targetEntity: QuoteProductDemand::class,
+        cascade: ['all'],
+        orphanRemoval: true
+    )]
+    #[ORM\OrderBy(['id' => Criteria::ASC])]
+    protected ?Collection $demandProducts = null;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="subtotal", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'subtotal', type: 'money', nullable: true)]
     protected $subtotal;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="total", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'total', type: 'money', nullable: true)]
     protected $total;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="total_currency", type="string", length=3, nullable=true)
-     */
-    protected $totalCurrency;
+    #[ORM\Column(name: 'total_currency', type: Types::STRING, length: 3, nullable: true)]
+    protected ?string $totalCurrency = null;
 
-    /**
-     * @var CustomerVisitor|null
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerVisitor")
-     * @ORM\JoinColumn(name="visitor_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $visitor;
+    #[ORM\ManyToOne(targetEntity: CustomerVisitor::class)]
+    #[ORM\JoinColumn(name: 'visitor_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?CustomerVisitor $visitor = null;
 
     public function __construct()
     {

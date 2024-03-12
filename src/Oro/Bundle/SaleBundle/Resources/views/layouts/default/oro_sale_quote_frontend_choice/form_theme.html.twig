@@ -92,6 +92,7 @@
             {{ UI.link({
                 path: path('oro_product_frontend_product_view', {'id': quoteProduct.product.id}),
                 label : quoteProduct.product.names|localized_value,
+                class: 'no-decoration'
             }) }}
         {% else %}
             {{ quoteProduct.productName }}
@@ -102,6 +103,7 @@
 {% block oro_sale_quote_product_demand_item_attributes_container %}
     <div class="customer-line-items__row">
         {{ block('oro_sale_quote_product_demand_item_attributes_sku') }}
+        {{ block('oro_sale_quote_product_demand_item_kit_configuration') }}
     </div>
 {% endblock %}
 
@@ -181,4 +183,8 @@
             {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+
+{% block oro_sale_quote_product_demand_item_kit_configuration %}
+    {% include '@OroSale/layouts/default/imports/oro_sale_quote_product_kit_configuration/layout.html.twig' %}
 {% endblock %}

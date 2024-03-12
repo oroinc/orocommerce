@@ -39,7 +39,7 @@ class PriceRuleLexemeEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $args = $this->getEventArgs();
 
-        $this->listener->postPersist($args->getEntity(), $args);
+        $this->listener->postPersist($args->getObject(), $args);
     }
 
     public function testPostUpdate()
@@ -49,7 +49,7 @@ class PriceRuleLexemeEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $args = $this->getEventArgs();
 
-        $this->listener->postUpdate($args->getEntity(), $args);
+        $this->listener->postUpdate($args->getObject(), $args);
     }
 
     public function testPostRemove()
@@ -59,7 +59,7 @@ class PriceRuleLexemeEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $args = $this->getEventArgs();
 
-        $this->listener->postRemove($args->getEntity(), $args);
+        $this->listener->postRemove($args->getObject(), $args);
     }
 
     /**

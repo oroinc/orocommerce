@@ -65,6 +65,6 @@ class UpdateQuoteGuestAccessIdQuery extends ParametrizedMigrationQuery
 
         $this->logQuery($logger, $query);
 
-        return $dryRun ? [] : array_column($this->connection->fetchAll($query), 'id');
+        return $dryRun ? [] : array_column($this->connection->fetchAllAssociative($query), 'id');
     }
 }

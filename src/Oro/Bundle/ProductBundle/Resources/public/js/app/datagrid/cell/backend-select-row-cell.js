@@ -2,16 +2,8 @@ define(function(require) {
     'use strict';
 
     const $ = require('jquery');
-    const _ = require('underscore');
-    const __ = require('orotranslation/js/translator');
     const template = require('tpl-loader!oroproduct/templates/datagrid/backend-select-row-cell.html');
     const SelectRowCell = require('oro/datagrid/cell/select-row-cell');
-    const viewportManager = require('oroui/js/viewport-manager').default;
-
-    const modes = {
-        DROPDOWN: 'Dropdown',
-        SIMPLE: 'Simple'
-    };
 
     /**
      * Renders a checkbox for row selection.
@@ -34,13 +26,7 @@ define(function(require) {
         checkboxSelector: '[data-role="select-row-cell"]',
 
         /** @property */
-        text: __('oro.product.grid.select_product'),
-
-        listen() {
-            return {
-                [`viewport:${this.getScreenSize()} mediator`]: 'defineRenderingStrategy'
-            };
-        },
+        text: null,
 
         /**
          * @inheritdoc
@@ -73,26 +59,6 @@ define(function(require) {
             this.model.on('backgrid:select', (model, checked) => {
                 this.$(':checkbox').prop('checked', checked).change();
             });
-            this.model.on('backgrid:canSelected', checked => {
-                this.hideView(!checked && this._isSimple());
-            });
-        },
-
-        defineRenderingStrategy() {
-            const prevRenderMode = this.renderMode;
-
-            if (this._isSimple()) {
-                this.renderMode = modes.SIMPLE;
-            } else {
-                this.renderMode = modes.DROPDOWN;
-            }
-
-            if (prevRenderMode !== this.renderMode) {
-                this.trigger('render-mode:changed', {
-                    prevRenderMode,
-                    renderMode: this.renderMode
-                });
-            }
         },
 
         /**
@@ -100,44 +66,20 @@ define(function(require) {
          */
         render: function() {
             const visibleState = {};
-            let hideCheckboxes = this._isSimple();
             const state = {selected: false};
 
             this.model.trigger('backgrid:isSelected', this.model, state);
             this.model.trigger('backgrid:getVisibleState', visibleState);
-            if (!_.isEmpty(visibleState)) {
-                // Mobile view row selection is turned on
-                hideCheckboxes = !visibleState.visible;
-            }
 
             this.$el.html(this.template({
                 checked: state.selected,
-                text: this.text,
-                isSimple: this._isSimple()
+                text: this.text
             }));
 
             this.$checkbox = this.$el.find(this.checkboxSelector);
             this.$container.append(this.$el);
-            this.hideView(hideCheckboxes);
 
             return this;
-        },
-
-        _isSimple() {
-            return viewportManager.isApplicable(this.getScreenSize());
-        },
-
-        getScreenSize() {
-            let screen = 'tablet';
-
-            try {
-                const resolution = this.model.collection.options.optimizedScreenSize;
-                if (resolution) {
-                    screen = resolution;
-                }
-            } catch (e) {}
-
-            return screen;
         },
 
         /**

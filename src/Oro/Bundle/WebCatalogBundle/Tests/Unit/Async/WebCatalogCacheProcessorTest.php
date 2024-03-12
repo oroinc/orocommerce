@@ -33,6 +33,12 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
 
     private WebCatalogCacheProcessor $processor;
 
+    private WebCatalogRepository $webCatalogRepository;
+
+    private WebsiteRepository $websiteRepository;
+
+    private ContentNodeRepository $contentNodeRepo;
+
     protected function setUp(): void
     {
         $this->jobRunner = $this->createMock(JobRunner::class);

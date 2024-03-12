@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Controller;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType;
@@ -34,18 +34,18 @@ class AjaxProductShippingOptionsController extends AbstractController
     /**
      * Get available FreightClasses codes
      *
-     * @Route("/freight-classes", name="oro_shipping_freight_classes", methods={"POST"})
-     * @AclAncestor("oro_product_update")
      *
      * @param Request $request
      * @return JsonResponse
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
+    #[Route(path: '/freight-classes', name: 'oro_shipping_freight_classes', methods: ['POST'])]
+    #[AclAncestor('oro_product_update')]
     public function getAvailableProductUnitFreightClassesAction(Request $request)
     {
         $unitCode = $request->request->get('activeUnitCode');
 
-        $productData = $request->request->get(ProductType::NAME);
+        $productData = $request->request->all(ProductType::NAME);
         if (!is_array($productData)) {
             throw $this->createNotFoundException();
         }
@@ -56,9 +56,9 @@ class AjaxProductShippingOptionsController extends AbstractController
         }
         $activeShippingOptions->setProduct($product);
 
-        $provider = $this->get(FreightClassesProvider::class);
+        $provider = $this->container->get(FreightClassesProvider::class);
 
-        $formatter = $this->get(UnitLabelFormatter::class);
+        $formatter = $this->container->get(UnitLabelFormatter::class);
 
         $units = $provider->getFreightClasses($activeShippingOptions);
 

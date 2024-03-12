@@ -1,34 +1,46 @@
 /* @theme: default; */
 
 .product-view {
-    &__attributes-container {
-        margin-bottom: $offset-y;
+    &-attribute {
+        &__tab-content {
+            display: $product-view-attribute-tab-content-display;
+            padding-top: $product-view-attribute-tab-content-padding-top;
+        }
 
-        border: 1px solid $product-view-attributes-containers-border-color;
-
-        border-radius: $product-view-attributes-container-border-radius;
-
-        .tab-content {
+        &__group {
             display: flex;
             flex-direction: column;
-            row-gap: $product-view-attributes-tab-content-gap;
-            padding: $product-view-attributes-tab-content-offset-inner;
+            border-bottom: $product-view-attribute-group-border-bottom;
 
-            .entity-label {
-                font-weight: $product-view-attributes-tab-content-attribute-weight;
+            &-title {
+                padding-block: $product-view-attribute-group-title-border-bottom;
             }
-        }
-    }
-}
 
-@include breakpoint('mobile-landscape') {
-    .product-view {
-        &__attributes-container {
-            border: $product-view-attributes-container-border-radius-mobile-l;
+            &-toggle {
+                background: transparent;
+                border: none;
+                font-size: inherit;
+                font-weight: inherit;
+                font-family: inherit;
+                color: inherit;
+                padding: 0;
 
-            .tab-content {
-                // stylelint-disable-next-line declaration-no-important
-                display: $product-view-attributes-tab-content-display-mobile-l !important;
+                display: flex;
+                gap: $product-view-attribute-group-toggle-gap;
+                align-items: center;
+
+                &:not(.collapsed) {
+                    .theme-icon {
+                        transform: rotate(180deg);
+                    }
+                }
+            }
+
+            &-content {
+                padding-bottom: spacing('base');
+                display: flex;
+                flex-direction: column;
+                gap: $product-view-attribute-group-content-gap;
             }
         }
     }

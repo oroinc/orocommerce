@@ -22,8 +22,8 @@ class CustomerGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->loadFixtures(['Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
         $this->repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved');
+            ->getManagerForClass(CustomerGroupProductVisibilityResolved::class)
+            ->getRepository(CustomerGroupProductVisibilityResolved::class);
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }
 

@@ -232,22 +232,36 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function onPreBuildDataProvider(): array
     {
-        $stringAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 101, 'fieldName' => 'sku']);
+        $stringAttribute = $this->getEntity(FieldConfigModel::class, [
+            'id' => 101, 'fieldName' => 'sku', 'type' => 'string'
+        ]);
         $stringAttribute->setEntity(new EntityConfigModel(Product::class));
         $stringSearchAttributeType = new SearchableType\StringSearchableAttributeType(new Type\StringAttributeType());
 
-        $enumAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 202, 'fieldName' => 'internalStatus']);
+        $enumAttribute = $this->getEntity(FieldConfigModel::class, [
+            'id' => 202,
+            'fieldName' => 'internalStatus',
+            'type' => 'enum'
+        ]);
         $enumAttribute->setEntity(new EntityConfigModel(Product::class))
             ->fromArray('extend', ['target_entity' => TestEnumValue::class]);
         $enumSearchAttributeType = new SearchableType\EnumSearchableAttributeType(new Type\EnumAttributeType());
 
-        $decimalAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 303, 'fieldName' => 'weight']);
+        $decimalAttribute = $this->getEntity(FieldConfigModel::class, [
+            'id' => 303,
+            'fieldName' => 'weight',
+            'type' => 'decimal'
+        ]);
         $decimalAttribute->setEntity(new EntityConfigModel(Product::class));
         $decimalSearchAttributeType = new SearchableType\DecimalSearchableAttributeType(
             new Type\DecimalAttributeType()
         );
 
-        $multiEnumAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 404, 'fieldName' => 'internalStatus']);
+        $multiEnumAttribute = $this->getEntity(FieldConfigModel::class, [
+            'id' => 404,
+            'fieldName' => 'internalStatus',
+            'type' => 'multiEnum'
+        ]);
         $multiEnumAttribute->setEntity(new EntityConfigModel(Product::class));
         $multiEnumSearchAttributeType = new SearchableType\MultiEnumSearchableAttributeType(
             new Type\MultiEnumAttributeType()
@@ -262,7 +276,11 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
 
-        $manyToManyAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 505, 'fieldName' => 'names']);
+        $manyToManyAttribute = $this->getEntity(FieldConfigModel::class, [
+            'id' => 505,
+            'fieldName' => 'names',
+            'type' => 'manyToMany'
+        ]);
         $manyToManyAttribute->setEntity(new EntityConfigModel(Product::class));
 
         $manyToManyAttributeLocalizable = clone $manyToManyAttribute;
@@ -272,13 +290,21 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             new Type\ManyToManyAttributeType($entityNameResolver, $doctrineHelper)
         );
 
-        $manyToOneAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 606, 'fieldName' => 'manytoone']);
+        $manyToOneAttribute = $this->getEntity(FieldConfigModel::class, [
+            'id' => 606,
+            'fieldName' => 'manytoone',
+            'type' => 'manytoone'
+        ]);
         $manyToOneAttribute->setEntity(new EntityConfigModel(Product::class));
         $manyToOneSearchAttributeType = new SearchableType\ManyToOneSearchableAttributeType(
             new Type\ManyToOneAttributeType($entityNameResolver, $doctrineHelper)
         );
 
-        $fileAttribute = $this->getEntity(FieldConfigModel::class, ['id' => 707, 'fieldName' => 'image']);
+        $fileAttribute = $this->getEntity(FieldConfigModel::class, [
+            'id' => 707,
+            'fieldName' => 'image',
+            'type' => 'image'
+        ]);
         $fileAttribute->setEntity(new EntityConfigModel(Product::class));
 
         $fileSearchAttributeType = new SearchableType\FileSearchableAttributeType(new Type\FileAttributeType());
@@ -314,7 +340,8 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_STRING,
                                 'data_name' => Query::TYPE_TEXT . '.sku',
                                 'label' => self::LABEL,
-                                'max_length' => 255
+                                'max_length' => 255,
+                                'field_options' => ['type' => 'string'],
                             ]
                         ]
                     ]
@@ -361,7 +388,8 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_enum.' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
-                                'class' => TestEnumValue::class
+                                'class' => TestEnumValue::class,
+                                'field_options' => ['type' => 'enum'],
                             ]
                         ]
                     ],
@@ -427,7 +455,8 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_enum.' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
-                                'class' => TestEnumValue::class
+                                'class' => TestEnumValue::class,
+                                'field_options' => ['type' => 'enum'],
                             ]
                         ]
                     ],
@@ -479,7 +508,8 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'label' => self::LABEL,
                                 'options' => [
                                     'data_type' => NumberFilterTypeInterface::DATA_DECIMAL
-                                ]
+                                ],
+                                'field_options' => ['type' => 'decimal']
                             ]
                         ]
                     ],
@@ -515,7 +545,8 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_enum.' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
-                                'class' => TestEnumValue::class
+                                'class' => TestEnumValue::class,
+                                'field_options' => ['type' => 'multiEnum']
                             ]
                         ]
                     ],
@@ -539,7 +570,8 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_enum.' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
-                                'class' => null
+                                'class' => null,
+                                'field_options' => ['type' => 'multiEnum']
                             ]
                         ]
                     ],
@@ -560,7 +592,8 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'type' => SearchableType\SearchAttributeTypeInterface::FILTER_TYPE_STRING,
                                 'data_name' => Query::TYPE_TEXT . '.names_' . LocalizationIdPlaceholder::NAME,
                                 'label' => self::LABEL,
-                                'max_length' => 255
+                                'max_length' => 255,
+                                'field_options' => ['type' => 'manyToMany']
                             ]
                         ]
                     ],
@@ -594,6 +627,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'data_name' => Query::TYPE_INTEGER . '.manytoone',
                                 'label' => self::LABEL,
                                 'class' => TestEnumValue::class,
+                                'field_options' => ['type' => 'manytoone']
                             ]
                         ]
                     ],

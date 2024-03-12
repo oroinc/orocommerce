@@ -221,6 +221,43 @@ oro.pricing:
         type.label: Type
         version.label: Version
         price_input.aria_label: 'Product Price'
+        debug:
+            page_title: 'Price Calculation Details'
+            currencies.label: 'Currencies'
+            show_tier_prices.label: 'Show Tier Prices'
+            trace.label: 'View Price Calculation Details'
+            show_for_date.label: 'Date'
+            general.label: 'General'
+            pricing_strategy.label: 'Pricing Strategy'
+            current_prices:
+                label: 'Customer Prices'
+                tooltip: 'Click to highlight prices in Price Merge Details.<br>Click again to turn off highlighting.'
+            no_prices.label: 'No prices'
+            no_prices_for_date.label: 'No prices available on %date%. Automatic price calculation is scheduled to start on %calculation_start_date%'
+            not_used_prices.message: 'Prices from this price list are not used'
+            not_used_prices_for_date.message: 'Prices from this price list are not used on %date%'
+            price_list_assignment_info.label: 'Price List Assignment'
+            price_list_used_chain.label: 'Active CPL Price Lists'
+            full_price_list_used_chain.label: 'Full CPL Price Lists'
+            show_detailed_assignment_info.label: 'Show Price List Assignment'
+            show_developers_info.label: 'Show Information for Developers'
+            price_merge_details.label: 'Price Merge Details'
+            merge_allowed.label: 'Merge allowed'
+            merge_not_allowed.label: 'Merge not allowed'
+            combined_price_list.label: 'Active CPL ID'
+            full_combined_price_list.label: 'Full CPL ID'
+            cpl_activation_rules.label: 'Combined Price List Activation Rules'
+            dev_info_general.label: General
+            dev_info.label: 'Information for Developers'
+            recalculate_action.label: 'Recalculate Prices'
+            planned_for_recalculation.message: 'Combined Price List was scheduled for recalculation'
+            pricelist_schedule:
+                was_activated: 'Was activated on <strong>%date%</strong>'
+                was_deactivated: 'Was deactivated on <strong>%date%</strong>'
+                will_be_acitivated: 'Will become active on <strong>%date%</strong>'
+                will_be_deacitivated: 'Will be deactivated on <strong>%date%</strong>'
+                active_now: 'Is active now'
+                not_active_now: 'Is inactive now'
 
     combinedproductprice:
         entity_label: 'Combined Product Price'
@@ -281,6 +318,7 @@ oro.pricing:
         shortcut_new_price_list.description: Create new price list item
         shortcut_price_lists.description: Show list of existing price lists
         shortcut_price_attribute_price_lists.description: Show list of existing price attributes
+        product_price_debug.description: Show product prices calculation details.
 
     sections:
         general: General
@@ -385,6 +423,12 @@ oro.pricing:
         not_priced_subtotal.label: Subtotal
         total.label: Total
         no_data.label: No data
+
+    acl:
+        action:
+            debug_prices:
+                label: Price Calculation Details
+                description: Allows user to access price calculation details
 
     frontend:
         pricelist:

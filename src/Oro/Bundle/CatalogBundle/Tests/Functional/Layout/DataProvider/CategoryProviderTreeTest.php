@@ -33,7 +33,8 @@ class CategoryProviderTreeTest extends WebTestCase
             self::getContainer()->get('doctrine'),
             $this->createMock(CategoryTreeProvider::class),
             self::getContainer()->get('oro_security.token_accessor'),
-            self::getContainer()->get('oro_catalog.provider.master_catalog_root')
+            self::getContainer()->get('oro_catalog.provider.master_catalog_root'),
+            self::getContainer()->get('oro_catalog.layout.data_provider.category_bc_adapter')
         );
     }
 

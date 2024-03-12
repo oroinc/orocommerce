@@ -170,9 +170,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         if (!$products) {
             yield [];
         } else {
-            foreach (array_chunk($products, $this->productsBatchSize) as $batch) {
-                yield $batch;
-            }
+            yield from array_chunk($products, $this->productsBatchSize);
         }
     }
 }

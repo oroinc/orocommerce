@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql\MysqlVersionCheckTrait;
 
 abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScopedProductSelectTypeTest
 {
     use MysqlVersionCheckTrait;
+
+    private AbstractPlatform $platform;
 
     protected function setUp(): void
     {
@@ -16,6 +19,7 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
 
         parent::setUp();
 
+        $this->initClient();
         $this->configScopeName = 'website';
         $this->configScopeIdentifier = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
         $this->platform = $this->getContainer()->get('doctrine')->getManager()->getConnection()->getDatabasePlatform();

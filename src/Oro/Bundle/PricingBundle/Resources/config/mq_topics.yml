@@ -8,6 +8,10 @@ services:
         arguments:
             - '@oro_pricing.provider.combined_price_list'
 
+    Oro\Bundle\PricingBundle\Async\Topic\ActualizeCombinedPriceListTopic:
+        arguments:
+            - '@oro_pricing.provider.combined_price_list'
+
     Oro\Bundle\PricingBundle\Async\Topic\ResolveFlatPriceTopic:
         arguments:
             - '@doctrine'

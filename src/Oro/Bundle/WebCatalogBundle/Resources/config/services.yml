@@ -401,6 +401,28 @@ services:
             - '@oro_web_catalog.content_node_tree_cache.root'
             - '@oro_web_catalog.content_node_tree_cache.merged'
 
+    # Component added back for theme layout BC from version 5.0
+    oro_web_catalog.layout.data_provider.menu_data:
+        class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_web_catalog.web_catalog_provider'
+            - '@oro_web_catalog.content_node_tree_resolver'
+            - '@oro_locale.helper.localization'
+            - '@oro_web_catalog.request_web_content_scope_provider'
+            - '@oro_website.manager'
+        calls:
+            - [setCache, ['@oro_web_catalog.layout.data_provider.menu_data.cache']]
+        tags:
+            - { name: layout.data_provider, alias: web_catalog_menu }
+
+    # Component added back for theme layout BC from version 5.0
+    oro_web_catalog.layout.data_provider.menu_data.cache:
+        parent: oro.data.cache
+        public: false
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_web_catalog_layout_provider' }
+
     oro_web_catalog.layout.data_provider.content_variant:
         class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\ContentVariantDataProvider
         arguments:

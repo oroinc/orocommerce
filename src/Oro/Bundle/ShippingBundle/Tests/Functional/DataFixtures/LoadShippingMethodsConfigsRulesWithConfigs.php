@@ -8,7 +8,6 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\FlatRateShippingBundle\Tests\Functional\DataFixtures\LoadFlatRateIntegration;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
@@ -16,6 +15,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture implements DependentFixtureInterface
@@ -25,9 +25,7 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
      */
     public function getDependencies(): array
     {
-        return [
-            LoadFlatRateIntegration::class,
-        ];
+        return [LoadFlatRateIntegration::class, LoadOrganization::class];
     }
 
     /**
@@ -38,7 +36,6 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
         foreach ($this->getShippingRuleData() as $reference => $data) {
             $this->loadShippingRule($reference, $data, $manager);
         }
-
         $manager->flush();
     }
 
@@ -66,7 +63,7 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
         $configRule = new ShippingMethodsConfigsRule();
         $configRule->setRule($rule);
         $configRule->setCurrency($data['currency']);
-        $configRule->setOrganization($manager->getRepository(Organization::class)->getFirst());
+        $configRule->setOrganization($this->getReference(LoadOrganization::ORGANIZATION));
 
         $this->setDestinations($configRule, $manager, $data);
         $this->setMethodConfigs($configRule, $manager, $data);

@@ -36,10 +36,12 @@ class InventoryLevelExportTypeExtensionTest extends \PHPUnit\Framework\TestCase
 
         $builder->expects($this->once())
             ->method('add')
-            ->willReturnCallback(function ($name, $type, $options) {
+            ->willReturnCallback(function ($name, $type, $options) use ($builder) {
                 $choices = $options['choices'];
                 $this->assertContains('oro_product.inventory_status_only', $choices);
                 $this->assertContains('oro_inventory.detailed_inventory_levels', $choices);
+
+                return $builder;
             });
 
         $this->inventoryLevelExportTypeExtension->buildForm(

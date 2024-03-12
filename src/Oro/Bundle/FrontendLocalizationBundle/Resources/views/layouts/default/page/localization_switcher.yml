@@ -1,15 +1,26 @@
 layout:
     actions:
-        - '@add':
-            id: localization_switcher
-            parentId: top_nav_menu_container
-            siblingId: top_nav
-            blockType: localization_switcher
-            options:
-                localizations: '=data["frontend_localization"].getEnabledLocalizations()'
-                selected_localization: '=data["frontend_localization"].getCurrentLocalization()'
-
         - '@appendOption':
             id: body
             optionName: vars.selected_localization
             optionValue: '=data["frontend_localization"].getCurrentLocalization()'
+
+        - '@appendOption':
+            id: currency_localization_container
+            optionName: vars.localizations
+            optionValue: '=data["frontend_localization"].getEnabledLocalizations()'
+
+        - '@appendOption':
+            id: currency_localization_container
+            optionName: vars.selected_localization
+            optionValue: '=data["frontend_localization"].getCurrentLocalization()'
+
+        - '@appendOption':
+            id: currency_localization_container_inner
+            optionName: vars.selected_localization
+            optionValue: '=data["frontend_localization"].getCurrentLocalization()'
+
+        - '@appendOption':
+            id: currency_localization_container_inner
+            optionName: vars.localizations
+            optionValue: '=data["frontend_localization"].getEnabledLocalizations()'

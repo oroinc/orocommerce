@@ -14,7 +14,7 @@ oro_behat_extension:
       selector: 'h1.page-title span.page-title__text'
 
     ShoppingListEdit:
-      selector: '.shopping-lists__area-trigger'
+      selector: '.shopping-lists button.btn'
 
     ShoppingListAdd:
       selector: '.add-to-shopping-list-button'
@@ -24,6 +24,9 @@ oro_behat_extension:
 
     ShoppingListButtonGroupMenu:
       selector: '[data-product-dropdown-root] .dropdown-menu.show'
+
+    Shopping List Button Group in Dialog:
+      selector: '[role="dialog"] [data-product-dropdown-root]'
 
     ShoppingListForm:
       selector: '.shopping-lists-popup__item'
@@ -53,7 +56,7 @@ oro_behat_extension:
       selector: '.shopping-lists-popup'
 
     FirstRowAcceptButton:
-      selector: '.shopping-lists-popup .btn'
+      selector: '.shopping-lists-popup [data-role="accept"]'
 
     NewShoppingListNameField:
       selector: '[name="oro_shopping_list_type[label]"]'
@@ -219,7 +222,7 @@ oro_behat_extension:
       selector: '.dropdown-search-container .clear-search-button'
 
     Shopping List Quick Search Clear in Mass Menu:
-      selector: '[data-sticky-name="bottom-sticky-panel"] .datagrid-massaction .dropdown-menu .dropdown-search-container .clear-search-button'
+      selector: '.sticky.sticky--bottom .datagrid-massaction .dropdown-menu .dropdown-search-container .clear-search-button'
 
     Shopping List Quick Search Clear in Dialog:
       selector: '[role="dialog"] .dropdown-search-container .clear-search-button'
@@ -236,6 +239,7 @@ oro_behat_extension:
           Unit:
             type: css
             locator: 'select[name="oro_product_frontend_line_item[unit]"]'
+            element: ProductUnitSelector
 
     Configurable Product Form:
       selector: 'form[id^="oro_product_product_variant_frontend_variant_field"]'
@@ -269,9 +273,7 @@ oro_behat_extension:
       selector: '.shopping-list-widget'
 
     Shopping Cart:
-      selector:
-        type: xpath
-        locator: '//div[@class="cart-widget__content"]'
+      selector: '.shopping-list-trigger'
 
     Shopping List Limit Form:
       selector: 'form[name="shopping_list"]'
@@ -285,7 +287,7 @@ oro_behat_extension:
       selector: '.order-checkout-widget__container, .order-checkout-widget__table'
 
     In Shopping List:
-      selector: 'button.shopping-lists__area-trigger'
+      selector: '.shopping-lists button.btn'
 
     Add to Shopping List:
       selector: '.add-to-shopping-list-button:contains("Add to Shopping List")'
@@ -464,10 +466,10 @@ oro_behat_extension:
     First Line Item Row Checkbox:
       selector: '.grid-body .grid-row:first-child input[type=checkbox]'
 
-    Shopping Lists Navigation Link:
+    Shopping Lists:
       selector:
         type: xpath
-        locator: '//a[text()="Shopping Lists" and contains(@class,"primary-menu__link")]'
+        locator: '//a[text()="Shopping Lists"]'
 
     Frontend Customer User Shopping Lists Grid:
       selector: 'div[data-page-component-name="frontend-customer-user-shopping-lists-grid"]'
@@ -671,6 +673,12 @@ oro_behat_extension:
       selector: '.product-kit-items-table__row-product:nth-child(5)'
     Product Kit Dialog Kit Item 2 Product 2:
       selector: '.product-kit-items-table__row-product:nth-child(6)'
+    Product Kit Dialog Error 1:
+      selector:
+        locator: '//tr[contains(@class, "product-kit-items-table__row-error")][1]'
+        type: xpath
+    Product Kit Dialog okButton:
+      selector: 'div.ui-dialog-buttonpane button[type=submit]'
 
     Product Kit In Shopping List Dialog:
       selector: 'div.product-kit-in-shopping-lists-dialog'
@@ -735,8 +743,34 @@ oro_behat_extension:
     Shopping List 3 Kit Line Item Delete Button:
       selector: 'tr:nth-child(3) td.action-cell a[title="Delete"]'
 
+    Product Kit Line Item Totals Form Unit:
+      selector:
+        type: xpath
+        locator: '//select[@name="oro_product_kit_line_item[unit]"]'
+
     Floating Error Message:
       selector: 'div.floating-error-message'
+
+    Product 2 Link:
+      selector:
+        locator: '//a[text()[contains(.,"Product 2")]]'
+        type: 'xpath'
+
+    Product 3 Link:
+      selector:
+        locator: '//a[text()[contains(.,"Product 3")]]'
+        type: 'xpath'
+
+    Configure Popup Product 2 Link:
+      selector:
+        locator: '//h3[contains(@class, "grid-line-items__title")]/a[text()[contains(.,"Product 2")]]'
+        type: 'xpath'
+
+    Configure Popup Product 3 Link:
+      selector:
+        locator: '//h3[contains(@class, "grid-line-items__title")]/a[text()[contains(.,"Product 3")]]'
+        type: 'xpath'
+
   suites:
     OroShoppingListBundle:
       contexts:
@@ -768,5 +802,7 @@ oro_behat_extension:
         - Oro\Bundle\ShippingBundle\Tests\Behat\Context\SingleCurrencyContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\ScrollspyContext
+        - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\PricingBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

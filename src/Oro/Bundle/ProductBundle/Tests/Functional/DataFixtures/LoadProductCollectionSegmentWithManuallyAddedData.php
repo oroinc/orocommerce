@@ -10,49 +10,38 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadProductCollectionSegmentWithManuallyAddedData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    const SEGMENT_WITH_FILTERS = 'product-collection-segment-with-filters';
-    const SEGMENT_WITH_MANUALLY_ADDED = 'product-collection-segment-manually-added';
-    const SEGMENT_WITH_MIXED = 'product-collection-segment-mixed';
+    use ContainerAwareTrait;
+
+    public const SEGMENT_WITH_FILTERS = 'product-collection-segment-with-filters';
+    public const SEGMENT_WITH_MANUALLY_ADDED = 'product-collection-segment-manually-added';
+    public const SEGMENT_WITH_MIXED = 'product-collection-segment-mixed';
 
     /**
-     * @var ContainerInterface
+     * {@inheritDoc}
      */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public function getDependencies(): array
     {
-        $this->container = $container;
+        return [LoadProductData::class, LoadOrganization::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
-    {
-        return [
-            LoadProductData::class,
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
         $segmentType = $manager->getRepository(SegmentType::class)->find(SegmentType::TYPE_DYNAMIC);
-        $organization = $manager->getRepository(Organization::class)->getFirst();
+        /** @var Organization $organization */
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
         $owner = $organization->getBusinessUnits()->first();
         $converter = $this->container->get('oro_product.service.product_collection_definition_converter');
 
@@ -75,7 +64,7 @@ class LoadProductCollectionSegmentWithManuallyAddedData extends AbstractFixture 
                         ],
                     ],
                 ],
-            ]),
+            ], JSON_THROW_ON_ERROR),
             $owner,
             $organization
         );
@@ -83,7 +72,7 @@ class LoadProductCollectionSegmentWithManuallyAddedData extends AbstractFixture 
             $segmentType,
             self::SEGMENT_WITH_MANUALLY_ADDED,
             $converter->putConditionsInDefinition(
-                json_encode(['columns' => [], 'filters' => []]),
+                json_encode(['columns' => [], 'filters' => []], JSON_THROW_ON_ERROR),
                 null,
                 implode(',', [$product1->getId(), $product2->getId()])
             ),
@@ -110,7 +99,7 @@ class LoadProductCollectionSegmentWithManuallyAddedData extends AbstractFixture 
                             ],
                         ],
                     ],
-                ]),
+                ], JSON_THROW_ON_ERROR),
                 null,
                 (string) $product2->getId()
             ),

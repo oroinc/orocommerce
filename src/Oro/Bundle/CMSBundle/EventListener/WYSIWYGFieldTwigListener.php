@@ -70,14 +70,14 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
     private function isApplicable(LifecycleEventArgs $args): bool
     {
         if (!$this->enabled
-            || !\is_object($args->getEntity())
-            || $args->getEntity() instanceof AbstractLocalizedFallbackValue
+            || !\is_object($args->getObject())
+            || $args->getObject() instanceof AbstractLocalizedFallbackValue
             || !$this->getTwigFunctionProcessor()->getApplicableMapping()
         ) {
             return false;
         }
 
-        $metadata = $args->getEntityManager()->getClassMetadata(\get_class($args->getEntity()));
+        $metadata = $args->getObjectManager()->getClassMetadata(\get_class($args->getObject()));
         if (\count($metadata->getIdentifier()) !== 1) {
             // Composite keys are not supported.
             return false;
@@ -92,7 +92,7 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
             return;
         }
 
-        $entityManager = $args->getEntityManager();
+        $entityManager = $args->getObjectManager();
         $emHash = spl_object_hash($entityManager);
         if (!isset($this->scheduled[$emHash])) {
             $this->scheduled[$emHash] = [
@@ -115,7 +115,7 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
      */
     public function postFlush(PostFlushEventArgs $args): void
     {
-        $entityManager = $args->getEntityManager();
+        $entityManager = $args->getObjectManager();
         $emHash = spl_object_hash($entityManager);
         if (!isset($this->scheduled[$emHash])) {
             return;
@@ -182,9 +182,9 @@ class WYSIWYGFieldTwigListener implements OptionalListenerInterface, ServiceSubs
     {
         return new WYSIWYGProcessedDTO(
             new WYSIWYGProcessedEntityDTO(
-                $args->getEntityManager(),
+                $args->getObjectManager(),
                 $this->getPropertyAccessor(),
-                $args->getEntity(),
+                $args->getObject(),
                 $args instanceof PreUpdateEventArgs ? $args->getEntityChangeSet() : null
             )
         );

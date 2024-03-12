@@ -18,7 +18,7 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
-            view: 'oroproduct/js/app/views/base-product-view',
+            view: 'oroproduct/js/app/views/frontend-product-view',
             modelAttr: modelAttr
         },
         'data-layout': 'separate',
@@ -32,9 +32,18 @@
 {% endblock %}
 
 {% block _product_view_microdata_container_widget %}
+
+    {% if matrixFormType is not defined %}
+        {% set matrixFormType = '' %}
+    {% endif %}
+
+    {% set isProductHasPrices = productPrices is defined and productPrices is not empty or
+        product is defined and product.prices is defined and matrixFormType == 'none' and product.prices is not empty
+    %}
+
     {% if
         microdataWithoutPricesDisabled == false or
-        productPrices is defined and productPrices is not empty
+        (not is_price_hidden(product) and isProductHasPrices == true)
     %}
         {% set attr = layout_attr_defaults(attr, {
             'itemscope': '',
@@ -50,16 +59,6 @@
         {% if productSchemaOrgDescription is defined %}
             {{ productSchemaOrgDescription }}
         {% endif %}
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _product_view_primary_wrapper_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__primary-wrapper'
-    }) %}
-
-    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -104,6 +103,16 @@
     </div>
 {% endblock %}
 
+{% block _product_view_info_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__info'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _product_view_specification_container_widget %}
     {% if block.children is not empty %}
         {% set attr = layout_attr_defaults(attr, {
@@ -130,35 +139,51 @@
     </div>
 {% endblock %}
 
+{% block _product_view_benefits_container_widget %}
+    {% set content = block_widget(block) %}
+    {%- if content|trim|length > 0 -%}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__benefits'
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{- content|raw -}}
+        </div>
+    {%- endif -%}
+{% endblock %}
+
+{% block _product_view_details_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__details'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _product_view_attribute_group_general_attribute_localized_fallback_descriptions_widget %}
     {% set description = translated_value.wysiwyg is defined ? translated_value.wysiwyg|trim  : null %}
     {% if description %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' cms-typography'
         }) %}
-        {% set attr = layout_attr_defaults(attr, {
-            '~class': ' cms-typography',
-            'data-page-component-viewport': {
-                viewport: 'tablet',
-                view: 'orofrontend/default/js/app/views/collapse-view',
-                triggerIsFirst: false,
-                toggleAttrs: {
-                    'class': 'btn btn--link btn--size-s btn--no-x-offset btn--full btn--default-color collapse-toggle',
-                    'aria-label': 'oro.ui.collapse.more'|trans,
-                    'data-icon': 'fa-chevron-down fa--no-offset'
-                },
-                collapseAttrs: {
-                    'class': 'collapse collapse-overflow increased-overflow',
-                    'data-check-overflow': true,
-                    'data-trigger-icon-show-class': 'fa-chevron-up',
-                    'data-trigger-icon-hide-class': 'fa-chevron-down',
-                    'data-collapsed-text': 'oro.ui.collapse.more'|trans,
-                    'data-expanded-text': 'oro.ui.collapse.less'|trans
-                }
-            }|json_encode
-        }) %}
         {%- import '@OroCMS/macros.html.twig' as CMS -%}
         <div {{ block('block_attributes') }}>{{ CMS.renderWysiwygContent(description, translated_value.wysiwygStyle) }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block _product_view_attribute_group_general_attribute_boolean_featured_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% if value == true %}
+        <div class="product-view__featured">{{ renderIcon.icon({name: 'star'}) }}{{ label|trans }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block _product_view_attribute_group_general_attribute_boolean_newArrival_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% if value == true %}
+        <div class="product-view__newarrival">{{ renderIcon.icon({name: 'award'}) }}{{ label|trans }}</div>
     {% endif %}
 {% endblock %}
 
@@ -172,6 +197,17 @@
             {{ block_widget(block) }}
         </div>
     {% endif %}
+{% endblock %}
+
+{% block _product_view_brand_inventory_status_widget %}
+    {% set inventoryStatus = oro_inventory_status_code(product) %}
+    {% set statusesMap = {
+        'in_stock': 'success',
+        'out_of_stock': 'warning',
+        'discontinued': 'destructive'
+    } %}
+    {% set status = attribute(statusesMap, inventoryStatus) is defined ? ' status-label--' ~ statusesMap[inventoryStatus] : '' %}
+    <span class="status-label{{ status }}">{{- oro_inventory_status_label(product) -}}</span>
 {% endblock %}
 
 {% block _product_view_attribute_group_general_widget %}
@@ -213,23 +249,20 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' sku'
     }) %}
-    <p {{ block('block_attributes') }}>
-        {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code" itemprop="sku">{{ entity.sku|e }}</span>
-    </p>
+    <div {{ block('block_attributes') }}>
+        <span class="sku__code" itemprop="sku">{{ entity.sku|e }}</span>
+    </div>
 {% endblock %}
 
 {% block _product_view_attribute_group_general_attribute_product_brand_brand_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' brand',
+        '~class': ' product-view-brand',
         'itemprop': 'brand',
         'itemscope': '',
         'itemtype': 'http://schema.org/Brand'
     }) %}
     <div {{ block('block_attributes') }} >
-        {% if label|trans|first != '_' %}
-            <span class="product-view-brand">{{ label|trans }}:</span>
-        {% endif %}
-        <span class="product-view-brand-title" itemprop="name">{{ block('attribute_localized_fallback_widget') }}</span>
+        <span class="product-view-brand-title" itemprop="name">{{ block('attribute_localized_fallback_widget')|trim }}</span>
     </div>
 {% endblock %}
 
@@ -264,7 +297,7 @@
     {% import '@OroAsset/Asset.html.twig' as Asset %}
     {{ Asset.js_modules_config({
         'oroui/js/app/views/tab-collection-view': {
-            templateClassName: 'nav product-attributes-tabs'
+            templateClassName: 'nav product-attributes-tabs invisible-scrollbar'
         },
         'oroui/js/app/views/tab-item-view': {
             className: 'product-attributes-tabs__item',
@@ -330,7 +363,7 @@
             {%- endfor -%}
         </div>
         <div class="product-view__attribute-panel">
-            <button type="button" class="btn btn--link btn--no-x-offset btn--no-y-offset" data-role="show-more"></button>
+            <button type="button" class="btn btn--outlined btn--size-small btn--text btn--no-padding" data-role="show-more"></button>
         </div>
     </div>
 {% endblock %}
@@ -400,7 +433,7 @@
             </table>
         </div>
         <div class="product-view__attribute-panel">
-            <button type="button" class="btn btn--link btn--no-x-offset btn--no-y-offset" data-role="show-more"></button>
+            <button type="button" class="btn btn--outlined btn--size-small btn--text btn--no-padding" data-role="show-more"></button>
         </div>
     </div>
 {% endblock %}
@@ -410,7 +443,7 @@
 {% endblock %}
 
 {% block attribute_group_rest_attribute_widget %}
-    <div class="tab-content__wrapper">
+    <div class="product-view-attribute__content">
         {% if 'attribute_collection' in block_prefixes %}
             {{ block('product_view_attribute_collection_widget') }}
         {% elseif 'attribute_image' in block_prefixes %}
@@ -431,5 +464,61 @@
         <div class="cms-typography">{{ translated_value.text|oro_html_sanitize }}</div>
     {% else %}
         {{ translated_value|oro_html_sanitize }}
+    {% endif %}
+{% endblock %}
+
+{% block attribute_group_rest_item_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view-attribute__group'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <h3 class="product-view-attribute__group-title" id="{{ headingBlockId }}">
+            <button
+                class="product-view-attribute__group-toggle collapsed"
+                type="button"
+                data-toggle="collapse"
+                data-target="#{{ contentBlockId }}"
+                aria-expanded="true"
+                aria-controls="{{ contentBlockId }}"
+                title="{{ tabOptionsById.label }}"
+            >{{ renderIcon.icon({name: 'chevron-down'}) }}{{ tabOptionsById.label }}</button>
+        </h3>
+
+        <div id="{{ contentBlockId }}" aria-labelledby="{{ headingBlockId }}" class="product-view-attribute__group-content collapse">{{ childContent|raw }}</div>
+    </div>
+{% endblock %}
+
+{% block attribute_group_rest_widget %}
+    {% set tabsOptionsById = [] %}
+    {%- for tab in tabsOptions -%}
+        {% set tabsOptionsById = tabsOptionsById|merge({
+            (tab.id): tab
+        }) %}
+    {%- endfor -%}
+
+    {%- for child in block -%}
+        {%- if child.vars.visible -%}
+            {% set childContent = block_widget(child) %}
+            {%- if childContent|trim|length > 0 -%}
+                {% set tabOptionsById = tabsOptionsById[child.vars.group] %}
+                {% set contentBlockId = 'content-block-'|uniqid %}
+                {% set headingBlockId = 'heading-block-'|uniqid %}
+                {{ block('attribute_group_rest_item_widget') }}
+            {%- endif -%}
+        {%- endif -%}
+    {%- endfor -%}
+{% endblock %}
+
+{% block attribute_group_rest_attribute_group_widget %}
+    {% set content = block_widget(block) %}
+    {% if content|trim|length > 0 %}
+        {{ content|raw }}
+    {% endif %}
+{% endblock %}
+
+{% block attribute_label_widget %}
+    {% if label|trans|first != '_' %}
+        <div class="product-view-attribute__label">{{ label|trans }}:</div>
     {% endif %}
 {% endblock %}

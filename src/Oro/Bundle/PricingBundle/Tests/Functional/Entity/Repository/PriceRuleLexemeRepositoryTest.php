@@ -7,9 +7,10 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -19,15 +20,20 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
 {
     /** @var PriceRuleLexemeRepository */
     private $repository;
+    private $defaultPriceListId;
 
     protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadPriceRuleLexemes::class]);
 
-        $this->repository = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository(PriceRuleLexeme::class);
+        $doctrine = $this->getContainer()->get('doctrine');
+
+        $this->defaultPriceListId = $doctrine
+            ->getRepository(PriceList::class)
+            ->findOneBy(['name' => 'Default Price List'])
+            ->getId();
+        $this->repository = $doctrine->getRepository(PriceRuleLexeme::class);
     }
 
     protected function tearDown(): void
@@ -35,33 +41,11 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
         $this->repository->invalidateCache();
     }
 
-    /**
-     * @param PriceRuleLexeme[] $lexemes
-     *
-     * @return array
-     */
-    private function getLexemeIds($lexemes)
-    {
-        $lexemeIds = array_map(
-            function (PriceRuleLexeme $lexeme) {
-                return $lexeme->getId();
-            },
-            $lexemes
-        );
-
-        sort($lexemeIds);
-        return $lexemeIds;
-    }
-
     public function testGetRelationIds()
     {
-        /** @var PriceList $priceList1 */
-        $priceList1 = $this->getReference(LoadPriceLists::PRICE_LIST_1);
-        /** @var PriceList $priceList2 */
-        $priceList2 = $this->getReference(LoadPriceLists::PRICE_LIST_2);
         $relationIds = $this->repository->getRelationIds();
         sort($relationIds);
-        $expected = [$priceList1->getId(), $priceList2->getId()];
+        $expected = [$this->defaultPriceListId];
         $this->assertEquals($expected, $relationIds);
     }
 
@@ -87,47 +71,50 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
     public function testFindEntityLexemesByClassName()
     {
         $lexemes = $this->repository->findEntityLexemes(Category::class);
-        $expected = [
-            $this->getReference('price_list_1_lexeme_1')->getId()
-        ];
-        $this->assertEquals($expected, $this->getLexemeIds($lexemes));
+        // 5 rule lexemes from PriceRuleLexeme + 2 productAssignmentRule from LoadPriceLists
+        $this->assertCount(7, $lexemes);
+        foreach ($lexemes as $lexeme) {
+            $this->assertEquals(Category::class, $lexeme->getClassName());
+        }
     }
 
     public function testFindEntityLexemesByClassNameAndFields()
     {
-        $lexemes = $this->repository->findEntityLexemes(Category::class, ['id']);
-        $expected = [
-            $this->getReference('price_list_1_lexeme_1')->getId()
-        ];
-        $this->assertEquals($expected, $this->getLexemeIds($lexemes));
+        $lexemes = $this->repository->findEntityLexemes(Product::class, ['status']);
+        $this->assertCount(1, $lexemes);
+        foreach ($lexemes as $lexeme) {
+            $this->assertEquals(Product::class, $lexeme->getClassName());
+            $this->assertEquals('status', $lexeme->getFieldName());
+        }
     }
 
     public function testFindEntityLexemesByClassNameAndRelationId()
     {
-        $relationEntity = $this->getReference('price_list_1_lexeme_3');
         $lexemes = $this->repository->findEntityLexemes(
-            PriceAttributeProductPrice::class,
+            ProductPrice::class,
             [],
-            $relationEntity->getRelationId()
+            $this->defaultPriceListId
         );
-        $expected = [
-            $this->getReference('price_list_1_lexeme_3')->getId()
-        ];
-        $this->assertEquals($expected, $this->getLexemeIds($lexemes));
+        $this->assertCount(5, $lexemes);
+        foreach ($lexemes as $lexeme) {
+            $this->assertEquals(ProductPrice::class, $lexeme->getClassName());
+            $this->assertEquals($this->defaultPriceListId, $lexeme->getRelationId());
+        }
     }
 
     public function testFindEntityLexemesByClassNameAndFieldsAndRelationId()
     {
-        $relationEntity = $this->getReference('price_list_1_lexeme_3');
         $lexemes = $this->repository->findEntityLexemes(
-            PriceAttributeProductPrice::class,
+            ProductPrice::class,
             ['value'],
-            $relationEntity->getRelationId()
+            $this->defaultPriceListId
         );
-        $expected = [
-            $this->getReference('price_list_1_lexeme_3')->getId()
-        ];
-        $this->assertEquals($expected, $this->getLexemeIds($lexemes));
+        $this->assertCount(5, $lexemes);
+        foreach ($lexemes as $lexeme) {
+            $this->assertEquals(ProductPrice::class, $lexeme->getClassName());
+            $this->assertEquals('value', $lexeme->getFieldName());
+            $this->assertEquals($this->defaultPriceListId, $lexeme->getRelationId());
+        }
     }
 
     public function testFindEntityLexemesByClassNameAndNotUsedFields()

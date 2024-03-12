@@ -85,7 +85,7 @@ Feature: Product attribute float
     And I should not see "SKU456" product
 
   Scenario: Check product grid filter and sorter
-    Given I click "NewCategory"
+    Given I click "NewCategory" in hamburger menu
     And I should see "SKU123" product
     And I should see "SKU456" product
     When I filter FloatField as equals "-1234,1234567891"
@@ -96,8 +96,7 @@ Feature: Product attribute float
   Scenario: Check product attribute is formatted according to localization on front store
     When I click "View Details" for "SKU123" product
     Then I should see "-1.234,1234567891"
-    When I click "Localization Switcher"
-    And I select "English" localization
+    And I select "English (United States)" localization
     Then I should see "-1,234.1234567891"
 
   Scenario: Delete product attribute

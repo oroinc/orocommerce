@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver;
 
-use Brick\Math\BigDecimal;
 use Oro\Bundle\TaxBundle\Matcher\UnitedStatesHelper;
 use Oro\Bundle\TaxBundle\Model\Result;
-use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
 
@@ -14,44 +12,48 @@ use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
  */
 class DigitalItemResolver implements ResolverInterface
 {
-    /** {@inheritdoc} */
-    public function resolve(Taxable $taxable)
+    use CalculateUSSalesTaxTrait;
+
+    public function __construct(
+        private ResolverInterface $kitItemResolver
+    ) {
+    }
+
+    public function resolve(Taxable $taxable): void
     {
-        if ($taxable->getItems()->count()) {
+        if (!$this->isApplicable($taxable)) {
             return;
         }
 
-        if (!$taxable->getPrice()->isPositive()) {
-            return;
+        if ($taxable->isKitTaxable()) {
+            $kitItemsResult = [];
+            foreach ($taxable->getItems() as $kitItem) {
+                $this->kitItemResolver->resolve($kitItem);
+                $kitItemsResult[] = $kitItem->getResult();
+            }
+
+            $taxable->getResult()->offsetSet(Result::ITEMS, $kitItemsResult);
         }
 
-        $address = $taxable->getDestination();
-        if (!$address) {
-            return;
-        }
-
-        $result = $taxable->getResult();
-        if ($result->isResultLocked()) {
-            return;
-        }
-
-        $isStateWithoutDigitalTax = UnitedStatesHelper::isStateWithoutDigitalTax(
-            $address->getCountryIso2(),
-            $address->getRegionCode()
-        );
-
-        if ($isStateWithoutDigitalTax && $taxable->getContextValue(Taxable::DIGITAL_PRODUCT)) {
+        if ($this->isApplicableOrderLineItemTaxable($taxable)) {
             $taxable->makeDestinationAddressTaxable();
-
-            $unitPrice = BigDecimal::of($taxable->getPrice());
-            $unitResultElement = ResultElement::create($unitPrice, $unitPrice, BigDecimal::zero(), BigDecimal::zero());
-            $result->offsetSet(Result::UNIT, $unitResultElement);
-
-            $rowPrice = $unitPrice->multipliedBy($taxable->getQuantity());
-            $rowResultElement = ResultElement::create($rowPrice, $rowPrice, BigDecimal::zero(), BigDecimal::zero());
-            $result->offsetSet(Result::ROW, $rowResultElement);
-
-            $result->lockResult();
+            $this->calculateUnitPriceAndRowTotal($taxable);
         }
+    }
+
+    private function isApplicable(Taxable $taxable): bool
+    {
+        return !$taxable->getItems()->count() || ($taxable->getItems()->count() && $taxable->isKitTaxable());
+    }
+
+    private function isApplicableOrderLineItemTaxable(Taxable $taxable): bool
+    {
+        $address = $taxable->getDestination();
+
+        return $taxable->getPrice()->isPositive() &&
+            $address &&
+            !$taxable->getResult()->isResultLocked() &&
+            $taxable->getContextValue(Taxable::DIGITAL_PRODUCT) &&
+            UnitedStatesHelper::isStateWithoutDigitalTax($address->getCountryIso2(), $address->getRegionCode());
     }
 }

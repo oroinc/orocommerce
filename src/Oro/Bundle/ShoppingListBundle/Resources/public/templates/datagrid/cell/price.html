@@ -1,3 +1,4 @@
+<% let oroui = _.macros('oroui') %>
 <% if (!obj.isConfigurable) { %>
 <div class="line-item-price mobile-row label-in-mobile-start label-bold-in-mobile"
      data-name="prices-hint"
@@ -28,10 +29,13 @@
                     data-trigger="manual"
                     data-placement="<%- _.isMobile() ? 'right' : 'bottom' %>"
                     data-boundary="viewport"
-                    class="btn btn--link btn--size-xs prices-hint-toggler"
+                    class="btn btn--outlined btn--text btn--size-small btn--no-padding prices-hint-toggler"
                     title="<%- _.__('oro.pricing.view_all_prices') %>"
                     aria-label="<%- _.__('oro.pricing.view_all_prices_extended', { product_attrs: name }) %>">
-                <span class="fa-info-circle fa--no-offset fa--loader-icon" aria-hidden="true"></span>
+                <%= oroui.renderIcon({
+                    name: 'info',
+                    extraClass: 'theme-icon--small'
+                }) %>
             </button>
         <% } %>
     </div>

@@ -45,7 +45,7 @@ Feature: WYSIWYG links
       | grid-row    | 1 |
       | grid-column | 2 |
     And I check wysiwyg content in "CMS Page Content":
-      | 5 | <a class="btn btn--info">Link Button</a> |
+      | 5 | <a class="btn btn--outlined">Link Button</a> |
     And I select component in canvas by tree:
       | grid-row    | 1 |
       | grid-column | 2 |
@@ -56,7 +56,7 @@ Feature: WYSIWYG links
       | Title  | Test title          |
       | Target | _blank              |
     And I check wysiwyg content in "CMS Page Content":
-      | 5 | <a href="http://test-url.com" title="Test title" target="_blank" class="btn btn--info">Test text</a> |
+      | 5 | <a href="http://test-url.com" title="Test title" target="_blank" class="btn btn--outlined">Test text</a> |
     And I update selected component "Typography" styles:
       | color | #000000 |
     And I update selected component "Decorations" styles:
@@ -81,13 +81,13 @@ Feature: WYSIWYG links
       | link-button | 1 |
     Then I click on "Clone" action for selected component
     And I check wysiwyg content in "CMS Page Content":
-      | 3 | <a class="btn btn--info">Link Button</a> |
-      | 4 | <a class="btn btn--info">Link Button</a> |
+      | 3 | <a class="btn btn--outlined">Link Button</a> |
+      | 4 | <a class="btn btn--outlined">Link Button</a> |
     And I save form
     And I check wysiwyg content in "CMS Page Content":
-      | 3 | <a class="btn btn--info">Link Button</a>                                                             |
-      | 4 | <a class="btn btn--info">Link Button</a>                                                             |
-      | 7 | <a href="http://test-url.com" title="Test title" target="_blank" class="btn btn--info">Test text</a> |
+      | 3 | <a class="btn btn--outlined">Link Button</a>                                                             |
+      | 4 | <a class="btn btn--outlined">Link Button</a>                                                             |
+      | 7 | <a href="http://test-url.com" title="Test title" target="_blank" class="btn btn--outlined">Test text</a> |
     And I clear canvas in WYSIWYG
 
   Scenario: Add/update/delete link block type

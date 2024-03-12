@@ -6,7 +6,10 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
 
-class CouponValidationService
+/**
+ * Validates if given coupon can be applied.
+ */
+class CouponValidationService implements CouponValidatorInterface
 {
     const MESSAGE_DISABLED = 'oro.promotion.coupon.violation.disabled';
     const MESSAGE_ABSENT_PROMOTION = 'oro.promotion.coupon.violation.absent_promotion';
@@ -15,10 +18,7 @@ class CouponValidationService
     const MESSAGE_USAGE_LIMIT_EXCEEDED = 'oro.promotion.coupon.violation.usage_limit_exceeded';
     const MESSAGE_USER_USAGE_LIMIT_EXCEEDED = 'oro.promotion.coupon.violation.customer_user_usage_limit_exceeded';
 
-    /**
-     * @var CouponUsageManager
-     */
-    private $couponUsageManager;
+    private CouponUsageManager $couponUsageManager;
 
     public function __construct(CouponUsageManager $couponUsageManager)
     {
@@ -28,6 +28,14 @@ class CouponValidationService
     public function isValid(Coupon $coupon, CustomerUser $customerUser = null): bool
     {
         return !$this->getViolations($coupon, $customerUser);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getViolationMessages(Coupon $coupon, object $entity): array
+    {
+        return $this->getViolations($coupon, $entity->getCustomerUser());
     }
 
     public function getViolations(Coupon $coupon, CustomerUser $customerUser = null): array

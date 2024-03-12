@@ -42,7 +42,17 @@ Feature: Product attribute smallint
     Given I go to Products/ Products
     When I click "Edit" on row "SKU123" in grid
     And I fill "Product Form" with:
-      | SmallIntField | 32167 |
+      | SmallIntField | 32768 |
+    And I save form
+    Then I should see validation errors:
+      | SmallIntField | This value should be between -32,768 and 32,767. |
+    When I fill "Product Form" with:
+      | SmallIntField | -32769 |
+    And I save form
+    Then I should see validation errors:
+      | SmallIntField | This value should be between -32,768 and 32,767. |
+    When I fill "Product Form" with:
+      | SmallIntField | 32767 |
     And I save and close form
     Then I should see "Product has been saved" flash message
 
@@ -54,10 +64,10 @@ Feature: Product attribute smallint
     And I should not see "SKU456" product
 
   Scenario: Check product grid filter and sorter
-    Given I click "NewCategory"
+    Given I click "NewCategory" in hamburger menu
     And I should see "SKU123" product
     And I should see "SKU456" product
-    When I filter SmallIntField as equals "32167"
+    When I filter SmallIntField as equals "32767"
     Then I should see "SKU123" product
     And I should not see "SKU456" product
     And grid sorter should have "SmallIntField" options

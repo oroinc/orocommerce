@@ -235,6 +235,15 @@ Feature: Product kits management UI
     When I fill "ProductKitForm" with:
       | Kit Item 1 Label | Kit Item 1 |
     And I click "Add Product" in "Product Kit Item 1" element
-    And I click on PSKU2 in grid "KitItemProductsAddGrid"
+    And I click on PSKU7 in grid "KitItemProductsAddGrid"
     And I save form
     Then I should see "Product has been saved" flash message
+
+  Scenario: Check prevents removal of simple products that relate to kit products
+    Given I go to Products/Products
+    When I click Delete PSKU7 in grid
+    Then I should see "Are you sure you want to delete this Product?"
+    And I click "Yes, Delete"
+    Then I should see "You do not have permission to perform this action." flash message
+    When I click View PSKU7 in grid
+    Then I should not see "Delete"

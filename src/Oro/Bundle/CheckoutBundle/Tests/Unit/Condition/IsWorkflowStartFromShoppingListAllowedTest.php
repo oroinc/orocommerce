@@ -6,6 +6,7 @@ use Oro\Bundle\CheckoutBundle\Condition\IsWorkflowStartFromShoppingListAllowed;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class IsWorkflowStartFromShoppingListAllowedTest extends \PHPUnit\Framework\TestCase
 {
@@ -58,7 +59,7 @@ class IsWorkflowStartFromShoppingListAllowedTest extends \PHPUnit\Framework\Test
 
     public function testIsAllowedForAnyLoggedUser()
     {
-        $this->configureToken(\stdClass::class);
+        $this->configureToken(TokenInterface::class);
         $this->assertTrue($this->condition->isAllowedForLogged());
     }
 
@@ -84,7 +85,7 @@ class IsWorkflowStartFromShoppingListAllowedTest extends \PHPUnit\Framework\Test
 
     public function testIsAllowedForGuestFalseAsDefault()
     {
-        $this->configureToken(\stdClass::class);
+        $this->configureToken(TokenInterface::class);
         $this->assertFalse($this->condition->isAllowedForGuest());
     }
 }

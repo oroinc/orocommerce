@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Storage;
 
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
@@ -39,9 +40,26 @@ class ProductDataStorage
                 'comment' => $lineItem->getNotes(),
                 'productUnit' => $lineItem->getUnit()->getCode(),
                 'productUnitCode' => $lineItem->getUnit()->getCode(),
+                Storage::PRODUCT_KIT_ITEM_LINE_ITEMS_DATA_KEY => $this->getKitItemLineItemsData($lineItem),
             ];
         }
 
         $this->storage->set($data);
+    }
+
+    protected function getKitItemLineItemsData(LineItem $lineItem): array
+    {
+        $kitItemLineItemsData = [];
+        foreach ($lineItem->getKitItemLineItems() as $kitItemLineItem) {
+            $kitItemLineItemsData[] = [
+                Storage::PRODUCT_KIT_ITEM_LINE_ITEM_KIT_ITEM_KEY => $kitItemLineItem->getKitItem()?->getId(),
+                Storage::PRODUCT_KIT_ITEM_LINE_ITEM_PRODUCT_KEY => $kitItemLineItem->getProduct()?->getId(),
+                Storage::PRODUCT_KIT_ITEM_LINE_ITEM_PRODUCT_UNIT_KEY =>
+                    $kitItemLineItem->getProductUnit()?->getCode(),
+                Storage::PRODUCT_KIT_ITEM_LINE_ITEM_QUANTITY_KEY => $kitItemLineItem->getQuantity(),
+            ];
+        }
+
+        return $kitItemLineItemsData;
     }
 }

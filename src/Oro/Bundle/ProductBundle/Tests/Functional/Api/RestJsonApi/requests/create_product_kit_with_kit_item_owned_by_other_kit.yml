@@ -34,7 +34,7 @@ data:
         pageTemplate:
             data:
                 type: entityfieldfallbackvalues
-                id: 'products-kit1-page-template-short'
+                id: 'products-kit1-page-template-wide'
         kitItems:
             data:
                 -
@@ -43,10 +43,10 @@ data:
 included:
     -
         type: entityfieldfallbackvalues
-        id: 'products-kit1-page-template-short'
+        id: 'products-kit1-page-template-wide'
         attributes:
             fallback: null
-            scalarValue: short
+            scalarValue: wide
             arrayValue: null
     -
         type: productnames

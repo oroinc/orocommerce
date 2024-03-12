@@ -3,21 +3,35 @@
 .request-form-product {
     position: relative;
 
+    &__wrap {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        padding-top: 12px;
+        padding-bottom: 12px;
+
+        border-top: $request-form-product-inner-border;
+    }
+
+    &__line {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
     &__inner {
         position: relative;
         display: flex;
+        flex-wrap: wrap;
         justify-content: flex-end;
 
         line-height: 1.3;
 
-        &:first-child {
-            padding-top: 12px;
-
-            border-top: $request-form-product-inner-border;
-        }
-
-        &:last-child {
-            padding-bottom: 12px;
+        &--info {
+            align-self: flex-start;
+            flex-wrap: wrap;
+            flex-direction: column;
+            margin-left: auto;
         }
     }
 
@@ -37,8 +51,8 @@
         }
 
         &--listed {
-            width: 195px;
-            padding-right: 55px;
+            width: 205px;
+            padding-right: 65px;
         }
 
         &--comment {
@@ -65,12 +79,26 @@
     }
 }
 
-@include breakpoint('mobile-landscape') {
+@include breakpoint('mobile-big') {
     .request-form-product {
-        &__inner {
-            flex-wrap: wrap;
+        &__wrap {
+            flex-direction: column;
+
+            &--info {
+                margin-left: initial;
+            }
         }
 
+        &__inner:last-child {
+            width: 100%;
+            margin-left: initial;
+            margin-top: 8px;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .request-form-product {
         &__item {
             &--link {
                 width: 100%;

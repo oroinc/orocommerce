@@ -20,7 +20,7 @@
                 </li>
             {% endif %}
             {% if blockView.attributes.contactInfo.email %}
-                <li class=" information-nav__item last">
+                <li class=" information-nav__item last no-decoration">
                     <a href="mailto:{{ blockView.attributes.contactInfo.email }}" class=" information-nav__item-content"><bdo dir="ltr">{{ blockView.attributes.contactInfo.email }}</bdo></a>
                 </li>
             {% endif %}
@@ -32,17 +32,37 @@
 {% endblock %}
 
 {% block _sales_menu_text_info_widget %}
-    <div class="information-nav" id="sales-contact-info">
-        <h3 class="information-nav__title">{{ 'oro.commercemenu.frontend.navigation.items.sales.label'|trans }}</h3>
+    {% set dataText = 'oro.commercemenu.frontend.navigation.items.sales.label'|trans %}
+    {% set collapseOptions = {
+        viewport: 'tablet-small',
+        view: 'orofrontend/default/js/app/views/collapse-view',
+        toggleAttrs: {
+            'class': 'accordion-group__trigger',
+            'data-text': dataText,
+            'data-icon': 'chevron-down'
+        },
+        collapseAttrs: {
+            'class': 'collapse',
+            'data-trigger-icon-show-class': 'chevron-up',
+            'data-trigger-icon-hide-class': 'chevron-down'
+        }
+    } %}
+    <section class="information-nav information-nav--responsive" id="sales-contact-info">
         {% if blockView.attributes.contactInfo.manualText %}
             {% set infoRows = blockView.attributes.contactInfo.manualText|split('\n') %}
-            <ul class=" information-nav__list">
-            {% for row in infoRows %}
-                <li class=" information-nav__item first">
-                    <span class=" information-nav__item-content">{{ row }}</span>
-                </li>
-            {% endfor %}
-            </ul>
+            <div
+                data-page-component-module="oroui/js/app/components/viewport-component"
+                data-page-component-options="{{ collapseOptions|json_encode() }}"
+            >
+                <h3 class="information-nav__title">{{ dataText }}</h3>
+                <ul class="information-nav__list">
+                {% for row in infoRows %}
+                    <li class="information-nav__item first">
+                        <span class=" information-nav__item-content">{{ row }}</span>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
         {% endif %}
-    </div>
+    </section>
 {% endblock %}

@@ -6,7 +6,7 @@ use Oro\Bundle\DataGridBundle\Controller\GridController;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\Form\Handler\ProductCollectionSegmentProductsFormHandler;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentProductsType;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -22,15 +22,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProductCollectionContentVariantController extends AbstractController
 {
-    /**
-     * @Route(
-     *     "/update/{id}/products",
-     *     name="oro_product_collection_content_variant_products_update",
-     *     requirements={"id"="\d+"},
-     *     methods={"PUT"}
-     * )
-     * @CsrfProtection()
-     */
+    #[Route(
+        path: '/update/{id}/products',
+        name: 'oro_product_collection_content_variant_products_update',
+        requirements: ['id' => '\d+'],
+        methods: ['PUT']
+    )]
+    #[CsrfProtection()]
     public function productsUpdateAction(ContentVariant $contentVariant, Request $request): Response
     {
         $contentNode = $contentVariant->getNode();
@@ -80,15 +78,13 @@ class ProductCollectionContentVariantController extends AbstractController
         return new JsonResponse($responseData, $statusCode);
     }
 
-    /**
-     * @Route(
-     *     "/manage-sort-order/{id}/widget/{gridName}",
-     *     name="oro_product_collection_content_variant_manage_sort_order_widget",
-     *     requirements={"id"="\d+"},
-     *     methods={"GET"}
-     * )
-     * @Template
-     */
+    #[Route(
+        path: '/manage-sort-order/{id}/widget/{gridName}',
+        name: 'oro_product_collection_content_variant_manage_sort_order_widget',
+        requirements: ['id' => '\d+'],
+        methods: ['GET']
+    )]
+    #[Template]
     public function manageSortOrderWidgetAction(
         ContentVariant $contentVariant,
         string $gridName,

@@ -22,6 +22,10 @@ class CategoryProductsTypeTest extends FormIntegrationTestCase
 {
     private CategoryProductsType $formType;
 
+    private EntitiesToIdsTransformer $entitiesToIdsTransformer;
+
+    private EntityIdentifierType $entityIdentifierType;
+
     protected function setUp(): void
     {
         $this->formType = new CategoryProductsType();

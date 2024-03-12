@@ -53,11 +53,13 @@ navigation:
 
             oro_customer_menu:
                 children:
-                    oro_sale_quote_frontend_index:
+                    oro_order_frontend_orders:
                         children:
-                            oro_sale_quote_frontend_view: ~
-                            oro_sale_quote_frontend_view_guest: ~
-                            oro_sale_quote_frontend_choice: ~
+                            oro_sale_quote_frontend_index:
+                                children:
+                                    oro_sale_quote_frontend_view: ~
+                                    oro_sale_quote_frontend_view_guest: ~
+                                    oro_sale_quote_frontend_choice: ~
 
     titles:
         oro_sale_quote_index: ~

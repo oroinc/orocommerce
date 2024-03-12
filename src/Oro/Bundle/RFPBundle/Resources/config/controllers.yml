@@ -4,13 +4,13 @@ services:
 
     Oro\Bundle\RFPBundle\Controller\RequestController:
         calls:
-            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
 
     Oro\Bundle\RFPBundle\Controller\OrderController:
         calls:
-            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: oro_rfp.storage.offers_data_storage, key: Oro\Bundle\RFPBundle\Storage\OffersDataStorage }
@@ -24,3 +24,29 @@ services:
             - { name: container.service_subscriber, id: oro_rfp.request.manager, key: Oro\Bundle\RFPBundle\Model\RequestManager }
             - { name: container.service_subscriber, id: oro_rfp.service.request_update_handler, key: Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler }
             - { name: container.service_subscriber, id: oro_rfp.layout.data_provider.request_form, key: Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider }
+
+    Oro\Bundle\RFPBundle\Controller\Frontend\RequestProductKitConfigurationDialogController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\RFPBundle\Controller\AjaxRequestProductKitItemLineItemController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\RFPBundle\Controller\Frontend\RequestProductKitConfigurationPriceController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_pricing.provider.product_line_item_price }
+
+    Oro\Bundle\RFPBundle\Controller\Frontend\RequestProductTierPricesController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_rfp.provider.request_product_line_item_tier_prices }

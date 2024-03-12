@@ -25,6 +25,7 @@ oro_behat_extension:
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
         - Oro\Bundle\CatalogBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ConsoleContext
+        - Oro\Bundle\PricingBundle\Tests\Behat\Context\PriceCalculationDetailsContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
 
@@ -105,6 +106,18 @@ oro_behat_extension:
     Product Price Attributes Grid 1:
       selector: 'div[data-page-component-name="product-price-attributes-grid:1"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Product Price Attribute MSRP Form:
+      selector:
+        locator: '//div[@class="price-attributes-collection"]/div/div/label[text()="MSRP"]/../..'
+        type: xpath
+    Product Price Attribute Unit Each:
+      selector:
+        locator: '//td/span[text()="each"]'
+        type: xpath
+    Product Price Attribute Unit Item:
+      selector:
+        locator: '//td/span[text()="item"]'
+        type: xpath
     ProductPricesGrid:
       selector: 'div[data-page-component-name="product-prices-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
@@ -130,6 +143,33 @@ oro_behat_extension:
     PriceListSidebarSelector:
       selector: 'input[name="oro_pricing_price_list_select"]'
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+    Price Calculation Details Grid Sidebar:
+      selector: '[data-role="sidebar"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Website:
+            type: 'css'
+            locator: 'input[name="oro_multiwebsite_website_select"]'
+            element: Select2Entity
+          Customer:
+            type: 'css'
+            locator: 'input[name="oro_customer_customer_select"]'
+            element: Select2Entity
+    Price Calculation Details Element Label:
+      selector: '.attribute-item__term'
+    Price Calculation Details Price List Label:
+      selector: '.terms-title-divider'
+    Price Calculation Details Prices Collection:
+      selector:
+        locator: "/following-sibling::*//*[contains(concat(' ', normalize-space(@class), ' '), ' prices-collection ')]"
+        type: 'xpath'
+    Price Calculation Details Price Block:
+      selector: '.price-details'
+    Price Calculation Details Price Unit:
+      selector: '.price-details-unit'
+    Price Calculation Details Price Item:
+      selector: '.price-details-item'
     PricingConfigurationForm:
       selector: 'form[name="pricing"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -204,14 +244,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Currency Switcher:
-      selector:
-        type: 'xpath'
-        locator: '//div[contains(@data-bound-component, "currency-switcher")]/ancestor::div[@class="oro-toolbar"]'
-
-    Currency Switcher Button:
-      selector:
-        type: 'xpath'
-        locator: '//div[contains(@data-bound-component, "currency-switcher")]/ancestor::div[@class="oro-toolbar"]/div[@data-toggle="dropdown"]'
+      selector: '[name="currency"]'
 
     Open Price Dropdown Button:
       selector:

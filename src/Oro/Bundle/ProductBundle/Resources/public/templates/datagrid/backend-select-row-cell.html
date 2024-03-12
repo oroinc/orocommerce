@@ -1,4 +1,4 @@
 <label class="checkbox-label">
-    <input type="checkbox" data-role="select-row-cell"<% if (obj.isSimple) { %> class="checkbox-round"<% } %><% if (checked) { %> checked="checked"<% } %>>
-    <% if (!obj.isSimple && !_.isUndefined(obj.text)) { %><%- text %><% } %>
+    <input type="checkbox" data-role="select-row-cell"<% if (checked) { %> checked="checked"<% } %>>
+    <% if (!_.isUndefined(obj.text)) { %><%- text %><% } %>
 </label>

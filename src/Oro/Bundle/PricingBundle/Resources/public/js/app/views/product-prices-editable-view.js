@@ -125,9 +125,17 @@ define(function(require) {
             this.updateUI();
         },
 
-        setPriceValue: function(price) {
-            this.model.set('price', this.calcTotalPrice(price));
-            this.getElement('priceValue').trigger('change');
+        setPriceValue: function(newPrice) {
+            let currentPrice = this.model.get('price');
+            if (currentPrice === '') {
+                currentPrice = null;
+            }
+
+            const formattedNewPrice = this.calcTotalPrice(newPrice);
+            if (formattedNewPrice !== this.calcTotalPrice(currentPrice)) {
+                this.model.set('price', formattedNewPrice);
+                this.getElement('priceValue').trigger('change');
+            }
         },
 
         updateUI: function() {

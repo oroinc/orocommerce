@@ -2,74 +2,41 @@
 
 namespace Oro\Bundle\PricingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 
 /**
  * Entity to store prices combined from price list chain by merge strategy.
  *
- * @ORM\Table(
- *      name="oro_price_product_combined",
- *     indexes={
- *         @ORM\Index(
- *              name="oro_combined_price_idx",
- *              columns={
- *                  "combined_price_list_id",
- *                  "product_id",
- *                  "currency",
- *                  "unit_code",
- *                  "quantity"
- *              }
- *         ),
- *         @ORM\Index(
- *              name="oro_cmb_price_mrg_idx",
- *              columns={
- *                  "combined_price_list_id",
- *                  "product_id",
- *                  "merge_allowed"
- *              }
- *         ),
- *         @ORM\Index(
- *              name="oro_cmb_price_product_currency_idx",
- *              columns={
- *                  "product_id",
- *                  "currency"
- *              }
- *         )
- *     }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository")
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-usd"
- *          }
- *      }
- * )
  * @method CombinedPriceList getPriceList()
  */
+#[ORM\Entity(repositoryClass: CombinedProductPriceRepository::class)]
+#[ORM\Table(name: 'oro_price_product_combined')]
+#[ORM\Index(
+    columns: ['combined_price_list_id', 'product_id', 'currency', 'unit_code', 'quantity'],
+    name: 'oro_combined_price_idx'
+)]
+#[ORM\Index(columns: ['combined_price_list_id', 'product_id', 'merge_allowed'], name: 'oro_cmb_price_mrg_idx')]
+#[ORM\Index(columns: ['product_id', 'currency'], name: 'oro_cmb_price_product_currency_idx')]
+#[Config(defaultValues: ['entity' => ['icon' => 'fa-usd']])]
 class CombinedProductPrice extends BaseProductPrice
 {
     /**
-     * @var PriceList
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\CombinedPriceList", inversedBy="prices")
-     * @ORM\JoinColumn(name="combined_price_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @var PriceList|null
      **/
+    #[ORM\ManyToOne(targetEntity: CombinedPriceList::class, inversedBy: 'prices')]
+    #[ORM\JoinColumn(name: 'combined_price_list_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     protected $priceList;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="merge_allowed", type="boolean", nullable=false)
-     */
-    protected $mergeAllowed = true;
+    #[ORM\Column(name: 'merge_allowed', type: Types::BOOLEAN, nullable: false)]
+    protected ?bool $mergeAllowed = true;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="origin_price_id", type="guid", nullable=true)
      */
+    #[ORM\Column(name: 'origin_price_id', type: Types::GUID, nullable: true)]
     protected $originPriceId;
 
     /**

@@ -6,19 +6,12 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Entity\Transport;
-use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 
-class LoadMoneyOrderChannelData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
+class LoadMoneyOrderChannelData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * @var array Channels configuration
-     */
-    protected $channelData = [
+    private array $channelData = [
         [
             'name' => 'MoneyOrder1',
             'type' => 'money_order',
@@ -43,52 +36,29 @@ class LoadMoneyOrderChannelData extends AbstractFixture implements DependentFixt
     ];
 
     /**
-     * @var ContainerInterface
+     * {@inheritDoc}
      */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public function getDependencies(): array
     {
-        $this->container = $container;
+        return [LoadMoneyOrderSettingsData::class, LoadOrganization::class, LoadUser::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $userManager = $this->container->get('oro_user.manager');
-        $admin = $userManager->findUserByEmail(LoadAdminUserData::DEFAULT_ADMIN_EMAIL);
-        $organization = $manager->getRepository(Organization::class)->getFirst();
-
         foreach ($this->channelData as $data) {
             $entity = new Channel();
-            /** @var Transport $transport */
-            $transportId = $this->getReference($data['transport'])->getId();
-            $transport = $manager->getRepository(MoneyOrderSettings::class)->findOneBy(['id' => $transportId]);
             $entity->setName($data['name']);
             $entity->setType($data['type']);
             $entity->setEnabled($data['enabled']);
-            $entity->setDefaultUserOwner($admin);
-            $entity->setOrganization($organization);
-            $entity->setTransport($transport);
+            $entity->setDefaultUserOwner($this->getReference(LoadUser::USER));
+            $entity->setOrganization($this->getReference(LoadOrganization::ORGANIZATION));
+            $entity->setTransport($this->getReference($data['transport']));
             $this->setReference($data['reference'], $entity);
-
             $manager->persist($entity);
         }
         $manager->flush();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            __NAMESPACE__ . '\LoadMoneyOrderSettingsData'
-        ];
     }
 }

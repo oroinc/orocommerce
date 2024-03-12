@@ -1,12 +1,9 @@
 /* @theme: default; */
 
 .product-price {
-    display: $product-price-display;
     width: $product-price-width;
-    overflow: $product-price-overflow;
 
     &__main {
-        padding-top: $product-price-main-offset-top;
         padding-bottom: $product-price-main-offset-bottom;
     }
 
@@ -14,6 +11,11 @@
         font-size: $product-price-main-box-font-size;
     }
 
+    &__container {
+        &:empty {
+            display: none;
+        }
+    }
     &__unit-short {
         display: $product-price-unit-short-display;
     }
@@ -27,11 +29,7 @@
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
-    }
-
-    &__label,
-    &__listed-label {
-        padding-right: $offset-y-m;
+        gap: 0 spacing('sm');
     }
 
     &__value,
@@ -39,41 +37,44 @@
         font-weight: $product-price-value-font-weight;
     }
 
-    &__listed {
-        padding-top: $offset-y-s;
+    &__not_found {
+        font-size: $base-font-size--s;
     }
 
     // Modifier for simple view(only main price)
-    &--simple & {
-        &__label {
+    $product-price-selector: &;
+    &--simple {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: spacing('md');
+        margin-bottom: spacing('lg');
+
+        #{$product-price-selector}__label {
             display: $product-price-simple-label-display;
         }
 
-        &__value {
+        #{$product-price-selector}__value {
             font-size: $product-price-simple-value-font-size;
+            color: $product-price-simple-value-color;
         }
 
-        &__listed-value {
+        #{$product-price-selector}__listed-value {
             color: $product-price-simple-listed-value-color;
         }
-    }
-}
 
-.product-view {
-    .product-price {
-        max-width: $product-price-max-width;
-        margin: $product-price-margin;
+        #{$product-price-selector}__main {
+            padding-bottom: initial;
+        }
+
+        #{$product-price-selector} {
+            width: initial;
+        }
     }
 }
 
 @include breakpoint('tablet') {
     .product-price {
-        &--simple {
-            display: $product-price-simple-display-tablet;
-
-            text-align: $product-price-simple-text-align-tablet;
-        }
-
         &__unit-full {
             display: $product-price-unit-full-display-tablet;
         }

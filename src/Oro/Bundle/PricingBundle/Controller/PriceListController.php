@@ -6,8 +6,8 @@ use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -19,16 +19,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class PriceListController extends AbstractController
 {
-    /**
-     * @Route("/view/{id}", name="oro_pricing_price_list_view", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_pricing_price_list_view",
-     *      type="entity",
-     *      class="OroPricingBundle:PriceList",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/view/{id}', name: 'oro_pricing_price_list_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_pricing_price_list_view', type: 'entity', class: PriceList::class, permission: 'VIEW')]
     public function viewAction(PriceList $priceList): array
     {
         return [
@@ -37,11 +30,9 @@ class PriceListController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/info/{id}", name="oro_pricing_price_list_info", requirements={"id"="\d+"})
-     * @Template("@OroPricing/PriceList/widget/info.html.twig")
-     * @AclAncestor("oro_pricing_price_list_view")
-     */
+    #[Route(path: '/info/{id}', name: 'oro_pricing_price_list_info', requirements: ['id' => '\d+'])]
+    #[Template('@OroPricing/PriceList/widget/info.html.twig')]
+    #[AclAncestor('oro_pricing_price_list_view')]
     public function infoAction(PriceList $priceList): array
     {
         return [
@@ -49,11 +40,9 @@ class PriceListController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/", name="oro_pricing_price_list_index")
-     * @Template
-     * @AclAncestor("oro_pricing_price_list_view")
-     */
+    #[Route(path: '/', name: 'oro_pricing_price_list_index')]
+    #[Template]
+    #[AclAncestor('oro_pricing_price_list_view')]
     public function indexAction(): array
     {
         return [
@@ -63,16 +52,10 @@ class PriceListController extends AbstractController
 
     /**
      * Create price_list form
-     *
-     * @Route("/create", name="oro_pricing_price_list_create")
-     * @Template("@OroPricing/PriceList/update.html.twig")
-     * @Acl(
-     *      id="oro_pricing_price_list_create",
-     *      type="entity",
-     *      class="OroPricingBundle:PriceList",
-     *      permission="CREATE"
-     * )
      */
+    #[Route(path: '/create', name: 'oro_pricing_price_list_create')]
+    #[Template('@OroPricing/PriceList/update.html.twig')]
+    #[Acl(id: 'oro_pricing_price_list_create', type: 'entity', class: PriceList::class, permission: 'CREATE')]
     public function createAction(): array|RedirectResponse
     {
         return $this->update(new PriceList());
@@ -80,16 +63,10 @@ class PriceListController extends AbstractController
 
     /**
      * Edit price_list form
-     *
-     * @Route("/update/{id}", name="oro_pricing_price_list_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_pricing_price_list_update",
-     *      type="entity",
-     *      class="OroPricingBundle:PriceList",
-     *      permission="EDIT"
-     * )
      */
+    #[Route(path: '/update/{id}', name: 'oro_pricing_price_list_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_pricing_price_list_update', type: 'entity', class: PriceList::class, permission: 'EDIT')]
     public function updateAction(PriceList $priceList): array|RedirectResponse
     {
         return $this->update($priceList);
@@ -97,10 +74,10 @@ class PriceListController extends AbstractController
 
     protected function update(PriceList $priceList): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $priceList,
             $this->createForm(PriceListType::class, $priceList),
-            $this->get(TranslatorInterface::class)->trans('oro.pricing.controller.price_list.saved.message')
+            $this->container->get(TranslatorInterface::class)->trans('oro.pricing.controller.price_list.saved.message')
         );
     }
 

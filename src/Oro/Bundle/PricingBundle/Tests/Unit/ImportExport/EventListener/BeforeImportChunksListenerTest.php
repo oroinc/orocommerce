@@ -7,29 +7,29 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ImportExportBundle\Event\BeforeImportChunksEvent;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\ImportExport\EventListener\BeforeImportChunksListener;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class BeforeImportChunksListenerTest extends TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    private ManagerRegistry|MockObject $doctrine;
 
-    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $shardManager;
+    private ShardManager|MockObject $shardManager;
 
-    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $priceListRepository;
+    private EntityRepository|MockObject $priceListRepository;
 
-    /** @var ProductPriceRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $productPriceRepository;
+    private ProductPriceRepository|MockObject $productPriceRepository;
 
-    /** @var BeforeImportChunksListener */
-    private $listener;
+    private PriceListToProductRepository|MockObject $pl2pRepository;
+
+    private BeforeImportChunksListener $listener;
 
     protected function setUp(): void
     {
@@ -37,6 +37,7 @@ class BeforeImportChunksListenerTest extends TestCase
         $this->shardManager = $this->createMock(ShardManager::class);
         $this->priceListRepository = $this->createMock(EntityRepository::class);
         $this->productPriceRepository = $this->createMock(ProductPriceRepository::class);
+        $this->pl2pRepository = $this->createMock(PriceListToProductRepository::class);
 
         $this->listener = new BeforeImportChunksListener($this->doctrine, $this->shardManager);
     }
@@ -44,7 +45,7 @@ class BeforeImportChunksListenerTest extends TestCase
     /**
      * @dataProvider onBeforeImportChunksWithoutPriceListDataProvider
      */
-    public function testOnBeforeImportChunksValidation(array $body)
+    public function testOnBeforeImportChunksValidation(array $body): void
     {
         $event = new BeforeImportChunksEvent($body);
 
@@ -86,7 +87,7 @@ class BeforeImportChunksListenerTest extends TestCase
         ];
     }
 
-    public function testOnBeforeImportChunksNonExistentPriceList()
+    public function testOnBeforeImportChunksNonExistentPriceList(): void
     {
         $body['process'] = ProcessorRegistry::TYPE_IMPORT;
         $body['processorAlias'] = BeforeImportChunksListener::RESET_PROCESSOR_ALIAS;
@@ -108,7 +109,7 @@ class BeforeImportChunksListenerTest extends TestCase
         $this->listener->onBeforeImportChunks($event);
     }
 
-    public function testOnBeforeImportChunks()
+    public function testOnBeforeImportChunks(): void
     {
         $body['process'] = ProcessorRegistry::TYPE_IMPORT;
         $body['processorAlias'] = BeforeImportChunksListener::RESET_PROCESSOR_ALIAS;
@@ -118,10 +119,14 @@ class BeforeImportChunksListenerTest extends TestCase
         $priceList = new PriceList();
         ReflectionUtil::setId($priceList, 16);
 
-        $this->doctrine->expects($this->exactly(2))
+        $this->doctrine->expects($this->exactly(3))
             ->method('getRepository')
-            ->withConsecutive([PriceList::class], [ProductPrice::class])
-            ->willReturnOnConsecutiveCalls($this->priceListRepository, $this->productPriceRepository);
+            ->withConsecutive([PriceList::class], [ProductPrice::class], [PriceListToProduct::class])
+            ->willReturnOnConsecutiveCalls(
+                $this->priceListRepository,
+                $this->productPriceRepository,
+                $this->pl2pRepository
+            );
 
         $this->priceListRepository->expects($this->once())
             ->method('find')
@@ -131,6 +136,10 @@ class BeforeImportChunksListenerTest extends TestCase
         $this->productPriceRepository->expects($this->once())
             ->method('deleteByPriceList')
             ->with($this->shardManager, $priceList);
+
+        $this->pl2pRepository->expects($this->once())
+            ->method('deleteManualRelations')
+            ->with($priceList);
 
         $this->listener->onBeforeImportChunks($event);
     }

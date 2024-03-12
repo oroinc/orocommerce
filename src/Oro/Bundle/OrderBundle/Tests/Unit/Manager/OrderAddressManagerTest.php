@@ -13,23 +13,26 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CustomerBundle\Entity\AbstractAddressToAddressType;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class OrderAddressManagerTest extends AbstractAddressManagerTest
 {
     /** @var OrderAddressManager */
     protected $manager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|OrderAddressProvider */
+    /** @var MockObject|OrderAddressProvider */
     private $provider;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
+    /** @var MockObject|ManagerRegistry */
     protected $registry;
 
     protected function setUp(): void
@@ -237,8 +240,8 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturnMap([
-                ['OroCustomerBundle:CustomerAddressToAddressType', $customerManager],
-                ['OroCustomerBundle:CustomerUserAddressToAddressType', $customerUserManager]
+                [CustomerAddressToAddressType::class, $customerManager],
+                [CustomerUserAddressToAddressType::class, $customerUserManager]
             ]);
 
         $expectedTypes = [];

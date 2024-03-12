@@ -3,13 +3,16 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved;
 
 /**
@@ -27,7 +30,7 @@ class CustomerGroupCategoryRepository extends ServiceEntityRepository
      * @param int $configValue
      * @param Scope $scope
      * @return bool
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function isCategoryVisible(Category $category, $configValue, Scope $scope)
     {
@@ -49,7 +52,7 @@ class CustomerGroupCategoryRepository extends ServiceEntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('category.id')
-            ->from('OroCatalogBundle:Category', 'category')
+            ->from(Category::class, 'category')
             ->orderBy('category.id');
 
         $terms = [
@@ -94,7 +97,7 @@ class CustomerGroupCategoryRepository extends ServiceEntityRepository
                 $visibilityCondition,
                 (string)CustomerGroupCategoryVisibilityResolved::SOURCE_STATIC
             )
-            ->from('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility', 'agcv')
+            ->from(CustomerGroupCategoryVisibility::class, 'agcv')
             ->where('agcv.visibility != :parentCategory')
             ->setParameter('parentCategory', CustomerGroupCategoryVisibility::PARENT_CATEGORY);
 
@@ -134,7 +137,7 @@ class CustomerGroupCategoryRepository extends ServiceEntityRepository
                 $sourceCondition,
                 'IDENTITY(agcv.scope)'
             )
-            ->from('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility', 'agcv')
+            ->from(CustomerGroupCategoryVisibility::class, 'agcv')
             ->leftJoin('agcv.category', 'c')
             ->andWhere('agcv.visibility = :parentCategory') // parent category fallback
             ->andWhere('agcv.id IN (:visibilityIds)')       // specific visibility entity IDs
@@ -161,15 +164,15 @@ class CustomerGroupCategoryRepository extends ServiceEntityRepository
 
         $configFallback = CustomerGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         $qb->select('COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).')')
-            ->from('OroCatalogBundle:Category', 'category')
+            ->from(Category::class, 'category')
             ->leftJoin(
-                'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
+                CategoryVisibilityResolved::class,
                 'cvr',
                 Join::WITH,
                 $qb->expr()->eq('cvr.category', 'category')
             )
             ->leftJoin(
-                'OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved',
+                CustomerGroupCategoryVisibilityResolved::class,
                 'agcvr',
                 Join::WITH,
                 $qb->expr()->andX(
@@ -207,10 +210,10 @@ class CustomerGroupCategoryRepository extends ServiceEntityRepository
             'agcvr.visibility as a',
             'cvr.visibility as b'
         )
-        ->from('OroCustomerBundle:CustomerGroup', 'customerGroup')
-        ->leftJoin('OroScopeBundle:Scope', 'scope', 'WITH', 'scope.customerGroup = customerGroup')
+        ->from(CustomerGroup::class, 'customerGroup')
+        ->leftJoin(Scope::class, 'scope', 'WITH', 'scope.customerGroup = customerGroup')
         ->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved',
+            CustomerGroupCategoryVisibilityResolved::class,
             'agcvr',
             Join::WITH,
             $qb->expr()->andX(
@@ -219,7 +222,7 @@ class CustomerGroupCategoryRepository extends ServiceEntityRepository
             )
         )
         ->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
+            CategoryVisibilityResolved::class,
             'cvr',
             Join::WITH,
             $qb->expr()->eq('cvr.category', ':category')
@@ -267,7 +270,7 @@ class CustomerGroupCategoryRepository extends ServiceEntityRepository
             'IDENTITY(c.parentCategory) as parent_category_id',
             'cvr_parent.visibility as parent_category_resolved_visibility'
         )
-        ->from('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility', 'agcv')
+        ->from(CustomerGroupCategoryVisibility::class, 'agcv')
         // join to category that includes only parent category entities
         ->innerJoin(
             'agcv.category',
@@ -277,14 +280,14 @@ class CustomerGroupCategoryRepository extends ServiceEntityRepository
         )
         // join to parent category visibility
         ->leftJoin(
-            'OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility',
+            CustomerGroupCategoryVisibility::class,
             'agcv_parent',
             'WITH',
             'agcv_parent.scope = agcv.scope AND agcv_parent.category = c.parentCategory'
         )
         // join to resolved category visibility for parent category
         ->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
+            CategoryVisibilityResolved::class,
             'cvr_parent',
             'WITH',
             'cvr_parent.category = c.parentCategory'

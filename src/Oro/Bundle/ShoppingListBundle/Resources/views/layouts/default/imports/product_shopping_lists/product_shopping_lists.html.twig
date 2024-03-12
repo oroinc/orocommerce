@@ -30,30 +30,14 @@
 {% block __product_shopping_lists__shopping_lists_template_widget %}
     <% if (shoppingListsCount) { %>
         <div class="shopping-lists">
-            <div class="shopping-lists__content">
-                {{ block_widget(block) }}
-            </div>
+            {{ block_widget(block) }}
         </div>
     <% } %>
 {% endblock %}
 
-{% block __product_shopping_lists__shopping_lists_template_preview_widget %}
-    <div class="shopping-lists__content-wrapper">
-        <div class="shopping-lists__text">
-            <span class="shopping-lists__cart" aria-hidden="true"></span>
-            <span class="shopping-lists__phrase">
-            <% if (shoppingListsCount == 1) { %>
-                <%- _.__('oro.shoppinglist.actions.in_shopping_list') %>
-            <% } else { %>
-                <%- _.__('oro.shoppinglist.actions.in_shopping_lists') %>
-            <% } %>
-            </span>
-        </div>
-    </div>
-{% endblock %}
-
 {% block __product_shopping_lists__shopping_lists_popup_widget %}
     {% import '@OroFrontend/layouts/default/utils.html.twig' as utils %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set shoppingListsTemplate %}
         {% apply spaceless %}
             {{ block_widget(block) }}
@@ -77,18 +61,42 @@
                     configDefaultUnit: defaultUnitCode
                 }
             },
-            '~class': 'btn btn--plain shopping-lists__area-trigger',
+            '~class': 'btn btn--outlined btn--size-small',
             'title': 'Edit'|trans,
             'aria-label': 'oro.frontend.shoppinglist.open_modal_btn.aria_label'|trans
         }) %}
 
-        <button {{ block('block_attributes') }}></button>
+        <button {{ block('block_attributes') }}>
+            {{ renderIcon.icon({name: 'pencil', extraClass: 'theme-icon--small'}) }}
+            <span class="clip-text">
+                <% if (shoppingListsCount == 1) { %>
+                    <%- _.__('oro.shoppinglist.actions.in_shopping_list') %>
+                <% } else { %>
+                    <%- _.__('oro.shoppinglist.actions.in_shopping_lists', {
+                        shoppingListsCount: shoppingListsCount
+                    }) %>
+                <% } %>
+            </span>
+        </button>
+    {% else %}
+        <div class="shopping-lists__text">
+            <span class="clip-text">
+                <% if (shoppingListsCount == 1) { %>
+                    <%- _.__('oro.shoppinglist.actions.in_shopping_list') %>
+                <% } else { %>
+                    <%- _.__('oro.shoppinglist.actions.in_shopping_lists', {
+                        shoppingListsCount: shoppingListsCount
+                    }) %>
+                <% } %>
+            </span>
+        </div>
     {% endif %}
 {% endblock %}
 
 {% block __product_shopping_lists__shopping_lists_popup_template_widget %}
     {% import '@OroUI/macros.html.twig' as UI %}
     {% import '@OroFrontend/layouts/default/utils.html.twig' as utils %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     <div class="shopping-lists-outer">
         <table class="shopping-lists-popup">
             <thead class="shopping-lists-popup__headline">
@@ -103,13 +111,13 @@
             <tr class="shopping-lists-popup__item">
                 <td class="shopping-lists-popup__list">
                     <% if (_.isString(list.href)) { %>
-                    <a class="shopping-lists-popup__link" href="<%- list.href %>">
+                    <a class="shopping-lists-popup__link no-decoration" href="<%- list.href %>">
                         <%- list.label %>
                     </a>
                     <% } else { %>
                     <span class="shopping-lists-popup__link">
-                            <%- list.label %>
-                        </span>
+                        <%- list.label %>
+                    </span>
                     <% } %>
                 </td>
                 <td class="shopping-lists-popup__quantity">
@@ -159,15 +167,15 @@
                                 <% } %>
                                 <div class="shopping-lists-units__actions">
                                     <div class="actions-row">
-                                        <div class="actions-row__item actions-row__item--separate-light">
-                                            <button class="actions-row__button" type="button" title="{{ 'Edit'|trans }}"
+                                        <div class="actions-row__item">
+                                            <button class="actions-row__button btn btn--plain btn--icon" type="button" title="{{ 'Edit'|trans }}"
                                                     aria-label="{{ 'oro.frontend.shoppinglist.btn.edit_aria_label'|trans }}" data-role="edit">
-                                                <span class="actions-row__icon fa-pencil-square-o" aria-hidden="true"></span>
+                                                {{ renderIcon.icon({name: 'pencil', extraClass: 'theme-icon--medium'}) }}
                                             </button>
                                         </div>
                                         {% if is_granted('oro_shopping_list_line_item_frontend_delete') %}
-                                            <div class="actions-row__item actions-row__item--separate-light">
-                                                <button class="actions-row__button" type="button"
+                                            <div class="actions-row__item">
+                                                <button class="actions-row__button btn btn--plain btn--icon" type="button"
                                                         title="{{ 'Delete'|trans }}"
                                                         aria-label="{{ 'oro.frontend.shoppinglist.btn.delete_item_aria_label'|trans }}"
                                                         {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
@@ -185,7 +193,7 @@
                                                                 successMessageOptions: {namespace: 'shopping_list'}
                                                             }
                                                         })) }}>
-                                                    <span class="actions-row__icon fa-trash-o" aria-hidden="true"></span>
+                                                    {{ renderIcon.icon({name: 'trash', extraClass: 'theme-icon--medium'}) }}
                                                 </button>
                                             </div>
                                         {% endif %}
@@ -195,7 +203,7 @@
                             <div class="shopping-lists-modify hidden"
                                  data-role="line-item-edit">
                                 <div class="shopping-lists-modify__text">
-                                    <input class="shopping-lists-modify__input input input--size-s"
+                                    <input class="shopping-lists-modify__input input input--size-md"
                                            type="number"
                                            min="1"
                                            value="<%- lineItem.quantity %>"
@@ -218,7 +226,7 @@
                                     <%- lineItem.unit %>
                                     <% } %>
                                     <% } else { %>
-                                    <select class="oro-select2 oro-select2--size-s"
+                                    <select class="oro-select2"
                                             name="unit"
                                             data-role="field__unit"
                                             required
@@ -234,23 +242,23 @@
                                     <% } %>
                                 </div>
                                 <div class="shopping-lists-modify__badges">
-                                        <span class="shopping-lists-modify__edit">
-                                            <button class="btn btn--info btn--size-xs"
-                                                    type="button"
-                                                    title="{{ 'Apply'|trans }}"
-                                                    aria-label="{{ 'oro.frontend.shoppinglist.btn.apply_aria_label'|trans }}"
-                                                    disabled
-                                                    data-role="accept">
-                                                <span class="shopping-lists-modify__icon fa-check" aria-hidden="true"></span>
-                                            </button>
-                                        </span>
                                     <span class="shopping-lists-modify__edit">
-                                            <button class="btn btn--size-xs"
+                                        <button class="btn btn--icon"
+                                                type="button"
+                                                title="{{ 'Apply'|trans }}"
+                                                aria-label="{{ 'oro.frontend.shoppinglist.btn.apply_aria_label'|trans }}"
+                                                disabled
+                                                data-role="accept">
+                                            {{ renderIcon.icon({name: 'check', extraClass: 'theme-icon--medium'}) }}
+                                        </button>
+                                    </span>
+                                    <span class="shopping-lists-modify__edit">
+                                            <button class="btn btn--neutral btn--icon"
                                                     type="button"
                                                     title="{{ 'Decline'|trans }}"
                                                     aria-label="{{ 'oro.frontend.shoppinglist.btn.decline_aria_label'|trans }}"
                                                     data-role="decline">
-                                                <span class="shopping-lists-modify__icon fa-close" aria-hidden="true"></span>
+                                                {{ renderIcon.icon({name: 'close', extraClass: 'theme-icon--medium'}) }}
                                             </button>
                                         </span>
                                 </div>
@@ -267,7 +275,7 @@
         <div class="shopping-lists-popup__footer">
             <form method="post" class="shopping-lists-popup__item" data-role="add-form">
                 <div class="shopping-lists-popup__list">
-                    <select class="oro-select2 oro-select2--size-s"
+                    <select class="oro-select2"
                             name="list"
                             data-role="add-form-shopping-list"
                     >
@@ -284,7 +292,7 @@
                         <div class="shopping-lists-modify"
                              data-role="line-item-edit">
                             <div class="shopping-lists-modify__text">
-                                <input class="shopping-lists-modify__input input input--size-s"
+                                <input class="shopping-lists-modify__input input input--size-md"
                                        type="number"
                                        min="1"
                                        value="1"
@@ -301,7 +309,7 @@
                                 <%- unit %>
                                 <% } %>
                                 <% } else { %>
-                                <select class="oro-select2 oro-select2--size-s"
+                                <select class="oro-select2"
                                         name="oro_product_frontend_line_item[unit]"
                                         data-role="add-form-unit"
                                 >
@@ -313,21 +321,21 @@
                             </div>
                             <div class="shopping-lists-modify__badges">
                                 <span class="shopping-lists-modify__edit">
-                                    <button class="btn btn--info btn--size-xs"
+                                    <button class="btn btn--icon"
                                             type="button"
                                             title="{{ 'Apply'|trans }}"
                                             aria-label="{{ 'oro.frontend.shoppinglist.btn.apply_aria_label'|trans }}"
                                             data-role="add-form-accept">
-                                        <span class="shopping-lists-modify__icon fa-check" aria-hidden="true"></span>
+                                        {{ renderIcon.icon({name: 'check', extraClass: 'theme-icon--medium'}) }}
                                     </button>
                                 </span>
                                 <span class="shopping-lists-modify__edit">
-                                    <button class="btn btn--size-xs"
+                                    <button class="btn btn--neutral btn--icon"
                                             type="reset"
                                             title="{{ 'Decline'|trans }}"
                                             aria-label="{{ 'oro.frontend.shoppinglist.btn.decline_aria_label'|trans }}"
                                             data-role="add-form-reset">
-                                        <span class="shopping-lists-modify__icon fa-close" aria-hidden="true"></span>
+                                            {{ renderIcon.icon({name: 'close', extraClass: 'theme-icon--medium'}) }}
                                     </button>
                                 </span>
                             </div>
@@ -338,7 +346,7 @@
             </form>
         </div>
         <div class="widget-actions">
-            <button class="btn" type="reset" aria-label="{{ 'oro.orowindows.dialog.close.aria_label'|trans }}">
+            <button class="btn btn--outlined" type="reset" aria-label="{{ 'oro.orowindows.dialog.close.aria_label'|trans }}">
                 <span aria-hidden="true">{{ 'Close'|trans }}</span>
             </button>
         </div>

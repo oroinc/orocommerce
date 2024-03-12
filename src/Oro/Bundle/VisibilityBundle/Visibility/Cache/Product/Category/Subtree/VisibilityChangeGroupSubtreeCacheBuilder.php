@@ -139,9 +139,9 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         /** @var QueryBuilder $qb */
         $qb = $repository->createQueryBuilder('customer');
         $qb->select('customer.id')
-            ->leftJoin('OroScopeBundle:Scope', 'scope', 'WITH', 'customer = scope.customer')
+            ->leftJoin(Scope::class, 'scope', 'WITH', 'customer = scope.customer')
             ->leftJoin(
-                'OroVisibilityBundle:Visibility\CustomerCategoryVisibility',
+                CustomerCategoryVisibility::class,
                 'customerCategoryVisibility',
                 'WITH',
                 $qb->expr()->andX(
@@ -196,7 +196,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         $qb = $this->getEntityManager(CustomerGroupProductVisibilityResolved::class)
             ->createQueryBuilder();
 
-        $qb->update('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved', 'agpvr')
+        $qb->update(CustomerGroupProductVisibilityResolved::class, 'agpvr')
             ->set('agpvr.visibility', ':visibility')
             ->where($qb->expr()->in('agpvr.scope', ':scopes'))
             ->andWhere($qb->expr()->in('IDENTITY(agpvr.category)', ':categoryIds'))
@@ -211,7 +211,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
     protected function joinCategoryVisibility(QueryBuilder $qb, $target)
     {
         return $qb->leftJoin(
-            'OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility',
+            CustomerGroupCategoryVisibility::class,
             'cv',
             Join::WITH,
             $qb->expr()->andX(

@@ -17,7 +17,7 @@ class QuoteAddressTest extends \PHPUnit\Framework\TestCase
     {
         $now = new \DateTime('now');
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['customerAddress', new CustomerAddress()],
             ['customerUserAddress', new CustomerUserAddress()],
             ['region', new Region('combineCode')],

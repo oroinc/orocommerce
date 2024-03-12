@@ -124,7 +124,9 @@ operations:
                 group_name: 'b2b_checkout_flow'
             - '@call_service_method':
                 conditions:
-                    '@not_empty': $.currentUser
+                    '@and':
+                        '@not_empty': $.currentUser
+                        '@instanceof': [$.data, 'Oro\Bundle\SaleBundle\Entity\Quote']
                 parameters:
                     attribute: $.checkout
                     service: 'oro_sale.provider.quote_checkout'
@@ -204,6 +206,10 @@ operations:
                         service: oro_sale.manager.quote_demand_manager
                         method: recalculateSubtotals
                         method_parameters: [$.quoteDemand]
+                    - '@call_service_method':
+                        service: oro_sale.manager.quote_demand_manager
+                        method: updateQuoteProductDemandChecksum
+                        method_parameters: [$.quoteDemand]
                     - '@flush_entity': $.quoteDemand
             - '@redirect':
                  route: 'oro_sale_quote_frontend_choice'
@@ -263,6 +269,10 @@ operations:
                                 service: oro_sale.manager.quote_demand_manager
                                 method: recalculateSubtotals
                                 method_parameters: [$.quoteDemand]
+                            - '@call_service_method':
+                                service: oro_sale.manager.quote_demand_manager
+                                method: updateQuoteProductDemandChecksum
+                                method_parameters: [$.quoteDemand]
                             - '@flush_entity': $.quoteDemand
             - '@tree':
                 conditions:
@@ -290,6 +300,10 @@ operations:
                             - '@call_service_method':
                                 service: oro_sale.manager.quote_demand_manager
                                 method: recalculateSubtotals
+                                method_parameters: [$.quoteDemand]
+                            - '@call_service_method':
+                                service: oro_sale.manager.quote_demand_manager
+                                method: updateQuoteProductDemandChecksum
                                 method_parameters: [$.quoteDemand]
                             - '@flush_entity': $.quoteDemand
             - '@redirect':
@@ -368,6 +382,7 @@ action_groups:
                     - [[keep], [propertyType, ['Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm']]]
                     - [[keep], [propertyType, ['Oro\Bundle\RFPBundle\Entity\RequestProductItem']]]
                     - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
+                    - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\ProductKitItem']]]
 
     oro_sale_expire_quote:
         parameters:
@@ -532,3 +547,26 @@ action_groups:
                     startTransition: $.startTransition
                 results:
                     redirectUrl: $.redirectUrl
+                    checkout: $.checkout
+            - '@tree':
+                conditions:
+                    '@has_elements': $.checkout.lineItems
+                actions:
+                    - '@call_service_method':
+                        attribute: $.changedSkus
+                        service: oro_checkout.provider.checkout_line_items
+                        method: getProductSkusWithDifferences
+                        method_parameters: [$.checkout.lineItems, $.data.demandProducts]
+                    - '@tree':
+                        conditions:
+                            '@has_elements': $.changedSkus
+                        actions:
+                            - '@call_method':
+                                attribute: $.changedSkus
+                                method: implode
+                                method_parameters: [', ', $.changedSkus]
+                            - '@flash_message':
+                                message: oro.checkout.frontend.checkout.some_changes_in_line_items
+                                message_parameters:
+                                    skus: $.changedSkus
+                                type: 'warning'

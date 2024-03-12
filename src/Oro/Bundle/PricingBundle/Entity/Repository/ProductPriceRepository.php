@@ -340,7 +340,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
 
         $batch = [];
         $count = 0;
-        while ($productId = $stmt->fetchColumn()) {
+        while ($productId = $stmt->fetchOne()) {
             $batch[] = $productId;
             $count++;
             if ($batchSize === $count) {

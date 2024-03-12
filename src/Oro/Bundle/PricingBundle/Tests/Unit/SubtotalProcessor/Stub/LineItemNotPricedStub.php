@@ -8,9 +8,13 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
-class LineItemNotPricedStub implements ProductLineItemInterface, ProductKitItemLineItemsAwareInterface
+class LineItemNotPricedStub implements
+    ProductLineItemInterface,
+    ProductLineItemChecksumAwareInterface,
+    ProductKitItemLineItemsAwareInterface
 {
     private ?float $quantity = null;
 

@@ -16,7 +16,8 @@
         },
         "index": 1,
         "unit_label": "milliliter",
-        "organization": ""
+        "organization": "",
+        "type": "simple"
       },
       {
         "sku": "product-1",
@@ -31,7 +32,8 @@
         },
         "index": 2,
         "unit_label": "liter",
-        "organization": ""
+        "organization": "",
+        "type": "simple"
       },
       {
         "sku": "product-1",
@@ -51,7 +53,8 @@
         },
         "index": 3,
         "unit_label": "box",
-        "organization": ""
+        "organization": "",
+        "type": "simple"
       },
       {
         "sku": "product-2",
@@ -72,7 +75,8 @@
         },
         "index": 4,
         "unit_label": "milliliter",
-        "organization": ""
+        "organization": "",
+        "type": "simple"
       },
       {
         "sku": "product-3",
@@ -86,7 +90,8 @@
         },
         "index": 5,
         "unit_label": "milliliter",
-        "organization": ""
+        "organization": "",
+        "type": "simple"
       },
       {
         "sku": "product-3",
@@ -105,7 +110,8 @@
         },
         "index": 6,
         "unit_label": "liter5",
-        "organization": ""
+        "organization": "",
+        "type": "simple"
       },
       {
         "sku": "SKU1",
@@ -171,6 +177,34 @@
         "index": 9,
         "unit_label": "",
         "organization": ""
+      },
+      {
+        "sku": "product-kit-1",
+        "product_name": "Product Kit with Single Kit Item",
+        "quantity": 3,
+        "errors": [],
+        "additional": [],
+        "units": {
+          "milliliter": 0
+        },
+        "index": 10,
+        "unit_label": "milliliter",
+        "organization": "",
+        "type": "kit"
+      },
+      {
+        "sku": "product-kit-2",
+        "product_name": "Product Kit Utilizing Sort Order",
+        "quantity": 1,
+        "errors": [],
+        "additional": [],
+        "units": {
+          "milliliter": 0
+        },
+        "index": 13,
+        "unit_label": "milliliter",
+        "organization": "",
+        "type": "kit"
       }
     ]
   }

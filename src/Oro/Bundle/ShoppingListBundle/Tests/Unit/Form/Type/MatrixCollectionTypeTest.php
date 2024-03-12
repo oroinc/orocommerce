@@ -78,9 +78,11 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->isType('array'))
-            ->willReturnCallback(function (array $options) {
+            ->willReturnCallback(function (array $options) use ($resolver) {
                 $this->assertArrayHasKey('data_class', $options);
                 $this->assertEquals(MatrixCollection::class, $options['data_class']);
+
+                return $resolver;
             });
 
         $type = new MatrixCollectionType();

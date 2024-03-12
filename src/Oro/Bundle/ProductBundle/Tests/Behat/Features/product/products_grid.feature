@@ -1,11 +1,9 @@
 @regression
 @fixture-OroProductBundle:products_grid.yml
 @ticket-BAP-17648
-@skip
-#Issue should be resolved in BB-21070
+@ticket-BB-21070
 
 Feature: Products Grid
-
   In order to ensure backoffice products grid works correctly
   As an administrator
   I check filters are working, sorting is working and columns config is working as designed.
@@ -187,11 +185,11 @@ Feature: Products Grid
       | Product 20 |
     When I sort grid by "Product Family"
     Then I should see following grid:
-      | Name       |
-      | Product 1  |
+      | Name      |
+      | Product 1 |
     When I sort grid by "Product Family" again
     Then I should see following grid:
-      | Name      |
+      | Name       |
       | Product 19 |
     And I reset "Products Grid" grid
 
@@ -249,30 +247,30 @@ Feature: Products Grid
 
   Scenario: Sort by Price
     Given I should see following grid:
-      | Name       |
-      | Product 20 |
-      | Product 19 |
+      | Name       | Price (USD) |
+      | Product 20 | Each $20.00 |
+      | Product 19 | Each $19.00 |
     When I sort grid by "Price (USD)"
     Then I should see following grid:
-      | Name       |
-      | Product 1  |
-      | Product 10 |
+      | Name      | Price (USD) |
+      | Product 1 | Each $1.00  |
+      | Product 2 | Each $2.00  |
     When I sort grid by "Price (USD)" again
     Then I should see following grid:
-      | Name      |
-      | Product 9 |
-      | Product 8 |
+      | Name       | Price (USD) |
+      | Product 20 | Each $20.00 |
+      | Product 19 | Each $19.00 |
     And I show column Price (USD/each) in grid
     When I sort grid by "Price (USD/each)"
     Then I should see following grid:
-      | Name       |
-      | Product 1  |
-      | Product 10 |
+      | Name      | Price (USD/each) |
+      | Product 1 | $1.00            |
+      | Product 2 | $2.00            |
     When I sort grid by "Price (USD/each)" again
     Then I should see following grid:
-      | Name      |
-      | Product 9 |
-      | Product 8 |
+      | Name       | Price (USD/each) |
+      | Product 20 | $20.00           |
+      | Product 19 | $19.00           |
     And I reset "Products Grid" grid
 
   Scenario: Enable column "Tax Code" and Sort by it
@@ -307,7 +305,7 @@ Feature: Products Grid
     When I sort grid by "Type" again
     Then I should see following grid:
       | Name       |
-      | Product 20  |
+      | Product 20 |
       | Product 19 |
     And I reset "Products Grid" grid
 
@@ -325,51 +323,44 @@ Feature: Products Grid
     When I sort grid by "New Arrival" again
     Then I should see following grid:
       | Name       |
-      | Product 10  |
+      | Product 10 |
       | Product 20 |
     And I reset "Products Grid" grid
 
   Scenario: Sort by Price Attribute
     Given I should see following grid:
-      | Name       |
-      | Product 20 |
-      | Product 19 |
+      | Name       | Price Attribute (USD)    |
+      | Product 20 | Each $20.00 Item $200.00 |
+      | Product 19 | Each $19.00 Item $190.00 |
     When I sort grid by "Price Attribute (USD)"
     Then I should see following grid:
-      | Name      |
-      | Product 1 |
-      | Product 10 |
+      | Name      | Price Attribute (USD) |
+      | Product 1 | Each $1.00            |
+      | Product 2 | Each $2.00            |
     When I sort grid by "Price Attribute (USD)" again
     Then I should see following grid:
-      | Name      |
-      | Product 9 |
-      | Product 8 |
+      | Name       | Price Attribute (USD)    |
+      | Product 20 | Each $20.00 Item $200.00 |
+      | Product 19 | Each $19.00 Item $190.00 |
 
-  Scenario: Check Sorter Applies After Different Actions
-    Given I hide column Price Attribute (USD) in grid
+    When I filter "Name" as is any of "Product 19, Product 20"
+    And I sort grid by "Price Attribute (USD)" again
     Then I should see following grid:
-      | Name      |
-      | Product 9 |
-      | Product 8 |
+      | Name       | Price Attribute (USD)    |
+      | Product 19 | Each $19.00 Item $190.00 |
+      | Product 20 | Each $20.00 Item $200.00 |
+    And I reset "Name" filter
+
+  Scenario: Check sorter not applies after column became hidden
+    Given I hide column Price Attribute (USD) in grid
+    And records in grid should be 20
     When I select 10 from per page list dropdown
     Then records in grid should be 10
-    And I should see following grid:
-      | Name      |
-      | Product 9 |
-      | Product 8 |
     When I press next page button
-    Then I should see following grid:
-      | Name       |
-      | Product 18 |
-      | Product 17 |
-    When I reload the page
-    Then I should see following grid:
-      | Name       |
-      | Product 18 |
-      | Product 17 |
+    And I reload the page
+    Then records in grid should be 10
     When I reset "Products Grid" grid
     Then there is 20 records in grid
-    And records in grid should be 20
 
   Scenario: Check columns are loaded correctly
     Given I hide all columns in grid except SKU
@@ -381,20 +372,20 @@ Feature: Products Grid
     When I show column Price Attribute (USD) in grid
     Then I should see "Price Attribute (USD)" column in grid
     And I should see following grid with exact columns order:
-      | SKU    | Name       | Price Attribute (USD) |
-      | PSKU20 | Product 20 | Each $20.00           |
+      | SKU    | Name       | Price Attribute (USD)    |
+      | PSKU20 | Product 20 | Each $20.00 Item $200.00 |
     When I show column Price (USD/each) in grid
     Then I should see "Price (USD/each)" column in grid
     And I should see following grid with exact columns order:
-      | SKU    | Name       | Price Attribute (USD) | Price (USD/Each) |
-      | PSKU20 | Product 20 | Each $20.00           | $20.00           |
+      | SKU    | Name       | Price Attribute (USD)    | Price (USD/Each) |
+      | PSKU20 | Product 20 | Each $20.00 Item $200.00 | $20.00           |
 
   Scenario: Check Columns Config Applies After Different Actions
     When I select 10 from per page list dropdown
     Then records in grid should be 10
     And I should see following grid with exact columns order:
-      | SKU    | Name       | Price Attribute (USD) | Price (USD/Each) |
-      | PSKU20 | Product 20 | Each $20.00           | $20.00           |
+      | SKU    | Name       | Price Attribute (USD)    | Price (USD/Each) |
+      | PSKU20 | Product 20 | Each $20.00 Item $200.00 | $20.00           |
     When I press next page button
     And I should see following grid with exact columns order:
       | SKU    | Name       | Price Attribute (USD) | Price (USD/Each) |
@@ -405,5 +396,5 @@ Feature: Products Grid
       | PSKU10 | Product 10 | Each $10.00           | $10.00           |
     When I reset "Products Grid" grid
     Then I should see following grid with exact columns order:
-      | SKU    | Image | Name       | Product Family           | Status  | Inventory Status |
-      | PSKU20 |       | Product 20 | Product Attribute Family | Enabled | In Stock         |
+      | SKU    | Image | Name       | Product Family | Status  | Inventory Status |
+      | PSKU20 |       | Product 20 | Default        | Enabled | In Stock         |

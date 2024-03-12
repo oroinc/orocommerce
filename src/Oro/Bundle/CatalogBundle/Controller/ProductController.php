@@ -4,7 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Controller;
 
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -16,15 +16,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductController extends AbstractController
 {
     /**
-     * @Route("/sidebar", name="oro_catalog_category_product_sidebar")
-     * @AclAncestor("oro_catalog_category_view")
-     * @Template
-     *
      * @return array
      */
+    #[Route(path: '/sidebar', name: 'oro_catalog_category_product_sidebar')]
+    #[Template]
+    #[AclAncestor('oro_catalog_category_view')]
     public function sidebarAction()
     {
-        $catalogRequestHandler = $this->get(RequestProductHandler::class);
+        $catalogRequestHandler = $this->container->get(RequestProductHandler::class);
 
         $includeSubcategoriesForm = $this->createForm(
             CheckboxType::class,
@@ -46,7 +45,7 @@ class ProductController extends AbstractController
             ]
         );
 
-        $masterCatalogRoot = $this->get(MasterCatalogRootProvider::class)
+        $masterCatalogRoot = $this->container->get(MasterCatalogRootProvider::class)
             ->getMasterCatalogRoot();
 
         return [

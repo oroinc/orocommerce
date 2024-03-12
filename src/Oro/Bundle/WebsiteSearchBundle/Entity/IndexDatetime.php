@@ -7,21 +7,14 @@ use Oro\Bundle\SearchBundle\Entity\AbstractIndexDatetime;
 
 /**
  * Stores values of datatime fields
- *
- * @ORM\Table(
- *      name="oro_website_search_datetime",
- *      indexes={
- *          @ORM\Index(name="oro_website_search_datetime_field_idx", columns={"field"}),
- *          @ORM\Index(name="oro_website_search_datetime_item_field_idx", columns={"item_id", "field"})
- *      }
- * )
- * @ORM\Entity
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_website_search_datetime')]
+#[ORM\Index(columns: ['field'], name: 'oro_website_search_datetime_field_idx')]
+#[ORM\Index(columns: ['item_id', 'field'], name: 'oro_website_search_datetime_item_field_idx')]
 class IndexDatetime extends AbstractIndexDatetime
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteSearchBundle\Entity\Item", inversedBy="datetimeFields")
-     * @ORM\JoinColumn(name="item_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    protected $item;
+    #[ORM\ManyToOne(targetEntity: Item::class, inversedBy: 'datetimeFields')]
+    #[ORM\JoinColumn(name: 'item_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Item $item = null;
 }

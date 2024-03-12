@@ -51,20 +51,23 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
     public function testChoices()
     {
         $form = $this->factory->create(BrandStatusType::class);
-        $availableBrandStatuses = $this->brandStatusProvider->getAvailableBrandStatuses();
-
-        $choices = [];
-        foreach ($availableBrandStatuses as $label => $value) {
-            $choices[] = new ChoiceView($value, $value, $label);
-        }
 
         $this->assertEquals(
-            $choices,
+            [1 => new ChoiceView(Brand::STATUS_ENABLED, Brand::STATUS_ENABLED, 'Enabled')],
             $form->createView()->vars['choices']
         );
 
         $this->assertEquals(
-            Brand::STATUS_DISABLED,
+            [new ChoiceView(Brand::STATUS_DISABLED, Brand::STATUS_DISABLED, 'Disabled')],
+            $form->createView()->vars['preferred_choices']
+        );
+
+        $this->assertFalse(
+            $form->getConfig()->getOptions()['duplicate_preferred_choices']
+        );
+
+        $this->assertEquals(
+            [Brand::STATUS_DISABLED],
             $form->getConfig()->getOptions()['preferred_choices']
         );
     }

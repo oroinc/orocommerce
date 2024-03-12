@@ -127,8 +127,8 @@ Feature: My Shopping List
   Scenario: Check index page
     Given I operate as the Buyer
     And I login as AmandaRCole@example.org buyer
-    And I follow "Account"
-    When I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    When I click on "Shopping Lists"
     Then Page title equals to "Shopping Lists - My Account"
     And should see following grid:
       | Name            | Subtotal  | Items |
@@ -166,8 +166,8 @@ Feature: My Shopping List
   Scenario: Check subtotals are recalculated if product is disabled or has been discontinued
     Given I operate as the Buyer
     And I open page with shopping list "Shopping List 3"
-    And I follow "Account"
-    When I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    When I click on "Shopping Lists"
     Then Page title equals to "Shopping Lists - My Account"
     And should see following grid:
       | Name            | Subtotal  | Items |
@@ -670,7 +670,7 @@ Feature: My Shopping List
     Then I should not see an "Product Item Gallery Trigger" element
 
   Scenario: Check owner link
-    When I click "Amanda Cole"
+    And I click "ShoppingList Owner"
     Then Page title equals to "Amanda Cole - Users - My Account"
     And I should see "CUSTOMER USER - AMANDA COLE"
 
@@ -724,10 +724,10 @@ Feature: My Shopping List
       | BB12 | Color: Blue Size: S Note 12 text | In Stock     | 7 item         | $23.00 | $161.00 -$80.50 $80.50   |
 
   Scenario: Change VIEW permission
-    Given I follow "Account"
-    And click "Users"
+    And I click "Account Dropdown"
     And click "Roles"
     And click edit "Administrator" in grid
+    And I should see 'Predefined roles cannot be edited directly. We copied all the original data so that you can save it as a new user role for your organization. All users will be moved from the original role to this new role after you click "Save".' flash message and I close it
     And click "Shopping"
     When select following permissions:
       | Shopping List | View:None |
@@ -735,9 +735,9 @@ Feature: My Shopping List
     And click "Save"
     Then should see "Customer User Role has been saved" flash message
     And should see "View - None"
+    And I click "Account Dropdown"
     And click "Sign Out"
 
   Scenario: Check resources
     Given I login as AmandaRCole@example.org buyer
-    When I follow "Account"
-    Then I should not see a "Shopping Lists Navigation Link" element
+    Then I should not see a "Shopping Lists" element

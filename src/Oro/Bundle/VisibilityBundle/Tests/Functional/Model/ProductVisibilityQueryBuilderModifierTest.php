@@ -20,6 +20,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * @dbIsolationPerTest
+ * @group CommunityEdition
  */
 class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {
@@ -44,7 +45,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         if ($user) {
             /** @var CustomerUser $user */
             $user = $this->getReference($user);
-            $token = new UsernamePasswordToken($user, $user->getPassword(), 'key');
+            $token = new UsernamePasswordToken($user, 'key');
             $this->client->getContainer()->get('security.token_storage')->setToken($token);
         } else {
             $this->client->getContainer()->get('security.token_storage')->setToken(null);

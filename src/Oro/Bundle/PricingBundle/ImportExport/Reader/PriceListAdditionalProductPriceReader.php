@@ -8,10 +8,14 @@ use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Context\ContextRegistry;
 use Oro\Bundle\ImportExportBundle\Reader\IteratorBasedReader;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\PricingBundle\ImportExport\Reader\Iterator\AdditionalProductPricesIterator;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
+/**
+ * Reads additional product prices for price list
+ */
 class PriceListAdditionalProductPriceReader extends IteratorBasedReader
 {
     /**
@@ -62,13 +66,13 @@ class PriceListAdditionalProductPriceReader extends IteratorBasedReader
     {
         if ($this->priceListId) {
             /** @var EntityManager $em */
-            $em = $this->registry->getManagerForClass('OroPricingBundle:PriceListToProduct');
+            $em = $this->registry->getManagerForClass(PriceListToProduct::class);
 
             /** @var PriceListToProductRepository $repository */
-            $repository = $em->getRepository('OroPricingBundle:PriceListToProduct');
+            $repository = $em->getRepository(PriceListToProduct::class);
 
             /** @var PriceList $priceList */
-            $priceList = $em->getReference('OroPricingBundle:PriceList', $this->priceListId);
+            $priceList = $em->getReference(PriceList::class, $this->priceListId);
 
             return new AdditionalProductPricesIterator(
                 $repository->getProductsWithoutPrices($this->shardManager, $priceList),

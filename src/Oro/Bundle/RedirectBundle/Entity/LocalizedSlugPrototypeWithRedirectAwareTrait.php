@@ -6,6 +6,10 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
+/**
+* LocalizedSlugPrototypeWithRedirectAware trait
+*
+*/
 trait LocalizedSlugPrototypeWithRedirectAwareTrait
 {
     use LocalizedSlugPrototypeAwareTrait;

@@ -5,12 +5,14 @@ namespace Oro\Bundle\RFPBundle\Controller;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Form\Type\RequestType;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -18,16 +20,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class RequestController extends AbstractController
 {
-    /**
-     * @Route("/view/{id}", name="oro_rfp_request_view", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_rfp_request_view",
-     *      type="entity",
-     *      class="OroRFPBundle:Request",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/view/{id}', name: 'oro_rfp_request_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_rfp_request_view', type: 'entity', class: RFPRequest::class, permission: 'VIEW')]
     public function viewAction(RFPRequest $rfpRequest): array
     {
         return [
@@ -35,11 +30,9 @@ class RequestController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/info/{id}", name="oro_rfp_request_info", requirements={"id"="\d+"})
-     * @Template
-     * @AclAncestor("oro_rfp_request_view")
-     */
+    #[Route(path: '/info/{id}', name: 'oro_rfp_request_info', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[AclAncestor('oro_rfp_request_view')]
     public function infoAction(RFPRequest $rfpRequest): array
     {
         return [
@@ -47,11 +40,9 @@ class RequestController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/", name="oro_rfp_request_index")
-     * @Template
-     * @AclAncestor("oro_rfp_request_view")
-     */
+    #[Route(path: '/', name: 'oro_rfp_request_index')]
+    #[Template]
+    #[AclAncestor('oro_rfp_request_view')]
     public function indexAction(): array
     {
         return [
@@ -59,16 +50,9 @@ class RequestController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/update/{id}", name="oro_rfp_request_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *     id="oro_rfp_request_update",
-     *     type="entity",
-     *     permission="EDIT",
-     *     class="OroRFPBundle:Request"
-     * )
-     */
+    #[Route(path: '/update/{id}', name: 'oro_rfp_request_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_rfp_request_update', type: 'entity', class: RFPRequest::class, permission: 'EDIT')]
     public function updateAction(RFPRequest $rfpRequest): array|RedirectResponse
     {
         return $this->update($rfpRequest);
@@ -76,11 +60,23 @@ class RequestController extends AbstractController
 
     protected function update(RFPRequest $rfpRequest): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        $form = $this->createForm(
+            RequestType::class,
             $rfpRequest,
-            $this->createForm(RequestType::class, $rfpRequest),
-            $this->get(TranslatorInterface::class)->trans('oro.rfp.controller.request.saved.message')
+            [
+                'validation_groups' => $this->getValidationGroups($rfpRequest),
+            ]
         );
+        return $this->container->get(UpdateHandlerFacade::class)->update(
+            $rfpRequest,
+            $form,
+            $this->container->get(TranslatorInterface::class)->trans('oro.rfp.controller.request.saved.message')
+        );
+    }
+
+    protected function getValidationGroups(RFPRequest $rfpRequest): GroupSequence|array|string
+    {
+        return new GroupSequence([Constraint::DEFAULT_GROUP, 'request_update']);
     }
 
     /**

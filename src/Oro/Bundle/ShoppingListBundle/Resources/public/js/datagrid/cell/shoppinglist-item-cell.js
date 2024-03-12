@@ -51,7 +51,7 @@ const ShoppingListItemCell = HtmlTemplateCell.extend({
 
         const launcher = this.editNotesAction.createLauncher({
             launcherMode: 'icon-only',
-            className: 'btn btn--plain btn--size-xs grid-line-items__edit-notes'
+            className: 'btn btn--outlined btn--text btn--size-small grid-line-items__edit-notes'
         });
         $note.after(launcher.render().$el);
     }

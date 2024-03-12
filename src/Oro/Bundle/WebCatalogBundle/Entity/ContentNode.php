@@ -4,15 +4,18 @@ namespace Oro\Bundle\WebCatalogBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroWebCatalogBundle_Entity_ContentNode;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope;
 use Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -22,6 +25,7 @@ use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeWithRedirectAwareTrai
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Component\Tree\Entity\TreeTrait;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
@@ -29,42 +33,6 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
 /**
  * Represents a node in the web catalog tree.
  *
- * @ORM\Entity(repositoryClass="Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository")
- * @ORM\Table(name="oro_web_catalog_content_node")
- * @Gedmo\Tree(type="nested")
- * @ORM\HasLifecycleCallbacks()
- * @ORM\AssociationOverrides({
- *      @ORM\AssociationOverride(
- *          name="slugPrototypes",
- *          joinTable=@ORM\JoinTable(
- *              name="oro_web_catalog_node_slug_prot",
- *              joinColumns={
- *                  @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
- *              },
- *              inverseJoinColumns={
- *                  @ORM\JoinColumn(
- *                      name="localized_value_id",
- *                      referencedColumnName="id",
- *                      onDelete="CASCADE",
- *                      unique=true
- *                  )
- *              }
- *          )
- *      )
- * })
- * @Config(
- *      defaultValues={
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "activity"={
- *              "show_on_page"="\Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE"
- *          },
- *          "slug"={
- *              "source"="titles"
- *          }
- *     }
- * )
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -77,6 +45,40 @@ use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
  * @method $this cloneLocalizedFallbackValueAssociations()
  * @mixin OroWebCatalogBundle_Entity_ContentNode
  */
+#[ORM\Entity(repositoryClass: ContentNodeRepository::class)]
+#[ORM\Table(name: 'oro_web_catalog_content_node')]
+#[ORM\HasLifecycleCallbacks]
+#[ORM\AssociationOverrides([
+    new ORM\AssociationOverride(
+        name: 'slugPrototypes',
+        joinColumns: [
+            new ORM\JoinColumn(
+                name: 'node_id',
+                referencedColumnName: 'id',
+                onDelete: 'CASCADE'
+            )
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(
+                name: 'localized_value_id',
+                referencedColumnName: 'id',
+                unique: true,
+                onDelete: 'CASCADE'
+            )
+        ],
+        joinTable: new ORM\JoinTable(name: 'oro_web_catalog_node_slug_prot')
+    )
+])]
+#[Gedmo\Tree(type: 'nested')]
+#[Config(
+    defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'activity' => [
+            'show_on_page' => ActivityScope::UPDATE_PAGE
+        ],
+        'slug' => ['source' => 'titles']
+    ]
+)]
 class ContentNode implements
     ContentNodeInterface,
     DatesAwareInterface,
@@ -92,154 +94,72 @@ class ContentNode implements
 
     const FIELD_PARENT_NODE = 'parentNode';
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: ContentNode::class, inversedBy: 'childNodes')]
+    #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[Gedmo\TreeParent]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?ContentNode $parentNode = null;
 
     /**
-     * @var ContentNode
-     *
-     * @Gedmo\TreeParent
-     * @ORM\ManyToOne(targetEntity="ContentNode", inversedBy="childNodes")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, ContentNode>
      */
-    protected $parentNode;
+    #[ORM\OneToMany(mappedBy: 'parentNode', targetEntity: ContentNode::class, cascade: ['persist'])]
+    #[ORM\OrderBy(['left' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $childNodes = null;
+
+    #[ORM\Column(name: 'parent_scope_used', type: Types::BOOLEAN, options: ['default' => true])]
+    protected ?bool $parentScopeUsed = true;
+
+    #[ORM\Column(name: 'rewrite_variant_title', type: Types::BOOLEAN, options: ['default' => true])]
+    protected ?bool $rewriteVariantTitle = true;
 
     /**
-     * @var Collection|ContentNode[]
-     *
-     * @ORM\OneToMany(targetEntity="ContentNode", mappedBy="parentNode", cascade={"persist"})
-     * @ORM\OrderBy({"left" = "ASC"})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $childNodes;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_web_catalog_node_title')]
+    #[ORM\JoinColumn(name: 'node_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $titles = null;
 
     /**
-     * @var boolean
-     *
-     * @ORM\Column(name="parent_scope_used", type="boolean", options={"default"=true})
+     * @var Collection<int, Scope>
      */
-    protected $parentScopeUsed = true;
+    #[ORM\ManyToMany(targetEntity: Scope::class)]
+    #[ORM\JoinTable(name: 'oro_web_catalog_node_scope')]
+    #[ORM\JoinColumn(name: 'node_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'scope_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Collection $scopes = null;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(name="rewrite_variant_title", type="boolean", options={"default"=true})
+     * @var Collection<int, ContentVariant>
      */
-    protected $rewriteVariantTitle = true;
+    #[ORM\OneToMany(mappedBy: 'node', targetEntity: ContentVariant::class, cascade: ['ALL'], orphanRemoval: true)]
+    protected ?Collection $contentVariants = null;
+
+    #[ORM\Column(name: 'materialized_path', type: Types::STRING, length: 1024, nullable: true)]
+    protected ?string $materializedPath = null;
+
+    #[ORM\ManyToOne(targetEntity: WebCatalog::class)]
+    #[ORM\JoinColumn(name: 'web_catalog_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?WebCatalog $webCatalog = null;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_web_catalog_node_title",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $titles;
-
-    /**
-     * @var Collection|Scope[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope"
-     * )
-     * @ORM\JoinTable(name="oro_web_catalog_node_scope",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="scope_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
-     */
-    protected $scopes;
-
-    /**
-     * @var Collection|ContentVariant[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentVariant",
-     *     mappedBy="node",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true
-     * )
-     */
-    protected $contentVariants;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="materialized_path", type="string", length=1024, nullable=true)
-     */
-    protected $materializedPath;
-
-    /**
-     * @var WebCatalog
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebCatalogBundle\Entity\WebCatalog")
-     * @ORM\JoinColumn(name="web_catalog_id", referencedColumnName="id",onDelete="CASCADE",nullable=false)
-     */
-    protected $webCatalog;
-
-    /**
-     * @var Collection|LocalizedFallbackValue[]
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_web_catalog_node_url",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $localizedUrls;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_web_catalog_node_url')]
+    #[ORM\JoinColumn(name: 'node_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $localizedUrls = null;
 
     /**
      * Property used by {@see \Gedmo\Tree\Entity\Repository\NestedTreeRepository::__call}
@@ -248,17 +168,17 @@ class ContentNode implements
     public $sibling;
 
     /**
-     * @var Collection|MenuUpdate[]
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate", mappedBy="contentNode")
+     * @var Collection<int, MenuUpdate>
      */
-    private $referencedMenuItems;
+    #[ORM\OneToMany(mappedBy: 'contentNode', targetEntity: MenuUpdate::class)]
+    private ?Collection $referencedMenuItems = null;
 
     /**
      * @var
      * @var Collection|Consent[]
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\ConsentBundle\Entity\Consent", mappedBy="contentNode")
      */
-    private $referencedConsents;
+    #[ORM\OneToMany(mappedBy: 'contentNode', targetEntity: Consent::class)]
+    private ?Collection $referencedConsents = null;
 
     /**
      * ContentNode Constructor

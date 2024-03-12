@@ -21,6 +21,12 @@ class ProductDataStorage extends AbstractSessionDataStorage
     public const PRODUCT_UNIT_KEY = 'productUnit';
     public const PRODUCT_ORGANIZATION_KEY = 'productOrganization';
 
+    public const PRODUCT_KIT_ITEM_LINE_ITEMS_DATA_KEY = 'kitItemLineItemsData';
+    public const PRODUCT_KIT_ITEM_LINE_ITEM_KIT_ITEM_KEY = 'kitItem';
+    public const PRODUCT_KIT_ITEM_LINE_ITEM_PRODUCT_KEY = 'product';
+    public const PRODUCT_KIT_ITEM_LINE_ITEM_PRODUCT_UNIT_KEY = 'productUnit';
+    public const PRODUCT_KIT_ITEM_LINE_ITEM_QUANTITY_KEY = 'quantity';
+
     protected function getKey(): string
     {
         return self::PRODUCT_DATA_KEY;

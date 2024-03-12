@@ -64,7 +64,7 @@ class OrderInternalStatusTypeTest extends FormIntegrationTestCase
         $form->submit(['archived']);
 
         self::assertCount(1, $form->getErrors(true));
-        self::assertEquals('This value is not valid.', $form->getErrors()[0]->getMessage());
+        self::assertEquals('The selected choice is invalid.', $form->getErrors()[0]->getMessage());
         self::assertEquals(['{{ value }}' => 'archived'], $form->getErrors()[0]->getMessageParameters());
         self::assertFalse($form->isValid());
         self::assertTrue($form->isSynchronized());

@@ -4,98 +4,61 @@ namespace Oro\Bundle\CMSBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\CMSBundle\Entity\Repository\TextContentVariantRepository;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
  * Represents Content Variant entity
- *
- * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\TextContentVariantRepository")
- * @ORM\Table(name="oro_cms_text_content_variant")
- * @Config
  */
+#[ORM\Entity(repositoryClass: TextContentVariantRepository::class)]
+#[ORM\Table(name: 'oro_cms_text_content_variant')]
+#[Config]
 class TextContentVariant
 {
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: ContentBlock::class, inversedBy: 'contentVariants')]
+    #[ORM\JoinColumn(name: 'content_block_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?ContentBlock $contentBlock = null;
 
     /**
-     * @var ContentBlock
-     *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\CMSBundle\Entity\ContentBlock",
-     *     inversedBy="contentVariants"
-     * )
-     * @ORM\JoinColumn(name="content_block_id", referencedColumnName="id", onDelete="CASCADE")
+     * @var Collection<int, Scope>
      */
-    protected $contentBlock;
-
-    /**
-     * @var Collection|Scope[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope"
-     * )
-     * @ORM\JoinTable(name="oro_cms_txt_cont_variant_scope",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="variant_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="scope_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
-     */
-    protected $scopes;
+    #[ORM\ManyToMany(targetEntity: Scope::class)]
+    #[ORM\JoinTable(name: 'oro_cms_txt_cont_variant_scope')]
+    #[ORM\JoinColumn(name: 'variant_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'scope_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Collection $scopes = null;
 
     /**
      * @var string
-     *
-     * @ORM\Column(type="wysiwyg", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "attachment"={
-     *              "acl_protected"=false,
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(type: 'wysiwyg', nullable: true)]
+    #[ConfigField(defaultValues: ['attachment' => ['acl_protected' => false]])]
     protected $content;
 
     /**
      * @var string
-     *
-     * @ORM\Column(type="wysiwyg_style", name="content_style", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "attachment"={
-     *              "acl_protected"=false,
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(name: 'content_style', type: 'wysiwyg_style', nullable: true)]
+    #[ConfigField(defaultValues: ['attachment' => ['acl_protected' => false]])]
     protected $contentStyle;
 
     /**
      * @var mixed
-     *
-     * @ORM\Column(type="wysiwyg_properties", name="content_properties", nullable=true)
      */
+    #[ORM\Column(name: 'content_properties', type: 'wysiwyg_properties', nullable: true)]
     protected $contentProperties;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="is_default", type="boolean", options={"default"=false})
-     */
-    protected $default = false;
+    #[ORM\Column(name: 'is_default', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $default = false;
 
     /**
      * {@inheritdoc}

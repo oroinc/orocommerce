@@ -21,7 +21,7 @@ class LineItemTest extends TestCase
     public function testProperties(): void
     {
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['product', new Product()],
             ['parentProduct', new Product()],
             ['shoppingList', new ShoppingList()],

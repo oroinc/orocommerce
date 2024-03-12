@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver;
 
 use Oro\Bundle\TaxBundle\Matcher\EuropeanUnionHelper;
+use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
 
@@ -11,39 +12,32 @@ use Oro\Bundle\TaxBundle\Resolver\ResolverInterface;
  */
 class DigitalResolver implements ResolverInterface
 {
-    /**
-     * @var ResolverInterface
-     */
-    protected $resolver;
-
-    public function __construct(ResolverInterface $resolver)
-    {
-        $this->resolver = $resolver;
+    public function __construct(
+        private ResolverInterface $resolver
+    ) {
     }
 
-    public function resolve(Taxable $taxable)
+    public function resolve(Taxable $taxable): void
     {
-        if ($taxable->getItems()->count() === 0) {
+        if (!$this->isApplicable($taxable)) {
             return;
         }
 
-        if ($taxable->getResult()->isResultLocked()) {
-            return;
+        $itemsResult = [];
+        foreach ($taxable->getItems() as $taxableItem) {
+            $this->resolver->resolve($taxableItem);
+            $itemsResult[] = $taxableItem->getResult();
         }
 
-        $buyerAddress = $taxable->getDestination();
-        if (!$buyerAddress) {
-            return;
-        }
+        $taxable->getResult()->offsetSet(Result::ITEMS, $itemsResult);
+    }
 
-        $isBuyerFromEU = EuropeanUnionHelper::isEuropeanUnionCountry($buyerAddress->getCountryIso2());
-
-        if (!$isBuyerFromEU) {
-            return;
-        }
-
-        foreach ($taxable->getItems() as $item) {
-            $this->resolver->resolve($item);
-        }
+    private function isApplicable(Taxable $taxable): bool
+    {
+        return $taxable->getItems()->count() &&
+            !$taxable->isKitTaxable() &&
+            !$taxable->getResult()->isResultLocked() &&
+            $taxable->getDestination() &&
+            EuropeanUnionHelper::isEuropeanUnionCountry($taxable->getDestination()->getCountryIso2());
     }
 }

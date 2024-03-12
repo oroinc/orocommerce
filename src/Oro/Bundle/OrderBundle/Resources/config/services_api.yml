@@ -114,6 +114,7 @@ services:
     oro_order.api.compute_order_shipping:
         class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderShipping
         arguments:
+            - '@oro_api.doctrine_helper'
             - '@oro_shipping.translator.shipping_method_label'
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order }
@@ -219,6 +220,24 @@ services:
             - '@translator'
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem, priority: -20 }
+
+    oro_order.api.fill_backend_order_line_item_price:
+        class: Oro\Bundle\OrderBundle\Api\Processor\FillBackendOrderLineItemPrice
+        arguments:
+            - '@oro_pricing.product_price_criteria_factory'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_pricing.provider.product_price'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: -20 }
+
+    oro_order.api.fill_backend_order_product_kit_item_line_item_price:
+        class: Oro\Bundle\OrderBundle\Api\Processor\FillBackendOrderProductKitItemLineItemPrice
+        arguments:
+            - '@oro_pricing.product_price_criteria_factory'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_pricing.provider.product_price'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: '!frontend', class: Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem, priority: -20 }
 
     oro_order.api.add_order_to_update_totals:
         class: Oro\Bundle\OrderBundle\Api\Processor\AddOrderToUpdateTotals

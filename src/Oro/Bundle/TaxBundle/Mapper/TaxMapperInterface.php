@@ -10,10 +10,5 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
  */
 interface TaxMapperInterface
 {
-    /**
-     * @param object $object
-     *
-     * @return Taxable
-     */
-    public function map($object);
+    public function map(object $object): Taxable;
 }

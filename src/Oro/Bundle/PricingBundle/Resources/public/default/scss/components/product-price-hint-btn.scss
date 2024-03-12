@@ -1,9 +1,10 @@
 /* @theme: default; */
 
 .product-price-hint-btn {
+    min-height: initial;
+    padding-block: 0;
+
     &:hover {
         text-decoration: $product-price-hint-btn-text-decoration;
     }
-
-    @include fa-icon($product-price-hint-btn-icon);
 }

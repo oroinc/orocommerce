@@ -94,6 +94,7 @@ class FrontendProductGridEventListener
         $type = $attributeType->getFilterStorageFieldTypes($attribute)[SearchAttributeTypeInterface::VALUE_MAIN] ?? '';
 
         $params = [
+            'field_options' => ['type' => $attribute->getType()],
             'type' => $attributeType->getFilterType($attribute),
             'data_name' => sprintf('%s.%s', $type, $name),
             'label' => $label

@@ -1,3 +1,4 @@
 dynamic-imports:
     orofixedproductshipping:
+        - orofixedproductshipping/js/app/components/product-shipping-cost-update-widget-component
         - orofixedproductshipping/js/app/views/fixed-product-shipping-options-view

@@ -24,17 +24,17 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
     use MysqlVersionCheckTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
         $this->createOroWebsiteSearchDecimalTable($schema);
@@ -57,55 +57,55 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
     /**
      * Create oro_website_search_decimal table
      */
-    protected function createOroWebsiteSearchDecimalTable(Schema $schema)
+    private function createOroWebsiteSearchDecimalTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_website_search_decimal');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('item_id', 'integer', []);
+        $table->addColumn('item_id', 'integer');
         $table->addColumn('field', 'string', ['length' => 250]);
         $table->addColumn('value', 'decimal', ['precision' => 21, 'scale' => 6]);
+        $table->setPrimaryKey(['id']);
         $table->addIndex(['item_id']);
         $table->addIndex(['field'], 'oro_website_search_decimal_field_idx');
         $table->addIndex(['item_id', 'field'], 'oro_website_search_decimal_item_field_idx');
-        $table->setPrimaryKey(['id']);
     }
 
     /**
      * Create oro_website_search_integer table
      */
-    protected function createOroWebsiteSearchIntegerTable(Schema $schema)
+    private function createOroWebsiteSearchIntegerTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_website_search_integer');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('item_id', 'integer', []);
+        $table->addColumn('item_id', 'integer');
         $table->addColumn('field', 'string', ['length' => 250]);
-        $table->addColumn('value', 'integer', []);
+        $table->addColumn('value', 'bigint');
+        $table->setPrimaryKey(['id']);
         $table->addIndex(['item_id']);
         $table->addIndex(['field'], 'oro_website_search_integer_field_idx');
         $table->addIndex(['item_id', 'field'], 'oro_website_search_integer_item_field_idx');
-        $table->setPrimaryKey(['id']);
     }
 
     /**
      * Create oro_website_search_datetime table
      */
-    protected function createOroWebsiteSearchDatetimeTable(Schema $schema)
+    private function createOroWebsiteSearchDatetimeTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_website_search_datetime');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('item_id', 'integer', []);
+        $table->addColumn('item_id', 'integer');
         $table->addColumn('field', 'string', ['length' => 250]);
         $table->addColumn('value', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->setPrimaryKey(['id']);
         $table->addIndex(['item_id']);
         $table->addIndex(['field'], 'oro_website_search_datetime_field_idx');
         $table->addIndex(['item_id', 'field'], 'oro_website_search_datetime_item_field_idx');
-        $table->setPrimaryKey(['id']);
     }
 
     /**
      * Create oro_website_search_item table
      */
-    protected function createOroWebsiteSearchItemTable(Schema $schema)
+    private function createOroWebsiteSearchItemTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_website_search_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -113,29 +113,29 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $table->addColumn('alias', 'string', ['length' => 255]);
         $table->addColumn('record_id', 'integer', ['notnull' => false]);
         $table->addColumn('weight', 'decimal', ['precision' => 8, 'scale' => 4, 'default' => 1]);
-        $table->addColumn('changed', 'boolean', []);
+        $table->addColumn('changed', 'boolean');
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addUniqueIndex(['entity', 'record_id', 'alias'], 'oro_website_search_item_uidx');
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['entity'], 'oro_website_search_item_idxe', []);
-        $table->addIndex(['alias'], 'oro_website_search_item_idxa', []);
+        $table->addUniqueIndex(['entity', 'record_id', 'alias'], 'oro_website_search_item_uidx');
+        $table->addIndex(['entity'], 'oro_website_search_item_idxe');
+        $table->addIndex(['alias'], 'oro_website_search_item_idxa');
     }
 
     /**
      * Create oro_website_search_text table
      */
-    protected function createOroWebsiteSearchTextTable(Schema $schema, QueryBag $queries)
+    private function createOroWebsiteSearchTextTable(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->createTable('oro_website_search_text');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('item_id', 'integer', []);
+        $table->addColumn('item_id', 'integer');
         $table->addColumn('field', 'string', ['length' => 250]);
-        $table->addColumn('value', 'text', []);
+        $table->addColumn('value', 'text');
+        $table->setPrimaryKey(['id']);
         $table->addIndex(['item_id']);
         $table->addIndex(['field'], 'oro_website_search_text_field_idx');
         $table->addIndex(['item_id', 'field'], 'oro_website_search_text_item_field_idx');
-        $table->setPrimaryKey(['id']);
 
         if ($this->isMysqlPlatform() && !$this->isInnoDBFulltextIndexSupported()) {
             $table->addOption('engine', PdoMysql::ENGINE_MYISAM);
@@ -146,7 +146,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $queries->addPostQuery($createFulltextIndexQuery);
     }
 
-    protected function createOroWebsiteSearchResultHistoryTable(Schema $schema, QueryBag $queries): void
+    private function createOroWebsiteSearchResultHistoryTable(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->createTable('oro_website_search_result_history');
         $table->addColumn('id', 'guid');
@@ -164,7 +164,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-
         $table->addIndex(['normalized_search_term_hash'], 'website_search_result_history_sterm_hash_idx');
 
         $queries->addPostQuery(
@@ -191,7 +190,6 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-
         $table->addIndex(['search_date'], 'website_search_term_report_date_idx');
 
         $queries->addPostQuery(
@@ -204,7 +202,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
     /**
      * Add oro_website_search_decimal foreign keys.
      */
-    protected function addOroWebsiteSearchDecimalForeignKeys(Schema $schema)
+    private function addOroWebsiteSearchDecimalForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_website_search_decimal');
         $table->addForeignKeyConstraint(
@@ -218,7 +216,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
     /**
      * Add oro_website_search_integer foreign keys.
      */
-    protected function addOroWebsiteSearchIntegerForeignKeys(Schema $schema)
+    private function addOroWebsiteSearchIntegerForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_website_search_integer');
         $table->addForeignKeyConstraint(
@@ -232,7 +230,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
     /**
      * Add oro_website_search_datetime foreign keys.
      */
-    protected function addOroWebsiteSearchDatetimeForeignKeys(Schema $schema)
+    private function addOroWebsiteSearchDatetimeForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_website_search_datetime');
         $table->addForeignKeyConstraint(
@@ -246,7 +244,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
     /**
      * Add oro_website_search_text foreign keys.
      */
-    protected function addOroWebsiteSearchTextForeignKeys(Schema $schema)
+    private function addOroWebsiteSearchTextForeignKeys(Schema $schema): void
     {
         if (!$this->isMysqlPlatform() || $this->isInnoDBFulltextIndexSupported()) {
             $table = $schema->getTable('oro_website_search_text');
@@ -259,7 +257,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         }
     }
 
-    protected function addOroWebsiteSearchResultHistoryForeignKeys(Schema $schema): void
+    private function addOroWebsiteSearchResultHistoryForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_website_search_result_history');
         $table->addForeignKeyConstraint(

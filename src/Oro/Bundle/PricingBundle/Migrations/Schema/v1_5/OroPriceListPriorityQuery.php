@@ -58,7 +58,7 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
         ];
 
         $this->logQuery($logger, $selectQuery, $selectQueryParameters, $selectQueryTypes);
-        $result = $this->connection->fetchAssoc($selectQuery, $selectQueryParameters, $selectQueryTypes);
+        $result = $this->connection->fetchAssociative($selectQuery, $selectQueryParameters, $selectQueryTypes);
 
         $arrayType = Type::getType(Types::ARRAY);
         $platform = $this->connection->getDatabasePlatform();
@@ -205,7 +205,7 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
     protected function fetchData(LoggerInterface $logger, $sql)
     {
         $logger->info($sql);
-        return $this->connection->fetchAll($sql);
+        return $this->connection->fetchAllAssociative($sql);
     }
 
     /**

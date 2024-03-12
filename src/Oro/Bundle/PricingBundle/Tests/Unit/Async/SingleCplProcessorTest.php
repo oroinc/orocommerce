@@ -32,7 +32,7 @@ class SingleCplProcessorTest extends TestCase
     private JobRunner|MockObject $jobRunner;
     private ManagerRegistry|MockObject $doctrine;
     private CombinedPriceListsBuilderFacade|MockObject $combinedPriceListsBuilderFacade;
-    private CombinedPriceListTriggerHandler|MockObject $triggerHandler;
+    private CombinedPriceListTriggerHandler|MockObject $indexationTriggerHandler;
     private CombinedPriceListStatusHandlerInterface|MockObject $statusHandler;
     private EventDispatcherInterface|MockObject $dispatcher;
     private LoggerInterface|MockObject $logger;

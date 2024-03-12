@@ -30,7 +30,7 @@ services:
         class: 'Oro\Bundle\ImportExportBundle\Serializer\Serializer'
         arguments:
           - ['@oro_inventory.importexport.normalizer.inventory_level']
-          - ['@oro_importexport.serializer.dummy_encoder']
+          - []
 
     oro_inventory.importexport.normalizer.inventory_level:
         class: 'Oro\Bundle\InventoryBundle\ImportExport\Serializer\InventoryLevelNormalizer'

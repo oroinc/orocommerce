@@ -27,7 +27,6 @@ class ChannelLoaderTest extends WebTestCase
         $user = $this->getUser();
         $token = new UsernamePasswordOrganizationToken(
             $user,
-            'password',
             'main',
             $user->getOrganization(),
             $user->getUserRoles()

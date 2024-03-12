@@ -258,20 +258,28 @@ oro.cms:
                     name: 'Top'
                 margin_right:
                     name: 'Right'
+                margin_inline_end:
+                    name: 'Margin Inline End'
                 margin_bottom:
                     name: 'Bottom'
                 margin_left:
                     name: 'Left'
+                margin_inline_start:
+                    name: 'Margin Inline Start'
                 padding:
                     name: 'Padding'
                 padding_top:
                     name: 'Top'
                 padding_right:
                     name: 'Right'
+                padding_inline_end:
+                    name: 'Padding Inline End'
                 padding_bottom:
                     name: 'Bottom'
                 padding_left:
                     name: 'Left'
+                padding_inline_start:
+                    name: 'Padding Inline Start'
                 font_family:
                     name: 'Font'
                 font_size:
@@ -314,6 +322,25 @@ oro.cms:
                     name: 'Color'
                 opacity:
                     name: 'Opacity'
+                mix_blend_mode:
+                    name: 'Mix Blend Mode'
+                    options:
+                        normal: 'normal'
+                        multiply: 'multiply'
+                        screen: 'screen'
+                        overlay: 'overlay'
+                        darken: 'darken'
+                        lighten: 'lighten'
+                        color_dodge: 'color-dodge'
+                        color_burn: 'color-burn'
+                        hard_light: 'hard-light'
+                        soft_light: 'soft-light'
+                        difference: 'difference'
+                        exclusion: 'exclusion'
+                        hue: 'hue'
+                        saturation: 'saturation'
+                        color: 'color'
+                        luminosity: 'luminosity'
                 background_color:
                     name: 'Background color'
                 border:

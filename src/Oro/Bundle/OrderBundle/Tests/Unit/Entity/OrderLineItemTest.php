@@ -40,7 +40,7 @@ class OrderLineItemTest extends TestCase
         $now = new \DateTime('now');
         $checksum = sha1('sample-line-item');
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['order', new Order()],
             ['product', new ProductStub()],
             ['parentProduct', new ProductStub()],

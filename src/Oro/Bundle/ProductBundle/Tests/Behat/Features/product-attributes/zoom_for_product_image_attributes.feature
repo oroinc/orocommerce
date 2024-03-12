@@ -31,9 +31,9 @@ Feature: Zoom for Product image attributes
     And I type "SKU123" in "search"
     And I click "Search Button"
     When I click "View Details" for "SKU123" product
-    And I set window size to 1100x1080
+    And I set window size to 1440x1080
     And I hover on "Product Main Image"
-    Then I check element "Zoom Container" has width "564"
+    Then I check element "Zoom Container" has width "376"
     And I set window size to 1920x1080
     And I hover on "Product Main Image"
-    Then I check element "Zoom Container" has width "564"
+    Then I check element "Zoom Container" has width "376"

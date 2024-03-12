@@ -57,6 +57,14 @@
         justify-content: $product-totals-total-items-justify-content;
     }
 
+    &__total-quantity-value {
+        font-weight: $product-totals-total-quantity-value-font-weight;
+    }
+
+    &__total-price-value {
+        font-weight: $product-totals-total-price-value-font-weight;
+    }
+
     &__separator {
         color: $product-totals-total-separator-color;
 

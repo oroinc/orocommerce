@@ -6,23 +6,20 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-/**
- * Installer for the RedirectBundle.
- */
 class OroRedirectBundleInstaller implements Installation
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
         $this->createOroRedirectSlugTable($schema);
@@ -35,12 +32,13 @@ class OroRedirectBundleInstaller implements Installation
         $this->addOroSlugScopeForeignKeys($schema);
         $this->addOroRedirectScopeForeignKeys($schema);
         $this->addOroRedirectSlugForeignKeys($schema);
+        $this->addUniqueConstraintToOroRedirectTable($queries);
     }
 
     /**
      * Create oro_redirect_slug table
      */
-    protected function createOroRedirectSlugTable(Schema $schema)
+    private function createOroRedirectSlugTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_redirect_slug');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -54,48 +52,53 @@ class OroRedirectBundleInstaller implements Installation
         $table->addColumn('parameters_hash', 'string', ['length' => 32]);
         $table->addColumn('scopes_hash', 'string', ['length' => 32]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['url_hash'], 'oro_redirect_slug_url_hash', []);
-        $table->addIndex(['route_name'], 'oro_redirect_slug_route', []);
-        $table->addIndex(['slug_prototype'], 'oro_redirect_slug_slug', []);
-        $table->addIndex(['parameters_hash'], 'oro_redirect_slug_parameters_hash_idx', []);
+        $table->addIndex(['url_hash'], 'oro_redirect_slug_url_hash');
+        $table->addIndex(['route_name'], 'oro_redirect_slug_route');
+        $table->addIndex(['slug_prototype'], 'oro_redirect_slug_slug');
+        $table->addIndex(['parameters_hash'], 'oro_redirect_slug_parameters_hash_idx');
+
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
-        $table->addUniqueIndex(
-            ['organization_id', 'url_hash', 'scopes_hash'],
-            'oro_redirect_slug_uidx'
+    }
+
+    private function addUniqueConstraintToOroRedirectTable(QueryBag $queries): void
+    {
+        $queries->addPostQuery(
+            'ALTER TABLE oro_redirect_slug ADD CONSTRAINT oro_redirect_slug_deferrable_uidx ' .
+            'UNIQUE(organization_id, url_hash, scopes_hash) DEFERRABLE INITIALLY DEFERRED'
         );
     }
 
     /**
      * Create oro_slug_scope table
      */
-    protected function createOroSlugScopeTable(Schema $schema)
+    private function createOroSlugScopeTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_slug_scope');
-        $table->addColumn('slug_id', 'integer', []);
-        $table->addColumn('scope_id', 'integer', []);
+        $table->addColumn('slug_id', 'integer');
+        $table->addColumn('scope_id', 'integer');
         $table->setPrimaryKey(['slug_id', 'scope_id']);
     }
 
     /**
      * Create oro_redirect_scope table
      */
-    protected function createOroRedirectScopeTable(Schema $schema)
+    private function createOroRedirectScopeTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_redirect_scope');
-        $table->addColumn('redirect_id', 'integer', []);
-        $table->addColumn('scope_id', 'integer', []);
+        $table->addColumn('redirect_id', 'integer');
+        $table->addColumn('scope_id', 'integer');
         $table->setPrimaryKey(['redirect_id', 'scope_id']);
     }
 
     /**
      * Add oro_slug_scope foreign keys.
      */
-    protected function addOroSlugScopeForeignKeys(Schema $schema)
+    private function addOroSlugScopeForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_slug_scope');
         $table->addForeignKeyConstraint(
@@ -115,7 +118,7 @@ class OroRedirectBundleInstaller implements Installation
     /**
      * Add oro_redirect_scope foreign keys.
      */
-    protected function addOroRedirectScopeForeignKeys(Schema $schema)
+    private function addOroRedirectScopeForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_redirect_scope');
         $table->addForeignKeyConstraint(
@@ -135,7 +138,7 @@ class OroRedirectBundleInstaller implements Installation
     /**
      * Create orob2b_redirect table
      */
-    protected function createOroRedirectTable(Schema $schema)
+    private function createOroRedirectTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_redirect');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -147,47 +150,14 @@ class OroRedirectBundleInstaller implements Installation
         $table->addColumn('redirect_type', 'integer', ['notnull' => true]);
         $table->addColumn('from_hash', 'string', ['length' => 32]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['from_hash'], 'idx_oro_redirect_from_hash', []);
-        $table->addIndex(['redirect_from_prototype'], 'idx_oro_redirect_redirect_from_prototype', []);
-    }
-
-    /**
-     * Create oro_slug_redirect table
-     */
-    protected function createOroSlugRedirectTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_slug_redirect');
-        $table->addColumn('slug_id', 'integer', []);
-        $table->addColumn('redirect_id', 'integer', []);
-        $table->setPrimaryKey(['slug_id', 'redirect_id']);
-        $table->addIndex(['slug_id'], 'IDX_DE8AE597311966CE', []);
-        $table->addIndex(['redirect_id'], 'IDX_DE8AE597B42D874D', []);
-    }
-
-    /**
-     * Add oro_slug_redirect foreign keys.
-     */
-    protected function addOroSlugRedirectForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_slug_redirect');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_redirect_slug'),
-            ['slug_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_redirect'),
-            ['redirect_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
+        $table->addIndex(['from_hash'], 'idx_oro_redirect_from_hash');
+        $table->addIndex(['redirect_from_prototype'], 'idx_oro_redirect_redirect_from_prototype');
     }
 
     /**
      * Add oro_redirect foreign keys.
      */
-    protected function addOroRedirectForeignKeys(Schema $schema)
+    private function addOroRedirectForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_redirect');
         $table->addForeignKeyConstraint(
@@ -201,7 +171,7 @@ class OroRedirectBundleInstaller implements Installation
     /**
      * Add oro_redirect_slug foreign keys.
      */
-    protected function addOroRedirectSlugForeignKeys(Schema $schema)
+    private function addOroRedirectSlugForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_redirect_slug');
         $table->addForeignKeyConstraint(

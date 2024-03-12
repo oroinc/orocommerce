@@ -5,6 +5,9 @@ namespace Oro\Bundle\ShoppingListBundle\EventListener;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerFallbackRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerGroupFallbackRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListWebsiteFallbackRepository;
@@ -14,6 +17,7 @@ use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 
 /**
  * Listens changes of Price Lists assigned to Customers, Customer Groups, Websites
@@ -46,8 +50,8 @@ class ShoppingListTotalListener
 
     public function onPriceListUpdate(CombinedPriceListsUpdateEvent $event)
     {
-        $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal')
-            ->getRepository('OroShoppingListBundle:ShoppingListTotal')
+        $this->registry->getManagerForClass(ShoppingListTotal::class)
+            ->getRepository(ShoppingListTotal::class)
             ->invalidateByCombinedPriceList($event->getCombinedPriceListIds());
     }
 
@@ -55,8 +59,8 @@ class ShoppingListTotalListener
     {
         $customersData = $event->getCustomersData();
         /** @var ShoppingListTotalRepository $repository */
-        $repository = $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal')
-            ->getRepository('OroShoppingListBundle:ShoppingListTotal');
+        $repository = $this->registry->getManagerForClass(ShoppingListTotal::class)
+            ->getRepository(ShoppingListTotal::class);
         foreach ($customersData as $data) {
             $repository->invalidateByCustomers($data['customers'], $data['websiteId']);
         }
@@ -66,11 +70,11 @@ class ShoppingListTotalListener
     {
         $customersData = $event->getCustomerGroupsData();
         /** @var PriceListCustomerFallbackRepository $fallbackRepository */
-        $fallbackRepository = $this->registry->getManagerForClass('OroPricingBundle:PriceListCustomerFallback')
-            ->getRepository('OroPricingBundle:PriceListCustomerFallback');
+        $fallbackRepository = $this->registry->getManagerForClass(PriceListCustomerFallback::class)
+            ->getRepository(PriceListCustomerFallback::class);
         /** @var ShoppingListTotalRepository $shoppingTotalsRepository */
-        $shoppingTotalsRepository = $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal')
-            ->getRepository('OroShoppingListBundle:ShoppingListTotal');
+        $shoppingTotalsRepository = $this->registry->getManagerForClass(ShoppingListTotal::class)
+            ->getRepository(ShoppingListTotal::class);
         foreach ($customersData as $data) {
             $customers = $fallbackRepository->getCustomerIdentityByGroup($data['customerGroups'], $data['websiteId']);
             $i = 0;
@@ -127,11 +131,11 @@ class ShoppingListTotalListener
     {
         $websiteIds = $event->getWebsiteIds();
         /** @var PriceListCustomerGroupFallbackRepository $fallbackRepository */
-        $fallbackRepository = $this->registry->getManagerForClass('OroPricingBundle:PriceListCustomerGroupFallback')
-            ->getRepository('OroPricingBundle:PriceListCustomerGroupFallback');
+        $fallbackRepository = $this->registry->getManagerForClass(PriceListCustomerGroupFallback::class)
+            ->getRepository(PriceListCustomerGroupFallback::class);
         /** @var ShoppingListTotalRepository $shoppingTotalsRepository */
-        $shoppingTotalsRepository = $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal')
-            ->getRepository('OroShoppingListBundle:ShoppingListTotal');
+        $shoppingTotalsRepository = $this->registry->getManagerForClass(ShoppingListTotal::class)
+            ->getRepository(ShoppingListTotal::class);
         foreach ($websiteIds as $websiteId) {
             $customers = $fallbackRepository->getCustomerIdentityByWebsite($websiteId);
             $i = 0;
@@ -153,14 +157,14 @@ class ShoppingListTotalListener
     public function onConfigPriceListUpdate(ConfigCPLUpdateEvent $event)
     {
         /** @var PriceListWebsiteFallbackRepository $fallbackWebsiteRepository */
-        $fallbackWebsiteRepository = $this->registry->getManagerForClass('OroPricingBundle:PriceListWebsiteFallback')
-            ->getRepository('OroPricingBundle:PriceListWebsiteFallback');
+        $fallbackWebsiteRepository = $this->registry->getManagerForClass(PriceListWebsiteFallback::class)
+            ->getRepository(PriceListWebsiteFallback::class);
         /** @var PriceListCustomerGroupFallbackRepository $fallbackRepository */
-        $fallbackRepository = $this->registry->getManagerForClass('OroPricingBundle:PriceListCustomerGroupFallback')
-            ->getRepository('OroPricingBundle:PriceListCustomerGroupFallback');
+        $fallbackRepository = $this->registry->getManagerForClass(PriceListCustomerGroupFallback::class)
+            ->getRepository(PriceListCustomerGroupFallback::class);
         /** @var ShoppingListTotalRepository $shoppingTotalsRepository */
-        $shoppingTotalsRepository = $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal')
-            ->getRepository('OroShoppingListBundle:ShoppingListTotal');
+        $shoppingTotalsRepository = $this->registry->getManagerForClass(ShoppingListTotal::class)
+            ->getRepository(ShoppingListTotal::class);
 
         $websitesData = $fallbackWebsiteRepository->getWebsiteIdByDefaultFallback();
         foreach ($websitesData as $websiteData) {

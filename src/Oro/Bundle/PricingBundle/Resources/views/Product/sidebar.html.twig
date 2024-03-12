@@ -30,11 +30,11 @@
 {% endif %}
 
 {% if priceList is defined or showTierPrices is defined or currencies is defined %}
-<div class="sidebar-items"
+<div class="sidebar-items form-vertical"
     data-page-component-module="oropricing/js/app/components/product-sidebar-component"
     data-page-component-options="{{ pageComponentOptions|json_encode }}">
-        {% if priceList is defined %}<div class="default-price-list-choice">{{ form_row(priceList) }}</div>{% endif %}
-        {% if showTierPrices is defined %}<div class="show-tier-prices-choice">{{ form_row(showTierPrices) }}</div>{% endif %}
-        {% if currencies is defined %}<div class="currencies">{{ form_row(currencies) }}</div>{% endif %}
+        {% if priceList is defined %}{{ form_row(priceList) }}{% endif %}
+        {% if showTierPrices is defined %}{{ form_row(showTierPrices) }}{% endif %}
+        {% if currencies is defined %}{{ form_row(currencies) }}{% endif %}
 </div>
 {% endif %}

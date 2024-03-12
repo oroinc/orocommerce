@@ -40,7 +40,6 @@
 
         width: $matrix-order-widget-grid-width;
         margin-bottom: $matrix-order-widget-grid-offset-bottom;
-        padding-top: $matrix-order-widget-grid-offset-inner-top;
 
         font-family: $matrix-order-widget-grid-font-family;
 
@@ -63,7 +62,7 @@
             }
 
             .matrix-order-widget__one-line {
-                padding: $offset-y-s $offset-x $offset-y-s 0;
+                padding: spacing('xs') spacing('base') spacing('xs') 0;
             }
 
             .matrix-order-widget__form__row {
@@ -85,7 +84,7 @@
                 display: inline-block;
                 min-width: $matrix-order-widget-state-multiline-label-wrap-width;
                 max-width: $matrix-order-widget-state-multiline-label-wrap-width;
-                padding-right: $offset-x;
+                padding-right: spacing('base');
 
                 word-break: break-word;
             }
@@ -112,7 +111,7 @@
             }
 
             .matrix-order-widget__label-wrap {
-                margin-bottom: $offset-x-m;
+                margin-bottom: spacing('sm');
             }
 
             @include matrix-design-for-not-available();
@@ -132,6 +131,12 @@
             position: $matrix-order-widget-grid-multi-rows-grid-head-position;
 
             z-index: $matrix-order-widget-grid-multi-rows-grid-head-z-index;
+        }
+
+        &__grid-body {
+            .matrix-order-widget__form__col {
+                justify-content: start;
+            }
         }
 
         &__grid-footer {
@@ -179,6 +184,9 @@
         }
 
         &__grid-footer-label {
+            font-weight: font-weight('semi-bold');
+            text-align: start;
+            padding: 0 spacing('sm');
             border-top: $matrix-order-widget-grid-multi-rows-grid-footer-border-top;
 
             &::before,
@@ -195,6 +203,8 @@
 
             .matrix-order-widget__form__col {
                 background: $matrix-order-widget-form-colored-background;
+                font-weight: font-weight('semi-bold');
+                justify-content: start;
 
                 &::after {
                     position: $matrix-order-widget-grid-multi-rows-grid-head-after-position;
@@ -289,11 +299,13 @@
         background: $matrix-order-widget-grid-footer-background;
 
         &-total {
+            font-weight: $matrix-order-widget-grid-footer-total-font-weight;
             padding: $matrix-order-widget-grid-footer-total-offset-inner;
 
             color: $matrix-order-widget-grid-footer-total-color;
 
             &.valid {
+                font-weight: $matrix-order-widget-grid-footer-total-valid-font-weight;
                 color: $matrix-order-widget-grid-footer-total-valid-color;
             }
         }
@@ -365,6 +377,7 @@
             margin: $matrix-order-widget-grid-side-form-row-offset;
             padding: $matrix-order-widget-grid-side-form-row-offset-inner;
 
+            font-weight: $matrix-order-widget-grid-side-form-row-font-weight;
             text-align: $matrix-order-widget-grid-side-form-row-text-align;
             white-space: $matrix-order-widget-grid-side-form-row-white-space;
             word-break: $matrix-order-widget-grid-side-form-row-word-break;
@@ -513,7 +526,7 @@
     }
 
     .pinned-dropdown {
-        max-width: $matrix-order-widget-pinned-dropdown-max-width;
+        width: $matrix-order-widget-pinned-dropdown-width;
     }
 
     &--dialog & {
@@ -545,6 +558,8 @@
     }
 
     .clear-button {
+        order: 1;
+
         &--mobile {
             width: $matrix-order-widget-clear-button-mobile-width;
             border-color: $matrix-order-widget-clear-button-mobile-border-color;
@@ -557,10 +572,6 @@
                 border-color: $matrix-order-widget-clear-button-mobile-border-color;
             }
         }
-
-        &.disabled {
-            color: $matrix-order-widget-form-col-color;
-        }
     }
 
     &__actions-container {
@@ -569,7 +580,7 @@
     }
 }
 
-@include breakpoint('desktop') {
+@include breakpoint('desktop-small') {
     .matrix-order-widget {
         &__form--inline & {
             &__summary--inline {

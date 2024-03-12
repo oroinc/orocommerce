@@ -31,10 +31,10 @@ Feature: Previously purchased products
     Given I operate as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on homepage
-    When I follow "Account"
+    And I click "Account Dropdown"
     And I click "Previously Purchased"
     Then page has "Previously Purchased" header
-    And I should see "My Account / Previously Purchased"
+    And I should see "My Account Previously Purchased"
     Then I should see "Product 1"
     And I should see "Product 2"
     And I should see "Recency (Newest first)"
@@ -51,7 +51,7 @@ Feature: Previously purchased products
 
   Scenario: Product from page can be added to shopping list
     Given I operate as the Buyer
-    When I follow "Account"
+    And I click "Account Dropdown"
     And I click "Previously Purchased"
     And I click "Add to Shopping List" for "PSKU2" product
     Then I should see "Product has been added to" flash message and I close it
@@ -67,7 +67,7 @@ Feature: Previously purchased products
       | Purchased Within             | 10    |
     And I save setting
     And I proceed as the Buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Previously Purchased"
     Then I should not see "Product 1"
     And I should see "Product 2"
@@ -88,7 +88,7 @@ Feature: Previously purchased products
     And click "Calculate Shipping Button"
     And I save and close form
     And I proceed as the Buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Previously Purchased"
     Then I should see "Product 4"
 
@@ -104,7 +104,7 @@ Feature: Previously purchased products
     And click "Calculate Shipping Button"
     And I save and close form
     And I proceed as the Buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Previously Purchased"
     Then I should see "Product 3"
 
@@ -116,7 +116,7 @@ Feature: Previously purchased products
     | Status | Disabled |
     And I save and close form
     And I proceed as the Buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Previously Purchased"
     And reload the page
     And I wait for products to load
@@ -131,6 +131,6 @@ Feature: Previously purchased products
     And click View "SimpleOrder" in grid
     And click "Cancel"
     And I proceed as the Buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Previously Purchased"
     Then I should not see "Product 2"

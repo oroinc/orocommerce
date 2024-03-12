@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
@@ -47,7 +48,9 @@ abstract class AbstractAjaxProductUnitController extends AbstractController
      */
     protected function getRepository()
     {
-        return $this->getDoctrine()->getManagerForClass(ProductUnit::class)->getRepository(ProductUnit::class);
+        return $this->container->get('doctrine')
+            ->getManagerForClass(ProductUnit::class)
+            ->getRepository(ProductUnit::class);
     }
 
     /**
@@ -55,7 +58,7 @@ abstract class AbstractAjaxProductUnitController extends AbstractController
      */
     protected function getProductUnitFormatter()
     {
-        return $this->get(UnitLabelFormatter::class);
+        return $this->container->get(UnitLabelFormatter::class);
     }
 
     /**
@@ -67,6 +70,7 @@ abstract class AbstractAjaxProductUnitController extends AbstractController
             parent::getSubscribedServices(),
             [
                 UnitLabelFormatter::class,
+                'doctrine' => ManagerRegistry::class,
             ]
         );
     }

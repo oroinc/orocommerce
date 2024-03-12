@@ -34,14 +34,15 @@ Feature: Guest RFQ
   Scenario: Create RFQ from shopping list
     Given I proceed as the Buyer
     And I am on the homepage
-    And I should see "No Shopping Lists"
+    And I should see "0" in the "Shopping List Widget" element
     When type "PSKU1" in "search"
     And I click "Search Button"
     Then I should see "Product1"
     When I click "Add to Shopping List" for "PSKU1" product
     And I follow "Shopping List" link within flash message "Product has been added to \"Shopping list\""
     And I hover on "Shopping List Widget"
-    And I should see "1 Item | $0.00" in the "Shopping List Widget" element
+    And I should see "1 item N/A" in the "Shopping List Widget" element
+    And I should see "$0.00" in the "Shopping List Widget" element
     And I click on empty space
     And click "Request Quote"
     And I fill form with:
@@ -123,10 +124,9 @@ Feature: Guest RFQ
   Scenario: Create RFQ with another localization and check product unit in email
     Given I proceed as the Buyer
     And I am on the homepage
-    And I click "Localization Switcher"
     And I select "Localization 1" localization
     And I open shopping list widget
-    And I click "View List"
+    And I click "Open List"
     And click "Request Quote"
     And I fill form with:
       | First Name    | Tester                |

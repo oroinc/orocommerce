@@ -1,0 +1,12 @@
+{% block __oro_product_list_item__product_inventory_status_label_widget %}
+    {% if product.inventory_status is defined %}
+        {% set inventoryStatus = oro_inventory_status_code(product) %}
+        {% set statusesMap = {
+            'in_stock': 'success',
+            'out_of_stock': 'warning',
+            'discontinued': 'destructive'
+        } %}
+        {% set status = attribute(statusesMap, inventoryStatus) is defined ? ' status-label--' ~ statusesMap[inventoryStatus] : '' %}
+        <span class="status-label{{ status }}">{{- oro_inventory_status_label(product) -}}</span>
+    {% endif %}
+{% endblock %}

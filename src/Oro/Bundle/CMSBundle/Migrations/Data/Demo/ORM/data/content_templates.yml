@@ -83,6 +83,12 @@
     contentStyle: css/two_columns_text_and_images_category.css
     previewImage: preview/two_columns_text_and_images_category.png
 -
+    name: 'Featured Categories'
+    tags: [ Category ]
+    content: featured_categories_grid.html
+    contentStyle: css/featured_categories_grid.css
+    previewImage: preview/featured_categories_grid.png
+-
     name: 'Four columns. Text'
     tags: [Features]
     content: four_columns_text_features.html

@@ -19,12 +19,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class AjaxQuoteProductController extends AbstractController
 {
     /**
-     * @Route(
-     *      "/match-offer/{id}/{demandId}",
-     *      name="oro_sale_quote_frontend_quote_product_match_offer",
-     *      requirements={"id"="\d+", "demandId"="\d+"}
-     * )
-     * @ParamConverter("quoteDemand", class="OroSaleBundle:QuoteDemand", options={"id" = "demandId"})
      *
      * @param QuoteProduct $quoteProduct
      * @param QuoteDemand $quoteDemand
@@ -32,16 +26,22 @@ class AjaxQuoteProductController extends AbstractController
      *
      * @return JsonResponse
      */
+    #[Route(
+        path: '/match-offer/{id}/{demandId}',
+        name: 'oro_sale_quote_frontend_quote_product_match_offer',
+        requirements: ['id' => '\d+', 'demandId' => '\d+']
+    )]
+    #[ParamConverter('quoteDemand', class: QuoteDemand::class, options: ['id' => 'demandId'])]
     public function matchQuoteProductOfferAction(QuoteProduct $quoteProduct, QuoteDemand $quoteDemand, Request $request)
     {
-        $authorizationChecker = $this->get('security.authorization_checker');
+        $authorizationChecker = $this->container->get('security.authorization_checker');
         if (!$authorizationChecker->isGranted('oro_sale_quote_demand_frontend_view', $quoteDemand) ||
             $quoteDemand->getQuote()->getId() !== $quoteProduct->getQuote()->getId()
         ) {
             throw $this->createAccessDeniedException();
         }
 
-        $matcher = $this->get(QuoteProductOfferMatcher::class);
+        $matcher = $this->container->get(QuoteProductOfferMatcher::class);
         $offer = $matcher->match($quoteProduct, $request->get('unit'), $request->get('qty'));
 
         return new JsonResponse($this->createResponseData($offer));
@@ -63,7 +63,7 @@ class AjaxQuoteProductController extends AbstractController
             return [];
         }
 
-        $formatter = $this->get(NumberFormatter::class);
+        $formatter = $this->container->get(NumberFormatter::class);
 
         return [
             'id' => $offer->getId(),

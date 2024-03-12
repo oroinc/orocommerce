@@ -19,12 +19,22 @@ class QuoteRepository extends EntityRepository implements ResettableCustomerUser
 {
     use ResetCustomerUserTrait;
 
-    private function getQueryBuildertoFetchQuote(): QueryBuilder
+    private function getQueryBuilderToFetchQuote(): QueryBuilder
     {
         return $this->createQueryBuilder('q')
-            ->select(['q', 'quoteProducts', 'quoteProductOffers'])
+            ->select([
+                'q',
+                'quoteProducts',
+                'quoteProductOffers',
+                'kitItemLineItem',
+                'kitItem',
+                'kitItemProduct',
+            ])
             ->leftJoin('q.quoteProducts', 'quoteProducts')
-            ->leftJoin('quoteProducts.quoteProductOffers', 'quoteProductOffers');
+            ->leftJoin('quoteProducts.quoteProductOffers', 'quoteProductOffers')
+            ->leftJoin('quoteProducts.kitItemLineItems', 'kitItemLineItem')
+            ->leftJoin('kitItemLineItem.kitItem', 'kitItem')
+            ->leftJoin('kitItemLineItem.product', 'kitItemProduct');
     }
 
     /**
@@ -33,7 +43,7 @@ class QuoteRepository extends EntityRepository implements ResettableCustomerUser
      */
     public function getQuote($id): ?Quote
     {
-        $qb = $this->getQueryBuildertoFetchQuote();
+        $qb = $this->getQueryBuilderToFetchQuote();
         $qb->where($qb->expr()->eq('q.id', ':id'))
             ->setParameter('id', (int)$id);
 
@@ -49,7 +59,7 @@ class QuoteRepository extends EntityRepository implements ResettableCustomerUser
 
     public function getQuoteByGuestAccessId(string $guestAccessId): ?Quote
     {
-        $qb = $this->getQueryBuildertoFetchQuote();
+        $qb = $this->getQueryBuilderToFetchQuote();
         $qb->where($qb->expr()->eq('q.guestAccessId', ':guestAccessId'))
             ->setParameter('guestAccessId', $guestAccessId);
 
@@ -79,6 +89,6 @@ class QuoteRepository extends EntityRepository implements ResettableCustomerUser
             $qb->setParameter(':organization', $organization);
         }
 
-        return (bool) $qb->getQuery()->getSingleScalarResult();
+        return (bool)$qb->getQuery()->getSingleScalarResult();
     }
 }

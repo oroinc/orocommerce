@@ -1,13 +1,3 @@
-{% block _main_menu_shopping_lists_wrapper_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " cart-widget"
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _header_row_shopping_toggle_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroshoppinglist/js/app/components/shoppinglist-widget-view-component',
@@ -28,37 +18,46 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_dropdown_widget %}
-    <div class="cart-widget__content">
-        <span class="cart-widget__icon" aria-hidden="true">
-            {% if not is_one_shopping_list_enabled() %}
-                <span class="fa-clipboard"></span>
-            {% else %}
-                <span class="fa-shopping-cart"></span>
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% if showLabel is not defined %}
+        {% set showLabel = showLabel|default(true) %}
+    {% endif %}
+    {{ renderIcon.icon({name: 'shopping-list'}) }}
+    <span class="text-clip">
+        {% set isShowDropdown = true %}
+        {% if not is_one_shopping_list_enabled() %}
+            <span class="shopping-list-trigger__count">{{ shoppingLists|length }}</span>
+            {% if showLabel %}
+                <span class="shopping-list-trigger__label hide-on-tablet">
+                    {{- 'oro.frontend.shoppinglist.view.entity.label'|trans({'%count%': shoppingLists|length}) -}}
+                </span>
             {% endif %}
-        </span>
-        <span class="cart-widget-counter">
-            <span class="cart-widget__text">
-                {% set isShowDropdown = true %}
-                {% if not is_one_shopping_list_enabled() %}
-                    {{ 'oro.frontend.shoppinglist.view.entity.label'|trans({'%count%': shoppingLists|length})|raw }}
-                {% else %}
-                    {% if (shoppingLists|length > 0) %}
-                        {% set shoppingList = shoppingLists[0] %}
-                        {{ 'oro.shoppinglist.default.label'|trans}}
-                        {% if shoppingList.lineItems|length > 0 %}
-                            <span aria-hidden="true">|</span> {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
-                        {% endif %}
-                    {% else %}
-                        {% set isShowDropdown = false %}
-                        {{ 'oro.frontend.shoppinglist.view.entity.label'|trans({'%count%': shoppingLists|length})|raw }}
-                    {% endif %}
+        {% else %}
+            {% if (shoppingLists|length > 0) %}
+                {% set shoppingList = shoppingLists[0] %}
+                {% if showLabel %}
+                    {{ 'oro.shoppinglist.default.label'|trans}}
                 {% endif %}
-            </span>
-            {% if isShowDropdown is same as(true) %}
-                <span class="fa-angle-down" aria-hidden="true"></span>
+                {% if shoppingList.lineItems|length > 0 %}
+                    {% if showLabel %}
+                        <span aria-hidden="true">|</span>
+                    {% endif %}
+                    {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
+                {% endif %}
+            {% else %}
+                {% set isShowDropdown = false %}
+                <span class="shopping-list-trigger__count">{{ shoppingLists|length }}</span>
+                {% if showLabel %}
+                    <span class="shopping-list-trigger__label">
+                        {{- 'oro.frontend.shoppinglist.view.entity.label'|trans({'%count%': shoppingLists|length}) -}}
+                    </span>
+                {% endif %}
             {% endif %}
-        </span>
-    </div>
+        {% endif %}
+    </span>
+    {% if isShowDropdown is same as(true) %}
+        {{ renderIcon.icon({name: 'chevron-down', extraClass: 'shopping-list-trigger__dropdown-icon hide-on-tablet'}) }}
+    {% endif %}
     {{ block_widget(block) }}
 {% endblock %}
 
@@ -80,26 +79,30 @@
         }) %}
     {% endif %}
 
-    <div {{ block('block_attributes') }}>
-        <fieldset>
-            <legend class="sr-only">{{ 'oro.frontend.shoppinglist.fieldset_legend'|trans }}</legend>
-            {% for shoppingList in shoppingLists -%}
-                {% do block|merge_context({
-                    shoppingList: shoppingList,
-                    shoppingListProducts: shoppingListProducts,
-                    productLineItemsPrices: productLineItemsPricesByShoppingList[shoppingList.id]|default([])
-                }) %}
-                {{ block('container_widget') }}
-            {%- endfor %}
-        </fieldset>
-    </div>
+    {% if shoppingLists|length > 0 %}
+        <div {{ block('block_attributes') }}>
+            <fieldset>
+                <legend class="sr-only">{{ 'oro.frontend.shoppinglist.fieldset_legend'|trans }}</legend>
+                {% for shoppingList in shoppingLists -%}
+                    {% do block|merge_context({
+                        shoppingList: shoppingList,
+                        shoppingListProducts: shoppingListProducts,
+                        productLineItemsPrices: productLineItemsPricesByShoppingList[shoppingList.id]|default([])
+                    }) %}
+                    {{ block('container_widget') }}
+                {%- endfor %}
+            </fieldset>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block shopping_list_dropdown_item_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
     {% if not is_one_shopping_list_enabled() %}
         {% set currentClass = 'checked' %}
         {% set attr = layout_attr_defaults(attr, {
-            '~class': " shopping-list-dropdown__item"
+            '~class': " shopping-list-dropdown__item" ~ (shoppingList.isCurrent ? ' shopping-list-dropdown__item--default')
         }) %}
         <div {{ block('block_attributes') }}>
             {% set can_set_as_default = is_granted('oro_shopping_list_frontend_set_as_default', shoppingList) %}
@@ -110,7 +113,6 @@
                         data-toggle="tooltip"
                         data-trigger="hover"
                         data-template="{{ tooltipTemplate }}"
-                        data-offset="2, 2"
                         title="{{ 'oro.frontend.shoppinglist.radio.title'|trans }}"
                         data-shopping-list-id="{{ shoppingList.id }}"
                         data-role="shopping-list-current-label">
@@ -167,7 +169,6 @@
                 {% endif %}
                 <span class="shopping-list-dropdown__info" aria-hidden="true">
                     {{ 'oro.frontend.shoppinglist.view.view_details.label'|trans }}
-                    <span class="fa-angle-right" aria-hidden="true"></span>
                 </span>
             </a>
         </div>
@@ -197,26 +198,31 @@
                 {{- 'oro.frontend.shoppinglist.view.empty_single'|trans -}}
             </div>
             {% endif %}
-            <div class="shopping-list-dropdown__footer">
+
+            {% set buttons = get_shopping_list_widget_buttons(shoppingList) %}
+            {% set footerClassNames = '' %}
+
+            {% if shoppingList.lineItems|length == 0 %}
+                {% set footerClassNames = footerClassNames ~ ' shopping-list-dropdown__footer--no-items' %}
+            {% endif %}
+
+            {% if buttons|length > 0 %}
+                {% set footerClassNames = footerClassNames ~ ' shopping-list-dropdown__footer--stack' %}
+            {% endif %}
+
+            <div class="shopping-list-dropdown__footer{{ footerClassNames }}">
                 {% if shoppingList.lineItems|length > 0 %}
                     <div class="shopping-list-dropdown__total">
-                        {{ 'oro.frontend.shoppinglist.view.total.label'|trans }}
-                        {{ 'oro.frontend.shoppinglist.view.items.label'|trans({'%count%': shoppingList.lineItems|length}) }}
-                        <span aria-hidden="true">|</span> {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
+                        <h3>{{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}</h3>
                     </div>
-                    <div class="shopping-list-dropdown__order-container">
-                        {% set buttons = get_shopping_list_widget_buttons(shoppingList) %}
-                        {% for button in buttons %}
-                            {% include button.template with button.templateData|merge({onlyLink: true, aClass: 'btn btn--block btn--info', noIconText: true}) %}
-                        {% endfor %}
-                    </div>
+                    {% for button in buttons %}
+                        {% include button.template with button.templateData|merge({onlyLink: true, aClass: 'btn btn--block btn--outlined', noIconText: true}) %}
+                    {% endfor %}
                 {% endif %}
-                <div class="shopping-list-dropdown__info-container">
-                    <a href="{{ oro_shopping_list_frontend_url() }}" class="shopping-list-dropdown__info">
-                        <span class="fa-shopping-cart" aria-hidden="true"></span>
-                        <span>{{ 'oro.frontend.shoppinglist.view.view_list.label'|trans }}</span>
-                    </a>
-                </div>
+                <a href="{{ oro_shopping_list_frontend_url() }}" class="btn">
+                    <span>{{ 'oro.frontend.shoppinglist.view.view_list.label'|trans }}</span>
+                    {{ renderIcon.icon({name: 'arrow-right'}) }}
+                </a>
             </div>
         </div>
     {% endif %}
@@ -228,7 +234,7 @@
         {% set productImageData = product.imagesByType('listing').first.image|default(null) %}
         {% set productTitle = productImageData ? oro_file_title(productImageData) : product.names|localized_value|oro_html_strip_tags %}
         {% include '@OroAttachment/Twig/picture.html.twig' with {
-            sources: product_filtered_picture_sources(productImageData, 'product_small'),
+            sources: product_filtered_picture_sources(productImageData, 'product_extra_small'),
             img_attrs: {
                 alt: productTitle|escape('html_attr'),
             }
@@ -252,13 +258,12 @@
         {% else %}
             {{ quantity }}
         {% endif %}
-        <span aria-hidden="true">|</span>
         {% if productLineItemPrice is not null %}
-            <span data-name="price-value">
+            <h5 data-name="price-value">
                 {{ productLineItemPrice.price.value|oro_format_currency({'currency': productLineItemPrice.price.currency}) }}
-            </span>
+            </h5>
         {% else %}
-            <span data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found.short_label'|trans }}</span>
+            <h5 data-name="price-not-found">{{ 'oro.pricing.frontend.product_prices.price_not_found.short_label'|trans }}</h5>
         {% endif %}
     </div>
 {% endblock %}
@@ -274,26 +279,29 @@
 {% block _main_menu_shopping_lists_dropdown_item_product_base_sku_widget %}
     {% set product = lineItem.product %}
     <div class="shopping-list-dropdown__product-sku">
-        {{- 'oro.frontend.shoppinglist.view.item.label'|trans }}
         <span class="shopping-list-dropdown__product-sku-value">{{ product.sku|e }}</span>
     </div>
 {% endblock %}
 
 {% block shopping_list_dropdown_create_widget %}
     {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     <div class="header-row__dropdown-footer">
-        {{ UI.clientBtn({
-            'btnCss': 'shopping-list-widget__create-btn',
-            'iCss': 'fa-plus-circle',
-            'label' : 'oro.frontend.shoppinglist.view.create_new_shopping_list.label'|trans,
-            'ariaLabel' : 'oro.frontend.shoppinglist.view.create_new_shopping_list.aria_label'|trans,
-            'labelInIcon': false,
-            'widget' : {
+        <button
+            type="button"
+            class="btn btn--full"
+            aria-label="{{ 'oro.frontend.shoppinglist.view.create_new_shopping_list.aria_label'|trans }}"
+            data-shopping-list-create
+            {{ UI.renderWidgetAttributes({
                 'type' : 'shopping-list-create',
+                'createOnEvent': 'click',
                 'options': {
                     'createOnly': true
                 }
-            }
-        }) }}
+            }) }}
+        >
+            {{ renderIcon.icon({name: 'plus'}) }}
+            {{ 'oro.frontend.shoppinglist.view.create_new_shopping_list.label'|trans }}
+        </button>
     </div>
 {% endblock %}

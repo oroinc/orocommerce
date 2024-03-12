@@ -186,7 +186,7 @@ class SlugRepository extends ServiceEntityRepository
             ->addOrderBy('slug.id')
             ->setMaxResults(1);
 
-        $result = $qb->execute()->fetch(\PDO::FETCH_ASSOC);
+        $result = $qb->execute()->fetchAssociative();
         if (false === $result) {
             $result = null;
         }
@@ -205,7 +205,7 @@ class SlugRepository extends ServiceEntityRepository
             ->setParameter('routeName', $routeName)
             ->setMaxResults(1);
 
-        return (bool)$qb->execute()->fetch(\PDO::FETCH_ASSOC);
+        return (bool)$qb->execute()->fetchAssociative();
     }
 
     /**

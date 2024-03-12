@@ -58,6 +58,7 @@ class LettersValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation($constraint->message)
             ->setParameter('{{ value }}', '"' . $value . '"')
+            ->setParameter('{{ pattern }}', $constraint->pattern)
             ->setCode(Letters::REGEX_FAILED_ERROR)
             ->assertRaised();
     }

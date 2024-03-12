@@ -4,9 +4,13 @@ namespace Oro\Bundle\RFPBundle\Form\DataTransformer;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
+/**
+ * Transforms user id to email and vice versa
+ */
 class UserIdToEmailTransformer implements DataTransformerInterface
 {
     /**
@@ -75,7 +79,7 @@ class UserIdToEmailTransformer implements DataTransformerInterface
      */
     protected function getUserRepository()
     {
-        $userClass = 'OroUserBundle:User';
+        $userClass = User::class;
 
         return $this->registry->getManagerForClass($userClass)->getRepository($userClass);
     }

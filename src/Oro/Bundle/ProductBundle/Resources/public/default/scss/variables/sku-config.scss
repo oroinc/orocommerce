@@ -1,5 +1,5 @@
 /* @theme: default; */
 
-$sku-offset: 0 0 $offset-y-m 0 !default;
-$sku-offset-color: get-color('additional', 'dark') !default;
-$sku-font-size: 12px !default;
+$sku-offset: 0 0 spacing('sm') 0 !default;
+$sku-offset-color: get-color('text', 'secondary') !default;
+$sku-font-size: 13px !default;

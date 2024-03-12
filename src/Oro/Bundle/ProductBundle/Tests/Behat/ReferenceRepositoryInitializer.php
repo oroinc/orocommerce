@@ -17,7 +17,7 @@ use Oro\Bundle\TranslationBundle\Entity\TranslationKey;
 class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
@@ -40,7 +40,6 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         $attributeFamily = $repository->findOneBy([
             'code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE,
         ]);
-
         if (!$attributeFamily) {
             throw new \InvalidArgumentException('Default product attribute family should exist.');
         }
@@ -52,22 +51,11 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
     {
         /** @var ProductUnitRepository $repository */
         $repository = $doctrine->getManager()->getRepository(ProductUnit::class);
-        /** @var ProductUnit $item */
-        $item = $repository->findOneBy(['code' => 'item']);
-        $referenceRepository->set('item', $item);
-        /** @var ProductUnit $each */
-        $each = $repository->findOneBy(['code' => 'each']);
-        $referenceRepository->set('each', $each);
-        /** @var ProductUnit $set */
-        $set = $repository->findOneBy(['code' => 'set']);
-        $referenceRepository->set('set', $set);
-        /** @var ProductUnit $piece */
-        $piece = $repository->findOneBy(['code' => 'piece']);
-        $referenceRepository->set('piece', $piece);
-
-        /** @var ProductUnit $kgUnit */
-        $kgUnit = $repository->findOneBy(['code' => 'kg']);
-        $referenceRepository->set('kg_unit', $kgUnit);
+        $referenceRepository->set('item', $repository->findOneBy(['code' => 'item']));
+        $referenceRepository->set('each', $repository->findOneBy(['code' => 'each']));
+        $referenceRepository->set('set', $repository->findOneBy(['code' => 'set']));
+        $referenceRepository->set('piece', $repository->findOneBy(['code' => 'piece']));
+        $referenceRepository->set('kg_unit', $repository->findOneBy(['code' => 'kg']));
     }
 
     /**
@@ -80,7 +68,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         Collection $referenceRepository
     ): void {
         /** @var TranslationKeyRepository $repository */
-        $repository = $doctrine->getManager()->getRepository('OroTranslationBundle:TranslationKey');
+        $repository = $doctrine->getManager()->getRepository(TranslationKey::class);
         $qb = $repository->createQueryBuilder('tk');
         $qb->orWhere($qb->expr()->like('tk.key', $qb->expr()->literal('oro.product_unit.%')))
             ->orWhere($qb->expr()->like('tk.key', $qb->expr()->literal('oro.product.product_unit.%')));

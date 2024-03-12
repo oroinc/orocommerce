@@ -5,11 +5,11 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Brand;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
@@ -26,8 +26,8 @@ class BrandTest extends \PHPUnit\Framework\TestCase
     {
         $now = new \DateTime('now');
         $properties = [
-            ['id', '123'],
-            ['owner', new User()],
+            ['id', 123],
+            ['owner', new BusinessUnit()],
             ['organization', new Organization()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],

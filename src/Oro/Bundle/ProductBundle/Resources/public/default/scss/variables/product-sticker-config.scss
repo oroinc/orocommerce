@@ -1,36 +1,28 @@
 /* @theme: default; */
 
-$product-sticker-inner-offset: null !default;
+$product-sticker-min-height: 28px !default;
+$product-sticker-display: inline-flex !default;
+$product-sticker-align-items: center !default;
+$product-sticker-padding: spacing('xs') spacing('md') !default;
+$product-sticker-z-index: z('base') + 1 !default;
+$product-sticker-position: absolute !default;
 
-$product-sticker-icon-top-left-pos-top: 0 !default;
-$product-sticker-icon-top-left-pos-left: 0 !default;
+$product-sticker-start-start-block-start: 0 !default;
+$product-sticker-start-start-inline-start: 0 !default;
 
-$product-sticker-icon-top-right-pos-top: $offset-y !default;
-$product-sticker-icon-top-right-pos-right: $offset-x !default;
+$product-sticker-start-end-block-start: 0 !default;
+$product-sticker-start-end-inline-end: 0 !default;
 
-$product-sticker-icon-bottom-right-pos-bottom: 0 !default;
-$product-sticker-icon-bottom-right-pos-right: 0 !default;
+$product-sticker-end-end-block-end: 0 !default;
+$product-sticker-end-end-inline-end: 0 !default;
 
-$product-sticker-icon-bottom-left-pos-bottom: 0 !default;
-$product-sticker-icon-bottom-left-pos-left: 0 !default;
+$product-sticker-end-start-block-end: 0 !default;
+$product-sticker-end-start-inline-start: 0 !default;
 
-$product-sticker-icon-bottom-right-gallery-pos-bottom: $product-view-media-gallery-nav-offset-top +
-    $product-view-media-gallery-nav-max-height + $product-sticker-icon-bottom-right-pos-bottom !default;
-$product-sticker-icon-bottom-left-gallery-pos-bottom: $product-view-media-gallery-nav-offset-top +
-    $product-view-media-gallery-nav-max-height + $product-sticker-icon-bottom-left-pos-bottom !default;
+$product-sticker-border-radius: 4px !default;
 
-$product-sticker-text-font-weight: font-weight('bold') !default;
-$product-sticker-text-new-arrival-color: get-color('primary', 'dark') !default;
+$product-sticker-new-arrival-background: get-var-color('secondary', 'c1') !default;
+$product-sticker-new-arrival-color: get-var-color('text', 'primary') !default;
 
-$product-sticker-icon-new-arrival-background: url('#{$global-url}/oroproduct/default/images/sticker-new.svg') 0 0 no-repeat !default;
-$product-sticker-icon-new-arrival-background-size: 100% 100% !default;
-
-$product-sticker-icon-static-size: 60px !default;
-
-$product-sticker-icon-size: 20% !default;
-$product-sticker-icon-top-right-tablet-small-pos-top: 12px !default;
-$product-sticker-icon-top-right-tablet-small-pos-right: 12px !default;
-
-$product-sticker-icon-size-mobile-landscape: 33% !default;
-$product-sticker-icon-top-right-mobile-landscape-pos-top: 8px !default;
-$product-sticker-icon-top-right-mobile-landscape-pos-right: 8px !default;
+$product-sticker-sale-background: get-var-color('secondary', 'sale') !default;
+$product-sticker-sale-color: get-var-color('text', 'inverse') !default;

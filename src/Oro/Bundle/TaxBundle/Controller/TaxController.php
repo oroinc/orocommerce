@@ -3,8 +3,8 @@
 namespace Oro\Bundle\TaxBundle\Controller;
 
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Form\Type\TaxType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -18,11 +18,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class TaxController extends AbstractController
 {
-    /**
-     * @Route("/", name="oro_tax_index")
-     * @Template
-     * @AclAncestor("oro_tax_view")
-     */
+    #[Route(path: '/', name: 'oro_tax_index')]
+    #[Template]
+    #[AclAncestor('oro_tax_view')]
     public function indexAction(): array
     {
         return [
@@ -30,16 +28,9 @@ class TaxController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/view/{id}", name="oro_tax_view", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_tax_view",
-     *      type="entity",
-     *      class="OroTaxBundle:Tax",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/view/{id}', name: 'oro_tax_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_tax_view', type: 'entity', class: Tax::class, permission: 'VIEW')]
     public function viewAction(Tax $tax): array
     {
         return [
@@ -47,31 +38,17 @@ class TaxController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/create", name="oro_tax_create")
-     * @Template("@OroTax/Tax/update.html.twig")
-     * @Acl(
-     *      id="oro_tax_create",
-     *      type="entity",
-     *      class="OroTaxBundle:Tax",
-     *      permission="CREATE"
-     * )
-     */
+    #[Route(path: '/create', name: 'oro_tax_create')]
+    #[Template('@OroTax/Tax/update.html.twig')]
+    #[Acl(id: 'oro_tax_create', type: 'entity', class: Tax::class, permission: 'CREATE')]
     public function createAction(): array|RedirectResponse
     {
         return $this->update(new Tax());
     }
 
-    /**
-     * @Route("/update/{id}", name="oro_tax_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_tax_update",
-     *      type="entity",
-     *      class="OroTaxBundle:Tax",
-     *      permission="EDIT"
-     * )
-     */
+    #[Route(path: '/update/{id}', name: 'oro_tax_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_tax_update', type: 'entity', class: Tax::class, permission: 'EDIT')]
     public function updateAction(Tax $tax): array|RedirectResponse
     {
         return $this->update($tax);
@@ -79,10 +56,10 @@ class TaxController extends AbstractController
 
     protected function update(Tax $tax): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $tax,
             $this->createForm(TaxType::class, $tax),
-            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.tax.saved.message')
+            $this->container->get(TranslatorInterface::class)->trans('oro.tax.controller.tax.saved.message')
         );
     }
 

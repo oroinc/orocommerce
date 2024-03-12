@@ -2,33 +2,28 @@
 
 namespace Oro\Bundle\PricingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\MappedSuperclass()
- */
+* BasePriceListCurrency class
+*
+*/
+#[ORM\MappedSuperclass]
 class BasePriceListCurrency
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
     /**
      * @var BasePriceList
      */
     protected $priceList;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", length=3)
-     */
-    protected $currency;
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3)]
+    protected ?string $currency = null;
 
     /**
      * @return integer

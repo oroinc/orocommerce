@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_3;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -19,18 +19,11 @@ class OroShoppingListBundle implements
     DatabasePlatformAwareInterface,
     OrderedMigrationInterface
 {
-    /**
-     * @var RenameExtension
-     */
-    private $renameExtension;
+    use DatabasePlatformAwareTrait;
+    use RenameExtensionAwareTrait;
 
     /**
-     * @var AbstractPlatform
-     */
-    private $databasePlatform;
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -40,9 +33,9 @@ class OroShoppingListBundle implements
         $extension->renameTable($schema, $queries, 'orob2b_shopping_list', 'oro_shopping_list');
         $extension->renameTable($schema, $queries, 'orob2b_shopping_list_line_item', 'oro_shopping_list_line_item');
 
-        if ($this->databasePlatform->supportsSequences()) {
-            $oldSequenceName = $this->databasePlatform->getIdentitySequenceName('orob2b_shopping_list_total', 'id');
-            $newSequenceName = $this->databasePlatform->getIdentitySequenceName('oro_shopping_list_total', 'id');
+        if ($this->platform->supportsSequences()) {
+            $oldSequenceName = $this->platform->getIdentitySequenceName('orob2b_shopping_list_total', 'id');
+            $newSequenceName = $this->platform->getIdentitySequenceName('oro_shopping_list_total', 'id');
             if (!$schema->hasSequence($oldSequenceName)) {
                 $renameSequenceQuery = new SqlSchemaUpdateMigrationQuery(
                     "ALTER SEQUENCE $oldSequenceName RENAME TO $newSequenceName"
@@ -67,29 +60,10 @@ class OroShoppingListBundle implements
     }
 
     /**
-     * Should be executed before:
-     * @see \Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_3\MigrateNotes
-     *
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getOrder()
     {
         return 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDatabasePlatform(AbstractPlatform $platform)
-    {
-        $this->databasePlatform = $platform;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
     }
 }

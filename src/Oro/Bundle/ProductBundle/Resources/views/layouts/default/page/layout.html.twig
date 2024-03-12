@@ -3,20 +3,16 @@
         stickers is defined and
         stickers|length
     %}
-        {% set attr = layout_attr_defaults(attr, {
-            '~class': ' product-sticker'
-        }) %}
-
-        {% if mode == 'icon' %}
-            {% set attr = layout_attr_defaults(attr, {
-                '~class': ' product-sticker--icon',
-                'role': 'img'
-            }) %}
+        {% set label_class = 'sticker' %}
+        {% if mode == 'badge' %}
+            {% set label_class = 'product-sticker' %}
         {% elseif mode == 'text' %}
-            {% set attr = layout_attr_defaults(attr, {
-                '~class': ' product-sticker--text'
-            }) %}
+            {% set label_class = 'status-label' %}
         {% endif %}
+
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " #{label_class}"
+        }) %}
 
         {% set def_attr = attr %}
 
@@ -24,20 +20,18 @@
             {% set attr = def_attr %}
 
             {% set attr = layout_attr_defaults(attr, {
-                '~class': ' product-sticker--' ~ mode ~ '-' ~ sticker.type
+                '~class': " #{label_class}--#{sticker.type}"
             }) %}
 
-            {% if mode == 'icon' %}
+            {% if mode == 'badge' %}
                 {% set attr = layout_attr_defaults(attr, {
-                    '~class': ' product-sticker--' ~ position,
-                    'aria-label': ('oro.product.sticker.' ~ sticker.type)|trans
+                    '~class': " #{label_class}--#{position}",
+                    'aria-label': ("oro.product.sticker.#{sticker.type}")|trans
                 }) %}
             {% endif %}
 
             <div {{ block('block_attributes') }}>
-                {%- if mode == 'text' -%}
-                    {{- ('oro.product.sticker.' ~ sticker.type)|trans -}}
-                {%- endif -%}
+                {{- ("oro.product.sticker.#{sticker.type}")|trans -}}
             </div>
         {% endfor %}
     {% endif %}

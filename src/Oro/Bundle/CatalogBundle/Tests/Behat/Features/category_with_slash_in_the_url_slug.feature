@@ -31,6 +31,7 @@ Feature: Category with slash in the url slug
   Scenario: Check subcategory
     Given I proceed as the Buyer
     And I am on the homepage
+    And I click on "Main Menu Button"
     When I go to "/foo/bar/baz"
     Then I should see "SubCategory"
     And I should not see "404 Not Found"

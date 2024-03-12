@@ -31,7 +31,7 @@ class LoadPriceListsForCPLBuilderFacade extends LoadPriceLists
     /**
      * {@inheritDoc}
      */
-    public static function getPriceListData()
+    public static function getPriceListData(): array
     {
         $data = [];
         foreach (self::$priceListNames as $priceListName) {

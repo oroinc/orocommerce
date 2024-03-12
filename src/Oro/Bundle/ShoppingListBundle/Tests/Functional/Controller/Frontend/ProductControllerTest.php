@@ -50,9 +50,11 @@ class ProductControllerTest extends WebTestCase
 
         foreach ($shoppingLists as $shoppingList) {
             if ($shoppingList !== $shoppingListFromAnotherSite) {
-                static::assertStringContainsString('Add to ' . $shoppingList->getLabel(), $content);
+                static::assertStringContainsString('Add to', $content);
+                static::assertStringContainsString($shoppingList->getLabel(), $content);
             } else {
-                static::assertStringNotContainsString('Add to ' . $shoppingList->getLabel(), $content);
+                static::assertStringNotContainsString('Add to', $content);
+                static::assertStringContainsString($shoppingList->getLabel(), $content);
             }
         }
 

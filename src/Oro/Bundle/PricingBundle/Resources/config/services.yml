@@ -119,8 +119,7 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.product_price_criteria_data_extractor'
             - '@oro_pricing.provider.product_price_by_matching_criteria'
-        calls:
-            - [setMemoryCacheProvider, ['@oro_pricing.provider.product_price.cache']]
+            - '@oro_pricing.provider.product_price.cache'
 
     Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface:
         alias: 'oro_pricing.provider.product_price'
@@ -535,6 +534,29 @@ services:
             - [setProductPriceClass, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
         tags:
             - { name: oro_filter.extension.orm_filter.filter, type: product-price }
+
+    oro_pricing.filter.product_price_attribute:
+        class: 'Oro\Bundle\PricingBundle\Filter\ProductPriceAttributeFilter'
+        public: false
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+            - '@oro_product.formatter.product_unit_label'
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: product-price-attribute }
+
+    oro_pricing.filter.combined_product_price:
+        class: 'Oro\Bundle\PricingBundle\Filter\ProductPriceFilter'
+        public: false
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+            - '@oro_product.formatter.product_unit_label'
+            - '@oro_pricing.model.debug_product_price_price_list_request_handler'
+        calls:
+            - [setProductPriceClass, ['Oro\Bundle\PricingBundle\Entity\CombinedProductPrice']]
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: combined-product-price }
 
     oro_pricing.filter.price_lists:
         class: 'Oro\Bundle\PricingBundle\Filter\PriceListsFilter'
@@ -1203,7 +1225,6 @@ services:
         class: Oro\Bundle\PricingBundle\Model\CombinedPriceListActivationStatusHandler
         arguments:
             - '@doctrine'
-            - '@oro_config.manager'
         tags:
             - { name: combined_price_list_status_handler, priority: 10 }
 
@@ -1527,9 +1548,25 @@ services:
         arguments:
             - '@translator'
             - '@security.authorization_checker'
+        calls:
+            - ['addSupportedGrid', ['products-grid']]
         tags:
             - { name: oro_datagrid.extension }
             - { name: oro_featuretogle.feature, feature: oro_price_lists }
+
+    oro_pricing.datagrid.extension.combined_product_price:
+        class: 'Oro\Bundle\PricingBundle\Debug\Datagrid\CombinedProductPriceDatagridExtension'
+        arguments:
+            - '@oro_pricing.model.debug_product_price_price_list_request_handler'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_datagrid.provider.selected_fields'
+            - '@translator'
+            - '@security.authorization_checker'
+        calls:
+            - ['addSupportedGrid', ['pricing-products-trace-grid']]
+        tags:
+            - { name: oro_datagrid.extension }
+            - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }
 
     oro_pricing.datagrid.extension.price_attribute_product_price_datagrid:
         class: 'Oro\Bundle\PricingBundle\Datagrid\PriceAttributeProductPriceDatagridExtension'
@@ -1587,7 +1624,7 @@ services:
         class: Oro\Bundle\PricingBundle\EventListener\PriceListViewListener
         arguments:
             - '@oro_pricing.notification_alert_manager'
-            - '@session.flash_bag'
+            - '@request_stack'
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.price-list-view, method: onPriceListView }
@@ -1772,3 +1809,12 @@ services:
             - '@oro_pricing.product_price_criteria_factory'
             - '@oro_pricing.provider.product_price_by_matching_criteria'
             - '@oro_currency.rounding.price_rounding_service'
+
+    oro_pricing.migrations.generate_missing_product_by_rules:
+        class: Oro\Bundle\PricingBundle\Migrations\Service\GenerateMissingPricesByRules
+        public: true
+        arguments:
+            - '@oro_pricing.price_rule_lexeme_trigger_handler'
+            - '@oro_pricing.compiler.product_assignment_rule_compiler'
+            - '@oro_pricing.compiler.price_list_rule_compiler'
+            - '@oro_pricing.shard_manager'

@@ -67,8 +67,8 @@ class ContentWidgetPathProviderTest extends \PHPUnit\Framework\TestCase
                 'theme' => 'base',
                 'content_widget_type' => 'test_widget_type',
                 'expectedResults' => [
-                    'base/content_widget',
-                    'base/content_widget/test_widget_type',
+                    str_replace('/', DIRECTORY_SEPARATOR, 'base/content_widget'),
+                    str_replace('/', DIRECTORY_SEPARATOR, 'base/content_widget/test_widget_type'),
                 ],
             ],
             [
@@ -76,10 +76,10 @@ class ContentWidgetPathProviderTest extends \PHPUnit\Framework\TestCase
                 'theme' => 'black',
                 'content_widget_type' => 'test_widget_type',
                 'expectedResults' => [
-                    'base/content_widget',
-                    'base/content_widget/test_widget_type',
-                    'black/content_widget',
-                    'black/content_widget/test_widget_type',
+                    str_replace('/', DIRECTORY_SEPARATOR, 'base/content_widget'),
+                    str_replace('/', DIRECTORY_SEPARATOR, 'base/content_widget/test_widget_type'),
+                    str_replace('/', DIRECTORY_SEPARATOR, 'black/content_widget'),
+                    str_replace('/', DIRECTORY_SEPARATOR, 'black/content_widget/test_widget_type'),
                 ],
             ],
         ];

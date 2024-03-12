@@ -70,4 +70,18 @@ class CombinedPriceListToWebsiteRepositoryTest extends AbstractCombinedPriceList
 
         $this->assertEquals([$this->getReference(LoadWebsiteData::WEBSITE1)], $websites);
     }
+
+    public function testGetRelation()
+    {
+        $registry = $this->getContainer()->get('doctrine');
+        $repo = $registry->getRepository(CombinedPriceListToWebsite::class);
+
+        $website = $this->getReference(LoadWebsiteData::WEBSITE2);
+
+        $cpl = $this->getReference('2f');
+
+        $relation = $repo->getRelation($website);
+        $this->assertNotNull($relation);
+        $this->assertEquals($cpl->getId(), $relation->getFullChainPriceList()->getId());
+    }
 }

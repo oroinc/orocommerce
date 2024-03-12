@@ -13,12 +13,10 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Form type for RequestProductItem
+ * Form type representing {@see RequestProductItem}.
  */
 class RequestProductItemType extends AbstractType
 {
-    const NAME = 'oro_rfp_request_product_item';
-
     /**
      * @var string
      */
@@ -64,7 +62,7 @@ class RequestProductItemType extends AbstractType
                     'required' => false,
                     'label' => 'oro.rfp.requestproductitem.quantity.label',
                     'default_data' => 1,
-                    'useInputTypeNumberValueFormat' => true
+                    'useInputTypeNumberValueFormat' => true,
                 ]
             );
 
@@ -98,16 +96,8 @@ class RequestProductItemType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
-        return self::NAME;
+        return 'oro_rfp_request_product_item';
     }
 }

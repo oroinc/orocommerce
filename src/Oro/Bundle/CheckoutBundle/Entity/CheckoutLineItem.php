@@ -6,16 +6,20 @@ use Brick\Math\BigDecimal;
 use Brick\Math\Exception\MathException;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
+use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutLineItemRepository;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
@@ -23,183 +27,120 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 /**
  * Represents checkout item.
  *
- * @ORM\Table(name="oro_checkout_line_item")
- * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutLineItemRepository")
- * @ORM\HasLifecycleCallbacks()
- * @Config(
- *      mode="hidden"
- * )
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
+#[ORM\Entity(repositoryClass: CheckoutLineItemRepository::class)]
+#[ORM\Table(name: 'oro_checkout_line_item')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(mode: 'hidden')]
 class CheckoutLineItem implements
     PriceAwareInterface,
     PriceTypeAwareInterface,
     ProductLineItemInterface,
     ProductLineItemsHolderAwareInterface,
+    ProductLineItemChecksumAwareInterface,
     ProductKitItemLineItemsAwareInterface,
     ShippingAwareInterface
 {
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Checkout::class, inversedBy: 'lineItems')]
+    #[ORM\JoinColumn(name: 'checkout_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Checkout $checkout = null;
+
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Product $product = null;
+
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'parent_product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Product $parentProduct = null;
+
+    #[ORM\Column(name: 'product_sku', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $productSku = null;
+
+    #[ORM\Column(name: 'free_form_product', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $freeFormProduct = null;
 
     /**
-     * @var Checkout
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CheckoutBundle\Entity\Checkout", inversedBy="lineItems")
-     * @ORM\JoinColumn(name="checkout_id", referencedColumnName="id", onDelete="CASCADE")
+     * @var float|null
      */
-    protected $checkout;
-
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $product;
-
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $parentProduct;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="product_sku", type="string", length=255, nullable=true)
-     */
-    protected $productSku;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="free_form_product", type="string", length=255, nullable=true)
-     */
-    protected $freeFormProduct;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="quantity", type="float", nullable=true)
-     */
+    #[ORM\Column(name: 'quantity', type: Types::FLOAT, nullable: true)]
     protected $quantity;
 
-    /**
-     * @var ProductUnit
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL")
-     */
-    protected $productUnit;
+    #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
+    #[ORM\JoinColumn(name: 'product_unit_id', referencedColumnName: 'code', onDelete: 'SET NULL')]
+    protected ?ProductUnit $productUnit = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="product_unit_code", type="string", length=255, nullable=true)
-     */
-    protected $productUnitCode;
+    #[ORM\Column(name: 'product_unit_code', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $productUnitCode = null;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="value", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'value', type: 'money', nullable: true)]
     protected $value;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", nullable=true)
-     */
-    protected $currency;
+    #[ORM\Column(name: 'currency', type: Types::STRING, nullable: true)]
+    protected ?string $currency = null;
 
     /**
      * @var Price
      */
     protected $price;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="price_type", type="integer")
-     */
-    protected $priceType = self::PRICE_TYPE_UNIT;
+    #[ORM\Column(name: 'price_type', type: Types::INTEGER)]
+    protected ?int $priceType = self::PRICE_TYPE_UNIT;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="from_external_source", type="boolean")
-     */
-    protected $fromExternalSource = false;
+    #[ORM\Column(name: 'from_external_source', type: Types::BOOLEAN)]
+    protected ?bool $fromExternalSource = false;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="comment", type="text", nullable=true)
-     */
-    protected $comment;
+    #[ORM\Column(name: 'comment', type: Types::TEXT, nullable: true)]
+    protected ?string $comment = null;
 
     /**
      * Hold flag to determine if price can be changed
      *
      * @var bool
-     *
-     * @ORM\Column(name="is_price_fixed", type="boolean")
      */
-    protected $priceFixed = false;
+    #[ORM\Column(name: 'is_price_fixed', type: Types::BOOLEAN)]
+    protected ?bool $priceFixed = false;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="shipping_method", type="string", nullable=true)
-     */
-    protected $shippingMethod;
+    #[ORM\Column(name: 'shipping_method', type: Types::STRING, nullable: true)]
+    protected ?string $shippingMethod = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="shipping_method_type", type="string", nullable=true)
-     */
-    protected $shippingMethodType;
+    #[ORM\Column(name: 'shipping_method_type', type: Types::STRING, nullable: true)]
+    protected ?string $shippingMethodType = null;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="shipping_estimate_amount", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'shipping_estimate_amount', type: 'money', nullable: true)]
     protected $shippingEstimateAmount;
 
     /**
-     * @var Collection<CheckoutProductKitItemLineItem>
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="CheckoutProductKitItemLineItem",
-     *     mappedBy="lineItem",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true
-     * )
-     * @OrderBy({"sortOrder"="ASC"})
+     * @var Collection<int, CheckoutProductKitItemLineItem>
      */
-    protected $kitItemLineItems;
+    #[ORM\OneToMany(
+        mappedBy: 'lineItem',
+        targetEntity: CheckoutProductKitItemLineItem::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    #[OrderBy(['sortOrder' => Criteria::ASC])]
+    protected ?Collection $kitItemLineItems = null;
 
     /**
      * Differentiates the unique constraint allowing to add the same product with the same unit code multiple times,
      * moving the logic of distinguishing of such line items out of the entity class.
-     *
-     * @ORM\Column(name="checksum", type="string", length=40, options={"default"=""}, nullable=false)
      */
-    protected string $checksum = '';
+    #[ORM\Column(name: 'checksum', type: Types::STRING, length: 40, nullable: false, options: ['default' => ''])]
+    protected ?string $checksum = '';
 
     public function __construct()
     {
@@ -603,9 +544,7 @@ class CheckoutLineItem implements
         return null;
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    #[ORM\PostLoad]
     public function createPrice()
     {
         if (null !== $this->value && null !== $this->currency) {
@@ -613,10 +552,8 @@ class CheckoutLineItem implements
         }
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function preSave()
     {
         $this->updatePrice();

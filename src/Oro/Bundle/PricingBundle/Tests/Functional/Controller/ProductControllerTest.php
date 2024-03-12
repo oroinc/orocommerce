@@ -30,6 +30,10 @@ class ProductControllerTest extends ProductHelperTestCase
         'price' => '12.3400',
         'currency' => 'EUR',
     ];
+    private const PRICE_LIST_SELECTOR = '.sidebar-items input[name="oro_pricing_price_list_select"]';
+    private const CURRENCY_CONTAINER_SELECTOR = '.sidebar-items [data-ftid="oro_currency_selection"]';
+    private const TIER_PRICES_SELECTOR = '//*[contains(@class, "sidebar-items")]//*[@data-ftid="checkbox"]';
+    private const TIER_PRICES_CONTAINER_SELECTOR = self::TIER_PRICES_SELECTOR . '/..';
 
     protected function setUp(): void
     {
@@ -62,16 +66,17 @@ class ProductControllerTest extends ProductHelperTestCase
 
         self::assertEquals(
             $defaultPriceList->getId(),
-            $crawler->filter('.sidebar-items .default-price-list-choice input[type=hidden]')->attr('value')
+            $crawler->filter(self::PRICE_LIST_SELECTOR)->attr('value')
         );
 
-        foreach ($crawler->filter('.sidebar-items .currencies input[type=checkbox]')->children() as $checkbox) {
+        $currenciesSelector = self::CURRENCY_CONTAINER_SELECTOR . ' input[type=checkbox]';
+        foreach ($crawler->filter($currenciesSelector)->children() as $checkbox) {
             self::assertContains($checkbox->attr('value'), $defaultPriceList->getCurrencies());
         }
 
         self::assertStringContainsString(
             self::getContainer()->get('translator')->trans('oro.pricing.productprice.show_tier_prices.label'),
-            $crawler->filter('.sidebar-items .show-tier-prices-choice')->html()
+            $crawler->filterXPath(self::TIER_PRICES_CONTAINER_SELECTOR)->html()
         );
     }
 
@@ -97,7 +102,7 @@ class ProductControllerTest extends ProductHelperTestCase
 
         self::assertEquals(
             $priceList->getId(),
-            $crawler->filter('.sidebar-items .default-price-list-choice input[type=hidden]')->attr('value')
+            $crawler->filter(self::PRICE_LIST_SELECTOR)->attr('value')
         );
     }
 
@@ -124,10 +129,13 @@ class ProductControllerTest extends ProductHelperTestCase
 
         self::assertSameSize(
             $priceList->getCurrencies(),
-            $crawler->filter('.sidebar-items .currencies input[type=checkbox]')
+            $crawler->filter(self::CURRENCY_CONTAINER_SELECTOR . ' input[type=checkbox]')
         );
-        self::assertCount(0, $crawler->filter('.sidebar-items .currencies input[type=checkbox][checked=checked]'));
-        $crawler->filter('.sidebar-items .currencies input[type=checkbox]')->each(
+        self::assertCount(
+            0,
+            $crawler->filter(self::CURRENCY_CONTAINER_SELECTOR . ' input[type=checkbox][checked=checked]')
+        );
+        $crawler->filter(self::CURRENCY_CONTAINER_SELECTOR . ' input[type=checkbox]')->each(
             function (Crawler $node) use ($priceList) {
                 self::assertContains($node->attr('value'), $priceList->getCurrencies());
                 self::assertEmpty($node->attr('checked'));
@@ -158,13 +166,13 @@ class ProductControllerTest extends ProductHelperTestCase
 
         self::assertSameSize(
             $priceList->getCurrencies(),
-            $crawler->filter('.sidebar-items .currencies input[type=checkbox]')
+            $crawler->filter(self::CURRENCY_CONTAINER_SELECTOR . ' input[type=checkbox]')
         );
         self::assertSameSize(
             $priceList->getCurrencies(),
-            $crawler->filter('.sidebar-items .currencies input[type=checkbox][checked=checked]')
+            $crawler->filter(self::CURRENCY_CONTAINER_SELECTOR . ' input[type=checkbox][checked=checked]')
         );
-        $crawler->filter('.sidebar-items .currencies input[type=checkbox]')->each(
+        $crawler->filter(self::CURRENCY_CONTAINER_SELECTOR . ' input[type=checkbox]')->each(
             function (Crawler $node) use ($priceList) {
                 self::assertContains($node->attr('value'), $priceList->getCurrencies());
                 self::assertNotEmpty($node->attr('checked'));
@@ -194,13 +202,13 @@ class ProductControllerTest extends ProductHelperTestCase
 
         self::assertSameSize(
             $priceList->getCurrencies(),
-            $crawler->filter('.sidebar-items .currencies input[type=checkbox]')
+            $crawler->filter(self::CURRENCY_CONTAINER_SELECTOR . ' input[type=checkbox]')
         );
         self::assertSameSize(
             $selectedCurrencies,
-            $crawler->filter('.sidebar-items .currencies input[type=checkbox][checked=checked]')
+            $crawler->filter(self::CURRENCY_CONTAINER_SELECTOR . ' input[type=checkbox][checked=checked]')
         );
-        $crawler->filter('.sidebar-items .currencies input[type=checkbox]')->each(
+        $crawler->filter(self::CURRENCY_CONTAINER_SELECTOR . ' input[type=checkbox]')->each(
             function (Crawler $node) use ($priceList, $selectedCurrencies) {
                 self::assertContains($node->attr('value'), $priceList->getCurrencies());
 
@@ -230,7 +238,7 @@ class ProductControllerTest extends ProductHelperTestCase
 
         self::assertEquals(
             'checked',
-            $crawler->filter('.sidebar-items .show-tier-prices-choice input[type=checkbox]')->attr('checked')
+            $crawler->filterXPath(self::TIER_PRICES_SELECTOR)->attr('checked')
         );
     }
 
@@ -251,7 +259,7 @@ class ProductControllerTest extends ProductHelperTestCase
 
         self::assertEquals(
             '',
-            $crawler->filter('.sidebar-items .show-tier-prices-choice input[type=checkbox]')->attr('checked')
+            $crawler->filterXPath(self::TIER_PRICES_SELECTOR)->attr('checked')
         );
     }
 

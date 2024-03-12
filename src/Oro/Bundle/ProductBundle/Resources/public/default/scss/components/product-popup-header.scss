@@ -5,7 +5,6 @@
 
     display: $product-popup-header-display;
     align-items: $product-popup-header-align-items;
-    margin-right: $close-dialog-size;
 
     &-img {
         margin: $product-popup-header-img-offset;
@@ -20,7 +19,7 @@
         display: flex;
         align-items: center;
         flex-wrap: wrap;
-        column-gap: $offset-x-m;
+        column-gap: spacing('sm');
     }
 }
 

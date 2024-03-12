@@ -110,7 +110,7 @@ Feature: Shopping list confirmation popup
     Given I type "1GB83" in "search"
     And click "Search Button"
     When I click "Add to Shopping List"
-    Then should see 'Shopping list "Shopping List" was updated successfully' flash message
+    Then should see 'Shopping list "Shopping List" was updated successfully' flash message and I close it
     When I open shopping list widget
     And click "Create Order"
     Then I should see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
@@ -120,7 +120,7 @@ Feature: Shopping list confirmation popup
       | Black | 1 | - |
       | White | - | - |
     And click "Add to Shopping List"
-    Then I should see 'Shopping list "Shopping list" was updated successfully' flash message
+    Then I should see 'Shopping list "Shopping list" was updated successfully' flash message and I close it
     When I open shopping list widget
     And click "Create Order"
     Then I should not see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"

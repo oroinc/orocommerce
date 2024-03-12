@@ -5,8 +5,7 @@ define(function(require) {
     const _ = require('underscore');
     const __ = require('orotranslation/js/translator');
     const BaseView = require('oroui/js/app/views/base/view');
-    const UnitsUtil = require('oroproduct/js/app/units-util');
-    const BaseModel = require('oroui/js/app/models/base/model');
+    const ElementsHelper = require('orofrontend/js/app/elements-helper');
     const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     const mediator = require('oroui/js/mediator');
     const routing = require('routing');
@@ -17,11 +16,12 @@ define(function(require) {
      * @extends oroui.app.views.base.View
      * @class orosale.app.views.LineItemView
      */
-    const LineItemView = BaseView.extend({
+    const LineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
         /**
          * @property {Object}
          */
         options: {
+            fullName: '',
             classNotesSellerActive: 'quote-lineitem-notes-seller-active',
             productSelect: '.quote-lineitem-product-select input[type="hidden"]',
             productSkuLabel: '.quote-lineitem-product-sku-label',
@@ -55,13 +55,23 @@ define(function(require) {
             requestsOnlyContainer: '.sale-quoteproductrequest-only',
             errorMessage: 'Sorry, an unexpected error has occurred.',
             submitButton: 'button#save-and-transit',
+            kitItemLineItems: '.quote-lineitem-product .quote-lineitem-kit-item-line-items',
             allUnits: {},
             units: {},
             events: {
                 before: 'entry-point:quote:load:before',
+                load: 'entry-point:quote:load',
                 after: 'entry-point:quote:load:after',
                 trigger: 'entry-point:quote:trigger'
             }
+        },
+
+        elements: {
+            productId: '[data-name="field__product"]:first'
+        },
+
+        modelElements: {
+            productId: 'productId'
         },
 
         /**
@@ -145,6 +155,11 @@ define(function(require) {
         loadingMask: null,
 
         /**
+         * @property {jQuery.Deferred}
+         */
+        productUnitsDeferred: null,
+
+        /**
          * @inheritdoc
          */
         constructor: function LineItemView(options) {
@@ -155,11 +170,11 @@ define(function(require) {
          * @inheritdoc
          */
         initialize: function(options) {
-            if (!this.model) {
-                this.model = new BaseModel();
-            }
-
             this.options = _.defaults(options || {}, this.options);
+
+            this.initModel(this.options);
+            this.initializeElements(this.options);
+
             this.units = _.defaults(this.units, options.units);
             this.allUnits = _.defaults(this.allUnits, options.allUnits);
 
@@ -192,7 +207,6 @@ define(function(require) {
                 .on('click', this.options.removeNotesButton, this.onRemoveNotesClick.bind(this))
                 .on('click', this.options.freeFormLink, this.onFreeFormLinkClick.bind(this))
                 .on('click', this.options.productSelectLink, this.onProductSelectLinkClick.bind(this))
-                .on('content:changed', this.onContentChanged.bind(this))
             ;
 
             this.listenTo(mediator, this.options.events.before, this.disableSubmit);
@@ -212,21 +226,35 @@ define(function(require) {
                 this.fieldsByName[this.formFieldName(field)].push($(field));
             });
 
-            this.entryPointTriggers([
-                this.fieldsByName.quantity,
-                this.fieldsByName.productUnit,
-                this.fieldsByName.priceValue,
-                this.fieldsByName.priceType
-            ]);
-
             this.checkAddButton();
             this.checkAddNotes();
             if (this.isFreeForm && !this.options.allowEditFreeForm) {
                 this.setReadonlyState();
             }
 
-            this.updateValidation();
-            this.$el.trigger('content:initialized');
+            this.delegate('content:initialized', this.options.itemsContainer, this.onContentInitialized);
+
+            this.initializeSubviews({
+                lineItemModel: this.model,
+                modelAttr: {
+                    product_units: this.model.get('product_units')
+                }
+            });
+        },
+
+        onContentInitialized: function(e) {
+            $(e.target).trigger('deferredInitialize', {
+                lineItemModel: this.model,
+                modelAttr: {
+                    product_units: this.model.get('product_units')
+                }
+            });
+        },
+
+        handleLayoutInit: function() {
+            this.updateProductUnits();
+
+            this._resolveDeferredRender();
         },
 
         disableSubmit: function() {
@@ -278,19 +306,6 @@ define(function(require) {
         },
 
         /**
-         * @param {jQuery|Array} fields
-         */
-        entryPointTriggers: function(fields) {
-            _.each(fields, function(fields) {
-                _.each(fields, function(field) {
-                    $(field).attr('data-entry-point-trigger', true);
-                });
-            });
-
-            mediator.trigger('entry-point:quote:init');
-        },
-
-        /**
          * Handle Product change
          *
          * @param {jQuery.Event} e
@@ -298,20 +313,40 @@ define(function(require) {
         onProductChanged: function(e) {
             this.checkAddButton();
 
-            if (this.getProductId() && !this.$itemsContainer.children().length) {
-                this.$addItemButton.click();
-            }
+            this.updateProductUnits().then(() => {
+                if (this.getProductId() && !this.$itemsContainer.children().length) {
+                    this.$addItemButton.click();
+                }
 
-            if (this.$itemsContainer.children().length) {
-                this.updateContent(true);
-            }
+                this.updateSkuLabelAndValue();
 
-            this.updateSkuLabelAndValue();
+                this.listenToOnce(mediator, this.options.events.before, this.showLoadingMask);
+                this.listenToOnce(mediator, this.options.events.load, this.updateKitLineItem);
+                this.listenToOnce(mediator, this.options.events.after, this.hideLoadingMask);
 
-            const $quantitySelector = this.$el.find(this.options.offersQuantitySelector);
-            $quantitySelector.trigger('change');
+                mediator.trigger(this.options.events.trigger);
+            });
+        },
 
-            mediator.trigger(this.options.events.trigger);
+        showLoadingMask: function() {
+            this.loadingMask.show();
+        },
+
+        hideLoadingMask: function() {
+            this.loadingMask.hide();
+        },
+
+        updateKitLineItem: function(response) {
+            this.disableProductKitPrice(response);
+
+            this.$el.find(this.options.kitItemLineItems)
+                .html(response.kitItemLineItems[this.options.fullName] || '')
+                .trigger('content:changed');
+        },
+
+        disableProductKitPrice: function(response) {
+            const value = response.disabledKitPrices[this.options.fullName] || false;
+            this.$el.find(this.options.offersPriceValueSelector).prop('readonly', value);
         },
 
         /**
@@ -328,28 +363,24 @@ define(function(require) {
             this.$productSelect.trigger('change');
         },
 
-        /**
-         * Handle Content change
-         *
-         * @param {jQuery.Event} e
-         */
-        onContentChanged: function(e) {
-            this.updateContent(false);
-        },
+        updateProductUnits: function() {
+            if (this.productUnitsDeferred?.state() === 'pending') {
+                return this.productUnitsDeferred.promise();
+            }
 
-        /**
-         * @param {Boolean} force
-         */
-        updateContent: function(force) {
+            this.productUnitsDeferred = new $.Deferred();
+
             this.updateValidation();
 
             const productId = this.getProductId();
             const productUnits = productId ? this.units[productId] : this.allUnits;
 
             if (!productId || productUnits) {
-                this.updateProductUnits(productUnits, force || false);
+                this.model.set('product_units', productUnits);
+                this.productUnitsDeferred?.resolve();
+
+                return this.productUnitsDeferred.promise();
             } else {
-                const self = this;
                 const routeParams = {id: productId};
 
                 if (this.options.compactUnits) {
@@ -359,50 +390,25 @@ define(function(require) {
                 $.ajax({
                     url: routing.generate(this.options.unitsRoute, routeParams),
                     type: 'GET',
-                    beforeSend: function() {
-                        self.loadingMask.show();
+                    beforeSend: () => {
+                        this.loadingMask.show();
                     },
-                    success: function(response) {
-                        self.units[productId] = response.units;
-                        self.updateProductUnits(response.units, force || false);
+                    success: response => {
+                        this.units[productId] = response.units;
+                        this.model.set('product_units', response.units);
+                        this.productUnitsDeferred?.resolve();
                     },
-                    complete: function() {
-                        self.loadingMask.hide();
+                    error: () => {
+                        this.productUnitsDeferred.reject();
+                    },
+                    complete: () => {
+                        this.loadingMask.hide();
                     },
                     errorHandlerMessage: __(this.options.errorMessage)
                 });
             }
-        },
 
-        /**
-         * Update available ProductUnit select
-         *
-         * @param {Object} data
-         * @param {Boolean} force
-         */
-        updateProductUnits: function(data, force) {
-            const self = this;
-
-            self.model.set('product_units', data || {});
-
-            const widgets = self.$el.find(self.options.itemWidget);
-
-            $.each(widgets, function(index, widget) {
-                const $select = $(widget).find(self.options.unitsSelect);
-
-                if (!force && $select.hasClass(self.options.syncClass)) {
-                    return;
-                }
-
-                UnitsUtil.updateSelect(self.model, $select);
-                $select.addClass(self.options.syncClass);
-                $select.data('product-units', self.model.get('product_units'));
-                $select.trigger('product-units:change');
-            });
-
-            if (force) {
-                this.$el.find('select').inputWidget('refresh');
-            }
+            return this.productUnitsDeferred.promise();
         },
 
         /**
@@ -601,7 +607,7 @@ define(function(require) {
 
             LineItemView.__super__.dispose.call(this);
         }
-    });
+    }));
 
     return LineItemView;
 });

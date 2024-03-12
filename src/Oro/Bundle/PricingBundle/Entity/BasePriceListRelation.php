@@ -2,55 +2,35 @@
 
 namespace Oro\Bundle\PricingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * Contains all required business logic that must used by all Price List relation
- *
- * @ORM\MappedSuperclass
  */
+#[ORM\MappedSuperclass]
 class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInterface
 {
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="sort_order", type="integer")
-     */
-    protected $sortOrder;
+    #[ORM\Column(name: 'sort_order', type: Types::INTEGER)]
+    protected ?int $sortOrder = null;
 
-    /**
-     * @var PriceList
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceList")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     */
-    protected $priceList;
+    #[ORM\ManyToOne(targetEntity: PriceList::class)]
+    #[ORM\JoinColumn(name: 'price_list_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?PriceList $priceList = null;
 
-    /**
-     * @var Website
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     */
-    protected $website;
+    #[ORM\ManyToOne(targetEntity: Website::class)]
+    #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Website $website = null;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="merge_allowed", type="boolean", nullable=false, options={"default":true})
-     */
-    protected $mergeAllowed = true;
+    #[ORM\Column(name: 'merge_allowed', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
+    protected ?bool $mergeAllowed = true;
 
     /**
      * @return int
@@ -117,9 +97,6 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
         return $this;
     }
 
-    /**
-     * @return boolean
-     */
     public function isMergeAllowed(): bool
     {
         return $this->mergeAllowed;

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
@@ -76,10 +77,10 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\
         $enabledPromotionId = 2;
 
         $sourceEntity = new Order();
-        $sourceEntity->setAppliedPromotions([
+        $sourceEntity->setAppliedPromotions(new ArrayCollection([
             $this->getAppliedPromotion(false, $disabledPromotionId),
             $this->getAppliedPromotion(true, $enabledPromotionId)
-        ]);
+        ]));
         $context = $this->createMock(DiscountContextInterface::class);
 
         $discountWithDisabledPromotion = new DiscountStub();
@@ -108,7 +109,7 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\
     public function testGetDiscountsWhenNoAppliedDisabledPromotions(): void
     {
         $sourceEntity = new Order();
-        $sourceEntity->setAppliedPromotions([$this->getAppliedPromotion(true, 1)]);
+        $sourceEntity->setAppliedPromotions(new ArrayCollection([$this->getAppliedPromotion(true, 1)]));
         $context = $this->createMock(DiscountContextInterface::class);
         $discounts = [new DiscountStub()];
 

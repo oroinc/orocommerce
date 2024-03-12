@@ -250,6 +250,24 @@ operations:
                 message: oro.pricing.pricelist.recalculate.message
                 type: 'success'
 
+    oro_pricing_actualize_combined_price_list:
+        label: oro.pricing.productprice.debug.recalculate_action.label
+        routes: [oro_pricing_price_product_debug_trace]
+        order: 10
+        acl_resource: ['RECALCULATE', 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
+        button_options:
+            icon: fa-money
+        actions:
+            - '@call_service_method':
+                  service: oro_message_queue.message_producer
+                  method: send
+                  method_parameters:
+                    - 'oro_pricing.price_lists.cpl.rebuild.list'
+                    - {'cpl': [$.data.id]}
+            - '@flash_message':
+                message: oro.pricing.productprice.debug.planned_for_recalculation.message
+                type: 'success'
+
 action_groups:
     oro_pricing_add_product_price:
         parameters:

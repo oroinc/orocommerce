@@ -5,11 +5,15 @@ namespace Oro\Bundle\PromotionBundle\Datagrid\Extension\MassAction;
 use Oro\Bundle\DataGridBundle\Exception\LogicException;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponseInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Form\Type\BaseCouponType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * The edit mass action handler for Coupon entity.
+ */
 class CouponEditMassActionHandler extends AbstractCouponMassActionHandler
 {
     /**
@@ -40,7 +44,7 @@ class CouponEditMassActionHandler extends AbstractCouponMassActionHandler
     /**
      * {@inheritdoc}
      */
-    public function handle(MassActionHandlerArgs $args)
+    public function handle(MassActionHandlerArgs $args): MassActionResponseInterface
     {
         $this->formData = null;
 

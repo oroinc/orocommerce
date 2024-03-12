@@ -3,8 +3,8 @@
 namespace Oro\Bundle\TaxBundle\Controller;
 
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -18,11 +18,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class CustomerTaxCodeController extends AbstractController
 {
-    /**
-     * @Route("/", name="oro_tax_customer_tax_code_index")
-     * @Template
-     * @AclAncestor("oro_tax_customer_tax_code_view")
-     */
+    #[Route(path: '/', name: 'oro_tax_customer_tax_code_index')]
+    #[Template]
+    #[AclAncestor('oro_tax_customer_tax_code_view')]
     public function indexAction(): array
     {
         return [
@@ -30,16 +28,9 @@ class CustomerTaxCodeController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/view/{id}", name="oro_tax_customer_tax_code_view", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_tax_customer_tax_code_view",
-     *      type="entity",
-     *      class="OroTaxBundle:CustomerTaxCode",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/view/{id}', name: 'oro_tax_customer_tax_code_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_tax_customer_tax_code_view', type: 'entity', class: CustomerTaxCode::class, permission: 'VIEW')]
     public function viewAction(CustomerTaxCode $customerTaxCode): array
     {
         return [
@@ -47,31 +38,17 @@ class CustomerTaxCodeController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/create", name="oro_tax_customer_tax_code_create")
-     * @Template("@OroTax/CustomerTaxCode/update.html.twig")
-     * @Acl(
-     *      id="oro_tax_customer_tax_code_create",
-     *      type="entity",
-     *      class="OroTaxBundle:CustomerTaxCode",
-     *      permission="CREATE"
-     * )
-     */
+    #[Route(path: '/create', name: 'oro_tax_customer_tax_code_create')]
+    #[Template('@OroTax/CustomerTaxCode/update.html.twig')]
+    #[Acl(id: 'oro_tax_customer_tax_code_create', type: 'entity', class: CustomerTaxCode::class, permission: 'CREATE')]
     public function createAction(): array|RedirectResponse
     {
         return $this->update(new CustomerTaxCode());
     }
 
-    /**
-     * @Route("/update/{id}", name="oro_tax_customer_tax_code_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_tax_customer_tax_code_update",
-     *      type="entity",
-     *      class="OroTaxBundle:CustomerTaxCode",
-     *      permission="EDIT"
-     * )
-     */
+    #[Route(path: '/update/{id}', name: 'oro_tax_customer_tax_code_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_tax_customer_tax_code_update', type: 'entity', class: CustomerTaxCode::class, permission: 'EDIT')]
     public function updateAction(CustomerTaxCode $customerTaxCode): array|RedirectResponse
     {
         return $this->update($customerTaxCode);
@@ -79,10 +56,11 @@ class CustomerTaxCodeController extends AbstractController
 
     protected function update(CustomerTaxCode $customerTaxCode): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $customerTaxCode,
             $this->createForm(CustomerTaxCodeType::class, $customerTaxCode),
-            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.customer_tax_code.saved.message')
+            $this->container->get(TranslatorInterface::class)
+                ->trans('oro.tax.controller.customer_tax_code.saved.message')
         );
     }
 

@@ -74,7 +74,7 @@ Feature: Duplicate product
       | PrimaryUnit                           | kilogram                   |
       | PrimaryPrecision                      | 2                          |
       | Page Template Use Fallback            | false                      |
-      | Page Template                         | Two columns page           |
+      | Page Template                         | Wide Template              |
       | Tax Code                              | TaxCode2                   |
       | Price Quantity 1                      | 2                          |
       | Price Value 1                         | 20                         |
@@ -104,7 +104,7 @@ Feature: Duplicate product
       | New Arrival   | No               |
       | Brand         | Brand2           |
       | Unit          | kilogram         |
-      | Page Template | Two columns page |
+      | Page Template | Wide Template    |
       | Tax Code      | TaxCode2         |
     And I should see "Product2 Description"
     And I should see "Product2 Short Description"

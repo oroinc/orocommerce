@@ -6,23 +6,25 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\OrderBundle\Provider\LatestOrderedProductsInfoProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class LatestOrderedProductsInfoProviderTest extends \PHPUnit\Framework\TestCase
+class LatestOrderedProductsInfoProviderTest extends TestCase
 {
     private const WEBSITE_ID = 1;
     private const PRODUCT_IDS = [1, 5];
 
     /**
-     * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject
+     * @var ManagerRegistry|MockObject
      */
     private $registry;
 
     /**
-     * @var OrderStatusesProviderInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @var OrderStatusesProviderInterface|MockObject
      */
     private $availableOrderStatusesProvider;
 
@@ -148,13 +150,13 @@ class LatestOrderedProductsInfoProviderTest extends \PHPUnit\Framework\TestCase
         $manager
             ->expects(self::atLeastOnce())
             ->method('getRepository')
-            ->with('OroOrderBundle:Order')
+            ->with(Order::class)
             ->willReturn($repository);
 
         $this->registry
             ->expects(self::atLeastOnce())
             ->method('getManagerForClass')
-            ->with('OroOrderBundle:Order')
+            ->with(Order::class)
             ->willReturn($manager);
 
         return $repository;

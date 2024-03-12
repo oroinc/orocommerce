@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Async;
 
+use Oro\Bundle\MessageQueueBundle\Client\BufferedMessageProducer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexGranulizedTopic;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
@@ -224,6 +225,87 @@ class WebsiteSearchReindexProcessorTest extends \PHPUnit\Framework\TestCase
                 [WebsiteSearchReindexGranulizedTopic::getName(), $childMessages[0]],
                 [WebsiteSearchReindexGranulizedTopic::getName(), $childMessages[1]]
             );
+
+        self::assertEquals($status, $this->processor->process($message, $session));
+    }
+
+    public function testProcessWhenGranulizeAndMultipleChunksWithMessageBuffering(): void
+    {
+        $message = new Message();
+        $messageBody = [
+            'class' => Product::class,
+            'context' => [AbstractIndexer::CONTEXT_WEBSITE_IDS => [3, 2, 1]],
+            'granulize' => true,
+        ];
+        $message->setBody($messageBody);
+        $session = $this->createMock(SessionInterface::class);
+        $status = MessageProcessorInterface::ACK;
+
+        $this->delayedJobRunnerProcessor
+            ->expects(self::never())
+            ->method(self::anything());
+
+        $this->eventDispatcher
+            ->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                new BeforeReindexEvent($messageBody['class'], $messageBody['context']),
+                BeforeReindexEvent::EVENT_NAME
+            );
+
+        $childMessages = [
+            [
+                'class' => $messageBody['class'],
+                'context' => [
+                    AbstractIndexer::CONTEXT_WEBSITE_IDS => [3],
+                    AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [42],
+                ],
+            ],
+            [
+                'class' => $messageBody['class'],
+                'context' => [
+                    AbstractIndexer::CONTEXT_WEBSITE_IDS => [2],
+                    AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [4242],
+                ],
+            ],
+        ];
+
+        $this->reindexMessageGranularizer
+            ->expects(self::once())
+            ->method('process')
+            ->with($messageBody['class'], $messageBody['context'][AbstractIndexer::CONTEXT_WEBSITE_IDS])
+            ->willReturnCallback(static function () use ($childMessages): \Generator {
+                foreach ($childMessages as $childMessageBody) {
+                    yield $childMessageBody;
+                }
+            });
+
+        $this->reindexGranulizedProcessor
+            ->expects(self::never())
+            ->method(self::anything());
+
+        $messageProducer = $this->createMock(BufferedMessageProducer::class);
+        $messageProducer->expects(self::exactly(1))
+            ->method('isBufferingEnabled')
+            ->willReturn(true);
+        $messageProducer->expects(self::once())
+            ->method('flushBuffer');
+        $messageProducer
+            ->expects(self::exactly(2))
+            ->method('send')
+            ->withConsecutive(
+                [WebsiteSearchReindexGranulizedTopic::getName(), $childMessages[0]],
+                [WebsiteSearchReindexGranulizedTopic::getName(), $childMessages[1]]
+            );
+
+        $this->processor = new WebsiteSearchReindexProcessor(
+            $this->delayedJobRunnerProcessor,
+            $this->reindexGranulizedProcessor,
+            $this->reindexMessageGranularizer,
+            $messageProducer,
+            $this->eventDispatcher
+        );
+        $this->processor->setMessagesBufferSize(2);
 
         self::assertEquals($status, $this->processor->process($message, $session));
     }

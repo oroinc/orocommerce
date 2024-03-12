@@ -25,6 +25,8 @@ class ProductKitItemLineItemProductUnitAvailableValidatorTest extends Constraint
 {
     private EntityStateChecker|MockObject $entityStateChecker;
 
+    private ProductKitItemProductAvailabilityChecker|MockObject $kitItemProductAvailabilityChecker;
+
     private ProductKitItemLineItemProductUnitAvailable $productKitItemLineItemProductUnitAvailableConstraint;
 
     protected function setUp(): void

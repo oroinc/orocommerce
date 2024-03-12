@@ -20,7 +20,7 @@ class ProductPriceDTOHydrator extends AbstractHydrator
     {
         $result = [];
         $mappings = array_flip($this->_rsm->scalarMappings);
-        while ($row = $this->_stmt->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $this->_stmt->fetchAssociative()) {
             $result[] = new ProductPriceDTO(
                 $this->_em->getReference(Product::class, $row[$mappings['id']]),
                 Price::create((float)$row[$mappings['value']], $row[$mappings['currency']]),

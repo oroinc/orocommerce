@@ -7,26 +7,30 @@ Feature: Started checkouts should be on Open Orders Grid
 
   Scenario: See Open Orders with child Customer by frontend administrator.
     Given I signed in as NancyJSallee@example.org on the store frontend
-    When click "Orders"
+    When I click "Account Dropdown"
+    And I click "Order History"
     Then I should see following records in "Open Orders Grid":
       | CheckoutWithParentCustomer |
       | CheckoutWithChildCustomer |
 
   Scenario: Don't see Open Orders with Customer by frontend administrator of child customer.
     Given I signed in as RuthWMaxwell@example.org on the store frontend
-    When click "Orders"
+    When I click "Account Dropdown"
+    And I click "Order History"
     Then I should not see "CheckoutWithParentCustomer"
     And I should see following records in "Open Orders Grid":
       | CheckoutWithChildCustomer |
 
   Scenario: Don't see Open Orders by frontend administrator of another customer.
     Given I signed in as JuanaPBrzezinski@example.net on the store frontend
-    When click "Orders"
+    When I click "Account Dropdown"
+    And I click "Order History"
     Then there is no records in "Open Orders Grid"
 
   Scenario: See Open Orders with Customer by creator (buyer).
     Given I signed in as AmandaRCole@example.org on the store frontend
-    And click "Orders"
+    When I click "Account Dropdown"
+    And I click "Order History"
     Then I should not see "CheckoutWithChildCustomer"
     And I should see following records in "Open Orders Grid":
       | CheckoutWithParentCustomer |

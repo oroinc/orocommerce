@@ -24,7 +24,7 @@ Feature: Shopping Lists Widget
     And I should not see "Shopping List 2" in the "Shopping List Widget" element
 
   Scenario: Check buttons with disabled Show All in Shopping Lists Widget
-    Given I click "New Category"
+    Given I click "New Category" in hamburger menu
     And I should not see "Remove from Shopping List 1"
     And I should not see "Remove from Shopping List 2"
     When I click on "Shopping List Dropdown"
@@ -42,8 +42,8 @@ Feature: Shopping Lists Widget
   Scenario: Check buttons widget with disabled Show All in Shopping Lists Widget
     When click "In Shopping List" for "AA1" product
     Then I should see next rows in "In Shopping Lists" table in the exact order
-      | Shopping List   | QTY #  |
-      | Shopping List 1 | 5items |
+      | Shopping List   | QTY     |
+      | Shopping List 1 | 5 items |
     And I click "Choose list"
     And I should see the following options for "List" select in form "ShoppingListForm":
       | Shopping List 1 |
@@ -67,7 +67,7 @@ Feature: Shopping Lists Widget
     And I should see "Shopping List 2" in the "Shopping List Widget" element
 
   Scenario: Check buttons with enabled Show All in Shopping Lists Widget
-    Given I click "New Category"
+    Given I click "New Category" in hamburger menu
     And I should not see "Remove from Shopping List 1"
     And I should not see "Remove from Shopping List 2"
     When I click on "Shopping List Dropdown"
@@ -85,9 +85,9 @@ Feature: Shopping Lists Widget
   Scenario: Check buttons widget with enabled Show All in Shopping Lists Widget
     When click "In Shopping List" for "AA1" product
     Then I should see next rows in "In Shopping Lists" table in the exact order
-      | Shopping List   | QTY #  |
-      | Shopping List 1 | 5items |
-      | Shopping List 2 | 2items |
+      | Shopping List   | QTY     |
+      | Shopping List 1 | 5 items |
+      | Shopping List 2 | 2 items |
     And I click "Choose list"
     And I should see the following options for "List" select in form "ShoppingListForm":
       | Shopping List 2 |

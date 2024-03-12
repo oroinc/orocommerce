@@ -104,7 +104,7 @@ SQL,
 
     private function prepareProductIds(Connection $connection, string $query, string $delimiter): array
     {
-        $queryResult = $connection->executeQuery($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $queryResult = $connection->executeQuery($query)->fetchAllAssociative();
 
         $productIds = [];
         if ($queryResult) {

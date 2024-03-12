@@ -13,7 +13,6 @@ Feature: Pricing Localization
     Given I am on the homepage
     When type "PSKU1" in "search"
     And I click "Search Button"
-    And I click "Localization Switcher"
     When I select "Localization 1" localization
     Then I should see "Listed Price: US$4.00 / item (lang1)" for "PSKU1" product
     And I should see "Your Price: US$4.00 / item (lang1)" for "PSKU1" product

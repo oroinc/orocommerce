@@ -98,7 +98,7 @@ class TaxManager
 
         $this->saveTaxValueByTaxable($taxable);
 
-        if ($includeItems) {
+        if ($includeItems && !$taxable->isKitTaxable()) {
             foreach ($taxable->getItems() as $item) {
                 $this->saveTaxValueByTaxable($item);
             }

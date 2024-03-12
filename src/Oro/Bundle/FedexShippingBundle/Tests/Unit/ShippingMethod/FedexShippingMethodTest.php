@@ -23,6 +23,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 class FedexShippingMethodTest extends \PHPUnit\Framework\TestCase
 {
     private const IDENTIFIER = 'id';
+    private const NAME = 'name';
     private const LABEL = 'label';
     private const ICON_PATH = 'path';
     private const ENABLED = true;
@@ -56,6 +57,7 @@ class FedexShippingMethodTest extends \PHPUnit\Framework\TestCase
         self::assertTrue($method->isGrouped());
         self::assertSame(self::ENABLED, $method->isEnabled());
         self::assertSame(self::IDENTIFIER, $method->getIdentifier());
+        self::assertSame(self::NAME, $method->getName());
         self::assertSame(self::LABEL, $method->getLabel());
         self::assertSame(self::ICON_PATH, $method->getIcon());
         self::assertSame($types, $method->getTypes());
@@ -192,7 +194,7 @@ class FedexShippingMethodTest extends \PHPUnit\Framework\TestCase
 
     private function createShippingMethod(FedexIntegrationSettings $settings, array $types): FedexShippingMethod
     {
-        return new FedexShippingMethod(
+        $method = new FedexShippingMethod(
             $this->rateServiceRequestSettingsFactory,
             $this->rateServiceRequestFactory,
             $this->rateServiceClient,
@@ -203,5 +205,6 @@ class FedexShippingMethodTest extends \PHPUnit\Framework\TestCase
             $settings,
             $types
         );
+        return $method->setName(self::NAME);
     }
 }

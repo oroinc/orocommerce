@@ -37,7 +37,7 @@ Feature: Product collection product change reflected
   Scenario: Edited product collection is accesible at frontend
     Given I operate as the Buyer
     And I am on homepage
-    And I click "Collection1"
+    And I click "Collection1" in hamburger menu
     Then I should see "PSKU1"
     And I should see "PSKU2"
 
@@ -64,7 +64,7 @@ Feature: Product collection product change reflected
   Scenario: "Product 2" that already not confirm to filter, excluded from product collection grid at frontend
     Given I operate as the Buyer
     And I am on homepage
-    And I click "Collection1"
+    And I click "Collection1" in hamburger menu
     Then I should see "PSKU1"
     And I should not see "PSKU2"
     And I should not see "XSKU"
@@ -93,6 +93,6 @@ Feature: Product collection product change reflected
   Scenario: "Product 2" that confirm to filter again, included into product collection grid at frontend
     Given I operate as the Buyer
     And I am on homepage
-    And I click "Collection1"
+    And I click "Collection1" in hamburger menu
     Then I should see "PSKU1"
     And I should see "PSKU2"

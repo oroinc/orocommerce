@@ -3,12 +3,12 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -21,25 +21,14 @@ class OroProductBundle implements
     ActivityExtensionAwareInterface,
     AttachmentExtensionAwareInterface
 {
+    use ExtendExtensionAwareTrait;
+    use ActivityExtensionAwareTrait;
     use AttachmentExtensionAwareTrait;
 
-    const PRODUCT_TABLE_NAME = 'orob2b_product';
-    const PRODUCT_UNIT_TABLE_NAME = 'orob2b_product_unit';
-    const PRODUCT_UNIT_PRECISION_TABLE_NAME = 'orob2b_product_unit_precision';
-
-    const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
-    const MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB = 5;
-
-    /** @var ExtendExtension */
-    protected $extendExtension;
-
-    /** @var  ActivityExtension */
-    protected $activityExtension;
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createOroProductTable($schema);
         $this->createOroProductUnitTable($schema);
@@ -52,35 +41,39 @@ class OroProductBundle implements
         $this->addOrob2BProductNameForeignKeys($schema);
         $this->addOrob2BProductDescriptionForeignKeys($schema);
 
-        $this->updateProductTable($schema);
-        $this->addNoteAssociations($schema);
-        $this->addAttachmentAssociations($schema);
+        $this->extendExtension->addEnumField($schema, 'orob2b_product', 'inventory_status', 'prod_inventory_status');
+        $this->extendExtension->addEnumField($schema, 'orob2b_product', 'visibility', 'prod_visibility');
+        $this->extendExtension->addEnumField($schema, 'orob2b_product', 'status', 'prod_status');
+
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'orob2b_product');
+        $this->attachmentExtension->addImageRelation($schema, 'orob2b_product', 'image', [], 10);
+        $this->attachmentExtension->addAttachmentAssociation($schema, 'orob2b_product', [], 5);
     }
 
     /**
      * Create orob2b_product table
      */
-    protected function createOroProductTable(Schema $schema)
+    private function createOroProductTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::PRODUCT_TABLE_NAME);
+        $table = $schema->createTable('orob2b_product');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('sku', 'string', ['length' => 255]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku']);
-        $table->addIndex(['created_at'], 'idx_orob2b_product_created_at', []);
-        $table->addIndex(['updated_at'], 'idx_orob2b_product_updated_at', []);
+        $table->addIndex(['created_at'], 'idx_orob2b_product_created_at');
+        $table->addIndex(['updated_at'], 'idx_orob2b_product_updated_at');
     }
 
     /**
      * Create orob2b_product_unit table
      */
-    protected function createOroProductUnitTable(Schema $schema)
+    private function createOroProductUnitTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::PRODUCT_UNIT_TABLE_NAME);
+        $table = $schema->createTable('orob2b_product_unit');
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('default_precision', 'integer');
         $table->setPrimaryKey(['code']);
@@ -89,31 +82,31 @@ class OroProductBundle implements
     /**
      * Create orob2b_product_unit_precision table
      */
-    protected function createOroProductUnitPrecisionTable(Schema $schema)
+    private function createOroProductUnitPrecisionTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::PRODUCT_UNIT_PRECISION_TABLE_NAME);
+        $table = $schema->createTable('orob2b_product_unit_precision');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('unit_code', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('unit_precision', 'integer', []);
+        $table->addColumn('unit_precision', 'integer');
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['product_id', 'unit_code'], 'product_unit_precision__product_id__unit_code__uidx');
     }
 
-    protected function createOrob2BProductNameTable(Schema $schema)
+    private function createOrob2BProductNameTable(Schema $schema): void
     {
         $table = $schema->createTable('orob2b_product_name');
-        $table->addColumn('product_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addColumn('product_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['product_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'uniq_ba57d521eb576e89');
     }
 
-    protected function createOrob2BProductDescriptionTable(Schema $schema)
+    private function createOrob2BProductDescriptionTable(Schema $schema): void
     {
         $table = $schema->createTable('orob2b_product_description');
-        $table->addColumn('description_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addColumn('description_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['description_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'uniq_416a3679eb576e89');
     }
@@ -121,9 +114,9 @@ class OroProductBundle implements
     /**
      * Add orob2b_product foreign keys.
      */
-    protected function addOroProductForeignKeys(Schema $schema)
+    private function addOroProductForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('orob2b_product');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
@@ -141,24 +134,24 @@ class OroProductBundle implements
     /**
      * Add orob2b_product_unit_precision foreign keys.
      */
-    protected function addOroProductUnitPrecisionForeignKeys(Schema $schema)
+    private function addOroProductUnitPrecisionForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::PRODUCT_UNIT_PRECISION_TABLE_NAME);
+        $table = $schema->getTable('orob2b_product_unit_precision');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::PRODUCT_TABLE_NAME),
+            $schema->getTable('orob2b_product'),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::PRODUCT_UNIT_TABLE_NAME),
+            $schema->getTable('orob2b_product_unit'),
             ['unit_code'],
             ['code'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
-    protected function addOrob2BProductNameForeignKeys(Schema $schema)
+    private function addOrob2BProductNameForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('orob2b_product_name');
         $table->addForeignKeyConstraint(
@@ -175,7 +168,7 @@ class OroProductBundle implements
         );
     }
 
-    protected function addOrob2BProductDescriptionForeignKeys(Schema $schema)
+    private function addOrob2BProductDescriptionForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('orob2b_product_description');
         $table->addForeignKeyConstraint(
@@ -190,68 +183,5 @@ class OroProductBundle implements
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
-    }
-
-    protected function updateProductTable(Schema $schema)
-    {
-        $this->extendExtension->addEnumField(
-            $schema,
-            self::PRODUCT_TABLE_NAME,
-            'inventory_status',
-            'prod_inventory_status'
-        );
-
-        $this->extendExtension->addEnumField(
-            $schema,
-            self::PRODUCT_TABLE_NAME,
-            'visibility',
-            'prod_visibility'
-        );
-
-        $this->extendExtension->addEnumField(
-            $schema,
-            self::PRODUCT_TABLE_NAME,
-            'status',
-            'prod_status'
-        );
-    }
-
-    protected function addNoteAssociations(Schema $schema)
-    {
-        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::PRODUCT_TABLE_NAME);
-    }
-
-    protected function addAttachmentAssociations(Schema $schema)
-    {
-        $this->attachmentExtension->addImageRelation(
-            $schema,
-            self::PRODUCT_TABLE_NAME,
-            'image',
-            [],
-            self::MAX_PRODUCT_IMAGE_SIZE_IN_MB
-        );
-
-        $this->attachmentExtension->addAttachmentAssociation(
-            $schema,
-            self::PRODUCT_TABLE_NAME,
-            [],
-            self::MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
     }
 }

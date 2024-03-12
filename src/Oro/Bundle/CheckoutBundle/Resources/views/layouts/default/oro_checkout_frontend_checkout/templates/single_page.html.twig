@@ -32,13 +32,6 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
-{% block _sticky_element_notification_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' single-page-checkout-view__notification-container'
-    }) %}
-    {{ parent_block_widget(block) }}
-{% endblock %}
-
 {% block _single_page_checkout_sticky_panel_widget %}
     {% set attr = layout_attr_defaults(attr, {
         id: 'single-page-checkout-sticky',
@@ -99,16 +92,7 @@
         class: attr.class|default('') ~ " single-page-checkout-view__column single-page-checkout-view__column--first"
     }) %}
     <fieldset {{ block('block_attributes') }}>
-        <legend class="single-page-checkout-view__column-header has-offset"
-            data-sticky-target="top-sticky-panel"
-            data-sticky="{{ {
-                isSticky: true,
-                affixed: true,
-                autoWidth: true,
-                placeholderId: 'single-page-checkout-sticky-billing',
-                viewport: 'desktop'
-            }|json_encode }}"
-        >
+        <legend class="single-page-checkout-view__column-header has-offset sticky sticky--top" data-sticky>
             <span class="single-page-checkout-view__title">
                 <span class="single-page-checkout-view__badge" aria-hidden="true">1</span>
                 <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.billing_information'|trans }}</span>
@@ -144,16 +128,7 @@
 {% block _checkout_shipping_information_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view__column"}) %}
     <fieldset {{ block('block_attributes') }}>
-        <legend class="single-page-checkout-view__column-header has-offset"
-            data-sticky-target="top-sticky-panel"
-            data-sticky="{{ {
-                isSticky: true,
-                affixed: true,
-                autoWidth: true,
-                placeholderId: 'single-page-checkout-sticky-shipping',
-                viewport: 'desktop'
-            }|json_encode }}"
-        >
+        <legend class="single-page-checkout-view__column-header has-offset sticky sticky--top" data-sticky>
             <span class="single-page-checkout-view__title">
                 <span class="single-page-checkout-view__badge" aria-hidden="true">2</span>
                 <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.shipping_information'|trans }}</span>
@@ -167,14 +142,8 @@
 
 {% block _checkout_order_summary_header_widget %}
     {% set attr = attr|merge({
-        'data-sticky-target': 'top-sticky-panel',
-        'data-sticky': {
-            isSticky: true,
-            affixed: true,
-            autoWidth: true,
-            placeholderId: 'single-page-checkout-sticky-summary',
-            viewport: 'desktop'
-        }
+        '~class': 'sticky--on-desktop sticky--top',
+        'data-sticky': ''
     }) %}
     {{ parent_block_widget(block) }}
 {% endblock %}
@@ -188,7 +157,8 @@
 
 {% block __oro_checkout_content__checkout_order_summary_header_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " single-page-checkout-view__column-header"
+        '~class': " single-page-checkout-view__column-header sticky sticky--top",
+        'data-sticky': ''
     }) %}
 
     <legend {{ block('block_attributes') }}>
@@ -384,12 +354,12 @@
         {% import '@OroCheckout/layouts/default/layout.html.twig' as _layout %}
         <div class="order-checkout-widget">
             {% if transitionData.isAllowed %}
-                <button type="submit" class="btn btn--size-m btn--info btn--block checkout__submit-btn">
+                <button type="submit" class="btn btn--size-small btn--outlined btn--block checkout__submit-btn">
                     {{- transitionData.transition.label|trans({},'workflows') -}}
                 </button>
             {% else %}
                 <div {{- _layout.conditionMessages(transitionData) -}}>
-                    <button class="btn btn--size-m btn--info btn--block btn--disabled checkout__submit-btn" disabled="disabled">
+                    <button class="btn btn--size-small btn--outlined btn--block btn--disabled checkout__submit-btn" disabled="disabled">
                         {{- transitionData.transition.label|trans({},'workflows') -}}
                     </button>
                 </div>
@@ -438,7 +408,7 @@
             {% for consent in acceptedRequiredConsents %}
                 <li class="notification__item">
                     {%- if consent.cmsPageData.url is defined %}
-                        <a href="{{- consent.cmsPageData.url -}}" target="_blank" class="link">
+                        <a href="{{- consent.cmsPageData.url -}}" target="_blank">
                             {{- consent.title -}}
                         </a>
                     {%- else -%}

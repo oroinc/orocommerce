@@ -14,7 +14,7 @@ Feature: Quote creation with empty prices (Backoffice Quote Flow with Approvals)
   Scenario: Create request for quote with empty and zero price as buyer
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"
     And I fill form with:
@@ -69,6 +69,7 @@ Feature: Quote creation with empty prices (Backoffice Quote Flow with Approvals)
 
   Scenario: Customer can create order from Quote with zero price for line item
     Given I proceed as the Buyer
+    And I click "Account Dropdown"
     When click "Quotes"
     And click view "PO1" in grid
     And should see following "Quote View Grid" grid:

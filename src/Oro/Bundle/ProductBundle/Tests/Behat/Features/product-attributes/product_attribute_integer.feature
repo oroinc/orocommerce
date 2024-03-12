@@ -49,7 +49,17 @@ Feature: Product attribute integer
     Given I go to Products/ Products
     When I click "Edit" on row "SKU123" in grid
     And I fill "Product Form" with:
-      | IntegerField | 32167 |
+      | IntegerField | 2147483648 |
+    And I save form
+    Then I should see validation errors:
+      | IntegerField | This value should be between -2,147,483,648 and 2,147,483,647. |
+    When I fill "Product Form" with:
+      | IntegerField | -2147483649 |
+    And I save form
+    Then I should see validation errors:
+      | IntegerField | This value should be between -2,147,483,648 and 2,147,483,647. |
+    When I fill "Product Form" with:
+      | IntegerField | 2147483647 |
     And I save and close form
     Then I should see "Product has been saved" flash message
 
@@ -57,62 +67,49 @@ Feature: Product attribute integer
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
     And I am on the homepage
-    When I type "32167" in "search"
+    When I type "2147483647" in "search"
     And I click "Search Button"
     Then I should not see "SKU123" product
     And I should not see "SKU456" product
 
   Scenario: Check product grid filter and sorter
-    Given I click "NewCategory"
+    Given I click "NewCategory" in hamburger menu
     And I should see "SKU123" product
     And I should see "SKU456" product
-    When I filter IntegerField as equals "32167"
+    When I filter IntegerField as equals "2147483647"
     Then I should see "SKU123" product
     And I should not see "SKU456" product
     And grid sorter should have "IntegerField" options
 
   Scenario: Check attributes in product page with "Default Page" template
     When I click "View Details" for "SKU123" product
-    Then I should see "IntegerField: 32167"
+    Then I should see "IntegerField: 2147483647"
 
-  Scenario: Change product page view to "Short Page"
+  Scenario: Change product page template to "Wide Template"
     Given I proceed as the Admin
     And I go to System / Configuration
     And I follow "Commerce/Design/Theme" on configuration sidebar
     When fill "Page Templates form" with:
-      | Use Default  | false      |
-      | Product Page | Short page |
+      | Product Page | Wide Template |
     And save form
     Then I should see "Configuration saved" flash message
 
-  Scenario: Check attribute in product page with "Short Page" template
+  Scenario: Check attribute in product page with "Wide Template" template
     Given I proceed as the Buyer
     When I reload the page
-    Then I should see "IntegerField: 32167"
+    Then I should see "IntegerField: 2147483647"
 
-  Scenario: Change product page template to "Two columns page"
+  Scenario: Change product page view to "Tabs Template"
     Given I proceed as the Admin
     When fill "Page Templates form" with:
-      | Product Page | Two columns page |
+      | Product Page | Tabs Template |
     And save form
     Then I should see "Configuration saved" flash message
 
-  Scenario: Check attribute in product page with "Two columns page" template
+  Scenario: Check attribute in product page with "Tabs Template" template
     Given I proceed as the Buyer
     When I reload the page
-    Then I should see "IntegerField: 32167"
-
-  Scenario: Change product page view to "List Page"
-    Given I proceed as the Admin
-    When fill "Page Templates form" with:
-      | Product Page | List page |
-    And save form
-    Then I should see "Configuration saved" flash message
-
-  Scenario: Check attribute in product page with "List Page" template
-    Given I proceed as the Buyer
-    When I reload the page
-    Then I should see "IntegerField: 32167"
+    Then I should see "IntegerField: 2147483647"
 
   Scenario: Remove new attribute from product family
     Given I login as administrator
@@ -126,7 +123,7 @@ Feature: Product attribute integer
     Given I go to Products/ Products
     When I click "View" on row "SKU123" in grid
     Then I should not see "IntegerField"
-    Then I should not see "32167"
+    Then I should not see "2147483647"
 
   Scenario: Update product family with new attribute again to check if attribute data is deleted
     Given I go to Products/ Product Families

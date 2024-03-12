@@ -3,23 +3,19 @@
 namespace Oro\Bundle\VisibilityBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroVisibilityBundle implements Migration, RenameExtensionAwareInterface
 {
+    use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
 
     /**
-     * @var RenameExtension
-     */
-    private $renameExtension;
-
-    /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -37,13 +33,5 @@ class OroVisibilityBundle implements Migration, RenameExtensionAwareInterface
         $extension->renameTable($schema, $queries, 'oro_acc_prod_vsb_resolv', 'oro_cus_prod_vsb_resolv');
         $extension->renameTable($schema, $queries, 'oro_acc_grp_ctgr_vsb_resolv', 'oro_cus_grp_ctgr_vsb_resolv');
         $extension->renameTable($schema, $queries, 'oro_acc_ctgr_vsb_resolv', 'oro_cus_ctgr_vsb_resolv');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
     }
 }

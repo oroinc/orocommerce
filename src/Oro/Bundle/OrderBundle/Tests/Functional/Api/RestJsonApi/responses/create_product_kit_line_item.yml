@@ -2,7 +2,7 @@ data:
     type: orderlineitems
     attributes:
         quantity: 6
-        value: '200.0000'
+        value: '21.1800'
         currency: 'USD'
     relationships:
         order:

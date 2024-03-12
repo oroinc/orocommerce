@@ -15,13 +15,6 @@ navigation:
                 extras:
                     description: 'oro.shipping.shippingrule.menu.shortcut_shipping_rule.description'
 
-            frontend_shipping_rule:
-                label:           'oro.shipping.shippingmethodsconfigsrule.entity_plural_label'
-                route:           'oro_shipping_methods_configs_rule_index'
-                position:        200
-                extras:
-                    description: 'oro.shipping.shippingrule.menu.shipping_rule.description'
-
         tree:
             application_menu:
                 children:
@@ -31,9 +24,6 @@ navigation:
             shortcuts:
                 children:
                     shortcut_shipping_rule: ~
-            frontend_menu:
-                children:
-                    frontend_shipping_rule: ~
 
     titles:
         oro_shipping_methods_configs_rule_index: ~

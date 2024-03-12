@@ -21,7 +21,7 @@ Feature: Guest quick order form
   Scenario: Quick order form for guest is disabled by default
     Given I proceed as the Guest
     And I am on the homepage
-    And I should not see text matching "Quick Order Form"
+    And I should not see text matching "Quick Order"
 
   Scenario: Enable quick order form for guest
     Given I proceed as the Admin
@@ -36,7 +36,7 @@ Feature: Guest quick order form
   Scenario: Quick order form for guest is disabled due to disabled dependant features
     Given I proceed as the Guest
     And I am on the homepage
-    And I should not see text matching "Quick Order Form"
+    And I should not see text matching "Quick Order"
 
   Scenario: Enable all dependant features for guest
     Given I proceed as the Admin
@@ -87,8 +87,8 @@ Feature: Guest quick order form
   Scenario: Create Order from Quick order when there is a started checkout from shopping list
     Given I proceed as the Guest
     And I am on the homepage
-    And I should see text matching "Quick Order Form"
-    And I click "Quick Order Form"
+    And I should see text matching "Quick Order"
+    And I click "Quick Order"
     And I should see "Add to Shopping List"
     And I should see "Get Quote"
     And I should see "Create Order"
@@ -155,7 +155,7 @@ Feature: Guest quick order form
   Scenario: Add to shopping list from quick order page
     Given I proceed as the Guest
     And I am on homepage
-    And I click "Quick Order Form"
+    And I click "Quick Order"
     And I should see "Add to Shopping List"
     And I should see "Get Quote"
     And I should not see "Create Order"
@@ -190,7 +190,7 @@ Feature: Guest quick order form
   Scenario: Create A Quote from quick order page
     Given I proceed as the Guest
     And I am on homepage
-    And I click "Quick Order Form"
+    And I click "Quick Order"
     And I should not see "Add to Shopping List"
     And I should see "Get Quote"
     And I should not see "Create Order"
@@ -220,10 +220,10 @@ Feature: Guest quick order form
       | Notes                  | Test note for quote. |
       | PO Number              | PO Test 01           |
     And Request a Quote contains products
-      | Product2               | 2 | item |
-      | Product2               | 4 | set  |
-      | Product3               | 2 | item |
-      | Product1`"'&йёщ®&reg;> | 5 | item |
+      | PSKU2 - Product2               | 2 | item |
+      | PSKU2 - Product2               | 4 | set  |
+      | PSKU3 - Product3               | 2 | item |
+      | psku1 - Product1`"'&йёщ®&reg;> | 5 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 

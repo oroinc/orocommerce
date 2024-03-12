@@ -23,11 +23,51 @@ class UrlParameterHelperTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 [
+                    'id' => (string) PHP_INT_MAX,
+                    'type' => 'label'
+                ],
+                [
+                    'id' => PHP_INT_MAX,
+                    'type' => 'label',
+                ]
+            ],
+            [
+                [
+                    'id' => '92233720368547758071',
+                    'type' => 'label'
+                ],
+                [
+                    'id' => '92233720368547758071',
+                    'type' => 'label',
+                ]
+            ],
+            [
+                [
+                    'id' => '40e-4',
+                    'type' => 'label'
+                ],
+                [
+                    'id' => '40e-4',
+                    'type' => 'label',
+                ]
+            ],
+            [
+                [
                     'id' => '000324',
                     'type' => 'label'
                 ],
                 [
                     'id' => '000324',
+                    'type' => 'label',
+                ]
+            ],
+            [
+                [
+                    'id' => '234000',
+                    'type' => 'label'
+                ],
+                [
+                    'id' => 234000,
                     'type' => 'label',
                 ]
             ],
@@ -96,6 +136,22 @@ class UrlParameterHelperTest extends \PHPUnit\Framework\TestCase
             [
                 [
                     'id' => 0,
+                    'type' => 'default',
+                    'category' => [
+                        'id' => '54'
+                    ]
+                ],
+                [
+                    'id' => 0,
+                    'type' => 'default',
+                    'category' => [
+                        'id' => 54
+                    ]
+                ]
+            ],
+            [
+                [
+                    'id' => '0',
                     'type' => 'default',
                     'category' => [
                         'id' => '54'

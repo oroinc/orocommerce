@@ -13,6 +13,8 @@ interface ShippingMethodInterface
 
     public function getIdentifier(): string;
 
+    public function getName(): string;
+
     public function getLabel(): string;
 
     /**

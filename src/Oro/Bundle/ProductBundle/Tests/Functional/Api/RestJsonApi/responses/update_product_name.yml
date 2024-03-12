@@ -1,6 +1,6 @@
 data:
     type: productnames
-    id: '<toString(@product1_name->id)>'
+    id: '<toString(@product5_name->id)>'
     attributes:
         fallback: null
         string: "An Updated Name"
@@ -8,4 +8,4 @@ data:
         product:
             data:
                 type: products
-                id: '<toString(@product1->id)>'
+                id: '<toString(@product5->id)>'

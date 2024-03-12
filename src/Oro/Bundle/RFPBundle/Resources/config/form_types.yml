@@ -16,6 +16,9 @@ services:
 
     oro_rfp.form.type.request_product:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestProductType'
+        arguments:
+            - '@oro_rfp.form.event_listener.request_product_product'
+            - '@oro_rfp.form.event_listener.request_product_item_checksum'
         calls:
             - [setDataClass, ['Oro\Bundle\RFPBundle\Entity\RequestProduct']]
         tags:
@@ -38,29 +41,55 @@ services:
         tags:
             - { name: form.type, alias: oro_rfp_request_product_item_collection }
 
-    oro_rfp.form.type.frontend_request_product_item_collection:
-            class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType'
-            tags:
-                - { name: form.type, alias: oro_rfp_frontend_request_product_item_collection }
-
     oro_rfp.form.type.frontend_request:
         class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType'
-        calls:
-            - [setDataClass, ['Oro\Bundle\RFPBundle\Entity\Request']]
         tags:
-            - { name: form.type, alias: oro_rfp_frontend_request }
+            - { name: form.type }
 
     oro_rfp.form.type.frontend_request_product:
         class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType'
-        calls:
-            - [setDataClass, ['Oro\Bundle\RFPBundle\Entity\RequestProduct']]
+        arguments:
+            - '@oro_rfp.form.event_listener.request_product_product'
+            - '@oro_rfp.form.event_listener.request_product_item_checksum'
         tags:
-            - { name: form.type, alias: oro_rfp_frontend_request_product }
+            - { name: form.type }
 
     oro_rfp.form.type.frontend_request_product_collection:
         class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType'
         tags:
-            - { name: form.type, alias: oro_rfp_frontend_request_product_collection }
+            - { name: form.type }
+
+    oro_rfp.form.type.frontend_request_product_item_collection:
+        class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType'
+        tags:
+            - { name: form.type }
+
+    oro_rfp.form.type.frontend_request_product_item:
+        class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemType'
+        tags:
+            - { name: form.type }
+
+    oro_rfp.form.type.frontend_request_product_kit_item_line_item_collection:
+        class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductKitItemLineItemCollectionType'
+        tags:
+            - { name: form.type }
+
+    oro_rfp.form.type.frontend_request_product_kit_item_line_item:
+        class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductKitItemLineItemType'
+        arguments:
+            - '@oro_rfp.product_kit.provider.product_kit_item_products'
+            - '@oro_rfp.product_kit.factory.request_product_kit_item_line_item'
+        tags:
+            - { name: form.type }
+
+    oro_rfp.form.type.frontend_request_product_kit_configuration:
+        class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductKitConfigurationType'
+        arguments:
+            - '@oro_pricing.provider.frontend_product_prices'
+            - '@oro_product.form.data_transformer.product_to_id'
+            - '@oro_rfp.form.event_listener.request_product_product'
+        tags:
+            - { name: form.type }
 
     oro_rfp.form.type.extension.frontend_request_data_storage:
         class: 'Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension'
@@ -101,3 +130,42 @@ services:
         class: 'Oro\Bundle\RFPBundle\Form\Type\OffersType'
         tags:
             - { name: form.type, alias: oro_rfp_request_offers }
+
+    oro_rfp.form.type.extension.frontend.request_product:
+        class: 'Oro\Bundle\RFPBundle\Form\Extension\Frontend\RequestProductExtension'
+        arguments:
+            - '@oro_visibility.provider.resolved_product_visibility_provider'
+        tags:
+            - { name: form.type_extension, alias: oro_rfp_frontend_request, extended_type: Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType }
+
+    oro_rfp.form.event_listener.request_product_product:
+        class: Oro\Bundle\RFPBundle\Form\EventListener\RequestProductProductListener
+        arguments:
+            - '@oro_entity.tools.entity_state_checker'
+
+    oro_rfp.form.event_listener.request_product_kit_item_line_item_default_data:
+        class: Oro\Bundle\RFPBundle\Form\EventListener\RequestProductKitItemLineItemDefaultDataListener
+        arguments:
+            - '@oro_rfp.product_kit.factory.request_product_kit_item_line_item'
+
+    oro_rfp.form.type.request_product_kit_item_line_item_collection:
+        class: Oro\Bundle\RFPBundle\Form\Type\RequestProductKitItemLineItemCollectionType
+        tags:
+            - { name: form.type }
+
+    oro_rfp.form.type.request_product_kit_item_line_item:
+        class: Oro\Bundle\RFPBundle\Form\Type\RequestProductKitItemLineItemType
+        arguments:
+            - '@oro_rfp.product_kit.provider.product_kit_item_products'
+            - '@oro_rfp.form.event_listener.request_product_kit_item_line_item_default_data'
+            - '@oro_rfp.form.event_listener.request_product_kit_item_line_item_ghost_option'
+        tags:
+            - { name: form.type }
+
+    oro_rfp.form.event_listener.request_product_kit_item_line_item_ghost_option:
+        class: Oro\Bundle\RFPBundle\Form\EventListener\RequestProductKitItemLineItemGhostOptionListener
+
+    oro_rfp.form.event_listener.request_product_item_checksum:
+        class: Oro\Bundle\RFPBundle\Form\EventListener\RequestProductItemChecksumListener
+        arguments:
+            - '@oro_product.line_item_checksum_generator'

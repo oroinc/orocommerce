@@ -1,6 +1,11 @@
-<div class="datagrid-massaction sticky-mode buttons-equal buttons-equal--no-offset" data-action-panel>
-    <button type="button" class="btn btn--block btn--size-s" data-undo-selection>
-        <span class="fa fa-close" aria-hidden="true"></span>
-        <%- _.__('Close') %>
-    </button>
+<% let oroui = _.macros('oroui') %>
+<div class="datagrid-massaction sticky-mode hidden" data-action-panel>
+    <div class="product-selected-counter"></div>
+    <div class="datagrid-massaction-actions"></div>
+    <div class="datagrid-massaction-close-container">
+        <button type="button" class="btn btn--outlined-inverse btn--text btn--no-padding" data-undo-selection>
+            <%= oroui.renderIcon({name: 'close'}) %>
+            <%- _.__('oro.product.frontend.actions_panel.discard_selection') %>
+        </button>
+    </div>
 </div>

@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutSubtotalRepository;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -11,76 +13,41 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtota
 /**
  * Entity holds checkout subtotals data by currency
  * If isValid=false values should be recalculated
- *
- * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutSubtotalRepository")
- * @ORM\Table(
- *     name="oro_checkout_subtotal",
- *     indexes={
- *         @ORM\Index(name="idx_checkout_subtotal_valid", columns={"is_valid"})
- *     },
- *     uniqueConstraints={
- *          @ORM\UniqueConstraint(name="unique_checkout_currency", columns={
- *              "checkout_id",
- *              "currency"
- *          })
- *      }
- * )
  **/
+#[ORM\Entity(repositoryClass: CheckoutSubtotalRepository::class)]
+#[ORM\Table(name: 'oro_checkout_subtotal')]
+#[ORM\Index(columns: ['is_valid'], name: 'idx_checkout_subtotal_valid')]
+#[ORM\UniqueConstraint(name: 'unique_checkout_currency', columns: ['checkout_id', 'currency'])]
 class CheckoutSubtotal
 {
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var Checkout
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CheckoutBundle\Entity\Checkout", inversedBy="subtotals")
-     * @ORM\JoinColumn(name="checkout_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     */
-    protected $checkout;
+    #[ORM\ManyToOne(targetEntity: Checkout::class, inversedBy: 'subtotals')]
+    #[ORM\JoinColumn(name: 'checkout_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Checkout $checkout = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", length=255, nullable=false)
-     */
-    protected $currency;
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 255, nullable: false)]
+    protected ?string $currency = null;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="value", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'value', type: 'money', nullable: true)]
     protected $value;
 
-    /**
-     * @var CombinedPriceList
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\CombinedPriceList")
-     * @ORM\JoinColumn(name="combined_price_list_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
-     */
-    protected $combinedPriceList;
+    #[ORM\ManyToOne(targetEntity: CombinedPriceList::class)]
+    #[ORM\JoinColumn(name: 'combined_price_list_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    protected ?CombinedPriceList $combinedPriceList = null;
 
-    /**
-     * @var PriceList
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceList")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
-     */
-    protected $priceList;
+    #[ORM\ManyToOne(targetEntity: PriceList::class)]
+    #[ORM\JoinColumn(name: 'price_list_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    protected ?PriceList $priceList = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_valid", type="boolean")
-     */
-    protected $valid = false;
+    #[ORM\Column(name: 'is_valid', type: Types::BOOLEAN)]
+    protected ?bool $valid = false;
 
     /**
      * @param Checkout $checkout

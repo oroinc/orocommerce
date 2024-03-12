@@ -1,0 +1,8 @@
+<% const showIcon = obj.showIcon !== void 0 ? showIcon : true %>
+<% _.each(messages, function(message) { %>
+    <span class="validation-failed">
+        <span class="validation-failed__content">
+            <span class="validation-failed__icon" aria-hidden="true"></span>
+        <span><%- message %></span>
+    </span>
+<% }) %>

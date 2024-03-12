@@ -5,8 +5,8 @@ namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_3;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\CronBundle\Engine\CommandRunnerInterface;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -25,11 +25,7 @@ class OroPricingBundle implements
     ContainerAwareInterface
 {
     use ContainerAwareTrait;
-
-    /**
-     * @var RenameExtension
-     */
-    protected $renameExtension;
+    use RenameExtensionAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -397,13 +393,5 @@ class OroPricingBundle implements
     protected function getCommandRunner()
     {
         return $this->container->get('oro_cron.async.command_runner');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
     }
 }

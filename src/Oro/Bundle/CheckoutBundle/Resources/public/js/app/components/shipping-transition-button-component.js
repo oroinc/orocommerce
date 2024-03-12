@@ -135,7 +135,7 @@ define(function(require) {
         },
 
         onFail: function() {
-            this.$el.removeClass('btn--info');
+            this.$el.removeClass('btn--outlined');
             this.$el.prop('disabled', true);
             this.$el.closest(this.defaults.selectors.checkoutContent)
                 .find(this.defaults.selectors.checkoutRequire)

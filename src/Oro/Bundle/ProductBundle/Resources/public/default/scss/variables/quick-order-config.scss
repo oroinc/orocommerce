@@ -2,7 +2,7 @@
 
 $quick-order-padding: 30px 30px 40px !default;
 $quick-order-border-radius: 5px !default;
-$quick-order-background: get-color('additional', 'base') !default;
+$quick-order-background: get-color('neutral', 'grey1') !default;
 $quick-order-display: grid !default;
 $quick-order-grid-template-areas:
     'add import'

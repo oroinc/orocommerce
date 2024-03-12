@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
-use Oro\Bundle\ProductBundle\Model\ProductUnitPrecisionAwareInterface;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -21,12 +21,16 @@ class ProductKitItemLineItemQuantityUnitPrecisionValidator extends ConstraintVal
 
     private UnitLabelFormatterInterface $unitLabelFormatter;
 
+    private PropertyAccessorInterface $propertyAccessor;
+
     public function __construct(
         RoundingServiceInterface $roundingService,
-        UnitLabelFormatterInterface $unitLabelFormatter
+        UnitLabelFormatterInterface $unitLabelFormatter,
+        PropertyAccessorInterface $propertyAccessor
     ) {
         $this->roundingService = $roundingService;
         $this->unitLabelFormatter = $unitLabelFormatter;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     public function validate($value, Constraint $constraint): void
@@ -48,7 +52,7 @@ class ProductKitItemLineItemQuantityUnitPrecisionValidator extends ConstraintVal
             throw new UnexpectedValueException($kitItemLineItem, ProductKitItemLineItemInterface::class);
         }
 
-        [$unitCode, $precision] = $this->getUnitPrecision($kitItemLineItem);
+        [$unitCode, $precision] = $this->getUnitPrecision($kitItemLineItem, $constraint);
         if ($unitCode === null || $precision === null) {
             return;
         }
@@ -67,19 +71,22 @@ class ProductKitItemLineItemQuantityUnitPrecisionValidator extends ConstraintVal
 
     /**
      * @param ProductKitItemLineItemInterface $kitItemLineItem
+     * @param ProductKitItemLineItemQuantityUnitPrecision $constraint
      *
      * @return array<?string,?int>
      */
-    private function getUnitPrecision(ProductKitItemLineItemInterface $kitItemLineItem): array
-    {
+    private function getUnitPrecision(
+        ProductKitItemLineItemInterface $kitItemLineItem,
+        ProductKitItemLineItemQuantityUnitPrecision $constraint
+    ): array {
         $productUnit = $kitItemLineItem->getProductUnit();
         $unitCode = $productUnit?->getCode() ?? $kitItemLineItem->getProductUnitCode();
         if ($unitCode === null) {
             return [null, null];
         }
 
-        if ($kitItemLineItem instanceof ProductUnitPrecisionAwareInterface) {
-            $precision = $kitItemLineItem->getProductUnitPrecision();
+        if ($constraint->unitPrecisionPropertyPath) {
+            $precision = $this->propertyAccessor->getValue($kitItemLineItem, $constraint->unitPrecisionPropertyPath);
         } else {
             $product = $kitItemLineItem->getProduct();
             if ($product === null) {

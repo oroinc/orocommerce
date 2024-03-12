@@ -81,6 +81,28 @@ services:
         calls:
             - [setTranslationPrefix, ['oro.length_unit']]
 
+    oro_shipping.shipping_method_provider:
+        class: Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider
+        arguments:
+            - !tagged_iterator oro_shipping_method_provider
+
+    oro_shipping.formatter.shipping_method_label:
+        class: Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter
+        arguments:
+            - '@oro_shipping.shipping_method_provider'
+            - '@oro_shipping.method.org_provider'
+
+    oro_shipping.translator.shipping_method_label:
+        class: Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator
+        arguments:
+            - '@oro_shipping.formatter.shipping_method_label'
+            - '@translator'
+
+    oro_shipping.tracking_aware_shipping_methods_provider:
+        class: Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider
+        arguments:
+            - '@oro_shipping.shipping_method_provider'
+
     oro_shipping.twig.shipping_extension:
         class: Oro\Bundle\ShippingBundle\Twig\ShippingExtension
         public: false
@@ -263,7 +285,6 @@ services:
         tags:
             - { name: 'cache.pool', namespace: 'oro_shipping_price' }
 
-
     Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler:
         alias: oro_shipping.form.handler.shipping_methods_configs_rule
 
@@ -295,14 +316,14 @@ services:
     oro_shipping.condition.shipping_method_has_shipping_rules:
         class: 'Oro\Bundle\ShippingBundle\Condition\ShippingMethodHasShippingRules'
         arguments:
-            - '@oro_shipping.repository.shipping_methods_configs_rule'
+            - '@doctrine'
         tags:
             - { name: oro_action.condition, alias: 'shipping_method_has_shipping_rules' }
 
     oro_shipping.condition.shipping_method_has_enabled_shipping_rules:
         class: 'Oro\Bundle\ShippingBundle\Condition\ShippingMethodHasEnabledShippingRules'
         arguments:
-            - '@oro_shipping.repository.shipping_methods_configs_rule'
+            - '@doctrine'
         tags:
             - { name: oro_action.condition, alias: 'shipping_method_has_enabled_shipping_rules' }
 
@@ -313,11 +334,18 @@ services:
     oro_shipping.context.line_item.factory.shipping_line_item_from_product_line_item_factory:
         class: Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingLineItemFromProductLineItemFactory
         arguments:
-            - '@doctrine'
             - '@oro_shipping.context.line_item.factory.shipping_kit_item_line_item_from_product_kit_item_line_item_factory'
+            - '@oro_shipping.context.line_item.shipping_line_item_options_modifier'
 
     oro_shipping.context.line_item.factory.shipping_kit_item_line_item_from_product_kit_item_line_item_factory:
         class: Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingKitItemLineItemFromProductKitItemLineItemFactory
+        arguments:
+            - '@oro_shipping.context.line_item.shipping_line_item_options_modifier'
+
+    oro_shipping.context.line_item.shipping_line_item_options_modifier:
+        class: Oro\Bundle\ShippingBundle\Context\LineItem\ShippingLineItemOptionsModifier
+        arguments:
+            - '@doctrine'
 
     oro_shipping.context.builder_factory_basic:
         class: 'Oro\Bundle\ShippingBundle\Context\Builder\Basic\Factory\BasicShippingContextBuilderFactory'
@@ -423,7 +451,7 @@ services:
         public: false
         arguments:
             - '@.inner'
-            - '@oro_shipping.repository.shipping_methods_configs_rule'
+            - '@doctrine'
             - '@oro_shipping.shipping_method_provider'
 
     oro_shipping.repository.shipping_method_config:
@@ -561,6 +589,22 @@ services:
 
     oro_shipping.multi_shipping.cost_provider:
         class: Oro\Bundle\ShippingBundle\Provider\MultiShippingCostProvider
-        lazy: true
         arguments:
-            - '@oro_checkout.provider.multi_shipping.single_line_item_shipping_price'
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_shipping.multi_shipping.cost_calculator'
+            - '@oro_shipping.multi_shipping.group_line_item_helper'
+
+    oro_shipping.multi_shipping.cost_calculator:
+        class: Oro\Bundle\ShippingBundle\Provider\MultiShippingCostCalculator
+        arguments:
+            - '@oro_shipping.shipping_price.provider'
+            - '@oro_checkout.provider.shipping_context'
+            - '@oro_checkout.factory.multi_shipping.checkout_factory'
+            - '@oro_shipping.method.org_provider'
+
+    oro_shipping.multi_shipping.group_line_item_helper:
+        class: Oro\Bundle\ShippingBundle\Provider\GroupLineItemHelper
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@property_accessor'
+            - '@oro_entity.doctrine_helper'

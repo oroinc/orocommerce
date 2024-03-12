@@ -12,7 +12,7 @@ Feature: Guest shopping list in the list block
 
   Scenario: Feature Background
     Given sessions active:
-      | Buyer | second_session |
+      | Buyer | first_session |
     And I enable configuration options:
       | oro_shopping_list.availability_for_guests |
       | oro_checkout.guest_checkout               |
@@ -32,7 +32,7 @@ Feature: Guest shopping list in the list block
 
   Scenario: Create checkout and remove all products from shopping list
     When I open shopping list widget
-    And I click "View List"
+    And I click "Open List"
     And click on "Create Order"
     And I click "Continue as a Guest"
     And I fill form with:
@@ -48,7 +48,7 @@ Feature: Guest shopping list in the list block
     And I click "Ship to This Address"
     And click "Continue"
     When I open shopping list widget
-    And I click "View List"
+    And I click "Open List"
     When I click "Delete" on row "PSKU1" in grid
     And I click "Yes, Delete"
     Then I should see "There are no shopping List line items"

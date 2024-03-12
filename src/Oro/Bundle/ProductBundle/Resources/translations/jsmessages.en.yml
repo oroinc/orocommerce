@@ -35,6 +35,7 @@ oro:
         sidebar_filters:
             title: Filter By
             button:
+                text: Filter
                 title:
                     collapse: 'Collapse Filters'
                     expand: 'Expand Filters'
@@ -180,6 +181,7 @@ oro:
                 form:
                     unit:
                         default: '--'
+                    has_non_configured_product_kit: Some of the products cannot be added to the order. Please add these products to the shopping list or create a quote.
                 copy_paste:
                     error: 'Some of the product SKUs, units or quantities are not valid. Please make corrections and try again.'
             choose_action: 'Choose Action'
@@ -188,6 +190,12 @@ oro:
                     success_message: The product data export has started. You will receive download instructions by email once the export is finished.
             actions_panel:
                 action_postfix: 'Default'
+                discard_selection: 'Discard Selection'
+                selected_view: '{{ count }} selected'
+            datagrid:
+                toolbar_sorting:
+                    label: Sort by
+
 
         dialog:
             quick_add.confirm:
@@ -209,6 +217,8 @@ oro:
             zoom:
                 label: 'Enlarge Product Image'
 
+        search_widget:
+            cancel: 'Cancel'
         autocomplete:
             popup:
                 button:
@@ -217,7 +227,7 @@ oro:
         frontend_importexport:
             product_data_export:
                 success_message: The product data export has started. You will receive download instructions by email once the export is finished.
-                
+
         product_kit:
             confirmation:
                 title: 'Delete Product'

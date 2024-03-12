@@ -2,94 +2,91 @@
 
 namespace Oro\Bundle\RFPBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
  * RFP Request Product Item entity.
- *
- * @ORM\Table(name="oro_rfp_request_prod_item")
- * @ORM\Entity
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-list-alt"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="quotes"
- *          }
- *      }
- * )
- * @ORM\HasLifecycleCallbacks()
  */
-class RequestProductItem implements ProductLineItemInterface, ExtendEntityInterface
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_rfp_request_prod_item')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    defaultValues: [
+        'entity' => ['icon' => 'fa-list-alt'],
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes']
+    ]
+)]
+class RequestProductItem implements
+    ProductLineItemInterface,
+    ProductLineItemChecksumAwareInterface,
+    ProductKitItemLineItemsAwareInterface,
+    ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: RequestProduct::class, inversedBy: 'requestProductItems')]
+    #[ORM\JoinColumn(name: 'request_product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?RequestProduct $requestProduct = null;
 
     /**
-     * @var RequestProduct
-     *
-     * @ORM\ManyToOne(targetEntity="RequestProduct", inversedBy="requestProductItems")
-     * @ORM\JoinColumn(name="request_product_id", referencedColumnName="id", onDelete="CASCADE")
+     * @var float|null
      */
-    protected $requestProduct;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="quantity", type="float", nullable=true)
-     */
+    #[ORM\Column(name: 'quantity', type: Types::FLOAT, nullable: true)]
     protected $quantity;
 
-    /**
-     * @var ProductUnit
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL")
-     */
-    protected $productUnit;
+    #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
+    #[ORM\JoinColumn(name: 'product_unit_id', referencedColumnName: 'code', onDelete: 'SET NULL')]
+    protected ?ProductUnit $productUnit = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="product_unit_code", type="string", length=255)
-     */
-    protected $productUnitCode;
+    #[ORM\Column(name: 'product_unit_code', type: Types::STRING, length: 255)]
+    protected ?string $productUnitCode = null;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="value", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'value', type: 'money', nullable: true)]
     protected $value;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
-     */
-    protected $currency;
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: true)]
+    protected ?string $currency = null;
 
     /**
      * @var Price
      */
     protected $price;
+
+    /**
+     * @var Collection<RequestProductKitItemLineItem>
+     */
+    protected $kitItemLineItems;
+
+    /**
+     * Differentiates the unique constraint allowing to add the same product with the same unit code multiple times,
+     * moving the logic of distinguishing of such line items out of the entity class.
+     */
+    #[ORM\Column(name: 'checksum', type: 'string', length: 40, nullable: false, options: ['default' => ''])]
+    protected string $checksum = '';
+
+    public function __construct()
+    {
+        $this->kitItemLineItems = new ArrayCollection();
+    }
 
     /**
      * {@inheritdoc}
@@ -149,6 +146,7 @@ class RequestProductItem implements ProductLineItemInterface, ExtendEntityInterf
     public function setRequestProduct(RequestProduct $requestProduct = null)
     {
         $this->requestProduct = $requestProduct;
+        $this->loadKitItemLineItems();
 
         return $this;
     }
@@ -212,6 +210,32 @@ class RequestProductItem implements ProductLineItemInterface, ExtendEntityInterf
         return $this->productUnitCode;
     }
 
+    public function setValue(?float $value): self
+    {
+        $this->value = $value;
+        $this->loadPrice();
+
+        return $this;
+    }
+
+    public function getValue(): ?float
+    {
+        return $this->value;
+    }
+
+    public function setCurrency(?string $currency): self
+    {
+        $this->currency = $currency;
+        $this->loadPrice();
+
+        return $this;
+    }
+
+    public function getCurrency(): ?string
+    {
+        return $this->currency;
+    }
+
     /**
      * @param Price|null $price
      * @return RequestProductItem
@@ -233,33 +257,31 @@ class RequestProductItem implements ProductLineItemInterface, ExtendEntityInterf
         return $this->price;
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    #[ORM\PostLoad]
     public function loadPrice()
     {
-        if ($this->value && $this->currency) {
-            $this->setPrice(Price::create($this->value, $this->currency));
+        if ($this->value !== null && $this->currency !== null) {
+            $this->price = Price::create($this->value, $this->currency);
         }
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updatePrice()
     {
-        $this->value = $this->price?->getValue();
-        $this->currency = $this->price?->getCurrency();
+        if ($this->price !== null) {
+            $this->value = (float)$this->price->getValue();
+            $this->currency = (string)$this->price->getCurrency();
+        } else {
+            $this->value = $this->currency = null;
+        }
     }
 
-    /** {@inheritdoc} */
     public function getProduct()
     {
         return $this->requestProduct?->getProduct();
     }
 
-    /** {@inheritdoc} */
     public function getProductSku()
     {
         return $this->getProduct()?->getSku();
@@ -268,5 +290,41 @@ class RequestProductItem implements ProductLineItemInterface, ExtendEntityInterf
     public function getParentProduct()
     {
         return null;
+    }
+
+    #[ORM\PostLoad]
+    public function loadKitItemLineItems(): void
+    {
+        if ($this->requestProduct) {
+            $this->kitItemLineItems = $this->requestProduct->getKitItemLineItems()->map(
+                fn (RequestProductKitItemLineItem $item) => (clone $item)->setLineItem($this)
+            );
+        } else {
+            $this->kitItemLineItems = new ArrayCollection();
+        }
+    }
+
+    /**
+     * @return Collection<RequestProductKitItemLineItem>
+     */
+    public function getKitItemLineItems()
+    {
+        if (!$this->kitItemLineItems->count()) {
+            $this->loadKitItemLineItems();
+        }
+
+        return $this->kitItemLineItems;
+    }
+
+    public function setChecksum(string $checksum): self
+    {
+        $this->checksum = $checksum;
+
+        return $this;
+    }
+
+    public function getChecksum(): string
+    {
+        return $this->checksum;
     }
 }

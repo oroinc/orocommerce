@@ -3,7 +3,6 @@ define(function(require) {
 
     const BaseView = require('oroui/js/app/views/base/view');
     const ElementsHelper = require('orofrontend/js/app/elements-helper');
-    const BaseModel = require('oroui/js/app/models/base/model');
     const UnitsUtil = require('oroproduct/js/app/units-util');
     const $ = require('jquery');
     const _ = require('underscore');
@@ -29,9 +28,8 @@ define(function(require) {
             syncClass: 'synchronized',
             unitsRoute: 'oro_product_frontend_ajaxproductunit_productunits',
             compactUnits: false,
-            itemsContainer: '[data-role="lineitems"]',
+            kitItemLineItemsRoute: 'oro_rfp_request_product_kit_item_line_item_entry_point',
             itemWidget: '[data-role="lineitem"]',
-            addItemButton: '[data-role="lineitem-add"]',
             skipLoadingMask: false
         },
 
@@ -39,16 +37,6 @@ define(function(require) {
          * @property {Object}
          */
         $el: null,
-
-        /**
-         * @property {Object}
-         */
-        $itemsContainer: null,
-
-        /**
-         * @property {Object}
-         */
-        $addItemButton: null,
 
         /**
          * @property {array}
@@ -61,7 +49,8 @@ define(function(require) {
         loadingMask: null,
 
         elements: {
-            productId: '[data-name="field__product"]'
+            productId: '[data-name="field__product"]',
+            kitItemLineItems: '.rfp-lineitem-product .rfp-lineitem-kit-item-line-items'
         },
 
         modelElements: {
@@ -70,6 +59,8 @@ define(function(require) {
 
         modelAttr: {
             productId: 0,
+            productType: 'simple',
+            sku: '',
             product_units: {}
         },
 
@@ -96,15 +87,13 @@ define(function(require) {
 
             this.delegate('click', '.removeLineItem', this.removeRow);
 
-            this.$itemsContainer = this.$el.find(this.options.itemsContainer);
-            this.$addItemButton = this.$el.find(this.options.addItemButton);
             this.loadingMask = new LoadingMaskView({container: this.$el});
 
             this.$el.on('content:changed', this.onContentChanged.bind(this));
 
             this.initModel(options);
             this.initializeElements(options);
-            this.model.set('product_units', this.options.units[this.model.get('productId')] || []);
+            this.model.set('product_units', this.options.units[this.model.get('productId')] || {});
 
             this.$el.on('options:set:lineItemModel', (e, options) => {
                 options.lineItemModel = this.model;
@@ -113,30 +102,6 @@ define(function(require) {
             this.initializeSubviews({
                 lineItemModel: this.model
             });
-        },
-
-        initModel: function(options) {
-            this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
-            this.model = new BaseModel();
-
-            _.each(this.modelAttr, function(value, attribute) {
-                if (!this.model.has(attribute)) {
-                    this.model.set(attribute, value);
-                }
-            }, this);
-        },
-
-        handleLayoutInit: function() {
-            this.checkAddButton();
-            this._resolveDeferredRender();
-        },
-
-        checkAddButton: function() {
-            this.$addItemButton.toggle(Boolean(this.model.get('productId')));
-        },
-
-        initSelects: function() {
-            this.$el.find(this.options.unitsSelect).addClass(this.options.syncClass);
         },
 
         removeRow: function() {
@@ -150,15 +115,40 @@ define(function(require) {
         onProductChanged: function(data) {
             if (data !== void 0 && data.event) {
                 this.model.set('sku', data.event.added.sku);
+                this.model.set('productType', data.event.added.type || 'simple');
             }
 
-            this.checkAddButton();
-            if (this.model.get('productId') && !this.$itemsContainer.children().length) {
-                this.$addItemButton.click();
+            const productId = this.model.get('productId');
+
+            if (productId) {
+                const self = this;
+                const routeParams = {id: productId};
+
+                $.ajax({
+                    url: routing.generate(this.options.kitItemLineItemsRoute, routeParams),
+                    type: 'POST',
+                    data: $.param(this.getData()),
+                    beforeSend: function() {
+                        if (!self.options.skipLoadingMask) {
+                            self.loadingMask.show();
+                        }
+                    },
+                    success: function(response) {
+                        self.updateKitItemLineItems(response);
+                        self.loadingMask.hide();
+                    },
+                    complete: function() {
+                        self.loadingMask.hide();
+                    },
+                    errorHandlerMessage: __(this.options.errorMessage)
+                });
             }
-            if (this.$itemsContainer.children().length) {
-                this.updateContent(true);
-            }
+        },
+
+        updateKitItemLineItems: function(response) {
+            this.getElement('kitItemLineItems')
+                .html(response || '')
+                .trigger('content:changed');
         },
 
         /**
@@ -233,6 +223,13 @@ define(function(require) {
             if (force) {
                 this.$el.find('select').inputWidget('refresh');
             }
+        },
+
+        /**
+         * @return {Object}
+         */
+        getData: function() {
+            return this.$elements.productId.serializeArray();
         },
 
         /**

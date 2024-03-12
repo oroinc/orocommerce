@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
@@ -17,6 +18,7 @@ class QuickAddControllerTest extends WebTestCase
             self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->loadFixtures([
+            LoadProductKitData::class,
             LoadFrontendProductData::class,
             LoadFrontendProductVisibilityData::class,
             LoadProductUnitPrecisions::class,

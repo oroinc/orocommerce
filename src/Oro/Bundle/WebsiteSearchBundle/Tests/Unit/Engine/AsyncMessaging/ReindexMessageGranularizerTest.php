@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine\AsyncMessaging;
 
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
@@ -23,8 +24,7 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->identifierRepository = $this->createMock(EntityIdentifierRepository::class);
-
+        $this->setUpIdentifierRepository();
         $this->granularizer = new ReindexMessageGranularizer($this->identifierRepository);
     }
 
@@ -34,17 +34,13 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
         $context = $this->setContextEntityIds($context, self::IDS_FROM_REPOSITORY);
         $context = $this->setContextFieldGroups($context, ['main']);
 
-        $this->identifierRepository->expects($this->any())
-            ->method('getIds')
-            ->willReturn(self::IDS_FROM_REPOSITORY);
-
         $result = $this->granularizer->process(
             ['Product'],
             [1],
             $context
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 [
                     'class'   => ['Product'],
@@ -67,17 +63,13 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
         $context = [];
         $context = $this->setContextEntityIds($context, $input['ids']);
 
-        $this->identifierRepository->expects($this->any())
-            ->method('getIds')
-            ->willReturn(self::IDS_FROM_REPOSITORY);
-
         $result = $this->granularizer->process(
             $input['entities'],
             $input['websites'],
             $context
         );
 
-        $this->assertEquals($output, iterator_to_array($result));
+        self::assertEquals($output, iterator_to_array($result));
     }
 
     /**
@@ -88,17 +80,13 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
         $context = [];
         $context = $this->setContextEntityIds($context, range(1, 500));
 
-        $this->identifierRepository->expects($this->any())
-            ->method('getIds')
-            ->willReturn(self::IDS_FROM_REPOSITORY);
-
         $result = $this->granularizer->process(
             $input['entities'],
             $input['websites'],
             $context
         );
 
-        $this->assertEquals($output, iterator_to_array($result));
+        self::assertEquals($output, iterator_to_array($result));
     }
 
     /**
@@ -182,16 +170,16 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
                         ]
                     ],
                     [
-                        'class'   => ['Product2'],
+                        'class'   => ['Product1'],
                         'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => self::IDS_FROM_REPOSITORY,
                         ]
                     ],
                     [
-                        'class'   => ['Product1'],
+                        'class'   => ['Product2'],
                         'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => self::IDS_FROM_REPOSITORY,
                         ]
                     ],
@@ -227,7 +215,21 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
                     [
                         'class'   => ['Product'],
                         'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(1, 100),
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
                             AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(101, 200),
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(101, 200),
                         ]
                     ],
@@ -241,7 +243,21 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
                     [
                         'class'   => ['Product'],
                         'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(201, 300),
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
                             AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(301, 400),
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(301, 400),
                         ]
                     ],
@@ -250,34 +266,6 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
                         'context' => [
                             AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(401, 500),
-                        ]
-                    ],
-                    [
-                        'class'   => ['Product'],
-                        'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(1, 100),
-                        ]
-                    ],
-                    [
-                        'class'   => ['Product'],
-                        'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(101, 200),
-                        ]
-                    ],
-                    [
-                        'class'   => ['Product'],
-                        'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(201, 300),
-                        ]
-                    ],
-                    [
-                        'class'   => ['Product'],
-                        'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => range(301, 400),
                         ]
                     ],
                     [
@@ -290,5 +278,51 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         ];
+    }
+
+    private function setUpIdentifierRepository(): void
+    {
+        $this->identifierRepository = $this->createMock(EntityIdentifierRepository::class);
+        $this->identifierRepository->expects(self::any())
+            ->method('getIds')
+            ->willReturnCallback(fn () => $this->createIdsFromRepositoryIterator());
+    }
+
+    private function createIdsFromRepositoryIterator(): BufferedQueryResultIteratorInterface
+    {
+        $bufferedIterator = $this->createMock(BufferedQueryResultIteratorInterface::class);
+        $arrayIterator = new \ArrayIterator(self::IDS_FROM_REPOSITORY);
+
+        $bufferedIterator
+            ->method('rewind')
+            ->willReturnCallback(function () use ($arrayIterator): void {
+                $arrayIterator->rewind();
+            });
+
+        $bufferedIterator
+            ->method('current')
+            ->willReturnCallback(function () use ($arrayIterator) {
+                return $arrayIterator->current();
+            });
+
+        $bufferedIterator
+            ->method('key')
+            ->willReturnCallback(function () use ($arrayIterator) {
+                return $arrayIterator->key();
+            });
+
+        $bufferedIterator
+            ->method('next')
+            ->willReturnCallback(function () use ($arrayIterator): void {
+                $arrayIterator->next();
+            });
+
+        $bufferedIterator
+            ->method('valid')
+            ->willReturnCallback(function () use ($arrayIterator): bool {
+                return $arrayIterator->valid();
+            });
+
+        return $bufferedIterator;
     }
 }

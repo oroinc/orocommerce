@@ -2,45 +2,33 @@
 
 namespace Oro\Bundle\UPSBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 
 /**
- * @ORM\Table(name="oro_ups_shipping_service")
- * @ORM\Entity(repositoryClass="Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository")
- */
+* Entity that represents Shipping Service
+*
+*/
+#[ORM\Entity(repositoryClass: ShippingServiceRepository::class)]
+#[ORM\Table(name: 'oro_ups_shipping_service')]
 class ShippingService
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="code", type="string", length=10)
-     */
-    protected $code;
+    #[ORM\Column(name: 'code', type: Types::STRING, length: 10)]
+    protected ?string $code = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="description", type="string", length=255)
-     */
-    protected $description;
+    #[ORM\Column(name: 'description', type: Types::STRING, length: 255)]
+    protected ?string $description = null;
 
-    /**
-     * @var Country
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AddressBundle\Entity\Country")
-     * @ORM\JoinColumn(name="country_code", referencedColumnName="iso2_code", nullable=false)
-     */
-    protected $country;
+    #[ORM\ManyToOne(targetEntity: Country::class)]
+    #[ORM\JoinColumn(name: 'country_code', referencedColumnName: 'iso2_code', nullable: false)]
+    protected ?Country $country = null;
 
     /**
      * @return integer

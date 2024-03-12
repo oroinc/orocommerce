@@ -4,8 +4,6 @@ namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
@@ -30,42 +28,25 @@ use Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Loading order demo data.
  */
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
+    use ContainerAwareTrait;
     use OrderLineItemsDemoDataTrait;
 
-    /** @var array */
-    protected $countries = [];
-
-    /** @var array */
-    protected $regions = [];
-
-    /** @var array */
-    protected $paymentTerms = [];
-
-    /** @var array */
-    protected $websites = [];
-
-    /** @var ContainerInterface */
-    protected $container;
+    private array $countries = [];
+    private array $regions = [];
+    private array $paymentTerms = [];
+    private array $websites = [];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadCustomerDemoData::class,
@@ -79,10 +60,9 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     }
 
     /**
-     * @param EntityManager $manager
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroOrderBundle/Migrations/Data/Demo/ORM/data/orders.csv');
@@ -93,13 +73,13 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         $paymentTermAccessor = $this->container->get('oro_payment_term.provider.payment_term_association');
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $manager->getRepository('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')->findOneBy([]);
+        $shoppingList = $manager->getRepository(ShoppingList::class)->findOneBy([]);
 
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
         /** @var EntityRepository $userRepository */
-        $userRepository = $manager->getRepository('OroUserBundle:User');
+        $userRepository = $manager->getRepository(User::class);
 
         /** @var User $user */
         $user = $userRepository->findOneBy([]);
@@ -109,12 +89,14 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         $regularCustomerUser = $this->getCustomerUser($manager);
         $guestCustomerUser = $this->getCustomerUser($manager, true);
 
+        /** @var ClassMetadata $orderMetadata */
         $orderMetadata = $manager->getClassMetadata(Order::class);
         $this->disablePrePersistCallback($orderMetadata);
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
+            /** @var CustomerUser $customerUser */
             $customerUser = $row['isGuest'] ? $guestCustomerUser : $regularCustomerUser;
             $order = new Order();
 
@@ -199,7 +181,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         ];
     }
 
-    protected function createOrderAddress(EntityManagerInterface $manager, array $address): OrderAddress
+    private function createOrderAddress(ObjectManager $manager, array $address): OrderAddress
     {
         $orderAddress = new OrderAddress();
         $orderAddress
@@ -218,60 +200,49 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $orderAddress;
     }
 
-    /**
-     * @param string $name
-     * @param ObjectManager $manager
-     *
-     * @return AbstractEnumValue|null|object
-     */
-    protected function getOrderInternalStatusByName($name, ObjectManager $manager)
+    private function getOrderInternalStatusByName(string $name, ObjectManager $manager): ?AbstractEnumValue
     {
-        return $manager
-            ->getRepository(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
-            ->findOneBy(['id' => $name,]);
+        return $manager->getRepository(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
+            ->findOneBy(['id' => $name]);
     }
 
-    /**
-     * @param bool $isGuest
-     * @return null|CustomerUser
-     */
-    protected function getCustomerUser(ObjectManager $manager, $isGuest = false)
+    private function getCustomerUser(ObjectManager $manager, bool $isGuest = false): ?CustomerUser
     {
-        return $manager->getRepository('OroCustomerBundle:CustomerUser')->findOneBy(['isGuest' => $isGuest]);
+        return $manager->getRepository(CustomerUser::class)->findOneBy(['isGuest' => $isGuest]);
     }
 
-    protected function getCountryByIso2Code(EntityManagerInterface $manager, string $iso2Code): ?Country
+    private function getCountryByIso2Code(ObjectManager $manager, string $iso2Code): ?Country
     {
-        if (!array_key_exists($iso2Code, $this->countries)) {
-            $this->countries[$iso2Code] = $manager->getReference('OroAddressBundle:Country', $iso2Code);
+        if (!\array_key_exists($iso2Code, $this->countries)) {
+            $this->countries[$iso2Code] = $manager->getReference(Country::class, $iso2Code);
         }
 
         return $this->countries[$iso2Code];
     }
 
-    protected function getRegionByIso2Code(EntityManagerInterface $manager, string $code): ?Region
+    private function getRegionByIso2Code(ObjectManager $manager, string $code): ?Region
     {
-        if (!array_key_exists($code, $this->regions)) {
-            $this->regions[$code] = $manager->getReference('OroAddressBundle:Region', $code);
+        if (!\array_key_exists($code, $this->regions)) {
+            $this->regions[$code] = $manager->getReference(Region::class, $code);
         }
 
         return $this->regions[$code];
     }
 
-    protected function getPaymentTerm(EntityManagerInterface $manager, string $label): PaymentTerm
+    private function getPaymentTerm(ObjectManager $manager, string $label): PaymentTerm
     {
-        if (!array_key_exists($label, $this->paymentTerms)) {
-            $this->paymentTerms[$label] = $manager->getRepository('OroPaymentTermBundle:PaymentTerm')
+        if (!\array_key_exists($label, $this->paymentTerms)) {
+            $this->paymentTerms[$label] = $manager->getRepository(PaymentTerm::class)
                 ->findOneBy(['label' => $label]);
         }
 
         return $this->paymentTerms[$label];
     }
 
-    protected function getWebsite(EntityManagerInterface $manager, string $name): Website
+    private function getWebsite(ObjectManager $manager, string $name): Website
     {
-        if (!array_key_exists($name, $this->websites)) {
-            $this->websites[$name] = $manager->getRepository('OroWebsiteBundle:Website')
+        if (!\array_key_exists($name, $this->websites)) {
+            $this->websites[$name] = $manager->getRepository(Website::class)
                 ->findOneBy(['name' => $name]);
         }
 

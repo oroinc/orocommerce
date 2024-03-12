@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\Persistence\ObjectManager;
-use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
-use Symfony\Component\DomCrawler\Form;
 
 abstract class AbstractImportExportTestCase extends WebTestCase
 {
@@ -21,28 +21,17 @@ abstract class AbstractImportExportTestCase extends WebTestCase
         $this->client->useHashNavigation(true);
     }
 
-    /**
-     * @param string $strategy
-     * @param string $file
-     */
-    protected function validateImportFile($strategy, $file)
+    protected function validateImportFile(string $strategy, string $file): void
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl(
-                'oro_importexport_import_form',
-                [
-                    'entity' => Product::class,
-                    '_widgetContainer' => 'dialog',
-                ]
-            )
+            $this->getUrl('oro_importexport_import_form', ['entity' => Product::class, '_widgetContainer' => 'dialog'])
         );
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertFileExists($file);
+        self::assertFileExists($file);
 
-        /** @var Form $form */
         $form = $crawler->selectButton('Submit')->form();
 
         /** Change after BAP-1813 */
@@ -54,54 +43,48 @@ abstract class AbstractImportExportTestCase extends WebTestCase
         $form['oro_importexport_import[file]']->upload($file);
         $form['oro_importexport_import[processorAlias]'] = $strategy;
 
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
         $this->client->submit($form);
 
         $result = $this->client->getResponse();
 
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
         $crawler = $this->client->getCrawler();
-        $this->assertEquals(0, $crawler->filter('.import-errors')->count());
+        self::assertEquals(0, $crawler->filter('.import-errors')->count());
     }
 
-    protected function doExport()
+    protected function doExport(): void
     {
         $this->client->followRedirects(false);
         $this->client->request(
             'GET',
             $this->getUrl(
                 'oro_importexport_export_instant',
-                [
-                    'processorAlias' => 'oro_product_product',
-                    '_format' => 'json',
-                ]
+                ['processorAlias' => 'oro_product_product', '_format' => 'json']
             )
         );
 
-        $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
+        $data = self::getJsonResponseContent($this->client->getResponse(), 200);
 
-        $this->assertTrue($data['success']);
-        $this->assertEquals(1, $data['readsCount']);
-        $this->assertEquals(0, $data['errorsCount']);
+        self::assertTrue($data['success']);
+        self::assertEquals(1, $data['readsCount']);
+        self::assertEquals(0, $data['errorsCount']);
 
         $this->client->request(
             'GET',
             $data['url'],
             [],
             [],
-            $this->generateNoHashNavigationHeader()
+            self::generateNoHashNavigationHeader()
         );
 
         $result = $this->client->getResponse();
-        $this->assertResponseStatusCodeEquals($result, 200);
-        $this->assertResponseContentTypeEquals($result, 'text/csv');
+        self::assertResponseStatusCodeEquals($result, 200);
+        self::assertResponseContentTypeEquals($result, 'text/csv');
     }
 
-    /**
-     * @param string $importTemplateFile
-     */
-    protected function validateExportResultWithImportTemplate($importTemplateFile)
+    protected function validateExportResultWithImportTemplate(string $importTemplateFile): void
     {
         $importTemplate = $this->getFileContents($importTemplateFile);
         $exportedData = $this->getFileContents($this->getExportFile());
@@ -111,15 +94,10 @@ abstract class AbstractImportExportTestCase extends WebTestCase
         $importTemplateValues = $this->extractFieldValues($commonFields, $importTemplate);
         $exportedDataValues = $this->extractFieldValues($commonFields, $exportedData);
 
-        $this->assertEquals($importTemplateValues, $exportedDataValues);
+        self::assertEquals($importTemplateValues, $exportedDataValues);
     }
 
-    /**
-     * @param array $fields
-     * @param array $data
-     * @return array
-     */
-    protected function extractFieldValues(array $fields, array $data)
+    protected function extractFieldValues(array $fields, array $data): array
     {
         $values = [];
         foreach ($fields as $field) {
@@ -132,80 +110,48 @@ abstract class AbstractImportExportTestCase extends WebTestCase
         return $values;
     }
 
-    /**
-     * @param string $strategy
-     * @return array
-     */
-    protected function doImport($strategy)
+    protected function doImport(string $strategy): array
     {
         $this->client->followRedirects(false);
         $this->client->request(
             'GET',
-            $this->getUrl(
-                'oro_importexport_import_process',
-                [
-                    'processorAlias' => $strategy,
-                    '_format' => 'json',
-                ]
-            )
+            $this->getUrl('oro_importexport_import_process', ['processorAlias' => $strategy, '_format' => 'json'])
         );
 
-        return $this->getJsonResponseContent($this->client->getResponse(), 200);
+        return self::getJsonResponseContent($this->client->getResponse(), 200);
     }
 
-    /**
-     * @return string
-     */
-    protected function getImportTemplate()
+    protected function getImportTemplate(): string
     {
-        $result = $this
-            ->getContainer()
-            ->get('oro_importexport.handler.export')
+        $result = self::getContainer()->get('oro_importexport.handler.export')
             ->getExportResult(
                 JobExecutor::JOB_EXPORT_TEMPLATE_TO_CSV,
                 'oro_product_product_export_template',
                 ProcessorRegistry::TYPE_EXPORT_TEMPLATE
             );
 
-        return $this
-            ->getContainer()
-            ->get('oro_importexport.file.file_manager')
+        return self::getContainer()->get('oro_importexport.file.file_manager')
             ->writeToTmpLocalStorage($result['file']);
     }
 
-    /**
-     * @return string
-     */
-    protected function getExportFile()
+    protected function getExportFile(): string
     {
-        $result = $this
-            ->getContainer()
-            ->get('oro_importexport.handler.export')
-            ->handleExport(
-                JobExecutor::JOB_EXPORT_TO_CSV,
-                'oro_product_product',
-                ProcessorRegistry::TYPE_EXPORT
-            );
+        $result = self::getContainer()->get('oro_importexport.handler.export')
+            ->handleExport(JobExecutor::JOB_EXPORT_TO_CSV, 'oro_product_product');
 
-        $this->assertResponseStatusCodeEquals($result, 200);
-        $this->assertResponseContentTypeEquals($result, 'application/json');
+        self::assertResponseStatusCodeEquals($result, 200);
+        self::assertResponseContentTypeEquals($result, 'application/json');
 
-        $result = json_decode($result->getContent(), true);
+        $result = json_decode($result->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
-        $this->assertTrue($result['success']);
-        $this->assertEquals(0, $result['errorsCount']);
+        self::assertTrue($result['success']);
+        self::assertEquals(0, $result['errorsCount']);
 
-        return $this
-            ->getContainer()
-            ->get('oro_importexport.file.file_manager')
+        return self::getContainer()->get('oro_importexport.file.file_manager')
             ->writeToTmpLocalStorage($result['file']);
     }
 
-    /**
-     * @param string $fileName
-     * @return array
-     */
-    protected function getFileContents($fileName)
+    protected function getFileContents(string $fileName): array
     {
         $content = file_get_contents($fileName);
         $content = explode("\n", $content);
@@ -214,33 +160,24 @@ abstract class AbstractImportExportTestCase extends WebTestCase
         return array_map('str_getcsv', $content);
     }
 
-    /**
-     * @param string $exportFile
-     * @param int $expectedItemsCount
-     */
-    protected function validateExportResult($exportFile, $expectedItemsCount)
+    protected function validateExportResult(string $exportFile, int $expectedItemsCount): void
     {
         $exportedData = $this->getFileContents($exportFile);
         unset($exportedData[0]);
 
-        $this->assertCount($expectedItemsCount, $exportedData);
+        self::assertCount($expectedItemsCount, $exportedData);
     }
 
-    protected function cleanUpReader()
+    protected function cleanUpReader(): void
     {
-        $reader = $this->getContainer()->get('oro_importexport.reader.csv');
+        $reader = self::getContainer()->get('oro_importexport.reader.csv');
         ReflectionUtil::setPropertyValue($reader, 'file', null);
         ReflectionUtil::setPropertyValue($reader, 'header', null);
     }
 
-    /**
-     * @param array $data
-     * @param int $added
-     * @param int $updated
-     */
-    protected function assertImportResponse(array $data, $added, $updated)
+    protected function assertImportResponse(array $data, int $added, int $updated): void
     {
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'success'    => true,
                 'message'    => 'File was successfully imported.',
@@ -251,31 +188,19 @@ abstract class AbstractImportExportTestCase extends WebTestCase
         );
     }
 
-    protected function setSecurityToken()
+    protected function setSecurityToken(): void
     {
-        $token = new OrganizationToken(
-            $this->getRepository('OroOrganizationBundle:Organization')->findOneBy([])
-        );
-        $token->setUser(
-            $this->getRepository('OroUserBundle:User')->findOneBy([])
-        );
-        $this->getContainer()->get('security.token_storage')->setToken($token);
+        $token = new OrganizationToken($this->getRepository(Organization::class)->findOneBy([]));
+        $token->setUser($this->getRepository(User::class)->findOneBy([]));
+        self::getContainer()->get('security.token_storage')->setToken($token);
     }
 
-    /**
-     * @param string $class
-     * @return ObjectManager|null|object
-     */
-    protected function getManager($class)
+    protected function getManager(string $class): EntityManagerInterface
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass($class);
+        return self::getContainer()->get('doctrine')->getManagerForClass($class);
     }
 
-    /**
-     * @param string $class
-     * @return ObjectRepository|EntityRepository
-     */
-    protected function getRepository($class)
+    protected function getRepository(string $class): EntityRepository
     {
         return $this->getManager($class)->getRepository($class);
     }

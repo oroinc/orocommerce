@@ -18,6 +18,42 @@ oro:
                     equal: 'Quantity should be equal to offered quantity'
                     less: 'Quantity should be greater than or equal to offered quantity'
 
+        quoteproductkititemlineitem:
+            quote_product:
+                blank:
+                    message: 'The quote product must not be blank'
+            kit_item:
+                blank:
+                    message: 'The product kit item must not be blank'
+                required.message: 'Original selection no longer available'
+            product:
+                blank:
+                    message: 'The product must not be blank'
+                not_enabled:
+                    message: 'The selected product is not enabled'
+                required.message: 'Original selection no longer available'
+            quantity:
+                decimal:
+                    message: 'The quantity must be a decimal number'
+                greater_than_zero:
+                    message: 'The quantity should be greater than 0'
+                range:
+                    min_message: 'The quantity should be {{ limit }} or more'
+                    max_message: 'The quantity should be {{ limit }} or less'
+                    not_in_range_message: 'The quantity should be between {{ min }} and {{ max }}'
+            product_unit:
+                blank:
+                    message: 'The product unit must not be blank'
+            sort_order:
+                blank:
+                    message: 'The sort order must not be blank'
+                type:
+                    message: 'The sort order must be an integer number'
+                range:
+                    min_message: 'The sort order must be {{ limit }} or more'
+                    max_message: 'The sort order must be {{ limit }} or less'
+                    not_in_range_message: 'The sort order must be between {{ min }} and {{ max }}'
+
         quote:
             ship_until:
                 type:

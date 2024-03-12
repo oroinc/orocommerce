@@ -22,8 +22,8 @@
         {% set itemId = 'content-widget-item-'|uniqid %}
         <div class="accordion-group__item">
             <h4>
-                <button class="accordion-group__trigger btn--link btn--no-offset {{ key != 0 ? 'collapsed' : '' }}" type="button" data-toggle="collapse" data-target="#{{ itemId }}" aria-expanded="{{ key != 0 }}" aria-controls="{{ itemId }}">
-                    <span class="accordion-group__trigger-icon fa-caret-right" aria-hidden="true"></span>
+                <button class="accordion-group__trigger {{ key != 0 ? 'collapsed' : '' }}" type="button" data-toggle="collapse" data-target="#{{ itemId }}" aria-expanded="{{ key != 0 }}" aria-controls="{{ itemId }}">
+                    {{ renderIcon.icon({name: 'chevron-down'}) }}
                     <span class="accordion-group__trigger-text">{{ item.title }}</span>
                 </button>
             </h4>

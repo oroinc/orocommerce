@@ -26,7 +26,6 @@ class QuoteControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadQuoteAddressData::class]);
     }
 
@@ -627,7 +626,6 @@ class QuoteControllerTest extends WebTestCase
 
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), $expected);
         self::assertFalse((bool)$crawler->filterXPath('//div[contains(@class, "breadcrumbs")]')->count());
-        self::assertFalse((bool)$crawler->filterXPath('//div[contains(@class, "primary-menu-container")]')->count());
         self::assertEquals(
             $expectedButton,
             (bool)$crawler->filterXPath('//button[contains(., \'Accept and Submit to Order\')]')->count()
@@ -731,8 +729,12 @@ class QuoteControllerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
 
-        $response = $this->client->requestGrid(['gridName' => 'frontend-quotes-grid'], [], true);
-        self::assertSame($response->getStatusCode(), 302);
+        $response = $this->client->requestFrontendGrid(
+            ['gridName' => 'frontend-quotes-grid'],
+            [],
+            true,
+        );
+        self::assertSame(Response::HTTP_UNAUTHORIZED, $response->getStatusCode());
     }
 
     public function testActualQuantityNotEqualToOfferedValidation(): void

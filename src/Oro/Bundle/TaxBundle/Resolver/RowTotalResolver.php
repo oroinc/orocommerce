@@ -12,43 +12,28 @@ use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 /**
- * Calculates taxes for row total
+ * Calculates taxes for row total.
  */
 class RowTotalResolver
 {
-    use CalculateAdjustmentTrait;
-
-    /**
-     * @var TaxationSettingsProvider
-     */
-    protected $settingsProvider;
-
-    /**
-     * @var TaxCalculatorInterface
-     */
-    protected $calculator;
-
-    /** @var RoundingResolver */
-    protected $roundingResolver;
+    use TaxCalculateResolverTrait;
 
     public function __construct(
-        TaxationSettingsProvider $settingsProvider,
-        TaxCalculatorInterface $calculator,
-        RoundingResolver $roundingResolver
+        private TaxationSettingsProvider $settingsProvider,
+        private TaxCalculatorInterface $calculator,
+        private RoundingResolver $roundingResolver
     ) {
-        $this->settingsProvider = $settingsProvider;
-        $this->calculator = $calculator;
-        $this->roundingResolver = $roundingResolver;
     }
 
     /**
-     * @param Result     $result
-     * @param TaxRule[]  $taxRules
-     * @param BigDecimal $taxableAmount
-     * @param int        $quantity
+     * @param TaxRule[] $taxRules
      */
-    public function resolveRowTotal(Result $result, array $taxRules, BigDecimal $taxableAmount, $quantity = 1)
-    {
+    public function resolveRowTotal(
+        Result $result,
+        array $taxRules,
+        BigDecimal $taxableAmount,
+        BigDecimal $quantity
+    ): void {
         $totalTaxRate = BigDecimal::zero();
         foreach ($taxRules as $taxRule) {
             $totalTaxRate = $totalTaxRate->plus($taxRule->getTax()->getRate());
@@ -75,35 +60,27 @@ class RowTotalResolver
                     );
             }
 
-            $taxResult = TaxResultElement::create(
+            $taxResults = $this->mergeTaxResult(
+                $taxResults,
                 $taxRule->getTax(),
                 $currentTaxRate,
-                $totalResultElement->getExcludingTax(),
+                BigDecimal::of($totalResultElement->getExcludingTax()),
                 $currentTaxAmount
             );
-
-            if ($this->settingsProvider->isStartCalculationOnItem()) {
-                $this->roundingResolver->round($taxResult);
-            }
-
-            $taxResults[] = $taxResult;
         }
         if ($this->settingsProvider->isCalculateAfterPromotionsEnabled()) {
             $totalResultElement->setDiscountsIncluded(true);
         }
 
         $result->offsetSet(Result::ROW, $totalResultElement);
-        $result->offsetSet(Result::TAXES, $taxResults);
+        $result->offsetSet(Result::TAXES, array_values($taxResults));
     }
 
-    /**
-     * @param BigDecimal $taxableAmount
-     * @param BigDecimal $taxRate
-     * @param int        $quantity
-     * @return ResultElement
-     */
-    protected function getRowTotalResult(BigDecimal $taxableAmount, BigDecimal $taxRate, $quantity = 1)
-    {
+    private function getRowTotalResult(
+        BigDecimal $taxableAmount,
+        BigDecimal $taxRate,
+        BigDecimal $quantity
+    ): ResultElement {
         if ($this->settingsProvider->isStartCalculationWithUnitPrice()) {
             $resultElement = $this->calculator->calculate($taxableAmount, $taxRate);
             $taxableAmount = BigDecimal::of($resultElement->getOffset($this->calculator->getAmountKey()))
@@ -119,5 +96,34 @@ class RowTotalResolver
         $this->calculateAdjustment($resultElementStartWith);
 
         return $resultElementStartWith;
+    }
+
+    private function mergeTaxResult(
+        array $taxResults,
+        string $taxCode,
+        BigDecimal $rate,
+        BigDecimal $taxableAmount,
+        BigDecimal $taxAmount,
+    ): array {
+        if (array_key_exists($taxCode, $taxResults)) {
+            $tax = $taxResults[$taxCode];
+            $taxAmount = BigDecimal::of($tax->getTaxAmount())->plus($taxAmount);
+            $taxableAmount = BigDecimal::of($tax->getTaxableAmount())->plus($taxableAmount);
+        }
+
+        $taxResult = TaxResultElement::create(
+            $taxCode,
+            $rate,
+            $taxableAmount,
+            $taxAmount
+        );
+
+        if ($this->settingsProvider->isStartCalculationOnItem()) {
+            $this->roundingResolver->round($taxResult);
+        }
+
+        $taxResults[$taxCode] = $taxResult;
+
+        return $taxResults;
     }
 }

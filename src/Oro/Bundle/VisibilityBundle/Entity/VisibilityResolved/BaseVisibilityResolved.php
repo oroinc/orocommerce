@@ -2,30 +2,25 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\MappedSuperclass
- */
+* BaseVisibilityResolved abstract class
+*
+*/
+#[ORM\MappedSuperclass]
 abstract class BaseVisibilityResolved
 {
     const VISIBILITY_HIDDEN = -1;
     const VISIBILITY_VISIBLE = 1;
     const VISIBILITY_FALLBACK_TO_CONFIG = 0; // fallback to category config value
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="visibility", type="smallint", nullable=true)
-     */
-    protected $visibility;
+    #[ORM\Column(name: 'visibility', type: Types::SMALLINT, nullable: true)]
+    protected ?int $visibility = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="source", type="smallint", nullable=true)
-     */
-    protected $source;
+    #[ORM\Column(name: 'source', type: Types::SMALLINT, nullable: true)]
+    protected ?int $source = null;
 
     /**
      * @param $visibility

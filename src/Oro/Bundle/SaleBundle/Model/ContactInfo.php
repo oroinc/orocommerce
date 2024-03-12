@@ -120,7 +120,7 @@ class ContactInfo extends ParameterBag
     /**
      * {@inheritDoc}
      */
-    public function get(string $name)
+    public function get(string $name): \UnitEnum|float|array|bool|int|string|null
     {
         return $this->has($name) ? parent::get($name) : '';
     }

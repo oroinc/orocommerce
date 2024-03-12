@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_9;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -13,19 +12,19 @@ class MakeDefaultCategoryTitleNotNull implements
     OrderedMigrationInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function getOrder(): int
     {
-        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
-        $table->getColumn('title')->setNotnull(true);
+        return 30;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getOrder()
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        return 30;
+        $schema->getTable('oro_catalog_category')
+            ->getColumn('title')->setNotnull(true);
     }
 }

@@ -26,7 +26,6 @@ class DropOldCustomerUserIdField implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * Must be executed after AddCustomerUserRelation when we sync data from old field
      * {@inheritdoc}
      */
     public function getOrder()

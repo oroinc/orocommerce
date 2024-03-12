@@ -243,7 +243,7 @@ Feature: WYSIWYG columns and tiles
       | 4  | <div class="grid-col">      |
       | 8  | --grid-column-span:2;       |
       | 11 | --grid-column-span:3;       |
-      | 13 | @media (max-width: 1099px){ |
+      | 13 | @media (max-width: 1279px){ |
       | 15 | --grid-column-span:6;       |
       | 18 | @media (max-width: 640px){  |
       | 20 | --grid-column-span:6;       |

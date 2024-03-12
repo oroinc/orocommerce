@@ -32,7 +32,7 @@ operations:
             - oro_shopping_list_frontend_view
             - oro_shopping_list_frontend_update
         button_options:
-            icon: fa-clone
+            icon: copy
         preactions:
             - '@call_service_method':
                 attribute: $.isOneShoppingList
@@ -113,7 +113,7 @@ operations:
             - datagrid_options
             - groups
         button_options:
-            icon: fa-trash
+            icon: trash
         frontend_options:
             show_dialog: true
             confirmation:
@@ -165,7 +165,7 @@ operations:
         label: oro.shoppinglist.rename.action.label
         acl_resource: ['oro_shopping_list_frontend_rename', $.data]
         button_options:
-            icon: fa-pencil
+            icon: pencil
         frontend_options:
             template: '@OroShoppingList/Action/shoppingListActionRename.html.twig'
             title: oro.frontend.shoppinglist.view.rename.label

@@ -5,42 +5,28 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_1;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveEnumFieldQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroProductBundle implements Migration, ExtendExtensionAwareInterface, OrderedMigrationInterface
 {
-    const PRODUCT_VARIANT_LINK_TABLE_NAME = 'orob2b_product_variant_link';
-    const PRODUCT_TABLE_NAME = 'orob2b_product';
+    use ExtendExtensionAwareTrait;
 
     /**
-     * @var ExtendExtension
+     * {@inheritDoc}
      */
-    protected $extendExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
+    public function getOrder(): int
     {
         return 10;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         $this->renameStatusEnumToStatusString($schema, $queries);
         $this->removeVisibilityEnum($schema, $queries);
@@ -49,9 +35,9 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface, Orde
         $this->addOroProductVariantLinkForeignKeys($schema);
     }
 
-    protected function createOroProductVariantLinkTable(Schema $schema)
+    private function createOroProductVariantLinkTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::PRODUCT_VARIANT_LINK_TABLE_NAME);
+        $table = $schema->createTable('orob2b_product_variant_link');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => true]);
         $table->addColumn('parent_product_id', 'integer', ['notnull' => true]);
@@ -59,29 +45,29 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface, Orde
         $table->setPrimaryKey(['id']);
     }
 
-    protected function addOroProductVariantLinkForeignKeys(Schema $schema)
+    private function addOroProductVariantLinkForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::PRODUCT_VARIANT_LINK_TABLE_NAME);
+        $table = $schema->getTable('orob2b_product_variant_link');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::PRODUCT_TABLE_NAME),
+            $schema->getTable('orob2b_product'),
             ['product_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::PRODUCT_TABLE_NAME),
+            $schema->getTable('orob2b_product'),
             ['parent_product_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 
-    protected function updateOroProductTable(Schema $schema, QueryBag $queries)
+    private function updateOroProductTable(Schema $schema, QueryBag $queries): void
     {
-        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('orob2b_product');
         $table->addColumn('has_variants', 'boolean', ['default' => false]);
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
-        $table->addIndex(['sku'], 'idx_orob2b_product_sku', []);
+        $table->addIndex(['sku'], 'idx_orob2b_product_sku');
 
         $queries->addQuery(
             new UpdateEntityConfigFieldValueQuery(
@@ -104,14 +90,14 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface, Orde
         );
     }
 
-    protected function renameStatusEnumToStatusString(Schema $schema, QueryBag $queries)
+    private function renameStatusEnumToStatusString(Schema $schema, QueryBag $queries): void
     {
         // create new status column
-        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('orob2b_product');
         $table->addColumn('status', 'string', ['length' => 16, 'notnull' => false]);
 
         // move data from old to new column
-        $queries->addPostQuery(sprintf('UPDATE %s SET status = status_id', self::PRODUCT_TABLE_NAME));
+        $queries->addPostQuery('UPDATE orob2b_product SET status = status_id');
 
         // drop status enum table
         $enumStatusTable = $this->extendExtension->getNameGenerator()->generateEnumTableName('prod_status');
@@ -120,7 +106,7 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface, Orde
         }
     }
 
-    protected function removeVisibilityEnum(Schema $schema, QueryBag $queries)
+    private function removeVisibilityEnum(Schema $schema, QueryBag $queries): void
     {
         // drop visibility enum field
         $productTable = $schema->getTable('orob2b_product');

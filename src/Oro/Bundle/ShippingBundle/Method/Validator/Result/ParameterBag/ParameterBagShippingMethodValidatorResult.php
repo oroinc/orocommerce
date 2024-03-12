@@ -4,11 +4,16 @@ namespace Oro\Bundle\ShippingBundle\Method\Validator\Result\ParameterBag;
 
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Factory\Common;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
-class ParameterBagShippingMethodValidatorResult extends ParameterBag implements ShippingMethodValidatorResultInterface
+/**
+ * DTO for shipping method validation result
+ */
+class ParameterBagShippingMethodValidatorResult implements ShippingMethodValidatorResultInterface
 {
-    const FIELD_ERRORS = 'errors';
+    public function __construct(
+        protected array $errors = []
+    ) {
+    }
 
     /**
      * {@inheritDoc}
@@ -23,6 +28,6 @@ class ParameterBagShippingMethodValidatorResult extends ParameterBag implements 
      */
     public function getErrors()
     {
-        return $this->get(self::FIELD_ERRORS);
+        return $this->errors;
     }
 }

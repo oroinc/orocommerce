@@ -1,27 +1,21 @@
 /* @theme: default; */
 
-$product-price-display: inline-block !default;
-$product-price-overflow: hidden !default;
-$product-price-margin: 0 auto !default;
-$product-price-max-width: 250px !default;
 $product-price-width: 100% !default;
 
 $product-price-main-box-font-size: null !default;
-$product-price-main-offset-top: 3px !default;
-$product-price-main-offset-bottom: 10px !default;
+$product-price-main-offset-bottom: spacing('base') !default;
 
 $product-price-listed-text-align: left !default;
-$product-price-value-font-weight: font-weight('bold') !default;
+$product-price-value-font-weight: font-weight('semi-bold') !default;
 $product-price-value-color: null !default;
 
-$product-price-simple-value-font-size: $base-font-size--l + 1 !default;
-$product-price-simple-listed-value-color: get-color('ui', 'normal') !default;
-$product-price-simple-text-align-tablet: center !default;
+$product-price-simple-value-font-size: $base-font-size--large + 2 !default;
+$product-price-simple-value-color: get-var-color('secondary', 'sale') !default;
+$product-price-simple-listed-value-color: get-color('primary', 'normal') !default;
+
 $product-price-simple-label-display: none !default;
 $product-price-unit-short-display: none !default;
 
 // Tablet
 $product-price-unit-short-display-tablet: inline !default;
 $product-price-unit-full-display-tablet: none !default;
-
-$product-price-simple-display-tablet: block !default;

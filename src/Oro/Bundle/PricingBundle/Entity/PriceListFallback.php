@@ -2,37 +2,29 @@
 
 namespace Oro\Bundle\PricingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
- * @ORM\MappedSuperclass
- */
+* PriceListFallback class
+*
+*/
+#[ORM\MappedSuperclass]
 class PriceListFallback implements WebsiteAwareInterface
 {
-    /**
-     * @var integer $id
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="fallback", type="integer")
-     */
-    protected $fallback;
+    #[ORM\Column(name: 'fallback', type: Types::INTEGER)]
+    protected ?int $fallback = null;
 
-    /** @var Website
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    protected $website;
+    #[ORM\ManyToOne(targetEntity: Website::class)]
+    #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Website $website = null;
 
     /**
      * Get id

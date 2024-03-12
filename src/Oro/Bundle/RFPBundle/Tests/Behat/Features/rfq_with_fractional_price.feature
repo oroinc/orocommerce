@@ -16,7 +16,6 @@ Feature: RFQ with fractional price
   Scenario: Create RFQ with fractional prices from shopping list
     Given I signed in as AmandaRCole@example.org on the store frontend
     And I am on the homepage
-    And I click "Localization Switcher"
     And I select "German Localization" localization
 
     When I open page with shopping list "Shopping List 1"

@@ -6,7 +6,7 @@
 {% extends '@OroSearch/Search/searchResultItem.html.twig' %}
 
 {% set showImage = false %}
-{% set title = indexer_item.selectedData.name %}
+{% set title = entity|oro_format_name(null, 'full') %}
 {% set entityType = 'oro.product.brand.entity_label'|trans %}
 
 {% set entityInfo = [

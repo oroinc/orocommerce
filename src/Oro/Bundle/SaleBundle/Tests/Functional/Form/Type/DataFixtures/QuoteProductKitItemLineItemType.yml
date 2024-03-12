@@ -1,0 +1,116 @@
+initial: true
+
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
+    - Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product_simple1_precision1:
+        unit: '@item'
+        precision: 4
+        conversionRate: 1
+    product_simple1_precision2:
+        unit: '@set'
+        precision: 1
+        conversionRate: 10
+    product_simple2_precision1:
+        unit: '@item'
+        precision: 2
+    product_kit1_precision1:
+        unit: '@each'
+        precision: 0
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'Customer1'
+        organization: '@organization'
+        owner: '@user'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    product_kit1_item1_product_simple1:
+        product: '@product_simple1'
+    product_kit1_item1_product_simple2:
+        product: '@product_simple2'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    product_kit1_item1:
+        productUnit: '@item'
+        __calls:
+            - setDefaultLabel: ['product_kit1_item1']
+            - addKitItemProduct: ['@product_kit1_item1_product_simple1']
+            - addKitItemProduct: ['@product_kit1_item1_product_simple2']
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product_simple1:
+        type: 'simple'
+        sku: 'product_simple1'
+        primaryUnitPrecision: '@product_simple1_precision1'
+        unitPrecisions: ['@product_simple1_precision1', '@product_simple1_precision2']
+        attributeFamily: '@default_product_family'
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        organization: '@organization'
+        owner: '@business_unit'
+        __calls:
+            - setDefaultName: ['ProductSimple1']
+    product_simple2:
+        type: 'simple'
+        sku: 'product_simple2'
+        primaryUnitPrecision: '@product_simple2_precision1'
+        unitPrecisions: ['@product_simple2_precision1']
+        attributeFamily: '@default_product_family'
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        organization: '@organization'
+        owner: '@business_unit'
+        __calls:
+            - setDefaultName: ['ProductSimple2']
+    product_kit1:
+        type: 'kit'
+        sku: 'product_kit1'
+        primaryUnitPrecision: '@product_kit1_precision1'
+        unitPrecisions: ['@product_kit1_precision1']
+        attributeFamily: '@default_product_family'
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        organization: '@organization'
+        owner: '@business_unit'
+        __calls:
+            - setDefaultName: ['ProductKit1']
+            - addKitItem: ['@product_kit1_item1']
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceList:
+    combined_price_list1:
+        name: 'combined_price_list1'
+        enabled: true
+        pricesCalculated: true
+        __calls:
+            -   setCurrencies: [ [ 'USD' ] ]
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+    combined_product_price_product_kit1:
+        product: '@product_kit1'
+        productSku: 'product_kit1'
+        priceList: '@combined_price_list1'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: 0.1234
+    combined_product_price_product_simple{1..2}:
+        priceList: '@combined_price_list1'
+        product: '@product_simple<current()>'
+        productSku: 'product_simple<current()>'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: '<(1.2345 * $current)>'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    combined_product_price_list1_to_website:
+        pricelist: '@combined_price_list1'
+        website: '@website'

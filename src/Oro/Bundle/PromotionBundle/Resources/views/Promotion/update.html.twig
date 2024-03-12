@@ -50,6 +50,7 @@
 {% block content_data %}
     {% set id = 'promotion-edit' %}
 
+    {% if form.rule.expression is defined%}
     {% set advancedConditions %}
         {% set collapseId = 'collapse-'|uniqid %}
         <div class="control-group">
@@ -79,6 +80,7 @@
             </div>
         </div>
     {% endset %}
+    {% endif %}
 
     {% set dataBlocks = [
         {
@@ -86,8 +88,9 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    form_row(form.owner),
+                    form.owner is defined ? form_row(form.owner) : '',
                     form_row(form.rule.name),
+                    form_row(form.labels),
                     form_row(form.rule.sortOrder),
                     form_row(form.rule.enabled, {'label': 'oro.promotion.rule.enabled.label'}),
                     form_row(form.rule.stopProcessing),
@@ -112,17 +115,23 @@
                     form_row(form.schedules)
                 ]
             }]
-        },
-        {
-            'title': 'oro.promotion.blocks.conditions'|trans,
-            'subblocks': [{
-                'title': '',
-                'data': [
-                    form_row(form.scopes),
-                    advancedConditions
-                ]
-            }]
-        },
+        }
+    ] %}
+    {% if form.scopes is defined and advancedConditions is defined %}
+        {% set dataBlocks = dataBlocks|merge([
+            {
+                'title': 'oro.promotion.blocks.conditions'|trans,
+                'subblocks': [{
+                    'title': '',
+                    'data': [
+                        form_row(form.scopes),
+                        advancedConditions
+                    ]
+                }]
+            }
+        ]) %}
+    {% endif %}
+    {% set dataBlocks = dataBlocks|merge([
         {
             'title': 'oro.promotion.blocks.matching_items'|trans,
             'subblocks': [{
@@ -132,19 +141,9 @@
                 ]
             }]
         }
-    ] %}
+    ]) %}
 
     {% set dataBlocks = dataBlocks|merge(oro_form_additional_data(form, 'Additional'|trans)) %}
-
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'oro.promotion.blocks.store_frontend'|trans,
-        'subblocks': [{
-            'title': '',
-            'data': [
-                form_row(form.labels)
-            ]
-        }]
-    }]) %}
 
     {% set data = {
         'formErrors': form_errors(form),

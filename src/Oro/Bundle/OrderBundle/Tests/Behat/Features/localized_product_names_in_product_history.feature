@@ -25,8 +25,7 @@ Feature: Localized product names in Product History
       | Product              |
       | Product1 Item #: AA1 |
       | Product2 Item #: AA2 |
-    When I click "Localization Switcher"
-    And I select "Zulu" localization
+    When I select "Zulu" localization
     Then I should see following "OrderLineItemsGrid" grid:
       | Product                   |
       | Product1 Zulu Item #: AA1 |

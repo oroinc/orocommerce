@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
@@ -15,8 +14,10 @@ use Oro\Bundle\ProductBundle\Search\ProductIndexDataProviderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
+use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 /**
  * Add product related data to search index
@@ -26,25 +27,20 @@ class WebsiteSearchProductIndexerListener implements WebsiteSearchProductIndexer
 {
     use ContextTrait;
 
-    private WebsiteContextManager $websiteContextManager;
-    private AbstractWebsiteLocalizationProvider $websiteLocalizationProvider;
-    private ManagerRegistry $doctrine;
-    private AttachmentManager $attachmentManager;
-    private AttributeManager $attributeManager;
-    private ProductIndexDataProviderInterface $dataProvider;
+    private int $batchSize = 100;
 
     public function __construct(
-        AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
-        WebsiteContextManager $websiteContextManager,
-        ManagerRegistry $doctrine,
-        AttributeManager $attributeManager,
-        ProductIndexDataProviderInterface $dataProvider
+        private AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
+        private WebsiteContextManager $websiteContextManager,
+        private ManagerRegistry $doctrine,
+        private AttributeManager $attributeManager,
+        private ProductIndexDataProviderInterface $dataProvider
     ) {
-        $this->websiteLocalizationProvider = $websiteLocalizationProvider;
-        $this->websiteContextManager = $websiteContextManager;
-        $this->doctrine = $doctrine;
-        $this->attributeManager = $attributeManager;
-        $this->dataProvider = $dataProvider;
+    }
+
+    public function setBatchSize(int $batchSize): void
+    {
+        $this->batchSize = $batchSize;
     }
 
     /**
@@ -79,23 +75,17 @@ class WebsiteSearchProductIndexerListener implements WebsiteSearchProductIndexer
         $primaryUnits = $this->getProductUnitRepository()->getPrimaryProductsUnits($productIds);
         $attributes = $this->attributeManager
             ->getActiveAttributesByClassForOrganization($event->getEntityClass(), $website->getOrganization());
-        $attributeFamilies = $this->getAttributeFamilyRepository()
-            ->getFamilyIdsForAttributesByOrganization($attributes, $website->getOrganization());
+        $attributeFamilies = $this->getAttributeFamilies($attributes, $website);
 
         $countVariantLinks = 0;
         $batchSize = 2000;
 
         foreach ($products as $product) {
             $countVariantLinks += $product->getVariantLinks()->count();
-            $productId = $product->getId();
 
-            foreach ($attributes as $attribute) {
-                if (!$this->isAllowedToIndex($attribute, $product, $attributeFamilies)) {
-                    continue;
-                }
-
-                $data = $this->dataProvider->getIndexData($product, $attribute, $localizations);
-                $this->processIndexData($event, $productId, $data);
+            $this->processProductAttributes($attributes, $event, $product, $attributeFamilies, $localizations);
+            if ($product->isKit()) {
+                $this->processKitItemLabels($event, $product, $localizations);
             }
 
             $event->addField($product->getId(), 'sku_uppercase', mb_strtoupper($product->getSku()));
@@ -142,6 +132,31 @@ class WebsiteSearchProductIndexerListener implements WebsiteSearchProductIndexer
         }
     }
 
+    private function processProductAttributes(
+        array $attributes,
+        IndexEntityEvent $event,
+        Product $product,
+        array $attributeFamilies,
+        array $localizations
+    ): void {
+        foreach ($attributes as $attribute) {
+            if ($this->isAllowedToIndex($attribute, $product, $attributeFamilies)) {
+                $data = $this->dataProvider->getIndexData($product, $attribute, $localizations);
+                $this->processIndexData($event, $product->getId(), $data);
+            }
+
+            if ($product->isKit() && $this->attributeManager->isSearchable($attribute)) {
+                $this->processKitItemProductsByAttribute(
+                    $event,
+                    $product,
+                    $attribute,
+                    $attributeFamilies,
+                    $localizations
+                );
+            }
+        }
+    }
+
     private function getWebsite(IndexEntityEvent $event): ?Website
     {
         $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
@@ -173,6 +188,58 @@ class WebsiteSearchProductIndexerListener implements WebsiteSearchProductIndexer
                 );
             } else {
                 $event->addField($productId, $content->getFieldName(), $value, $content->isSearchable());
+            }
+        }
+    }
+
+    /**
+     * Add KitItemProduct searchable attributes to all_text index
+     */
+    private function processKitItemProductsByAttribute(
+        IndexEntityEvent $event,
+        Product $product,
+        FieldConfigModel $attribute,
+        array $attributeFamilies,
+        array $localizations
+    ): void {
+        foreach ($product->getKitItems() as $kitItem) {
+            foreach ($kitItem->getKitItemProducts() as $kitItemProduct) {
+                if (!$this->isAllowedToIndex($attribute, $kitItemProduct->getProduct(), $attributeFamilies)) {
+                    continue;
+                }
+
+                $data = $this->dataProvider->getIndexData($kitItemProduct->getProduct(), $attribute, $localizations);
+                foreach ($data as $key => $model) {
+                    // Clean not searchable attribute model data
+                    if (!$model->isSearchable()) {
+                        $data->offsetUnset($key);
+                    }
+                }
+
+                $this->processIndexData($event, $product->getId(), $data);
+            }
+        }
+    }
+
+    /**
+     * Add KitItem label to all_text index
+     */
+    private function processKitItemLabels(IndexEntityEvent $event, Product $product, array $localizations): void
+    {
+        foreach ($product->getKitItems() as $kitItem) {
+            foreach ($localizations as $localization) {
+                $label = $kitItem->getLabel($localization);
+                if (!$label) {
+                    continue;
+                }
+
+                $event->addPlaceholderField(
+                    $product->getId(),
+                    IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                    $this->cleanUpStrings((string)$label),
+                    [LocalizationIdPlaceholder::NAME => $localization->getId()],
+                    true
+                );
             }
         }
     }
@@ -220,5 +287,29 @@ class WebsiteSearchProductIndexerListener implements WebsiteSearchProductIndexer
     private function getAttributeFamilyRepository(): AttributeFamilyRepository
     {
         return $this->doctrine->getRepository(AttributeFamily::class);
+    }
+
+    private function getAttributeFamilies(array $attributes, Website $website): array
+    {
+        $organization = $website->getOrganization();
+        $attributeFamilyRepo = $this->getAttributeFamilyRepository();
+
+        if (count($attributes) <= $this->batchSize) {
+            $attributeFamilies = $attributeFamilyRepo
+                ->getFamilyIdsForAttributesByOrganization($attributes, $organization);
+        } else {
+            $attributeFamilies = array_reduce(
+                array_chunk($attributes, $this->batchSize),
+                function (array $accum, array $currentAttrChunk) use ($organization, $attributeFamilyRepo): array {
+                    $accum += $attributeFamilyRepo
+                        ->getFamilyIdsForAttributesByOrganization($currentAttrChunk, $organization);
+
+                    return $accum;
+                },
+                []
+            );
+        }
+
+        return $attributeFamilies;
     }
 }

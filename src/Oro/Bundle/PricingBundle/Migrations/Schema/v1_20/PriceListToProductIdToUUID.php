@@ -2,26 +2,25 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_20;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Migrate ID from integer to UUID to prevent reaching max integer value.
  */
-class PriceListToProductIdToUUID implements Migration, ConnectionAwareInterface, ContainerAwareInterface
+class PriceListToProductIdToUUID implements Migration, ConnectionAwareInterface
 {
-    use ContainerAwareTrait;
+    use ConnectionAwareTrait;
 
-    private Connection $connection;
-
+    /**
+     * {@inheritDoc}
+     */
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_price_list_to_product');
@@ -53,10 +52,5 @@ class PriceListToProductIdToUUID implements Migration, ConnectionAwareInterface,
             );
             $table->setPrimaryKey(['id']);
         }
-    }
-
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
     }
 }

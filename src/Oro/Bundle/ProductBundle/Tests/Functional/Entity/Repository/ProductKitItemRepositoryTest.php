@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -9,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductKitItemRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\ReflectionUtil;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -144,5 +146,27 @@ class ProductKitItemRepositoryTest extends WebTestCase
             'in_stock',
             'in_stock',
         ], $data[$productKit->getId()][0]['status']);
+    }
+
+    public function testGetProductKitItemByIdAndOrganization(): void
+    {
+        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_2);
+        $kitItem = $productKit->getKitItems()->first();
+
+        $result = $this->repository->getProductKitItemByIdAndOrganization(
+            $kitItem->getId(),
+            $productKit->getOrganization()->getId()
+        );
+
+        self::assertEquals($kitItem, $result);
+
+        $organization = new Organization();
+        ReflectionUtil::setId($organization, 100);
+        $result = $this->repository->getProductKitItemByIdAndOrganization(
+            $kitItem->getId(),
+            $organization->getId()
+        );
+
+        self::assertNull($result);
     }
 }

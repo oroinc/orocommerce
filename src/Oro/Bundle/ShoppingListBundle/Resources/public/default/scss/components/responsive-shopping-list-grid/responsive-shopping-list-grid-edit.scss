@@ -118,7 +118,7 @@
     }
 }
 
-@include breakpoint('desktop') {
+@include breakpoint('desktop-small') {
     .responsive-shopping-list-grid-edit {
         .sub-row {
             .grid-body-cell-quantity {
@@ -133,8 +133,7 @@
         .grid-row {
             .grid-body-cell {
                 &-price,
-                &-subtotal,
-                &.action-cell {
+                &-subtotal {
                     padding-top: $responsive-shopping-body-cell-offset-y-tablet;
                 }
             }

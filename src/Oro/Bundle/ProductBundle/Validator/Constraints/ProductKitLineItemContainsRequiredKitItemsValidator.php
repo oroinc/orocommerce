@@ -7,7 +7,6 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -26,7 +25,7 @@ class ProductKitLineItemContainsRequiredKitItemsValidator extends ConstraintVali
     }
 
     /**
-     * @param ProductLineItemInterface&ProductKitItemLineItemsAwareInterface|null $value
+     * @param ProductKitItemLineItemsAwareInterface|null $value
      * @param ProductKitLineItemContainsRequiredKitItems $constraint
      */
     public function validate($value, Constraint $constraint): void
@@ -39,14 +38,11 @@ class ProductKitLineItemContainsRequiredKitItemsValidator extends ConstraintVali
             return;
         }
 
-        if (!$value instanceof ProductLineItemInterface || !$value instanceof ProductKitItemLineItemsAwareInterface) {
-            throw new UnexpectedValueException(
-                $value,
-                ProductLineItemInterface::class . '&' . ProductKitItemLineItemsAwareInterface::class
-            );
+        if (!$value instanceof ProductKitItemLineItemsAwareInterface) {
+            throw new UnexpectedValueException($value, ProductKitItemLineItemsAwareInterface::class);
         }
 
-        $requiredKitItems = $this->getPresentRequiredKitItems($value->getKitItemLineItems());
+        $requiredKitItemLineItems = $this->getPresentRequiredKitItems($value->getKitItemLineItems());
 
         $localization = $this->localizationHelper->getCurrentLocalization();
         foreach ($value->getProduct()->getKitItems() as $kitItem) {
@@ -54,10 +50,10 @@ class ProductKitLineItemContainsRequiredKitItemsValidator extends ConstraintVali
                 continue;
             }
 
-            if (!isset($requiredKitItems[spl_object_hash($kitItem)])) {
+            if (!isset($requiredKitItemLineItems[spl_object_hash($kitItem)])) {
                 $kitItemLabel = (string)$this->localizationHelper
                     ->getLocalizedValue($kitItem->getLabels(), $localization);
-                $productSku = $value->getProductSku() ?? $value->getProduct()->getSku();
+                $productSku = $value->getProduct()->getSku();
 
                 $this->context->buildViolation(
                     $constraint->message,

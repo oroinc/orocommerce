@@ -1,7 +1,13 @@
 layout:
     actions:
+        - '@setFormTheme':
+            themes: 'form.html.twig'
+
+        - '@setFormTheme':
+              themes: '../../request_product_kit_item_line_items.form.html.twig'
+
         - '@setBlockTheme':
-            themes: '@OroRFP/layouts/default/imports/oro_rfp_frontend_request_edit/layout.html.twig'
+            themes: 'layout.html.twig'
 
         - '@addTree':
             items:
@@ -45,7 +51,6 @@ layout:
                     options:
                         action: submit
                         text: oro.frontend.rfp.request.create_form.send.label
-                        style: auto
             tree:
                 __root:
                     __rfp_form_container:
@@ -56,15 +61,20 @@ layout:
                         __rfp_form_lineitems_container:
                             __rfp_form_lineitems: ~
                         __rfp_form_actions:
-                            __rfp_form_actions_create: ~
                             __rfp_form_actions_back: ~
+                            __rfp_form_actions_create: ~
                         __rfp_form_end: ~
         - '@appendOption':
             id: rfp_form_lineitems_container
             optionName: vars.tierPrices
-            optionValue: '=data["oro_rfp_product_prices"].getPrices(data["entity"])'
+            optionValue: '=data["oro_rfp_request_product_prices"].getTierPrices(data["entity"])'
 
         - '@add':
             id: __rfp_form_lineitems_view_js
+            parentId: head
+            blockType: block
+
+        - '@add':
+            id: __rfp_form_kititemlineitem_view_js
             parentId: head
             blockType: block

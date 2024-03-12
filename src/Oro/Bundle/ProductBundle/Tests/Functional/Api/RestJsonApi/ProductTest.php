@@ -167,7 +167,7 @@ class ProductTest extends RestJsonApiTestCase
             'id'   => 'page-template',
             'attributes' => [
                 'fallback'    => null,
-                'scalarValue' => 'short',
+                'scalarValue' => 'wide',
                 'arrayValue'  => null
             ]
         ];
@@ -180,7 +180,7 @@ class ProductTest extends RestJsonApiTestCase
         $pageTemplate = $product->getPageTemplate();
         $this->assertInstanceOf(EntityFieldFallbackValue::class, $pageTemplate);
         $this->assertArrayHasKey(ProductType::PAGE_TEMPLATE_ROUTE_NAME, $pageTemplate->getOwnValue());
-        $this->assertEquals('short', $pageTemplate->getArrayValue()[ProductType::PAGE_TEMPLATE_ROUTE_NAME]);
+        $this->assertEquals('wide', $pageTemplate->getArrayValue()[ProductType::PAGE_TEMPLATE_ROUTE_NAME]);
         $this->assertNull($pageTemplate->getScalarValue());
         $this->assertNull($pageTemplate->getFallback());
     }

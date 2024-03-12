@@ -436,11 +436,11 @@ class UniqueProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')
-            ->with(\Oro\Bundle\ProductBundle\Entity\ProductVariantLink::class)
+            ->with(ProductVariantLink::class)
             ->willReturn($repo);
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with(\Oro\Bundle\ProductBundle\Entity\ProductVariantLink::class)
+            ->with(ProductVariantLink::class)
             ->willReturn($em);
     }
 

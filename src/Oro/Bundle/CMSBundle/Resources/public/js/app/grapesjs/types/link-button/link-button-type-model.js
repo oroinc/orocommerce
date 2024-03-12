@@ -74,7 +74,7 @@ export default (BaseTypeModel, {editor}) => {
         value: {
             ...LinkButtonTypeModel.prototype.defaults,
             tagName: 'a',
-            classes: ['btn', 'btn--info'],
+            classes: ['btn', 'btn--outlined'],
             style: {},
             components: [{
                 type: 'textnode',

@@ -2,33 +2,27 @@
 
 .product-action-area {
     display: flex;
-    gap: $offset-x-m;
+    gap: spacing('sm');
 
     &:empty {
         display: none;
     }
 
     .product-action {
+        min-width: 100%;
+
         &:empty {
             display: none;
         }
     }
 
-    .icon-selector {
-        @include fa-icon($product-action-toggle-icon-mobile, after);
-    }
-
     &.in-sticky {
         display: block;
+        z-index: $datagrid-massaction-sticky-mode-z-index;
 
         .product-action {
             display: block;
             background-color: $datagrid-massaction-sticky-mode-background-color;
-        }
-
-        .datagrid-massaction {
-            max-width: $product-action-in-sticky-max-width;
-            margin: $product-action-in-sticky-margin;
         }
     }
 }

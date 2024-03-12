@@ -77,7 +77,7 @@
     }
 }
 
-@include breakpoint('desktop') {
+@include breakpoint('desktop-small') {
     .responsive-shopping-list-grid-desktop-alignment {
         .sub-row-last,
         .filtered-out {

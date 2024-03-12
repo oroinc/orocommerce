@@ -29,7 +29,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
     {
         $now = new \DateTime('now');
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['qid', 'QID-123456'],
             ['guestAccessId', UUIDGenerator::v4(), false],
             ['owner', new User()],

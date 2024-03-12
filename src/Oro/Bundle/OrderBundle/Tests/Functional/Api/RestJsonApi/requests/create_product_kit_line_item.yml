@@ -2,7 +2,7 @@ data:
     type: orderlineitems
     attributes:
         quantity: 6
-        value: 200
+        value: 555
         currency: 'USD'
         checksum: 'product_kit_1_line_item.1.checksum'
     relationships:
@@ -30,7 +30,7 @@ included:
         attributes:
             productSku: product-1
             productName: product-1.names.default
-            quantity: 1
+            quantity: 2
             sortOrder: 1
             productUnitCode: milliliter
             value: '10.5900'

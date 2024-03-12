@@ -38,6 +38,7 @@ Feature: Products Grid Frontend
   Scenario: Check Filter Applies After Different Actions
     Given number of records in "Product Frontend Grid" should be 18
     When I select 10 from per page list dropdown in "Product Frontend Grid"
+    And I scroll to top
     Then I should not see "PSKU19"
     And number of records in "Product Frontend Grid" should be 18
     When I go to next page in "Product Frontend Grid"
@@ -48,6 +49,7 @@ Feature: Products Grid Frontend
     And number of records in "Product Frontend Grid" should be 18
     When I hide filter "Name" in "Product Frontend Grid" frontend grid
     And I select 25 from per page list dropdown in "Product Frontend Grid"
+    And I scroll to top
     Then I should see "PSKU19"
     And number of records in "Product Frontend Grid" should be 19
 
@@ -71,6 +73,7 @@ Feature: Products Grid Frontend
 
   Scenario: Check Sorter Applies After Different Actions
     When I select 10 from per page list dropdown in "Product Frontend Grid"
+    And I scroll to top
     Then PSKU9 must be first record in "Product Frontend Grid"
     And PSKU8 must be second record in "Product Frontend Grid"
     When I go to next page in "Product Frontend Grid"

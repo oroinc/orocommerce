@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroCheckoutBundle_Entity_CheckoutSource;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\EntityExtendBundle\EntityReflectionClass;
@@ -13,30 +14,22 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 /**
  * Checkout Source entity
  *
- * @ORM\Entity
- * @ORM\Table(name="oro_checkout_source")
- * @Config
  * @mixin OroCheckoutBundle_Entity_CheckoutSource
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_checkout_source')]
+#[Config]
 class CheckoutSource implements ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer", name="id")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="deleted", type="boolean", options={"default"=false})
-     */
-    protected $deleted = false;
+    #[ORM\Column(name: 'deleted', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $deleted = false;
 
     public function getId(): ?int
     {

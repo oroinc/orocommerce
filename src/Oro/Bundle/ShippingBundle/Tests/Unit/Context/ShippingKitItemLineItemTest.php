@@ -8,16 +8,20 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Bundle\ShippingBundle\Model\Weight;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ShippingKitItemLineItemTest extends TestCase
 {
-    private const QUANTITY = 15;
-
     private ProductUnit|MockObject $productUnit;
 
     private ProductHolderInterface|MockObject $productHolder;
+
+    private Weight|MockObject $weight;
+
+    private Dimensions|MockObject $dimensions;
 
     protected function setUp(): void
     {
@@ -26,6 +30,9 @@ class ShippingKitItemLineItemTest extends TestCase
 
         $this->productHolder = $this->createMock(ProductHolderInterface::class);
         $this->productHolder->method('getEntityIdentifier')->willReturn('entityId');
+
+        $this->dimensions = $this->createMock(Dimensions::class);
+        $this->weight = $this->createMock(Weight::class);
     }
 
     public function testOnlyRequiredParameters(): void
@@ -67,6 +74,8 @@ class ShippingKitItemLineItemTest extends TestCase
             ->setProductSku($anotherSku)
             ->setPrice($price)
             ->setKitItem($kitItem)
+            ->setDimensions($this->dimensions)
+            ->setWeight($this->weight)
             ->setSortOrder($sortOrder);
 
         self::assertSame($this->productUnit, $shippingKitItemLineItem->getProductUnit());
@@ -82,5 +91,7 @@ class ShippingKitItemLineItemTest extends TestCase
         self::assertSame($price, $shippingKitItemLineItem->getPrice());
         self::assertSame($kitItem, $shippingKitItemLineItem->getKitItem());
         self::assertEquals($sortOrder, $shippingKitItemLineItem->getSortOrder());
+        self::assertSame($this->dimensions, $shippingKitItemLineItem->getDimensions());
+        self::assertSame($this->weight, $shippingKitItemLineItem->getWeight());
     }
 }

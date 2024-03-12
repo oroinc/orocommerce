@@ -58,9 +58,12 @@ oro:
             choose_list: Choose list
             view: view shopping list
             add_to_shopping_list: Add to {{ shoppingList }}
+            add_to_shopping_list_short: Add to
             update_shopping_list: Update {{ shoppingList }}
+            update_shopping_list_short: Update
             add_to_current_shopping_list: Add to current Shopping List
             remove_from_shopping_list: Remove From {{ shoppingList }}
+            remove_from_shopping_list_short: Remove From
             add_to_new_shopping_list: Create New Shopping List
             add_to_new_shopping_list.aria_label: Create New Shopping List. Opens a popup
             add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"
@@ -79,6 +82,7 @@ oro:
                 label: Edit
             delete_product_kit_line_item:
                 label: Delete
+            in_shopping_list: "In Shopping List"
 
         mass_actions:
             delete_line_items:
@@ -280,23 +284,21 @@ oro:
                 is_default.label: 'Default'
                 assigned_to.label: 'Assigned To'
 
-                entity.label: '{0} No Shopping Lists|{1} <strong>%count%</strong> Shopping List|]1,Inf[ <strong>%count%</strong> Shopping Lists'
+                entity.label: '{0} No Shopping Lists|{1} Shopping List|]1,Inf[ Shopping Lists'
                 items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
                 total.label: 'Total:'
                 subtotal.label: 'Subtotal:'
 
                 item.label: 'Item #:'
-                qty.label: 'QTY #'
+                qty.label: 'QTY'
 
-                add_item_note:
-                    label: 'Add a Note to This Item'
                 not_have_available: 'You do not have available Shopping Lists'
                 empty: 'Your Shopping List Is Empty'
                 empty_single: 'Your Shopping List is empty'
 
                 view_details.label: 'View Details'
                 view_details.title: 'Click to see all items, discounts, taxes and other applicable fees'
-                view_list.label: 'View List'
+                view_list.label: 'Open List'
                 create_new_shopping_list.label: 'Create New List'
                 create_new_shopping_list.aria_label: 'Create New List. Opens a popup'
                 choose_assign_user.label: 'Choose a User to assign "%label%"'
@@ -339,8 +341,8 @@ oro:
                 remove_source.label: Delete this shopping list after submitting order
             matrix_grid_order:
                 qty: 'QTY'
-                total_qty: 'Total QTY'
-                total: 'Total'
+                total_qty: 'Total QTY:'
+                total: 'Total:'
                 subtotal: 'Subtotal'
                 not_available: 'N/A'
                 close: 'Close'

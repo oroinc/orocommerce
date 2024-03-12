@@ -80,7 +80,7 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
 
     public function onFlush(OnFlushEventArgs $event)
     {
-        $unitOfWork = $event->getEntityManager()->getUnitOfWork();
+        $unitOfWork = $event->getObjectManager()->getUnitOfWork();
         $productIds = [];
         $websiteIds = [];
 

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -41,7 +42,7 @@ class FormViewListener
         }
 
         /** @var CategoryRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository('OroCatalogBundle:Category');
+        $repository = $this->doctrineHelper->getEntityRepository(Category::class);
         $category = $repository->findOneByProduct($product);
 
         if (!$category) {

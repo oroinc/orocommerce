@@ -10,7 +10,7 @@ class ProductFamilySearchHandlerTest extends WebTestCase
 {
     protected function setUp(): void
     {
-        $this->initClient();
+        $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([LoadProductFamilyData::class]);
     }
 

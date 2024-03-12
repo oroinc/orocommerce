@@ -47,6 +47,17 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
 
     /**
      * If 'Exclude Direct URLs Of Landing Pages' is checked and
+     * 'Include Landing Pages Not Used In Web Catalog' is checked
+     * indicates that the sitemap for landing pages will only contain pages that not belong to the web catalog.
+     */
+    public function isRestrictedToPagesNotBelongToWebCatalogOnly(WebsiteInterface $website = null): bool
+    {
+        return $this->isExcludedPagesBelongToWebCatalog($website)
+            && $this->isExcludedPagesBelongToWebCatalog($website);
+    }
+
+    /**
+     * If 'Exclude Direct URLs Of Landing Pages' is checked and
      * 'Include Landing Pages Not Used In Web Catalog' is unchecked
      * A sitemap for landing pages will not be generated.
      */
@@ -57,22 +68,17 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
     }
 
     /**
-     * Restriction is active when webcatalog feature is disabled
-     * and both 'Exclude Direct URLs Of Landing Pages' and 'Include Landing Pages Not Used In Web Catalog'
-     * options are checked (the pages do not belong to the web directory)
-     * or unchecked (the pages belong to the web directory).
+     * Restriction is inactive when webcatalog feature is enabled
+     * or 'Exclude Direct URLs Of Landing Pages' is checked and 'Include Landing Pages Not Used In Web Catalog'
+     * is unchecked.
      */
     public function isRestrictionActive(WebsiteInterface $website = null): bool
     {
-        if ($this->isFeaturesEnabled($website)) {
+        if ($this->isFeaturesEnabled($website) || $this->isUrlItemsExcluded($website)) {
             return false;
         }
 
-        $excludedPagesBelongToWebCatalog = $this->isExcludedPagesBelongToWebCatalog($website);
-        $includedPagesNotBelongToWebCatalog = $this->isIncludedPagesNotBelongToWebCatalog($website);
-
-        return ($excludedPagesBelongToWebCatalog && $includedPagesNotBelongToWebCatalog) ||
-            (!$excludedPagesBelongToWebCatalog && !$includedPagesNotBelongToWebCatalog);
+        return true;
     }
 
     /**

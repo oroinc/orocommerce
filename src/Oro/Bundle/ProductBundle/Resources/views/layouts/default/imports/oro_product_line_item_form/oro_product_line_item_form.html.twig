@@ -30,10 +30,11 @@
         }) %}
 
         <div {{ block('block_attributes') }}>
-            <div class="form-row {{ class_prefix }}">
+            <div class="form-row {{ class_prefix }}" data-page-component-view="orofrontend/default/js/app/views/increment-input/increment-input-view">
                 {{ form_widget(form.quantity, {attr: {
                     'class': 'product-item__qty-input',
-                    'aria-label': 'oro.product.quantity.aria_label'|trans
+                    'aria-label': 'oro.product.quantity.aria_label'|trans,
+                    'data-floating-error': ''
                 }}) }}
             </div>
             <div class="form-row {{ class_prefix }}">
@@ -72,6 +73,9 @@
                             {% endif %}
                         {% endif %}
                     {% else %}
+                        {% set unitAttr = layout_attr_defaults(unitAttr, {
+                            '~class': ' invisible'
+                        }) %}
                         {{ form_widget(form.unit, {attr: unitAttr}) }}
                     {% endif %}
                 {% else %}
@@ -145,7 +149,7 @@
         '~options': {
             'truncateLength': 25,
             'appendToBody': true,
-            'decoreClass': 'btn--info'
+            'decoreClass': ''
         }
     }) %}
     {{ block_widget(block, {attr: attr}) }}
@@ -155,7 +159,7 @@
     {% set isRenderable = (
         (
             is_configurable_product_type(product.type) and
-            matrixFormType == 'none'
+            matrixFormType|default('') == 'none'
         ) or
        is_kit_product_type(product.type)
     ) %}
@@ -163,7 +167,7 @@
     {% if isRenderable %}
         {% set path = product.view_link|default(path('oro_product_frontend_product_view', {id: product.id})) %}
         {% set attr = layout_attr_defaults(attr, {
-            '~class': " btn btn--info btn--block"
+            '~class': " btn btn--outlined btn--block"
         }) %}
 
         {{ parent_block_widget(block) }}

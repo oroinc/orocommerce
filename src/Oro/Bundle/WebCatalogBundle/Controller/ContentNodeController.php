@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\ContentNodeFormTemplateDataProvider;
@@ -28,11 +29,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ContentNodeController extends AbstractController
 {
-    /**
-     * @Route("/root/{id}", name="oro_content_node_update_root", requirements={"id"="\d+"})
-     * @AclAncestor("oro_web_catalog_update")
-     * @Template("@OroWebCatalog/ContentNode/update.html.twig")
-     */
+    #[Route(path: '/root/{id}', name: 'oro_content_node_update_root', requirements: ['id' => '\d+'])]
+    #[Template('@OroWebCatalog/ContentNode/update.html.twig')]
+    #[AclAncestor('oro_web_catalog_update')]
     public function createRootAction(WebCatalog $webCatalog): array|RedirectResponse
     {
         $rootNode = $this->getTreeHandler()->getTreeRootByWebCatalog($webCatalog);
@@ -46,10 +45,8 @@ class ContentNodeController extends AbstractController
         return $this->updateTreeNode($rootNode);
     }
 
-    /**
-     * @Route("/create/parent/{id}", name="oro_content_node_create", requirements={"id"="\d+"})
-     * @Template("@OroWebCatalog/ContentNode/update.html.twig")
-     */
+    #[Route(path: '/create/parent/{id}', name: 'oro_content_node_create', requirements: ['id' => '\d+'])]
+    #[Template('@OroWebCatalog/ContentNode/update.html.twig')]
     public function createAction(ContentNode $parentNode): array|RedirectResponse
     {
         if (!$this->isGranted('oro_web_catalog_update', $parentNode->getWebCatalog())) {
@@ -63,10 +60,8 @@ class ContentNodeController extends AbstractController
         return $this->updateTreeNode($contentNode);
     }
 
-    /**
-     * @Route("/update/{id}", name="oro_content_node_update", requirements={"id"="\d+"})
-     * @Template("@OroWebCatalog/ContentNode/update.html.twig")
-     */
+    #[Route(path: '/update/{id}', name: 'oro_content_node_update', requirements: ['id' => '\d+'])]
+    #[Template('@OroWebCatalog/ContentNode/update.html.twig')]
     public function updateAction(ContentNode $contentNode): array|RedirectResponse
     {
         if (!$this->isGranted('oro_web_catalog_update', $contentNode->getWebCatalog())) {
@@ -76,11 +71,9 @@ class ContentNodeController extends AbstractController
         return $this->updateTreeNode($contentNode);
     }
 
-    /**
-     * @Route("/move", name="oro_content_node_move", methods={"PUT"})
-     * @CsrfProtection()
-     * @AclAncestor("oro_web_catalog_update")
-     */
+    #[Route(path: '/move', name: 'oro_content_node_move', methods: ['PUT'])]
+    #[AclAncestor('oro_web_catalog_update')]
+    #[CsrfProtection()]
     public function moveAction(Request $request): JsonResponse
     {
         $nodeId = (int)$request->get('id');
@@ -100,14 +93,12 @@ class ContentNodeController extends AbstractController
         return new JsonResponse($responseData);
     }
 
-    /**
-     * @Route(
-     *     "/get-possible-urls/{id}/{newParentId}",
-     *     name="oro_content_node_get_possible_urls",
-     *     requirements={"id"="\d+", "newParentId"="\d+"}
-     * )
-     * @ParamConverter("newParentContentNode", options={"id" = "newParentId"})
-     */
+    #[Route(
+        path: '/get-possible-urls/{id}/{newParentId}',
+        name: 'oro_content_node_get_possible_urls',
+        requirements: ['id' => '\d+', 'newParentId' => '\d+']
+    )]
+    #[ParamConverter('newParentContentNode', options: ['id' => 'newParentId'])]
     public function getPossibleUrlsAction(ContentNode $contentNode, ContentNode $newParentContentNode): JsonResponse
     {
         if (!$this->isGranted('oro_web_catalog_update', $contentNode->getWebCatalog())
@@ -115,33 +106,27 @@ class ContentNodeController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $slugGenerator = $this->get(SlugGenerator::class);
+        $slugGenerator = $this->container->get(SlugGenerator::class);
 
         return new JsonResponse($slugGenerator->getSlugsUrlForMovedNode($newParentContentNode, $contentNode));
     }
 
-    /**
-     * @Route(
-     *     "/get-changed-urls/{id}",
-     *     name="oro_content_node_get_changed_urls",
-     *     requirements={"id"="\d+"}
-     * )
-     */
+    #[Route(path: '/get-changed-urls/{id}', name: 'oro_content_node_get_changed_urls', requirements: ['id' => '\d+'])]
     public function getChangedUrlsAction(ContentNode $node, Request $request): JsonResponse
     {
         if (!$this->isGranted('oro_web_catalog_update', $node->getWebCatalog())) {
             throw $this->createAccessDeniedException();
         }
 
-        $slugGenerator = $this->get(SlugGenerator::class);
+        $slugGenerator = $this->container->get(SlugGenerator::class);
         $oldUrls = $slugGenerator->prepareSlugUrls($node);
 
         $form = $this->createForm(ContentNodeType::class, $node);
-        $form->submit($request->request->get($form->getName()), false);
+        $form->submit($request->request->all($form->getName()), false);
 
         $newUrls = $slugGenerator->prepareSlugUrls($form->getData());
 
-        $slugUrlDiffer = $this->get(SlugUrlDiffer::class);
+        $slugUrlDiffer = $this->container->get(SlugUrlDiffer::class);
 
         $urlChanges = $slugUrlDiffer->getSlugUrlsChanges($oldUrls, $newUrls);
 
@@ -150,19 +135,20 @@ class ContentNodeController extends AbstractController
 
     protected function updateTreeNode(ContentNode $node): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $node,
             $this->createForm(ContentNodeType::class, $node),
-            $this->get(TranslatorInterface::class)->trans('oro.webcatalog.controller.contentnode.saved.message'),
+            $this->container->get(TranslatorInterface::class)
+                ->trans('oro.webcatalog.controller.contentnode.saved.message'),
             null,
-            $this->get(ContentNodeHandler::class),
-            $this->get(ContentNodeFormTemplateDataProvider::class)
+            $this->container->get(ContentNodeHandler::class),
+            $this->container->get(ContentNodeFormTemplateDataProvider::class)
         );
     }
 
     protected function getTreeHandler(): ContentNodeTreeHandler
     {
-        return $this->get(ContentNodeTreeHandler::class);
+        return $this->container->get(ContentNodeTreeHandler::class);
     }
 
     /**
@@ -177,14 +163,15 @@ class ContentNodeController extends AbstractController
             UpdateHandlerFacade::class,
             TranslatorInterface::class,
             ContentNodeHandler::class,
-            ContentNodeFormTemplateDataProvider::class
+            ContentNodeFormTemplateDataProvider::class,
+            'doctrine' => ManagerRegistry::class
         ]);
     }
 
     private function getSlugPrototypeStrings(int $nodeId): array
     {
         /** @var ContentNode $movedNode */
-        $movedNode = $this->getDoctrine()
+        $movedNode = $this->container->get('doctrine')
             ->getManagerForClass(ContentNode::class)
             ->find(ContentNode::class, $nodeId);
 

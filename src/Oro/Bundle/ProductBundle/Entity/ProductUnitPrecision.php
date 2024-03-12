@@ -2,108 +2,56 @@
 
 namespace Oro\Bundle\ProductBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitPrecisionRepository;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
- * @ORM\Table(
- *      name="oro_product_unit_precision",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(
- *              name="uidx_oro_product_unit_precision",
- *              columns={"product_id","unit_code"}
- *          )
- *      }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitPrecisionRepository")
- * @Config
- */
+* Entity that represents Product Unit Precision
+*
+*/
+#[ORM\Entity(repositoryClass: ProductUnitPrecisionRepository::class)]
+#[ORM\Table(name: 'oro_product_unit_precision')]
+#[ORM\UniqueConstraint(name: 'uidx_oro_product_unit_precision', columns: ['product_id', 'unit_code'])]
+#[Config]
 class ProductUnitPrecision implements ProductUnitHolderInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $id = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Product", inversedBy="unitPrecisions")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $product;
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'unitPrecisions')]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?Product $product = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="ProductUnit")
-     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=10,
-     *              "identity"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $unit;
+    #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
+    #[ORM\JoinColumn(name: 'unit_code', referencedColumnName: 'code', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 10, 'identity' => true]])]
+    protected ?ProductUnit $unit = null;
 
     /**
      * @var integer
-     *
-     * @ORM\Column(name="unit_precision",type="integer")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=20
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(name: 'unit_precision', type: Types::INTEGER)]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 20]])]
     protected $precision;
 
     /**
-     * @var float
-     *
-     * @ORM\Column(name="conversion_rate",type="float",nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=30
-     *          }
-     *      }
-     * )
+     * @var float|null
      */
+    #[ORM\Column(name: 'conversion_rate', type: Types::FLOAT, nullable: true)]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 30]])]
     protected $conversionRate;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="sell",type="boolean",nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=40
-     *          }
-     *      }
-     * )
-     */
-    protected $sell = true;
+    #[ORM\Column(name: 'sell', type: Types::BOOLEAN, nullable: false)]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 40]])]
+    protected ?bool $sell = true;
 
     public function __clone()
     {
@@ -167,10 +115,10 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     /**
      * Set precision
      *
-     * @param integer $precision
+     * @param int|null $precision
      * @return ProductUnitPrecision
      */
-    public function setPrecision($precision)
+    public function setPrecision(int $precision = null)
     {
         $this->precision = $precision;
 

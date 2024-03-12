@@ -20,17 +20,15 @@ use Oro\Component\Testing\ReflectionUtil;
 
 class ProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
+    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry;
 
-    /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $shardManager;
+    private ShardManager|\PHPUnit\Framework\MockObject\MockObject  $shardManager;
 
-    /** @var FlatPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject */
-    private $priceListTreeHandler;
+    private FlatPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject $priceListTreeHandler;
 
-    /** @var ProductPriceORMStorage */
-    private $storage;
+    private ProductPriceORMStorage $storage;
+
+    private FeatureChecker|FlatPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject $featureChecker;
 
     protected function setUp(): void
     {

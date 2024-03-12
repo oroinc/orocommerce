@@ -11,7 +11,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class AddRawSlugIndex implements Migration, OrderedMigrationInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -24,9 +24,7 @@ class AddRawSlugIndex implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * Get the order of this migration
-     *
-     * @return integer
+     * {@inheritDoc}
      */
     public function getOrder()
     {

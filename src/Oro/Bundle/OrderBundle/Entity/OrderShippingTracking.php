@@ -2,47 +2,32 @@
 
 namespace Oro\Bundle\OrderBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 
 /**
  * Represents shipping tracking record for an order.
- * @ORM\Entity
- * @ORM\Table("oro_order_shipping_tracking")
- * @Config
  */
+#[ORM\Entity]
+#[ORM\Table('oro_order_shipping_tracking')]
+#[Config]
 class OrderShippingTracking
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="method", type="string", length=255, nullable=true)
-     */
-    protected $method;
+    #[ORM\Column(name: 'method', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $method = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="number", type="string", length=255, nullable=true)
-     */
-    protected $number;
+    #[ORM\Column(name: 'number', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $number = null;
 
-    /**
-     * @var Order
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\Order", inversedBy="shippingTrackings")
-     * @ORM\JoinColumn(name="order_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     */
-    protected $order;
+    #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'shippingTrackings')]
+    #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Order $order = null;
 
     /**
      * @return int

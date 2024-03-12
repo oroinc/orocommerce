@@ -15,7 +15,7 @@ class CreateForeignKeysWithNewTable implements Migration, OrderedMigrationInterf
     const SHIPPING_RULE_CLASS = 'Oro\Bundle\ShippingBundle\Entity\ShippingRule';
 
     /**
-     * @return int
+     * {@inheritDoc}
      */
     public function getOrder()
     {
@@ -23,7 +23,7 @@ class CreateForeignKeysWithNewTable implements Migration, OrderedMigrationInterf
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

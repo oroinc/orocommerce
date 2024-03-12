@@ -1,7 +1,8 @@
 /* @theme: default; */
 
 .product-upcoming-label {
-    margin-bottom: $offset-y-m;
+    margin-top: spacing('md');
+    margin-bottom: spacing('md');
 
     color: $product-upcoming-label-color;
 }

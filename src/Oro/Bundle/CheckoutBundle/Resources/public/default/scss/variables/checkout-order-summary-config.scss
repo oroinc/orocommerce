@@ -1,6 +1,6 @@
 /* @theme: default; */
-$checkout-order-summary-header-margin: 0 0 $offset-y !default;
+$checkout-order-summary-header-margin: 0 0 spacing('base') !default;
 
-$checkout-order-summary-in-sticky-color: get-color('additional', 'middle') !default;
+$checkout-order-summary-in-sticky-color: get-color('neutral', 'grey2') !default;
 
 $checkout-order-summary-edit-link-font-size: $base-font-size !default;

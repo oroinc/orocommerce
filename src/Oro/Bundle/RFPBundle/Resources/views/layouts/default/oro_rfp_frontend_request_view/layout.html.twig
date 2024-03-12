@@ -114,7 +114,7 @@
             <h3 class="section-title section-title--size-m">
                 {{ 'oro.frontend.rfp.request.sections.notes.label'|trans }}
                 <span class="notes__count">({{ requestAdditionalNotes|length }})</span>
-                <button type="button" class="btn btn--plain btn--default-color" title="{{ 'Show less'|trans }}"
+                <button type="button" class="btn btn--text" title="{{ 'Show less'|trans }}"
                       data-toggle="collapse"
                       data-target="{{ '#' ~  collapseId }}"
                       aria-expanded="false"
@@ -201,10 +201,11 @@
         {% if (requestProduct.product.id is defined) %}
             {{ UI.link({
                 path: path('oro_product_frontend_product_view', {'id': requestProduct.product.id}),
-                label : requestProduct.product.names|localized_value|trim,
+                label: requestProduct.product.names|localized_value|trim,
+                class: 'no-decoration'
             }) }}
         {% else %}
-            {{ requestProduct.product }}
+            {{ requestProduct.product ?? requestProduct.productSku }}
         {% endif %}
     </h3>
 {% endblock %}

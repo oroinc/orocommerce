@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 
 /**
@@ -103,7 +104,7 @@ class ProductRepository extends AbstractVisibilityRepository
     {
         $visibility = (int)$visibility;
         $qb = $this->getEntityManager()
-            ->getRepository('OroCatalogBundle:Category')
+            ->getRepository(Category::class)
             ->createQueryBuilder('category');
 
         $qb->select([
@@ -115,7 +116,7 @@ class ProductRepository extends AbstractVisibilityRepository
         ])
             ->innerJoin('category.products', 'product')
             ->leftJoin(
-                'OroVisibilityBundle:Visibility\ProductVisibility',
+                ProductVisibility::class,
                 'pv',
                 Join::WITH,
                 'IDENTITY(pv.product) = product.id AND IDENTITY(pv.scope) = :scopeId'
@@ -136,7 +137,7 @@ class ProductRepository extends AbstractVisibilityRepository
     protected function getProductVisibilityResolvedQueryBuilder(Scope $scope, Scope $categoryScope)
     {
         $qb = $this->getEntityManager()
-            ->getRepository('OroCatalogBundle:Category')
+            ->getRepository(Category::class)
             ->createQueryBuilder('category');
 
         $configValue = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
@@ -149,13 +150,13 @@ class ProductRepository extends AbstractVisibilityRepository
         ])
         ->innerJoin('category.products', 'product')
         ->leftJoin(
-            'OroVisibilityBundle:Visibility\ProductVisibility',
+            ProductVisibility::class,
             'pv',
             'WITH',
             'IDENTITY(pv.product) = product.id AND IDENTITY(pv.scope) = :scope'
         )
         ->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
+            CategoryVisibilityResolved::class,
             'cvr',
             'WITH',
             'cvr.category = category AND cvr.scope = :cat_scope'
@@ -182,7 +183,7 @@ class ProductRepository extends AbstractVisibilityRepository
         );
 
         $qb = $this->getEntityManager()
-            ->getRepository('OroVisibilityBundle:Visibility\ProductVisibility')
+            ->getRepository(ProductVisibility::class)
             ->createQueryBuilder('pv')
             ->select(
                 'pv.id',

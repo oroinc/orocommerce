@@ -99,10 +99,16 @@
                             <div class="grid-line-items__row">
                                 <div class="grid-line-items__row-item height-as-image-mobile">
                                     <h3 class="grid-line-items__title">
-                                        {{ UI.link({
-                                            path: path('oro_product_frontend_product_view', {'id': product.id}),
-                                            label : productName
-                                        }) }}
+                                        {% set productId = product.id|default(0) %}
+                                        {% if productId and is_visible_product(productId) %}
+                                            {{ UI.link({
+                                                path: path('oro_product_frontend_product_view', {'id': productId}),
+                                                label: productName,
+                                                class: 'no-decoration'
+                                            }) }}
+                                        {% else %}
+                                            {{ productName|e }}
+                                        {% endif %}
                                     </h3>
                                 </div>
                                 <div class="grid-line-items__row-entry show-in-mobile">

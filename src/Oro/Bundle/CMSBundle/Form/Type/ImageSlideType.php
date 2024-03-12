@@ -21,6 +21,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ImageSlideType extends AbstractType
 {
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
@@ -30,32 +33,6 @@ class ImageSlideType extends AbstractType
                 'label' => 'oro.cms.imageslide.slide_order.label',
                 'tooltip' => 'oro.cms.imageslide.form.tooltip.slide_order.label',
                 'required' => true,
-            ]
-        )->add(
-            'mainImage',
-            ImageType::class,
-            [
-                'label' => 'oro.cms.imageslide.main_image.label',
-                'tooltip' => 'oro.cms.imageslide.form.tooltip.main_image.label',
-                'required' => true,
-                'checkEmptyFile' => true,
-                'allowDelete' => false,
-            ]
-        )->add(
-            'mediumImage',
-            ImageType::class,
-            [
-                'label' => 'oro.cms.imageslide.medium_image.label',
-                'tooltip' => 'oro.cms.imageslide.form.tooltip.medium_image.label',
-                'required' => false,
-            ]
-        )->add(
-            'smallImage',
-            ImageType::class,
-            [
-                'label' => 'oro.cms.imageslide.small_image.label',
-                'tooltip' => 'oro.cms.imageslide.form.tooltip.small_image.label',
-                'required' => false,
             ]
         )->add(
             'url',
@@ -73,11 +50,11 @@ class ImageSlideType extends AbstractType
                 'required' => true,
             ]
         )->add(
-            'title',
+            'altImageText',
             TextType::class,
             [
-                'label' => 'oro.cms.imageslide.title.label',
-                'tooltip' => 'oro.cms.imageslide.form.tooltip.title.label',
+                'label' => 'oro.cms.imageslide.alt_image_text.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.alt_image_text.label',
                 'required' => true,
             ]
         )->add(
@@ -91,6 +68,134 @@ class ImageSlideType extends AbstractType
                 'choices' => $this->getTextAlignmentOptions(),
             ]
         )->add(
+            'extraLargeImage',
+            ImageType::class,
+            [
+                'label' => 'oro.cms.imageslide.extra_large_image.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.extra_large_image.label',
+                'required' => false,
+                'checkEmptyFile' => false,
+                'allowDelete' => true,
+            ]
+        )->add(
+            'extraLargeImage2x',
+            ImageType::class,
+            [
+                'label' => 'oro.cms.imageslide.extra_large_image2x.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.extra_large_image2x.label',
+                'required' => false,
+                'checkEmptyFile' => false,
+                'allowDelete' => true,
+            ]
+        )->add(
+            'extraLargeImage3x',
+            ImageType::class,
+            [
+                'label' => 'oro.cms.imageslide.extra_large_image3x.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.extra_large_image3x.label',
+                'required' => false,
+                'checkEmptyFile' => false,
+                'allowDelete' => true,
+            ]
+        )->add(
+            'largeImage',
+            ImageType::class,
+            [
+                'label' => 'oro.cms.imageslide.large_image.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.large_image.label',
+                'required' => false,
+                'checkEmptyFile' => false,
+                'allowDelete' => true,
+            ]
+        )->add(
+            'largeImage2x',
+            ImageType::class,
+            [
+                'label' => 'oro.cms.imageslide.large_image2x.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.large_image2x.label',
+                'required' => false,
+                'checkEmptyFile' => false,
+                'allowDelete' => true,
+            ]
+        )->add(
+            'largeImage3x',
+            ImageType::class,
+            [
+                'label' => 'oro.cms.imageslide.large_image3x.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.large_image3x.label',
+                'required' => false,
+                'checkEmptyFile' => false,
+                'allowDelete' => true,
+            ]
+        )->add(
+            'mediumImage',
+            ImageType::class,
+            [
+                'label' => 'oro.cms.imageslide.medium_image.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.medium_image.label',
+                'required' => false,
+                'checkEmptyFile' => false,
+                'allowDelete' => true,
+            ]
+        )->add(
+            'mediumImage2x',
+            ImageType::class,
+            [
+                'label' => 'oro.cms.imageslide.medium_image2x.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.medium_image2x.label',
+                'required' => false,
+                'checkEmptyFile' => false,
+                'allowDelete' => true,
+            ]
+        )->add(
+            'mediumImage3x',
+            ImageType::class,
+            [
+                'label' => 'oro.cms.imageslide.medium_image3x.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.medium_image3x.label',
+                'required' => false,
+                'checkEmptyFile' => false,
+                'allowDelete' => true,
+            ]
+        )->add(
+            'smallImage',
+            ImageType::class,
+            [
+                'label' => 'oro.cms.imageslide.small_image.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.small_image.label',
+                'required' => false,
+                'checkEmptyFile' => false,
+                'allowDelete' => true,
+            ]
+        )->add(
+            'smallImage2x',
+            ImageType::class,
+            [
+                'label' => 'oro.cms.imageslide.small_image2x.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.small_image2x.label',
+                'required' => false,
+                'checkEmptyFile' => false,
+                'allowDelete' => true,
+            ]
+        )->add(
+            'smallImage3x',
+            ImageType::class,
+            [
+                'label' => 'oro.cms.imageslide.small_image3x.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.small_image3x.label',
+                'required' => false,
+                'checkEmptyFile' => false,
+                'allowDelete' => true,
+            ]
+        )->add(
+            'header',
+            TextType::class,
+            [
+                'label' => 'oro.cms.imageslide.header.label',
+                'tooltip' => 'oro.cms.imageslide.form.tooltip.header.label',
+                'required' => false,
+            ]
+        )->add(
             'text',
             OroRichTextType::class,
             [
@@ -98,7 +203,7 @@ class ImageSlideType extends AbstractType
                 'tooltip' => 'oro.cms.imageslide.form.tooltip.text.label',
                 'required' => false,
                 'attr' => [
-                    'class' => 'image-slide-text'
+                    'class' => 'image-slide-text',
                 ],
                 'wysiwyg_options' => [
                     'elementpath' => true,

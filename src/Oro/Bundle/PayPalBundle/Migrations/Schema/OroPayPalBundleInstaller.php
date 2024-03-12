@@ -14,7 +14,7 @@ class OroPayPalBundleInstaller implements Installation
     /**
      * {@inheritDoc}
      */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_2';
     }
@@ -22,13 +22,15 @@ class OroPayPalBundleInstaller implements Installation
     /**
      * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         $this->updateOroIntegrationTransportTable($schema);
+
         $this->createOroPaypalCreditCardLblTable($schema);
         $this->createOroPaypalCreditCardShLblTable($schema);
         $this->createOroPaypalXprssChktLblTable($schema);
         $this->createOroPaypalXprssChktShrtLblTable($schema);
+
         $this->addOroPaypalCreditCardLblForeignKeys($schema);
         $this->addOroPaypalCreditCardShLblForeignKeys($schema);
         $this->addOroPaypalXprssChktLblForeignKeys($schema);
@@ -38,7 +40,7 @@ class OroPayPalBundleInstaller implements Installation
     /**
      * Update oro_integration_transport table
      */
-    protected function updateOroIntegrationTransportTable(Schema $schema)
+    private function updateOroIntegrationTransportTable(Schema $schema): void
     {
         $table = $schema->getTable('oro_integration_transport');
         $table->addColumn('pp_express_checkout_action', 'string', ['notnull' => false, 'length' => 255]);
@@ -87,11 +89,11 @@ class OroPayPalBundleInstaller implements Installation
     /**
      * Create oro_paypal_credit_card_lbl table
      */
-    protected function createOroPaypalCreditCardLblTable(Schema $schema)
+    private function createOroPaypalCreditCardLblTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_paypal_credit_card_lbl');
-        $table->addColumn('transport_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addColumn('transport_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_92E5B87EEB576E89');
     }
@@ -99,11 +101,11 @@ class OroPayPalBundleInstaller implements Installation
     /**
      * Create oro_paypal_credit_card_sh_lbl table
      */
-    protected function createOroPaypalCreditCardShLblTable(Schema $schema)
+    private function createOroPaypalCreditCardShLblTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_paypal_credit_card_sh_lbl');
-        $table->addColumn('transport_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addColumn('transport_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_55FE472FEB576E89');
     }
@@ -111,11 +113,11 @@ class OroPayPalBundleInstaller implements Installation
     /**
      * Create oro_paypal_xprss_chkt_lbl table
      */
-    protected function createOroPaypalXprssChktLblTable(Schema $schema)
+    private function createOroPaypalXprssChktLblTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_paypal_xprss_chkt_lbl');
-        $table->addColumn('transport_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addColumn('transport_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_386D1FC6EB576E89');
     }
@@ -123,11 +125,11 @@ class OroPayPalBundleInstaller implements Installation
     /**
      * Create oro_paypal_xprss_chkt_shrt_lbl table
      */
-    protected function createOroPaypalXprssChktShrtLblTable(Schema $schema)
+    private function createOroPaypalXprssChktShrtLblTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_paypal_xprss_chkt_shrt_lbl');
-        $table->addColumn('transport_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addColumn('transport_id', 'integer');
+        $table->addColumn('localized_value_id', 'integer');
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_A9419ECEB576E89');
     }
@@ -135,7 +137,7 @@ class OroPayPalBundleInstaller implements Installation
     /**
      * Add oro_paypal_credit_card_lbl foreign keys.
      */
-    protected function addOroPaypalCreditCardLblForeignKeys(Schema $schema)
+    private function addOroPaypalCreditCardLblForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_paypal_credit_card_lbl');
         $table->addForeignKeyConstraint(
@@ -155,7 +157,7 @@ class OroPayPalBundleInstaller implements Installation
     /**
      * Add oro_paypal_credit_card_sh_lbl foreign keys.
      */
-    protected function addOroPaypalCreditCardShLblForeignKeys(Schema $schema)
+    private function addOroPaypalCreditCardShLblForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_paypal_credit_card_sh_lbl');
         $table->addForeignKeyConstraint(
@@ -175,7 +177,7 @@ class OroPayPalBundleInstaller implements Installation
     /**
      * Add oro_paypal_xprss_chkt_lbl foreign keys.
      */
-    protected function addOroPaypalXprssChktLblForeignKeys(Schema $schema)
+    private function addOroPaypalXprssChktLblForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_paypal_xprss_chkt_lbl');
         $table->addForeignKeyConstraint(
@@ -195,7 +197,7 @@ class OroPayPalBundleInstaller implements Installation
     /**
      * Add oro_paypal_xprss_chkt_shrt_lbl foreign keys.
      */
-    protected function addOroPaypalXprssChktShrtLblForeignKeys(Schema $schema)
+    private function addOroPaypalXprssChktShrtLblForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_paypal_xprss_chkt_shrt_lbl');
         $table->addForeignKeyConstraint(

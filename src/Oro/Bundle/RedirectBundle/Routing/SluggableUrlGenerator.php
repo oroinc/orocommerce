@@ -49,7 +49,7 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     /**
      * {@inheritdoc}
      */
-    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
         if (preg_match('/\W/', $name)) {
             throw new RouteNotFoundException('Unable to generate a URL for the named route'.
@@ -105,7 +105,7 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     /**
      * {@inheritdoc}
      */
-    public function getContext()
+    public function getContext(): RequestContext
     {
         return $this->generator->getContext();
     }
@@ -126,7 +126,7 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
             $contextData = $parameters[self::CONTEXT_DATA];
             unset($parameters[self::CONTEXT_TYPE], $parameters[self::CONTEXT_DATA]);
 
-            $url = $this->contextUrlProvider->getUrl($contextType, $contextData);
+            $url = $this->contextUrlProvider->getUrl($contextType, $contextData) ?? '';
 
             return trim($url, '/');
         }

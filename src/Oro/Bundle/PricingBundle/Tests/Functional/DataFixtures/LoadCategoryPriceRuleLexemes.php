@@ -6,17 +6,24 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 class LoadCategoryPriceRuleLexemes extends AbstractFixture implements DependentFixtureInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function getDependencies(): array
+    {
+        return [LoadCategoryData::class, LoadPriceLists::class, LoadOrganization::class];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager): void
     {
         $category = $this->getCategory($manager);
 
@@ -44,49 +51,26 @@ class LoadCategoryPriceRuleLexemes extends AbstractFixture implements DependentF
 
         foreach ($data as $item) {
             $lexeme = new PriceRuleLexeme();
-            $lexeme->setClassName(Category::class)
-                ->setFieldName($item['field'])
-                ->setPriceList($item['priceList']);
-
-            if (array_key_exists('category', $item)) {
+            $lexeme->setClassName(Category::class);
+            $lexeme->setFieldName($item['field']);
+            $lexeme->setPriceList($item['priceList']);
+            if (\array_key_exists('category', $item)) {
                 /** @var Category $category */
                 $category = $item['category'];
                 $lexeme->setRelationId($category->getId());
             }
-
             $manager->persist($lexeme);
         }
-
         $manager->flush();
     }
 
-    /**
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
     private function getCategory(ObjectManager $manager): Category
     {
-        /** @var Organization $organization */
-        $organization = $manager->getRepository(Organization::class)->getFirst();
-
-        /** @var CategoryRepository $categoryRepository */
-        $categoryRepository = $manager->getRepository(Category::class);
-        $queryBuilder = $categoryRepository->getMasterCatalogRootQueryBuilder();
-        $queryBuilder
+        return $manager->getRepository(Category::class)
+            ->getMasterCatalogRootQueryBuilder()
             ->andWhere('category.organization = :organization')
-            ->setParameter('organization', $organization);
-
-        return $queryBuilder->getQuery()->getSingleResult();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            LoadCategoryData::class,
-            LoadPriceLists::class
-        ];
+            ->setParameter('organization', $this->getReference(LoadOrganization::ORGANIZATION))
+            ->getQuery()
+            ->getSingleResult();
     }
 }

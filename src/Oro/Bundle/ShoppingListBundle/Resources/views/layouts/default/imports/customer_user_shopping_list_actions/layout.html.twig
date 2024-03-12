@@ -1,11 +1,12 @@
 {% block __customer_user_shopping_list_actions__shopping_list_actions_container_widget %}
     {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
 
     {% if block.children %}
         {% set togglerId = 'dropdown-'|uniqid %}
         <div class="btn-group">
             <button id="{{ togglerId }}"
-                    class="btn btn--default btn--size-s btn--no-y-offset dropdown-toggle dropdown-toggle--no-caret"
+                    class="btn btn--outlined btn--text btn--size-small btn--no-padding dropdown-toggle dropdown-toggle--no-caret"
                     type="button"
                     data-toggle="dropdown"
                     aria-haspopup="true"
@@ -14,8 +15,8 @@
                     data-placement="bottom-end"
                     data-inherit-parent-width="loosely"
             >
-                <span class="fa fa-ellipsis-h fa--gray" aria-hidden="true"></span>
-                <span class="fa fa-caret-down fa--gray fa--no-offset" aria-hidden="true"></span>
+                {{ renderIcon.icon({name: 'more-horizontal', extraClass: 'theme-icon--small'}) }}
+                {{ renderIcon.icon({name: 'chevron-down', extraClass: 'theme-icon--small'}) }}
             </button>
             <div class="dropdown-menu" role="menu" aria-labelledby="{{ togglerId }}">
                 {{ block_widget(block) }}
@@ -25,6 +26,7 @@
 {% endblock %}
 
 {%- block __customer_user_shopping_list_actions__shopping_list_action_list_widget -%}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {%- for button in buttons -%}
         {%- set options = oro_action_frontend_options(button) -%}
         {%- set buttonOptions = options.options -%}
@@ -36,13 +38,15 @@
             data-operation-url="{{ buttonOptions.url }}"
             data-options="{{ buttonOptions|json_encode }}"
             data-page-component-module="oroaction/js/app/components/button-component"
-        ><span class="icon {{ button.icon }}" aria-hidden="true"></span>
+        >
+            {{ renderIcon.icon({name: button.icon, extraClass: 'theme-icon--small'}) }}
             {{- button.label|trans -}}
         </button>
     {%- endfor -%}
 {%- endblock -%}
 
 {% block __customer_user_shopping_list_actions__shopping_list_action_assign_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     <button
         type="button"
         class="action mode-icon-text dropdown-item"
@@ -54,8 +58,8 @@
             dialogTitle: 'oro.frontend.shoppinglist.view.choose_assign_user.label'|trans({'%label%': shoppingList.label}),
             shoppingListOwnerChangeUrl: path('oro_api_set_shopping_list_owner', {id : shoppingList.id})
         }|json_encode }}">
+        {{ renderIcon.icon({name: 'user', extraClass: 'theme-icon--small'}) }}
         {%- apply spaceless -%}
-            <span class="icon fa-user" aria-hidden="true"></span>
             {{ 'oro.frontend.shoppinglist.btn.assign.label'|trans }}
         {%- endapply -%}
     </button>

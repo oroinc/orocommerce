@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\DataGridBundle\Controller\GridController;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\LayoutBundle\Attribute\Layout;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
@@ -24,19 +25,22 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ShoppingListController extends AbstractController
 {
-    /**
-     * @Route("/{id}", name="oro_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
-     * @Layout
-     * @AclAncestor("oro_shopping_list_frontend_view")
-     */
+    #[Route(
+        path: '/{id}',
+        name: 'oro_shopping_list_frontend_view',
+        requirements: ['id' => '\d+'],
+        defaults: ['id' => null]
+    )]
+    #[Layout]
+    #[AclAncestor('oro_shopping_list_frontend_view')]
     public function viewAction(ShoppingList $shoppingList = null): array
     {
         if (!$shoppingList) {
-            $shoppingList = $this->get(CurrentShoppingListManager::class)->getCurrent();
+            $shoppingList = $this->container->get(CurrentShoppingListManager::class)->getCurrent();
         }
 
         if ($shoppingList) {
-            $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+            $this->container->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
         }
 
         return [
@@ -46,11 +50,9 @@ class ShoppingListController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/all", name="oro_shopping_list_frontend_index")
-     * @Layout
-     * @AclAncestor("oro_shopping_list_frontend_view")
-     */
+    #[Route(path: '/all', name: 'oro_shopping_list_frontend_index')]
+    #[Layout]
+    #[AclAncestor('oro_shopping_list_frontend_view')]
     public function indexAction(): array
     {
         if (!$this->getUser() instanceof CustomerUser) {
@@ -60,24 +62,22 @@ class ShoppingListController extends AbstractController
         return [];
     }
 
-    /**
-     * @Route(
-     *     "/update/{id}",
-     *     name="oro_shopping_list_frontend_update",
-     *     defaults={"id" = null},
-     *     requirements={"id"="\d+"}
-     * )
-     * @Layout
-     * @AclAncestor("oro_shopping_list_frontend_update")
-     */
+    #[Route(
+        path: '/update/{id}',
+        name: 'oro_shopping_list_frontend_update',
+        requirements: ['id' => '\d+'],
+        defaults: ['id' => null]
+    )]
+    #[Layout]
+    #[AclAncestor('oro_shopping_list_frontend_update')]
     public function updateAction(ShoppingList $shoppingList = null): array
     {
         if (!$shoppingList) {
-            $shoppingList = $this->get(CurrentShoppingListManager::class)->getCurrent();
+            $shoppingList = $this->container->get(CurrentShoppingListManager::class)->getCurrent();
         }
 
         if ($shoppingList) {
-            $this->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
+            $this->container->get(ShoppingListManager::class)->actualizeLineItems($shoppingList);
         }
 
         return [
@@ -87,15 +87,13 @@ class ShoppingListController extends AbstractController
         ];
     }
 
-    /**
-     * @Route(
-     *      "/{id}/massAction/{gridName}/{actionName}",
-     *      name="oro_shopping_list_frontend_move_mass_action",
-     *      requirements={"id"="\d+", "gridName"="[\w\:\-]+", "actionName"="[\w\-]+"}
-     * )
-     * @Layout
-     * @AclAncestor("oro_shopping_list_frontend_update")
-     */
+    #[Route(
+        path: '/{id}/massAction/{gridName}/{actionName}',
+        name: 'oro_shopping_list_frontend_move_mass_action',
+        requirements: ['id' => '\d+', 'gridName' => '[\w\:\-]+', 'actionName' => '[\w\-]+']
+    )]
+    #[Layout]
+    #[AclAncestor('oro_shopping_list_frontend_update')]
     public function moveMassActionAction(
         ShoppingList $shoppingList,
         Request $request,
@@ -117,11 +115,9 @@ class ShoppingListController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/{id}/assign", name="oro_shopping_list_frontend_assign", requirements={"id"="\d+"})
-     * @Layout
-     * @AclAncestor("oro_shopping_list_frontend_assign")
-     */
+    #[Route(path: '/{id}/assign', name: 'oro_shopping_list_frontend_assign', requirements: ['id' => '\d+'])]
+    #[Layout]
+    #[AclAncestor('oro_shopping_list_frontend_assign')]
     public function assignAction(ShoppingList $shoppingList): array
     {
         return [
@@ -133,20 +129,19 @@ class ShoppingListController extends AbstractController
 
     /**
      * Create shopping list form
-     *
-     * @Route("/create", name="oro_shopping_list_frontend_create")
-     * @Layout
-     * @Acl(
-     *      id="oro_shopping_list_frontend_create",
-     *      type="entity",
-     *      class="OroShoppingListBundle:ShoppingList",
-     *      permission="CREATE",
-     *      group_name="commerce"
-     * )
      */
+    #[Route(path: '/create', name: 'oro_shopping_list_frontend_create')]
+    #[Layout]
+    #[Acl(
+        id: 'oro_shopping_list_frontend_create',
+        type: 'entity',
+        class: ShoppingList::class,
+        permission: 'CREATE',
+        groupName: 'commerce'
+    )]
     public function createAction(Request $request): array|Response
     {
-        $shoppingList = $this->get(ShoppingListManager::class)->create();
+        $shoppingList = $this->container->get(ShoppingListManager::class)->create();
 
         $response = $this->create($request, $shoppingList);
         if ($response instanceof Response) {
@@ -165,14 +160,15 @@ class ShoppingListController extends AbstractController
     protected function create(Request $request, ShoppingList $shoppingList): array|Response
     {
         $handler = new ShoppingListHandler(
-            $this->get(CurrentShoppingListManager::class),
-            $this->getDoctrine()
+            $this->container->get(CurrentShoppingListManager::class),
+            $this->container->get('doctrine')
         );
 
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $shoppingList,
             $this->createForm(ShoppingListType::class, $shoppingList),
-            $this->get(TranslatorInterface::class)->trans('oro.shoppinglist.controller.shopping_list.saved.message'),
+            $this->container->get(TranslatorInterface::class)
+                ->trans('oro.shoppinglist.controller.shopping_list.saved.message'),
             $request,
             $handler
         );
@@ -187,7 +183,8 @@ class ShoppingListController extends AbstractController
             CurrentShoppingListManager::class,
             ShoppingListManager::class,
             TranslatorInterface::class,
-            UpdateHandlerFacade::class
+            UpdateHandlerFacade::class,
+            'doctrine' => ManagerRegistry::class
         ]);
     }
 }

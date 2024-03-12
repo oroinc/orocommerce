@@ -40,15 +40,17 @@ class ProductControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         self::assertHtmlResponseStatusCodeEquals($result, 200);
-        $priceTable = $crawler->filter('.product-prices__table');
-        self::assertStringContainsString($contains, $priceTable->text());
+        $productView = $crawler->filter('.product-view__content');
+        self::assertStringContainsString($contains, $productView->text());
     }
 
     public function viewDataProvider(): array
     {
         return [
-            'unit without prices'       => ['product' => LoadProductData::PRODUCT_2, 'contains' => 'Get Quote'],
-            'unit with empty price'     => ['product' => LoadProductData::PRODUCT_6, 'contains' => '$200.50'],
+            'unit without prices' => [
+                'product' => LoadProductData::PRODUCT_2, 'contains' => 'Request a quote to obtain pricing'
+            ],
+            'unit with empty price' => ['product' => LoadProductData::PRODUCT_6, 'contains' => '$200.50'],
             'unit with not empty price' => ['product' => LoadProductData::PRODUCT_7, 'contains' => '$0.00']
         ];
     }

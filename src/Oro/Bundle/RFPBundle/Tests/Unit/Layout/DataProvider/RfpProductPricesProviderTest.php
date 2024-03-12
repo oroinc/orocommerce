@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Layout\DataProvider;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Layout\DataProvider\RfpProductPricesProvider;
 
 class RfpProductPricesProviderTest extends \PHPUnit\Framework\TestCase
@@ -16,15 +19,11 @@ class RfpProductPricesProviderTest extends \PHPUnit\Framework\TestCase
 
         $rfpRequest = $this->createMock(RFPRequest::class);
 
-        $requestProductsObject = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['map', 'toArray'])
-            ->getMock();
-        $requestProductsObject->expects($this->atLeastOnce())
-            ->method('map')
-            ->willReturn($requestProductsObject);
-        $requestProductsObject->expects($this->atLeastOnce())
-            ->method('toArray')
-            ->willReturn([]);
+        $product = new Product();
+        $requestProductsObject = new ArrayCollection([
+            new RequestProduct(),
+            (new RequestProduct())->setProduct($product)
+        ]);
 
         $rfpRequest->expects($this->any())
             ->method('getRequestProducts')
@@ -32,6 +31,7 @@ class RfpProductPricesProviderTest extends \PHPUnit\Framework\TestCase
 
         $frontendProductPricesProvider->expects($this->atLeastOnce())
             ->method('getByProducts')
+            ->with([$product])
             ->willReturn(['foo', 'bar']);
 
         $result = $rfpProductPricesProvider->getPrices($rfpRequest);

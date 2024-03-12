@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     const $ = require('jquery');
+    const _ = require('underscore');
     const routing = require('routing');
     const mediator = require('oroui/js/mediator');
     const BaseComponent = require('oroui/js/app/components/base/component');
@@ -26,7 +27,8 @@ define(function(require) {
                 triggerDelayed: 'entry-point:order:trigger-delayed',
                 init: 'entry-point:order:init',
                 listenersOff: 'entry-point:listeners:off',
-                listenersOn: 'entry-point:listeners:on'
+                listenersOn: 'entry-point:listeners:on',
+                interruptPostpone: 'entry-point:interrupt:postpone'
             },
             triggerTimeout: 1500
         },
@@ -51,7 +53,8 @@ define(function(require) {
                 [`${this.options.events.trigger} mediator`]: 'callEntryPoint',
                 [`${this.options.events.triggerDelayed} mediator`]: 'callEntryPointDelayed',
                 [`${this.options.events.listenersOff} mediator`]: 'listenerOff',
-                [`${this.options.events.listenersOn} mediator`]: 'listenerOn'
+                [`${this.options.events.listenersOn} mediator`]: 'listenerOn',
+                [`${this.options.events.interruptPostpone} mediator`]: 'interruptPostpone'
             };
         },
 
@@ -68,6 +71,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.request = null;
+            this.callEntryPoint = _.debounce(this.callEntryPoint.bind(this), 100);
 
             this.initializeListener();
         },
@@ -76,6 +80,10 @@ define(function(require) {
             this.options._sourceElement
                 .on('change', '[data-entry-point-trigger]', this.callEntryPoint.bind(this))
                 .on('keyup', '[data-entry-point-trigger]', this.callEntryPointDelayed.bind(this));
+        },
+
+        interruptPostpone() {
+            this.postponedEntryPointAction = false;
         },
 
         listenerOff: function() {
@@ -129,25 +137,29 @@ define(function(require) {
          * @private
          */
         _sendEntryPointAjax: function() {
-            if (this.request && this.request.readyState !== 4) {
+            if (this.disposed || this.request && this.request.readyState !== 4) {
                 return;
             }
-            const self = this;
 
             this.listenerOff();
 
             this.request = $.post(
                 routing.generate(this.options.route, this.options.routeParams),
                 $.param(this.getData())
-            ).done(function(response) {
-                mediator.trigger(self.options.events.load, response);
-            }).fail(function() {
-                mediator.trigger(self.options.events.load, {});
-            }).always(function() {
-                mediator.trigger(self.options.events.after);
-                self.clearTimeout();
-                self.request = null;
-                self.listenerOn();
+            ).done(response => {
+                mediator.trigger(this.options.events.load, response);
+            }).fail(() => {
+                mediator.trigger(this.options.events.load, {});
+            }).always(() => {
+                mediator.trigger(this.options.events.after);
+
+                if (this.disposed) {
+                    return;
+                }
+
+                this.clearTimeout();
+                this.request = null;
+                this.listenerOn();
             });
         },
 

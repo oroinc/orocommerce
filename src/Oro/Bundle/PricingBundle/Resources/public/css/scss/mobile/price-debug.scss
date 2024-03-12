@@ -1,0 +1,25 @@
+/* @theme: admin.oro; */
+
+.prices-collection {
+    grid-gap: $content-padding-medium * 2 $content-padding-medium * 4;
+
+    &--divider {
+        grid-template-columns: repeat(auto-fill, calc(50% - #{$content-padding-medium * 2}));
+    }
+}
+
+.price-details {
+    &--divider {
+        &:not(:first-of-type) {
+            &:after {
+                left: -$content-padding-medium * 2;
+            }
+        }
+    }
+}
+
+.price-list-term {
+    &-name {
+        row-gap: 0;
+    }
+}

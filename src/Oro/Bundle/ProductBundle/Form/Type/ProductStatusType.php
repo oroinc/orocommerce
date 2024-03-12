@@ -8,6 +8,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for Product status
+ */
 class ProductStatusType extends AbstractType
 {
     const NAME = 'oro_product_status';
@@ -29,7 +32,8 @@ class ProductStatusType extends AbstractType
     {
         $resolver->setDefaults([
             'choices' => $this->productStatusProvider->getAvailableProductStatuses(),
-            'preferred_choices' => Product::STATUS_DISABLED
+            'preferred_choices' => [Product::STATUS_DISABLED],
+            'duplicate_preferred_choices' => false
         ]);
     }
 

@@ -40,6 +40,7 @@ Feature: Create Order with Product Kits
       | ProductKitItem2Price    | 1.23                                  |
     And I should see "per pc" in the "Order Form Line Item 1 Kit Item 1 Unit" element
     And I should see "per pc" in the "Order Form Line Item 1 Kit Item 2 Unit" element
+    And the "Price" field should be readonly in form "Order Form"
     When I click on "Order Form Line Item 1 Kit Item 1 Quantity Label Tooltip"
     Then I should see "The quantity of product kit item units to be purchased: piece (whole numbers)" in the "Tooltip Popover Content" element
     And I click on empty space
@@ -72,6 +73,8 @@ Feature: Create Order with Product Kits
       | Product2KitItem2Price    | 1.23                                  |
     And I should see "$1.2345" in the "Order Form Line Item 2 Kit Item 1 Matched Price" element
     And I should not see a "Order Form Line Item 2 Kit Item 2 Matched Price" element
+    And the "Price" field should be readonly in form "Order Form"
+    And the "Price2" field should be readonly in form "Order Form"
 
   Scenario: Check that order line item price is updated when a kit configuration changes
     When I fill "Order Form" with:
@@ -82,6 +85,8 @@ Feature: Create Order with Product Kits
       | Product2KitItem1Price | 0.85 |
     Then "Order Form" must contains values:
       | Price2 | 128.94 |
+    And the "Price" field should be readonly in form "Order Form"
+    And the "Price2" field should be readonly in form "Order Form"
 
   Scenario: Check order subtotals
     And I see next subtotals for "Backend Order":

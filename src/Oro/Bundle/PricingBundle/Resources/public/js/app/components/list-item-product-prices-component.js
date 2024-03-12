@@ -36,7 +36,7 @@ const ListItemProductPricesComponent = BaseComponent.extend({
 
         this.viewOptions = {
             el: options._sourceElement,
-            ..._.pick(options, 'showValuePrice', 'showListedPrice', 'doUpdateQtyForUnit', 'elements')
+            ..._.pick(options, 'showValuePrice', 'showListedPrice', 'showUnit', 'doUpdateQtyForUnit', 'elements')
         };
 
         this.loadPrices();

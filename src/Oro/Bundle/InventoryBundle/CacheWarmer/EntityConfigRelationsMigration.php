@@ -138,7 +138,7 @@ class EntityConfigRelationsMigration
                 AND field.field_name = ?
                 LIMIT 1';
 
-            $configCheck = $defaultConnection->fetchColumn($sql, [$class, $association]);
+            $configCheck = $defaultConnection->fetchOne($sql, [$class, $association]);
         } catch (\Exception $e) {
             return false;
         }

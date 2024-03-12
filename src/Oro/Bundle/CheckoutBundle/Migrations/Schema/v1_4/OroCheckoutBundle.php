@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
@@ -12,12 +12,8 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroCheckoutBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
+    use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
-
-    /**
-     * @var RenameExtension
-     */
-    private $renameExtension;
 
     /**
      * {@inheritdoc}
@@ -47,14 +43,6 @@ class OroCheckoutBundle implements Migration, RenameExtensionAwareInterface, Ord
             'account_id',
             'customer_id'
         );
-    }
-
-    /**
-     * Sets the RenameExtension
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
     }
 
     /**

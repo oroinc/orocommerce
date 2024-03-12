@@ -4,71 +4,49 @@ namespace Oro\Bundle\UPSBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Migrations\Data\ORM\LoadCountryData;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
+/**
+ * Loads shipping services.
+ */
 class LoadShippingServicesData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    /**
-     * @var EntityRepository
-     */
-    protected $countryRepository;
+    use ContainerAwareTrait;
+
+    private array $loadedCountries = [];
 
     /**
-     * @var array
+     * {@inheritDoc}
      */
-    protected $loadedCountries;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public function getDependencies(): array
     {
-        $this->container = $container;
+        return [LoadCountryData::class];
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
+    public function load(ObjectManager $manager): void
     {
-        return [
-            'Oro\Bundle\AddressBundle\Migrations\Data\ORM\LoadCountryData',
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     * @throws \InvalidArgumentException
-     */
-    public function load(ObjectManager $manager)
-    {
-        $this->countryRepository = $manager->getRepository('OroAddressBundle:Country');
         $this->loadSpecifiedCountryServices($manager);
         $this->loadEUCountriesServices($manager);
         $this->loadUnspecifiedCountryServices($manager);
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
-    public function loadSpecifiedCountryServices(ObjectManager $manager)
+    private function loadSpecifiedCountryServices(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroUPSBundle/Migrations/Data/ORM/data/specified_country_services.csv');
-
-        if (is_array($filePath)) {
+        if (\is_array($filePath)) {
             $filePath = current($filePath);
         }
+
+        $countryRepository = $manager->getRepository(Country::class);
 
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
@@ -77,7 +55,7 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
             $row = array_combine($headers, array_values($data));
 
             /** @var Country $country */
-            $country = $this->countryRepository->findOneBy(['iso2Code' => $row['country']]);
+            $country = $countryRepository->findOneBy(['iso2Code' => $row['country']]);
             $shippingService = new ShippingService();
             $shippingService
                 ->setCode($row['code'])
@@ -92,21 +70,19 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
         $manager->flush();
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
-    public function loadEUCountriesServices(ObjectManager $manager)
+    private function loadEUCountriesServices(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroUPSBundle/Migrations/Data/ORM/data/eu_countries_services.csv');
-
-        if (is_array($filePath)) {
+        if (\is_array($filePath)) {
             $filePath = current($filePath);
         }
 
+        $countryRepository = $manager->getRepository(Country::class);
+
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
-        $countries = array_keys(static::getEUCountries());
+        $countries = array_keys(self::getEUCountries());
         $services = [];
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $services[] = array_combine($headers, array_values($data));
@@ -114,7 +90,7 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
         foreach ($countries as $countryCode) {
             if (!in_array($countryCode, $this->loadedCountries, true)) {
                 /** @var Country $country */
-                $country = $this->countryRepository->findOneBy(['iso2Code' => $countryCode]);
+                $country = $countryRepository->findOneBy(['iso2Code' => $countryCode]);
                 foreach ($services as $row) {
                     $shippingService = new ShippingService();
                     $shippingService
@@ -132,21 +108,18 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
         $manager->flush();
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     */
-    public function loadUnspecifiedCountryServices(ObjectManager $manager)
+    private function loadUnspecifiedCountryServices(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroUPSBundle/Migrations/Data/ORM/data/unspecified_country_services.csv');
-
-        if (is_array($filePath)) {
+        if (\is_array($filePath)) {
             $filePath = current($filePath);
         }
 
+        $countries = $manager->getRepository(Country::class)->findAll();
+
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
-        $countries = $this->countryRepository->findAll();
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -170,10 +143,7 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
         $manager->flush();
     }
 
-    /**
-     * @return array
-     */
-    public static function getEUCountries()
+    private static function getEUCountries(): array
     {
         return [
             'AT' => 'Austria',

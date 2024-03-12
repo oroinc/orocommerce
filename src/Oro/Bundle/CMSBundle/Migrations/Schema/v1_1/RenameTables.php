@@ -3,18 +3,15 @@
 namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
-    /**
-     * @var RenameExtension
-     */
-    private $renameExtension;
+    use RenameExtensionAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -29,21 +26,10 @@ class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedM
     }
 
     /**
-     * Should be executed before:
-     * @see \Oro\Bundle\CMSBundle\Migrations\Schema\v1_1\MigrateNotes
-     *
      * {@inheritdoc}
      */
     public function getOrder()
     {
         return 0;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
     }
 }

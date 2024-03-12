@@ -5,34 +5,21 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_11;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroProductBundle implements Migration, ExtendExtensionAwareInterface
 {
-    const PRODUCT_TABLE_NAME = 'oro_product';
+    use ExtendExtensionAwareTrait;
 
     /**
-     * @var ExtendExtension
+     * {@inheritDoc}
      */
-    private $extendExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function up(Schema $schema, QueryBag $queries)
-    {
-        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('oro_product');
         $table->addColumn('is_featured', 'boolean', ['default' => false]);
 
         $this->createRelationToSegmentFromContentVariant($schema);

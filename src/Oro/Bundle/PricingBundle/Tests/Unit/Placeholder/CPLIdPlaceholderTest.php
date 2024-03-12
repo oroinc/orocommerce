@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 {
@@ -136,7 +137,7 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $token = $this->createMock(AnonymousCustomerUserToken::class);
-        $token->method('getUser')->willReturn('Anonymous Customer User');
+        $token->method('getUser')->willReturn($this->createMock(UserInterface::class));
         $this->tokenStorage->method('getToken')->willReturn($token);
 
         $customer = new Customer();

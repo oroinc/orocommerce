@@ -142,8 +142,8 @@ Feature: My Shopping List with products unit of quantity is more than zero
   Scenario: Check the unit of quantity for configurable product at my shopping list edit page and Matrix Form Popup
     Given I operate as the Buyer
     And I login as AmandaRCole@example.org buyer
-    And I follow "Account"
-    When I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    When I click on "Shopping Lists"
     And I click Edit "Shopping List 3" in grid
     And I click "Group Product Variants"
     When I select 10 from per page list dropdown in "Frontend Customer User Shopping List Edit Grid"
@@ -197,10 +197,11 @@ Feature: My Shopping List with products unit of quantity is more than zero
       | BB14 | Product 14 Note 14 text                                  | In Stock     | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
       | BB15 | Product 15 Note 15 text                                  | Out of Stock | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
       | BB16 | Product 16 Note 16 text                                  | In Stock     | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
+    And click on "Flash Message Close Button"
 
   Scenario: Check the unit of quantity for configurable product at my shopping list view page
-    Given I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     And I click View "Shopping List 3" in grid
     And I click "Group Product Variants"
     When I select 10 from per page list dropdown in "Frontend Customer User Shopping List View Grid"

@@ -9,15 +9,13 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class RemoveColumnHasVariantsFromProduct implements Migration
 {
-    const PRODUCT_TABLE_NAME = 'oro_product';
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
-        $table->dropColumn('has_variants');
+        $schema->getTable('oro_product')
+            ->dropColumn('has_variants');
 
         $queries->addPostQuery(
             new RemoveFieldQuery('Oro\Bundle\ProductBundle\Entity\Product', 'hasVariants')

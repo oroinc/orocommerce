@@ -11,8 +11,8 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormView;
@@ -20,6 +20,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\GroupSequence;
 
 /**
  * Provides supportive actions for ajax calls during quote creation and editing.
@@ -29,11 +31,11 @@ class AjaxQuoteController extends AbstractController
     /**
      * Get order related data
      *
-     * @Route("/related-data", name="oro_quote_related_data", methods={"GET"})
-     * @AclAncestor("oro_quote_update")
      *
      * @return JsonResponse
      */
+    #[Route(path: '/related-data', name: 'oro_quote_related_data', methods: ['GET'])]
+    #[AclAncestor('oro_quote_update')]
     public function getRelatedDataAction()
     {
         $quote = new Quote();
@@ -51,15 +53,15 @@ class AjaxQuoteController extends AbstractController
 
             if ($customer->getGroup() instanceof CustomerGroup) {
                 $customerGroupPaymentTerm = $this->getPaymentTermProvider()
-                                                 ->getCustomerGroupPaymentTerm($customer->getGroup());
+                    ->getCustomerGroupPaymentTerm($customer->getGroup());
             }
         }
 
         $quoteForm = $this->createForm($this->getQuoteFormTypeName(), $quote);
 
         $responseData = [
-            'customerPaymentTerm' => $customerPaymentTerm ? $customerPaymentTerm->getId() : null,
-            'customerGroupPaymentTerm' => $customerGroupPaymentTerm ? $customerGroupPaymentTerm->getId() : null
+            'customerPaymentTerm' => $customerPaymentTerm?->getId(),
+            'customerGroupPaymentTerm' => $customerGroupPaymentTerm?->getId(),
         ];
         if ($quoteForm->has(AddressType::TYPE_SHIPPING . 'Address')) {
             $responseData['shippingAddress'] = $this->renderFormView(
@@ -71,29 +73,34 @@ class AjaxQuoteController extends AbstractController
     }
 
     /**
-     * @Route("/entry-point/{id}", name="oro_quote_entry_point", defaults={"id" = 0}, methods={"POST"})
-     * @AclAncestor("oro_quote_update")
-     * @CsrfProtection()
      *
      * @param Request    $request
      * @param Quote|null $quote
-     *
      * @return JsonResponse
      */
+    #[Route(path: '/entry-point/{id}', name: 'oro_quote_entry_point', defaults: ['id' => 0], methods: ['POST'])]
+    #[AclAncestor('oro_quote_update')]
+    #[CsrfProtection()]
     public function entryPointAction(Request $request, Quote $quote = null)
     {
         if (!$quote) {
             $quote = new Quote();
         }
 
-        $form = $this->createForm($this->getQuoteFormTypeName(), $quote);
+        $form = $this->createForm(
+            $this->getQuoteFormTypeName(),
+            $quote,
+            [
+                'validation_groups' => $this->getValidationGroups($quote),
+            ]
+        );
 
         $submittedData = $request->get($form->getName());
 
         $form->submit($submittedData);
 
         $event = new QuoteEvent($form, $form->getData(), $submittedData);
-        $this->get(EventDispatcherInterface::class)->dispatch($event, QuoteEvent::NAME);
+        $this->container->get(EventDispatcherInterface::class)->dispatch($event, QuoteEvent::NAME);
 
         return new JsonResponse($event->getData());
     }
@@ -125,8 +132,7 @@ class AjaxQuoteController extends AbstractController
      */
     protected function validateRelation(CustomerUser $customerUser, Customer $customer)
     {
-        if ($customerUser &&
-            $customerUser->getCustomer() &&
+        if ($customerUser->getCustomer() &&
             $customerUser->getCustomer()->getId() !== $customer->getId()
         ) {
             throw new BadRequestHttpException('CustomerUser must belong to Customer');
@@ -138,7 +144,7 @@ class AjaxQuoteController extends AbstractController
      */
     protected function getPaymentTermProvider()
     {
-        return $this->get(PaymentTermProvider::class);
+        return $this->container->get(PaymentTermProvider::class);
     }
 
     /**
@@ -151,7 +157,16 @@ class AjaxQuoteController extends AbstractController
 
     protected function getQuoteRequestHandler(): QuoteRequestHandler
     {
-        return $this->get(QuoteRequestHandler::class);
+        return $this->container->get(QuoteRequestHandler::class);
+    }
+
+    protected function getValidationGroups(Quote $quote): GroupSequence|array|string
+    {
+        return new GroupSequence([
+            Constraint::DEFAULT_GROUP,
+            'add_kit_item_line_item',
+            'quote_entry_point'
+        ]);
     }
 
     /**

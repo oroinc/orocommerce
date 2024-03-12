@@ -1,54 +1,52 @@
 /* @theme: default; */
 
-.product-view-quantity {
-    display: $product-view-quantity-display;
-    flex-wrap: $product-view-quantity-flex-wrap;
+.product-view-line-item {
+    display: flex;
+    flex-wrap: wrap;
+    gap: spacing('base') spacing('lg');
+    justify-content: space-between;
 
-    margin-bottom: $product-view-quantity-margin-bottom;
+    margin-top: spacing('xl');
 
-    &__unit {
-        width: $product-view-quantity-unit-width;
-        margin-right: $product-view-quantity-unit-margin-right;
-
-        display: $product-view-quantity-unit-display;
-
-        &--half {
-            width: $product-view-quantity-unit-half-width;
-        }
+    &__quantity,
+    &__button {
+        flex-shrink: 0;
     }
 
-    &__unit-label {
-        font-size: $product-view-quantity-unit-label-font-size;
-        text-align: $product-view-quantity-unit-label-text-align;
-        flex-grow: $product-view-quantity-unit-label-flex-grow;
-        align-self: $product-view-quantity-unit-label-align-self;
+    &__button {
+        flex-grow: 1;
     }
 
-    &__value {
-        width: $product-view-quantity-value-width;
-
-        &--half {
-            width: $product-view-quantity-value-half-width;
-        }
+    &__quantity {
+        width: $product-view-line-item-quantity-width;
 
         .input {
-            text-align: $product-view-quantity-value-input-text-align;
+            text-align: center;
         }
-    }
-
-    .fields-row-error {
-        width: $product-view-quantity-error-width;
     }
 }
 
-@include breakpoint('tablet') {
-    .product-view-quantity {
-        &__unit {
-            width: $product-view-quantity-tablet-unit-width;
+@include breakpoint('tablet-small') {
+    .product-view-line-item {
+        &__quantity {
+            width: 100%;
         }
+    }
+}
 
-        &__value {
-            width: $product-view-quantity-tablet-value-width;
+@include breakpoint('mobile-landscape') {
+    .product-view-line-item {
+        display: flex;
+        flex-direction: column;
+
+        justify-content: space-between;
+
+        gap: spacing('md');
+        margin-top: spacing('lg');
+        margin-bottom: 0;
+
+        &__quantity {
+            width: $product-view-line-item-quantity-width-mobile;
         }
     }
 }

@@ -201,7 +201,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                     'list1' => [
                         'is_current' => false,
                         'type' => 'addproducts',
-                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list_short',
                         'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
@@ -209,17 +209,15 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'route_parameters' => [
                             'shoppingList' => 1
                         ],
-                        'launcherOptions' => [
-                            'iconClassName' => 'fa-shopping-cart',
-                        ],
                         'attributes' => [
                             'data-order' => 'add',
                         ],
+                        'entityName' => 'shopping_list_1'
                     ],
                     'list2' => [
                         'is_current' => true,
                         'type' => 'addproducts',
-                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list_short',
                         'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
@@ -227,12 +225,10 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'route_parameters' => [
                             'shoppingList' => 2
                         ],
-                        'launcherOptions' => [
-                            'iconClassName' => 'fa-shopping-cart',
-                        ],
                         'attributes' => [
                             'data-order' => 'new',
                         ],
+                        'entityName' => 'shopping_list_2'
                     ],
                     'new' => [
                         'is_current' => false,
@@ -279,7 +275,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                     'list1' => [
                         'is_current' => false,
                         'type' => 'addproducts',
-                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list_short',
                         'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
@@ -287,17 +283,15 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'route_parameters' => [
                             'shoppingList' => 1
                         ],
-                        'launcherOptions' => [
-                            'iconClassName' => 'fa-shopping-cart',
-                        ],
                         'attributes' => [
                             'data-order' => 'add',
                         ],
+                        'entityName' => 'shopping_list_1'
                     ],
                     'list2' => [
                         'is_current' => true,
                         'type' => 'addproducts',
-                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list',
+                        'label' => 'oro.shoppinglist.actions.add_to_shopping_list_short',
                         'translatable' => false,
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
@@ -305,12 +299,10 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'route_parameters' => [
                             'shoppingList' => 2
                         ],
-                        'launcherOptions' => [
-                            'iconClassName' => 'fa-shopping-cart',
-                        ],
                         'attributes' => [
                             'data-order' => 'new',
                         ],
+                        'entityName' => 'shopping_list_2'
                     ]
                 ],
                 'isGuest' => false,
@@ -331,9 +323,6 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'oro_shopping_list.mass_action.add_products_handler',
-                        'launcherOptions' => [
-                            'iconClassName' => 'fa-shopping-cart',
-                        ],
                     ],
                     'new' => [
                         'is_current' => false,
@@ -384,9 +373,6 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
                         'handler' => 'oro_shopping_list.mass_action.add_products_handler',
-                        'launcherOptions' => [
-                            'iconClassName' => 'fa-shopping-cart',
-                        ],
                     ]
                 ],
                 'isGuest' => true,

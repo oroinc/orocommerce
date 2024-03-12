@@ -52,7 +52,7 @@ class LoadProductKitData extends AbstractFixture implements
         ];
     }
 
-    private function getProductsData(): array
+    protected function getProductsData(): array
     {
         return [
             [
@@ -166,7 +166,6 @@ class LoadProductKitData extends AbstractFixture implements
                 ->setSku($productData['sku'])
                 ->setStatus($productData['status'])
                 ->addName((new ProductName())->setString($productData['name']))
-                ->setStatus(Product::STATUS_ENABLED)
                 ->setInventoryStatus($inventoryStatus)
                 ->addSlugPrototype($this->createSlugPrototype($productData['name']))
                 ->setPrimaryUnitPrecision(

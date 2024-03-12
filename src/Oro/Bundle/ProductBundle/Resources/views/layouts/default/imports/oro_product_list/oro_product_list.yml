@@ -14,15 +14,16 @@ layout:
                 item_key: product
                 use_slider: true
                 slider_options:
-                    slidesToShow: 4
+                    slidesToShow: 5
                     arrows: true
                     responsive:
-                        - {breakpoint: 1100, settings: {arrows: true}}
-                        - {breakpoint: 993, settings: {slidesToShow: 3, arrows: true}}
-                        - {breakpoint: 768, settings: {slidesToShow: 2, arrows: true}}
-                        - {breakpoint: 641, settings: {slidesToShow: 1, arrows: true}}
+                        - {breakpoint: 1367, settings: {slidesToShow: 4, arrows: true}}
+                        - {breakpoint: 1281, settings: {slidesToShow: 3, arrows: true}}
+                        - {breakpoint: 769, settings: {slidesToShow: 2, arrows: false, dots: true}}
+                        - {breakpoint: 641, settings: {slidesToShow: 1, arrows: false, dots: true}}
                 visible: '=items'
                 item_extra_class: 'embedded-products__item'
+                title_extra_class: 'embedded-products__title'
                 attr:
                     class: 'embedded-products'
 

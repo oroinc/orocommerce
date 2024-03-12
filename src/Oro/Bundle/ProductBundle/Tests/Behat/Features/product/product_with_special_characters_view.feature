@@ -47,37 +47,13 @@ Feature: Product with special characters view
       | Title | Product1`"'&йёщ®&reg;> |
     And I close ui dialog
 
-  Scenario: Check that product name is displayed properly in "Short page" layout view
-    Given I proceed as the Admin
-    And go to System/ Configuration
-    And I follow "Commerce/Design/Theme" on configuration sidebar
-    And I fill "Page Templates Form" with:
-      | Use Default  | false      |
-      | Product Page | Short page |
-    And I click "Save settings"
-    Given I proceed as the Buyer
-    And I reload the page
-    Then I should see "Product1`\"'&йёщ®&reg;>"
-    And I should not see "Product1`\"'&йёщ®®>"
-    When I click on "Product View Gallery Trigger"
-    Then I should see gallery image with alt "Product1`\"'&йёщ®&reg;>"
-    And I click "Popup Gallery Widget Close"
-
-  @skip
-#  Unskip when BB-20324 will be fixed
-  Scenario: Check that product name is displayed properly in shopping lists widget
-    When click "In Shopping List"
-    Then I should see "UiDialog" with elements:
-      | Title | Product1`"'&йёщ®&reg;> |
-    And I close ui dialog
-
-  Scenario: Check that product name is displayed properly in "Two columns page" layout view
+  Scenario: Check that product name is displayed properly in "Wide template" layout view
     Given I proceed as the Admin
     And go to System/ Configuration
     And I follow "Commerce/Design/Theme" on configuration sidebar
     And I fill "Page Templates Form" with:
       | Use Default  | false            |
-      | Product Page | Two columns page |
+      | Product Page | Wide Template |
     And I click "Save settings"
     Given I proceed as the Buyer
     And I reload the page
@@ -101,7 +77,7 @@ Feature: Product with special characters view
     And I follow "Commerce/Design/Theme" on configuration sidebar
     And I fill "Page Templates Form" with:
       | Use Default  | false     |
-      | Product Page | List page |
+      | Product Page | Tabs Template |
     And I click "Save settings"
     Given I proceed as the Buyer
     And I reload the page

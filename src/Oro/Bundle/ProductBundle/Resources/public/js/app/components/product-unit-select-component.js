@@ -1,9 +1,10 @@
 define(function(require) {
     'use strict';
 
-    const BaseComponent = require('oroui/js/app/components/base/component');
-    const UnitsUtil = require('oroproduct/js/app/units-util');
     const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const UnitsAsRadioGroupView = require('oroproduct/js/app/views/units-as-radio-group-view').default;
+    const UnitsUtil = require('oroproduct/js/app/units-util');
 
     const ProductUnitSelectComponent = BaseComponent.extend({
         /**
@@ -13,7 +14,9 @@ define(function(require) {
             unitLabel: 'oro.product.product_unit.%s.label.full',
             singleUnitMode: false,
             singleUnitModeCodeVisible: false,
-            configDefaultUnit: null
+            configDefaultUnit: null,
+            UNIT_COUNT_AS_GROUP: 2,
+            UNIT_LENGTH_AS_GROUP: 5
         },
 
         /**
@@ -28,8 +31,21 @@ define(function(require) {
          */
         initialize: function(additionalOptions) {
             _.extend(this.options, additionalOptions || {});
+            const $select = this.options._sourceElement.find('select');
+            const {productModel} = this.options;
 
             this.initSelect();
+            if (this.displayUnitsAsGroup()) {
+                this.unitsAsRadioGroupView = new UnitsAsRadioGroupView({
+                    autoRender: true,
+                    model: productModel,
+                    units: UnitsUtil.getUnitsLabel(productModel),
+                    $select: $select
+                });
+                $select.after(this.unitsAsRadioGroupView.$el);
+            } else {
+                $select.removeClass('invisible');
+            }
         },
 
         initSelect: function() {
@@ -57,6 +73,23 @@ define(function(require) {
             }
 
             return false;
+        },
+
+        /**
+         * Determines to show units as a radio group
+         * @returns {boolean}
+         */
+        displayUnitsAsGroup() {
+            const {productModel} = this.options;
+
+            if (!productModel) {
+                return false;
+            }
+
+            const units = UnitsUtil.getUnitsLabel(productModel);
+
+            return Object.keys(units).length === this.options.UNIT_COUNT_AS_GROUP &&
+                _.every(units, label => label.length <= this.options.UNIT_LENGTH_AS_GROUP);
         }
     });
 

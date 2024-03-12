@@ -2,57 +2,45 @@
 
 namespace Oro\Bundle\FrontendTestFrameworkBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
 /**
- * @ORM\Entity()
- * @ORM\Table(name="oro_test_content_variant")
- */
+* Entity that represents Test Content Variant
+*
+*/
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_test_content_variant')]
 class TestContentVariant
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    private ?int $id = null;
 
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_page_product", referencedColumnName="id", nullable=true)
-     */
-    private $product_page_product;
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_page_product', referencedColumnName: 'id', nullable: true)]
+    private ?Product $product_page_product = null;
 
-    /**
-     * @var Category
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CatalogBundle\Entity\Category")
-     * @ORM\JoinColumn(name="category_page_category", referencedColumnName="id", nullable=true)
-     */
-    private $category_page_category;
+    #[ORM\ManyToOne(targetEntity: Category::class)]
+    #[ORM\JoinColumn(name: 'category_page_category', referencedColumnName: 'id', nullable: true)]
+    private ?Category $category_page_category = null;
 
-    /**
-     * @var Segment
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SegmentBundle\Entity\Segment", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(name="product_collection_segment", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     */
-    private $product_collection_segment;
+    #[ORM\ManyToOne(targetEntity: Segment::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(
+        name: 'product_collection_segment',
+        referencedColumnName: 'id',
+        nullable: true,
+        onDelete: 'CASCADE'
+    )]
+    private ?Segment $product_collection_segment = null;
 
-    /**
-     * @var TestContentNode
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentNode")
-     * @ORM\JoinColumn(name="node", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     */
-    private $node;
+    #[ORM\ManyToOne(targetEntity: TestContentNode::class)]
+    #[ORM\JoinColumn(name: 'node', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    private ?TestContentNode $node = null;
 
     /**
      * @return integer

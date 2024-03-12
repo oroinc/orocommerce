@@ -1,57 +1,49 @@
 /* @theme: default; */
 
-$product-item-gallery-view-offset-x: $offset-x-m !default;
-$product-item-gallery-view-width: calc(20% - (#{$product-item-gallery-view-offset-x} * 2)) !default;
-$product-item-gallery-view-offset-bottom: 30px !default;
-$product-item-gallery-view-border: 1px solid get-color('additional', 'light') !default;
+$product-item-gallery-view-border: 1px solid get-color('neutral', 'grey2') !default;
+$product-item-gallery-view-border-radius: $base-ui-element-border-radius !default;
+$product-item-gallery-view-box-shadow: 0 7px 21px 0 rgba(91, 126, 131, .17), 0 2px 6px 0 rgba(5, 59, 66, .07) !default;
+
 $product-item-qty-height: 115px !default;
 
-$product-item-list-view-border: 1px solid get-color('additional', 'light') !default;
+$product-item-list-view-border: 1px solid get-color('neutral', 'grey2') !default;
+$product-item-list-view-border-radius: $base-ui-element-border-radius !default;
 
-$product-item-no-image-view-border: 1px solid get-color('additional', 'light') !default;
+$product-item-no-image-view-border: 1px solid get-color('neutral', 'grey2') !default;
+$product-item-no-image-view-border-radius: $base-ui-element-border-radius !default;
+$product-item-no-image-view-sticker-border-radius:
+    0 0
+    $base-ui-element-border-radius $base-ui-element-border-radius !default;
 
-$product-item-title-link-color: get-color('additional', 'dark') !default;
-$product-item-title-link-color-hover: get-color('additional', 'dark') !default;
+$product-item-title-font-size: $headline4-font-size !default;
+$product-item-title-font-family: $headline4-font-family !default;
+$product-item-title-font-weight: $headline4-font-weight !default;
+$product-item-title-line-height: $headline4-line-height !default;
+$product-item-title-text-transform: $headline4-text-transform !default;
+$product-item-title-color: $headline4-color !default;
+$product-item-title-margin-block: 0 4px !default;
 
-$product-item-title-gallery-view-font-size: 15px !default;
-$product-item-title-gallery-view-line-height: 1.35 !default;
+$product-item-title-link-color: inherit !default;
+$product-item-title-link-color-hover: inherit !default;
 
 $product-item-image-holder-list-view-max-width: 316px !default;
 
+$product-item-image-holder-gallery-view-border-bottom: 1px solid get-color('neutral', 'grey2') !default;
+
+$product-item-no-image-bc-color: get-var-color('neutral', 'grey1') !default;
+$product-item-preview-image-border-radius: $base-ui-element-border-radius !default;
+
 $product-item-image-holder-tiny-width: 40px !default;
 $product-item-image-holder-tiny-height: $product-item-image-holder-tiny-width !default;
-$product-item-image-holder-tiny-border: 1px solid get-color('additional', 'light') !default;
-$product-item-sku-value-color: get-color('primary', 'dark') !default;
+$product-item-image-holder-tiny-border: 1px solid get-color('neutral', 'grey2') !default;
+
+$product-item-sku-value-font-size: $caption-2-font-size !default;
+$product-item-sku-value-line-height: $caption-2-line-height !default;
+$product-item-sku-value-font-weight: $caption-2-font-weight !default;
+$product-item-sku-value-color: get-color('text', 'secondary') !default;
 $product-item-sku-value-word-break: break-all !default;
 
 $product-item-view-product-color: null !default;
-
-$product-item-select-row-gallery-view-height: var(--product-item-select-row-gallery-view-height, 26px) !default;
-
-// strict-tablet
-$product-item-gallery-view-width-strict-tablet: calc(25% - (#{$product-item-gallery-view-offset-x} * 2)) !default;
-
-// tablet
-$product-item-select-row-gallery-view-height-tablet: auto !default;
-
-// tablet-small
-$product-item-gallery-view-offset-x-tablet-small: 12px !default;
-$product-item-primary-content-remainder-width-width-tablet-small: 77% !default;
-$product-item-secondary-content-list-view-width-tablet-small: 240px !default;
-$product-item-primary-content-list-view-width-tablet-small: calc(
-    $product-item-primary-content-remainder-width-width-tablet-small -
-    $product-item-secondary-content-list-view-width-tablet-small
-) !default;
-
-//strict-tablet-small
-$product-item-gallery-view-width-strict-tablet-small: calc(
-    33.3333% - (#{$product-item-gallery-view-offset-x-tablet-small} * 2)
-) !default;
-
-// mobile-landscape
-$product-item-gallery-view-offset-x-mobile-landscape: $offset-x-s !default;
-
-// strict-mobile-landscape
-$product-item-gallery-view-width-strict-mobile-landscape: calc(
-    50% - (#{$product-item-gallery-view-offset-x-mobile-landscape} * 2)
-) !default;
+$product-item-placeholder-label-height: 44px !default;
+$product-item-placeholder-label-display: flex !default;
+$product-item-placeholder-label-align-items: center !default;

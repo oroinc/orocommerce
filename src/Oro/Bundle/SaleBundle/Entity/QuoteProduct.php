@@ -4,146 +4,122 @@ namespace Oro\Bundle\SaleBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Doctrine\ORM\Mapping\OrderBy;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 
 /**
  * Quote Product entity.
  *
- * @ORM\Table(name="oro_sale_quote_product")
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-list-alt"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="quotes"
- *          }
- *      }
- * )
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_sale_quote_product')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    defaultValues: [
+        'entity' => ['icon' => 'fa-list-alt'],
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes']
+    ]
+)]
+class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, ProductKitItemLineItemsAwareInterface
 {
     use ExtendEntityTrait;
 
-    const TYPE_REQUESTED        = 10;
-    const TYPE_OFFER            = 20;
-    const TYPE_NOT_AVAILABLE    = 30;
+    const TYPE_REQUESTED = 10;
+    const TYPE_OFFER = 20;
+    const TYPE_NOT_AVAILABLE = 30;
+
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Quote::class, inversedBy: 'quoteProducts')]
+    #[ORM\JoinColumn(name: 'quote_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Quote $quote = null;
+
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?Product $product = null;
+
+    #[ORM\Column(name: 'free_form_product', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $freeFormProduct = null;
+
+    #[ORM\Column(name: 'product_sku', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $productSku = null;
+
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_replacement_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?Product $productReplacement = null;
+
+    #[ORM\Column(name: 'free_form_product_replacement', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $freeFormProductReplacement = null;
+
+    #[ORM\Column(name: 'product_replacement_sku', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $productReplacementSku = null;
+
+    #[ORM\Column(name: 'type', type: Types::SMALLINT, nullable: true)]
+    protected ?int $type = self::TYPE_REQUESTED;
+
+    #[ORM\Column(name: 'comment', type: Types::TEXT, nullable: true)]
+    protected ?string $comment = null;
+
+    #[ORM\Column(name: 'comment_customer', type: Types::TEXT, nullable: true)]
+    protected ?string $commentCustomer = null;
 
     /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @var Collection<int, QuoteProductOffer>
      */
-    protected $id;
+    #[ORM\OneToMany(
+        mappedBy: 'quoteProduct',
+        targetEntity: QuoteProductOffer::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    protected ?Collection $quoteProductOffers = null;
 
     /**
-     * @var Quote
-     *
-     * @ORM\ManyToOne(targetEntity="Quote", inversedBy="quoteProducts")
-     * @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
+     * @var Collection<int, QuoteProductRequest>
      */
-    protected $quote;
+    #[ORM\OneToMany(
+        mappedBy: 'quoteProduct',
+        targetEntity: QuoteProductRequest::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    protected ?Collection $quoteProductRequests = null;
 
     /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="SET NULL")
+     * @var Collection<QuoteProductKitItemLineItem>
      */
-    protected $product;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="free_form_product", type="string", length=255, nullable=true)
-     */
-    protected $freeFormProduct;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="product_sku", type="string", length=255, nullable=true)
-     */
-    protected $productSku;
-
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_replacement_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $productReplacement;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="free_form_product_replacement", type="string", length=255, nullable=true)
-     */
-    protected $freeFormProductReplacement;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="product_replacement_sku", type="string", length=255, nullable=true)
-     */
-    protected $productReplacementSku;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="type", type="smallint", nullable=true)
-     */
-    protected $type = self::TYPE_REQUESTED;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="comment", type="text", nullable=true)
-     */
-    protected $comment;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="comment_customer", type="text", nullable=true)
-     */
-    protected $commentCustomer;
-
-    /**
-     * @var Collection|QuoteProductOffer[]
-     *
-     * @ORM\OneToMany(targetEntity="QuoteProductOffer", mappedBy="quoteProduct", cascade={"ALL"}, orphanRemoval=true)
-     */
-    protected $quoteProductOffers;
-
-    /**
-     * @var Collection|QuoteProductRequest[]
-     *
-     * @ORM\OneToMany(targetEntity="QuoteProductRequest", mappedBy="quoteProduct", cascade={"ALL"}, orphanRemoval=true)
-     */
-    protected $quoteProductRequests;
+    #[ORM\OneToMany(
+        mappedBy: 'quoteProduct',
+        targetEntity: QuoteProductKitItemLineItem::class,
+        cascade: ['ALL'],
+        orphanRemoval: true,
+        indexBy: 'kitItemId'
+    )]
+    #[OrderBy(['sortOrder' => 'ASC'])]
+    protected $kitItemLineItems;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->quoteProductOffers   = new ArrayCollection();
+        $this->quoteProductOffers = new ArrayCollection();
         $this->quoteProductRequests = new ArrayCollection();
+        $this->kitItemLineItems = new ArrayCollection();
     }
 
     /**
@@ -154,19 +130,17 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
         return (string)$this->productSku;
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updateProducts()
     {
         if ($this->product) {
             $this->productSku = $this->product->getSku();
-            $this->freeFormProduct = (string) $this->product;
+            $this->freeFormProduct = (string)$this->product;
         }
         if ($this->productReplacement) {
             $this->productReplacementSku = $this->productReplacement->getSku();
-            $this->freeFormProductReplacement = (string) $this->productReplacement;
+            $this->freeFormProductReplacement = (string)$this->productReplacement;
         }
     }
 
@@ -184,9 +158,9 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
     public static function getTypes()
     {
         return [
-            self::TYPE_OFFER            => 'offer',
-            self::TYPE_REQUESTED        => 'requested',
-            self::TYPE_NOT_AVAILABLE    => 'not_available',
+            self::TYPE_OFFER => 'offer',
+            self::TYPE_REQUESTED => 'requested',
+            self::TYPE_NOT_AVAILABLE => 'not_available',
         ];
     }
 
@@ -227,7 +201,8 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
      */
     public function isProductFreeForm()
     {
-        return (!$this->product) && ('' !== trim($this->freeFormProduct));
+        return (!$this->product) &&
+            (null !== $this->freeFormProduct && '' !== trim($this->freeFormProduct));
     }
 
     /**
@@ -237,7 +212,8 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
      */
     public function isProductReplacementFreeForm()
     {
-        return (!$this->productReplacement) && ('' !== trim($this->freeFormProductReplacement));
+        return (!$this->productReplacement) &&
+            (null !== $this->freeFormProductReplacement && '' !== trim($this->freeFormProductReplacement));
     }
 
     /**
@@ -249,12 +225,12 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
         if ($this->isTypeNotAvailable()) {
             return $this->isProductReplacementFreeForm()
                 ? $this->freeFormProductReplacement
-                : (string) $this->productReplacement;
+                : (string)$this->productReplacement;
         }
 
         return $this->isProductFreeForm()
             ? $this->freeFormProduct
-            : (string) $this->product;
+            : (string)$this->product;
     }
 
     /**
@@ -632,5 +608,36 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface
     {
         // QuoteProduct doesn't support configurable products
         return null;
+    }
+
+    /**
+     * @return Collection<QuoteProductKitItemLineItem>
+     */
+    public function getKitItemLineItems()
+    {
+        return $this->kitItemLineItems;
+    }
+
+    public function addKitItemLineItem(QuoteProductKitItemLineItem $productKitItemLineItem): self
+    {
+        $index = $productKitItemLineItem->getKitItemId();
+
+        if (!$this->kitItemLineItems->containsKey($index)) {
+            $productKitItemLineItem->setQuoteProduct($this);
+            if ($index) {
+                $this->kitItemLineItems->set($index, $productKitItemLineItem);
+            } else {
+                $this->kitItemLineItems->add($productKitItemLineItem);
+            }
+        }
+
+        return $this;
+    }
+
+    public function removeKitItemLineItem(QuoteProductKitItemLineItem $productKitItemLineItem): self
+    {
+        $this->kitItemLineItems->removeElement($productKitItemLineItem);
+
+        return $this;
     }
 }

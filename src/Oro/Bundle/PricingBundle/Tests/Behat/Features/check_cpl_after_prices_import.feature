@@ -26,6 +26,6 @@ Feature: Check CPL after Prices Import
 
     When I continue as the Buyer
     And I am on the homepage
-    And I click "NewCategory"
+    And I click "NewCategory" in hamburger menu
     And I click "Product 1"
     And I should see "$11.00"

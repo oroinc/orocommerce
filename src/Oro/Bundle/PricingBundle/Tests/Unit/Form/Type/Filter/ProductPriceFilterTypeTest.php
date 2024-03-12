@@ -16,12 +16,13 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Forms;
 
 class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
 {
-    /** @var NumberFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var NumberFormatter|MockObject */
     private $numberFormatter;
     private string $defaultLocale;
 
@@ -102,13 +103,13 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
         $entityManager = $this->createMock(EntityManager::class);
         $entityManager->expects($this->any())
             ->method('getRepository')
-            ->with('OroProductBundle:ProductUnit')
+            ->with(ProductUnit::class)
             ->willReturn($productUnitRepository);
 
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroProductBundle:ProductUnit')
+            ->with(ProductUnit::class)
             ->willReturn($entityManager);
 
         return $doctrine;

@@ -8,8 +8,10 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Context\ShippingKitItemLineItem;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
@@ -71,6 +73,11 @@ class PriceRequestFactoryTest extends TestCase
 
         $this->symmetricCrypter = $this->createMock(SymmetricCrypterInterface::class);
 
+        $this->symmetricCrypter->expects(self::any())
+            ->method('decryptData')
+            ->with('some password')
+            ->willReturn('some password');
+
         $this->priceRequestFactory = new PriceRequestFactory(
             $measureUnitConversion,
             $unitsMapper,
@@ -87,46 +94,82 @@ class PriceRequestFactoryTest extends TestCase
         string $unitOfWeight,
         ?PriceRequest $expectedRequest
     ): void {
-        $this->symmetricCrypter->expects(self::once())
-            ->method('decryptData')
-            ->with('some password')
-            ->willReturn('some password');
-
         $this->transport->setUpsUnitOfWeight($unitOfWeight);
 
-        $lineItems = [];
-        for ($i = 1; $i <= $lineItemCnt; $i++) {
-            $product = $this->getEntity(Product::class, ['id' => $i]);
+        $lineItems = $this->createShippingLineItems($lineItemCnt, $productWeight);
 
-            $lineItems[] = $this->getShippingLineItem(
-                $this->getEntity(
-                    ProductUnit::class,
-                    ['code' => 'test1']
-                ),
-                1
-            )
-                ->setProduct($product)
-                ->setWeight(
-                    Weight::create($productWeight, $this->getEntity(
-                        WeightUnit::class,
-                        ['code' => 'lbs']
-                    ))
-                );
-        }
-
-        $context = new ShippingContext([
-            ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection($lineItems),
-            ShippingContext::FIELD_BILLING_ADDRESS => new AddressStub(),
-            ShippingContext::FIELD_SHIPPING_ORIGIN => new AddressStub(),
-            ShippingContext::FIELD_SHIPPING_ADDRESS => new AddressStub(),
-            ShippingContext::FIELD_PAYMENT_METHOD => '',
-            ShippingContext::FIELD_CURRENCY => 'USD',
-            ShippingContext::FIELD_SUBTOTAL => new Price(),
-        ]);
+        $context = $this->buildShippingContext($lineItems);
 
         $request = $this->priceRequestFactory->create($this->transport, $context, 'Rate', $this->shippingService);
 
         self::assertEquals($expectedRequest, $request);
+    }
+
+    public function testCreateWithKitLineItems(): void
+    {
+        $this->transport->setUpsUnitOfWeight(UPSTransport::UNIT_OF_WEIGHT_LBS);
+
+        $expectedRequest = $this->createRequest([
+            $this->createPackage(150, UPSTransport::UNIT_OF_WEIGHT_LBS),
+            $this->createPackage(105, UPSTransport::UNIT_OF_WEIGHT_LBS),
+        ]);
+
+        $lineItems = $this->createShippingLineItems(2, 50);
+        $lineItems[0]->getProduct()->setType(Product::TYPE_KIT);
+        $lineItems[0]->setKitItemLineItems(new ArrayCollection([
+            $this->createShippingKitItemLineItem(1, 25, 2),
+            $this->createShippingKitItemLineItem(2, 35, 3),
+        ]));
+
+        $context = $this->buildShippingContext($lineItems);
+
+        $request = $this->priceRequestFactory->create($this->transport, $context, 'Rate', $this->shippingService);
+
+        self::assertEquals($expectedRequest, $request);
+    }
+
+    public function testCreateWithNoValidShippingOptionsForKitProduct(): void
+    {
+        $this->transport->setUpsUnitOfWeight(UPSTransport::UNIT_OF_WEIGHT_LBS);
+
+        $expectedRequest = $this->createRequest([
+            $this->createPackage(135, UPSTransport::UNIT_OF_WEIGHT_LBS),
+            $this->createPackage(70, UPSTransport::UNIT_OF_WEIGHT_LBS),
+        ]);
+
+        $lineItems = $this->createShippingLineItems(2, 50);
+        $lineItems[0]->getProduct()->setType(Product::TYPE_KIT);
+        $lineItems[0]->setKitItemLineItems(new ArrayCollection([
+            $this->createShippingKitItemLineItem(1, 25, 2),
+            $this->createShippingKitItemLineItem(2, 35, 3),
+        ]));
+        $lineItems[0]->setWeight(null);
+
+        $context = $this->buildShippingContext($lineItems);
+
+        $request = $this->priceRequestFactory->create($this->transport, $context, 'Rate', $this->shippingService);
+
+        self::assertEquals($expectedRequest, $request);
+    }
+
+    public function testCreateWithNoValidShippingOptionsForRelatedSimpleProduct(): void
+    {
+        $this->transport->setUpsUnitOfWeight(UPSTransport::UNIT_OF_WEIGHT_LBS);
+
+        $lineItems = $this->createShippingLineItems(2, 50);
+        $lineItems[0]->getProduct()->setType(Product::TYPE_KIT);
+        $lineItems[0]->setKitItemLineItems(new ArrayCollection([
+            $this->createShippingKitItemLineItem(1, 25, 2),
+            $this->createShippingKitItemLineItem(2, 35, 3),
+        ]));
+
+        $lineItems[0]->getKitItemLineItems()[0]->setWeight(null);
+
+        $context = $this->buildShippingContext($lineItems);
+
+        $request = $this->priceRequestFactory->create($this->transport, $context, 'Rate', $this->shippingService);
+
+        self::assertEquals(null, $request);
     }
 
     public function packagesDataProvider(): array
@@ -179,6 +222,64 @@ class PriceRequestFactoryTest extends TestCase
         $priceRequest = $this->priceRequestFactory->create($this->transport, new ShippingContext([]), '');
 
         self::assertNull($priceRequest);
+    }
+
+    private function buildShippingContext(array $lineItems): ShippingContext
+    {
+        return new ShippingContext([
+           ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection($lineItems),
+           ShippingContext::FIELD_BILLING_ADDRESS => new AddressStub(),
+           ShippingContext::FIELD_SHIPPING_ORIGIN => new AddressStub(),
+           ShippingContext::FIELD_SHIPPING_ADDRESS => new AddressStub(),
+           ShippingContext::FIELD_PAYMENT_METHOD => '',
+           ShippingContext::FIELD_CURRENCY => 'USD',
+           ShippingContext::FIELD_SUBTOTAL => new Price(),
+        ]);
+    }
+
+    private function createShippingLineItems(int $lineItemCnt, int $productWeight): array
+    {
+        $lineItems = [];
+        for ($i = 1; $i <= $lineItemCnt; $i++) {
+            $product = $this->getEntity(Product::class, ['id' => $i]);
+
+            $lineItems[] = $this->getShippingLineItem(
+                $this->getEntity(
+                    ProductUnit::class,
+                    ['code' => 'test1']
+                ),
+                1
+            )
+                ->setProduct($product)
+                ->setWeight(
+                    Weight::create($productWeight, $this->getEntity(
+                        WeightUnit::class,
+                        ['code' => 'lbs']
+                    ))
+                );
+        }
+        return $lineItems;
+    }
+
+    private function createShippingKitItemLineItem(int $id, int $productWeight, int $quantity): ShippingKitItemLineItem
+    {
+        $product = $this->getEntity(Product::class, ['id' => $id]);
+
+        $productHolder = $this->createMock(ProductHolderInterface::class);
+        $productHolder->method('getEntityIdentifier')->willReturn(static::LINE_ITEM_ENTITY_ID);
+
+        $shippingKitItemLineItem = new ShippingKitItemLineItem($productHolder);
+        $shippingKitItemLineItem
+            ->setProduct($product)
+            ->setQuantity($quantity)
+            ->setWeight(
+                Weight::create($productWeight, $this->getEntity(
+                    WeightUnit::class,
+                    ['code' => 'lbs']
+                ))
+            );
+
+        return $shippingKitItemLineItem;
     }
 
     private function createPackage(int $weight, string $unitOfWeight): Package

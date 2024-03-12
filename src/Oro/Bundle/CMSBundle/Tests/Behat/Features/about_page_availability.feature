@@ -8,6 +8,6 @@ Feature: About page availability
 
   Scenario: Access About page
     Given I am on the homepage
-    When I follow "About"
+    When I click "About" in hamburger menu
     Then Page title equals to "About"
     And image "About Page Image" is loaded

@@ -4,68 +4,61 @@ namespace Oro\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
 use Extend\Entity\Autocomplete\OroShoppingListBundle_Entity_LineItem;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
  * Represents a line item in a shopping list.
  *
- * @ORM\Table(
- *      name="oro_shopping_list_line_item",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(
- *              name="oro_shopping_list_line_item_uidx",
- *              columns={"product_id", "shopping_list_id", "unit_code", "checksum"}
- *          )
- *      }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository")
- * @Config(
- *      defaultValues={
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="shopping"
- *          },
- *          "ownership"={
- *              "owner_type"="USER",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="user_owner_id",
- *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="customerUser",
- *              "frontend_owner_column_name"="customer_user_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "entity"={
- *              "icon"="fa-shopping-cart"
- *          }
- *      }
- * )
  * @mixin OroShoppingListBundle_Entity_LineItem
  */
+#[ORM\Entity(repositoryClass: LineItemRepository::class)]
+#[ORM\Table(name: 'oro_shopping_list_line_item')]
+#[ORM\UniqueConstraint(
+    name: 'oro_shopping_list_line_item_uidx',
+    columns: ['product_id', 'shopping_list_id', 'unit_code', 'checksum']
+)]
+#[Config(
+    defaultValues: [
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'shopping'],
+        'ownership' => [
+            'owner_type' => 'USER',
+            'owner_field_name' => 'owner',
+            'owner_column_name' => 'user_owner_id',
+            'frontend_owner_type' => 'FRONTEND_USER',
+            'frontend_owner_field_name' => 'customerUser',
+            'frontend_owner_column_name' => 'customer_user_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id'
+        ],
+        'dataaudit' => ['auditable' => true],
+        'entity' => ['icon' => 'fa-shopping-cart']
+    ]
+)]
 class LineItem implements
     OrganizationAwareInterface,
     CustomerVisitorOwnerAwareInterface,
     ProductLineItemInterface,
+    ProductLineItemChecksumAwareInterface,
     ProductKitItemLineItemsAwareInterface,
     ProductLineItemsHolderAwareInterface,
     ExtendEntityInterface
@@ -73,148 +66,66 @@ class LineItem implements
     use UserAwareTrait;
     use ExtendEntityTrait;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Product $product = null;
+
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'parent_product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Product $parentProduct = null;
 
     /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, ProductKitItemLineItem>
      */
-    protected $product;
-
-    /**
-     * @var Product|null
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $parentProduct;
-
-    /**
-     * @var Collection<ProductKitItemLineItem>
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="ProductKitItemLineItem",
-     *     mappedBy="lineItem",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true
-     * )
-     * @OrderBy({"sortOrder"="ASC"})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $kitItemLineItems;
+    #[ORM\OneToMany(
+        mappedBy: 'lineItem',
+        targetEntity: ProductKitItemLineItem::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    #[OrderBy(['sortOrder' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $kitItemLineItems = null;
 
     /**
      * Differentiates the unique constraint allowing to add the same product with the same unit code multiple times,
      * moving the logic of distinguishing of such line items out of the entity class.
-     *
-     * @ORM\Column(name="checksum", type="string", length=40, options={"default"=""}, nullable=false)
      */
-    protected string $checksum = '';
+    #[ORM\Column(name: 'checksum', type: Types::STRING, length: 40, nullable: false, options: ['default' => ''])]
+    protected ?string $checksum = '';
+
+    #[ORM\ManyToOne(targetEntity: ShoppingList::class, inversedBy: 'lineItems')]
+    #[ORM\JoinColumn(name: 'shopping_list_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?ShoppingList $shoppingList = null;
 
     /**
-     * @var ShoppingList
-     *
-     * @ORM\ManyToOne(
-     *      targetEntity="Oro\Bundle\ShoppingListBundle\Entity\ShoppingList",
-     *      inversedBy="lineItems"
-     * )
-     * @ORM\JoinColumn(name="shopping_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var int|float
      */
-    protected $shoppingList;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="quantity", type="float")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
+    #[ORM\Column(name: 'quantity', type: Types::FLOAT)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected $quantity = 1;
 
-    /**
-     * @var ProductUnit
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $unit;
+    #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
+    #[ORM\JoinColumn(name: 'unit_code', referencedColumnName: 'code', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?ProductUnit $unit = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="notes", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $notes;
+    #[ORM\Column(name: 'notes', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $notes = null;
 
-    /**
-     * @var CustomerUser|null
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
-     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $customerUser;
+    #[ORM\ManyToOne(targetEntity: CustomerUser::class)]
+    #[ORM\JoinColumn(name: 'customer_user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?CustomerUser $customerUser = null;
 
     public function __construct()
     {

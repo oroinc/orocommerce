@@ -102,6 +102,15 @@ const SidebarToggleFiltersAction = FullscreenFiltersAction.extend({
         );
     },
 
+    /**
+     * @param {boolean} selected
+     */
+    markAsFiltersAsChanged(selected = false) {
+        if (this.$launcherParent) {
+            this.$launcherParent.toggleClass('filters-selected', selected);
+        }
+    },
+
     createLauncher: function(options) {
         const launcher = SidebarToggleFiltersAction.__super__.createLauncher.call(this, options);
         const triggerSidebar = new SidebarToggleFiltersView({

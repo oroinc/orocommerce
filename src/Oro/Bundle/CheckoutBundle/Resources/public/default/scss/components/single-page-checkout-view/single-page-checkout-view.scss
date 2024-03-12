@@ -55,15 +55,17 @@
         }
 
         &-header {
-            position: relative;
+            --sticky-position-top-offset: var(--sticky-page-header-element-offset-top, 0);
+
             display: flex;
             width: 100%;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
 
-            &.has-offset:not(.in-sticky) {
-                margin: $checkout-head-margin;
+            &.in-sticky {
+                background: $checkout-view-sticky-titles-background;
+                z-index: $checkout-view-sticky-titles-z-index;
             }
         }
     }
@@ -148,25 +150,14 @@
         }
     }
 
-    &__notification-container {
-        &:not(:empty) {
-            background: $checkout-view-notification-container-background;
-        }
-
-        .notification-flash-container {
-            margin: 0 auto;
-            padding: $offset-y-m;
-        }
-    }
-
     .checkout {
         padding: $checkout-padding-narrow;
     }
 
     .checkout-form__payment-methods {
         max-width: 300px;
-        padding: 0 0 0 ($offset-x-m + 2);
-        margin: 0 0 0 $offset-x;
+        padding: 0 0 0 (spacing('sm') + 2);
+        margin: 0 0 0 spacing('base');
     }
 
     .checkout-form__img {
@@ -221,6 +212,19 @@
             }
         }
     }
+}
+
+.alert.notification-flash--single-page-checkout {
+    position: fixed;
+    top: spacing('base');
+    left: spacing('base');
+    right: spacing('base');
+
+    z-index: z('popup') + 101;
+
+    max-width: calc(#{$page-area-container-max-width} - #{spacing('base')});
+
+    margin: auto;
 }
 
 @include breakpoint('mobile-landscape') {

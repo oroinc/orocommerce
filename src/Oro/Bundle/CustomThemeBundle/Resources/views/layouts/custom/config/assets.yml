@@ -30,9 +30,6 @@ styles:
 
         - 'bundles/orocustomtheme/ShoppingListBundle/scss/variables/shopping-list-config.scss'
 
-        - 'bundles/orocustomtheme/ProductBundle/scss/variables/page-templates/list-theme-config.scss'
-        - 'bundles/orocustomtheme/ProductBundle/scss/styles.scss'
-
     output: 'css/styles.css'
 
 stylebook_styles:

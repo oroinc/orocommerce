@@ -45,6 +45,11 @@ class UpdateIntegrationValidator extends ConstraintValidator
         $errors = $this->shippingMethodValidator
             ->validate($this->shippingMethodFactory->create($value->getChannel()))
             ->getErrors();
+
+        if (is_array($errors) && isset($errors['errors'])) {
+            $errors = $errors['errors'];
+        }
+
         if ($errors->isEmpty()) {
             return;
         }

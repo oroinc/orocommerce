@@ -6,7 +6,7 @@ $checkout-view-margin: 20px 0 0 !default;
 $checkout-view-flex-direction: row !default;
 $checkout-view-flex-wrap: wrap !default;
 $checkout-view-justify-content: space-between !default;
-$checkout-view-align-items: flex-start !default;
+$checkout-view-align-items: stretch !default;
 
 $checkout-view-column-gap: 28px !default;
 
@@ -16,7 +16,7 @@ $checkout-view-column-first-width: calc(#{$checkout-view-column-width} - #{$chec
 $checkout-view-column-extended-width: calc(
     #{$checkout-view-column-extra-width} + #{$checkout-view-column-gap}
 ) !default;
-$checkout-view-column-margin: 0 0 $offset-y !default;
+$checkout-view-column-margin: 0 0 spacing('base') !default;
 $checkout-view-column-offset: 0 $checkout-view-column-gap !default;
 $checkout-view-column-min-width: 0 !default;
 
@@ -27,16 +27,15 @@ $checkout-view-title-font-size: $headline2-font-size !default;
 $checkout-view-title-line-height: $headline2-line-height !default;
 $checkout-view-title-font-weight: $headline2-font-weight !default;
 
-$checkout-view-notification-container-background: get-color('additional', 'ultra') !default;
+$checkout-view-sticky-column-offset: spacing('sm') $checkout-view-column-gap !default;
 
-$checkout-view-sticky-column-offset: $offset-y-m $checkout-view-column-gap !default;
-
-$checkout-view-sticky-titles-background: get-color('additional', 'ultra') !default;
-$checkout-view-sticky-titles-border-bottom: 1px solid get-color('additional', 'light') !default;
+$checkout-view-sticky-titles-background: get-color('neutral', 'white-100') !default;
+$checkout-view-sticky-titles-z-index: z('fixed') !default;
+$checkout-view-sticky-titles-border-bottom: 1px solid get-color('neutral', 'grey1') !default;
 
 $checkout-view-sticky-titles-inner-display: flex !default;
 $checkout-view-sticky-titles-inner-max-width: $site-width !default;
-$checkout-view-sticky-titles-inner-offset: 0 $offset-x-m !default;
+$checkout-view-sticky-titles-inner-offset: 0 spacing('sm') !default;
 $checkout-view-sticky-titles-inner-margin: 0 auto !default;
 $checkout-view-sticky-titles-inner-flex-direction: row !default;
 $checkout-view-sticky-titles-inner-justify-content: space-between !default;
@@ -52,12 +51,12 @@ $checkout-view-sticky-totals-summary-float: none !default;
 
 $checkout-view-badge-size: 26px !default;
 $checkout-view-badge-font-size: $base-font-size !default;
-$checkout-view-badge-margin: 0 $offset-x-s 0 0 !default;
+$checkout-view-badge-margin: 0 spacing('xs') 0 0 !default;
 
 $checkout-view-column-pseudo-width: 1px !default;
-$checkout-view-column-pseudo-background: get-color('additional', 'light') !default;
+$checkout-view-column-pseudo-background: get-color('neutral', 'grey1') !default;
 
-$checkout-view-shipping-methods-margin: $offset-y 0 0 !default;
+$checkout-view-shipping-methods-margin: spacing('base') 0 0 !default;
 $checkout-view-shipping-methods-datepicker-box-max-width: none !default;
 
 $checkout-view-checkout-order-summary-totals-sticky-left: auto !default;

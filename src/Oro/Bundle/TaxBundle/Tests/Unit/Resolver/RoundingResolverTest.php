@@ -8,20 +8,23 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Resolver\RoundingResolver;
 use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
+use PHPUnit\Framework\TestCase;
 
-class RoundingResolverTest extends \PHPUnit\Framework\TestCase
+class RoundingResolverTest extends TestCase
 {
     use ResultComparatorTrait;
 
-    /** @var RoundingResolver */
-    protected $resolver;
+    private RoundingResolver $resolver;
 
     protected function setUp(): void
     {
         $this->resolver = new RoundingResolver();
     }
 
-    public function testResolve()
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testResolve(): void
     {
         $taxable = new Taxable();
         $taxable->setResult(
@@ -38,6 +41,7 @@ class RoundingResolverTest extends \PHPUnit\Framework\TestCase
             )
         );
         $itemTaxable = new Taxable();
+        $itemTaxable->setKitTaxable(true);
         $itemTaxable->setResult(
             new Result(
                 [
@@ -52,6 +56,22 @@ class RoundingResolverTest extends \PHPUnit\Framework\TestCase
             )
         );
         $taxable->addItem($itemTaxable);
+
+        $kitItemTaxable = new Taxable();
+        $kitItemTaxable->setResult(
+            new Result(
+                [
+                    Result::UNIT => ResultElement::create('16.1333', '12.6459', '3.2413', '0.0000001'),
+                    Result::ROW => ResultElement::create('16.1333', '12.6459', '3.2413', '0.0000001'),
+                    Result::TAXES => [
+                        TaxResultElement::create('1', '0.08', '12.6459', '1.0021'),
+                        TaxResultElement::create('2', '0.07', '12.6459', '1.1233'),
+                        TaxResultElement::create('3', '0.066', '12.6459', '1.1159'),
+                    ],
+                ]
+            )
+        );
+        $itemTaxable->addItem($kitItemTaxable);
 
         $this->resolver->resolve($taxable);
 
@@ -83,6 +103,21 @@ class RoundingResolverTest extends \PHPUnit\Framework\TestCase
                 ]
             ),
             $itemTaxable->getResult()
+        );
+
+        $this->compareResult(
+            new Result(
+                [
+                    Result::UNIT => ResultElement::create('16.13', '12.65', '3.24', '0.0000001'),
+                    Result::ROW => ResultElement::create('16.13', '12.65', '3.24', '0.0000001'),
+                    Result::TAXES => [
+                        TaxResultElement::create('1', '0.08', '12.65', '1'),
+                        TaxResultElement::create('2', '0.07', '12.65', '1.12'),
+                        TaxResultElement::create('3', '0.066', '12.65', '1.12'),
+                    ],
+                ]
+            ),
+            $kitItemTaxable->getResult()
         );
     }
 

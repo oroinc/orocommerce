@@ -123,6 +123,7 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
 
         $priceLists = $this->setRepositoryExpectations();
 
+        $event = $this->createEvent($this->env);
         $this->env->expects($this->once())
             ->method('render')
             ->with(
@@ -130,10 +131,10 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
                 [
                     'priceLists' => $priceLists,
                     'fallback' => $this->getFallbackLabel(),
+                    'entity' => $event->getEntity()
                 ]
             )
             ->willReturn($templateHtml);
-        $event = $this->createEvent($this->env);
 
         $this->processEvent($event);
         $scrollData = $event->getScrollData()->getData();

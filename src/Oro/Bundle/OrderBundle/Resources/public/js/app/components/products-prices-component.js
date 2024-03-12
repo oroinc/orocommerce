@@ -1,36 +1,61 @@
 define(function(require) {
     'use strict';
 
+    const $ = require('jquery');
     const mediator = require('oroui/js/mediator');
-    const BaseProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    /**
-     * @export oroorder/js/app/components/entry-point-component
-     * @extends oropricing.app.components.ProductsPricesComponent
-     * @class oroorder.app.components.ProductsPricesComponent
-     */
-    const ProductsPricesComponent = BaseProductsPricesComponent.extend({
+    const ProductsPricesComponent = BaseComponent.extend({
         /**
-         * @inheritdoc
+         * @inheritDoc
          */
+        options: {
+            tierPrices: null
+        },
+
         constructor: function ProductsPricesComponent(options) {
             ProductsPricesComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @param {Array} products
-         * @param {Function} callback
+         * @inheritDoc
          */
-        loadProductsTierPrices: function(products, callback) {
-            mediator.once('entry-point:order:load', function(response) {
-                callback(response.tierPrices || {});
+        initialize: function(options) {
+            ProductsPricesComponent.__super__.initialize.call(this, options);
+
+            this.options = $.extend(true, {}, this.options, options || {});
+
+            mediator.trigger('pricing:refresh:products-tier-prices', this.options.tierPrices);
+
+            this.listenTo(mediator, {
+                'pricing:get:products-tier-prices': this.getProductsTierPrices,
+                'pricing:load:products-tier-prices': this.loadProductsTierPrices,
+                'pricing:load:prices': this.reloadPrices,
+                'entry-point:order:load': this.onOrderEntryPointLoad
             });
         },
 
-        reloadPrices: function() {
-            ProductsPricesComponent.__super__.reloadPrices.call(this);
+        /*
+         * @param {Function} callback
+         */
+        getProductsTierPrices: function(callback) {
+            callback(this.options.tierPrices);
+        },
+
+        loadProductsTierPrices: function(products, callback) {
+            mediator.once('entry-point:order:load', response => {
+                callback(response.tierPrices || {});
+            });
 
             mediator.trigger('entry-point:order:trigger');
+        },
+
+        reloadPrices: function() {
+            mediator.trigger('entry-point:order:trigger');
+        },
+
+        onOrderEntryPointLoad: function(response) {
+            mediator.trigger('pricing:refresh:products-tier-prices', response.tierPrices || {});
         }
     });
 

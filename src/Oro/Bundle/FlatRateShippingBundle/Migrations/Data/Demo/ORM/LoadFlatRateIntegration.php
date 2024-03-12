@@ -38,6 +38,9 @@ class LoadFlatRateIntegration extends AbstractFixture implements
     use ContainerAwareTrait;
     use UserUtilityTrait;
 
+    /**
+     * {@inheritDoc}
+     */
     public function getDependencies(): array
     {
         return [
@@ -46,6 +49,9 @@ class LoadFlatRateIntegration extends AbstractFixture implements
         ];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getPreviousClassNames(): array
     {
         return [
@@ -53,15 +59,12 @@ class LoadFlatRateIntegration extends AbstractFixture implements
         ];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function load(ObjectManager $manager): void
     {
-        if (!$this->container) {
-            return;
-        }
-
-        $channel = $this->loadIntegration($manager);
-
-        $this->loadShippingRule($manager, $channel);
+        $this->loadShippingRule($manager, $this->loadIntegration($manager));
     }
 
     private function loadIntegration(ObjectManager $manager): Channel
@@ -85,7 +88,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
         return $channel;
     }
 
-    private function loadShippingRule(ObjectManager $manager, Channel $channel)
+    private function loadShippingRule(ObjectManager $manager, Channel $channel): void
     {
         $typeConfig = new ShippingMethodTypeConfig();
         $typeConfig->setEnabled(true);
@@ -122,17 +125,15 @@ class LoadFlatRateIntegration extends AbstractFixture implements
     private function getOrganization(ObjectManager $manager): Organization
     {
         if ($this->hasReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION)) {
-            /** @noinspection PhpIncompatibleReturnTypeInspection */
             return $this->getReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION);
         }
 
-        return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        return $manager->getRepository(Organization::class)->getFirst();
     }
 
     private function getFlatRateIdentifier(Channel $channel): string
     {
-        return $this->container
-            ->get('oro_flat_rate_shipping.method.identifier_generator.method')
+        return $this->container->get('oro_flat_rate_shipping.method.identifier_generator.method')
             ->generateIdentifier($channel);
     }
 

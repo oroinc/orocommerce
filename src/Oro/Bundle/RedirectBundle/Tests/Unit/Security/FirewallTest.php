@@ -52,7 +52,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
         $event = new RequestEvent(
             $this->createMock(KernelInterface::class),
             $request,
-            KernelInterface::MASTER_REQUEST
+            KernelInterface::MAIN_REQUEST
         );
 
         $this->matchedUrlDecisionMaker->expects(self::once())
@@ -78,7 +78,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
         $event = new RequestEvent(
             $this->createMock(KernelInterface::class),
             $request,
-            KernelInterface::MASTER_REQUEST
+            KernelInterface::MAIN_REQUEST
         );
 
         $this->matchedUrlDecisionMaker->expects(self::once())
@@ -129,7 +129,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
         $event = new RequestEvent(
             $this->createMock(KernelInterface::class),
             $request,
-            KernelInterface::MASTER_REQUEST
+            KernelInterface::MAIN_REQUEST
         );
         $event->setResponse($this->createMock(Response::class));
 
@@ -158,7 +158,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
         $event = new RequestEvent(
             $this->createMock(KernelInterface::class),
             $request,
-            KernelInterface::MASTER_REQUEST
+            KernelInterface::MAIN_REQUEST
         );
 
         $this->matchedUrlDecisionMaker->expects(self::once())
@@ -187,7 +187,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
         $event = new RequestEvent(
             $this->createMock(KernelInterface::class),
             $request,
-            KernelInterface::MASTER_REQUEST
+            KernelInterface::MAIN_REQUEST
         );
 
         $this->matchedUrlDecisionMaker->expects(self::once())
@@ -218,7 +218,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
         $event = new RequestEvent(
             $this->createMock(KernelInterface::class),
             $request,
-            KernelInterface::MASTER_REQUEST
+            KernelInterface::MAIN_REQUEST
         );
 
         $this->matchedUrlDecisionMaker->expects(self::once())
@@ -255,7 +255,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
         $event = new RequestEvent(
             $this->createMock(KernelInterface::class),
             $request,
-            KernelInterface::MASTER_REQUEST
+            KernelInterface::MAIN_REQUEST
         );
 
         $this->matchedUrlDecisionMaker->expects(self::once())
@@ -294,7 +294,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
         $event = new FinishRequestEvent(
             $this->createMock(KernelInterface::class),
             $request,
-            KernelInterface::MASTER_REQUEST
+            KernelInterface::MAIN_REQUEST
         );
 
         $this->baseFirewall->expects(self::once())
@@ -314,7 +314,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
         $event = new FinishRequestEvent(
             $this->createMock(KernelInterface::class),
             $request,
-            KernelInterface::MASTER_REQUEST
+            KernelInterface::MAIN_REQUEST
         );
 
         $this->matchedUrlDecisionMaker->expects(self::once())

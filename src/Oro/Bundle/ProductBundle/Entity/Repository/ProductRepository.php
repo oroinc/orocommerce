@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Entity\Repository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -118,9 +119,9 @@ class ProductRepository extends ServiceEntityRepository
     {
         $qb = $this->_em->createQueryBuilder()
             ->select('imageFile as image, IDENTITY(pi.product) as product_id')
-            ->from('OroAttachmentBundle:File', 'imageFile')
+            ->from(File::class, 'imageFile')
             ->join(
-                'OroProductBundle:ProductImage',
+                ProductImage::class,
                 'pi',
                 Expr\Join::WITH,
                 'imageFile.id = pi.image'
@@ -501,6 +502,59 @@ class ProductRepository extends ServiceEntityRepository
             ->setParameter('product_id', $product->getId(), Types::INTEGER)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param array $ids
+     * @return int[]
+     */
+    public function getProductKitIdsByProductIds(array $ids): array
+    {
+        if (!$ids) {
+            return [];
+        }
+
+        $qb = $this->getProductKitsByProductIdsQueryBuilder($ids);
+
+        return $qb
+            ->select('pk.id')
+            ->getQuery()
+            ->getResult(AbstractQuery::HYDRATE_SCALAR_COLUMN);
+    }
+
+    /**
+     * @param array $ids
+     * @return Product[]|array
+     */
+    public function getProductKitsByProductIds(array $ids): array
+    {
+        if (!$ids) {
+            return [];
+        }
+
+        return $this
+            ->getProductKitsByProductIdsQueryBuilder($ids)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param array $ids
+     * @return QueryBuilder
+     */
+    private function getProductKitsByProductIdsQueryBuilder(array $ids): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('pk');
+
+        return $qb
+            ->innerJoin('pk.kitItems', 'pki')
+            ->innerJoin('pki.kitItemProducts', 'pip')
+            ->innerJoin('pip.product', 'p')
+            ->where($qb->expr()->eq('pk.type', ':type'))
+            ->andWhere($qb->expr()->in('p.id', ':ids'))
+            ->setParameter('type', Product::TYPE_KIT, Types::STRING)
+            ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY)
+            ->groupBy('pk.id');
     }
 
     private function filterByImageType(QueryBuilder $queryBuilder)

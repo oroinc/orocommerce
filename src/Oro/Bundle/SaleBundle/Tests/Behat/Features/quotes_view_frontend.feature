@@ -10,6 +10,7 @@ Feature: Quotes View Frontend
 
   Scenario: Check quote view page
     Given I signed in as AmandaRCole@example.org on the store frontend
+    And I click "Account Dropdown"
     When I click "Quotes"
     And click view "Q123" in grid
     Then I should see "Product1`\"'&йёщ®&reg;>"

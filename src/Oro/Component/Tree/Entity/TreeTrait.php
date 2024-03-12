@@ -2,42 +2,31 @@
 
 namespace Oro\Component\Tree\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
+/**
+* Tree trait
+*
+*/
 trait TreeTrait
 {
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeLeft
-     * @ORM\Column(name="tree_left", type="integer")
-     */
-    protected $left;
+    #[ORM\Column(name: 'tree_left', type: Types::INTEGER)]
+    #[Gedmo\TreeLeft]
+    protected ?int $left = null;
 
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeLevel
-     * @ORM\Column(name="tree_level", type="integer")
-     */
-    protected $level;
+    #[ORM\Column(name: 'tree_level', type: Types::INTEGER)]
+    #[Gedmo\TreeLevel]
+    protected ?int $level = null;
 
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeRight
-     * @ORM\Column(name="tree_right", type="integer")
-     */
-    protected $right;
+    #[ORM\Column(name: 'tree_right', type: Types::INTEGER)]
+    #[Gedmo\TreeRight]
+    protected ?int $right = null;
 
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeRoot
-     * @ORM\Column(name="tree_root", type="integer", nullable=true)
-     */
-    protected $root;
+    #[ORM\Column(name: 'tree_root', type: Types::INTEGER, nullable: true)]
+    #[Gedmo\TreeRoot]
+    protected ?int $root = null;
 
     /**
      * @return int

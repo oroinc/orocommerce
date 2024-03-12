@@ -4,13 +4,16 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Provider;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
+use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class UnitsMapperTest extends \PHPUnit\Framework\TestCase
+class UnitsMapperTest extends TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|MockObject */
     private $registry;
 
     /** @var UnitsMapper */
@@ -81,7 +84,7 @@ class UnitsMapperTest extends \PHPUnit\Framework\TestCase
             ->willReturn($kgUnit);
         $this->registry->expects(self::once())
             ->method('getRepository')
-            ->with('OroShippingBundle:WeightUnit')
+            ->with(WeightUnit::class)
             ->willReturn($repository);
 
         self::assertEquals(
@@ -100,7 +103,7 @@ class UnitsMapperTest extends \PHPUnit\Framework\TestCase
             ->willReturn($kgUnit);
         $this->registry->expects(self::once())
             ->method('getRepository')
-            ->with('OroShippingBundle:LengthUnit')
+            ->with(LengthUnit::class)
             ->willReturn($repository);
 
         self::assertEquals(

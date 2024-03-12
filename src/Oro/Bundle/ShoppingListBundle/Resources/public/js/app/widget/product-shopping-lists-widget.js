@@ -23,7 +23,7 @@ define(function(require) {
                 modal: true,
                 resizable: false,
                 width: '100%',
-                maxWidth: 580,
+                maxWidth: 620,
                 minWidth: 375,
                 autoResize: true
             },
@@ -227,7 +227,9 @@ define(function(require) {
             const $form = this.getElement('addForm');
 
             $form[0].reset();
-            $form.find('select').inputWidget('refresh');
+            $form.find('select').each(function() {
+                $(this).inputWidget('val', $(this).val());
+            });
         },
 
         onAddFormShoppingListChange: function(e) {

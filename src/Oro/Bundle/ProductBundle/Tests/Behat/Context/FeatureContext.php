@@ -548,7 +548,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * Assert specific template containing specified data on page.
-     * Example: Then I should see "Two Columns Page" with "Product Group" containing data:
+     * Example: Then I should see "Wide Template" with "Product Group" containing data:
      *            | Color | Green |
      *            | Size  | L     |
      *
@@ -564,7 +564,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * Assert prices on specific template.
-     * Example: Then I should see the following prices on "Two Columns Page":
+     * Example: Then I should see the following prices on "Wide Template":
      *    | Listed Price: | [$10.00 / item, $445.50 / set] |
      *    | Your Price:   | $10.00 / item                  |
      *
@@ -687,6 +687,24 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
                 $SKU
             )
         );
+    }
+
+    /**
+     * @codingStandardsIgnoreStart
+     * Example: I should see product unit selector as "single" for product with SKU "SKU1"
+     * @Then /^(?:|I )should see product unit selector as "(?P<selectorType>[^"]*)" for product with SKU "(?P<SKU>[^"]*)"$/
+     * @codingStandardsIgnoreEnd
+     */
+    public function shouldSeeForProductUnit($selectorType, $sku)
+    {
+        $productItem = $this->findProductItem($sku);
+
+        self::assertTrue($productItem->isVisible());
+
+        $unitSelector = $productItem->getElement('ProductUnitSelector');
+
+        self::assertTrue($unitSelector->isVisible());
+        self::assertEquals($selectorType, $unitSelector->getSelectorType());
     }
 
     /**
@@ -1568,7 +1586,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     {
         $section = $this->getSession()->getPage()->find(
             'xpath',
-            sprintf('//h2[contains(.,"%s")]/..', $sectionName)
+            sprintf('//h2[contains(.,"%s")]/../..', $sectionName)
         );
         self::assertNotEmpty($section, sprintf('Section "%s" not found on page', $sectionName));
 
@@ -1918,98 +1936,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         $importFile = $this->createElement('Import Choose File');
         $importFile->setValue($fileName);
-    }
-
-    /**
-     * Check schema.org brand in block or page
-     * Example: I should see schema org brand "Test Brand" for "TestSKU" in "Product Frontend Grid"
-     * Example: I should see schema org brand "Test Brand" on page
-     *
-     * @Then /^(?:|I )should see schema org brand "(?P<BRAND>[^"]*)" for "(?P<SKU>[^"]*)" in "(?P<BLOCK>[^"]*)"$/
-     * @Then /^(?:|I )should see schema org brand "(?P<BRAND>[^"]*)" on page$/
-     */
-    public function iShouldSeeSchemaOrgBrandForProductInBlock(
-        string $brand,
-        ?string $sku = null,
-        ?string $block = null
-    ): void {
-        $productItem = $this->getProductItemInBlock($block, $sku);
-        $schemaOrgBrandName = $this->createElement('SchemaOrg Brand Name', $productItem);
-
-        self::assertTrue($schemaOrgBrandName->isIsset(), 'Element "SchemaOrg Brand Name" is not found.');
-
-        self::assertEquals($brand, $schemaOrgBrandName->getAttribute('content'));
-    }
-
-    /**
-     * Check schema.org description in block or page
-     * Example: I should see schema org description "Test Description" for "TestSKU" in "Product Frontend Grid"
-     * Example: I should see schema org description "Test Description"
-     *
-     * @codingStandardsIgnoreStart
-     * @Then /^(?:|I )should see schema org description "(?P<DESCRIPTION>[^"]*)" for "(?P<SKU>[^"]*)" in "(?P<BLOCK>[^"]*)"$/
-     * @Then /^(?:|I )should see schema org description "(?P<DESCRIPTION>[^"]*)" on page$/
-     * @codingStandardsIgnoreEnd
-     */
-    public function iShouldSeeSchemaOrgDescriptionForProductInBlock(
-        string $description,
-        ?string $sku = null,
-        ?string $block = null
-    ): void {
-        $productItem = $this->getProductItemInBlock($block, $sku);
-        $schemaOrgProductDescription = $this->createElement('SchemaOrg Description', $productItem);
-        self::assertTrue($schemaOrgProductDescription->isIsset(), 'Element "SchemaOrg Description" is not found.');
-
-        self::assertEquals($description, $schemaOrgProductDescription->getAttribute('content'));
-    }
-
-    /**
-     * Check schema.org brand in block or page
-     * Example: I should not see schema org brand for "TestSKU" in "Product Frontend Grid"
-     * Example: I should not see schema org brand on page
-     *
-     * @Then /^(?:|I )should not see schema org brand for "(?P<SKU>[^"]*)" in "(?P<BLOCK>[^"]*)"$/
-     * @Then /^(?:|I )should not see schema org brand on page$/
-     */
-    public function iShouldNotSeeSchemaOrgBrandForProductInBlock(?string $sku = null, ?string $block = null): void
-    {
-        $productItem = $this->getProductItemInBlock($block, $sku);
-        $schemaOrgBrandName = $this->createElement('SchemaOrg Brand Name', $productItem);
-
-        self::assertFalse($schemaOrgBrandName->isIsset(), 'Element "SchemaOrg Brand Name" was expected to be absent.');
-    }
-
-    /**
-     * Check schema.org description in block or page
-     * Example: I should not see schema org description for "TestSKU" in "Product Frontend Grid"
-     * Example: I should not see schema org description
-     *
-     * @Then /^(?:|I )should not see schema org description for "(?P<SKU>[^"]*)" in "(?P<BLOCK>[^"]*)"$/
-     * @Then /^(?:|I )should not see schema org description on page$/
-     */
-    public function iShouldNotSeeSchemaOrgDescriptionForProductInBlock(?string $sku = null, ?string $block = null): void
-    {
-        $productItem = $this->getProductItemInBlock($block, $sku);
-        $schemaOrgProductDescription = $this->createElement('SchemaOrg Description', $productItem);
-
-        self::assertFalse(
-            $schemaOrgProductDescription->isIsset(),
-            'Element "SchemaOrg Description" was expected to be absent.'
-        );
-    }
-
-    private function getProductItemInBlock(?string $block, ?string $sku): Element
-    {
-        if (!is_null($block) && !is_null($sku)) {
-            $blockElement = $this->createElement($block);
-            self::assertTrue($blockElement->isIsset(), sprintf('Block "%s" is not found.', $block));
-            $productItem = $this->findProductItem($sku, $blockElement);
-        } else {
-            $productItem = $this->createElement('Product Item View');
-            self::assertTrue($productItem->isIsset(), 'Element "Product Item View" is not found.');
-        }
-
-        return $productItem;
     }
 
     private function getProductUnitPrecisionsIteratorAll(): iterable

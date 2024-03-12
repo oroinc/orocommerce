@@ -42,7 +42,7 @@ Feature: Product redirect slug
   Scenario: Check product url
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
-    When I click "MyCategory"
+    When I click "MyCategory" in hamburger menu
     And should see "Product1"
     And click "View Details" for "Product1" product
     Then the url should match "/new-category-rc-17/_item/acme-rp-17"
@@ -81,7 +81,7 @@ Feature: Product redirect slug
 
   Scenario: Check product url with new slug
     Given I proceed as the User
-    When I click "MyCategory"
+    When I click "MyCategory" in hamburger menu
     And should see "Product1"
     And click "View Details" for "Product1" product
     Then the url should match "/new-category-rc-18/_item/acme-rp-18"

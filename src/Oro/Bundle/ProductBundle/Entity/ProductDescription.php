@@ -3,75 +3,42 @@
 namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 
 /**
  * Represents product description
- *
- * @ORM\Table(
- *      name="oro_product_prod_descr",
- *      indexes={
- *          @ORM\Index(name="idx_product_prod_descr_fallback", columns={"fallback"})
- *      }
- * )
- * @ORM\Entity
- * @Config()
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_product_prod_descr')]
+#[ORM\Index(columns: ['fallback'], name: 'idx_product_prod_descr_fallback')]
+#[Config]
 class ProductDescription extends AbstractLocalizedFallbackValue
 {
-    /**
-     * @var Product
-     *
-     * @ORM\ManyToOne(targetEntity="Product", inversedBy="descriptions")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $product;
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'descriptions')]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?Product $product = null;
 
     /**
      * @var null|string
-     *
-     * @ORM\Column(type="wysiwyg", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "attachment"={
-     *              "acl_protected"=true,
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(type: 'wysiwyg', nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'attachment' => ['acl_protected' => true]])]
     protected $wysiwyg;
 
     /**
      * @var null|string
-     *
-     * @ORM\Column(type="wysiwyg_style", name="wysiwyg_style", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "attachment"={
-     *              "acl_protected"=true,
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(name: 'wysiwyg_style', type: 'wysiwyg_style', nullable: true)]
+    #[ConfigField(defaultValues: ['attachment' => ['acl_protected' => true]])]
     protected $wysiwygStyle;
 
     /**
      * @var null|array
-     *
-     * @ORM\Column(type="wysiwyg_properties", name="wysiwyg_properties", nullable=true)
      */
+    #[ORM\Column(name: 'wysiwyg_properties', type: 'wysiwyg_properties', nullable: true)]
     protected $wysiwygProperties;
 
     public function getProduct(): ?Product

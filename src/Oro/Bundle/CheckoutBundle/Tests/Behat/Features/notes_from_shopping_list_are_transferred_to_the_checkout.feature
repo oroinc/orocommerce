@@ -80,11 +80,13 @@ Feature: Notes from shopping list are transferred to the checkout
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
   Scenario: Order view page should show order notes and line item notes on storefront
-    Given I click "Orders"
+    When I click "Account Dropdown"
+    And I click "Order History"
     And click view "1" in grid
     Then I should see "Notes My shopping list notes"
     And I should see that Notes in 1 row is equal to "SKU123 Product Note"
-    When I click "Orders"
+    When I click "Account Dropdown"
+    And I click "Order History"
     And click view "2" in grid
     Then I should see "Notes My shopping list notes"
     And I should see that Notes in 1 row is equal to "SKU123 Product Note"

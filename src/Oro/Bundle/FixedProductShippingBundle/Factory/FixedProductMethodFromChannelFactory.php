@@ -48,6 +48,7 @@ class FixedProductMethodFromChannelFactory implements IntegrationShippingMethodF
 
         return new FixedProductMethod(
             $this->identifierGenerator->generateIdentifier($channel),
+            $channel->getName(),
             (string)$this->localizationHelper->getLocalizedValue($transport->getLabels()),
             $this->integrationIconProvider->getIcon($channel),
             $channel->isEnabled(),

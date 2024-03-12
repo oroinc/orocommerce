@@ -119,6 +119,9 @@ class OrderLineItemTest extends RestJsonApiTestCase
         self::assertSame('789.0000', $order->getSubtotal());
         self::assertSame('1234.0000', $order->getTotal());
 
+        $data = $this->getRequestData('create_product_kit_line_item.yml');
+        self::assertSame(555, $data['data']['attributes']['value']);
+
         $response = $this->post(
             ['entity' => 'orderlineitems'],
             'create_product_kit_line_item.yml'
@@ -139,8 +142,8 @@ class OrderLineItemTest extends RestJsonApiTestCase
         $responseContent = $this->updateResponseContent($responseContent, $response);
         $this->assertResponseContains($responseContent, $response);
 
-        self::assertSame('1230.5900', $order->getSubtotal());
-        self::assertSame('1230.5900', $order->getTotal());
+        self::assertSame('157.6700', $order->getSubtotal());
+        self::assertSame('157.6700', $order->getTotal());
     }
 
     public function testTryToCreateEmptyValue(): void

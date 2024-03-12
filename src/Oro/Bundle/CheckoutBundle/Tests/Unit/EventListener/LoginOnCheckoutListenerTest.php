@@ -9,6 +9,7 @@ use Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener;
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\UserBundle\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,7 +64,7 @@ class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnInteractiveWrongToken(): void
     {
-        $event = $this->getEvent(new \stdClass());
+        $event = $this->getEvent(new User());
         $this->configManager->expects(self::never())
             ->method('get');
         $this->listener->onInteractiveLogin($event);

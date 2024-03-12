@@ -7,3 +7,12 @@ services:
         resource: '../../Controller/Frontend/Api/Rest/*Controller.php'
         calls:
             - [setContainer, ['@service_container']]
+
+    Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest\LineItemController:
+        calls:
+            - [ setContainer, [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_shopping_list.line_item.manager.api, key: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager }
+            - { name: container.service_subscriber, id: oro_shopping_list.manager.shopping_list, key: Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager }
+            - { name: container.service_subscriber, id: oro_shopping_list.manager.current_shopping_list, key: Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager }

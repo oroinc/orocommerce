@@ -14,8 +14,8 @@ Feature: My Shopping List Actions
 
   Scenario: Check index page
     Given I login as AmandaRCole@example.org buyer
-    When I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     Then Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
@@ -50,8 +50,8 @@ Feature: My Shopping List Actions
     And I should see "Create Order"
     When I click "Create Order"
     Then Page title equals to "Billing Information - Checkout"
-    When I follow "Account"
-    Then I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    Then I click on "Shopping Lists"
     And I click View "Shopping List 4" in grid
 
   Scenario: Set Default Action
@@ -59,18 +59,20 @@ Feature: My Shopping List Actions
     Then I should see "Set as Default"
     When I click "Set as Default"
     And I click "Yes, set as default"
-    Then I should see "Shopping list has been successfully set as default" flash message
+    Then I should see "Shopping list has been successfully set as default" flash message and I close it
+    And reload the page
+    And I wait for 3 seconds
     When I click "Shopping List Actions"
     Then I should not see "Set as Default"
     When I open shopping list widget
     And I click on "Shopping List Widget Set Current Radio 2"
-    And I close shopping list widget
+    And I click on empty space
     And I click "Shopping List Actions"
     Then I should see "Set as Default"
 
   Scenario: Check Default Shopping List
-    When I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     Then I should see following grid:
       | Name            | Subtotal  | Items | Default |
       | Shopping List 4 | $8,818.00 | 32    | No      |
@@ -83,14 +85,15 @@ Feature: My Shopping List Actions
     And I click "Shopping List Actions"
     And I click "Delete"
     And I click "Yes, delete"
+    And click on "Flash Message Close Button"
     Then Page title equals to "Shopping Lists - My Account"
     When I open shopping list widget
     Then I should not see "Shopping List 4" on shopping list widget
     And I reload the page
 
   Scenario: Move line item to another shopping list
-    Given I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
@@ -104,9 +107,9 @@ Feature: My Shopping List Actions
     And I filter Name as is equal to "Shopping List 1" in "Shopping List Action Move Grid"
     And I click "Shopping List Action Move Radio"
     And I click "Shopping List Action Submit"
-    Then I should see "One entity has been moved successfully" flash message
-    And I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    Then I should see "One entity has been moved successfully" flash message and I close it
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
@@ -114,8 +117,8 @@ Feature: My Shopping List Actions
       | Shopping List 1 | $1,614.00 | 4     | No      |
 
   Scenario: Delete line items from shopping list mass action
-    Given I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
@@ -126,9 +129,9 @@ Feature: My Shopping List Actions
     When I check first 4 records in "Frontend Shopping List Edit Grid"
     And I click "Delete" link from mass action dropdown
     And confirm deletion
-    Then I should see "4 item(s) have been deleted successfully" flash message
-    And I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    Then I should see "4 item(s) have been deleted successfully" flash message and I close it
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     And Page title equals to "Shopping Lists - My Account"
     And I should see following grid:
       | Name            | Subtotal  | Items | Default |
@@ -147,10 +150,10 @@ Feature: My Shopping List Actions
     Then Page title equals to "Nancy Sallee - Users - My Account"
 
   Scenario: Check shopping list view page without actions
-    Given I follow "Account"
-    When click "Users"
+    And I click "Account Dropdown"
     And click "Roles"
     And click edit "Administrator" in grid
+    And I should see 'Predefined roles cannot be edited directly. We copied all the original data so that you can save it as a new user role for your organization. All users will be moved from the original role to this new role after you click "Save".' flash message and I close it
     And click "Shopping"
     And select following permissions:
       | Shopping List | Edit:None           |
@@ -161,17 +164,18 @@ Feature: My Shopping List Actions
       | Shopping List | Set as Default:None |
     And I scroll to top
     And click "Save"
-    Then should see "Customer User Role has been saved" flash message
+    Then should see "Customer User Role has been saved" flash message and I close it
+    And I click "Account Dropdown"
     When click "Sign Out"
     And I login as AmandaRCole@example.org buyer
-    And I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     And I click View "Shopping List 1" in grid
     Then I should not see a "Shopping List Actions" element
 
   Scenario: Filter by owner should be visible after clearing all filters
-    Given I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     And Page title equals to "Shopping Lists - My Account"
     When I click "Frontend Grid Action Filter Button"
     And I filter Owner as contains "Amanda"

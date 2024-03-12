@@ -10,7 +10,7 @@
             type: entity.shippingMethodType,
             cost: entity.estimatedShippingCost.value
         } %}
-        {% set savedShippingMethodLabel = oro_shipping_method_with_type_label(entity.shippingMethod, entity.shippingMethodType) ~ ': ' ~ entity.estimatedShippingCost|oro_format_price() %}
+        {% set savedShippingMethodLabel = oro_shipping_method_with_type_label(entity.shippingMethod, entity.shippingMethodType, entity.organization) ~ ': ' ~ entity.estimatedShippingCost|oro_format_price() %}
     {% endif %}
     {% set options = {
         view: view,

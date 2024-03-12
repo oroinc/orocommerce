@@ -1,10 +1,10 @@
 /* @theme: default; */
 
 $checkout-navigation-icon-size: 26px !default;
-$checkout-navigation-icon-current-background-color: get-color('primary', 'base') !default;
+$checkout-navigation-icon-current-background-color: get-color('secondary', 'c1') !default;
 $checkout-navigation-icon-font-size: 14px !default;
 
-$checkout-navigation-border-left: 2px solid get-color('additional', 'light') !default;
+$checkout-navigation-border-left: 2px solid get-color('neutral', 'grey2') !default;
 
-$checkout-navigation-complete-color: get-color('additional', 'ultra') !default;
-$checkout-navigation-complete-background-color: get-color('secondary', 'light') !default;
+$checkout-navigation-complete-color: get-color('neutral', 'white-100') !default;
+$checkout-navigation-complete-background-color: get-color('success', 'dark') !default;

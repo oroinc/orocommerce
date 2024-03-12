@@ -7,26 +7,22 @@ use Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Model\Result;
 
+/**
+ * Tax resolver that calculate tax value and provides unit result.
+ */
 class UnitResolver
 {
-    use CalculateAdjustmentTrait;
+    use TaxCalculateResolverTrait;
 
-    /**
-     * @var TaxCalculatorInterface
-     */
-    protected $calculator;
-
-    public function __construct(TaxCalculatorInterface $calculator)
-    {
-        $this->calculator = $calculator;
+    public function __construct(
+        private TaxCalculatorInterface $calculator
+    ) {
     }
 
     /**
-     * @param Result $result
      * @param TaxRule[] $taxRules
-     * @param BigDecimal $taxableAmount
      */
-    public function resolveUnitPrice(Result $result, array $taxRules, BigDecimal $taxableAmount)
+    public function resolveUnitPrice(Result $result, array $taxRules, BigDecimal $taxableAmount): void
     {
         $taxRate = BigDecimal::zero();
 

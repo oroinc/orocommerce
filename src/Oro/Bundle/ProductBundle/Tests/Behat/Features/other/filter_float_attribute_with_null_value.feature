@@ -34,7 +34,7 @@ Feature: Filter float attribute with null value
     And I save and close form
     Given I proceed as the User
     And I go to homepage
-    And I click "Category 4"
+    And I click "Category 4" in hamburger menu
     And filter test6 as less than "10"
     Then there is no records in grid
     And filter test6 as is empty

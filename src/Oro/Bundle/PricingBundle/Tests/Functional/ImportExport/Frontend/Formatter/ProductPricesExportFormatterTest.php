@@ -17,7 +17,6 @@ class ProductPricesExportFormatterTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
-        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [

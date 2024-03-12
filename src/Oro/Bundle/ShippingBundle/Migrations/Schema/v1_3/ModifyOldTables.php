@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class ModifyOldTables implements Migration, OrderedMigrationInterface
 {
     /**
-     * @return int
+     * {@inheritDoc}
      */
     public function getOrder()
     {
@@ -18,7 +18,7 @@ class ModifyOldTables implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

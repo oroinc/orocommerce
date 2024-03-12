@@ -33,7 +33,6 @@ Feature: Products grid frontend export localized
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
     And I am on the homepage
-    And I click "Localization Switcher"
     And I select "Zulu" localization
     And I type "SKUZULU1" in "search"
     And I click "Search Button"

@@ -4,6 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -12,6 +13,9 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 
 /**
@@ -172,7 +176,7 @@ class CustomerProductRepository extends AbstractVisibilityRepository
     private function getSubQueryOfExistsVisibilities($parentAlias)
     {
         $subQueryBuilder = $this->getEntityManager()
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved')
+            ->getRepository(CustomerProductVisibilityResolved::class)
             ->createQueryBuilder('apvr');
         $subQueryBuilder->where(
             $subQueryBuilder->expr()->andX(
@@ -195,7 +199,7 @@ class CustomerProductRepository extends AbstractVisibilityRepository
     ) {
         $configValue = CustomerProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         $qb = $this->getEntityManager()
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerProductVisibility')
+            ->getRepository(CustomerProductVisibility::class)
             ->createQueryBuilder('apv');
         $qb->select(
             'apv.id',
@@ -207,23 +211,23 @@ class CustomerProductRepository extends AbstractVisibilityRepository
         )
         ->innerJoin('apv.scope', 'scope')
         ->innerJoin('scope.customer', 'customer')
-        ->innerJoin('OroCatalogBundle:Category', 'category', 'WITH', 'apv.product MEMBER OF category.products')
-        ->leftJoin('OroScopeBundle:Scope', 'acvr_scope', 'WITH', 'acvr_scope.customer = scope.customer')
+        ->innerJoin(Category::class, 'category', 'WITH', 'apv.product MEMBER OF category.products')
+        ->leftJoin(Scope::class, 'acvr_scope', 'WITH', 'acvr_scope.customer = scope.customer')
         ->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved',
+            CustomerCategoryVisibilityResolved::class,
             'acvr',
             'WITH',
             'acvr.scope = acvr_scope AND acvr.category = category'
         )
-        ->leftJoin('OroScopeBundle:Scope', 'agcvr_scope', 'WITH', 'agcvr_scope.customerGroup = customer.group')
+        ->leftJoin(Scope::class, 'agcvr_scope', 'WITH', 'agcvr_scope.customerGroup = customer.group')
         ->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved',
+            CustomerGroupCategoryVisibilityResolved::class,
             'agcvr',
             'WITH',
             'agcvr.category = category AND agcvr.scope = agcvr_scope'
         )
         ->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
+            CategoryVisibilityResolved::class,
             'cvr',
             'WITH',
             'cvr.category = category'
@@ -260,7 +264,7 @@ ELSE
 END
 VISIBILITY;
         $queryBuilder = $this->getEntityManager()
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerProductVisibility')
+            ->getRepository(CustomerProductVisibility::class)
             ->createQueryBuilder('apv');
         $queryBuilder
             ->select(
@@ -299,7 +303,7 @@ VISIBILITY;
     private function getInsertByProductVisibilityQueryBuilder(Product $product, $visibility, array $productVisibility)
     {
         $qb = $this->getEntityManager()
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerProductVisibility')
+            ->getRepository(CustomerProductVisibility::class)
             ->createQueryBuilder('productVisibility');
 
         $qb->select([
@@ -325,7 +329,7 @@ VISIBILITY;
     private function getInsertByCustomerCategoryVisibilityQueryBuilder(Product $product, Category $category)
     {
         $qb = $this->getEntityManager()
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerProductVisibility')
+            ->getRepository(CustomerProductVisibility::class)
             ->createQueryBuilder('apv');
         $qb->select([
             'apv.id',
@@ -336,15 +340,15 @@ VISIBILITY;
             'IDENTITY(acvr.category)',
         ])
         ->innerJoin('apv.scope', 'scope')
-        ->innerJoin('OroCustomerBundle:Customer', 'ac', 'WITH', 'scope.customer = ac')
+        ->innerJoin(Customer::class, 'ac', 'WITH', 'scope.customer = ac')
         ->innerJoin(
-            'OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved',
+            CustomerCategoryVisibilityResolved::class,
             'acvr',
             'WITH',
             'acvr.category = :category'
         )
         ->innerJoin(
-            'OroScopeBundle:Scope',
+            Scope::class,
             'acs',
             'WITH',
             'acvr.scope = acs AND acs.customer = scope.customer'
@@ -366,7 +370,7 @@ VISIBILITY;
     private function getInsertByCustomerGroupCategoryVisibilityQueryBuilder(Product $product, Category $category)
     {
         $qb = $this->getEntityManager()
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerProductVisibility')
+            ->getRepository(CustomerProductVisibility::class)
             ->createQueryBuilder('apv');
 
         $parentAlias = $this->getRootAlias($qb);
@@ -381,15 +385,15 @@ VISIBILITY;
             'IDENTITY(agcvr.category)',
         ])
         ->innerJoin('apv.scope', 'scope')
-        ->innerJoin('OroCustomerBundle:Customer', 'ac', 'WITH', 'scope.customer = ac')
+        ->innerJoin(Customer::class, 'ac', 'WITH', 'scope.customer = ac')
         ->innerJoin(
-            'OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved',
+            CustomerGroupCategoryVisibilityResolved::class,
             'agcvr',
             'WITH',
             'agcvr.category = :category'
         )
         ->innerJoin(
-            'OroScopeBundle:Scope',
+            Scope::class,
             'gcs',
             'WITH',
             'agcvr.scope = gcs AND gcs.customerGroup = scope.customerGroup'
@@ -414,7 +418,7 @@ VISIBILITY;
         $configValue = CustomerProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
 
         $qb = $this->getEntityManager()
-            ->getRepository('OroVisibilityBundle:Visibility\CustomerProductVisibility')
+            ->getRepository(CustomerProductVisibility::class)
             ->createQueryBuilder('apv');
 
         $parentAlias = $this->getRootAlias($qb);
@@ -429,9 +433,9 @@ VISIBILITY;
             'IDENTITY(cvr.category)',
         ])
         ->innerJoin('apv.scope', 'scope')
-        ->innerJoin('OroCustomerBundle:Customer', 'ac', 'WITH', 'scope.customer = ac')
+        ->innerJoin(Customer::class, 'ac', 'WITH', 'scope.customer = ac')
         ->innerJoin(
-            'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
+            CategoryVisibilityResolved::class,
             'cvr',
             'WITH',
             'cvr.category = :category'

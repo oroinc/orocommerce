@@ -34,7 +34,7 @@ class ProductPriceEntityListenerTest extends TestCase
         $args = $this->createMock(PreUpdateEventArgs::class);
         $event = $this->createMock(ProductPriceSaveAfterEvent::class);
         $args->expects(self::once())
-            ->method('getEntity')
+            ->method('getObject')
             ->willReturn($price);
         $args->expects(self::once())
             ->method('getEntityChangeSet')
@@ -61,7 +61,7 @@ class ProductPriceEntityListenerTest extends TestCase
         $args = $this->createMock(PreUpdateEventArgs::class);
         $event = $this->createMock(ProductPriceSaveAfterEvent::class);
         $args->expects(self::once())
-            ->method('getEntity')
+            ->method('getObject')
             ->willReturn($price);
         $args->expects(self::once())
             ->method('getEntityChangeSet')

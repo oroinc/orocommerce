@@ -40,6 +40,8 @@ Feature: Update Order with Product Kits
     And I see next subtotals for "Backend Order":
       | Subtotal | $81.46 |
       | Total    | $81.46 |
+    And the "Price" field should be readonly in form "Order Form"
+    And the "Price2" field should be readonly in form "Order Form"
 
   Scenario: Check that order can be saved
     When I save form
@@ -60,6 +62,8 @@ Feature: Update Order with Product Kits
     And I see next subtotals for "Backend Order":
       | Subtotal | $81.46 |
       | Total    | $81.46 |
+    And the "Price" field should be readonly in form "Order Form"
+    And the "Price2" field should be readonly in form "Order Form"
 
   Scenario: Check that order can be saved
     When I save form
@@ -75,6 +79,8 @@ Feature: Update Order with Product Kits
     And I see next subtotals for "Backend Order":
       | Subtotal | $197.51 |
       | Total    | $197.51 |
+    And the "Price" field should be readonly in form "Order Form"
+    And the "Price2" field should be readonly in form "Order Form"
 
   Scenario: Check that order can be saved
     When I save form
@@ -95,6 +101,8 @@ Feature: Update Order with Product Kits
     And I see next subtotals for "Backend Order":
       | Subtotal | $193.81 |
       | Total    | $193.81 |
+    And the "Price" field should be readonly in form "Order Form"
+    And the "Price2" field should be readonly in form "Order Form"
 
   Scenario: Check that order can be saved
     When I save form
@@ -116,6 +124,8 @@ Feature: Update Order with Product Kits
     And I see next subtotals for "Backend Order":
       | Subtotal | $195.05 |
       | Total    | $195.05 |
+    And the "Price" field should be readonly in form "Order Form"
+    And the "Price2" field should be readonly in form "Order Form"
 
   Scenario: Check that order can be saved
     When I save form
@@ -137,6 +147,8 @@ Feature: Update Order with Product Kits
     And I see next subtotals for "Backend Order":
       | Subtotal | $197.52 |
       | Total    | $197.52 |
+    And the "Price" field should be readonly in form "Order Form"
+    And the "Price2" field should be readonly in form "Order Form"
 
   Scenario: Check that order can be saved
     When I save form
@@ -158,6 +170,8 @@ Feature: Update Order with Product Kits
     And I see next subtotals for "Backend Order":
       | Subtotal | $496.28 |
       | Total    | $496.28 |
+    And the "Price" field should be readonly in form "Order Form"
+    And the "Price2" field should be readonly in form "Order Form"
 
   Scenario: Check that order can be saved
     When I save form
@@ -180,6 +194,8 @@ Feature: Update Order with Product Kits
     And I see next subtotals for "Backend Order":
       | Subtotal | $494.38 |
       | Total    | $494.38 |
+    And the "Price" field should be readonly in form "Order Form"
+    And the "Price2" field should be readonly in form "Order Form"
 
   Scenario: Check that order can be saved
     When I save form
@@ -220,6 +236,8 @@ Feature: Update Order with Product Kits
     And I see next subtotals for "Backend Order":
       | Subtotal | $382.28 |
       | Total    | $382.28 |
+    And the "Price" field should be readonly in form "Order Form"
+    And the "Price2" field should be readonly in form "Order Form"
 
   Scenario: Check that order can be saved
     When I save form

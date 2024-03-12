@@ -4,51 +4,45 @@ namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroPricingBundle_Entity_PriceList;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalsAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 /**
  * Entity holds price list data.
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @ORM\Table(name="oro_price_list")
- * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository")
- * @Config(
- *      routeName="oro_pricing_price_list_index",
- *      routeView="oro_pricing_price_list_view",
- *      routeUpdate="oro_pricing_price_list_update",
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-briefcase"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="organization",
- *              "owner_column_name"="organization_id"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          },
- *          "form"={
- *              "form_type"="Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType",
- *              "grid_name"="pricing-price-list-select-grid",
- *          }
- *      }
- * )
  * @mixin OroPricingBundle_Entity_PriceList
  */
+#[ORM\Entity(repositoryClass: PriceListRepository::class)]
+#[ORM\Table(name: 'oro_price_list')]
+#[Config(
+    routeName: 'oro_pricing_price_list_index',
+    routeView: 'oro_pricing_price_list_view',
+    routeUpdate: 'oro_pricing_price_list_update',
+    defaultValues: [
+        'entity' => ['icon' => 'fa-briefcase'],
+        'dataaudit' => ['auditable' => true],
+        'ownership' => [
+            'owner_type' => 'ORGANIZATION',
+            'owner_field_name' => 'organization',
+            'owner_column_name' => 'organization_id'
+        ],
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'form' => ['form_type' => PriceListSelectType::class, 'grid_name' => 'pricing-price-list-select-grid']
+    ]
+)]
 class PriceList extends BasePriceList implements
     ScheduleIntervalsAwareInterface,
     OrganizationAwareInterface,
@@ -56,95 +50,58 @@ class PriceList extends BasePriceList implements
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $organization;
+    #[ORM\ManyToOne(targetEntity: Organization::class)]
+    #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?OrganizationInterface $organization = null;
+
+    #[ORM\Column(name: 'active', type: Types::BOOLEAN, options: ['default' => true])]
+    protected ?bool $active = true;
+
+    #[ORM\Column(name: 'actual', type: Types::BOOLEAN, options: ['default' => true])]
+    protected ?bool $actual = true;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(name="active", type="boolean", options={"default"=true})
-     */
-    protected $active = true;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="actual", type="boolean", options={"default"=true})
-     */
-    protected $actual = true;
-
-    /**
-     * @var Collection|ProductPrice[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\PricingBundle\Entity\ProductPrice",
-     *      mappedBy="priceList",
-     *      fetch="EXTRA_LAZY"
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, ProductPrice>
      **/
-    protected $prices;
+    #[ORM\OneToMany(mappedBy: 'priceList', targetEntity: ProductPrice::class, fetch: 'EXTRA_LAZY')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $prices = null;
 
     /**
-     * @var PriceListCurrency[]|Collection
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceListCurrency",
-     *      mappedBy="priceList",
-     *      cascade={"all"},
-     *      orphanRemoval=true
-     * )
+     * @var Collection<int, PriceListCurrency>
      */
-    protected $currencies;
+    #[ORM\OneToMany(
+        mappedBy: 'priceList',
+        targetEntity: PriceListCurrency::class,
+        cascade: ['all'],
+        orphanRemoval: true
+    )]
+    protected ?Collection $currencies = null;
 
     /**
-     * @var PriceListSchedule[]|ArrayCollection
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceListSchedule",
-     *      mappedBy="priceList",
-     *      cascade={"persist"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\OrderBy({"activeAt" = "ASC"})
+     * @var Collection<int, PriceListSchedule>
      */
-    protected $schedules;
+    #[ORM\OneToMany(
+        mappedBy: 'priceList',
+        targetEntity: PriceListSchedule::class,
+        cascade: ['persist'],
+        orphanRemoval: true
+    )]
+    #[ORM\OrderBy(['activeAt' => Criteria::ASC])]
+    protected ?Collection $schedules = null;
+
+    #[ORM\Column(name: 'contain_schedule', type: Types::BOOLEAN)]
+    protected ?bool $containSchedule = false;
+
+    #[ORM\Column(name: 'product_assignment_rule', type: Types::TEXT, nullable: true)]
+    protected ?string $productAssignmentRule = null;
 
     /**
-     * @var bool
-     * @ORM\Column(name="contain_schedule", type="boolean")
-     */
-    protected $containSchedule = false;
-
-    /**
-     * @var string
-     * @ORM\Column(name="product_assignment_rule", type="text", nullable=true)
-     */
-    protected $productAssignmentRule;
-
-    /**
-     * @var Collection|PriceRule[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceRule",
-     *      mappedBy="priceList",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\OrderBy({"priority" = "ASC"})
+     * @var Collection<int, PriceRule>
      **/
-    protected $priceRules;
+    #[ORM\OneToMany(mappedBy: 'priceList', targetEntity: PriceRule::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\OrderBy(['priority' => Criteria::ASC])]
+    protected ?Collection $priceRules = null;
 
     /**
      * {@inheritdoc}

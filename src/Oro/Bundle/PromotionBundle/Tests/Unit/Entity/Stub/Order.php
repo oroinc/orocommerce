@@ -14,7 +14,7 @@ class Order extends BaseOrder
     /**
      * @var Collection|AppliedPromotion[]
      */
-    private $appliedPromotions;
+    private ?Collection $appliedPromotions = null;
 
     public function __construct()
     {

@@ -18,6 +18,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -129,7 +130,7 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         CustomerVisitorStub $customerVisitor,
         array $expectedShoppingList
     ) {
-        $token = new AnonymousCustomerUserToken('', [], $customerVisitor);
+        $token = new AnonymousCustomerUserToken($customerVisitor, []);
 
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
@@ -152,7 +153,7 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetShoppingListsForCustomerVisitorAndCreateShoppingListForGuest()
     {
-        $token = new AnonymousCustomerUserToken('', [], new CustomerVisitorStub());
+        $token = new AnonymousCustomerUserToken(new CustomerVisitorStub(), []);
 
         $website = $this->getEntity(Website::class, [
             'id' => 1,
@@ -186,7 +187,7 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     {
         $this->tokenStorage->expects($this->once())
             ->method('getToken')
-            ->willReturn(new \stdClass());
+            ->willReturn($this->createMock(TokenInterface::class));
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage(
@@ -198,20 +199,20 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetShoppingListForCustomerVisitorEmptyVisitor()
     {
-        $token = new AnonymousCustomerUserToken('', [], null);
+        $token = new AnonymousCustomerUserToken(new CustomerVisitor());
         $this->tokenStorage->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Customer visitor is empty.');
+        $this->expectExceptionMessage('Current website is empty.');
 
         $this->guestShoppingListManager->getShoppingListForCustomerVisitor();
     }
 
     public function testGetShoppingListForCustomerVisitorEmptyWebsite()
     {
-        $token = new AnonymousCustomerUserToken('', [], new CustomerVisitor());
+        $token = new AnonymousCustomerUserToken(new CustomerVisitor());
         $this->tokenStorage->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
@@ -230,7 +231,7 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'not valid token' => [
-                'tokenClass' => \stdClass::class,
+                'tokenClass' => TokenInterface::class,
                 'isFeatureEnabled' => true,
                 'expectedResult' => false,
             ],
@@ -318,7 +319,7 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         CustomerVisitorStub $customerVisitor,
         ShoppingList $expectedShoppingList
     ) {
-        $token = new AnonymousCustomerUserToken('', [], $customerVisitor);
+        $token = new AnonymousCustomerUserToken($customerVisitor);
 
         $this->websiteManager->expects($this->atLeastOnce())
             ->method('getCurrentWebsite')

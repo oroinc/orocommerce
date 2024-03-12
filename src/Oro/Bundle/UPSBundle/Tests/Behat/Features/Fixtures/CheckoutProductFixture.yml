@@ -1,0 +1,121 @@
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: 'Common Business Unit'
+        organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+    precision2:
+        unit: '@item'
+        precision: '1'
+    precision3:
+        unit: '@item'
+        precision: '1'
+    product_kit_precision1:
+        unit: '@piece'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValue1:
+        string: '400-Watt Bulb Work Light'
+    locValue2:
+        string: '800-Watt Bulb Work Light'
+    locValue3:
+        string: 'Kit Watt Bulb Work Light'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU123'
+        type: 'simple'
+        primaryUnitPrecision: '@precision1'
+        __calls:
+            - addName: ['@locValue1']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+    product2:
+        sku: 'SKU124'
+        type: 'simple'
+        primaryUnitPrecision: '@precision2'
+        __calls:
+            - addName: [ '@locValue2' ]
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+    productKit:
+        sku: 'KIT001'
+        type: 'kit'
+        primaryUnitPrecision: '@precision3'
+        __calls:
+            - addName: [ '@locValue3' ]
+            - addKitItem: ['@product_kit_item1']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    product_kit_item1:
+        optional: false
+        sortOrder: 2
+        minimumQuantity: 1
+        maximumQuantity: 10
+        productUnit: '@item'
+        __calls:
+            - addLabel: ['@product_kit_item_label1']
+            - addKitItemProduct: ['@product_kit_item_product1']
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
+    product_kit_item_label1:
+        string: 'Base Unit'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    product_kit_item_product1:
+        kitItem: '@product_kit_item1'
+        product: '@product2'
+        sortOrder: 2
+        productUnitPrecision: '@product_kit_precision1'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelationSku123ToPriceListDefault1:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+    priceRelationSku123ToPriceListDefault2:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+    priceRelationSku123ToPriceListDefault3:
+        product: '@productKit'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice1:
+        pricelist: '@defaultPriceList'
+        product: '@product1'
+        productSku: 'SKU123'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+    productPrice2:
+        pricelist: '@defaultPriceList'
+        product: '@product2'
+        productSku: 'SKU124'
+        quantity: 2
+        unit: '@item'
+        value: 3.75
+        currency: 'USD'
+    productPrice3:
+        pricelist: '@defaultPriceList'
+        product: '@productKit'
+        productSku: 'KIT001'
+        quantity: 3
+        unit: '@item'
+        value: 14.75
+        currency: 'USD'

@@ -6,7 +6,6 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Schema\OroFrontendTestFrameworkBundleInstaller;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadConfigurableProductWithVariants;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -119,9 +118,7 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
      */
     public function testEnumVariantSearch(string $enumName, array $expectedSkus)
     {
-        $variantClassName = ExtendHelper::buildEnumValueClassName(
-            OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_CODE
-        );
+        $variantClassName = ExtendHelper::buildEnumValueClassName('variant_field_code');
         /** @var AbstractEnumValue $variantEnum */
         $variantEnum = self::getContainer()->get('oro_entity.doctrine_helper')
             ->getEntityRepository($variantClassName)

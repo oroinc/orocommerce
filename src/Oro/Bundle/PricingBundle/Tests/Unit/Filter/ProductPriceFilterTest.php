@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Filter;
 
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\PricingBundle\Filter\ProductPriceFilter;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
@@ -20,7 +20,7 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
     /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formatter;
 
-    /** @var PriceListRequestHandler|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var PriceListRequestHandlerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $requestHandler;
 
     /** @var ProductPriceFilter */
@@ -29,7 +29,7 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);
-        $this->requestHandler = $this->createMock(PriceListRequestHandler::class);
+        $this->requestHandler = $this->createMock(PriceListRequestHandlerInterface::class);
         $this->form = $this->createMock(FormInterface::class);
 
         $formFactory = $this->createMock(FormFactoryInterface::class);

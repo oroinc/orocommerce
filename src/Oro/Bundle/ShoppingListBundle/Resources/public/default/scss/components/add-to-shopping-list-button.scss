@@ -1,0 +1,17 @@
+/* @theme: default; */
+
+.add-to-shopping-list-button {
+    @include ellipsis();
+
+    .action-label {
+        @include ellipsis();
+    }
+}
+
+.btn-main {
+    font-weight: normal;
+
+    .entity-name {
+        font-weight: font-weight('semi-bold');
+    }
+}

@@ -49,12 +49,12 @@ class MoveStringToTextQuery extends ParametrizedMigrationQuery
     {
         $table = $this->table;
 
-        $statement = $this->connection->query(
+        $statement = $this->connection->executeQuery(
             "select f.id, f.string, f.text " .
             "from oro_fallback_localization_val f inner join $table j on f.id = j.localizedfallbackvalue_id"
         );
 
-        while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $statement->fetchAssociative()) {
             if (!empty($row['string'])) {
                 $query = "UPDATE oro_fallback_localization_val SET string = NULL, text = ? WHERE id = ?";
                 $parameters = [$row['string'], $row['id']];

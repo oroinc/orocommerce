@@ -44,6 +44,14 @@ services:
             - '@oro_message_queue.client.message_producer'
             - '@oro_message_queue.job.runner'
 
+    oro_pricing.async.actualize_combined_price_list_processor:
+        class: 'Oro\Bundle\PricingBundle\Async\ActualizeCombinedPriceListsProcessor'
+        arguments:
+            - '@doctrine'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.job.dependent_job_service'
+
     oro_pricing.async.single_cpl_processor:
         class: 'Oro\Bundle\PricingBundle\Async\SingleCplProcessor'
         arguments:
@@ -85,6 +93,7 @@ services:
             - '@oro_pricing.notification_alert_manager'
             - '@oro_pricing.price_list_trigger_handler'
             - '@oro_message_queue.client.message_producer'
+            - '@oro_pricing.provider.dependent_price_lists'
         tags:
             - { name: oro_featuretogle.feature, feature: oro_price_lists_flat }
 
@@ -95,3 +104,4 @@ services:
             - '@oro_pricing.builder.price_list_product_assignment_builder'
             - '@oro_pricing.notification_alert_manager'
             - '@oro_pricing.price_list_trigger_handler'
+            - '@oro_pricing.provider.dependent_price_lists'

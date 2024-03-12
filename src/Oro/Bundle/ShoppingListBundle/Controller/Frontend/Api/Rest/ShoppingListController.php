@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,15 +21,14 @@ class ShoppingListController extends RestController
      *      description="Set current Shopping List",
      *      resource=true
      * )
-     * @AclAncestor("oro_shopping_list_frontend_set_as_default")
      *
      * @param ShoppingList $shoppingList
-     *
      * @return JsonResponse
      */
+    #[AclAncestor('oro_shopping_list_frontend_set_as_default')]
     public function setCurrentAction(ShoppingList $shoppingList)
     {
-        $this->get('oro_shopping_list.manager.current_shopping_list')
+        $this->container->get('oro_shopping_list.manager.current_shopping_list')
             ->setCurrent($this->getUser(), $shoppingList);
 
         return $this->buildResponse(
@@ -44,15 +43,15 @@ class ShoppingListController extends RestController
      *      description="Set Shopping List Owner",
      *      resource=true
      * )
-     * @AclAncestor("oro_shopping_list_frontend_assign")
      *
      * @param Request $request
      * @param ShoppingList $shoppingList
      * @return JsonResponse
      */
+    #[AclAncestor('oro_shopping_list_frontend_assign')]
     public function setOwnerAction(Request $request, ShoppingList $shoppingList)
     {
-        $manager = $this->get('oro_shopping_list.shopping_list.owner_manager');
+        $manager = $this->container->get('oro_shopping_list.shopping_list.owner_manager');
         $status = Response::HTTP_OK;
         $data = $this->container->get('translator')
             ->trans(
@@ -77,7 +76,7 @@ class ShoppingListController extends RestController
      */
     public function getManager()
     {
-        return $this->get('oro_shopping_list.shopping_list.manager.api');
+        return $this->container->get('oro_shopping_list.shopping_list.manager.api');
     }
 
     /**

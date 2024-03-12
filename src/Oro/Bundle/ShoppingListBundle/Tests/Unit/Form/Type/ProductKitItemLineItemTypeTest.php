@@ -20,6 +20,8 @@ class ProductKitItemLineItemTypeTest extends FormIntegrationTestCase
     use ProductKitItemLineItemTypeTrait;
     use QuantityTypeTrait;
 
+    private ProductKitItemLineItemType $type;
+
     private Product $kitItemProduct1;
 
     private Product $kitItemProduct2;

@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroTaxBundleStage2 implements Migration, OrderedMigrationInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -66,9 +66,7 @@ class OroTaxBundleStage2 implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * Get the order of this migration
-     *
-     * @return integer
+     * {@inheritDoc}
      */
     public function getOrder()
     {

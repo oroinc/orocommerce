@@ -6,42 +6,26 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\ProductBundle\Migrations\Schema\OroProductBundleInstaller;
 
-class AddDefaultProductNameColumn implements
-    Migration,
-    OrderedMigrationInterface
+class AddDefaultProductNameColumn implements Migration, OrderedMigrationInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getOrder()
+    public function getOrder(): int
     {
         return 10;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $this->addDenormalizedDefaultNameColumn($schema);
-        $this->addDenormalizedDefaultNameColumnUppercase($schema);
-    }
-
-    protected function addDenormalizedDefaultNameColumn(Schema $schema)
-    {
-        $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);
-
+        $table = $schema->getTable('oro_product');
         $table->addColumn('name', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addIndex(['name'], 'idx_oro_product_default_name', []);
-    }
-
-    protected function addDenormalizedDefaultNameColumnUppercase(Schema $schema)
-    {
-        $table = $schema->getTable(OroProductBundleInstaller::PRODUCT_TABLE_NAME);
-
         $table->addColumn('name_uppercase', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addIndex(['name_uppercase'], 'idx_oro_product_default_name_uppercase', []);
+        $table->addIndex(['name'], 'idx_oro_product_default_name');
+        $table->addIndex(['name_uppercase'], 'idx_oro_product_default_name_uppercase');
     }
 }

@@ -3,9 +3,9 @@
 namespace Oro\Bundle\ShippingBundle\Controller;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
@@ -34,45 +34,38 @@ class ShippingMethodsConfigsRuleController extends AbstractController
         }
     }
 
-    /**
-     * @Route("/", name="oro_shipping_methods_configs_rule_index")
-     * @Template
-     * @AclAncestor("oro_shipping_methods_configs_rule_view")
-     */
+    #[Route(path: '/', name: 'oro_shipping_methods_configs_rule_index')]
+    #[Template]
+    #[AclAncestor('oro_shipping_methods_configs_rule_view')]
     public function indexAction(): array
     {
         return ['entity_class' => ShippingMethodsConfigsRule::class];
     }
 
-    /**
-     * @Route("/create", name="oro_shipping_methods_configs_rule_create")
-     * @Template("@OroShipping/ShippingMethodsConfigsRule/update.html.twig")
-     * @Acl(
-     *     id="oro_shipping_methods_configs_rule_create",
-     *     type="entity",
-     *     permission="CREATE",
-     *     class="OroShippingBundle:ShippingMethodsConfigsRule"
-     * )
-     */
+    #[Route(path: '/create', name: 'oro_shipping_methods_configs_rule_create')]
+    #[Template('@OroShipping/ShippingMethodsConfigsRule/update.html.twig')]
+    #[Acl(
+        id: 'oro_shipping_methods_configs_rule_create',
+        type: 'entity',
+        class: ShippingMethodsConfigsRule::class,
+        permission: 'CREATE'
+    )]
     public function createAction(Request $request): array|RedirectResponse
     {
         return $this->update(new ShippingMethodsConfigsRule(), $request);
     }
 
-    /**
-     * @Route("/view/{id}", name="oro_shipping_methods_configs_rule_view", requirements={"id"="\d+"})
-     * @Acl(
-     *      id="oro_shipping_methods_configs_rule_view",
-     *      type="entity",
-     *      class="OroShippingBundle:ShippingMethodsConfigsRule",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/view/{id}', name: 'oro_shipping_methods_configs_rule_view', requirements: ['id' => '\d+'])]
+    #[Acl(
+        id: 'oro_shipping_methods_configs_rule_view',
+        type: 'entity',
+        class: ShippingMethodsConfigsRule::class,
+        permission: 'VIEW'
+    )]
     public function viewAction(ShippingMethodsConfigsRule $shippingRule): Response
     {
-        $organizationProvider = $this->get(ShippingMethodOrganizationProvider::class);
+        $organizationProvider = $this->container->get(ShippingMethodOrganizationProvider::class);
         $previousOrganization = $organizationProvider->getOrganization();
-
         $organizationProvider->setOrganization($shippingRule->getOrganization());
         try {
             return $this->render(
@@ -84,16 +77,14 @@ class ShippingMethodsConfigsRuleController extends AbstractController
         }
     }
 
-    /**
-     * @Route("/update/{id}", name="oro_shipping_methods_configs_rule_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *     id="oro_shipping_methods_configs_rule_update",
-     *     type="entity",
-     *     permission="EDIT",
-     *     class="OroShippingBundle:ShippingMethodsConfigsRule"
-     * )
-     */
+    #[Route(path: '/update/{id}', name: 'oro_shipping_methods_configs_rule_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(
+        id: 'oro_shipping_methods_configs_rule_update',
+        type: 'entity',
+        class: ShippingMethodsConfigsRule::class,
+        permission: 'EDIT'
+    )]
     public function updateAction(Request $request, ShippingMethodsConfigsRule $entity): array|RedirectResponse
     {
         return $this->update($entity, $request);
@@ -102,13 +93,13 @@ class ShippingMethodsConfigsRuleController extends AbstractController
     protected function update(ShippingMethodsConfigsRule $entity, Request $request): array|RedirectResponse
     {
         $form = $this->createForm(ShippingMethodsConfigsRuleType::class);
-        if ($this->get(ShippingMethodsConfigsRuleHandler::class)->process($form, $entity)) {
+        if ($this->container->get(ShippingMethodsConfigsRuleHandler::class)->process($form, $entity)) {
             $request->getSession()->getFlashBag()->add(
                 'success',
-                $this->get(TranslatorInterface::class)->trans('oro.shipping.controller.rule.saved.message')
+                $this->container->get(TranslatorInterface::class)->trans('oro.shipping.controller.rule.saved.message')
             );
 
-            return $this->get(Router::class)->redirect($entity);
+            return $this->container->get(Router::class)->redirect($entity);
         }
 
         if ($request->get(ShippingMethodsConfigsRuleHandler::UPDATE_FLAG, false)) {
@@ -125,19 +116,17 @@ class ShippingMethodsConfigsRuleController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/{gridName}/massAction/{actionName}", name="oro_status_shipping_rule_massaction")
-     * @Acl(
-     *     id="oro_shipping_methods_configs_rule_update",
-     *     type="entity",
-     *     permission="EDIT",
-     *     class="OroShippingBundle:ShippingMethodsConfigsRule"
-     * )
-     * @CsrfProtection()
-     */
+    #[Route(path: '/{gridName}/massAction/{actionName}', name: 'oro_status_shipping_rule_massaction')]
+    #[Acl(
+        id: 'oro_shipping_methods_configs_rule_update',
+        type: 'entity',
+        class: ShippingMethodsConfigsRule::class,
+        permission: 'EDIT'
+    )]
+    #[CsrfProtection()]
     public function markMassAction(string $gridName, string $actionName, Request $request): JsonResponse
     {
-        $massActionDispatcher = $this->get(MassActionDispatcher::class);
+        $massActionDispatcher = $this->container->get(MassActionDispatcher::class);
 
         $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
 

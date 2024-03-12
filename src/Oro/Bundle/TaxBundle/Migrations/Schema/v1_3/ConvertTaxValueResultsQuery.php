@@ -67,10 +67,9 @@ class ConvertTaxValueResultsQuery extends ParametrizedMigrationQuery
             $updateStatement = $this->connection->prepare($updateSql);
             do {
                 $selectStatement->bindValue('offs', $selectParams['offs'], \PDO::PARAM_INT);
-                $selectStatement->execute();
                 $this->logQuery($logger, $selectSql, $selectParams, $selectTypes);
                 $rowsCount = 0;
-                while ($row = $selectStatement->fetch()) {
+                while ($row = $selectStatement->executeQuery()->fetchAssociative()) {
                     $rowsCount++;
                     $result = $objectType->convertToPHPValue($row['result_base64'], $this->platform);
                     $updateParams = [
@@ -79,7 +78,7 @@ class ConvertTaxValueResultsQuery extends ParametrizedMigrationQuery
                     ];
                     $updateStatement->bindValue('id', $updateParams['id'], \PDO::PARAM_INT);
                     $updateStatement->bindValue('result', $updateParams['result'], \PDO::PARAM_STR);
-                    $updateStatement->execute();
+                    $updateStatement->executeQuery();
                     $this->logQuery($logger, $updateSql, $updateParams, $updateTypes);
                 }
                 $selectParams['offs'] += self::SELECT_LIMIT;

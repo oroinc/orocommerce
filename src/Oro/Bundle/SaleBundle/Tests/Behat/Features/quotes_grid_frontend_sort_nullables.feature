@@ -11,6 +11,7 @@ Feature: Quotes Grid Frontend Sort Nullables
 
   Scenario: Sort by DNSLT
     Given I signed in as AmandaRCole@example.org on the store frontend
+    And I click "Account Dropdown"
     When I click "Quotes"
     And I sort grid by "DNSLT"
     Then I should see following grid:

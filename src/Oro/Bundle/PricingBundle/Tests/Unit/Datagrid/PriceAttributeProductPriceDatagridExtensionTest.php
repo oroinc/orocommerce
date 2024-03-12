@@ -36,6 +36,7 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
             $this->selectedFieldsProvider,
             $this->aclHelper
         );
+        $this->supportedGridName = 'products-grid';
     }
 
     public function testProcessConfigsWhenNoAttributesWithCurrencies(): void
@@ -93,7 +94,10 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
 
     private function assertColumnsAddedToConfig(): void
     {
-        $this->mockAttributesWithCurrencies([['id' => 1, 'name' => 'Sample Attribute', 'currency' => 'USD']], ['USD']);
+        $this->mockAttributesWithCurrencies(
+            [['id' => 1, 'name' => 'Sample Attribute', 'currency' => 'USD', 'fieldName' => 'sampleAttribute']],
+            ['USD']
+        );
 
         $this->datagridConfiguration
             ->expects($this->any())
@@ -115,15 +119,20 @@ class PriceAttributeProductPriceDatagridExtensionTest extends AbstractProductsGr
                     '[filters][columns]',
                     [
                         'price_attribute_price_column_usd_1' => [
-                            'type' => 'price-attribute-product-price',
+                            'type' => 'product-price-attribute',
                             'data_name' => 'USD',
+                            'attribute_name' => 'sampleAttribute'
                         ],
                     ],
                 ],
                 [
                     '[sorters][columns]',
                     [
-                        'price_attribute_price_column_usd_1' => ['data_name' => 'price_attribute_price_column_usd_1'],
+                        'price_attribute_price_column_usd_1' => [
+                            'data_name' => 'MIN(price_attribute_price_column_usd_1_table.value)',
+                            'apply_callback' => function () {
+                            }
+                        ],
                     ],
                 ]
             );

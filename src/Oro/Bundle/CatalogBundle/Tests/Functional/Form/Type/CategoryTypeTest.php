@@ -15,10 +15,12 @@ use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\UserBundle\Entity\AbstractUser;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class CategoryTypeTest extends WebTestCase
@@ -32,11 +34,17 @@ class CategoryTypeTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
+        $token = new UsernamePasswordToken($this->createMock(AbstractUser::class), 'key');
+        $this->getContainer()->get('security.token_storage')->setToken($token);
+
         $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadCategoryProductData::class]);
 
         $this->formFactory = $this->getContainer()->get('form.factory');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
+
+        // Emulate request processing
+        $this->emulateRequest();
     }
 
     public function testSubmit()

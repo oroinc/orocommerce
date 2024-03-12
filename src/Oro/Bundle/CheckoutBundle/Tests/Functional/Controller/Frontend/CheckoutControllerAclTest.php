@@ -41,13 +41,12 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
 
         $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
         $this->assertSame($indexResponseStatus, $this->client->getResponse()->getStatusCode());
-        $response = $this->client->requestGrid(
+        $response = $this->client->requestFrontendGrid(
             [
                 'gridName' => 'frontend-checkouts-grid',
             ],
             [],
             true,
-            'oro_frontend_datagrid_index'
         );
 
         self::assertResponseStatusCodeEquals($response, $gridResponseStatus);

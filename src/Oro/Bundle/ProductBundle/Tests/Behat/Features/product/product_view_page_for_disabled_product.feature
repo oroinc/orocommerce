@@ -18,12 +18,12 @@ Feature: Product view page for disabled product
   Scenario: View product page when product is enabled by unauthorized buyer
     Given I operate as the Buyer
     When I open product with sku "PSKU1" on the store frontend
-    Then I should see "Item #: PSKU1"
+    Then I should see "PSKU1"
 
   Scenario: View product page when product is enabled by authorized buyer
     Given I signed in as AmandaRCole@example.org on the store frontend
     When I open product with sku "PSKU1" on the store frontend
-    Then I should see "Item #: PSKU1"
+    Then I should see "PSKU1"
 
   Scenario: View product page when product is disabled
     Given I proceed as the Admin
@@ -39,6 +39,7 @@ Feature: Product view page for disabled product
     Given I operate as the Buyer
     When I open product with sku "PSKU1" on the store frontend
     Then I should see "404 Not Found"
+    And I click "Account Dropdown"
     When I click "Sign Out"
     And I open product with sku "PSKU1" on the store frontend
     Then I should see "404 Not Found"

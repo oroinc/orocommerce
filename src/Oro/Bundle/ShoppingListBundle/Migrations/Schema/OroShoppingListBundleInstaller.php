@@ -5,38 +5,27 @@ namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
-    /**
-     * @var ExtendExtension
-     */
-    protected $extendExtension;
+    use ExtendExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_11';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
         $this->createOroShoppingListTable($schema);
@@ -57,7 +46,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
     /**
      * Create oro_shopping_list_total table
      */
-    protected function createOroShoppingListTotalTable(Schema $schema)
+    private function createOroShoppingListTotalTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_shopping_list_total');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -70,17 +59,17 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         );
         $table->addColumn('is_valid', 'boolean');
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
             ['shopping_list_id', 'currency', 'customer_user_id'],
             'unique_shopping_list_currency_customer_user'
         );
-        $table->setPrimaryKey(['id']);
     }
 
     /**
      * Create oro_shopping_list table
      */
-    protected function createOroShoppingListTable(Schema $schema)
+    private function createOroShoppingListTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_shopping_list');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -95,13 +84,13 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         $table->addColumn('updated_at', 'datetime');
         $table->addColumn('currency', 'string', ['notnull' => true, 'length' => 3]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['created_at'], 'oro_shop_lst_created_at_idx', []);
+        $table->addIndex(['created_at'], 'oro_shop_lst_created_at_idx');
     }
 
     /**
      * Create oro_shopping_list_line_item table
      */
-    protected function createOroShoppingListLineItemTable(Schema $schema)
+    private function createOroShoppingListLineItemTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_shopping_list_line_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -125,7 +114,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
     /**
      * Add oro_shopping_list_total foreign keys.
      */
-    protected function addOroShoppingListTotalForeignKeys(Schema $schema)
+    private function addOroShoppingListTotalForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_shopping_list_total');
         $table->addForeignKeyConstraint(
@@ -145,7 +134,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
     /**
      * Add oro_shopping_list foreign keys.
      */
-    protected function addOroShoppingListForeignKeys(Schema $schema)
+    private function addOroShoppingListForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_shopping_list');
         $table->addForeignKeyConstraint(
@@ -183,7 +172,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
     /**
      * Add oro_shopping_list_line_item foreign keys.
      */
-    protected function addOroShoppingListLineItemForeignKeys(Schema $schema)
+    private function addOroShoppingListLineItemForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_shopping_list_line_item');
         $table->addForeignKeyConstraint(
@@ -230,7 +219,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         );
     }
 
-    protected function addShoppingListCheckoutSource(Schema $schema)
+    private function addShoppingListCheckoutSource(Schema $schema): void
     {
         if (class_exists('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource')) {
             $this->extendExtension->addManyToOneRelation(
@@ -259,7 +248,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         }
     }
 
-    protected function addShoppingListCustomerVisitor(Schema $schema)
+    private function addShoppingListCustomerVisitor(Schema $schema): void
     {
         $table = $schema->getTable('oro_customer_visitor');
         $targetTable = $schema->getTable('oro_shopping_list');
@@ -324,7 +313,6 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('quantity', 'float');
         $table->addColumn('sort_order', 'integer', ['default' => 0]);
-
         $table->setPrimaryKey(['id']);
     }
 

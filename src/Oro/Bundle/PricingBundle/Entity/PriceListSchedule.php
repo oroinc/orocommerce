@@ -2,46 +2,36 @@
 
 namespace Oro\Bundle\PricingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalInterface;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalTrait;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository;
 
 /**
- * @ORM\Table(name="oro_price_list_schedule")
- * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository")
- */
+* Entity that represents Price List Schedule
+*
+*/
+#[ORM\Entity(repositoryClass: PriceListScheduleRepository::class)]
+#[ORM\Table(name: 'oro_price_list_schedule')]
 class PriceListSchedule implements ScheduleIntervalInterface
 {
     use ScheduleIntervalTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var PriceList
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceList", inversedBy="schedules")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $priceList;
+    #[ORM\ManyToOne(targetEntity: PriceList::class, inversedBy: 'schedules')]
+    #[ORM\JoinColumn(name: 'price_list_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?PriceList $priceList = null;
 
-    /**
-     * @var \DateTime|null
-     * @ORM\Column(name="active_at", type="datetime", nullable=true)
-     */
-    protected $activeAt;
+    #[ORM\Column(name: 'active_at', type: Types::DATETIME_MUTABLE, nullable: true)]
+    protected ?\DateTimeInterface $activeAt = null;
 
-    /**
-     * @var \DateTime|null
-     * @ORM\Column(name="deactivate_at", type="datetime", nullable=true)
-     */
-    protected $deactivateAt;
+    #[ORM\Column(name: 'deactivate_at', type: Types::DATETIME_MUTABLE, nullable: true)]
+    protected ?\DateTimeInterface $deactivateAt = null;
 
     public function __construct(\DateTime $activeAt = null, \DateTime $deactivateAt = null)
     {

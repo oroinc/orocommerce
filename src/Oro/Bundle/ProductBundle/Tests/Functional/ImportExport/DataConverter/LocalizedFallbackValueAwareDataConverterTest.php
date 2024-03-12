@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\DataConverter;
 
+use Oro\Bundle\EntityConfigBundle\Config\ConfigModelManager;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter;
@@ -10,6 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
 class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 {
@@ -95,7 +98,12 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'extend.entity.test.wysiwyg' => '',
         'extend.entity.test.wysiwyg_attr' => '',
         'Upcoming.value' => '',
+        'Kit Items' => ''
     ];
+
+    private const HEADER_FIELD = 'sku';
+    private const HEADER_NOT_SET = 'not_set';
+    private $previousHeader;
 
     private LocalizedFallbackValueAwareDataConverter $converter;
 
@@ -104,12 +112,15 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         $this->initClient();
         $this->client->useHashNavigation(true);
 
+        $this->storeFieldConfigImportExportHeader(self::HEADER_FIELD);
+        $this->setFieldConfigImportExportHeader(self::HEADER_FIELD, null);
+
         $container = $this->getContainer();
 
         $this->loadFixtures([LoadLocalizationData::class, LoadOrganization::class]);
 
         $organization = $this->getReference('organization');
-        $token = new UsernamePasswordOrganizationToken('user', 'password', 'key', $organization);
+        $token = new UsernamePasswordOrganizationToken($this->createMock(AbstractUser::class), 'key', $organization);
         $this->getContainer()->get('security.token_storage')->setToken($token);
 
         $this->converter = new LocalizedFallbackValueAwareDataConverter(
@@ -121,6 +132,54 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         $this->converter->setRegistry($container->get('doctrine'));
         $this->converter->setLocalizedFallbackValueClassName(AbstractLocalizedFallbackValue::class);
         $this->converter->setLocalizationClassName(Localization::class);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->revertFieldConfigImportExportHeader(self::HEADER_FIELD);
+    }
+
+    private function setFieldConfigImportExportHeader(string $fieldName, ?string $newHeader): void
+    {
+        /** @var ConfigModelManager $manager */
+        $manager = $this->getContainer()->get('oro_entity_config.config_model_manager');
+
+        $fieldConfig = $manager->getFieldModel(Product::class, $fieldName);
+        $importExportConfig = $fieldConfig->toArray('importexport');
+
+        if (self::HEADER_NOT_SET === $newHeader) {
+            unset($importExportConfig['header']);
+        } else {
+            $importExportConfig['header'] = $newHeader;
+        }
+
+        $fieldConfig->fromArray('importexport', $importExportConfig);
+
+        $manager->getEntityManager()->persist($fieldConfig);
+        $manager->getEntityManager()->flush();
+
+        $manager->clearCache();
+        $this->getContainer()->get('oro_entity_config.config_manager')->clear();
+    }
+
+    private function revertFieldConfigImportExportHeader(string $fieldName): void
+    {
+        $this->setFieldConfigImportExportHeader($fieldName, $this->previousHeader);
+    }
+
+    private function storeFieldConfigImportExportHeader(string $fieldName): void
+    {
+        $fieldConfig = $this->loadFieldConfig($fieldName);
+
+        $importExportConfig = $fieldConfig->toArray('importexport');
+        $this->previousHeader = $importExportConfig['header'] ?? self::HEADER_NOT_SET;
+    }
+
+    private function loadFieldConfig(string $fieldName): FieldConfigModel
+    {
+        $manager = $this->getContainer()->get('oro_entity_config.config_model_manager');
+
+        return $manager->getFieldModel(Product::class, $fieldName);
     }
 
     /**

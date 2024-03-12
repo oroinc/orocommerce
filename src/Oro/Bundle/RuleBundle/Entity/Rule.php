@@ -2,149 +2,61 @@
 
 namespace Oro\Bundle\RuleBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroRuleBundle_Entity_Rule;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
  * Store rule data in database.
  *
- * @ORM\Entity
- * @ORM\Table(
- *     name="oro_rule",
- *     indexes={
- *         @ORM\Index(name="idx_oro_rule_created_at", columns={"created_at"}),
- *         @ORM\Index(name="idx_oro_rule_updated_at", columns={"updated_at"})
- *     }
- * )
- * @ORM\HasLifecycleCallbacks
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-briefcase"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *      }
- * )
  * @mixin OroRuleBundle_Entity_Rule
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_rule')]
+#[ORM\Index(columns: ['created_at'], name: 'idx_oro_rule_created_at')]
+#[ORM\Index(columns: ['updated_at'], name: 'idx_oro_rule_updated_at')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(defaultValues: ['entity' => ['icon' => 'fa-briefcase'], 'dataaudit' => ['auditable' => true]])]
 class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
 {
     use DatesAwareTrait;
     use ExtendEntityTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    private ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "identity"=true,
-     *              "order"=10
-     *          }
-     *      }
-     * )
-     */
-    private $name;
+    #[ORM\Column(type: Types::TEXT, nullable: false)]
+    #[ConfigField(
+        defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['identity' => true, 'order' => 10]]
+    )]
+    private ?string $name = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="enabled", type="boolean", nullable=false, options={"default"=true})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=20
-     *          }
-     *      }
-     *  )
-     */
-    private $enabled = true;
+    #[ORM\Column(name: 'enabled', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 20]])]
+    private ?bool $enabled = true;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="sort_order", type="integer")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=30
-     *          }
-     *      }
-     *  )
-     */
-    private $sortOrder;
+    #[ORM\Column(name: 'sort_order', type: Types::INTEGER)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 30]])]
+    private ?int $sortOrder = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="stop_processing", type="boolean", nullable=false, options={"default"=false})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=40
-     *          }
-     *      }
-     *  )
-     */
-    private $stopProcessing = false;
+    #[ORM\Column(name: 'stop_processing', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 40]])]
+    private ?bool $stopProcessing = false;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=50
-     *          }
-     *      }
-     *  )
-     */
-    private $expression;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 50]])]
+    private ?string $expression = null;
 
-    /**
-     * @ORM\PrePersist
-     */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -152,9 +64,7 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
         $this->setUpdatedAt($now);
     }
 
-    /**
-     * @ORM\PreUpdate
-     */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));

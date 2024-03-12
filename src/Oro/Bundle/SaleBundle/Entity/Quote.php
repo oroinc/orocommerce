@@ -4,6 +4,8 @@ namespace Oro\Bundle\SaleBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroSaleBundle_Entity_Quote;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -14,13 +16,15 @@ use Oro\Bundle\EmailBundle\Entity\EmailOwnerAwareInterface;
 use Oro\Bundle\EmailBundle\Entity\EmailOwnerInterface;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\SaleBundle\Entity\Listener\QuoteListener;
+use Oro\Bundle\SaleBundle\Entity\Repository\QuoteRepository;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\ShippingBundle\Method\Configuration\AllowUnlistedShippingMethodConfigurationInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\MethodLockedShippingMethodConfigurationInterface;
@@ -33,45 +37,6 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 /**
  * Entity holds information about quote.
  *
- * @ORM\Table(name="oro_sale_quote")
- * @ORM\Entity(repositoryClass="Oro\Bundle\SaleBundle\Entity\Repository\QuoteRepository")
- * @ORM\EntityListeners({"Oro\Bundle\SaleBundle\Entity\Listener\QuoteListener"})
- * @ORM\HasLifecycleCallbacks()
- * @Config(
- *      routeName="oro_sale_quote_index",
- *      routeView="oro_sale_quote_view",
- *      routeUpdate="oro_sale_quote_update",
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-file-text",
- *              "contact_information"={
- *                  "email"={
- *                      {"fieldName"="contactInformation"}
- *                  }
- *              }
- *          },
- *          "ownership"={
- *              "owner_type"="USER",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="user_owner_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id",
- *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="customerUser",
- *              "frontend_owner_column_name"="customer_user_id",
- *              "frontend_customer_field_name"="customer",
- *              "frontend_customer_column_name"="customer_id"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="quotes"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          }
- *      }
- * )
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -81,6 +46,35 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  * @method AbstractEnumValue getCustomerStatus()
  * @mixin OroSaleBundle_Entity_Quote
  */
+#[ORM\Entity(repositoryClass: QuoteRepository::class)]
+#[ORM\Table(name: 'oro_sale_quote')]
+#[ORM\EntityListeners([QuoteListener::class])]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    routeName: 'oro_sale_quote_index',
+    routeView: 'oro_sale_quote_view',
+    routeUpdate: 'oro_sale_quote_update',
+    defaultValues: [
+        'entity' => [
+            'icon' => 'fa-file-text',
+            'contact_information' => ['email' => [['fieldName' => 'contactInformation']]]
+        ],
+        'ownership' => [
+            'owner_type' => 'USER',
+            'owner_field_name' => 'owner',
+            'owner_column_name' => 'user_owner_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id',
+            'frontend_owner_type' => 'FRONTEND_USER',
+            'frontend_owner_field_name' => 'customerUser',
+            'frontend_owner_column_name' => 'customer_user_id',
+            'frontend_customer_field_name' => 'customer',
+            'frontend_customer_column_name' => 'customer_id'
+        ],
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes'],
+        'dataaudit' => ['auditable' => true]
+    ]
+)]
 class Quote implements
     CustomerOwnerAwareInterface,
     EmailHolderInterface,
@@ -114,263 +108,116 @@ class Quote implements
         'cancelled',
     ];
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $qid;
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $qid = null;
 
     /**
      * @var string|null
-     *
-     * @ORM\Column(name="guest_access_id", type="guid", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(name: 'guest_access_id', type: Types::GUID, nullable: true)]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
     protected $guestAccessId;
 
-    /**
-     * @var Website
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $website;
+    #[ORM\ManyToOne(targetEntity: Website::class)]
+    #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Website $website = null;
+
+    #[ORM\ManyToOne(targetEntity: Request::class)]
+    #[ORM\JoinColumn(name: 'request_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Request $request = null;
+
+    #[ORM\Column(name: 'po_number', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $poNumber = null;
+
+    #[ORM\Column(name: 'ship_until', type: Types::DATE_MUTABLE, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?\DateTimeInterface $shipUntil = null;
+
+    #[ORM\Column(name: 'valid_until', type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?\DateTimeInterface $validUntil = null;
 
     /**
-     * @var Request
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RFPBundle\Entity\Request")
-     * @ORM\JoinColumn(name="request_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, QuoteProduct>
      */
-    protected $request;
+    #[ORM\OneToMany(mappedBy: 'quote', targetEntity: QuoteProduct::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\OrderBy(['id' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $quoteProducts = null;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?bool $expired = false;
+
+    #[ORM\Column(name: 'prices_changed', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?bool $pricesChanged = false;
+
+    #[ORM\OneToOne(targetEntity: QuoteAddress::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'shipping_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?QuoteAddress $shippingAddress = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="po_number", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $poNumber;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="ship_until", type="date", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $shipUntil;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="valid_until", type="datetime", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $validUntil;
-
-    /**
-     * @var Collection|QuoteProduct[]
-     *
-     * @ORM\OneToMany(targetEntity="QuoteProduct", mappedBy="quote", cascade={"ALL"}, orphanRemoval=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $quoteProducts;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(type="boolean", options={"default"=false})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $expired = false;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="prices_changed", type="boolean", options={"default"=false})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $pricesChanged = false;
-
-    /**
-     * @var QuoteAddress
-     *
-     * @ORM\OneToOne(targetEntity="QuoteAddress", cascade={"persist"})
-     * @ORM\JoinColumn(name="shipping_address_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $shippingAddress;
-
-    /**
-     * @var Collection|User[]
-     *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinTable(
-     *      name="oro_quote_assigned_users",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
+     * @var Collection<int, User>
      **/
-    protected $assignedUsers;
+    #[ORM\ManyToMany(targetEntity: User::class)]
+    #[ORM\JoinTable(name: 'oro_quote_assigned_users')]
+    #[ORM\JoinColumn(name: 'quote_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Collection $assignedUsers = null;
 
     /**
-     * @var Collection|CustomerUser[]
-     *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
-     * @ORM\JoinTable(
-     *      name="oro_quote_assigned_cus_users",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
+     * @var Collection<int, CustomerUser>
      **/
-    protected $assignedCustomerUsers;
+    #[ORM\ManyToMany(targetEntity: CustomerUser::class)]
+    #[ORM\JoinTable(name: 'oro_quote_assigned_cus_users')]
+    #[ORM\JoinColumn(name: 'quote_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'customer_user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Collection $assignedCustomerUsers = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="shipping_method", type="string", length=255, nullable=true)
-     */
-    protected $shippingMethod;
+    #[ORM\Column(name: 'shipping_method', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $shippingMethod = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="shipping_method_type", type="string", length=255, nullable=true)
-     */
-    protected $shippingMethodType;
+    #[ORM\Column(name: 'shipping_method_type', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $shippingMethodType = null;
 
-    /**
-     * @ORM\Column(name="shipping_method_locked", type="boolean", options={"default"=false})
-     *
-     * @var bool
-     */
-    protected $shippingMethodLocked = false;
+    #[ORM\Column(name: 'shipping_method_locked', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $shippingMethodLocked = false;
 
-    /**
-     * @ORM\Column(name="allow_unlisted_shipping_method", type="boolean", options={"default"=false})
-     *
-     * @var bool
-     */
-    protected $allowUnlistedShippingMethod = false;
+    #[ORM\Column(name: 'allow_unlisted_shipping_method', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $allowUnlistedShippingMethod = false;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="estimated_shipping_cost_amount", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'estimated_shipping_cost_amount', type: 'money', nullable: true)]
     protected $estimatedShippingCostAmount;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="override_shipping_cost_amount", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'override_shipping_cost_amount', type: 'money', nullable: true)]
     protected $overriddenShippingCostAmount;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", nullable=true, length=3)
-     */
-    protected $currency;
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: true)]
+    protected ?string $currency = null;
 
     /**
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\SaleBundle\Entity\QuoteDemand",
-     *     mappedBy="quote",
-     *     cascade={"all"},
-     *     orphanRemoval=true
-     * )
-     * @ORM\OrderBy({"id" = "ASC"})
+     * @var Collection<int, QuoteDemand>
      */
-    protected $demands;
+    #[ORM\OneToMany(mappedBy: 'quote', targetEntity: QuoteDemand::class, cascade: ['all'], orphanRemoval: true)]
+    #[ORM\OrderBy(['id' => Criteria::ASC])]
+    protected ?Collection $demands = null;
 
     /**
      * Constructor
@@ -386,9 +233,8 @@ class Quote implements
 
     /**
      * Pre persist event handler
-     *
-     * @ORM\PrePersist
      */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -397,9 +243,8 @@ class Quote implements
 
     /**
      * Pre update event handler
-     *
-     * @ORM\PreUpdate
      */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));

@@ -24,6 +24,10 @@ class ProductCollectionSegmentProductsTypeTest extends FormIntegrationTestCase
 {
     private ProductCollectionSegmentProductsType $formType;
 
+    private EntitiesToIdsTransformer $entitiesToIdsTransformer;
+
+    private EntityIdentifierType $entityIdentifierType;
+
     protected function setUp(): void
     {
         $this->formType = new ProductCollectionSegmentProductsType();

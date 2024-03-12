@@ -42,7 +42,7 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit\Framework\T
 
         $builder->expects($this->once())
             ->method('add')
-            ->willReturnCallback(function ($name, $type, $options) use ($phpunitTestCase, $processorAliases) {
+            ->willReturnCallback(function ($name, $type, $options) use ($phpunitTestCase, $processorAliases, $builder) {
                 $choices = $options['choices'];
                 $phpunitTestCase->assertContains(
                     $processorAliases[0],
@@ -52,6 +52,8 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit\Framework\T
                     $processorAliases[1],
                     $choices
                 );
+
+                return $builder;
             });
 
         $this->inventoryLevelExportTemplateTypeExtension->buildForm(

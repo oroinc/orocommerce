@@ -5,13 +5,12 @@ namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_3;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendNameGeneratorAwareTrait;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\MigrationBundle\Migration\Extension\NameGeneratorAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\MigrationBundle\Tools\DbIdentifierNameGenerator;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class DropMetaTitleTables implements
@@ -19,18 +18,7 @@ class DropMetaTitleTables implements
     OrderedMigrationInterface,
     NameGeneratorAwareInterface
 {
-    /**
-     * @var ExtendDbIdentifierNameGenerator
-     */
-    protected $nameGenerator;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNameGenerator(DbIdentifierNameGenerator $nameGenerator)
-    {
-        $this->nameGenerator = $nameGenerator;
-    }
+    use ExtendNameGeneratorAwareTrait;
 
     /**
      * {@inheritdoc}

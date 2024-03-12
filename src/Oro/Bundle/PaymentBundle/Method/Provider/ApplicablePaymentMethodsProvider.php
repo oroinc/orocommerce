@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\Provider;
 
-use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderAwareTrait;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
@@ -14,24 +14,18 @@ use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsR
  */
 class ApplicablePaymentMethodsProvider
 {
-    use MemoryCacheProviderAwareTrait;
-
-    /**
-     * @var PaymentMethodProviderInterface
-     */
-    private $paymentMethodProvider;
-
-    /**
-     * @var MethodsConfigsRulesByContextProviderInterface
-     */
-    private $paymentMethodsConfigsRulesProvider;
+    private PaymentMethodProviderInterface $paymentMethodProvider;
+    private MethodsConfigsRulesByContextProviderInterface $paymentMethodsConfigsRulesProvider;
+    private MemoryCacheProviderInterface $memoryCacheProvider;
 
     public function __construct(
         PaymentMethodProviderInterface $paymentMethodProvider,
-        MethodsConfigsRulesByContextProviderInterface $paymentMethodsConfigsRulesProvider
+        MethodsConfigsRulesByContextProviderInterface $paymentMethodsConfigsRulesProvider,
+        MemoryCacheProviderInterface $memoryCacheProvider
     ) {
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->paymentMethodsConfigsRulesProvider = $paymentMethodsConfigsRulesProvider;
+        $this->memoryCacheProvider = $memoryCacheProvider;
     }
 
     /**
@@ -41,7 +35,7 @@ class ApplicablePaymentMethodsProvider
      */
     public function getApplicablePaymentMethods(PaymentContextInterface $context): array
     {
-        return $this->getMemoryCacheProvider()->get(
+        return $this->memoryCacheProvider->get(
             ['payment_context' => $context],
             function () use ($context) {
                 return $this->getActualApplicablePaymentMethods($context);

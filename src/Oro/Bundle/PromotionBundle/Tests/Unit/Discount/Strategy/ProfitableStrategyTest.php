@@ -11,7 +11,19 @@ use Oro\Bundle\PromotionBundle\Discount\Strategy\ProfitableStrategy;
 
 class ProfitableStrategyTest extends \PHPUnit\Framework\TestCase
 {
-    public function testProcess()
+    private ProfitableStrategy $strategy;
+
+    protected function setUp(): void
+    {
+        $this->strategy = new ProfitableStrategy();
+    }
+
+    public function testGetLabel(): void
+    {
+        self::assertEquals('oro.promotion.discount.strategy.profitable.label', $this->strategy->getLabel());
+    }
+
+    public function testProcess(): void
     {
         $discount1 = $this->createOrderDiscount(10);
         $discount2 = $this->createOrderDiscount(20);
@@ -20,22 +32,19 @@ class ProfitableStrategyTest extends \PHPUnit\Framework\TestCase
         $shippingDiscount2 = $this->createShippingDiscount(5);
 
         $discountContext = new DiscountContext();
-        $discountContext->setLineItems(
-            [
-                (new DiscountLineItem())->setSubtotal(100),
-                (new DiscountLineItem())->setSubtotal(200)
-            ]
-        );
+        $discountContext->setLineItems([
+            (new DiscountLineItem())->setSubtotal(100),
+            (new DiscountLineItem())->setSubtotal(200)
+        ]);
         $discountContext->setSubtotal(300);
         $discountContext->setShippingCost(80);
 
-        $strategy = new ProfitableStrategy();
-        $processedContext = $strategy->process(
+        $processedContext = $this->strategy->process(
             $discountContext,
             [$discount1, $shippingDiscount2, $discount2, $shippingDiscount1]
         );
 
-        $this->assertInstanceOf(DiscountContext::class, $processedContext);
+        self::assertInstanceOf(DiscountContext::class, $processedContext);
         $appliedDiscounts = [];
         foreach ($processedContext->getLineItems() as $lineItem) {
             $appliedDiscounts = array_merge($appliedDiscounts, $lineItem->getDiscounts());
@@ -43,22 +52,18 @@ class ProfitableStrategyTest extends \PHPUnit\Framework\TestCase
         $appliedDiscounts = array_merge($appliedDiscounts, $processedContext->getSubtotalDiscounts());
         $appliedDiscounts = array_merge($appliedDiscounts, $processedContext->getShippingDiscounts());
 
-        $this->assertNotEmpty($appliedDiscounts);
+        self::assertNotEmpty($appliedDiscounts);
 
-        $this->assertContains($discount2, $appliedDiscounts);
-        $this->assertNotContains($discount1, $appliedDiscounts);
-        $this->assertEquals(280, $processedContext->getSubtotal());
+        self::assertContains($discount2, $appliedDiscounts);
+        self::assertNotContains($discount1, $appliedDiscounts);
+        self::assertEquals(280, $processedContext->getSubtotal());
 
-        $this->assertContains($shippingDiscount1, $appliedDiscounts);
-        $this->assertNotContains($shippingDiscount2, $appliedDiscounts);
-        $this->assertEquals(65, $processedContext->getShippingCost());
+        self::assertContains($shippingDiscount1, $appliedDiscounts);
+        self::assertNotContains($shippingDiscount2, $appliedDiscounts);
+        self::assertEquals(65, $processedContext->getShippingCost());
     }
 
-    /**
-     * @param float $amount
-     * @return OrderDiscount
-     */
-    private function createOrderDiscount($amount): OrderDiscount
+    private function createOrderDiscount(float $amount): OrderDiscount
     {
         $discount = new OrderDiscount();
         $discount->configure([
@@ -70,11 +75,7 @@ class ProfitableStrategyTest extends \PHPUnit\Framework\TestCase
         return $discount;
     }
 
-    /**
-     * @param float $amount
-     * @return ShippingDiscount
-     */
-    private function createShippingDiscount($amount): ShippingDiscount
+    private function createShippingDiscount(float $amount): ShippingDiscount
     {
         $discount = new ShippingDiscount();
         $discount->configure([
@@ -84,11 +85,5 @@ class ProfitableStrategyTest extends \PHPUnit\Framework\TestCase
         ]);
 
         return $discount;
-    }
-
-    public function testGetLabel()
-    {
-        $strategy = new ProfitableStrategy();
-        $this->assertEquals('oro.promotion.discount.strategy.profitable.label', $strategy->getLabel());
     }
 }

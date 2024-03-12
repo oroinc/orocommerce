@@ -75,7 +75,7 @@ class PriceListToProductEntityListener implements OptionalListenerInterface
             [$priceListToProduct->getProduct()]
         );
 
-        $event->getEntityManager()
+        $event->getObjectManager()
             ->getRepository(ProductPrice::class)
             ->deleteByPriceList(
                 $this->shardManager,

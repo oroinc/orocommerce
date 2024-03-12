@@ -3,42 +3,56 @@
 .shopping-lists-popup {
     width: $shopping-lists-popup-width;
 
-    font-family: $shopping-lists-popup-font-family;
-
     &__content {
         display: $shopping-lists-popup-content-display;
         overflow-y: $shopping-lists-popup-content-overflow-y;
 
         max-height: $shopping-lists-popup-content-max-height;
+
+        .shopping-lists-modify {
+            display: flex;
+            width: 100%;
+            justify-content: flex-end;
+
+            &__badges {
+                margin-left: 16px;
+            }
+        }
     }
 
     &__item {
-        display: $shopping-lists-popup-item-display;
-
         border-top: $shopping-lists-popup-item-border-top;
-    }
 
-    &__list,
-    &__quantity {
-        display: $shopping-lists-popup-list-display;
+        display: $shopping-lists-popup-item-display;
+        align-items: $shopping-lists-popup-item-align-items;
 
-        vertical-align: $shopping-lists-popup-list-vertical-align;
+        grid-template-columns: $shopping-lists-popup-list-width $shopping-lists-popup-quantity-width;
     }
 
     &__list {
-        width: $shopping-lists-popup-list-width;
         padding: $shopping-lists-popup-list-inner-offset;
     }
 
     &__quantity {
-        width: $shopping-lists-popup-quantity-width;
-        padding: $shopping-lists-popup-quantity-inner-offset;
+        padding-block: $shopping-lists-popup-quantity-inner-block-offset;
+        padding-inline: $shopping-lists-popup-quantity-inner-inline-offset;
     }
 
     &__headline {
         background: $shopping-lists-popup-headline-background;
-
         text-align: $shopping-lists-popup-headline-text-align;
+        color: $shopping-lists-popup-headline-color;
+        letter-spacing: $shopping-lists-popup-headline-letter-spacing;
+        text-transform: $shopping-lists-popup-headline-text-transform;
+        font-size: $base-font-size--xs;
+
+        th {
+            font-weight: font-weight('semi-bold');
+        }
+    }
+
+    .error-row-item {
+        padding: $shopping-lists-popup-error-row-item;
     }
 
     &__headline &__item {
@@ -50,43 +64,68 @@
         padding: $shopping-lists-popup-headline-list-text-inner-offset;
     }
 
-    &__footer {
-        background: $shopping-lists-popup-footer-background;
+    &__content &__item {
+        grid-template-columns: $shopping-lists-content-popup-list-width $shopping-lists-content-popup-quantity-width;
+        &:first-child {
+            border-top: 0;
+        }
     }
 
     &__footer &__list {
         padding: $shopping-lists-popup-footer-list-inner-offset;
-
-        vertical-align: $shopping-lists-popup-footer-list-vertical-align;
-    }
-
-    &__footer &__quantity {
-        padding: $shopping-lists-popup-footer-quantity-inner-offset;
-
-        vertical-align: $shopping-lists-popup-footer-quantity-vertical-align;
     }
 }
 
 @include breakpoint('mobile-landscape') {
     .shopping-lists-popup {
         &__quantity {
-            width: $shopping-lists-popup-quantity-width-mobile;
             padding: $shopping-lists-popup-quantity-inner-offset-mobile;
         }
 
+        &__item {
+            grid-template-columns: $shopping-lists-grid-template-columns-mobile;
+        }
+
         &__list {
-            width: $shopping-lists-popup-list-width-mobile;
+            padding: $shopping-lists-popup-list-inner-offset-mobile;
+        }
+
+        &__headline &__quantity {
+            display: $shopping-lists-popup-headline-quantyty-display-mobile;
         }
 
         &__footer & {
             &__list {
-                width: $shopping-lists-popup-footer-list-width-mobile;
                 padding: $shopping-lists-popup-footer-list-inner-offset-mobile;
             }
 
             &__quantity {
-                width: $shopping-lists-popup-footer-quantity-width-mobile;
                 padding: $shopping-lists-popup-footer-quantity-inner-offset-mobile;
+            }
+
+            &__item {
+                padding-top: $shopping-lists-popup-footer-item-inner-offset-top-mobile;
+            }
+        }
+
+        &__footer {
+            .shopping-lists-modify__select {
+                width: $shopping-lists-modify-select-footer-width-mobile;
+            }
+        }
+
+        &__content & {
+            &__item {
+                display: $shopping-lists-popup-content-items-display-mobile;
+            }
+        }
+
+        &__content {
+            .shopping-lists-popup__quantity,
+            .shopping-lists-units,
+            .error-row,
+            form {
+                display: $shopping-lists-popup-content-items-display-mobile;
             }
         }
     }

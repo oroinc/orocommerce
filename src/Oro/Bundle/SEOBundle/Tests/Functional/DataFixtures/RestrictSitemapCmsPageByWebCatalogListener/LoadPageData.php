@@ -38,7 +38,8 @@ class LoadPageData extends AbstractFixture
      */
     public function load(ObjectManager $manager)
     {
-        $manager->createQuery('DELETE OroCMSBundle:Page')->execute(); // remove all built-in pages before tests
+        // remove all built-in pages before tests
+        $manager->createQuery('DELETE Oro\Bundle\CMSBundle\Entity\Page')->execute();
         foreach (self::$page as $menuItemReference => $data) {
             $entity = new Page();
             $entity->addTitle((new LocalizedFallbackValue())->setString($menuItemReference));

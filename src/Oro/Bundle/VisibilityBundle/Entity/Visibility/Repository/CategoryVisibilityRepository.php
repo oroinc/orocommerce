@@ -3,7 +3,12 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 
+/**
+ * Repository for CategoryVisibility entity
+ */
 class CategoryVisibilityRepository extends AbstractCategoryVisibilityRepository
 {
     /**
@@ -18,9 +23,9 @@ class CategoryVisibilityRepository extends AbstractCategoryVisibilityRepository
                 'IDENTITY(c.parentCategory) as category_parent_id',
                 'categoryVisibility.visibility'
             )
-            ->from('OroCatalogBundle:Category', 'c')
+            ->from(Category::class, 'c')
             ->leftJoin(
-                'OroVisibilityBundle:Visibility\CategoryVisibility',
+                CategoryVisibility::class,
                 'categoryVisibility',
                 Join::WITH,
                 $queryBuilder->expr()->eq('categoryVisibility.category', 'c')

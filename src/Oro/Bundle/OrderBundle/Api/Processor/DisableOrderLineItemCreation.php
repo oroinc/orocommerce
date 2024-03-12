@@ -19,7 +19,7 @@ class DisableOrderLineItemCreation implements ProcessorInterface
     {
         /** @var Context $context */
 
-        if ($context->isMasterRequest()) {
+        if ($context->isMainRequest()) {
             throw new AccessDeniedException(
                 'Use API resource to create an order. An order line item can be created only together with an order.'
             );

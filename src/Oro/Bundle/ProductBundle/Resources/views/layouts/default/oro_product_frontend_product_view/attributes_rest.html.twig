@@ -2,10 +2,9 @@
     {% set content = block_widget(block) %}
     {%- if content|trim|length > 0 -%}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroproduct/js/app/components/fullscreen-attribute-group-tab-content-component',
+        'data-page-component-module': 'oroentityconfig/js/attribute-group-tab-content-component',
         '~data-page-component-options': {
-            id: group,
-            viewport: 'mobile-landscape',
+            id: group
         },
         'role': 'tab',
         'id': group

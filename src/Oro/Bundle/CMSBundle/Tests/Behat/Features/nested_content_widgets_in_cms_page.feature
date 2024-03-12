@@ -76,7 +76,7 @@ Feature: Nested Content Widgets in CMS Page
   Scenario: Check Tabbed Content Widget in tabs mode is rendered on storefront
     Given I proceed as the Buyer
     And I am on the homepage
-    When I click "Test CMS Page"
+    When I click "Test CMS Page" in hamburger menu
     Then Page title equals to "Test CMS Page"
     And I should see following tabs in "Tabbed Content Widget Tabs 1" element:
       | Tab 1 Title |

@@ -7,6 +7,7 @@ use Oro\Bundle\RedirectBundle\Cache\UrlDataStorage;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -121,10 +122,7 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->willReturn(new UrlDataStorage());
 
-        $persistenceItem = $this->createMock(CacheItemInterface::class);
-        $persistenceItem->expects($this->once())
-            ->method('isHit')
-            ->willReturn(false);
+        $persistenceItem = new CacheItem();
         $this->persistentCache->expects($this->once())
             ->method('getItem')
             ->with($key)
@@ -166,13 +164,10 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
         $persistentStorage = $this->createMock(UrlDataStorage::class);
         $this->configureLocalCacheWithValue($key, $storage);
 
-        $persistentItem = $this->createMock(CacheItemInterface::class);
-        $persistentItem->expects($this->any())
-            ->method('get')
-            ->willReturn($persistentStorage);
-        $persistentItem->expects($this->once())
-            ->method('isHit')
-            ->willReturn(true);
+        $persistentItem = new CacheItem();
+        $r = new \ReflectionProperty($persistentItem, 'isHit');
+        $r->setValue($persistentItem, true);
+        $persistentItem->set($persistentStorage);
 
         $this->persistentCache->expects($this->once())
             ->method('getItem')
@@ -244,13 +239,10 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
 
         $this->storageCache->setUrl($routeName, $routeParameters, $url);
 
-        $persistentItem = $this->createMock(CacheItemInterface::class);
-        $persistentItem->expects($this->any())
-            ->method('get')
-            ->willReturn($oldStorage);
-        $persistentItem->expects($this->once())
-            ->method('isHit')
-            ->willReturn(true);
+        $persistentItem = new CacheItem();
+        $r = new \ReflectionProperty($persistentItem, 'isHit');
+        $r->setValue($persistentItem, true);
+        $persistentItem->set($oldStorage);
 
         $this->persistentCache->expects($this->once())
             ->method('getItem')
@@ -285,15 +277,7 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
 
         $this->storageCache->setUrl($routeName, $routeParameters, $url);
 
-        $persistentItem = $this->createMock(CacheItemInterface::class);
-        $persistentItem->expects($this->never())
-            ->method('get');
-        $persistentItem->expects($this->once())
-            ->method('isHit')
-            ->willReturn(false);
-        $persistentItem->expects($this->once())
-            ->method('set')
-            ->with($storage);
+        $persistentItem = new CacheItem();
 
         $this->persistentCache->expects($this->once())
             ->method('getItem')

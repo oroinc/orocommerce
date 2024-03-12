@@ -15,7 +15,8 @@ const QuickOrderFromView = BaseView.extend({
         clear: '[data-role="quick-order-add-clear"]',
         add: '.add-list-item',
         productSkus: '[data-name="field__sku"]',
-        collectionValidation: '[data-name="collection-validation"]'
+        collectionValidation: '[data-name="collection-validation"]',
+        createOrderButton: '[data-transition_name="start_from_quickorderform"]'
     },
 
     events() {
@@ -38,11 +39,13 @@ const QuickOrderFromView = BaseView.extend({
     listen: {
         'rows-initialization-progress': 'updateLoadingBarProgress',
         'quick-add-rows collection': 'onCollectionQuickAddRows',
-        'update collection': 'checkRowsQuantity',
+        'update collection': 'onUpdateCollection',
         'rows-initialization-done': 'updateTopButtons'
     },
 
     topButtons: null,
+
+    collectionHasProductKitMessage: _.__('oro.product.frontend.quick_add.form.has_non_configured_product_kit'),
 
     constructor: function QuickOrderFromView(options) {
         this.checkRowsQuantity = _.debounce(this.checkRowsQuantity.bind(this), 25);
@@ -237,6 +240,34 @@ const QuickOrderFromView = BaseView.extend({
 
     onProductSkuUpdate() {
         this.$(this.elem.collectionValidation).valid();
+        this._toggleCreateOrderButton();
+    },
+
+    onUpdateCollection(collection, options) {
+        this.checkRowsQuantity(collection, options);
+        this._toggleCreateOrderButton();
+    },
+
+    /**
+     * @param {boolean} disable
+     * @private
+     */
+    _toggleCreateOrderButton: function(disable) {
+        const disabled = disable || this.isCollectionHasProductKit();
+        const $createOrderButton = this.$(this.elem.createOrderButton);
+
+        if (disabled === true) {
+            $createOrderButton.addClass('disabled');
+            $createOrderButton.parent()
+                .attr('title', this.collectionHasProductKitMessage);
+        } else {
+            $createOrderButton.removeClass('disabled');
+            $createOrderButton.parent().removeAttr('title');
+        }
+    },
+
+    isCollectionHasProductKit() {
+        return this.collection.filter(model => model.attributes.type === 'kit').length > 0;
     }
 });
 

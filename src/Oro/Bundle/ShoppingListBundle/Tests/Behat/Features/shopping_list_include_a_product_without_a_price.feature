@@ -33,13 +33,13 @@ Feature: Shopping list include a product without a price
     And I should see "Add to Shopping List"
     And I click "Add to Shopping List"
     And I should see "Product has been added to" flash message and I close it
-    When I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     And I click View "Shopping List" in grid
     And I click on "Open Price Dropdown Button" element in grid row contains "Product1"
     Then I should see "Price for requested quantity is not available"
-    When I follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     And I click Edit "Shopping List" in grid
     And I click on "Open Price Dropdown Button" element in grid row contains "Product1"
     Then I should see "Price for requested quantity is not available"

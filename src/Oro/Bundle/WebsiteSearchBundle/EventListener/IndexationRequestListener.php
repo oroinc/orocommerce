@@ -59,7 +59,7 @@ class IndexationRequestListener implements OptionalListenerInterface
             return;
         }
 
-        $entityManager = $args->getEntityManager();
+        $entityManager = $args->getObjectManager();
         $unitOfWork    = $entityManager->getUnitOfWork();
 
         foreach ($unitOfWork->getScheduledEntityUpdates() as $hash => $entity) {

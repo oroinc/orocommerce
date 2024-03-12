@@ -2,62 +2,37 @@
 
 namespace Oro\Bundle\TaxBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 /**
- * @ORM\MappedSuperclass
- * @ORM\HasLifecycleCallbacks
  *
  * The base class for the family of classes of tax codes
  */
+#[ORM\MappedSuperclass]
+#[ORM\HasLifecycleCallbacks]
 abstract class AbstractTaxCode implements TaxCodeInterface, DatesAwareInterface
 {
     use DatesAwareTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     *
-     * @var int
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, unique=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=10,
-     *              "identity"=true
-     *          }
-     *      }
-     * )
-     *
-     * @var string
-     */
-    protected $code;
+    #[ORM\Column(type: Types::STRING, length: 255, unique: false)]
+    #[ConfigField(
+        defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 10, 'identity' => true]]
+    )]
+    protected ?string $code = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="description", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $description;
+    #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $description = null;
 
     /**
      * Get id

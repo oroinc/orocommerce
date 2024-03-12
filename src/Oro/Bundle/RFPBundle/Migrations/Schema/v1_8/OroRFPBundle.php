@@ -3,8 +3,8 @@
 namespace Oro\Bundle\RFPBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
@@ -12,15 +12,11 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroRFPBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
+    use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
 
     /**
-     * @var RenameExtension
-     */
-    private $renameExtension;
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -60,17 +56,7 @@ class OroRFPBundle implements Migration, RenameExtensionAwareInterface, OrderedM
     }
 
     /**
-     * Sets the RenameExtension
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
-
-    /**
-     * Get the order of this migration
-     *
-     * @return integer
+     * {@inheritDoc}
      */
     public function getOrder()
     {

@@ -176,6 +176,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_security.acl_helper'
+            - '@request_stack'
         tags:
             - { name: form.type_extension, alias: oro_product, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 

@@ -439,7 +439,7 @@ Feature: Commerce smoke e2e
   Scenario: Create customer from the frontstore
     Given I proceed as the User
     And I am on the homepage
-    And click "Sign In"
+    And click "Log In"
     And click "Create An Account"
     And I fill "Registration Form" with:
       | Company Name     | OroCommerce              |
@@ -456,7 +456,7 @@ Feature: Commerce smoke e2e
     When fill form with:
       |Email Address|AmandaRCole1@example.org|
       |Password     |AmandaRCole1@example.org|
-    And click "Sign In"
+    And click "Log In"
     Then I should see "Your login was unsuccessful. Please check your e-mail address and password before trying again."
 
   Scenario: Activate customer user
@@ -473,8 +473,9 @@ Feature: Commerce smoke e2e
     And fill form with:
       |Email Address|AmandaRCole1@example.org|
       |Password     |AmandaRCole1@example.org|
-    And click "Sign In"
-    Then should see "Signed in as: Amanda Cole"
+    And click "Log In"
+    Then should see "Amanda Cole"
+    And I click "Account Dropdown"
     And click "Sign Out"
 
   Scenario: Create customer group
@@ -537,9 +538,9 @@ Feature: Commerce smoke e2e
   Scenario: Check Contact Us and About us pages, Products views, front filters, prices by not registered user
     Given I proceed as the User
     And I am on the homepage
-    When click "About"
+    When I click "About" in hamburger menu
     Then Page title equals to "About"
-    When click "Phones"
+    When click "Phones" in hamburger menu
     Then should see "All Products / Phones"
     And should see "View Details" for "Lenovo_Vibe_sku" product
     And should see "Product Image" for "Lenovo_Vibe_sku" product
@@ -564,9 +565,8 @@ Feature: Commerce smoke e2e
     And should see "Listed Price: $100.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Green Box" for "Lenovo_Vibe_sku" product
     And should see "Update Shopping list" for "Lenovo_Vibe_sku" product
-    When click "No Image View"
-    Then should see "View Details" for "Lenovo_Vibe_sku" product
-    And should not see "Product Image" for "Lenovo_Vibe_sku" product
+    When click "Compact View"
+    And should see "Product Image" for "Lenovo_Vibe_sku" product
     And should see "Product Name" for "Lenovo_Vibe_sku" product
     And should see "Your Price: $100.00 / item" for "Lenovo_Vibe_sku" product
     And should see "Listed Price: $100.00 / item" for "Lenovo_Vibe_sku" product
@@ -576,9 +576,9 @@ Feature: Commerce smoke e2e
 
   Scenario: Check Contact Us and About us pages, Products views, correct price for the product for customer user and for customer group
     Given I signed in as AmandaRCole1@example.org on the store frontend
-    When click "About"
+    When click "About" in hamburger menu
     Then Page title equals to "About"
-    When click "Phones"
+    When click "Phones" in hamburger menu
     Then should see "All Products / Phones"
     And should see "View Details" for "Lenovo_Vibe_sku" product
     And should see "Product Image" for "Lenovo_Vibe_sku" product
@@ -595,7 +595,7 @@ Feature: Commerce smoke e2e
     And should not see "Green Box" for "Xiaomi_Redmi_3S_sku" product
     And should see "Your Price: $120.00 / item" for "Xiaomi_Redmi_3S_sku" product
     And should see "Listed Price: $120.00 / item" for "Xiaomi_Redmi_3S_sku" product
-    When click "Shirts"
+    When I click "Shirts" in hamburger menu
     Then should see "Add to Shopping List button" for "Shirt_Sku" product
     And should see "View Details" for "Shirt_Sku" product
     And should see "Product Image" for "Shirt_Sku" product
@@ -618,9 +618,10 @@ Feature: Commerce smoke e2e
     When I hover on "Shopping Cart"
     And click "View Details"
     And should see "Subtotal $175.20"
+    And I click "Account Dropdown"
     And click "Sign Out"
     And I signed in as BrandaJSanborn1@example.org on the store frontend
-    And click "Phones"
+    And click "Phones" in hamburger menu
     When fill line item with "Lenovo_Vibe_sku" in frontend product grid:
       |Quantity|10  |
     Then should see "Your Price: $90.00 / item" for "Lenovo_Vibe_sku" product
@@ -646,7 +647,7 @@ Feature: Commerce smoke e2e
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
     And should see "New Front Shopping List"
-    And click "Phones"
+    And click "Phones" hamburger menu
     When fill line item with "Lenovo_Vibe_sku" in frontend product grid:
       |Quantity|112 |
     And click "Add to New Front Shopping List" for "Lenovo_Vibe_sku" product
@@ -725,6 +726,7 @@ Feature: Commerce smoke e2e
     And should see "TOTAL $1,893.90"
     And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+    And I click "Account Dropdown"
     And click "Sign Out"
 
   Scenario: Checkout by customer created from front store through the shopping list created by himself and review the submited order
@@ -768,7 +770,7 @@ Feature: Commerce smoke e2e
 
   Scenario: Create RFQ, convert it to quote with edit and complete checkout by customer user
     Given I proceed as the User
-    And click "Phones"
+    And click "Phones" hamburger menu
     And fill "FrontendLineItemForm" with:
       |Quantity|10  |
     And I scroll to top
@@ -819,7 +821,7 @@ Feature: Commerce smoke e2e
       | Internal Status | Sent to Customer |
       | Customer Status | N/A              |
     And I proceed as the User
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     And click on PO00001 in grid
     When click "Accept and Submit to Order"
@@ -844,6 +846,7 @@ Feature: Commerce smoke e2e
     And should see "TOTAL $4,014.00"
     And click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+    And I click "Account Dropdown"
     And click "Sign Out"
 
   Scenario: Create Quote from admin and check that Customers able to checkout from it (Quote assigned to buyer, check out by admin)
@@ -892,7 +895,7 @@ Feature: Commerce smoke e2e
     Then I should see "Quote #2 successfully sent to customer" flash message
     And I proceed as the User
     And I signed in as LonnieVTownsend1@example.org on the store frontend
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on PO1001 in grid
     When click "Accept and Submit to Order"
@@ -906,7 +909,7 @@ Feature: Commerce smoke e2e
 
   Scenario: Customer User with Administrator privileges have ability to see orders, RFQ, quotes of other users for the same customer
     Given I proceed as the User
-    And follow "Account"
+    And I click "Account Dropdown"
     When click "Requests For Quote"
     And click on PO00001 in grid
     Then should see "First Name Amanda"
@@ -916,12 +919,14 @@ Feature: Commerce smoke e2e
     And should see "Owner Amanda Cole"
     And should see "Xiaomi Redmi 3S Item #: Xiaomi_Redmi_3S_sku 12 items $112.00"
     And should see "Lenovo Vibe Item #: Lenovo_Vibe_sku 30 items $75.00"
+    And I click "Account Dropdown"
     When click "Quotes"
     Then should see following grid:
       | Quote # | PO Number | Owner       |
       | 1       | PO00001   | Amanda Cole |
       | 2       | PO1001    | Amanda Cole |
-    When click "Order History"
+    And I click "Account Dropdown"
+    And click "Order History"
     And click on $295.20 in grid
     Then should see "Billing Address Home Address NewAmanda NewCole NewOrg Stanyan St 12 SAN FRANCISCO CA US 90001"
     And should see "Shipping Address Home Address NewAmanda NewCole NewOrg Stanyan St 12 SAN FRANCISCO CA US 90001"
@@ -938,7 +943,7 @@ Feature: Commerce smoke e2e
 
   Scenario: Customer User with Administrator privileges create/update/block/delete new Customer User
     Given I proceed as the User
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Roles"
     When click edit "Buyer" in grid
     And fill form with:
@@ -957,19 +962,22 @@ Feature: Commerce smoke e2e
       |NewByerRole (Customizable)|true              |
     And click "Save"
     Then should see "Customer User has been saved" flash message
+    And I click "Account Dropdown"
     And click "Sign Out"
     When I signed in as TestUser1@test.com on the store frontend
-    Then should see "Signed in as: TestF TestL"
+    Then should see "TestF TestL"
+    And I click "Account Dropdown"
     And click "Sign Out"
     And I signed in as LonnieVTownsend1@example.org on the store frontend
-    When follow "Account"
+    And I click "Account Dropdown"
     And click "Users"
     And click disable "TestUser1@test.com" in grid
+    And I click "Account Dropdown"
     And click "Sign Out"
     And I signed in as TestUser1@test.com on the store frontend
     Then I should see "Your login was unsuccessful. Please check your e-mail address and password before trying again."
     And I signed in as LonnieVTownsend1@example.org on the store frontend
-    When follow "Account"
+    And I click "Account Dropdown"
     And click "Users"
     And click edit "TestUser1@test.com" in grid
     And fill form with:

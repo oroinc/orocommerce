@@ -226,7 +226,7 @@ class CanonicalUrlGenerator
         }
 
         if ($baseUrl) {
-            $domainUrl = str_replace(parse_url($domainUrl, PHP_URL_PATH), '', $domainUrl);
+            $domainUrl = str_replace((string)parse_url($domainUrl, PHP_URL_PATH), '', $domainUrl);
             $urlParts = [rtrim($domainUrl, ' /'), $baseUrl];
         } else {
             $urlParts = [$domainUrl];

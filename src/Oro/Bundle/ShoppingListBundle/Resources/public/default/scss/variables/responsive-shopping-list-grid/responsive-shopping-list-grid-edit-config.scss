@@ -4,7 +4,7 @@ $responsive-shopping-list-edit-select-row-cell-width: 80px !default;
 
 $responsive-shopping-list-edit-action-in-desktop-height: $product-item-image-holder-tiny-height !default;
 
-$responsive-shopping-list-edit-checkbox-offset: $offset-x !default;
+$responsive-shopping-list-edit-checkbox-offset: spacing('base') !default;
 
 // Mobile
 
@@ -14,8 +14,8 @@ $responsive-shopping-list-edit-sub-row-offset: (
 ) !default;
 $responsive-shopping-list-edit-select-row-cell-height-mobile: $product-item-image-holder-tiny-height !default;
 
-$responsive-shopping-list-edit-action-cell-width-mobile: 26px * 2 !default;
-$responsive-shopping-list-edit-three-actions-cell-width-mobile: 26px * 3 !default;
+$responsive-shopping-list-edit-action-cell-width-mobile: 44px * 2 !default;
+$responsive-shopping-list-edit-three-actions-cell-width-mobile: 44px * 3 !default;
 
 // Mobile small
 $responsive-shopping-list-edit-select-row-cell-width-mobile-s: 36px !default;

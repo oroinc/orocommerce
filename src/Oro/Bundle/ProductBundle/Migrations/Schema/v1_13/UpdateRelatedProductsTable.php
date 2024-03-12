@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_13;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
@@ -15,10 +15,8 @@ class UpdateRelatedProductsTable implements
     RenameExtensionAwareInterface,
     OrderedMigrationInterface
 {
+    use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
-
-    /** @var RenameExtension */
-    private $renameExtension;
 
     /**
      * {@inheritdoc}
@@ -33,14 +31,6 @@ class UpdateRelatedProductsTable implements
         $table->dropIndex('idx_oro_product_related_products_unique');
 
         $this->renameExtension->renameColumn($schema, $queries, $table, 'related_product_id', 'related_item_id');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
     }
 
     /**

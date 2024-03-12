@@ -1,7 +1,7 @@
 //@theme: default;
 
 .checkout-sidebar {
-    margin-top: $offset-x-m;
+    margin-top: spacing('sm');
 }
 
 @include breakpoint('tablet') {

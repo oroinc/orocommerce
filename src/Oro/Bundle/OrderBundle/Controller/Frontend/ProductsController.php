@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Controller\Frontend;
 
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -17,12 +17,11 @@ class ProductsController extends AbstractController
     const PRODUCT_GRID_NAME = 'order-products-previously-purchased-grid';
 
     /**
-     * @Route("/previously-purchased", name="oro_order_products_frontend_previously_purchased")
-     * @AclAncestor("oro_order_frontend_view")
-     * @Layout(vars={"entity_class", "product_grid_name", "grid_config", "theme_name"})
-     *
      * @return array
      */
+    #[Route(path: '/previously-purchased', name: 'oro_order_products_frontend_previously_purchased')]
+    #[Layout(vars: ['entity_class', 'product_grid_name', 'grid_config', 'theme_name'])]
+    #[AclAncestor('oro_order_frontend_view')]
     public function previouslyPurchasedAction()
     {
         return [
@@ -31,7 +30,7 @@ class ProductsController extends AbstractController
             'grid_config' => [
                 self::PRODUCT_GRID_NAME
             ],
-            'theme_name' => $this->get(DataGridThemeHelper::class)
+            'theme_name' => $this->container->get(DataGridThemeHelper::class)
                 ->getTheme('order-products-previously-purchased-grid')
         ];
     }

@@ -13,7 +13,7 @@ class OrderDiscountTest extends \PHPUnit\Framework\TestCase
     public function testProperties()
     {
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['description', 'Description'],
             ['type', 'test_type'],
             ['amount', 100.00],

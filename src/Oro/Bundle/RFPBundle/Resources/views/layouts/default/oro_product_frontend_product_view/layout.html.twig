@@ -1,20 +1,18 @@
 {% block _units_request_for_quote_widget %}
-    <tfoot class="product-prices__tfoot">
-        {% for unit in units %}
-            {% if isPriceUnitsVisible %}
-                <tr class="product-prices__tr">
-                    <td colspan="2" class="product-prices__td">
-                        <strong>{{ unit.code|oro_format_product_unit_label|capitalize }}</strong>
-                    </td>
-                </tr>
-            {% endif %}
-            <tr class="product-prices__tr">
-                <td colspan="2" class="product-prices__td">
-                    <div class="product_view_request_quote_for_unit">{{ 'oro.rfp.btn.add_to_rfp'|trans }}</div>
-                </td>
-            </tr>
-        {% endfor %}
-    </tfoot>
+    {% if units is defined and units is iterable and units|length %}
+        {% set text = 'oro.frontend.product.view.request_a_quote_more_units'|trans({
+            '{{ units }}': units|first,
+            '%count%': 1
+        }) %}
+        {% if units|length > 1 %}
+            {% set text = 'oro.frontend.product.view.request_a_quote_more_units'|trans({
+                '{{ units }}': units|slice(0, -1)|join(', '),
+                '{{ andUnit }}': units|last,
+                '%count%': 2
+            }) %}
+        {% endif %}
+        <p class="request-more-units-label">{{ text }}</p>
+    {% endif %}
 {% endblock %}
 
 {% block _request_a_quote_form_button_widget %}
@@ -24,11 +22,10 @@
     {% endif %}
 
     {% if visible == true %}
-        {% import '@OroUI/macros.html.twig' as UI %}
+        {% import '@OroUI/layouts/macros.html.twig' as UI %}
         {% set btnOptions = {
             'label': 'oro.frontend.product.view.request_a_quote'|trans,
-            'iCss': 'fa fa-file-text fa--fw fa--as-line',
-            'labelInIcon': false,
+            'iconName': 'file-text',
             'dataIntention': 'important',
             'dataUrl': 'oro_rfp_frontend_request_create',
             'pageComponent': {

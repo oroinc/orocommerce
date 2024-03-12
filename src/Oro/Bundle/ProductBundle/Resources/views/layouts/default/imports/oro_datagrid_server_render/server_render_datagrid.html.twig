@@ -1,4 +1,5 @@
 {% block __oro_datagrid_server_render__datagrid_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     {% set datagrid = oro_datagrid_build(grid_name, grid_parameters) %}
 
     {% set gridId = oro_datagrid_generate_element_id(datagrid) %}
@@ -87,18 +88,18 @@
         >
 
             {% if toolbarOptions.placement.top %}
-                <div class="toolbar">
+                {% set toolbarAttr = {
+                    'class': 'toolbar sticky sticky--top',
+                    'data-sticky': {
+                        'toggleClass': 'datagrid-toolbar-sticky-container',
+                        'name': 'toolbar'
+                    }
+                } %}
+                <div {{ UI.attributes(toolbarAttr) }}>
                     {{ block_widget(block[id ~ '_toolbar'], {
                         attr: {
                             'data-grid-toolbar': 'top',
-                            'data-sticky-target': 'top-sticky-panel',
-                            'data-proxy-data': 'true',
-                            'data-sticky': {
-                                'isSticky': true,
-                                'autoWidth': true,
-                                'toggleClass': 'datagrid-toolbar-sticky-container',
-                                'placeholderId': 'sticky_element_toolbar'
-                            }
+                            'data-proxy-data': 'true'
                     }}) }}
                 </div>
             {% endif %}
@@ -109,7 +110,7 @@
                     <div class="grid-scrollable-container">
                 {% endif %}
                     <div class="grid-container">
-                        <div class="grid-main-container table-hover table table-bordered table-condensed">
+                        <div class="grid-main-container table">
                             {% if themeOptions.headerHide is not defined or themeOptions.headerHide == false %}
                                 <div class="grid-header">
                                     {{ block_widget(block[id ~ '_header_row']) }}
@@ -175,7 +176,7 @@
 
     <div{{ block('block_attributes') }}>
         {% if columnAttributes.sortable is defined and columnAttributes.sortable %}
-            <a class="grid-header-cell__link" href="#">
+            <a class="grid-header-cell__link no-decoration" href="#">
                 <span class="grid-header-cell__label">{{ columnAttributes.label }}</span>
                 <span class="caret"></span>
             </a>

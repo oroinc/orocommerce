@@ -1,4 +1,5 @@
 {% block _product_shopping_lists_popup_widget %}
+    {%- import '@OroUI/layouts/renderIcon.html.twig' as renderIcon -%}
     {% if not is_one_shopping_list_enabled() %}
         {% set attr = layout_attr_defaults(attr, {
             'data-page-component-module': 'oroui/js/app/components/widget-component',
@@ -7,10 +8,13 @@
                 createOnEvent: 'click'
             },
             'data-url': path('oro_shopping_list_frontend_product_kit_in_shopping_lists', {productId: product.id}),
-            '~class': 'btn btn--plain shopping-lists__area-trigger',
+            '~class': 'btn btn--outlined btn--full shopping-lists__area-trigger',
             'title': 'Edit'|trans,
             'aria-label': 'oro.frontend.shoppinglist.open_modal_btn.aria_label'|trans
         }) %}
-        <button {{ block('block_attributes') }}></button>
+        <button {{ block('block_attributes') }}>
+            {{- renderIcon.icon({name: 'pencil'}) -}}
+            {{ 'oro.shoppinglist.actions.in_shopping_list'|trans }}
+        </button>
     {% endif %}
 {% endblock %}

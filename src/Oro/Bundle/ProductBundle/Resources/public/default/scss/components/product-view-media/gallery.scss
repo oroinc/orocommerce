@@ -12,6 +12,7 @@
     max-height: $product-view-media-gallery-max-height;
     border: $product-view-media-gallery-border;
     z-index: $product-view-media-gallery-z-index;
+    margin: 0;
 
     .tab-content__wrapper & {
         max-width: $product-view-media-gallery-tab-content-max-width;
@@ -39,7 +40,7 @@
     }
 
     &.slick-initialized {
-        overflow: visible;
+        overflow: hidden;
 
         .product-view-media-gallery__image-item {
             //Should for reset slick display value
@@ -49,8 +50,6 @@
 
     &__nav {
         position: relative;
-
-        max-height: $product-view-media-gallery-nav-max-height;
         margin: $product-view-media-gallery-nav-offset;
 
         opacity: 0;
@@ -101,34 +100,142 @@
             padding: $product-view-media-gallery-nav-item-offset-inner;
 
             &.slick-current img {
-                border-color: $product-view-media-gallery-nav-image-current-border-color;
+                border: $product-view-media-gallery-slick-slide-current-item-border;
             }
         }
 
         &__image {
-            width: 100%;
-            max-height: $product-view-media-gallery-nav-max-height;
+            width: $product-view-media-gallery-image-width;
+            height: $product-view-media-gallery-image-height;
+            border: $product-view-media-gallery-slick-slide-item-border;
+            border-radius: $product-view-media-gallery-image-border-radius;
+            overflow: hidden;
+            display: block;
+            margin: auto;
+        }
 
-            border: $product-view-media-gallery-nav-image-border-color;
-            transition: border-color .5s;
+        .slick-btn-wrapper {
+            position: absolute;
+            z-index: z('base');
+            top: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            background-color: $product-view-media-gallery-arrow-wrapper-bg;
+            box-shadow: $product-view-media-gallery-arrow-wrapper-box-shadow;
+        }
+
+        .slick-arrow-prev {
+            left: 0;
+        }
+
+        .slick-arrow-next {
+            right: 0;
         }
 
         @include slick-arrow(
-            $slick-arrow-top: 0,
+            $slick-arrow-class: '.slick-arrow-btn',
             $slick-arrow-transform: null,
-            $slick-arrow-z-index: z('base') + 1,
+            $slick-arrow-position: static,
             $slick-arrow-width: $product-view-media-gallery-nav-arrow-width,
             $slick-arrow-height: $product-view-media-gallery-nav-arrow-height,
-            $slick-arrow-color: null,
             $slick-arrow-background: $product-view-media-gallery-nav-arrow-bg,
+            $slick-arrow-hover-background: $product-view-media-gallery-nav-arrow-bg-hover,
+            $slick-arrow-focus-background: $product-view-media-gallery-nav-arrow-bg-focus,
             $slick-arrow-border: $product-view-media-gallery-nav-arrow-border,
-            $slick-arrow-icon-size: $product-view-media-gallery-nav-arrow-icon-size,
-            $slick-arrow-icon-color: null,
-            $slick-arrow-prev-icon: $product-view-media-gallery-nav-arrow-icon-prev,
-            $slick-arrow-next-icon: $product-view-media-gallery-nav-arrow-icon-next,
             $slick-arrow-next-right: $product-view-media-gallery-nav-arrow-side-position,
-            $slick-arrow-prev-left: $product-view-media-gallery-nav-arrow-side-position
+            $slick-arrow-prev-left: $product-view-media-gallery-nav-arrow-side-position,
+            $slick-arrow-disabled-opacity: 0,
+            $slick-arrow-inner-offset: 12px,
+            $slick-arrow-border-radius: $product-view-media-gallery-nav-arrow-border-radius,
         );
+    }
+}
+
+@include breakpoint('desktop') {
+    .product-view-media-wrapper {
+        &.vertical-mode {
+            &:has(.product-view-media-gallery__nav) {
+                display: $vertical-product-view-media-wrapper-display;
+                // Don't use 1fr! This leads to a slick slider bug
+                grid-template-columns: $vertical-product-view-media-wrapper-grid-template-columns;
+                gap: $vertical-product-view-media-wrapper-gap;
+
+                .product-view-media-gallery {
+                    max-height: $vertical-product-view-media-gallery-max-height;
+                }
+
+                .product-view-media-gallery-container {
+                    grid-row: $vertical-product-view-media-gallery-container-grid-row;
+                    grid-column: $vertical-product-view-media-gallery-container-grid-column;
+                }
+
+                .product-view-media-gallery__image-item {
+                    height: $vertical-product-view-media-gallery-image-item-height;
+                }
+
+                .product-view-media-gallery__nav {
+                    grid-row: $vertical-product-view-media-gallery-nav-grid-row;
+                    grid-column: $vertical-product-view-media-gallery-nav-grid-column;
+
+                    &.slick-initialized {
+                        height: $vertical-product-view-media-gallery-nav-height;
+                        margin-top: $vertical-product-view-media-gallery-nav-margin-top;
+                    }
+
+                    &__item {
+                        padding: $vertical-product-view-media-gallery-nav-item-padding;
+
+                        &.slick-slide {
+                            margin: $vertical-product-view-media-gallery-nav-item-margin;
+                            border-width: $vertical-product-view-media-gallery-nav-item-border-width;
+                        }
+                    }
+
+                    &__image {
+                        width: $vertical-product-view-media-gallery-nav-image-width;
+                        height: $vertical-product-view-media-gallery-nav-image-height;
+                    }
+
+                    .slick-btn-wrapper {
+                        inset-inline: $vertical-product-view-media-gallery-nav-slick-btn-wrapper-inset-inline;
+                        justify-content: $vertical-product-view-media-gallery-nav-slick-btn-wrapper-justify-content;
+                        box-shadow: $vertical-product-view-media-gallery-nav-slick-btn-wrapper-box-shadow;
+
+                        &::before,
+                        &::after {
+                            content: $vertical-product-view-media-gallery-nav-slick-btn-before-content;
+                            width: $vertical-product-view-media-gallery-nav-slick-btn-before-width;
+                            height: $vertical-product-view-media-gallery-nav-slick-btn-before-height;
+                            position: $vertical-product-view-media-gallery-nav-slick-btn-before-position;
+                            pointer-events: none;
+                        }
+                    }
+
+                    .slick-arrow-prev {
+                        inset-block: $vertical-product-view-media-gallery-nav-slick-arrow-prev-inset-block;
+
+                        &::after {
+                            background: $vertical-product-view-media-gallery-nav-slick-arrow-prev-after-background;
+                            top: $vertical-product-view-media-gallery-nav-slick-arrow-prev-after-top;
+                        }
+                    }
+
+                    .slick-arrow-next {
+                        inset-block: $vertical-product-view-media-gallery-nav-slick-arrow-next-inset-block;
+
+                        &::before {
+                            background: $vertical-product-view-media-gallery-nav-slick-arrow-next-before-background;
+                            bottom: $vertical-product-view-media-gallery-nav-slick-arrow-next-before-bottom;
+                        }
+                    }
+
+                    .slick-arrow-btn {
+                        transform: $vertical-product-view-media-gallery-nav-slick-arrow-btn-transform;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -137,6 +244,18 @@
         &__image-item,
         &__image {
             height: auto;
+        }
+
+        &__nav {
+            // show part of slide in addition to slidesToShow
+            .slick-list {
+                padding-right: 40px;
+            }
+
+            &__image {
+                width: $product-view-media-gallery-image-width-tablet;
+                height: $product-view-media-gallery-image-height-tablet;
+            }
         }
 
         .slick-track {

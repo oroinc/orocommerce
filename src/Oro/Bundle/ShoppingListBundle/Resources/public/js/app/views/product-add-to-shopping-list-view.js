@@ -355,34 +355,46 @@ define(function(require) {
         },
 
         updateLabel: function($button, shoppingList, hasLineItems) {
-            let label;
+            const $els = $button.find('a, button');
+            const $btnLabel = $($els).find('.action-label');
             let intention;
+            let label;
 
             if (this.options.shoppingListUpdateEnabled && shoppingList && hasLineItems) {
-                label = _.__('oro.shoppinglist.actions.update_shopping_list', {
-                    shoppingList: shoppingList.label
-                });
+                if ($btnLabel.length) {
+                    label = _.__('oro.shoppinglist.actions.update_shopping_list_short');
+                } else {
+                    label = _.__('oro.shoppinglist.actions.update_shopping_list', {
+                        shoppingList: shoppingList.label
+                    });
+                }
                 intention = 'update';
             } else if (!shoppingList) {
                 label = _.__('oro.shoppinglist.widget.add_to_new_shopping_list');
                 intention = 'new';
             } else {
-                label = _.__('oro.shoppinglist.actions.add_to_shopping_list', {
-                    shoppingList: shoppingList.label
-                });
+                if ($btnLabel.length) {
+                    label = _.__('oro.shoppinglist.actions.add_to_shopping_list_short');
+                } else {
+                    label = _.__('oro.shoppinglist.actions.add_to_shopping_list', {
+                        shoppingList: shoppingList.label
+                    });
+                }
                 intention = 'add';
             }
 
-            const $els = $button.find('a, button');
-            const $icon = $button.find('.fa').clone();
+            if ($btnLabel.length) {
+                $btnLabel.text(label);
 
-            $els
-                .text(label)
-                .attr('data-intention', intention);
-
-            if ($icon.length) {
-                $els.prepend($icon);
+                if (shoppingList) {
+                    $btnLabel.append(
+                        $('<span class="entity-name"></span>').text(` ${shoppingList.label}`)
+                    );
+                }
+            } else {
+                $els.text(label);
             }
+            $els.attr('data-intention', intention);
 
             return $button;
         },

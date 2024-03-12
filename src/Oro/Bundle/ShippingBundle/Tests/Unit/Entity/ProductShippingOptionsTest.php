@@ -58,7 +58,7 @@ class ProductShippingOptionsTest extends \PHPUnit\Framework\TestCase
     public function testGettersAndSetters()
     {
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['product', new Product()],
             ['productUnit', new ProductUnit()],
             ['weight', new Weight()],

@@ -1,0 +1,7 @@
+{% block __oro_rfp_frontend_request_product_kit_configuration_form_view__wrapper_widget %}
+    {% do block|merge_context({
+        form: form
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}

@@ -1,0 +1,48 @@
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    product_kit_shopping_list:
+        label: 'Product Kit Shopping List'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    product_kit1_line_item1:
+        product: '@product_kit1'
+        quantity: '1'
+        unit: '@piece'
+        customerUser: '@amanda'
+        shoppingList: '@product_kit_shopping_list'
+        organization: '@organization'
+        checksum: 'product_kit1_line_item1'
+    product_kit1_line_item2:
+        product: '@product_kit1'
+        quantity: '1'
+        unit: '@piece'
+        customerUser: '@amanda'
+        shoppingList: '@product_kit_shopping_list'
+        organization: '@organization'
+        checksum: 'product_kit1_line_item2'
+
+Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
+    product_kit1_item1_line_item1:
+        lineItem: '@product_kit1_line_item1'
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product1'
+        quantity: 1
+        unit: '@piece'
+        sortOrder: 1
+    product_kit1_item2_line_item1:
+        lineItem: '@product_kit1_line_item2'
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product3'
+        quantity: 1
+        unit: '@piece'
+        sortOrder: 1
+    product_kit1_item2_line_item2:
+        lineItem: '@product_kit1_line_item2'
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product2'
+        quantity: 1
+        unit: '@piece'
+        sortOrder: 2

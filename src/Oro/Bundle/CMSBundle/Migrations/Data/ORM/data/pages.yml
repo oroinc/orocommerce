@@ -134,5 +134,531 @@ about:
         </div>
         
         <div class="cms-panel-end">
-            <a href="#" class="btn btn--info" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
+            <a href="#" class="btn btn--outlined" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
+        </div>
+homepage:
+    slug: homepage
+    title: 'Homepage Page'
+    contentStyle: >
+        .featured-categories-grid {
+            --featured-categories-content-offset: 24px;
+            --grid-auto-rows: minmax(210px, auto);
+            --grid-gap: 24px;
+        }
+        .featured-categories-offset-top-bottom-start {
+            padding-top: var(--featured-categories-content-offset);
+            padding-inline-end: 0;
+            padding-bottom: var(--featured-categories-content-offset);
+            padding-inline-start: var(--featured-categories-content-offset);
+        }
+        .featured-categories-offset-top-end-start {
+            padding: var(--featured-categories-content-offset);
+            padding-inline-end: var(--featured-categories-content-offset);
+            padding-bottom: 0;
+            padding-inline-start: var(--featured-categories-content-offset);
+        }
+        .featured-categories-offset-start {
+            padding-inline-start: var(--featured-categories-content-offset);
+        }
+        .featured-categories-grid__cell {
+            position: relative;
+            column-gap: 8px;
+            row-gap: 0;
+            border-radius: 12px;
+            background-color: #f0f3f5;
+            text-decoration: none;
+            color: inherit;
+            overflow: hidden;
+        }
+        .featured-categories__sub-cell {
+            display: flex;
+            flex-direction: column;
+            column-gap: 8px;
+            row-gap: 12px;
+        }
+        .featured-categories-content-over {
+            position: relative;
+            z-index: 1;
+        }
+        .featured-categories-grid__2-rows {
+            grid-template-rows: auto 1fr;
+        }
+        .featured-categories-grid__cell:hover,
+        .featured-categories-grid__cell:focus {
+            color: inherit;
+            text-decoration: none;
+        }
+        .featured-categories-grid__content {
+            column-gap: 8px;
+            row-gap: 12px;
+            height: 100%;
+        }
+        .featured-categories-grid__content h2 {
+            font-size: 32px;
+            line-height: 1.25;
+        }
+        .featured-categories-grid__content-flex {
+            display: flex;
+            flex-direction: column;
+        }
+        .featured-categories-grid__content-main {
+            gap: 32px;
+            justify-content: center;
+        }
+        .featured-categories-grid__content-main h2 {
+            font-size: 46px;
+        }
+        .featured-categories-grid__content-main p {
+            font-size: 20px;
+            line-height: 1.4;
+        }
+        .featured-categories-grid__picture {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .featured-categories-grid__picture--bottom-end {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+        .featured-categories-grid__picture--align-end {
+            align-items: end;
+            justify-content: end;
+            padding: 0;
+        }
+        .featured-categories-grid__img {
+            vertical-align: bottom;
+            max-width: 100%;
+        }
+        .featured-categories-grid__cell:nth-child(1) {
+            grid-column-start: 1;
+            grid-column-end: 7;
+            grid-row-start: 1;
+            grid-row-end: 3;
+        }
+        .featured-categories-grid__cell:nth-child(2) {
+            grid-column-start: 7;
+            grid-column-end: 10;
+            grid-row-start: 1;
+            grid-row-end: 1;
+        }
+        .featured-categories-grid__cell:nth-child(3) {
+            grid-column-start: 10;
+            grid-column-end: 13;
+            grid-row-start: 1;
+            grid-row-end: 3;
+        }
+        .featured-categories-grid__cell:nth-child(4) {
+            grid-column-start: 1;
+            grid-column-end: 4;
+            grid-row-start: 3;
+            grid-row-end: 5;
+        }
+        .featured-categories-grid__cell:nth-child(5) {
+            grid-column-start: 4;
+            grid-column-end: 7;
+            grid-row-start: 3;
+        }
+        .featured-categories-grid__cell:nth-child(6) {
+            grid-column-start: 7;
+            grid-column-end: 10;
+            grid-row-start: 2;
+            grid-row-end: 4;
+        }
+        .featured-categories-grid__cell:nth-child(7) {
+            grid-column-start: 4;
+            grid-column-end: 10;
+            grid-row-start: 4;
+        }
+        .featured-categories-grid__cell:nth-child(8) {
+            grid-column-start: 10;
+            grid-column-end: 13;
+            grid-row-start: 3;
+            grid-row-end: 5;
+        }
+        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(1) {
+            background-color: #fcb614;
+        }
+        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(2) {
+            background-color: #f7941d;
+        }
+        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(3) {
+            background-color: #71a0eb;
+        }
+        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(4) {
+            background-color: #70a0eb;
+        }
+        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(5) {
+            background-color: #197b30;
+            color: #fff;
+        }
+        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(6) {
+            background-color: #70b4b1;
+        }
+        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(7) {
+            background-color: #f7941d;
+        }
+        .featured-categories-multicolored .featured-categories-grid__cell:nth-child(8) {
+            background-color: #fbb11c;
+        }
+        .featured-categories-grid__link {
+            text-decoration: underline;
+        }
+        .featured-categories-grid__link:hover {
+            text-decoration: none;
+        }
+        .home-page-slider-wrapper {
+            margin-bottom: 32px;
+        }
+        .home-page-grid {
+            --grid-gap: 56px;
+        }
+        @media screen and (max-width: 1280px) {
+            .featured-categories-grid__cell:nth-child(1) {
+                grid-column-start: 1;
+                grid-column-end: 9;
+                grid-row-start: 1;
+                grid-row-end: 3;
+            }
+            .featured-categories-grid__cell:nth-child(2) {
+                grid-column-start: 9;
+                grid-column-end: 13;
+                grid-row-start: 1;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(3) {
+                grid-column-start: 1;
+                grid-column-end: 6;
+                grid-row-start: 5;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(4) {
+                grid-column-start: 1;
+                grid-column-end: 4;
+                grid-row-start: 3;
+                grid-row-end: 5;
+            }
+            .featured-categories-grid__cell:nth-child(5) {
+                grid-column-start: 4;
+                grid-column-end: 9;
+                grid-row-start: 3;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(6) {
+                grid-column-start: 9;
+                grid-column-end: 13;
+                grid-row-start: 2;
+                grid-row-end: 4;
+            }
+            .featured-categories-grid__cell:nth-child(7) {
+                grid-column-start: 4;
+                grid-column-end: 13;
+                grid-row-start: 4;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(8) {
+                grid-column-start: 6;
+                grid-row-start: 5;
+                grid-row-end: initial;
+                grid-column-end: 13;
+            }
+        }
+        @media screen and (max-width: 992px) {
+            .featured-categories-grid__cell:nth-child(1) {
+                grid-column-start: 1;
+                grid-column-end: 13;
+                grid-row-start: 1;
+                grid-row-end: 3;
+            }
+            .featured-categories-grid__cell:nth-child(2) {
+                grid-column-start: 7;
+                grid-column-end: 13;
+                grid-row-start: 4;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(3) {
+                grid-column-start: 1;
+                grid-column-end: 7;
+                grid-row-start: 7;
+            }
+            .featured-categories-grid__cell:nth-child(4) {
+                grid-column-start: 1;
+                grid-column-end: 7;
+                grid-row-start: 3;
+                grid-row-end: 5;
+            }
+            .featured-categories-grid__cell:nth-child(5) {
+                grid-column-start: 7;
+                grid-column-end: 13;
+                grid-row-start: 3;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(6) {
+                grid-column-start: 1;
+                grid-column-end: 13;
+                grid-row-start: 5;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(7) {
+                grid-column-start: 1;
+                grid-column-end: 13;
+                grid-row-start: 6;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(8) {
+                grid-column-start: 7;
+                grid-column-end: 13;
+                grid-row-start: 7;
+                grid-row-end: initial;
+            }
+            .home-page-slider-wrapper {
+                margin-bottom: 16px;
+            }
+            .home-page-grid {
+                --grid-gap: 32px;
+            }
+        }
+        @media screen and (max-width: 640px) {
+            .featured-categories-grid {
+                --featured-categories-content-offset: 16px;
+                --grid-auto-rows: minmax(120px, auto);
+                --grid-gap: 12px;
+            }
+            .featured-categories-offset-top-end-start-mobile {
+                padding-top: var(--featured-categories-content-offset);
+                padding-inline-end: var(--featured-categories-content-offset);
+                padding-bottom: 0;
+                padding-inline-start: var(--featured-categories-content-offset);
+            }
+            .featured-categories-grid__picture {
+                position: relative;
+                justify-content: end;
+            }
+            .featured-categories-grid__picture--mobile-has-offset {
+                padding: 0 var(--featured-categories-content-offset) var(--featured-categories-content-offset) 0;
+            }
+            .featured-categories-grid__content-main {
+                gap: 8px;
+                justify-content: flex-start;
+            }
+            .featured-categories-grid__content h2 {
+                font-size: 14px;
+                line-height: 1.5;
+            }
+            .featured-categories-grid__cell {
+                grid-template-rows: auto auto;
+            }
+            .featured-categories-grid__cell:nth-child(1) {
+                grid-column-start: 1;
+                grid-column-end: 7;
+                grid-row-start: initial;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(2) {
+                grid-column-start: 7;
+                grid-column-end: 13;
+                grid-row-start: initial;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(3) {
+                grid-column-start: 1;
+                grid-column-end: 7;
+                grid-row-start: 2;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(4) {
+                grid-column-start: 1;
+                grid-column-end: 7;
+                grid-row-start: 4;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(5) {
+                grid-column-start: 7;
+                grid-column-end: 13;
+                grid-row-start: 2;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(6) {
+                grid-column-start: 1;
+                grid-column-end: 7;
+                grid-row-start: 3;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(7) {
+                grid-column-start: 7;
+                grid-column-end: 13;
+                grid-row-start: 3;
+                grid-row-end: initial;
+            }
+            .featured-categories-grid__cell:nth-child(8) {
+                grid-column-start: 7;
+                grid-column-end: 13;
+                grid-row-start: 4;
+                grid-row-end: initial;
+            }
+            .featured-categories-multicolored .featured-categories-grid__picture {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+            }
+        }
+    content: >
+        <div class="home-page-slider-wrapper">
+            <div data-title="Home Page Slider" class="content-block content-placeholder">{{ content_block("home-page-slider") }}</div>
+        </div>
+        <div class="grid home-page-grid">
+            <div class="grid-col-12">
+                <div class="featured-categories-grid featured-categories-multicolored grid">
+                    <a href="/lighting-products" class="featured-categories-grid__cell grid-col grid grid-columns-2">
+                        <div class="featured-categories-grid__content featured-categories-content-over featured-categories-offset-top-bottom-start featured-categories-offset-top-end-start-mobile featured-categories-grid__content-flex featured-categories-grid__content-main grid-col grid-col-mobile-landscape-12">
+                            <h2 class="no-offset">Lighting Products</h2>
+                            <p class="no-offset hide-on-mobile-landscape">Looking for a top-quality lighting<br>product manufacturer?</p>
+                            <span class="featured-categories-grid__link hide-on-mobile-landscape">Shop Now</span>
+                        </div>
+                        <div class="featured-categories-grid__picture featured-categories-grid__picture--align-end grid-col grid-col-mobile-landscape-12">
+                            <picture>
+                                <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-1-640.png">
+                                <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-1-992.png">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-1.png" alt="Lighting Products">
+                            </picture>
+                        </div>
+                    </a>
+                    <a href="/lighting-products/headlamps" class="featured-categories-grid__cell grid-col grid grid-columns-2">
+                        <div class="featured-categories-grid__content featured-categories-content-over featured-categories-offset-top-bottom-start featured-categories-offset-top-end-start-mobile featured-categories-grid__content-flex grid-col grid-col-mobile-landscape-12">
+                            <h2 class="no-offset">Headlamps</h2>
+                            <p class="no-offset hide-on-mobile-landscape">Discover the best rechargeable and ultralight headlamps for runners and walkers</p>
+                            <span class="featured-categories-grid__link hide-on-mobile-landscape">Shop Now</span>
+                        </div>
+                        <div class="featured-categories-grid__picture featured-categories-grid__picture--align-end grid-col grid-col-mobile-landscape-12">
+                            <picture>
+                                <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-4-640.png">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-4.png" alt="Headlamps">
+                            </picture>
+                        </div>
+                    </a>
+                    <a href="/medical/medical-apparel" class="featured-categories-grid__cell featured-categories-grid__2-rows featured-categories-grid__content grid-col grid">
+                        <h2 class="grid-col-12 grid-col-mobile-landscape-12 featured-categories-offset-top-end-start featured-categories-offset-top-end-start-mobile featured-categories-content-over no-offset">Medical Apparel</h2>
+                        <div class="grid-col-6 featured-categories-offset-start featured-categories__sub-cell hide-on-mobile-landscape">
+                            <p class="no-offset">Complete the look of your medical team with our high-quality medical apparel</p>
+                            <span class="featured-categories-grid__link">Shop Now</span>
+                        </div>
+                        <div class="featured-categories-grid__picture featured-categories-grid__picture--align-end grid-col-6 grid-col-mobile-landscape-12">
+                            <picture>
+                                <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-7-640.png">
+                                <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-7-992.png">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-7.png" alt="Medical Apparel">
+                            </picture>
+                        </div>
+                    </a>
+                    <a href="/medical/medical-apparel/medical-uniforms" class="featured-categories-grid__cell featured-categories-grid__2-rows grid-col grid grid-columns-2">
+                        <div class="featured-categories-grid__content featured-categories-content-over featured-categories-grid__content-flex featured-categories-offset-top-end-start featured-categories-offset-top-end-start-mobile grid-col-12 grid-col-mobile-landscape-12">
+                            <h2 class="no-offset">Medical Uniforms</h2>
+                            <p class="no-offset hide-on-mobile-landscape">Looking for a comfortable designer medical uniform?</p>
+                            <span class="featured-categories-grid__link hide-on-mobile-landscape">Shop Now</span>
+                        </div>
+                        <div class="featured-categories-grid__picture featured-categories-grid__picture--align-end grid-col-12 grid-col-mobile-landscape-12">
+                            <picture>
+                                <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-2-640.png">
+                                <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-2-992.png">
+                                <source media="(max-width: 1280px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-2-1280.png">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-2.png" alt="Medical Uniforms">
+                            </picture>
+                        </div>
+                    </a>
+                    <a href="/medical/medical-apparel/footwear" class="featured-categories-grid__cell featured-categories-grid__2-rows grid-col grid grid-columns-2">
+                        <div class="featured-categories-grid__content featured-categories-content-over featured-categories-offset-top-bottom-start featured-categories-offset-top-end-start-mobile featured-categories-grid__content-flex grid-col grid-col-mobile-landscape-12">
+                            <h2 class="no-offset">Footwear</h2>
+                            <p class="no-offset hide-on-mobile-landscape">Find supportive, stain- and slip-resistant medical footwear for the demanding healthcare environment</p>
+                            <span class="featured-categories-grid__link hide-on-mobile-landscape">Shop Now</span>
+                        </div>
+                        <div class="featured-categories-grid__picture featured-categories-grid__picture--align-end grid-col grid-col-mobile-landscape-12">
+                            <picture>
+                                <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-3-640.png">
+                                <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-3-992.png">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-3.png" alt="Footwear">
+                            </picture>
+                        </div>
+                    </a>
+                    <a href="/medical" class="featured-categories-grid__cell grid-col grid">
+                        <div class="featured-categories-grid__content featured-categories-content-over featured-categories-grid__content-flex featured-categories-offset-top-end-start featured-categories-offset-top-end-start-mobile grid-col-12 grid-col-tablet-small-6 grid-col-mobile-landscape-12">
+                            <h2 class="no-offset">Medical</h2>
+                            <p class="no-offset hide-on-mobile-landscape">From medical uniforms and lab coats to medical equipment</p>
+                            <span class="featured-categories-grid__link hide-on-mobile-landscape">Shop Now</span>
+                        </div>
+                        <div class="featured-categories-grid__picture featured-categories-grid__picture--align-end grid-col-12 grid-col-tablet-small-6 grid-col-mobile-landscape-12">
+                            <picture>
+                                <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-5-640.png">
+                                <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-5-992.png">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-5.png" alt="Medical">
+                            </picture>
+                        </div>
+                    </a>
+                    <a href="/medical/patient-transportation-equipment" class="featured-categories-grid__cell grid-col grid grid-columns-2">
+                        <div class="featured-categories-grid__content featured-categories-content-over featured-categories-offset-top-bottom-start featured-categories-offset-top-end-start-mobile featured-categories-grid__content-flex grid-col-12 grid-col-mobile-landscape-12">
+                            <h2 class="no-offset">Patient Transportation Equipment</h2>
+                            <p class="no-offset hide-on-mobile-landscape">Medical equipment for safe transportation of patients</p>
+                            <span class="featured-categories-grid__link hide-on-mobile-landscape">Shop Now</span>
+                        </div>
+                        <div class="featured-categories-grid__picture featured-categories-grid__picture--align-end featured-categories-grid__picture--bottom-end grid-col grid-col-mobile-landscape-12">
+                            <picture>
+                                <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-6-640.png">
+                                <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-6-992.png">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-6.png" alt="Patient Transportation Equipment">
+                            </picture>
+                        </div>
+                    </a>
+                    <a href="/navigation-root/new-arrivals" class="featured-categories-grid__cell featured-categories-grid__2-rows featured-categories-grid__content grid-col grid">
+                        <h2 class="featured-categories-content-over grid-col-12 grid-col-mobile-landscape-12 featured-categories-offset-top-end-start featured-categories-offset-top-end-start-mobile no-offset">New Arrivals</h2>
+                        <div class="grid-col-6 featured-categories-offset-start featured-categories-content-over hide-on-mobile-landscape">
+                            <span class="featured-categories-grid__link">Shop Now</span>
+                        </div>
+                        <div class="featured-categories-grid__picture featured-categories-grid__picture--align-end featured-categories-grid__picture--bottom-end grid-col-6 grid-col-mobile-landscape-12">
+                            <picture>
+                                <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-8-640.png">
+                                <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-8-992.png">
+                                <source media="(max-width: 1280px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-8-1280.png">
+                                <img class="featured-categories-grid__img" src="/bundles/orocms/images/home-page/featured-categories-grid-img-8.png" alt="New Arrivals">
+                            </picture>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="grid-col-12">
+                <div class="illustration-carts grid">
+                    <div class="illustration-carts__item grid-col grid grid-col-6 grid-col-mobile-landscape-12">
+                        <div class="illustration-carts__info grid-col grid-col-mobile-12">
+                            <h2 class="illustration-carts__title no-offset">Order History</h2>
+                            <p class="illustration-carts__text no-offset">Keep track of all current and submitted orders under your account menu.</p>
+                            <a class="illustration-carts__btn btn btn--outlined" href="/customer/order">View Order History</a>
+                        </div>
+                        <div class="illustration-carts__img grid-col hide-on-mobile-big">
+                            <picture>
+                                <source media="(max-width: 1280px)" srcset="/bundles/orocms/images/home-page/illustration-carts-order-history-1280.png" type="image/png">
+                                <img src="/bundles/orocms/images/home-page/illustration-carts-order-history.png" alt="Order history">
+                            </picture>
+                        </div>
+                    </div>
+                    <div class="illustration-carts__item grid grid-col grid-col-6 grid-col-mobile-landscape-12">
+                        <div class="illustration-carts__info grid-col grid-col-mobile-12">
+                            <h2 class="illustration-carts__title no-offset">Contact Us for Help</h2>
+                            <p class="illustration-carts__text no-offset">Need assistance with a product, checkout, or your order?</p>
+                            <a class="illustration-carts__btn btn btn--outlined" href="/contact-us">Contact Us</a>
+                        </div>
+                        <div class="illustration-carts__img grid-col hide-on-mobile-big">
+                            <picture>
+                                <source media="(max-width: 1280px)" srcset="/bundles/orocms/images/home-page/illustration-carts-contact-us-1280.png" type="image/png">
+                                <img src="/bundles/orocms/images/home-page/illustration-carts-contact-us.png" alt="Contact us">
+                            </picture>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-title="Featured Products" data-type="product_segment" class="grid-col-12 content-widget content-placeholder">
+                {{ widget("featured-products") }}
+            </div>
+            <div data-title="New Arrivals" data-type="product_segment" class="grid-col-12 content-widget content-placeholder">
+                {{ widget("new-arrivals") }}
+            </div>
         </div>

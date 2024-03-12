@@ -1,11 +1,17 @@
 {% block __oro_product_price__product_price_component_widget %}
-    {% if not is_price_hidden(product, matrixFormType == 'none') %}
+    {% do block|merge_context({
+        showValuePrice: showValuePrice,
+        showListedPrice: showListedPrice,
+        showUnit: showUnit
+    }) %}
+    {% if not is_price_hidden(product, matrixFormType|default('') == 'none') %}
         {% set attr = layout_attr_defaults(attr, {
             'data-page-component-module': 'oroui/js/app/components/view-component',
             '~data-page-component-options': {
                 view: 'oropricing/js/app/views/list-item-product-prices-view',
                 showValuePrice: showValuePrice,
                 showListedPrice: showListedPrice,
+                showUnit: showUnit,
                 modelAttr: {
                     prices: productPrices,
                 }
@@ -28,6 +34,7 @@
 {% endblock %}
 
 {% block __oro_product_price__product_price_hint_trigger_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% if product is defined %}
         {% set attr = layout_attr_defaults(attr, {
             'aria-label': 'oro.pricing.view_all_prices_extended'|trans({
@@ -36,13 +43,15 @@
         }) %}
     {% endif %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-price-hint-btn btn btn--link btn--size-xs',
+        '~class': ' product-price-hint-btn btn btn--outlined btn--no-padding btn--text',
         'type': 'button',
         'title': 'oro.pricing.view_all_prices'|trans,
         'aria-label': 'oro.pricing.view_all_prices'|trans,
         'data-name': 'prices-hint-trigger'
     }) %}
-    <button {{ block('block_attributes') }}></button>
+    <button {{ block('block_attributes') }}>
+        {{ renderIcon.icon({name: 'info', extraClass: 'theme-icon--small'}) }}
+    </button>
 {% endblock %}
 
 {% block __oro_product_price__product_prices_widget %}
@@ -82,8 +91,9 @@
                     {% endif %}
                 {% endapply %}
             </span>
-            <span> / </span>
-            <span class="product-price__unit" data-name="unit">
+            {% if showUnit %}
+                <span> / </span>
+                <span class="product-price__unit" data-name="unit">
                 <span class="product-price__unit-full">
                     {{ firstPrice ? firstPrice.formatted_unit }}
                 </span>
@@ -91,6 +101,7 @@
                     {{ firstPrice ? firstPrice.unit|oro_format_short_product_unit_label }}
                 </span>
             </span>
+            {% endif %}
         </span>
     </div>
 {% endblock %}

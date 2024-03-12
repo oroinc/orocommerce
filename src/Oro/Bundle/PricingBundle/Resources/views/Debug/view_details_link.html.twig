@@ -1,0 +1,16 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{% set route_params = {'customer': entity.id} %}
+{% if website is defined and website %}
+    {% set route_params = route_params|merge({'website': website.id}) %}
+{% endif %}
+
+<div class="buttons-row buttons-row--flex-end buttons-row--bottom-offset">
+    {{ UI.quickAccessLink({
+        'title': 'oro.pricing.productprice.debug.trace.label'|trans,
+        'label': 'oro.pricing.productprice.debug.trace.label'|trans,
+        'dataUrl': path('oro_pricing_price_product_debug_index', route_params),
+        'class': 'btn',
+        'iCss': 'fa-eye'
+    }) }}
+</div>

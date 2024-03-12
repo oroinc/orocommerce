@@ -6,7 +6,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 
 /**
- * Responsible for applying discounts
+ * Implements a discount strategy that applies best value discount only.
  */
 class ProfitableStrategy extends AbstractStrategy
 {

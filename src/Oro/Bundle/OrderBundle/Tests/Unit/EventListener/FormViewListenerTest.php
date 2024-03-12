@@ -9,6 +9,8 @@ use Oro\Bundle\OrderBundle\EventListener\FormViewListener;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -17,7 +19,7 @@ use Twig\Environment;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class FormViewListenerTest extends \PHPUnit\Framework\TestCase
+class FormViewListenerTest extends TestCase
 {
     private const EXPECTED_SCROLL_DATA = [
         ScrollData::DATA_BLOCKS => [
@@ -35,13 +37,13 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         ],
     ];
 
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var TranslatorInterface|MockObject */
     private $translator;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var DoctrineHelper|MockObject */
     private $doctrineHelper;
 
-    /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Environment|MockObject */
     private $env;
 
     /** @var FormViewListener */
@@ -79,7 +81,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroCustomerBundle:CustomerUser', 1)
+            ->with(CustomerUser::class, 1)
             ->willReturn($customerUser);
 
         $this->env->expects($this->once())
@@ -115,7 +117,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroCustomerBundle:CustomerUser', 1)
+            ->with(CustomerUser::class, 1)
             ->willReturn(null);
 
         $this->env->expects($this->never())
@@ -143,7 +145,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroCustomerBundle:Customer', 1)
+            ->with(Customer::class, 1)
             ->willReturn($customer);
 
         $this->env->expects($this->once())
@@ -177,7 +179,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroCustomerBundle:Customer', 1)
+            ->with(Customer::class, 1)
             ->willReturn(null);
 
         $this->env->expects($this->never())
@@ -205,7 +207,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroShoppingListBundle:ShoppingList', 1)
+            ->with(ShoppingList::class, 1)
             ->willReturn($shoppingList);
 
         $this->env->expects($this->once())
@@ -239,7 +241,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroShoppingListBundle:ShoppingList', 1)
+            ->with(ShoppingList::class, 1)
             ->willReturn(null);
 
         $this->env->expects($this->never())
@@ -261,7 +263,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
 
     private function assertRequestCalled(?int $id): void
     {
-        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
+        /** @var Request|MockObject $request */
         $request = $this->createMock(Request::class);
         $request->expects($this->once())
             ->method('get')

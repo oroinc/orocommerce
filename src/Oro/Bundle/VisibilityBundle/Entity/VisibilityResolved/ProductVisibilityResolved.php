@@ -4,20 +4,24 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 
 /**
- * @ORM\Entity(repositoryClass="Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository")
- * @ORM\Table(name="oro_prod_vsb_resolv")
- */
+* Entity that represents Product Visibility Resolved
+*
+*/
+#[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\Table(name: 'oro_prod_vsb_resolv')]
 class ProductVisibilityResolved extends BaseProductVisibilityResolved
 {
-    /**
-     * @var ProductVisibility
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility")
-     * @ORM\JoinColumn(name="source_product_visibility", referencedColumnName="id", onDelete="CASCADE", nullable=true)
-     */
-    protected $sourceProductVisibility;
+    #[ORM\ManyToOne(targetEntity: ProductVisibility::class)]
+    #[ORM\JoinColumn(
+        name: 'source_product_visibility',
+        referencedColumnName: 'id',
+        nullable: true,
+        onDelete: 'CASCADE'
+    )]
+    protected ?ProductVisibility $sourceProductVisibility = null;
 
     /**
      * @return ProductVisibility

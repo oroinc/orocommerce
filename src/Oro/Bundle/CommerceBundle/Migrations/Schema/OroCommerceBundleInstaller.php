@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Oro\Bundle\CommerceBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\CommerceBundle\Migrations\Schema\v4_1_0_0\RemoveInvoiceEntityConfig;
-use Oro\Bundle\CommerceBundle\Migrations\Schema\v4_1_0_1\RemoveExampleDocumentationTables;
 use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveTableQuery;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -18,21 +17,36 @@ class OroCommerceBundleInstaller implements Installation, ContainerAwareInterfac
     use ContainerAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v4_1_0_1';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         if ($this->container->get(ApplicationState::class)->isInstalled()) {
-            RemoveInvoiceEntityConfig::removeInvoiceEntityConfig($queries);
-            RemoveExampleDocumentationTables::removeExampleDocumentationTables($queries);
+            $this->removeTables($queries);
+        }
+    }
+
+    private function removeTables(QueryBag $queries): void
+    {
+        $classNames = [
+            'Oro\Bundle\InvoiceBundle\Entity\Invoice',
+            'Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem',
+            'ACME\Bundle\WysiwygBundle\Entity\BlogPost',
+            'ACME\Bundle\CollectOnDeliveryBundle\Entity\CollectOnDeliverySettings',
+            'ACME\Bundle\FastShippingBundle\Entity\FastShippingSettings'
+        ];
+        foreach ($classNames as $className) {
+            if (!class_exists($className, false)) {
+                $queries->addQuery(new RemoveTableQuery($className));
+            }
         }
     }
 }

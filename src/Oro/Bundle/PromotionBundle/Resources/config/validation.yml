@@ -38,7 +38,6 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
             - Length:
                 min: 1
                 max: 255
-                allowEmptyString: false
             - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDash: ~
         validFrom:
             - Type:

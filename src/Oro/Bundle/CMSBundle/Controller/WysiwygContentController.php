@@ -16,9 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class WysiwygContentController extends AbstractController
 {
-    /**
-     * @Route("/validate", name="oro_cms_wysiwyg_content_validate", methods={"POST"})
-     */
+    #[Route(path: '/validate', name: 'oro_cms_wysiwyg_content_validate', methods: ['POST'])]
     public function validateAction(Request $request): Response
     {
         $className = $request->get('className');
@@ -31,15 +29,13 @@ class WysiwygContentController extends AbstractController
             throw new BadRequestHttpException('FieldName field is required.');
         }
 
-        $errors = $this->get(WYSIWYGContentChecker::class)
+        $errors = $this->container->get(WYSIWYGContentChecker::class)
             ->check((string)$request->get('content'), $className, $fieldName);
 
         return new JsonResponse(['success' => !$errors, 'errors' => $errors]);
     }
 
-    /**
-     * @Route("/resolve", name="oro_cms_wysiwyg_content_resolve", methods={"POST"})
-     */
+    #[Route(path: '/resolve', name: 'oro_cms_wysiwyg_content_resolve', methods: ['POST'])]
     public function resolveAction(Request $request): Response
     {
         $success = true;
@@ -47,7 +43,7 @@ class WysiwygContentController extends AbstractController
         $code = Response::HTTP_OK;
 
         try {
-            $content = $this->get(DigitalAssetTwigTagsConverter::class)
+            $content = $this->container->get(DigitalAssetTwigTagsConverter::class)
                 ->convertToUrls($content);
         } catch (\Exception $e) {
             $success = false;

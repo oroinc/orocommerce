@@ -183,7 +183,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
             ->method('getConfig')
             ->willReturn($formConfig);
 
-        $sourceField = $this->createMock(FormConfigInterface::class);
+        $sourceField = $this->createMock(FormInterface::class);
         $sourceField->expects($this->once())
             ->method('getData')
             ->willReturn($localizedSources);

@@ -3,11 +3,11 @@
 namespace Oro\Bundle\CatalogBundle\Controller\Frontend;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -19,12 +19,12 @@ class ProductController extends AbstractController
     /**
      * View List of ALL products
      *
-     * @Route("/allproducts", name="oro_catalog_frontend_product_allproducts")
-     * @Layout(vars={"entity_class", "grid_config", "theme_name", "filters_position"})
-     * @AclAncestor("oro_product_frontend_view")
      *
      * @return array
      */
+    #[Route(path: '/allproducts', name: 'oro_catalog_frontend_product_allproducts')]
+    #[Layout(vars: ['entity_class', 'grid_config', 'theme_name', 'filters_position'])]
+    #[AclAncestor('oro_product_frontend_view')]
     public function allProductsAction()
     {
         return [

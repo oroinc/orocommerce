@@ -6,13 +6,17 @@ use Brick\Math\BigDecimal;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Event\ContextEventDispatcher;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\OrderTax\Mapper\OrderLineItemMapper;
 use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class OrderLineItemMapperTest extends \PHPUnit\Framework\TestCase
+class OrderLineItemMapperTest extends TestCase
 {
     use EntityTrait;
 
@@ -23,11 +27,8 @@ class OrderLineItemMapperTest extends \PHPUnit\Framework\TestCase
     private const CONTEXT_KEY = 'context_key';
     private const CONTEXT_VALUE = 'context_value';
 
-    /** @var TaxationAddressProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $addressProvider;
-
-    /** @var OrderLineItemMapper */
-    private $mapper;
+    private TaxationAddressProvider|MockObject $addressProvider;
+    private OrderLineItemMapper $mapper;
 
     protected function setUp(): void
     {
@@ -44,7 +45,7 @@ class OrderLineItemMapperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testMap()
+    public function testMap(): void
     {
         $lineItem = $this->createLineItem(self::ITEM_ID, self::ITEM_QUANTITY, self::ITEM_PRICE_VALUE);
 
@@ -58,13 +59,66 @@ class OrderLineItemMapperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testMapWithoutPrice()
+    public function testMapWithSimpleProduct(): void
     {
         $lineItem = $this->createLineItem(self::ITEM_ID, self::ITEM_QUANTITY);
 
         $taxable = $this->mapper->map($lineItem);
 
         $this->assertTaxable($taxable, self::ITEM_ID, BigDecimal::of(self::ITEM_QUANTITY), BigDecimal::one());
+    }
+
+    public function testMapWithKitProductAndWithoutKitLineItems(): void
+    {
+        $productKit = $this->getEntity(Product::class, ['id' => 1]);
+        $productKit->setType(Product::TYPE_KIT);
+
+        $lineItem = $this->getEntity(OrderLineItem::class, ['id' => self::ITEM_ID]);
+        $lineItem
+            ->setOrder(new Order())
+            ->setProduct($productKit);
+
+        $taxable = $this->mapper->map($lineItem);
+
+        self::assertTrue($taxable->isKitTaxable());
+        self::assertEquals(BigDecimal::zero(), $taxable->getPrice());
+    }
+
+    public function testMapWithKitProduct(): void
+    {
+        $kitItem1 = new OrderProductKitItemLineItem();
+        $kitItem1->setPrice(Price::create(100, 'USD'));
+        $kitItem1->setQuantity(2);
+        $kitItem2 = new OrderProductKitItemLineItem();
+        $kitItem2->setPrice(Price::create(300, 'USD'));
+        $kitItem2->setQuantity(1);
+
+        $productKit = $this->getEntity(Product::class, ['id' => 1]);
+        $productKit->setType(Product::TYPE_KIT);
+
+        $lineItem = $this->getEntity(OrderLineItem::class, ['id' => self::ITEM_ID]);
+        $lineItem
+            ->setOrder(new Order())
+            ->setProduct($productKit)
+            ->setPrice(Price::create(1300, 'USD'))
+            ->addKitItemLineItem($kitItem1)
+            ->addKitItemLineItem($kitItem2);
+
+        $taxable = $this->mapper->map($lineItem);
+
+        self::assertTrue($taxable->isKitTaxable());
+        self::assertEquals(BigDecimal::of('800'), $taxable->getPrice());
+
+        $items = [];
+        foreach ($taxable->getItems() as $item) {
+            $items[] = $item;
+        }
+
+        self::assertFalse($items[0]->isKitTaxable());
+        self::assertEquals(BigDecimal::of('100'), $items[0]->getPrice());
+
+        self::assertFalse($items[1]->isKitTaxable());
+        self::assertEquals(BigDecimal::of('300'), $items[1]->getPrice());
     }
 
     private function createLineItem(int $id, int $quantity, float $priceValue = 1): OrderLineItem
@@ -89,5 +143,6 @@ class OrderLineItemMapperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('0', $taxable->getAmount());
         $this->assertEquals(self::CONTEXT_VALUE, $taxable->getContextValue(self::CONTEXT_KEY));
         $this->assertEmpty($taxable->getItems());
+        $this->assertFalse($taxable->isKitTaxable());
     }
 }

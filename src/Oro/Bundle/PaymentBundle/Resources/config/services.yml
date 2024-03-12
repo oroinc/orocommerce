@@ -56,8 +56,7 @@ services:
         arguments:
             - '@oro_payment.payment_method.composite_provider'
             - '@oro_payment.provider.methods_configs_rules.by_context.basic'
-        calls:
-            - [setMemoryCacheProvider, ['@oro_payment.method.provider.applicable_methods_provider.cache']]
+            - '@oro_payment.method.provider.applicable_methods_provider.cache'
 
     oro_payment.method.provider.applicable_methods_provider.cache:
         parent: oro.cache.provider.memory_cache

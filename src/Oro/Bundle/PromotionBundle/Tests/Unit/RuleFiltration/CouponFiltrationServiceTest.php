@@ -132,10 +132,10 @@ class CouponFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $appliedPromotionWithoutCoupon = $this->getPromotion(7, true);
         $ruleOwners = [$appliedPromotionWithCoupon, $appliedPromotionWithoutCoupon];
 
-        $appliedCoupons = [$this->getCoupon('XYZ')];
+        $appliedCoupons = [$this->getCoupon('XYZ'), $this->getCoupon('123')];
         $context = [ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection($appliedCoupons)];
 
-        $this->baseFiltrationService->expects(self::once())
+        $this->baseFiltrationService->expects(self::exactly(2))
             ->method('getFilteredRuleOwners')
             ->with([$appliedPromotionWithCoupon], $context)
             ->willReturn([$appliedPromotionWithCoupon]);
@@ -143,7 +143,10 @@ class CouponFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $repository = $this->createMock(CouponRepository::class);
         $repository->expects(self::once())
             ->method('getPromotionsWithMatchedCoupons')
-            ->with([$appliedPromotionWithCoupon, $appliedPromotionWithoutCoupon], ['XYZ'])
+            ->with(
+                [$appliedPromotionWithCoupon->getId(), $appliedPromotionWithoutCoupon->getId()],
+                self::identicalTo(['123', 'XYZ'])
+            )
             ->willReturn([5]);
 
         $this->doctrine->expects(self::once())
@@ -151,6 +154,11 @@ class CouponFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             ->with(Coupon::class)
             ->willReturn($repository);
 
+        self::assertEquals(
+            [$appliedPromotionWithCoupon],
+            $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)
+        );
+        // test memory cache
         self::assertEquals(
             [$appliedPromotionWithCoupon],
             $this->filtrationService->getFilteredRuleOwners($ruleOwners, $context)

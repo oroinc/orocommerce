@@ -93,7 +93,7 @@ Feature: Landing Page Drafts
     Given I proceed as the Buyer
     When I am on the homepage
     Then I should see "Test Node" in main menu
-    When I click "Test Node"
+    When I click "Test Node" in hamburger menu
     Then Page title equals to "Test Node"
     And I should be on "/test-node"
     And I should see "Test content"

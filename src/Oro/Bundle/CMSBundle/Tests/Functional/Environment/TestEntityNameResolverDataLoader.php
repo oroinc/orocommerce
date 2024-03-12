@@ -82,7 +82,7 @@ class TestEntityNameResolverDataLoader implements TestEntityNameResolverDataLoad
             $imageSlide = new ImageSlide();
             $imageSlide->setOrganization($repository->getReference('organization'));
             $imageSlide->setContentWidget($contentWidget);
-            $imageSlide->setTitle('Test Image Slide');
+            $imageSlide->setAltImageText('Test Image Slide');
             $imageSlide->setText('test text');
             $imageSlide->setUrl('http://example.com');
             $repository->setReference('imageSlide', $imageSlide);

@@ -1,0 +1,36 @@
+{% extends '@OroUI/actions/index.html.twig' %}
+{% set gridName = widgetRouteParameters.gridName %}
+{% set gridWidgetName = gridName ~'-widget' %}
+{% set pageTitle = 'oro.pricing.productprice.debug.page_title'|trans %}
+
+{% block content_datagrid %}
+    {% set componentOptions = {
+        sidebarAlias: 'product-prices-debug-sidebar',
+        widgetAlias: gridWidgetName,
+        widgetRouteParameters: widgetRouteParameters
+    } %}
+
+    <div class="layout-content product-container" data-role="grid-sidebar-component-container">
+        <div class="scrollable-container sidebar-container">
+            {% embed "@OroUI/content_sidebar.html.twig" %}
+                {% block sidebar %}
+                    <div data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
+                         data-page-component-options="{{ componentOptions|json_encode }}"
+                    >
+                        {{ render(controller('Oro\\Bundle\\PricingBundle\\Debug\\Controller\\DebugController::sidebarAction')) }}
+                    </div>
+                {% endblock sidebar %}
+
+                {% block content %}
+                    <div class="category-data">
+                        {{ oro_widget_render({
+                            'widgetType': 'block',
+                            'url': path('oro_datagrid_widget', widgetRouteParameters|merge({route: 'oro_pricing_price_product_debug_index'})),
+                            'alias': gridWidgetName
+                        }) }}
+                    </div>
+                {% endblock content %}
+            {% endembed %}
+        </div>
+    </div>
+{% endblock content_datagrid %}

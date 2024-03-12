@@ -261,11 +261,15 @@ Delete a collection of line item records.
 
 **The required field.**
 
+**If this field changes then will be changed related price value field of `orderlineitems`.**
+
 #### update
 
 {@inheritdoc}
 
 **This field must not be empty, if it is passed.**
+
+**If the value of the field changes then will be changed related price value of `orderlineitems`.**
 
 ### currency
 

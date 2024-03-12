@@ -234,7 +234,6 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
             $imageFile->setExtension('jpg');
             $imageFile->setParentEntityClass(ProductImage::class);
             $imageFile->setMimeType('image/jpeg');
-            $imageFile->setOwner($product->getOwner());
             $this->setReference($image['reference'] . '.' . $productReferenceName, $imageFile);
 
             $productImage = new ProductImage();

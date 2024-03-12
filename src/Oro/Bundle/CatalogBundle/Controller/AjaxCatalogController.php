@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CatalogBundle\Controller;
 
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,17 +16,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class AjaxCatalogController extends AbstractController
 {
     /**
-     * @Route(
-     *      "/category-move",
-     *      name="oro_catalog_category_move",
-     *      methods={"PUT"}
-     * )
-     * @CsrfProtection()
-     * @AclAncestor("oro_catalog_category_update")
      *
      * @param Request $request
      * @return JsonResponse
      */
+    #[Route(path: '/category-move', name: 'oro_catalog_category_move', methods: ['PUT'])]
+    #[AclAncestor('oro_catalog_category_update')]
+    #[CsrfProtection()]
     public function categoryMoveAction(Request $request)
     {
         $nodeId = (int)$request->get('id');
@@ -34,7 +30,7 @@ class AjaxCatalogController extends AbstractController
         $position = (int)$request->get('position');
 
         return new JsonResponse(
-            $this->get(CategoryTreeHandler::class)->moveNode($nodeId, $parentId, $position)
+            $this->container->get(CategoryTreeHandler::class)->moveNode($nodeId, $parentId, $position)
         );
     }
 

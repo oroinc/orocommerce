@@ -58,7 +58,7 @@ class UpdateFallbackEntitySystemOptionConfig extends ParametrizedMigrationQuery
             AND field_name = ?
             LIMIT 1';
         $parameters = [$this->entityName, $this->fieldName];
-        $row        = $this->connection->fetchAssoc($sql, $parameters);
+        $row        = $this->connection->fetchAssociative($sql, $parameters);
         $this->logQuery($logger, $sql, $parameters);
 
         $id = $row['id'];
@@ -71,7 +71,7 @@ class UpdateFallbackEntitySystemOptionConfig extends ParametrizedMigrationQuery
         $sql        = 'UPDATE oro_entity_config_field SET data = ? WHERE id = ?';
         $parameters = [$data, $id];
         $statement = $this->connection->prepare($sql);
-        $statement->execute($parameters);
+        $statement->executeQuery($parameters);
         $this->logQuery($logger, $sql, $parameters);
     }
 }

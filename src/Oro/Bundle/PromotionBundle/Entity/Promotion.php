@@ -4,17 +4,22 @@ namespace Oro\Bundle\PromotionBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroPromotionBundle_Entity_Promotion;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository;
+use Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType;
+use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
@@ -23,34 +28,6 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 /**
  * Store promotion data in database.
  *
- * @ORM\Table(name="oro_promotion")
- * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository")
- * @Config(
- *      routeName="oro_promotion_index",
- *      routeView="oro_promotion_view",
- *      routeCreate="oro_promotion_create",
- *      routeUpdate="oro_promotion_update",
- *      defaultValues={
- *          "ownership"={
- *              "owner_type"="USER",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="user_owner_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          },
- *          "form"={
- *              "form_type"="Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType",
- *              "grid_name"="promotion-select-grid"
- *          },
- *      }
- * )
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
@@ -62,6 +39,26 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  * @method setDefaultDescription($slug)
  * @mixin OroPromotionBundle_Entity_Promotion
  */
+#[ORM\Entity(repositoryClass: PromotionRepository::class)]
+#[ORM\Table(name: 'oro_promotion')]
+#[Config(
+    routeName: 'oro_promotion_index',
+    routeView: 'oro_promotion_view',
+    routeCreate: 'oro_promotion_create',
+    routeUpdate: 'oro_promotion_update',
+    defaultValues: [
+        'ownership' => [
+            'owner_type' => 'USER',
+            'owner_field_name' => 'owner',
+            'owner_column_name' => 'user_owner_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id'
+        ],
+        'dataaudit' => ['auditable' => true],
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'form' => ['form_type' => PromotionSelectType::class, 'grid_name' => 'promotion-select-grid']
+    ]
+)]
 class Promotion implements
     DatesAwareInterface,
     OrganizationAwareInterface,
@@ -72,191 +69,78 @@ class Promotion implements
     use UserAwareTrait;
     use ExtendEntityTrait;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer", name="id")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Rule::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'rule_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['identity' => true]])]
+    protected ?Rule $rule = null;
 
     /**
-     * @var RuleInterface
-     *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\RuleBundle\Entity\Rule",
-     *     cascade={"persist", "remove"}
-     * )
-     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "identity"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $rule;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_promotion_label')]
+    #[ORM\JoinColumn(name: 'promotion_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $labels = null;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_promotion_label",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $labels;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_promotion_description')]
+    #[ORM\JoinColumn(name: 'promotion_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $descriptions = null;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_promotion_description",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, Scope>
      */
-    protected $descriptions;
+    #[ORM\ManyToMany(targetEntity: Scope::class)]
+    #[ORM\JoinTable(name: 'oro_promotion_scope')]
+    #[ORM\JoinColumn(name: 'promotion_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'scope_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Collection $scopes = null;
 
     /**
-     * @var Collection|Scope[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope"
-     * )
-     * @ORM\JoinTable(name="oro_promotion_scope",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="scope_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
+     * @var Collection<int, PromotionSchedule>
      */
-    protected $scopes;
+    #[ORM\OneToMany(
+        mappedBy: 'promotion',
+        targetEntity: PromotionSchedule::class,
+        cascade: ['persist'],
+        orphanRemoval: true
+    )]
+    #[ORM\OrderBy(['activeAt' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $schedules = null;
+
+    #[ORM\OneToOne(targetEntity: DiscountConfiguration::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'discount_config_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?DiscountConfiguration $discountConfiguration = null;
+
+    #[ORM\Column(name: 'use_coupons', type: Types::BOOLEAN)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?bool $useCoupons = false;
 
     /**
-     * @var Collection|PromotionSchedule[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\PromotionBundle\Entity\PromotionSchedule",
-     *      mappedBy="promotion",
-     *      cascade={"persist"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\OrderBy({"activeAt" = "ASC"})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, Coupon>
      */
-    protected $schedules;
+    #[ORM\OneToMany(mappedBy: 'promotion', targetEntity: Coupon::class, fetch: 'EXTRA_LAZY')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $coupons = null;
 
-    /**
-     * @var DiscountConfiguration
-     *
-     * @ORM\OneToOne(
-     *     targetEntity="Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration",
-     *     cascade={"persist", "remove"}
-     * )
-     * @ORM\JoinColumn(name="discount_config_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $discountConfiguration;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(type="boolean", name="use_coupons")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $useCoupons = false;
-
-    /**
-     * @var Collection|Coupon[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\PromotionBundle\Entity\Coupon",
-     *     mappedBy="promotion",
-     *     fetch="EXTRA_LAZY"
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $coupons;
-
-    /**
-     * @var Segment
-     *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\SegmentBundle\Entity\Segment",
-     *     cascade={"persist", "remove"}
-     * )
-     * @ORM\JoinColumn(name="products_segment_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     */
-    protected $productsSegment;
+    #[ORM\ManyToOne(targetEntity: Segment::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'products_segment_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Segment $productsSegment = null;
 
     public function __construct()
     {

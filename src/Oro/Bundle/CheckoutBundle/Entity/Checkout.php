@@ -4,8 +4,11 @@ namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroCheckoutBundle_Entity_Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -16,7 +19,8 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
@@ -30,36 +34,30 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 /**
  * Checkout entity
  *
- * @ORM\Table(name="oro_checkout")
- * @ORM\Entity(repositoryClass="Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository")
- * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-shopping-cart"
- *          },
- *          "ownership"={
- *              "owner_type"="USER",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="user_owner_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id",
- *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="customerUser",
- *              "frontend_owner_column_name"="customer_user_id",
- *              "frontend_customer_field_name"="customer",
- *              "frontend_customer_column_name"="customer_id"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="checkout"
- *          }
- *      }
- * )
  * @mixin OroCheckoutBundle_Entity_Checkout
  */
+#[ORM\Entity(repositoryClass: CheckoutRepository::class)]
+#[ORM\Table(name: 'oro_checkout')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    defaultValues: [
+        'entity' => ['icon' => 'fa-shopping-cart'],
+        'ownership' => [
+            'owner_type' => 'USER',
+            'owner_field_name' => 'owner',
+            'owner_column_name' => 'user_owner_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id',
+            'frontend_owner_type' => 'FRONTEND_USER',
+            'frontend_owner_field_name' => 'customerUser',
+            'frontend_owner_column_name' => 'customer_user_id',
+            'frontend_customer_field_name' => 'customer',
+            'frontend_customer_column_name' => 'customer_id'
+        ],
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'checkout']
+    ]
+)]
 class Checkout implements
     CheckoutInterface,
     ProductLineItemsHolderInterface,
@@ -79,154 +77,101 @@ class Checkout implements
     use CheckoutAddressesTrait;
     use ExtendEntityTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer", name="id")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\Column(name: 'po_number', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $poNumber = null;
+
+    #[ORM\ManyToOne(targetEntity: Website::class)]
+    #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    protected ?Website $website = null;
+
+    #[ORM\Column(name: 'shipping_method', type: Types::STRING, nullable: true)]
+    protected ?string $shippingMethod = null;
+
+    #[ORM\Column(name: 'shipping_method_type', type: Types::STRING, nullable: true)]
+    protected ?string $shippingMethodType = null;
+
+    #[ORM\Column(name: 'payment_method', type: Types::STRING, nullable: true)]
+    protected ?string $paymentMethod = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="po_number", type="string", length=255, nullable=true)
+     * @var float|null
      */
-    protected $poNumber;
-
-    /**
-     * @var Website
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     */
-    protected $website;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="shipping_method", type="string", nullable=true)
-     */
-    protected $shippingMethod;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="shipping_method_type", type="string", nullable=true)
-     */
-    protected $shippingMethodType;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="payment_method", type="string", nullable=true)
-     */
-    protected $paymentMethod;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="shipping_estimate_amount", type="money", nullable=true)
-     */
+    #[ORM\Column(name: 'shipping_estimate_amount', type: 'money', nullable: true)]
     protected $shippingEstimateAmount;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="shipping_estimate_currency", type="string", nullable=true, length=3)
-     */
-    protected $shippingEstimateCurrency;
+    #[ORM\Column(name: 'shipping_estimate_currency', type: Types::STRING, length: 3, nullable: true)]
+    protected ?string $shippingEstimateCurrency = null;
 
     /**
      * @var Price
      */
     protected $shippingCost;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="ship_until", type="date", nullable=true)
-     */
-    protected $shipUntil;
+    #[ORM\Column(name: 'ship_until', type: Types::DATE_MUTABLE, nullable: true)]
+    protected ?\DateTimeInterface $shipUntil = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="customer_notes", type="text", nullable=true)
-     */
-    protected $customerNotes;
+    #[ORM\Column(name: 'customer_notes', type: Types::TEXT, nullable: true)]
+    protected ?string $customerNotes = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
-     */
-    protected $currency;
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: true)]
+    protected ?string $currency = null;
 
-    /**
-     * @var CheckoutSource
-     *
-     * @ORM\OneToOne(targetEntity="Oro\Bundle\CheckoutBundle\Entity\CheckoutSource", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
-     */
-    protected $source;
+    #[ORM\OneToOne(targetEntity: CheckoutSource::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'source_id', referencedColumnName: 'id', nullable: false)]
+    protected ?CheckoutSource $source = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="deleted", type="boolean", options={"default"=false})
-     */
-    protected $deleted = false;
+    #[ORM\Column(name: 'deleted', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $deleted = false;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="completed", type="boolean", options={"default"=false})
-     */
-    protected $completed = false;
+    #[ORM\Column(name: 'completed', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $completed = false;
 
     /**
      * @var array|CompletedCheckoutData
-     *
-     * @ORM\Column(name="completed_data", type="json_array")
      */
+    #[ORM\Column(name: 'completed_data', type: 'json_array')]
     protected $completedData;
 
-    /**
-     * @var Collection|CheckoutLineItem[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem",
-     *      mappedBy="checkout",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\OrderBy({"id" = "ASC"})
-     **/
-    protected $lineItems;
+    #[ORM\Column(name: 'line_item_group_shipping_data', type: 'json', nullable: true)]
+    #[ConfigField(mode: 'hidden')]
+    private ?array $lineItemGroupShippingData = null;
 
     /**
-     * @var Collection|CheckoutSubtotal[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal",
-     *      mappedBy="checkout",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
+     * @var Collection<int, CheckoutLineItem>
      **/
-    protected $subtotals;
+    #[ORM\OneToMany(
+        mappedBy: 'checkout',
+        targetEntity: CheckoutLineItem::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    #[ORM\OrderBy(['id' => Criteria::ASC])]
+    protected ?Collection $lineItems = null;
 
     /**
-     * @var CustomerUser
-     *
-     * @ORM\OneToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
-     * @ORM\JoinColumn(
-     *     name="registered_customer_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL"
-     * )
-     */
-    protected $registeredCustomerUser;
+     * @var Collection<int, CheckoutSubtotal>
+     **/
+    #[ORM\OneToMany(
+        mappedBy: 'checkout',
+        targetEntity: CheckoutSubtotal::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    protected ?Collection $subtotals = null;
+
+    #[ORM\OneToOne(targetEntity: CustomerUser::class)]
+    #[ORM\JoinColumn(
+        name: 'registered_customer_user_id',
+        referencedColumnName: 'id',
+        nullable: true,
+        onDelete: 'SET NULL'
+    )]
+    protected ?CustomerUser $registeredCustomerUser = null;
 
     public function __construct()
     {
@@ -497,18 +442,26 @@ class Checkout implements
         return $this->completedData;
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    public function getLineItemGroupShippingData(): array
+    {
+        return $this->lineItemGroupShippingData ?? [];
+    }
+
+    public function setLineItemGroupShippingData(array $lineItemGroupShippingData): static
+    {
+        $this->lineItemGroupShippingData = $lineItemGroupShippingData ?: null;
+
+        return $this;
+    }
+
+    #[ORM\PostLoad]
     public function postLoad()
     {
         $this->shippingCost = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updateShippingEstimate()
     {
         $this->shippingEstimateAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;

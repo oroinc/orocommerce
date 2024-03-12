@@ -95,7 +95,7 @@ define(function(require) {
         },
 
         onOrderEntryPoint: function(response) {
-            this.model.set('checksum', response.checksum[this.options.fullName] || '', {silent: true});
+            this.model.set('checksum', response.checksum[this.options.fullName] || '');
         },
 
         showLoadingMask: function() {
@@ -215,8 +215,6 @@ define(function(require) {
             _.each($fields, function(field) {
                 $(field).attr('data-entry-point-trigger', true);
             });
-
-            mediator.trigger('entry-point:order:init');
         },
 
         removeRow: function() {
@@ -247,19 +245,24 @@ define(function(require) {
             this.$el.find(this.options.selectors.productSku).text(data.sku || null);
 
             mediator.once('entry-point:order:load:before', this.showLoadingMask.bind(this));
-            mediator.once('entry-point:order:load', this.updateKitItemLineItems.bind(this));
+            mediator.once('entry-point:order:load', this.updateKitLineItem.bind(this));
             mediator.once('entry-point:order:load:after', this.hideLoadingMask.bind(this));
         },
 
-        updateKitItemLineItems: function(response) {
-            this.getElement('kitItemLineItems')
-                .one('content:initialized', () => {
-                    mediator.trigger('pricing:refresh:products-tier-prices', response.tierPrices);
-                });
+        updateKitLineItem: function(response) {
+            mediator.trigger('entry-point:interrupt:postpone');
+
+            this.disableProductKitPrice(response);
 
             this.getElement('kitItemLineItems')
                 .html(response.kitItemLineItems[this.options.fullName] || '')
-                .trigger('content:changed');
+                .trigger('content:changed', {
+                    onInitialized: () => {
+                        mediator.trigger('entry-point:listeners:off');
+                        mediator.trigger('pricing:refresh:products-tier-prices', response.tierPrices);
+                        mediator.trigger('entry-point:order:trigger');
+                    }
+                });
         },
 
         lineItemProductPriceLock: function() {
@@ -268,6 +271,11 @@ define(function(require) {
 
         lineItemProductPriceUnlock: function() {
             this.getElement('isPriceChanged').val(0);
+        },
+
+        disableProductKitPrice: function(response) {
+            const value = response.disabledKitPrices[this.options.fullName] || false;
+            this.getElement('priceValue').attr('readonly', value);
         }
     });
 

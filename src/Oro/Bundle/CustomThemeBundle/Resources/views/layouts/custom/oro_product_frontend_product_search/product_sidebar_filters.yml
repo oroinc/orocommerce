@@ -1,8 +1,0 @@
-layout:
-    actions:
-        - '@setOption':
-              id: product_datagrid
-              optionName: grid_render_parameters.themeOptions.sidebarExpanded
-              optionValue: true
-
-    conditions: 'context["filters_position"] == "sidebar"'

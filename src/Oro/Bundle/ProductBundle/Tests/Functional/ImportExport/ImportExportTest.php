@@ -43,14 +43,13 @@ class ImportExportTest extends AbstractImportExportTestCase
         );
 
         $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
-        $this->assertCount(1, $data);
-        $this->assertTrue($data['success']);
+        self::assertCount(1, $data);
+        self::assertTrue($data['success']);
 
-        $exportedDataFilePath = $this->processExportMessage($this->getContainer(), $this->client);
+        $exportedDataFilePath = $this->processExportMessage(self::getContainer(), $this->client);
 
-        $expectedDataFilePath = $this->getContainer()->get('file_locator')->locate(
-            '@OroProductBundle/Tests/Functional/ImportExport/data/expected_export_product_row.csv'
-        );
+        $expectedDataFilePath = self::getContainer()->get('file_locator')
+            ->locate('@OroProductBundle/Tests/Functional/ImportExport/data/expected_export_product_row.csv');
 
         $exportedData = $this->getFileContents($exportedDataFilePath);
         $expectedData = $this->getFileContents($expectedDataFilePath);
@@ -60,7 +59,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $expectedValues = $this->extractFieldValues($commonFields, $expectedData);
         $exportedValues = $this->extractFieldValues($commonFields, $exportedData);
 
-        $this->assertEquals($expectedValues, $exportedValues);
+        self::assertEquals($expectedValues, $exportedValues);
 
         unlink($exportedDataFilePath); // remove trash
     }
@@ -88,19 +87,17 @@ class ImportExportTest extends AbstractImportExportTestCase
 
     protected function getExportFile(): string
     {
-        $result = $this->getContainer()
-            ->get('oro_importexport.handler.export')
+        $result = self::getContainer()->get('oro_importexport.handler.export')
             ->getExportResult(JobExecutor::JOB_EXPORT_TO_CSV, 'oro_product_product');
 
-        return $this->getContainer()
-            ->get('oro_importexport.file.file_manager')
+        return self::getContainer()->get('oro_importexport.file.file_manager')
             ->writeToTmpLocalStorage($result['file']);
     }
 
     /**
      * {@inheritDoc}
      */
-    protected function getFileContents($fileName)
+    protected function getFileContents(string $fileName): array
     {
         $content = file_get_contents($fileName);
         $content = explode("\n", $content);
@@ -112,12 +109,12 @@ class ImportExportTest extends AbstractImportExportTestCase
     /**
      * {@inheritDoc}
      */
-    protected function validateExportResult($exportFile, $expectedItemsCount)
+    protected function validateExportResult(string $exportFile, int $expectedItemsCount): void
     {
         $exportedData = $this->getFileContents($exportFile);
         unset($exportedData[0]);
 
-        $this->assertCount($expectedItemsCount, $exportedData);
+        self::assertCount($expectedItemsCount, $exportedData);
     }
 
     /**
@@ -141,14 +138,14 @@ class ImportExportTest extends AbstractImportExportTestCase
             ],
         ];
 
-        $jobResult = $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
+        $jobResult = self::getContainer()->get('oro_importexport.job_executor')->executeJob(
             ProcessorRegistry::TYPE_IMPORT_VALIDATION,
             JobExecutor::JOB_IMPORT_VALIDATION_FROM_CSV,
             $configuration
         );
 
         $exceptions = $jobResult->getFailureExceptions();
-        $this->assertEmpty($exceptions, implode(PHP_EOL, $exceptions));
+        self::assertEmpty($exceptions, implode(PHP_EOL, $exceptions));
 
         // owner is not available in cli context, managed using ConsoleContextListener
         $errors = array_filter(
@@ -159,8 +156,8 @@ class ImportExportTest extends AbstractImportExportTestCase
                     && !str_contains($error, 'Unit of Quantity Unit Code: This value should not be blank.');
             }
         );
-        $this->assertEquals($contextErrors, array_values($errors), implode(PHP_EOL, $errors));
-        $this->getContainer()->get('security.token_storage')->setToken(null);
+        self::assertEquals($contextErrors, array_values($errors), implode(PHP_EOL, $errors));
+        self::getContainer()->get('security.token_storage')->setToken(null);
     }
 
     public function validationDataProvider(): array
@@ -189,15 +186,15 @@ class ImportExportTest extends AbstractImportExportTestCase
             ],
         ];
 
-        $jobResult = $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
+        $jobResult = self::getContainer()->get('oro_importexport.job_executor')->executeJob(
             ProcessorRegistry::TYPE_IMPORT,
             JobExecutor::JOB_IMPORT_FROM_CSV,
             $configuration
         );
 
         $exceptions = $jobResult->getFailureExceptions();
-        $this->assertEmpty($exceptions, implode(PHP_EOL, $exceptions));
-        $this->assertEmpty(
+        self::assertEmpty($exceptions, implode(PHP_EOL, $exceptions));
+        self::assertEmpty(
             $jobResult->getContext()->getErrors(),
             implode(PHP_EOL, $jobResult->getContext()->getErrors())
         );
@@ -205,21 +202,21 @@ class ImportExportTest extends AbstractImportExportTestCase
         /** @var Product $product */
         $product = self::getContainer()->get('doctrine')->getRepository($productClass)->findOneBy(['sku' => 'SKU099']);
 
-        $this->assertNotEmpty($product);
-        $this->assertEquals('enabled', $product->getStatus());
-        $this->assertEquals('in_stock', $product->getInventoryStatus()->getId());
+        self::assertNotEmpty($product);
+        self::assertEquals('enabled', $product->getStatus());
+        self::assertEquals('in_stock', $product->getInventoryStatus()->getId());
 
-        $this->assertCount(1, $product->getUnitPrecisions());
-        $this->assertEquals('each', $product->getUnitPrecisions()->first()->getUnit()->getCode());
-        $this->assertEquals(3, $product->getUnitPrecisions()->first()->getPrecision());
+        self::assertCount(1, $product->getUnitPrecisions());
+        self::assertEquals('each', $product->getUnitPrecisions()->first()->getUnit()->getCode());
+        self::assertEquals(3, $product->getUnitPrecisions()->first()->getPrecision());
 
-        $this->assertCount(2, $product->getNames());
-        $this->assertEquals('parent_localization', $product->getNames()->first()->getFallback());
-        $this->assertEquals('Name', $product->getNames()->first()->getString());
-        $this->assertEquals('system', $product->getNames()->last()->getFallback());
-        $this->assertEquals('En Name', $product->getNames()->last()->getString());
+        self::assertCount(2, $product->getNames());
+        self::assertEquals('parent_localization', $product->getNames()->first()->getFallback());
+        self::assertEquals('Name', $product->getNames()->first()->getString());
+        self::assertEquals('system', $product->getNames()->last()->getFallback());
+        self::assertEquals('En Name', $product->getNames()->last()->getString());
 
-        $this->getContainer()->get('security.token_storage')->setToken(null);
+        self::getContainer()->get('security.token_storage')->setToken(null);
     }
 
     public function testSkippedTypeForExistingProduct()
@@ -228,12 +225,12 @@ class ImportExportTest extends AbstractImportExportTestCase
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
         );
         $token = new OrganizationToken(
-            $this->getContainer()->get('doctrine')->getRepository(Organization::class)->findOneBy([])
+            self::getContainer()->get('doctrine')->getRepository(Organization::class)->findOneBy([])
         );
         $token->setUser(
-            $this->getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([])
+            self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([])
         );
-        $this->getContainer()->get('security.token_storage')->setToken($token);
+        self::getContainer()->get('security.token_storage')->setToken($token);
 
         $this->cleanUpReader();
 
@@ -248,7 +245,7 @@ class ImportExportTest extends AbstractImportExportTestCase
             ],
         ];
 
-        $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
+        self::getContainer()->get('oro_importexport.job_executor')->executeJob(
             ProcessorRegistry::TYPE_IMPORT,
             JobExecutor::JOB_IMPORT_FROM_CSV,
             $configuration
@@ -264,7 +261,7 @@ class ImportExportTest extends AbstractImportExportTestCase
             ],
         ];
 
-        $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
+        self::getContainer()->get('oro_importexport.job_executor')->executeJob(
             ProcessorRegistry::TYPE_IMPORT,
             JobExecutor::JOB_IMPORT_FROM_CSV,
             $configuration
@@ -273,11 +270,11 @@ class ImportExportTest extends AbstractImportExportTestCase
         /** @var Product $product */
         $product = self::getContainer()->get('doctrine')->getRepository($productClass)->findOneBy(['sku' => 'SKU099']);
 
-        $this->assertNotEmpty($product);
-        $this->assertNotEquals(Product::TYPE_CONFIGURABLE, $product->getType());
-        $this->assertEquals(Product::STATUS_DISABLED, $product->getStatus());
+        self::assertNotEmpty($product);
+        self::assertNotEquals(Product::TYPE_CONFIGURABLE, $product->getType());
+        self::assertEquals(Product::STATUS_DISABLED, $product->getStatus());
 
-        $this->getContainer()->get('security.token_storage')->setToken(null);
+        self::getContainer()->get('security.token_storage')->setToken(null);
     }
 
     /**
@@ -295,7 +292,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $file = $this->getExportFile();
         $this->validateExportResult($file, 8);
 
-        $doctrine = $this->getContainer()->get('doctrine');
+        $doctrine = self::getContainer()->get('doctrine');
 
         /** @var EntityManager $productManager */
         $productManager = $doctrine->getManagerForClass($productClass);
@@ -306,7 +303,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->assertImportResponse($data, 8, 0);
 
         $products = $productManager->getRepository($productClass)->findAll();
-        $this->assertCount(8, $products);
+        self::assertCount(8, $products);
     }
 
     /**
@@ -331,9 +328,9 @@ class ImportExportTest extends AbstractImportExportTestCase
     /**
      * {@inheritDoc}
      */
-    protected function assertImportResponse(array $data, $added, $updated)
+    protected function assertImportResponse(array $data, int $added, int $updated): void
     {
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'success'    => true,
                 'message'    => 'File was successfully imported.',
@@ -346,14 +343,14 @@ class ImportExportTest extends AbstractImportExportTestCase
     /**
      * {@inheritDoc}
      */
-    protected function setSecurityToken()
+    protected function setSecurityToken(): void
     {
         $token = new OrganizationToken(
-            $this->getContainer()->get('doctrine')->getRepository(Organization::class)->findOneBy([])
+            self::getContainer()->get('doctrine')->getRepository(Organization::class)->findOneBy([])
         );
         $token->setUser(
-            $this->getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([])
+            self::getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([])
         );
-        $this->getContainer()->get('security.token_storage')->setToken($token);
+        self::getContainer()->get('security.token_storage')->setToken($token);
     }
 }

@@ -55,7 +55,7 @@ define(function(require) {
 
             this.fullscreenView = new FullscreenPopupView({
                 contentElement: this.$popupContent,
-                popupIcon: 'fa-chevron-left'
+                popupIcon: _.isRTL() ? 'chevron-right' : 'chevron-left'
             });
             this.fullscreenView.on('close', this.onClosePopup.bind(this));
             this.fullscreenView.show();

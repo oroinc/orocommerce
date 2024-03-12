@@ -4,28 +4,17 @@ namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigArrayKeyQuery;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class RenamePriority implements Migration, RenameExtensionAwareInterface
 {
+    use RenameExtensionAwareTrait;
+
     const OLD_COLUMN_NAME = 'priority';
     const NEW_COLUMN_NAME = 'sort_order';
-
-    /**
-     * @var RenameExtension
-     */
-    private $renameExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
 
     /**
      * {@inheritdoc}

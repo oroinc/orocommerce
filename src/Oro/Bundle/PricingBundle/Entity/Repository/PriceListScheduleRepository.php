@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 
 /**
  * Repository for entity PriceListSchedule
@@ -20,7 +21,7 @@ class PriceListScheduleRepository extends EntityRepository
         $qb = $this->createQueryBuilder('schedule');
         $qb->select('DISTINCT schedule')
             ->join(
-                'OroPricingBundle:CombinedPriceListToPriceList',
+                CombinedPriceListToPriceList::class,
                 'priceListRelations',
                 Join::WITH,
                 $qb->expr()->eq('schedule.priceList', 'priceListRelations.priceList')

@@ -1,0 +1,97 @@
+services:
+    Oro\Bundle\PricingBundle\Debug\Controller\DebugController:
+        public: true
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\PricingBundle\Debug\Provider\CombinedPriceListActivationRulesProvider:
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+            - '@oro_customer.provider.customer_user_relations_provider'
+
+    Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler:
+        public: true
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+            - '@oro_pricing.model.price_list_tree_handler'
+            - '@Oro\Bundle\PricingBundle\Debug\Provider\CombinedPriceListActivationRulesProvider'
+            - '@oro_customer.provider.customer_user_relations_provider'
+
+    oro_pricing.model.debug_product_price_price_list_request_handler:
+        alias: Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler
+
+    Oro\Bundle\PricingBundle\Debug\Provider\PriceListsAssignmentProvider:
+        arguments:
+            - !tagged_iterator oro_pricing.debug.provider.price_list_assignment
+
+    Oro\Bundle\PricingBundle\Debug\Provider\SidebarFormProvider:
+        arguments:
+            - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
+            - '@Oro\Bundle\PricingBundle\Debug\Provider\CombinedPriceListActivationRulesProvider'
+            - '@form.factory'
+
+    Oro\Bundle\PricingBundle\Debug\Provider\CustomerPriceListsAssignmentProvider:
+        arguments:
+            - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
+            - '@doctrine'
+            - '@translator'
+            - '@router'
+            - '@security.authorization_checker'
+        tags:
+            - { name: 'oro_pricing.debug.provider.price_list_assignment', 'priority': 300}
+
+    Oro\Bundle\PricingBundle\Debug\Provider\CustomerGroupPriceListsAssignmentProvider:
+        arguments:
+            - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
+            - '@doctrine'
+            - '@translator'
+            - '@router'
+            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@security.authorization_checker'
+        tags:
+            - { name: 'oro_pricing.debug.provider.price_list_assignment', 'priority': 200 }
+
+    Oro\Bundle\PricingBundle\Debug\Provider\WebsitePriceListsAssignmentProvider:
+        arguments:
+            - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
+            - '@doctrine'
+            - '@translator'
+        tags:
+            - { name: 'oro_pricing.debug.provider.price_list_assignment', 'priority': 100 }
+
+    Oro\Bundle\PricingBundle\Debug\Provider\ConfigPriceListsAssignmentProvider:
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_pricing.system_config_converter'
+            - '@translator'
+            - '@router'
+        tags:
+            - { name: 'oro_pricing.debug.provider.price_list_assignment', 'priority': 0 }
+
+    Oro\Bundle\PricingBundle\Debug\Provider\ProductPricesProvider:
+        arguments:
+            - '@Oro\Bundle\PricingBundle\Debug\Handler\DebugProductPricesPriceListRequestHandler'
+            - '@doctrine'
+            - '@oro_pricing.shard_manager'
+
+    Oro\Bundle\PricingBundle\Debug\Provider\MinimalPricesSelectedPriceProvider:
+        arguments:
+            - '@doctrine'
+
+    Oro\Bundle\PricingBundle\Debug\Provider\MergeByPriorityPricesSelectedPriceProvider:
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.shard_manager'
+
+    Oro\Bundle\PricingBundle\Debug\Provider\PriceMergeInfoProvider:
+        arguments:
+            - '@oro_config.manager'
+            - '@doctrine'
+            - '@oro_pricing.shard_manager'
+        calls:
+            - ['addSelectedPriceProvider', ['minimal_prices', '@Oro\Bundle\PricingBundle\Debug\Provider\MinimalPricesSelectedPriceProvider']]
+            - ['addSelectedPriceProvider', ['merge_by_priority', '@Oro\Bundle\PricingBundle\Debug\Provider\MergeByPriorityPricesSelectedPriceProvider']]

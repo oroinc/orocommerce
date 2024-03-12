@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
@@ -14,21 +13,26 @@ use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 class LoadPriceListToCustomerGroupDemoData extends LoadBasePriceListRelationDemoData
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function getDependencies(): array
     {
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator
-            ->locate('@OroPricingBundle/Migrations/Data/Demo/ORM/data/price_lists_to_customer_group.csv');
+        return array_merge(parent::getDependencies(), [LoadWebsiteData::class]);
+    }
 
-        if (is_array($filePath)) {
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager): void
+    {
+        $filePath = $this->getFileLocator()
+            ->locate('@OroPricingBundle/Migrations/Data/Demo/ORM/data/price_lists_to_customer_group.csv');
+        if (\is_array($filePath)) {
             $filePath = current($filePath);
         }
 
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
-        /** @var EntityManagerInterface $manager */
         $website = $this->getWebsiteByName($manager, LoadWebsiteData::DEFAULT_WEBSITE_NAME);
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -50,22 +54,13 @@ class LoadPriceListToCustomerGroupDemoData extends LoadBasePriceListRelationDemo
         $manager->flush();
     }
 
-    protected function getCustomerGroupByName(EntityManagerInterface $manager, string $name): CustomerGroup
+    private function getCustomerGroupByName(ObjectManager $manager, string $name): CustomerGroup
     {
-        $website = $manager->getRepository('OroCustomerBundle:CustomerGroup')->findOneBy(['name' => $name]);
-
+        $website = $manager->getRepository(CustomerGroup::class)->findOneBy(['name' => $name]);
         if (!$website) {
             throw new \LogicException(sprintf('There is no customer group with name "%s" .', $name));
         }
 
         return $website;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return array_merge(parent::getDependencies(), [LoadWebsiteData::class]);
     }
 }

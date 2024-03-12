@@ -2,10 +2,11 @@ styles:
     inputs:
         - 'bundles/ororfp/default/scss/variables/request-form-editnote-config.scss'
         - 'bundles/ororfp/default/scss/variables/request-form-editline-config.scss'
-        - 'bundles/ororfp/default/scss/variables/request-form-link-config.scss'
         - 'bundles/ororfp/default/scss/variables/request-form-product-config.scss'
         - 'bundles/ororfp/default/scss/variables/request-form-note-config.scss'
         - 'bundles/ororfp/default/scss/variables/request-form-footer-config.scss'
         - 'bundles/ororfp/default/scss/variables/request-form-config.scss'
+        - 'bundles/ororfp/default/scss/variables/request-more-units-label-config.scss'
 
         - 'bundles/ororfp/default/scss/styles.scss'
+        - 'bundles/ororfp/default/scss/components/request-more-units-label.scss'

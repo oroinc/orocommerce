@@ -3,9 +3,9 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\EventListener;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -14,10 +14,12 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber;
-use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
+use Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider;
+use Oro\Bundle\SaleBundle\Quote\Pricing\QuotePricesComparator;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormError;
@@ -43,15 +45,13 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
     private const QUANTITY = 10;
     private const UNIT1 = 'kg';
     private const UNIT2 = 'set';
+    private const SAMPLE_CHECKSUM_1 = 'sample-checksum-1 ';
 
-    /** @var QuoteProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private QuoteProductPriceProvider $provider;
+    private QuoteProductPricesProvider|MockObject $quoteProductPricesProvider;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private DoctrineHelper $doctrineHelper;
+    private ManagerRegistry|MockObject $managerRegistry;
 
-    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private ProductRepository $productRepository;
+    private ProductRepository|MockObject $productRepository;
 
     private QuoteFormSubscriber $subscriber;
 
@@ -61,34 +61,36 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->provider = $this->createMock(QuoteProductPriceProvider::class);
+        $this->managerRegistry = $this->createMock(ManagerRegistry::class);
+        $this->quoteProductPricesProvider = $this->createMock(QuoteProductPricesProvider::class);
 
         /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(self::any())->method('trans')->willReturnArgument(0);
 
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-
         $this->subscriber = new QuoteFormSubscriber(
-            $this->provider,
-            $translator,
-            $this->doctrineHelper
+            $this->managerRegistry,
+            $this->quoteProductPricesProvider,
+            new QuotePricesComparator(),
+            $translator
         );
 
         $this->tierPrices = [
             self::PRODUCT_ID => [
-                new ProductPriceDTO(
-                    (new ProductStub())->setId(self::PRODUCT_ID),
-                    Price::create(self::PRICE2, self::CURRENCY),
-                    1,
-                    (new ProductUnit())->setCode(self::UNIT2)
-                ),
-                new ProductPriceDTO(
-                    (new ProductStub())->setId(self::PRODUCT_ID),
-                    Price::create(self::PRICE2, self::CURRENCY),
-                    20,
-                    (new ProductUnit())->setCode(self::UNIT2)
-                ),
+                self::SAMPLE_CHECKSUM_1 => [
+                    new ProductPriceDTO(
+                        (new ProductStub())->setId(self::PRODUCT_ID),
+                        Price::create(self::PRICE2, self::CURRENCY),
+                        1,
+                        (new ProductUnit())->setCode(self::UNIT2)
+                    ),
+                    new ProductPriceDTO(
+                        (new ProductStub())->setId(self::PRODUCT_ID),
+                        Price::create(self::PRICE2, self::CURRENCY),
+                        20,
+                        (new ProductUnit())->setCode(self::UNIT2)
+                    ),
+                ],
             ],
         ];
     }
@@ -112,7 +114,6 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
         /** @var Quote $quote */
         $quote = $this->getEntity(Quote::class);
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $form->expects(self::once())->method('getData')->willReturn($quote);
 
@@ -125,13 +126,13 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
     {
         return [
             'no data' => [
-                'data' => null
+                'data' => null,
             ],
             'no website' => [
-                'data' => []
+                'data' => [],
             ],
             'empty website' => [
-                'data' => ['website' => null]
+                'data' => ['website' => null],
             ],
         ];
     }
@@ -177,13 +178,13 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
     {
         return [
             'no data' => [
-                'data' => null
+                'data' => null,
             ],
             'no customer' => [
-                'data' => []
+                'data' => [],
             ],
             'empty customer' => [
-                'data' => ['customer' => null]
+                'data' => ['customer' => null],
             ],
         ];
     }
@@ -226,19 +227,11 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
 
         $form = new Form($config);
 
-        if (!$data['quoteProducts']) {
-            $this->provider->expects(self::never())
-                ->method('getMatchedProductPrice');
-        } else {
-            $price = $this->getEntity(Price::class, ['value' => self::PRICE1]);
-            $matchedPrice = $expectPriceChange ? null : $price;
-            $this->provider->expects(self::once())
-                ->method('getMatchedProductPrice')
-                ->willReturn($matchedPrice);
-        }
-
-        $this->provider->expects(self::never())
-            ->method('getTierPricesForProducts');
+        $this->quoteProductPricesProvider
+            ->expects(self::once())
+            ->method('getProductLineItemsTierPrices')
+            ->with($quote)
+            ->willReturn($this->tierPrices);
 
         $this->subscriber->onSubmit(new FormEvent($form, $quote));
 
@@ -254,17 +247,17 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
                 'expectPriceChange' => false,
             ],
             'no changes' => [
-                'data' => $this->getData(),
+                'data' => $this->getData(self::PRICE2, self::CURRENCY, 1, self::UNIT2),
                 'options' => [],
                 'expectPriceChange' => false,
             ],
             'price changed' => [
-                'data' => $this->getData(self::PRICE2),
+                'data' => $this->getData(self::PRICE1, self::CURRENCY, 1, self::UNIT2),
                 'options' => ['allow_prices_override' => true, 'allow_add_free_form_items' => true],
                 'expectPriceChange' => true,
             ],
             'price changed not allow free form' => [
-                'data' => $this->getData(self::PRICE2),
+                'data' => $this->getData(self::PRICE1, self::CURRENCY, 1, self::UNIT2),
                 'options' => ['allow_prices_override' => true, 'allow_add_free_form_items' => false],
                 'expectPriceChange' => true,
             ],
@@ -298,12 +291,11 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
 
         $form = new Form($config);
 
-        $this->provider->expects(self::once())
-            ->method('getMatchedProductPrice')
-            ->willReturn(null);
-
-        $this->provider->expects(self::never())
-            ->method('getTierPricesForProducts');
+        $this->quoteProductPricesProvider
+            ->expects(self::once())
+            ->method('getProductLineItemsTierPrices')
+            ->with($quote)
+            ->willReturn($this->tierPrices);
 
         $this->subscriber->onSubmit(new FormEvent($form, $quote));
 
@@ -319,7 +311,7 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
 
     public function testOnSubmitWithCheckingTierPrice(): void
     {
-        $data = $this->getData(self::PRICE2, self::CURRENCY, 5, self::UNIT2);
+        $data = $this->getData(self::PRICE1, self::CURRENCY, 5, self::UNIT2);
 
         /** @var Quote $quote */
         $quote = $this->getEntity(Quote::class, $data);
@@ -336,10 +328,10 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
         $product->setId(self::PRODUCT_ID);
         $product->setSku(self::PRODUCT_SKU);
 
-        $this->provider
+        $this->quoteProductPricesProvider
             ->expects(self::once())
-            ->method('getTierPricesForProducts')
-            ->with($quote, [$product])
+            ->method('getProductLineItemsTierPrices')
+            ->with($quote)
             ->willReturn($this->tierPrices);
 
         $this->subscriber->onSubmit(new FormEvent($form, $quote));
@@ -366,10 +358,10 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
         $product->setId(self::PRODUCT_ID);
         $product->setSku(self::PRODUCT_SKU);
 
-        $this->provider
+        $this->quoteProductPricesProvider
             ->expects(self::once())
-            ->method('getTierPricesForProducts')
-            ->with($quote, [$product])
+            ->method('getProductLineItemsTierPrices')
+            ->with($quote)
             ->willReturn($this->tierPrices);
 
         $this->subscriber->onSubmit(new FormEvent($form, $quote));
@@ -393,7 +385,7 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
         $form->expects(self::any())->method('getConfig')->willReturn($config);
         $form->expects(self::never())->method('addError');
 
-        $this->provider->expects(self::never())->method('getTierPricesForProducts');
+        $this->quoteProductPricesProvider->expects(self::never())->method('getProductLineItemsTierPrices');
 
         $this->subscriber->onSubmit(new FormEvent($form, null));
     }
@@ -414,30 +406,21 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
         $product->setId(self::PRODUCT_ID);
         $product->setSku(self::PRODUCT_SKU);
 
-        $this->provider->expects(self::once())
-            ->method('getTierPricesForProducts')
-            ->with($quote, [$product])
+        $this->quoteProductPricesProvider->expects(self::once())
+            ->method('getProductLineItemsTierPrices')
+            ->with($quote)
             ->willReturn($this->tierPrices);
 
         $this->subscriber->onSubmit(new FormEvent($form, $quote));
     }
 
-    /**
-     * @param int $price
-     * @param string $currency
-     * @param int $quantity
-     * @param string $unit
-     * @param string $sku
-     * @param bool $isFreeForm
-     * @return array
-     */
     private function getData(
-        $price = self::PRICE1,
-        $currency = self::CURRENCY,
-        $quantity = self::QUANTITY,
-        $unit = self::UNIT1,
-        $sku = self::PRODUCT_SKU,
-        $isFreeForm = false
+        float $price = self::PRICE1,
+        string $currency = self::CURRENCY,
+        float $quantity = self::QUANTITY,
+        string $unit = self::UNIT1,
+        string $sku = self::PRODUCT_SKU,
+        bool $isFreeForm = false
     ): array {
         if ($isFreeForm) {
             $product = null;
@@ -457,29 +440,26 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
                             'quantity' => $quantity,
                             'quoteProduct' => $this->getEntity(QuoteProduct::class, [
                                 'product' => $product,
-                                'productSku' => $sku
+                                'productSku' => $sku,
                             ]),
                             'productUnit' => $this->getEntity(ProductUnit::class, ['code' => $unit]),
                             'productUnitCode' => $unit,
-                            'price' => Price::create($price, $currency)
-                        ])
-                    ]
-                ])
-            ]
+                            'price' => Price::create($price, $currency),
+                            'checksum' => self::SAMPLE_CHECKSUM_1,
+                        ]),
+                    ],
+                ]),
+            ],
         ];
     }
 
-    /**
-     * @param string $entityClass
-     * @return EntityRepository|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function configureRepository(string $entityClass): EntityRepository
+    private function configureRepository(string $entityClass): EntityRepository|MockObject
     {
         $entityRepository = $this->createMock(EntityRepository::class);
 
-        $this->doctrineHelper
+        $this->managerRegistry
             ->expects(self::once())
-            ->method('getEntityRepository')
+            ->method('getRepository')
             ->with($entityClass)
             ->willReturn($entityRepository);
 

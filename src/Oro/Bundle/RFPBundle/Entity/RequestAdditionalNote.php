@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\RFPBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
  * Additional Note for Request.
- *
- * @ORM\Table(name="oro_rfp_request_add_note")
- * @ORM\Entity
- * @Config
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_rfp_request_add_note')]
+#[Config]
 class RequestAdditionalNote implements DatesAwareInterface, ExtendEntityInterface
 {
     use DatesAwareTrait;
@@ -24,50 +24,26 @@ class RequestAdditionalNote implements DatesAwareInterface, ExtendEntityInterfac
     const TYPE_CUSTOMER_NOTE = 'customer_note';
     const TYPE_SELLER_NOTE = 'seller_note';
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var Request
-     *
-     * @ORM\ManyToOne(targetEntity="Request", inversedBy="requestAdditionalNotes")
-     * @ORM\JoinColumn(name="request_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $request;
+    #[ORM\ManyToOne(targetEntity: Request::class, inversedBy: 'requestAdditionalNotes')]
+    #[ORM\JoinColumn(name: 'request_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Request $request = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="type", type="string", length=100)
-     */
-    protected $type;
+    #[ORM\Column(name: 'type', type: Types::STRING, length: 100)]
+    protected ?string $type = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="author", type="string", length=100)
-     */
-    protected $author;
+    #[ORM\Column(name: 'author', type: Types::STRING, length: 100)]
+    protected ?string $author = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="user_id", type="integer")
-     */
-    protected $userId;
+    #[ORM\Column(name: 'user_id', type: Types::INTEGER)]
+    protected ?int $userId = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="text", type="text")
-     */
-    protected $text;
+    #[ORM\Column(name: 'text', type: Types::TEXT)]
+    protected ?string $text = null;
 
     /**
      * @return array

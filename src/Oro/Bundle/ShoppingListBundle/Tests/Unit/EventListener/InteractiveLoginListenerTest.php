@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorManager;
-use Oro\Bundle\CustomerBundle\Security\Firewall\AnonymousCustomerUserAuthenticationListener;
+use Oro\Bundle\CustomerBundle\Security\AnonymousCustomerUserAuthenticator;
 use Oro\Bundle\DataAuditBundle\EventListener\SendChangedEntitiesToMessageQueueListener;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -15,6 +15,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\CustomerVisitorStub;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
@@ -73,7 +74,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
     public function testWithoutVisitor(): void
     {
         $this->request->cookies->set(
-            AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
+            AnonymousCustomerUserAuthenticator::COOKIE_NAME,
             base64_encode(json_encode(self::VISITOR_CREDENTIALS))
         );
 
@@ -99,7 +100,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
     public function testWithoutVisitorShoppingLists(): void
     {
         $this->request->cookies->set(
-            AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
+            AnonymousCustomerUserAuthenticator::COOKIE_NAME,
             base64_encode(json_encode(self::VISITOR_CREDENTIALS))
         );
 
@@ -127,7 +128,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
     public function testMigrateGuestShoppingList(): void
     {
         $this->request->cookies->set(
-            AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
+            AnonymousCustomerUserAuthenticator::COOKIE_NAME,
             base64_encode(json_encode(self::VISITOR_CREDENTIALS))
         );
         $this->configManager->expects(self::once())
@@ -161,7 +162,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
     public function testLogException(): void
     {
         $this->request->cookies->set(
-            AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
+            AnonymousCustomerUserAuthenticator::COOKIE_NAME,
             base64_encode(json_encode(self::VISITOR_CREDENTIALS))
         );
         $this->configManager->expects(self::once())
@@ -215,7 +216,10 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
             ->method('migrateGuestShoppingList');
 
         $this->listener->onInteractiveLogin(
-            new InteractiveLoginEvent($this->request, $this->getToken(new \stdClass()))
+            new InteractiveLoginEvent(
+                $this->request,
+                $this->getToken($this->createMock(UserInterface::class))
+            )
         );
     }
 

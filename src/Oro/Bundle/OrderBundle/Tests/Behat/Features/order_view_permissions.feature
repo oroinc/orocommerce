@@ -29,6 +29,7 @@ Feature: Order View Permissions
 
   Scenario: Check that Order can be viewed by frontend user
     Given I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Orders"
+    And I click "Account Dropdown"
+    And I click "Order History"
     And I click "view" on first row in "Past Orders Grid"
     Then I should see "Order #1"

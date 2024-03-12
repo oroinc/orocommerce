@@ -1,5 +1,10 @@
 @ticket-BB-15244
 @ticket-BB-19940
+
+#  IMPORTANT: the one of possible reasons for failure of this feature may be in identifiers of digital assets
+#  at the moment uploaded images cat1.jpg and cat2.jpg have following identifiers 57 & 58
+#  please make sure that they are still same
+
 Feature: Landing page open on frontend
   In order to see landing page info
   As buyer
@@ -33,7 +38,7 @@ Feature: Landing page open on frontend
     And click "Create Landing Page"
     And I fill in Landing Page Titles field with "Other page"
     Then I should see URL Slug field filled with "other-page"
-    And I fill in WYSIWYG "CMS Page Content" with "GrapesJS content: <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(13, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a>"
+    And I fill in WYSIWYG "CMS Page Content" with "GrapesJS content: <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(57, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(57, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a>"
     When I save form
     Then I should not see text matching "\{\{ wysiwyg_image\(" in WYSIWYG editor
     And I should not see text matching "\{\{ wysiwyg_file\(" in WYSIWYG editor
@@ -58,6 +63,7 @@ Feature: Landing page open on frontend
   Scenario: Check content and image are shown on store front
     When I proceed as the Buyer
     And I am on the homepage
+    And I click on "Main Menu Button"
     Then I should see "Other page"
     When I click "Other page"
     Then Page title equals to "Other page"
@@ -71,14 +77,14 @@ Feature: Landing page open on frontend
     Given I proceed as the Admin
     And I go to Marketing/Landing Pages
     And I click Edit "Other page" in grid
-    And I fill in WYSIWYG "CMS Page Content" with "GrapesJS content: {{ test(123) }} <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(13, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a><img alt=\"cat2_wysiwyg_image\" src=\"{{ wysiwyg_image(14, 'c840eec3-4b10-4682-b5cd-4d51fe008b6f') }}\"/>"
+    And I fill in WYSIWYG "CMS Page Content" with "GrapesJS content: {{ test(123) }} <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(57, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(57, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a><img alt=\"cat2_wysiwyg_image\" src=\"{{ wysiwyg_image(58, 'c840eec3-4b10-4682-b5cd-4d51fe008b6f') }}\"/>"
     And I save form
     Then I should see "The entered content contains invalid twig constructions."
     And I should not see text matching "\{\{ wysiwyg_image\(" in WYSIWYG editor
     And I should not see text matching "\{\{ wysiwyg_file\(" in WYSIWYG editor
 
   Scenario: Add another image
-    When I fill in WYSIWYG "CMS Page Content" with "GrapesJS content: <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(13, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a><img alt=\"cat2_wysiwyg_image\" src=\"{{ wysiwyg_image(14, 'c840eec3-4b10-4682-b5cd-4d51fe008b6f') }}\"/>"
+    When I fill in WYSIWYG "CMS Page Content" with "GrapesJS content: <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(57, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(57, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a><img alt=\"cat2_wysiwyg_image\" src=\"{{ wysiwyg_image(58, 'c840eec3-4b10-4682-b5cd-4d51fe008b6f') }}\"/>"
     When I save form
     Then I should not see text matching "\{\{ wysiwyg_image\(" in WYSIWYG editor
     And I should not see text matching "\{\{ wysiwyg_file\(" in WYSIWYG editor

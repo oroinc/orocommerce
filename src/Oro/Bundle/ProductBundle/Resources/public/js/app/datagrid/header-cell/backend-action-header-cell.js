@@ -12,6 +12,7 @@ define(function(require, exports, module) {
     const ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
     const ActionsPanel = require('oroproduct/js/app/datagrid/backend-actions-panel');
     const FullscreenPopupView = require('orofrontend/default/js/app/views/fullscreen-popup-view');
+    const oroui = _.macros('oroui');
     const config = require('module-config').default(module.id);
 
     const shoppingListAddAction = config.shoppingListAddAction || {
@@ -25,10 +26,7 @@ define(function(require, exports, module) {
         route: 'oro_shopping_list_add_products_massaction',
         route_parameters: {},
         frontend_handle: 'ajax',
-        confirmation: false,
-        launcherOptions: {
-            iconClassName: 'fa-shopping-cart'
-        }
+        confirmation: false
     };
     const modes = {
         GROUP: 'Group',
@@ -146,6 +144,7 @@ define(function(require, exports, module) {
         _doActivate: function(selectState) {
             try {
                 this[`_doActivate${this.renderMode}`](selectState);
+                this._renderSelectedItemsView(selectState);
             } catch (e) {
                 throw e;
             }
@@ -175,7 +174,7 @@ define(function(require, exports, module) {
         },
 
         getActionContainer() {
-            return this.$('[data-action-panel]');
+            return this.$('.datagrid-massaction-actions');
         },
 
         render: function() {
@@ -197,16 +196,19 @@ define(function(require, exports, module) {
             switch (this.renderMode) {
                 case modes.GROUP:
                     return this._renderAsGroup();
-                    break;
                 case modes.GROUPDROPDOWN:
                     return this._renderAsGroupDropdown();
-                    break;
                 case modes.FULLSCREEN:
                     return this._renderAsFullscreen();
-                    break;
                 default:
                     break;
             }
+        },
+
+        _renderSelectedItemsView(selectState) {
+            this.$('.product-selected-counter').text(
+                `${__('oro.product.frontend.actions_panel.selected_view', {count: selectState.get('rows').length})}`
+            );
         },
 
         _renderAsGroupDropdown() {
@@ -224,17 +226,17 @@ define(function(require, exports, module) {
 
                 panel.launchers.forEach(launcher => {
                     launcher.$el.addClass('dropdown-item');
-                    launcher.$('.icon').addClass('fa fa--fw fa--as-line');
                 });
 
                 const $dropdownToggle = $('<button></button>', {
                     'id': togglerId,
                     'type': 'button',
-                    'class': 'btn btn--info dropdown-toggle',
+                    'class': 'btn btn--inverse btn--icon dropdown-toggle',
                     'aria-label': __('oro.product.frontend.choose_action'),
                     'data-toggle': 'dropdown',
                     'data-placement': 'top-end'
                 });
+                $dropdownToggle.html(oroui.renderIcon({name: 'chevron-up'}));
 
                 panel.$el.children().wrapAll($('<div></div>', {
                     'class': 'dropdown-menu',
@@ -244,7 +246,7 @@ define(function(require, exports, module) {
                 $dropdownToggle.prependTo(panel.$el);
 
                 $mainLuncher
-                    .addClass('btn btn--full btn--info btn--clip-text')
+                    .addClass('btn btn-main btn--inverse')
                     .removeClass('disabled')
                     .prependTo(panel.$el);
             } else {
@@ -252,7 +254,7 @@ define(function(require, exports, module) {
                     panel.renderMainLauncher().$el
                 );
                 panel.launchers.forEach(launcher => {
-                    launcher.$el.addClass('btn btn--full btn--info btn--clip-text');
+                    launcher.$el.addClass('btn btn--full btn--outlined');
                 });
 
                 panel.$el.addClass(extraClasses);
@@ -265,32 +267,34 @@ define(function(require, exports, module) {
 
         _doActivateGroupDropdown(selectState) {
             if (selectState.isEmpty()) {
-                this.getActionContainer().addClass('hidden');
+                $('[data-action-panel]').addClass('hidden');
                 this.subview('actionsPanel').disable();
             } else {
-                this.getActionContainer().removeClass('hidden');
+                $('[data-action-panel]').removeClass('hidden');
                 this.subview('actionsPanel').enable();
             }
         },
 
         _renderAsGroup() {
             const panel = this.subview('actionsPanel');
-            const extraClasses = 'btn-group--full dropup';
+            const extraClasses = 'btn-group--full action-group dropup';
 
             this.getActionContainer().append(
                 panel.renderMainLauncher().$el
             );
             panel.launchers.forEach(launcher => {
-                launcher.$el.addClass('btn btn--full btn--info btn--size-s btn--clip-text');
+                launcher.$el.addClass('btn btn--inverse btn--full');
             });
             panel.$el.addClass(extraClasses);
             if (panel.actions.length > 1) {
-                panel.$el.append($('<button></button>', {
+                const $dropdownToggle = $('<button></button>', {
                     'type': 'button',
-                    'class': 'btn btn--info btn--size-s dropdown-toggle',
+                    'class': 'btn btn--inverse btn--icon dropdown-toggle',
                     'data-fullscreen-trigger': '',
                     'aria-label': __('oro.product.frontend.choose_action')
-                }));
+                });
+                panel.$el.append($dropdownToggle);
+                $dropdownToggle.html(oroui.renderIcon({name: 'chevron-up'}));
             }
 
             this._replaceablePanelClasses = `${extraClasses} show`;
@@ -300,10 +304,10 @@ define(function(require, exports, module) {
 
         _doActivateGroup(selectState) {
             if (selectState.isEmpty()) {
-                this.getActionContainer().addClass('hidden');
+                $('[data-action-panel]').addClass('hidden');
                 this.subview('actionsPanel').disable();
             } else {
-                this.getActionContainer().removeClass('hidden');
+                $('[data-action-panel]').removeClass('hidden');
                 this.subview('actionsPanel').enable();
             }
         },
@@ -316,7 +320,6 @@ define(function(require, exports, module) {
             panel.$el.addClass(this._replaceablePanelClasses);
             panel.launchers.forEach(launcher => {
                 launcher.$el.addClass('dropdown-item');
-                launcher.$('.icon').addClass('fa fa--fw fa--as-line');
             });
 
             return panel;
@@ -333,7 +336,7 @@ define(function(require, exports, module) {
         showFullScreen() {
             const fullscreen = new FullscreenPopupView({
                 contentElement: document.createElement('div'),
-                popupIcon: 'fa-chevron-left',
+                popupIcon: _.isRTL() ? 'chevron-right' : 'chevron-left',
                 popupLabel: __('oro.product.frontend.choose_action')
             });
 

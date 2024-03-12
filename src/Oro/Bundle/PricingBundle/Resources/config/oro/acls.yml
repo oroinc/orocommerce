@@ -1,6 +1,18 @@
 acls:
     oro_pricing_product_price_view:
         type: entity
-        class: OroPricingBundle:ProductPrice
+        class: Oro\Bundle\PricingBundle\Entity\ProductPrice
         permission: VIEW
         bindings: ~
+    oro_pricing_product_price_debug:
+        label: oro.pricing.acl.action.debug_prices.label
+        description: oro.pricing.acl.action.debug_prices.description
+        type: action
+        group_name: ""
+        category: "application"
+        bindings:
+            - { class: Oro\Bundle\PricingBundle\Debug\Controller\DebugController, method: indexAction }
+            - { class: Oro\Bundle\PricingBundle\Debug\Controller\DebugController, method: sidebarAction }
+            - { class: Oro\Bundle\PricingBundle\Debug\Controller\DebugController, method: sidebarViewAction }
+            - { class: Oro\Bundle\PricingBundle\Debug\Controller\DebugController, method: traceAction }
+            - { class: Oro\Bundle\PricingBundle\Debug\Controller\DebugController, method: getPriceListCurrencyListAction }

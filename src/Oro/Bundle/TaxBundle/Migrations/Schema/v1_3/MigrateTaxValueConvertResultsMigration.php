@@ -27,7 +27,6 @@ class MigrateTaxValueConvertResultsMigration implements
 
     /**
      * {@inheritdoc}
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)
     {

@@ -17,7 +17,7 @@ use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Website search engine repository for OroProductBundle:Product entity
+ * Website search engine repository for Oro\Bundle\ProductBundle\Entity\Product entity
  * This repository encapsulates Product related operations
  */
 class ProductRepository extends WebsiteSearchRepository
@@ -100,6 +100,7 @@ class ProductRepository extends WebsiteSearchRepository
 
         $searchQuery
             ->addSelect('sku')
+            ->addSelect('type')
             ->addSelect('names_LOCALIZATION_ID as name')
             ->addSelect('integer.system_entity_id as product_id')
             ->addWhere(Criteria::expr()->in('sku_uppercase', $upperCaseSkus));
@@ -167,6 +168,7 @@ class ProductRepository extends WebsiteSearchRepository
             ->setFrom('oro_product_WEBSITE_ID')
             ->addSelect('sku')
             ->addSelect('integer.system_entity_id as product_id')
+            ->addSelect('type')
             ->addSelect('names_LOCALIZATION_ID as name')
             ->getCriteria()
             ->andWhere(

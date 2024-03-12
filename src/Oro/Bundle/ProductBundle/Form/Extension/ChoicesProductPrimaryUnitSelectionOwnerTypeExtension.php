@@ -46,12 +46,13 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
     public function setAvailableUnits(FormEvent $event)
     {
         $form = $event->getForm();
-        $child = $form->get($this->childName);
-        if (!$child) {
+        if (!$form->has($this->childName)) {
             throw new \InvalidArgumentException(
                 sprintf('Unknown %s child in %s', $this->childName, self::EXTENDED_TYPE)
             );
         }
+
+        $child = $form->get($this->childName);
         $options = $child->getConfig()->getOptions();
         $product = $this->getProduct($child);
 

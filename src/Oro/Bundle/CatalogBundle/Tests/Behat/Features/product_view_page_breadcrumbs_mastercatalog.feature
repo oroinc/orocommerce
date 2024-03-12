@@ -7,8 +7,8 @@ Feature: Product view page breadcrumbs mastercatalog
 
   Scenario: Breadcrumbs should be built based on category
     Given I am on the homepage
-    And I click "Headlamps"
+    And I click "Headlamps" in hamburger menu
     When I click "View Details" for "PSKU1" product
-    Then I should see "All Products / Headlamps / 220 Lumen Rechargeable Headlamp"
+    Then I should see "All Products Headlamps 220 Lumen Rechargeable Headlamp"
     When I click on "All Products"
     Then Page title equals to "All Products"

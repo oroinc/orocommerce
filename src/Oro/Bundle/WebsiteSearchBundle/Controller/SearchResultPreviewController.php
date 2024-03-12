@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Controller;
 
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,14 +15,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class SearchResultPreviewController extends AbstractController
 {
     /**
-     * @Route("/search-term-preview/{id}", name="oro_website_search_term_preview")
-     * @AclAncestor("oro_website_search_result_history_view")
      * @return RedirectResponse
      */
+    #[Route(path: '/search-term-preview/{id}', name: 'oro_website_search_term_preview')]
+    #[AclAncestor('oro_website_search_result_history_view')]
     public function previewAction(SearchResultHistory $historyEntry)
     {
         return new RedirectResponse(
-            $this->get(WebsiteUrlResolver::class)
+            $this->container->get(WebsiteUrlResolver::class)
                 ->getWebsitePath(
                     'oro_product_frontend_product_search',
                     [

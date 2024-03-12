@@ -12,7 +12,7 @@ class PaymentStatusTest extends \PHPUnit\Framework\TestCase
     public function testProperties()
     {
         $properties = [
-            ['id', '1'],
+            ['id', 1],
             ['entityIdentifier', 10],
             ['entityClass', 'Some\Class'],
             ['paymentStatus', 'pending'],

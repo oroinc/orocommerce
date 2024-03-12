@@ -3,6 +3,10 @@ services:
         alias: Oro\Bundle\PricingBundle\Command\CombinedPriceListScheduleCommand
         public: true
 
+    oro_pricing.tests.debug.minimal_prices_selected_price_provider:
+        alias: Oro\Bundle\PricingBundle\Debug\Provider\MinimalPricesSelectedPriceProvider
+        public: true
+
     oro_pricing.tests.api.skipped_entity_provider:
         class: Oro\Bundle\ApiBundle\Tests\Functional\Environment\SkippedEntityProvider
         decorates: oro_api.tests.skipped_entity_provider
@@ -17,3 +21,7 @@ services:
         decorates: oro_entity.tests.entity_name_resolver.data_loader
         arguments:
             - '@.inner'
+
+    oro_pricing.tests.provider.frontend_product_prices:
+        alias: oro_pricing.provider.frontend_product_prices
+        public: true

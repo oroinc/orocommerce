@@ -26,3 +26,8 @@ oro_behat_extension:
                     Meta Title: 'oro_product[metaTitles][values][default]'
                     Meta Description: 'oro_product[metaDescriptions][values][default]'
                     Meta Keywords: 'oro_product[metaKeywords][values][default]'
+
+        HeadlampsInMainMenu:
+            selector:
+                type: 'xpath'
+                locator: './/*[contains(concat(" ",normalize-space(@class)," ")," main-menu__link ")][contains(normalize-space(),"Headlamps")]'

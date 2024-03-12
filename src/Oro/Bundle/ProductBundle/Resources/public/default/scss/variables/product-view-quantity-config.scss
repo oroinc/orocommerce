@@ -1,25 +1,7 @@
 /* @theme: default;  */
 
-$product-view-quantity-display: flex !default;
-$product-view-quantity-flex-wrap: wrap !default;
-$product-view-quantity-margin-bottom: 20px !default;
+$product-view-line-item-quantity-width: 200px !default;
 
-$product-view-quantity-unit-margin-right: 5px !default;
-$product-view-quantity-unit-display: flex !default;
-$product-view-quantity-unit-width: calc(70% - #{$product-view-quantity-unit-margin-right}) !default;
-$product-view-quantity-unit-half-width: calc(50% - #{$product-view-quantity-unit-margin-right}) !default;
+// Mobile
 
-$product-view-quantity-unit-label-flex-grow: 1 !default;
-$product-view-quantity-unit-label-align-self: center !default;
-$product-view-quantity-unit-label-font-size: $base-font-size--large !default;
-$product-view-quantity-unit-label-text-align: center !default;
-
-$product-view-quantity-value-width: 30% !default;
-$product-view-quantity-value-half-width: 50% !default;
-
-$product-view-quantity-value-input-text-align: center !default;
-
-$product-view-quantity-error-width: 100% !default;
-
-$product-view-quantity-tablet-unit-width: calc(75% - #{$product-view-quantity-unit-margin-right}) !default;
-$product-view-quantity-tablet-value-width: 25% !default;
+$product-view-line-item-quantity-width-mobile: 100% !default;

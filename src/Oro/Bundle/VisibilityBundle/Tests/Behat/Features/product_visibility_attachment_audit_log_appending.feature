@@ -2,6 +2,9 @@
 @ticket-BB-22744
 @fixture-OroVisibilityBundle:category_tree_with_product_visibility.yml
 
+#  IMPORTANT: the one of possible reasons for failure of this feature may be in count of digital assets from main data
+#  at the moment the count is 56, please make sure that they are still same
+
 Feature: Product Visibility Attachment Audit Log Appending
   In order to see product visibility and attachment changes audit log
   As an administrator
@@ -33,8 +36,8 @@ Feature: Product Visibility Attachment Audit Log Appending
     And I save and close form
     Then I should see "Field saved" flash message
     Examples:
-      | Name       | AuditField | AuditRelatedField |
-      | Attachment | file       | Product           |
+      | Name                           | AuditField | AuditRelatedField |
+      | Attachment                     | file       | Product           |
       | ProductVisibility              | visibility | product           |
       | CustomerProductVisibility      | visibility | product           |
       | CustomerGroupProductVisibility | visibility | product           |
@@ -54,8 +57,8 @@ Feature: Product Visibility Attachment Audit Log Appending
       | File size | 76.77 KB |
     When I click "Change History"
     Then should see following "Audit History Grid" grid:
-      | Old Values  | New values                                                                    |
-      | Attachment: | Attachment:  Attachment "Item #1" added: File: File "25" Product: Product "1" |
+      | Old Values  | New values                                                                     |
+      | Attachment: | Attachment:  Attachment "Item #1" added: File: File "113" Product: Product "1" |
     And I close ui dialog
 
   Scenario: Delete attachment
@@ -64,8 +67,8 @@ Feature: Product Visibility Attachment Audit Log Appending
     Then I should see "Item deleted" flash message
     When I click "Change History"
     Then should see following "Audit History Grid" grid:
-      | Old Values                                                                     | New values  |
-      | Attachment: Attachment "Item #1" removed: File: File "25" Product: Product "1" | Attachment: |
+      | Old Values                                                                      | New values  |
+      | Attachment: Attachment "Item #1" removed: File: File "113" Product: Product "1" | Attachment: |
     And I close ui dialog
 
   Scenario: Should see audit log once update visibility to all for current product
@@ -78,7 +81,7 @@ Feature: Product Visibility Attachment Audit Log Appending
     Then I should see "Product visibility has been saved" flash message
     When I click "Change History"
     Then should see following "Audit History Grid" grid:
-      | Old Values                 | New values                                                                                    |
+      | Old Values                 | New values                                                                                                    |
       | Product Visibility to All: | Product Visibility to All:  Product Visibility to All "hidden" added: Product: Product "1" Visibility: hidden |
     And I close ui dialog
 
@@ -91,7 +94,7 @@ Feature: Product Visibility Attachment Audit Log Appending
     Then I should see "Product visibility has been saved" flash message
     When I click "Change History"
     Then should see following "Audit History Grid" grid:
-      | Old Values                                                                                       | New values                                                                                               |
+      | Old Values                                                                                                       | New values                                                                                                               |
       | Visibility to Customer Products: Visibility to Customer Products "current_product" changed: Visibility: category | Visibility to Customer Products:  Visibility to Customer Products "current_product" changed: Visibility: current_product |
     And I close ui dialog
 
@@ -104,6 +107,6 @@ Feature: Product Visibility Attachment Audit Log Appending
     Then I should see "Product visibility has been saved" flash message
     When I click "Change History"
     Then should see following "Audit History Grid" grid:
-      | Old Values                                                                                          | New values                                                                                         |
+      | Old Values                                                                                                          | New values                                                                                                         |
       | Visibility to Customer Group Products: Visibility to Customer Group Products "hidden" changed: Visibility: category | Visibility to Customer Group Products:  Visibility to Customer Group Products "hidden" changed: Visibility: hidden |
     And I close ui dialog

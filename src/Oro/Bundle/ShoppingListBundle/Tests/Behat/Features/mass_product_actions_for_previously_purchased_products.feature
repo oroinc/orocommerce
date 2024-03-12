@@ -26,14 +26,12 @@ Feature: Mass Product Actions for Previously purchased products
     Given I operate as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on homepage
-    When I follow "Account"
+    And I click "Account Dropdown"
     And I click "Previously Purchased"
     Then page has "Previously Purchased" header
     And I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
-    When I click "Catalog Switcher Toggle"
-    And I click "No Image View"
+    And I click "Compact View"
     Then I should see mass action checkbox in row with PSKU1 content for "Product Frontend Grid"
-    When I click "Catalog Switcher Toggle"
     And I click "Gallery View"
     And I check PSKU1 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU1" in frontend product grid:
@@ -47,6 +45,7 @@ Feature: Mass Product Actions for Previously purchased products
     And type "New Shopping List" in "Shopping List Name"
     When click "Create and Add"
     Then should see 'Shopping list "New Shopping List" was created successfully' flash message
+    And click on "Flash Message Close Button"
     When I hover on "Shopping Cart"
     And I click "New Shopping List" on shopping list widget
     Then I should see following grid containing rows:

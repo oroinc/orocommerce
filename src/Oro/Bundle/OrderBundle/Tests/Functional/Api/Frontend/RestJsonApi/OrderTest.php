@@ -36,6 +36,172 @@ class OrderTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_order.yml', $response);
     }
 
+    public function testGetListFilteredByIdentifier(): void
+    {
+        $response = $this->cget(['entity' => 'orders'], ['filter[identifier]' => 'Order2']);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@order2->id)>',
+                        'attributes' => [
+                            'identifier' => 'order2',
+                            'poNumber'   => 'PO2'
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilteredByIdentifierNeq(): void
+    {
+        $response = $this->cget(['entity' => 'orders'], ['filter[identifier][neq]' => 'Order2']);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'orders', 'id' => '<toString(@order1->id)>'],
+                    ['type' => 'orders', 'id' => '<toString(@order3->id)>'],
+                    ['type' => 'orders', 'id' => '<toString(@order4->id)>'],
+                    ['type' => 'orders', 'id' => '<toString(@order5->id)>']
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilteredBySeveralIdentifiers(): void
+    {
+        $response = $this->cget(['entity' => 'orders'], ['filter[identifier]' => 'Order2,Order3']);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@order2->id)>',
+                        'attributes' => [
+                            'identifier' => 'order2',
+                            'poNumber'   => 'PO2'
+                        ]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@order3->id)>',
+                        'attributes' => [
+                            'identifier' => 'order3',
+                            'poNumber'   => 'PO3'
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilteredBySeveralIdentifiersNeq(): void
+    {
+        $response = $this->cget(['entity' => 'orders'], ['filter[identifier][neq]' => 'Order2,Order3']);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'orders', 'id' => '<toString(@order1->id)>'],
+                    ['type' => 'orders', 'id' => '<toString(@order4->id)>'],
+                    ['type' => 'orders', 'id' => '<toString(@order5->id)>']
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilteredByPoNumber(): void
+    {
+        $response = $this->cget(['entity' => 'orders'], ['filter[poNumber]' => 'po2']);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@order2->id)>',
+                        'attributes' => [
+                            'identifier' => 'order2',
+                            'poNumber'   => 'PO2'
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilteredByPoNumberNeq(): void
+    {
+        $response = $this->cget(['entity' => 'orders'], ['filter[poNumber][neq]' => 'po2']);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'orders', 'id' => '<toString(@order1->id)>'],
+                    ['type' => 'orders', 'id' => '<toString(@order3->id)>'],
+                    ['type' => 'orders', 'id' => '<toString(@order4->id)>'],
+                    ['type' => 'orders', 'id' => '<toString(@order5->id)>']
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilteredBySeveralPoNumbers(): void
+    {
+        $response = $this->cget(['entity' => 'orders'], ['filter[poNumber]' => 'po2,po3']);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@order2->id)>',
+                        'attributes' => [
+                            'identifier' => 'order2',
+                            'poNumber'   => 'PO2'
+                        ]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@order3->id)>',
+                        'attributes' => [
+                            'identifier' => 'order3',
+                            'poNumber'   => 'PO3'
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilteredBySeveralPoNumbersNeq(): void
+    {
+        $response = $this->cget(['entity' => 'orders'], ['filter[poNumber][neq]' => 'po2,po3']);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    ['type' => 'orders', 'id' => '<toString(@order1->id)>'],
+                    ['type' => 'orders', 'id' => '<toString(@order4->id)>'],
+                    ['type' => 'orders', 'id' => '<toString(@order5->id)>']
+                ]
+            ],
+            $response
+        );
+    }
+
     public function testGet(): void
     {
         $response = $this->get(

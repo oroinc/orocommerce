@@ -15,26 +15,13 @@ class ProductPriceRepositoryGetMinimalTest extends WebTestCase
 {
     use ProductPriceReference;
 
-    /**
-     * @var ProductPriceRepository
-     */
-    protected $repository;
+    private ProductPriceRepository $repository;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp(): void
     {
         $this->initClient();
-
-        $this->loadFixtures(
-            [
-                LoadProductPricesForMinimalStrategy::class,
-            ]
-        );
-
-        $this->repository = $this->getContainer()->get('doctrine')
-            ->getRepository(ProductPrice::class);
+        $this->loadFixtures([LoadProductPricesForMinimalStrategy::class]);
+        $this->repository = self::getContainer()->get('doctrine')->getRepository(ProductPrice::class);
     }
 
     /**
@@ -57,24 +44,16 @@ class ProductPriceRepositoryGetMinimalTest extends WebTestCase
         $this->assertEqualsCanonicalizing($expectedPrices, array_column($qb->getQuery()->getArrayResult(), 'id'));
     }
 
-    public function minimalPricesProvider(): \Generator
+    public function minimalPricesProvider(): array
     {
-        yield [
-            ['price_list_3'],
+        return [
             [
-                'min.product_price.p1_1l_USD_pl3',
-                'min.product_price.p1_10l_USD_pl3'
-            ]
-        ];
-
-        yield [
-            [
-                'price_list_1',
-                'price_list_3',
+                ['price_list_3'],
+                ['min.product_price.p1_1l_USD_pl3', 'min.product_price.p1_10l_USD_pl3']
             ],
             [
-                'min.product_price.p1_1l_USD_pl3',
-                'min.product_price.p1_10l_USD_pl1'
+                ['price_list_1', 'price_list_3'],
+                ['min.product_price.p1_1l_USD_pl3', 'min.product_price.p1_10l_USD_pl1']
             ]
         ];
     }

@@ -10,6 +10,16 @@
     ) }}
 {% endif %}
 
+{% if defaultLabel is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.labels.singular_label'|trans,
+        defaultLabel|default('N/A'|trans),
+        null,
+        null,
+        {tooltipHTML: UI.tooltip('oro.product.content_widget_type.product_segment.options.labels.tooltip')}
+    ) }}
+{% endif %}
+
 {% if maximum_items is defined %}
     {{ UI.renderProperty(
         'oro.product.content_widget_type.product_segment.options.maximum_items.label'|trans,
@@ -49,5 +59,47 @@
         null,
         null,
         {tooltipHTML: UI.tooltip('oro.product.content_widget_type.product_segment.options.show_add_button.tooltip')}
+    ) }}
+{% endif %}
+
+{% if autoplay is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.autoplay.label'|trans,
+        autoplay ? 'Yes'|trans : 'No'|trans
+    ) }}
+{% endif %}
+
+{% if autoplaySpeed is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.autoplay_speed.label'|trans,
+        autoplaySpeed
+    ) }}
+{% endif %}
+
+{% if arrows is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.arrows.label'|trans,
+        arrows ? 'Yes'|trans : 'No'|trans
+    ) }}
+{% endif %}
+
+{% if show_arrows_on_touchscreens is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.show_arrows_on_touchscreens.label'|trans,
+        show_arrows_on_touchscreens ? 'Yes'|trans : 'No'|trans
+    ) }}
+{% endif %}
+
+{% if dots is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.dots.label'|trans,
+        dots ? 'Yes'|trans : 'No'|trans
+    ) }}
+{% endif %}
+
+{% if infinite is defined %}
+    {{ UI.renderProperty(
+        'oro.product.content_widget_type.product_segment.options.infinite.label'|trans,
+        infinite ? 'Yes'|trans : 'No'|trans
     ) }}
 {% endif %}

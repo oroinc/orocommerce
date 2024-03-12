@@ -12,7 +12,7 @@ class PaymentTermTest extends \PHPUnit\Framework\TestCase
     public function testProperties()
     {
         $properties = [
-            ['id', '1'],
+            ['id', 1],
             ['label', 'net 10']
         ];
 

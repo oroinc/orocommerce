@@ -2,46 +2,31 @@
 
 namespace Oro\Bundle\PaymentBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="oro_payment_status",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="oro_payment_status_unique", columns={
- *              "entity_class",
- *              "entity_identifier"
- *          })
- *      }
- * )
- * @ORM\Entity
- */
+* Entity that represents Payment Status
+*
+*/
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_payment_status')]
+#[ORM\UniqueConstraint(name: 'oro_payment_status_unique', columns: ['entity_class', 'entity_identifier'])]
 class PaymentStatus
 {
-    /**
-     * @var int
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     * @ORM\Column(name="entity_class", type="string")
-     */
-    protected $entityClass;
+    #[ORM\Column(name: 'entity_class', type: Types::STRING)]
+    protected ?string $entityClass = null;
 
-    /**
-     * @var int
-     * @ORM\Column(name="entity_identifier", type="integer")
-     */
-    protected $entityIdentifier;
+    #[ORM\Column(name: 'entity_identifier', type: Types::INTEGER)]
+    protected ?int $entityIdentifier = null;
 
-    /**
-     * @var string
-     * @ORM\Column(name="payment_status", type="string")
-     */
-    protected $paymentStatus;
+    #[ORM\Column(name: 'payment_status', type: Types::STRING)]
+    protected ?string $paymentStatus = null;
 
     /**
      * @return int

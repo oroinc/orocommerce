@@ -5,11 +5,11 @@ namespace Oro\Bundle\OrderBundle\Controller\Frontend;
 use Exception;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutCompareHelper;
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,18 +20,17 @@ use Symfony\Component\Routing\Annotation\Route;
 class OrderController extends AbstractController
 {
     /**
-     * @Route("/", name="oro_order_frontend_index")
-     * @Layout(vars={"entity_class"})
-     * @Acl(
-     *      id="oro_order_frontend_view",
-     *      type="entity",
-     *      class="OroOrderBundle:Order",
-     *      permission="VIEW",
-     *      group_name="commerce"
-     * )
-     *
      * @return array
      */
+    #[Route(path: '/', name: 'oro_order_frontend_index')]
+    #[Layout(vars: ['entity_class'])]
+    #[Acl(
+        id: 'oro_order_frontend_view',
+        type: 'entity',
+        class: Order::class,
+        permission: 'VIEW',
+        groupName: 'commerce'
+    )]
     public function indexAction()
     {
         return [
@@ -40,19 +39,20 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/view/{id}", name="oro_order_frontend_view", requirements={"id"="\d+"})
-     * @AclAncestor("oro_order_frontend_view")
-     * @Layout()
      *
      * @param Order $order
      * @return array
      */
+    #[Route(path: '/view/{id}', name: 'oro_order_frontend_view', requirements: ['id' => '\d+'])]
+    #[Layout]
+    #[AclAncestor('oro_order_frontend_view')]
     public function viewAction(Order $order)
     {
         return [
             'data' => [
                 'order' => $order,
-                'totals' => (object)$this->get(TotalProcessorProvider::class)->getTotalWithSubtotalsAsArray($order),
+                'totals' => (object)$this->container->get(TotalProcessorProvider::class)
+                    ->getTotalWithSubtotalsAsArray($order),
             ],
         ];
     }
@@ -69,13 +69,13 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/checkout/{id}", name="oro_order_frontend_to_checkout", requirements={"id"="\d+"})
-     * @AclAncestor("oro_order_frontend_view")
      * @throws Exception
      */
+    #[Route(path: '/checkout/{id}', name: 'oro_order_frontend_to_checkout', requirements: ['id' => '\d+'])]
+    #[AclAncestor('oro_order_frontend_view')]
     public function checkoutAction(Checkout $checkout): RedirectResponse
     {
-        $this->get('oro_checkout.helper.check_compare')->compare($checkout);
+        $this->container->get('oro_checkout.helper.check_compare')->compare($checkout);
 
         return $this->redirectToRoute('oro_checkout_frontend_checkout', ['id' => $checkout->getId()]);
     }

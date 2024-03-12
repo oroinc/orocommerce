@@ -39,7 +39,7 @@ class ProductAutocompleteProviderTest extends WebTestCase
         ]);
 
         $user = $container->get('oro_customer_user.manager')->findUserByEmail(LoadCustomerUserData::AUTH_USER);
-        $token = new UsernamePasswordOrganizationToken($user, $user->getUsername(), 'main', $user->getOrganization());
+        $token = new UsernamePasswordOrganizationToken($user, 'main', $user->getOrganization());
 
         $container->get('security.token_storage')->setToken($token);
         $container->get('oro_frontend.request.frontend_helper')->emulateFrontendRequest();

@@ -202,8 +202,7 @@ class ProductKitTest extends RestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title' => 'access denied exception',
-                'detail' => 'The delete operation is forbidden. Reason: Product "PSKU1" cannot be deleted '
-                    . 'because it is used in the following product kits: PKSKU2, PKSKU1.',
+                'detail' => 'No access by "DELETE" permission to the entity.',
             ],
             $response,
             Response::HTTP_FORBIDDEN

@@ -22,19 +22,22 @@ class CategoryProvider
     private CategoryTreeProvider $categoryTreeProvider;
     private TokenAccessorInterface $tokenAccessor;
     private MasterCatalogRootProviderInterface $masterCatalogRootProvider;
+    private CategoryProviderBCAdapter $providerBCAdapter;
 
     public function __construct(
         RequestProductHandler $requestProductHandler,
         ManagerRegistry $registry,
         CategoryTreeProvider $categoryTreeProvider,
         TokenAccessorInterface $tokenAccessor,
-        MasterCatalogRootProviderInterface $masterCatalogRootProvider
+        MasterCatalogRootProviderInterface $masterCatalogRootProvider,
+        CategoryProviderBCAdapter $providerBCAdapter
     ) {
         $this->requestProductHandler = $requestProductHandler;
         $this->registry = $registry;
         $this->categoryTreeProvider = $categoryTreeProvider;
         $this->tokenAccessor = $tokenAccessor;
         $this->masterCatalogRootProvider = $masterCatalogRootProvider;
+        $this->providerBCAdapter = $providerBCAdapter;
     }
 
     public function getCurrentCategory(): ?Category
@@ -53,6 +56,50 @@ class CategoryProvider
     public function getCategoryPath(): array
     {
         return $this->categoryTreeProvider->getParentCategories($this->getCustomerUser(), $this->getCurrentCategory());
+    }
+
+    /**
+     * Component added back for theme layout BC from version 5.0
+     *
+     * @return Category
+     */
+    public function getRootCategory()
+    {
+        return $this->providerBCAdapter->getRootCategory();
+    }
+
+    /**
+     * Component added back for theme layout BC from version 5.0
+     *
+     * @param CustomerUser|null $user
+     *
+     * @return array
+     */
+    public function getCategoryTreeArray(CustomerUser $user = null)
+    {
+        return $this->providerBCAdapter->getCategoryTreeArray($user);
+    }
+
+    /**
+     * Component added back for theme layout BC from version 5.0
+     *
+     * @param CustomerUser|null $user
+     *
+     * @return Category[]
+     */
+    public function getCategoryTree(CustomerUser $user = null)
+    {
+        return $this->providerBCAdapter->getCategoryTree($user);
+    }
+
+    /**
+     * Component added back for theme layout BC from version 5.0
+     *
+     * @return array
+     */
+    public function getParentCategories()
+    {
+        return $this->providerBCAdapter->getParentCategories();
     }
 
     protected function loadCategory(int $categoryId = 0): ?Category

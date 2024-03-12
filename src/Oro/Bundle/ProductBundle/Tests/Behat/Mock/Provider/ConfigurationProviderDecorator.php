@@ -44,4 +44,15 @@ class ConfigurationProviderDecorator implements ConfigurationProviderInterface
     {
         return $this->configurationProvider->isApplicable($gridName);
     }
+
+    public function isValidConfiguration(string $gridName): bool
+    {
+        try {
+            $this->configurationProvider->getConfiguration($gridName);
+        } catch (\Throwable $e) {
+            return false;
+        }
+
+        return true;
+    }
 }

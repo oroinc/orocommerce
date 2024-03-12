@@ -9,6 +9,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -17,6 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Responsible for render a form with price attributes for product.
@@ -25,20 +28,15 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
 {
     const PRODUCT_PRICE_ATTRIBUTES_PRICES = 'productPriceAttributesPrices';
 
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    private ManagerRegistry $registry;
+    private AclHelper $aclHelper;
+    private RequestStack $requestStack;
 
-    /**
-     * @var AclHelper
-     */
-    private $aclHelper;
-
-    public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
+    public function __construct(ManagerRegistry $registry, AclHelper $aclHelper, RequestStack $requestStack)
     {
         $this->registry = $registry;
         $this->aclHelper = $aclHelper;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -73,6 +71,9 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
         $attributes = $this->getAvailablePriceListForProduct();
         $existingPrices = $this->getProductExistingPrices($product, $attributes);
 
+        // Product unit needs to be set from the form to the product to show price fields on the product create form
+        $this->ensureProductUnitPrecision($product);
+
         $formData = $this->transformPriceAttributes($product, $attributes, $existingPrices);
         $event->getForm()->get(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)->setData($formData);
     }
@@ -96,6 +97,10 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
                     continue;
                 }
 
+                // In case prices were created before the product was persisted,
+                // productSku in the price may be null and needs to be updated
+                $this->ensureProductSkuInPrice($price);
+
                 // persist new prices
                 if (null === $price->getId()) {
                     $this->registry->getManagerForClass(PriceAttributeProductPrice::class)->persist($price);
@@ -116,6 +121,48 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
             ->setProduct($product)
             ->setPrice(Price::create(null, $newInstanceData['currency']))
             ->setPriceList($newInstanceData['attribute']);
+    }
+
+    private function ensureProductUnitPrecision(Product $product): void
+    {
+        if (null !== $product->getId()) {
+            return;
+        }
+
+        $request = $this->requestStack->getCurrentRequest();
+        $requestProductData = $request->get('oro_product');
+
+        if ($requestProductData
+            && isset($requestProductData['primaryUnitPrecision']['unit'])
+        ) {
+            $unitCode = $requestProductData['primaryUnitPrecision']['unit'];
+
+            $formProductUnit = $this->registry->getRepository(ProductUnit::class)
+                ->find($unitCode);
+
+            if ($formProductUnit) {
+                $formProductUnitPrecision = new ProductUnitPrecision();
+                $formProductUnitPrecision->setUnit($formProductUnit)
+                    ->setProduct($product);
+
+                if (isset($requestProductData['primaryUnitPrecision']['precision'])) {
+                    $formProductUnitPrecision->setPrecision(
+                        $requestProductData['primaryUnitPrecision']['precision']
+                    );
+                }
+
+                $product->setPrimaryUnitPrecision($formProductUnitPrecision);
+            }
+        }
+    }
+
+    private function ensureProductSkuInPrice(PriceAttributeProductPrice $price): void
+    {
+        if (null === $price->getProductSku()
+            && $price->getProduct()?->getSku()
+        ) {
+            $price->setProduct($price->getProduct());
+        }
     }
 
     private function transformPriceAttributes(Product $product, array $attributes, array $existingPrices): array

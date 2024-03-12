@@ -83,7 +83,7 @@ Feature: Product attribute decimal
     And I should not see "SKU456" product
 
   Scenario: Check product grid filter and sorter
-    Given I click "NewCategory"
+    Given I click "NewCategory" in hamburger menu
     And I should see "SKU123" product
     And I should see "SKU456" product
     When I filter DecimalField as equals "0,42"
@@ -94,8 +94,7 @@ Feature: Product attribute decimal
   Scenario: Check product attribute is formatted according to localization on front store
     When I click "View Details" for "SKU123" product
     Then I should see "0,42"
-    When I click "Localization Switcher"
-    And I select "English" localization
+    And I select "English (United States)" localization
     Then I should see "0.42"
 
   Scenario: Delete product attribute

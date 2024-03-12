@@ -38,6 +38,9 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     product4_precision:
         unit: '@item'
         precision: 1
+    product5_precision:
+        unit: '@item'
+        precision: 1
     configurable_product1_precision:
         unit: '@item'
         precision: 0
@@ -103,6 +106,8 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'Product 3'
     product4_name:
         string: 'Product 4'
+    product5_name:
+        string: 'Product 5'
     configurable_product1_name:
         string: 'Configurable Product 1'
     configurable_product2_name:
@@ -146,6 +151,8 @@ Oro\Bundle\ProductBundle\Entity\ProductShortDescription:
         string: 'Product 3 Short Description'
     product4_short_description:
         string: 'Product 4 Short Description'
+    product5_short_description:
+        string: 'Product 5 Short Description'
     configurable_product1_short_description:
         string: 'Configurable Product 1 Short Description'
     configurable_product2_short_description:
@@ -183,6 +190,8 @@ Oro\Bundle\ProductBundle\Entity\ProductDescription:
         wysiwyg: 'Product 3 Description'
     product4_description:
         wysiwyg: 'Product 4 Description'
+    product5_description:
+        wysiwyg: 'Product 5 Description'
     configurable_product1_description:
         wysiwyg: 'Configurable Product 1 Description'
     configurable_product2_description:
@@ -443,6 +452,21 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - addName: ['@product4_name']
             - addShortDescription: ['@product4_short_description']
             - addDescription: ['@product4_description']
+        status: 'enabled'
+        inventoryStatus: '@discontinued'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+    product5:
+        sku: 'PSKU5'
+        primaryUnitPrecision: '@product5_precision'
+        unitPrecisions: [ '@product5_precision' ]
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: [ '@product5_name' ]
+            - addShortDescription: [ '@product5_short_description' ]
+            - addDescription: [ '@product5_description' ]
         status: 'enabled'
         inventoryStatus: '@discontinued'
         featured: false

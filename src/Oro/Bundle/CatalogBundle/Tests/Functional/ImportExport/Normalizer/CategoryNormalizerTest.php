@@ -9,6 +9,7 @@ use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
 class CategoryNormalizerTest extends WebTestCase
 {
@@ -74,7 +75,7 @@ class CategoryNormalizerTest extends WebTestCase
     public function testNormalizeParentCategoryTitleIsAbsentWhenRootCategory(): void
     {
         $organization = $this->getReference('organization');
-        $token = new UsernamePasswordOrganizationToken('user', 'password', 'key', $organization);
+        $token = new UsernamePasswordOrganizationToken($this->createMock(AbstractUser::class), 'key', $organization);
         $this->getContainer()->get('security.token_storage')->setToken($token);
 
         $rootCategory = $this->getRootCategory();

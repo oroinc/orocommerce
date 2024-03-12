@@ -75,11 +75,11 @@ class OnlySimpleProductsInProductKitItemProductsCollectionValidatorTest extends 
         $this->validator->validate($kitItem, $constraint);
 
         $this->buildViolation($constraint->message)
-            ->atPath('property.path.kitItemProducts.0')
+            ->atPath('property.path.kitItemProducts[0]')
             ->buildNextViolation($constraint->message)
-            ->atPath('property.path.kitItemProducts.1')
+            ->atPath('property.path.kitItemProducts[1]')
             ->buildNextViolation($constraint->message)
-            ->atPath('property.path.kitItemProducts.2')
+            ->atPath('property.path.kitItemProducts[2]')
             ->assertRaised();
     }
 

@@ -95,7 +95,7 @@ Feature: Configurable products in order history
 
   Scenario: Check configurable is displayed with its variants in orders history grid
     Given I proceed as the Buyer
-    When I follow "Account"
+    And I click "Account Dropdown"
     And I click "Order History"
     And I click view "1" in "PastOrdersGrid"
     Then I should see following records in "OrderLineItemsGrid":

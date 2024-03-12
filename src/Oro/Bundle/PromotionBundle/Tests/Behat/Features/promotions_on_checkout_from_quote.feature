@@ -34,7 +34,7 @@ Feature: Promotions on checkout from quote
     And click "Send"
     And I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     And click view "PO42" in grid
     And click "Accept and Submit to Order"

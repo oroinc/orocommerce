@@ -15,6 +15,8 @@ class UnitsWithPrecisionPropertyTest extends TestCase
 {
     private const TEMPLATE = 'sample_template.html.twig';
 
+    private UnitsWithPrecisionProperty $property;
+
     private Environment|MockObject $twig;
 
     protected function setUp(): void

@@ -86,9 +86,8 @@ class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
         return [
             'access granted for visitor' => [
                 'token' => new AnonymousCustomerUserToken(
-                    '',
+                    $this->getCustomerVisitor(42),
                     [],
-                    $this->getCustomerVisitor(42)
                 ),
                 'quoteDemand' => $this->getQuoteDemand(
                     $this->getCustomerVisitor(42),
@@ -109,7 +108,7 @@ class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
                 'expected' => VoterInterface::ACCESS_GRANTED
             ],
             'token without visitor' => [
-                'token' => new AnonymousCustomerUserToken('', []),
+                'token' => new AnonymousCustomerUserToken(new CustomerVisitor(), []),
                 'quoteDemand' => $this->getQuoteDemand(
                     $this->getCustomerVisitor(42),
                     null,
@@ -119,9 +118,8 @@ class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
             ],
             'quote without visitor' => [
                 'token' => new AnonymousCustomerUserToken(
-                    '',
+                    $this->getCustomerVisitor(42),
                     [],
-                    $this->getCustomerVisitor(42)
                 ),
                 'quoteDemand' => $this->getQuoteDemand(
                     null,
@@ -132,9 +130,8 @@ class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
             ],
             'different visitor ids' => [
                 'token' => new AnonymousCustomerUserToken(
-                    '',
+                    $this->getCustomerVisitor(1001),
                     [],
-                    $this->getCustomerVisitor(1001)
                 ),
                 'quoteDemand' => $this->getQuoteDemand(
                     $this->getCustomerVisitor(2002),

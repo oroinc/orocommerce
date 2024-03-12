@@ -51,6 +51,9 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     productUnitPrecision{1..20}:
         unit: '@each'
         precision: '1'
+    productUnitPrecisionItem{19..20}:
+        unit: '@item'
+        precision: '1'
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     productAttributeFamily:
@@ -346,10 +349,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@productAttributeFamilyCustom'
         taxCode: '@productTaxCode1'
         primaryUnitPrecision: '@productUnitPrecision19'
-        unitPrecisions: [ '@productUnitPrecision19' ]
+        unitPrecisions: [ '@productUnitPrecision19', '@productUnitPrecisionItem19' ]
         __calls:
             - addName: ['@localProductName19']
-            - addDescription: ['@localProductDescription19']œ
+            - addDescription: ['@localProductDescription19']
 
     product20:
         type: 'simple'
@@ -360,7 +363,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         attributeFamily: '@defaultProductFamily'
         taxCode: '@productTaxCode1'
         primaryUnitPrecision: '@productUnitPrecision20'
-        unitPrecisions: [ '@productUnitPrecision20' ]
+        unitPrecisions: [ '@productUnitPrecision20', '@productUnitPrecisionItem20' ]
         __calls:
             - addName: ['@localProductName20']
             - addDescription: ['@localProductDescription20']
@@ -405,6 +408,20 @@ Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
         quantity: 1
         unit: '@each'
         value: <current(10)>
+    priceAttributeProductPriceItem19:
+        product: '@product19'
+        priceList: '@priceAttributePriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 190
+    priceAttributeProductPriceItem20:
+        product: '@product20'
+        priceList: '@priceAttributePriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 200
 
 Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
     priceRelation{1..20}:

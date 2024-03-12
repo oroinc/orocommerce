@@ -6,33 +6,29 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\LoadUserData;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Creates the customer user entity.
  */
 class LoadCustomerUserData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    const AUTH_USER = 'customer_user@example.com';
-    const AUTH_PW = 'customer_user';
+    use ContainerAwareTrait;
 
-    /** @var ContainerInterface */
-    protected $container;
+    public const AUTH_USER = 'customer_user@example.com';
+    public const AUTH_PW = 'customer_user';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /** {@inheritdoc} */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadUserData::class,
@@ -41,39 +37,27 @@ class LoadCustomerUserData extends AbstractFixture implements ContainerAwareInte
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         /** @var BaseUserManager $userManager */
         $userManager = $this->container->get('oro_customer_user.manager');
 
-        $organization = $manager
-            ->getRepository('OroOrganizationBundle:Organization')
-            ->getFirst();
-
-        $user = $manager
-            ->getRepository('OroUserBundle:User')
-            ->findOneBy([]);
+        $role = $manager->getRepository(CustomerUserRole::class)
+            ->findOneBy(['role' => 'ROLE_FRONTEND_ADMINISTRATOR']);
 
         /** @var CustomerUser $entity */
         $entity = $userManager->createUser();
-
-        $role = $this->container
-            ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:CustomerUserRole')
-            ->getRepository('OroCustomerBundle:CustomerUserRole')
-            ->findOneBy(['role' => 'ROLE_FRONTEND_ADMINISTRATOR']);
-
         $entity
             ->setFirstName('CustomerUser')
             ->setLastName('CustomerUser')
             ->setEmail(self::AUTH_USER)
-            ->setOwner($user)
+            ->setOwner($manager->getRepository(User::class)->findOneBy([]))
             ->setEnabled(true)
             ->setSalt('')
             ->setPlainPassword(self::AUTH_PW)
-            ->setOrganization($organization)
+            ->setOrganization($manager->getRepository(Organization::class)->getFirst())
             ->addUserRole($role);
 
         $userManager->updateUser($entity);

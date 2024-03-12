@@ -10,6 +10,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type that represents a {@see QuoteDemand}.
+ */
 class QuoteDemandType extends AbstractType
 {
     const NAME = 'oro_sale_quote_demand';
@@ -73,6 +76,7 @@ class QuoteDemandType extends AbstractType
 
         if ($data instanceof QuoteDemand) {
             $this->quoteDemandManager->recalculateSubtotals($data);
+            $this->quoteDemandManager->updateQuoteProductDemandChecksum($data);
         }
     }
 }

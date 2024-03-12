@@ -4,7 +4,18 @@
 
 .embedded-products {
     display: flex;
-    margin: 0 $embedded-products-btn-arrow-width;
+
+    flex-wrap: wrap;
+    row-gap: $embedded-list-item-offset-inner * 2;
+
+    &.slider-enabled {
+        flex-wrap: initial;
+        row-gap: initial;
+    }
+
+    &.slick-dotted {
+        display: block;
+    }
 
     &__item {
         height: initial;
@@ -19,17 +30,13 @@
 
         // Styles that apply when tiles are disabled.
         &:not(.tiles-item) {
-            width: math.div(100%, $embedded-products-item-count-desktop);
+            width: math.div(100%, $embedded-products-item-count);
         }
 
         // We need to exclude the influence of styles when the tiles are on.
         &:not(.slick-slide):not(.tiles-item) {
-            min-width: math.div(100%, $embedded-products-item-count-desktop);
+            min-width: math.div(100%, $embedded-products-item-count);
         }
-    }
-
-    .slick-arrow {
-        top: $embedded-products-slider-arrow-top;
     }
 
     .slick-track {
@@ -41,25 +48,33 @@
     }
 }
 
-@include breakpoint('desktop') {
-    .embedded-products {
-        .slick-arrow {
-            top: $embedded-products-slider-arrow-top-desktop;
-        }
-    }
-}
-
-@include breakpoint('tablet-small') {
+@include breakpoint('tablet-big') {
     .embedded-products {
         &__item {
             // Styles that apply when tiles are disabled.
             &:not(.tiles-item) {
-                width: math.div(100%, $embedded-products-item-width-count-tablet-small);
+                width: math.div(100%, $embedded-products-item-count-tablet-big);
             }
 
             // We need to exclude the influence of styles when the tiles are on.
             &:not(.slick-slide):not(.tiles-item) {
-                min-width: math.div(100%, $embedded-products-item-width-count-tablet-small);
+                min-width: math.div(100%, $embedded-products-item-count-tablet-big);
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .embedded-products {
+        &__item {
+            // Styles that apply when tiles are disabled.
+            &:not(.tiles-item) {
+                width: math.div(100%, $embedded-products-item-count-tablet);
+            }
+
+            // We need to exclude the influence of styles when the tiles are on.
+            &:not(.slick-slide):not(.tiles-item) {
+                min-width: math.div(100%, $embedded-products-item-count-tablet);
             }
         }
     }
@@ -67,15 +82,27 @@
 
 @include breakpoint('mobile-big') {
     .embedded-products {
+        &.slider-enabled {
+            padding-right: $embedded-products-item-offset-mobile-big;
+        }
+
+        &.slick-initialized {
+            padding: 0;
+        }
+
+        .slick-list {
+            padding-right: $embedded-products-item-offset-mobile-big;
+        }
+
         &__item {
             // Styles that apply when tiles are disabled.
             &:not(.tiles-item) {
-                width: math.div(100%, $embedded-products-item-count-mobile-big);
+                width: math.div(100%, $embedded-products-item-width-count-mobile-big);
             }
 
             // We need to exclude the influence of styles when the tiles are on.
             &:not(.slick-slide):not(.tiles-item) {
-                min-width: math.div(100%, $embedded-products-item-count-mobile-big);
+                min-width: math.div(100%, $embedded-products-item-width-count-mobile-big);
             }
         }
     }
@@ -83,6 +110,18 @@
 
 @include breakpoint('mobile-landscape') {
     .embedded-products {
+        &.slider-enabled {
+            padding-right: $embedded-products-item-offset-mobile-landscape;
+        }
+
+        &.slick-initialized {
+            padding: 0;
+        }
+
+        .slick-list {
+            padding-right: $embedded-products-item-offset-mobile-landscape;
+        }
+
         &__item {
             // Styles that apply when tiles are disabled.
             &:not(.tiles-item) {
@@ -93,6 +132,22 @@
             &:not(.slick-slide):not(.tiles-item) {
                 min-width: math.div(100%, $embedded-products-item-count-mobile-landscape);
             }
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .embedded-products {
+        &.slider-enabled {
+            padding-right: $embedded-products-item-count-mobile;
+        }
+
+        &.slick-initialized {
+            padding: 0;
+        }
+
+        .slick-list {
+            padding-right: $embedded-products-item-count-mobile;
         }
     }
 }

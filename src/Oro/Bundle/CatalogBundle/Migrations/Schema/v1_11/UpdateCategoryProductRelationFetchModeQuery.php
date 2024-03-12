@@ -5,8 +5,8 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_11;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
-use Oro\Bundle\EntityConfigBundle\EntityConfig\ConfigurationHandler;
 use Oro\Bundle\EntityConfigBundle\Migration\ConfigurationHandlerAwareInterface;
+use Oro\Bundle\EntityConfigBundle\Migration\ConfigurationHandlerAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -17,7 +17,7 @@ use Psr\Log\LoggerInterface;
 class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQuery implements
     ConfigurationHandlerAwareInterface
 {
-    protected ConfigurationHandler $configurationHandler;
+    use ConfigurationHandlerAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -30,19 +30,11 @@ class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQ
     /**
      * {@inheritdoc}
      */
-    public function setConfigurationHandler(ConfigurationHandler $configurationHandler): void
-    {
-        $this->configurationHandler = $configurationHandler;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function execute(LoggerInterface $logger)
     {
         $rows = $this->createEntityConfigQb()
             ->execute()
-            ->fetchAll(\PDO::FETCH_ASSOC);
+            ->fetchAllAssociative();
 
         $row = reset($rows);
         if ($row) {

@@ -18,8 +18,7 @@ define(function(require) {
             dialogHeight: 'auto',
             resizable: false,
             autoResize: true,
-            dialogTitleIcon: 'fa-map-marker',
-            dialogTitleBadge: true
+            dialogTitleIcon: 'map-pin'
         },
 
         enterManuallyOriginLabel: null,
@@ -127,8 +126,7 @@ define(function(require) {
                         autoResize: this.options.autoResize
                     },
                     fullscreenDialogOptions: {
-                        dialogTitleIcon: this.options.dialogTitleIcon,
-                        dialogTitleBadge: this.options.dialogTitleBadge
+                        dialogTitleIcon: this.options.dialogTitleIcon
                     }
                 }
             });

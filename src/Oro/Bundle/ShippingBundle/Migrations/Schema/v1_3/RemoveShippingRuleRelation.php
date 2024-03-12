@@ -13,7 +13,7 @@ class RemoveShippingRuleRelation implements Migration, OrderedMigrationInterface
     use MigrationConstraintTrait;
 
     /**
-     * @return int
+     * {@inheritDoc}
      */
     public function getOrder()
     {
@@ -21,7 +21,7 @@ class RemoveShippingRuleRelation implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

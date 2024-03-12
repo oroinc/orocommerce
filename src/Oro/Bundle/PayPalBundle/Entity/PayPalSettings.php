@@ -4,20 +4,22 @@ namespace Oro\Bundle\PayPalBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\PayPalBundle\Entity\Repository\PayPalSettingsRepository;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * PayPalSettings entity
- * @ORM\Entity(repositoryClass="Oro\Bundle\PayPalBundle\Entity\Repository\PayPalSettingsRepository")
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
+#[ORM\Entity(repositoryClass: PayPalSettingsRepository::class)]
 class PayPalSettings extends Transport
 {
     const CREDIT_CARD_LABELS_KEY = 'credit_card_labels';
@@ -52,204 +54,113 @@ class PayPalSettings extends Transport
      */
     protected $settings;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="pp_credit_card_action", type="string", length=255, nullable=false)
-     */
-    protected $creditCardPaymentAction;
+    #[ORM\Column(name: 'pp_credit_card_action', type: Types::STRING, length: 255, nullable: false)]
+    protected ?string $creditCardPaymentAction = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="pp_express_checkout_action", type="string", length=255, nullable=false)
-     */
-    protected $expressCheckoutPaymentAction;
+    #[ORM\Column(name: 'pp_express_checkout_action', type: Types::STRING, length: 255, nullable: false)]
+    protected ?string $expressCheckoutPaymentAction = null;
 
     /**
      * @var array
-     *
-     * @ORM\Column(name="pp_allowed_card_types", type="array", length=255, nullable=false)
      **/
+    #[ORM\Column(name: 'pp_allowed_card_types', type: Types::ARRAY, length: 255, nullable: false)]
     protected $allowedCreditCardTypes = [];
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_paypal_credit_card_lbl",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $creditCardLabels;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_paypal_credit_card_lbl')]
+    #[ORM\JoinColumn(name: 'transport_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    protected ?Collection $creditCardLabels = null;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_paypal_credit_card_sh_lbl",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $creditCardShortLabels;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_paypal_credit_card_sh_lbl')]
+    #[ORM\JoinColumn(name: 'transport_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    protected ?Collection $creditCardShortLabels = null;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_paypal_xprss_chkt_lbl",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $expressCheckoutLabels;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_paypal_xprss_chkt_lbl')]
+    #[ORM\JoinColumn(name: 'transport_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    protected ?Collection $expressCheckoutLabels = null;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_paypal_xprss_chkt_shrt_lbl",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $expressCheckoutShortLabels;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_paypal_xprss_chkt_shrt_lbl')]
+    #[ORM\JoinColumn(name: 'transport_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    protected ?Collection $expressCheckoutShortLabels = null;
+
+    #[ORM\Column(name: 'pp_express_checkout_name', type: Types::STRING, length: 255, nullable: false)]
+    protected ?string $expressCheckoutName = null;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="pp_express_checkout_name", type="string", length=255, nullable=false)
      */
-    protected $expressCheckoutName;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="pp_partner", type="crypted_string", length=255, nullable=false)
-     */
+    #[ORM\Column(name: 'pp_partner', type: 'crypted_string', length: 255, nullable: false)]
     protected $partner;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="pp_vendor", type="crypted_string", length=255, nullable=false)
      */
+    #[ORM\Column(name: 'pp_vendor', type: 'crypted_string', length: 255, nullable: false)]
     protected $vendor;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="pp_user", type="crypted_string", length=255, nullable=false)
      */
+    #[ORM\Column(name: 'pp_user', type: 'crypted_string', length: 255, nullable: false)]
     protected $user;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="pp_password", type="crypted_string", length=255, nullable=false)
      */
+    #[ORM\Column(name: 'pp_password', type: 'crypted_string', length: 255, nullable: false)]
     protected $password;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="pp_test_mode", type="boolean", options={"default"=false})
-     */
-    protected $testMode = false;
+    #[ORM\Column(name: 'pp_test_mode', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $testMode = false;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="pp_debug_mode", type="boolean", options={"default"=false})
-     */
-    protected $debugMode = false;
+    #[ORM\Column(name: 'pp_debug_mode', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $debugMode = false;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="pp_require_cvv_entry", type="boolean", options={"default"=true})
-     */
-    protected $requireCVVEntry = true;
+    #[ORM\Column(name: 'pp_require_cvv_entry', type: Types::BOOLEAN, options: ['default' => true])]
+    protected ?bool $requireCVVEntry = true;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="pp_zero_amount_authorization", type="boolean", options={"default"=false})
-     */
-    protected $zeroAmountAuthorization = false;
+    #[ORM\Column(name: 'pp_zero_amount_authorization', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $zeroAmountAuthorization = false;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="pp_auth_for_req_amount", type="boolean", options={"default"=false})
-     */
-    protected $authorizationForRequiredAmount = false;
+    #[ORM\Column(name: 'pp_auth_for_req_amount', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $authorizationForRequiredAmount = false;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="pp_use_proxy", type="boolean", options={"default"=false})
-     */
-    protected $useProxy = false;
+    #[ORM\Column(name: 'pp_use_proxy', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $useProxy = false;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="pp_proxy_host", type="crypted_string", length=255, nullable=false)
      */
+    #[ORM\Column(name: 'pp_proxy_host', type: 'crypted_string', length: 255, nullable: false)]
     protected $proxyHost;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="pp_proxy_port", type="crypted_string", length=255, nullable=false)
      */
+    #[ORM\Column(name: 'pp_proxy_port', type: 'crypted_string', length: 255, nullable: false)]
     protected $proxyPort;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="pp_enable_ssl_verification", type="boolean", options={"default"=true})
-     */
-    protected $enableSSLVerification = true;
+    #[ORM\Column(name: 'pp_enable_ssl_verification', type: Types::BOOLEAN, options: ['default' => true])]
+    protected ?bool $enableSSLVerification = true;
 
     /**
      * @return ParameterBag

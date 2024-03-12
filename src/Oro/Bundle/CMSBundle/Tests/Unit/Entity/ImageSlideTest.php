@@ -21,10 +21,11 @@ class ImageSlideTest extends \PHPUnit\Framework\TestCase
                 ['slideOrder', 1001],
                 ['url', 'test/url/path'],
                 ['displayInSameWindow', true, false],
-                ['title', 'test title'],
+                ['altImageText', 'test title'],
                 ['text', 'test text'],
                 ['textAlignment', 'center'],
                 ['organization', new Organization()],
+                ['header', 'test header'],
             ]
         );
     }

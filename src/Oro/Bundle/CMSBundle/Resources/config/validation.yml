@@ -51,8 +51,12 @@ Oro\Bundle\CMSBundle\Entity\ContentWidget:
                   max: 255
         organization:
             - NotBlank: ~
+        labels:
+            - Valid: ~
 
 Oro\Bundle\CMSBundle\Entity\ImageSlide:
+    constraints:
+        - Oro\Bundle\CMSBundle\Validator\Constraints\HasAtLeastOneSizeImage: ~
     properties:
         contentWidget:
             - NotBlank: ~
@@ -64,17 +68,15 @@ Oro\Bundle\CMSBundle\Entity\ImageSlide:
             - Length:
                 min: 1
                 max: 255
-                allowEmptyString: false
             - Oro\Bundle\SecurityBundle\Validator\Constraints\NotDangerousProtocol:
                 message: oro.cms.image_slider.url.not_dangerous_protocol.message
         displayInSameWindow:
             - Type: boolean
-        title:
+        altImageText:
             - NotBlank: ~
             - Length:
                 min: 1
                 max: 255
-                allowEmptyString: false
         textAlignment:
             - NotBlank: ~
             - Choice:
@@ -88,10 +90,12 @@ Oro\Bundle\CMSBundle\Entity\ImageSlide:
                     - bottom_left
                     - bottom_center
                     - bottom_right
-        mainImage:
-            - NotBlank: ~
         organization:
             - NotBlank: ~
+        header:
+            - Length:
+                  min: 1
+                  max: 255
 
 Oro\Bundle\CMSBundle\Entity\TextContentVariant:
     properties:
@@ -113,7 +117,6 @@ Oro\Bundle\CMSBundle\Entity\TabbedContentItem:
             - Length:
                 min: 1
                 max: 255
-                allowEmptyString: false
         content:
             - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
             - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~
@@ -135,7 +138,6 @@ Oro\Bundle\CMSBundle\Entity\ContentTemplate:
             - Length:
                 min: 1
                 max: 255
-                allowEmptyString: false
         content:
             - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
             - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYG: ~

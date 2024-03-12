@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -9,32 +11,37 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
+use Oro\Bundle\SecurityBundle\Acl\Extension\ObjectIdentityHelper;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainOwnershipMetadataProvider;
 use Oro\Bundle\SecurityBundle\Tests\Functional\DataFixtures\SetRolePermissionsTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class LoadUserData extends AbstractFixture
+class LoadUserData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
+    use ContainerAwareTrait;
     use SetRolePermissionsTrait;
 
-    const USER1 = 'shop-user1';
-    const USER2 = 'shop-user2';
+    public const USER1 = 'shop-user1';
+    public const USER2 = 'shop-user2';
 
-    const ROLE1 = 'shop-role1';
-    const ROLE2 = 'shop-role2';
+    public const ROLE1 = 'shop-role1';
+    public const ROLE2 = 'shop-role2';
 
-    const ACCOUNT1 = 'shop-customer1';
-    const ACCOUNT2 = 'shop-customer2';
+    public const ACCOUNT1 = 'shop-customer1';
+    public const ACCOUNT2 = 'shop-customer2';
 
-    const ACCOUNT1_USER1    = 'shop-customer1-user1@example.com';
-    const ACCOUNT1_USER2    = 'shop-customer1-user2@example.com';
-    const ACCOUNT2_USER1    = 'shop-customer2-user1@example.com';
+    public const ACCOUNT1_USER1 = 'shop-customer1-user1@example.com';
+    public const ACCOUNT1_USER2 = 'shop-customer1-user2@example.com';
+    public const ACCOUNT2_USER1 = 'shop-customer2-user1@example.com';
 
-    /** @var array */
-    private $roles = [
+    private array $roles = [
         self::ROLE1 => [
             [
                 'class' => ShoppingList::class,
@@ -57,8 +64,7 @@ class LoadUserData extends AbstractFixture
         ],
     ];
 
-    /** @var array */
-    private $customers = [
+    private array $customers = [
         [
             'name' => self::ACCOUNT1,
         ],
@@ -67,14 +73,13 @@ class LoadUserData extends AbstractFixture
         ],
     ];
 
-    /** @var array */
-    private $customerUsers = [
+    private array $customerUsers = [
         [
             'email'     => self::ACCOUNT1_USER2,
             'firstname' => 'User2FN',
             'lastname'  => 'User2LN',
             'password'  => self::ACCOUNT1_USER2,
-            'customer'   => self::ACCOUNT1,
+            'customer'  => self::ACCOUNT1,
             'role'      => self::ROLE2,
         ],
         [
@@ -82,7 +87,7 @@ class LoadUserData extends AbstractFixture
             'firstname' => 'User1FN',
             'lastname'  => 'User1LN',
             'password'  => self::ACCOUNT1_USER1,
-            'customer'   => self::ACCOUNT1,
+            'customer'  => self::ACCOUNT1,
             'role'      => self::ROLE1,
         ],
         [
@@ -90,13 +95,12 @@ class LoadUserData extends AbstractFixture
             'firstname' => 'User1FN',
             'lastname'  => 'User1LN',
             'password'  => self::ACCOUNT2_USER1,
-            'customer'   => self::ACCOUNT2,
+            'customer'  => self::ACCOUNT2,
             'role'      => self::ROLE1,
         ],
     ];
 
-    /** @var array */
-    private $users = [
+    private array $users = [
         [
             'email'     => 'shop-user1@example.com',
             'username'  => self::USER1,
@@ -114,9 +118,17 @@ class LoadUserData extends AbstractFixture
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function getDependencies(): array
+    {
+        return [LoadUser::class];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager): void
     {
         $this->loadUsers($manager);
         $this->loadRoles($manager);
@@ -124,7 +136,7 @@ class LoadUserData extends AbstractFixture
         $this->loadCustomerUsers($manager);
     }
 
-    private function loadRoles(ObjectManager $manager)
+    private function loadRoles(ObjectManager $manager): void
     {
         /* @var AclManager $aclManager */
         $aclManager = $this->container->get('oro_security.acl.manager');
@@ -147,47 +159,38 @@ class LoadUserData extends AbstractFixture
         $aclManager->flush();
     }
 
-    private function loadCustomerUsers(ObjectManager $manager)
+    private function loadCustomerUsers(ObjectManager $manager): void
     {
         /* @var CustomerUserManager $userManager */
         $userManager = $this->container->get('oro_customer_user.manager');
-
-        $defaultUser = $this->getUser($manager);
-        $organization = $defaultUser->getOrganization();
-
+        /** @var User $defaultUser */
+        $defaultUser = $this->getReference(LoadUser::USER);
         foreach ($this->customerUsers as $item) {
             /* @var CustomerUser $customerUser */
             $customerUser = $userManager->createUser();
-
             $customerUser
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
                 ->setCustomer($this->getReference($item['customer']))
                 ->setEmail($item['email'])
                 ->setConfirmed(true)
-                ->setOrganization($organization)
+                ->setOrganization($defaultUser->getOrganization())
                 ->addUserRole($this->getReference($item['role']))
                 ->setSalt('')
                 ->setPlainPassword($item['password'])
                 ->setEnabled(true);
-
             $userManager->updateUser($customerUser);
-
             $this->setReference($item['email'], $customerUser);
         }
     }
 
-    private function loadUsers(ObjectManager $manager)
+    private function loadUsers(ObjectManager $manager): void
     {
         /* @var UserManager $userManager */
         $userManager = $this->container->get('oro_user.manager');
-
-        $defaultUser = $this->getUser($manager);
-
-        $businessUnit = $defaultUser->getOwner();
-        $organization = $defaultUser->getOrganization();
+        /** @var User $defaultUser */
+        $defaultUser = $this->getReference(LoadUser::USER);
         $roles = $defaultUser->getUserRoles();
-
         foreach ($this->users as $item) {
             /* @var User $user */
             $user = $userManager->createUser();
@@ -196,58 +199,43 @@ class LoadUserData extends AbstractFixture
                 ->setLastName($item['lastname'])
                 ->setEmail($item['email'])
                 ->setBusinessUnits($defaultUser->getBusinessUnits())
-                ->setOwner($businessUnit)
-                ->setOrganization($organization)
+                ->setOwner($defaultUser->getOwner())
+                ->setOrganization($defaultUser->getOrganization())
                 ->addUserRole($roles[0])
                 ->setUsername($item['username'])
                 ->setPlainPassword($item['password'])
                 ->setEnabled(true);
             $userManager->updateUser($user);
-
-            $this->setReference($user->getUsername(), $user);
+            $this->setReference($user->getUserIdentifier(), $user);
         }
     }
 
-    private function loadCustomers(ObjectManager $manager)
+    private function loadCustomers(ObjectManager $manager): void
     {
-        $defaultUser = $this->getUser($manager);
-        $organization = $defaultUser->getOrganization();
-
+        /** @var User $defaultUser */
+        $defaultUser = $this->getReference(LoadUser::USER);
         foreach ($this->customers as $item) {
             $customer = new Customer();
-            $customer
-                ->setName($item['name'])
-                ->setOrganization($organization);
+            $customer->setName($item['name']);
+            $customer->setOrganization($defaultUser->getOrganization());
             $manager->persist($customer);
-
             $this->addReference($item['name'], $customer);
         }
-
         $manager->flush();
     }
 
-    /**
-     * @param AclManager $aclManager
-     * @param CustomerUserRole $role
-     * @param string $className
-     * @param string[] $permissions
-     */
     private function setRolePermissions(
         AclManager $aclManager,
         CustomerUserRole $role,
-        $className,
+        string $className,
         array $permissions
-    ) {
+    ): void {
         /* @var ChainOwnershipMetadataProvider $chainMetadataProvider */
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
         $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
-
-        $this->setPermissions(
-            $aclManager,
-            $role,
-            ['entity:' . $className => $permissions]
-        );
-
+        $this->setPermissions($aclManager, $role, [
+            ObjectIdentityHelper::encodeIdentityString(EntityAclExtension::NAME, $className) => $permissions
+        ]);
         $chainMetadataProvider->stopProviderEmulation();
     }
 }

@@ -1,21 +1,20 @@
 {% import '@OroUI/macros.html.twig' as UI %}
 
-<div id ="priceLists">
-    <div class="row-fluid form-horizontal">
-        <div class="responsive-block">
-            {% if priceLists is defined %}
-                {% set entities = priceLists %}
-                {% include '@OroPricing/PriceList/partial/list.html.twig'
-                    with {
-                        'fallback': fallback,
-                        'entities': entities
-                    }
-                %}
-            {% else %}
-                <div class="no-data">
-                    {{ "oro.pricing.no_price_lists"|trans }}
-                </div>
-            {% endif %}
+<div class="price-lists">
+    {% if priceLists is defined %}
+        {% set entities = priceLists %}
+        {% include '@OroPricing/PriceList/partial/list.html.twig'
+            with {
+                'fallback': fallback,
+                'fallbackEntityTitle': fallbackEntityTitle|default(null),
+                'entities': entities,
+                'headLink': headLink|default(null),
+                'scope': {entity: entity|default(null)}
+            }
+        %}
+    {% else %}
+        <div class="no-data">
+            {{ "oro.pricing.no_price_lists"|trans }}
         </div>
-    </div>
+    {% endif %}
 </div>

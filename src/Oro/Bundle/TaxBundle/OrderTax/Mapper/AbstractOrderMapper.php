@@ -14,22 +14,13 @@ use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
  */
 abstract class AbstractOrderMapper implements TaxMapperInterface
 {
-    /** @var ContextEventDispatcher */
-    protected $contextEventDispatcher;
-
-    /** @var TaxationAddressProvider */
-    protected $addressProvider;
-
     public function __construct(
-        ContextEventDispatcher $contextEventDispatcher,
-        TaxationAddressProvider $addressProvider
+        protected ContextEventDispatcher $contextEventDispatcher,
+        protected TaxationAddressProvider $addressProvider
     ) {
-        $this->contextEventDispatcher = $contextEventDispatcher;
-        $this->addressProvider = $addressProvider;
     }
 
     /**
-     * @param Order $order
      * @return AbstractAddress Billing, shipping or origin address according to exclusions
      */
     public function getTaxationAddress(Order $order)
@@ -38,7 +29,6 @@ abstract class AbstractOrderMapper implements TaxMapperInterface
     }
 
     /**
-     * @param Order $order
      * @return AbstractAddress Billing or shipping address
      */
     public function getDestinationAddress(Order $order)

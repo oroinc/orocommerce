@@ -17,8 +17,8 @@ Feature: ACL Drafts
     And I go to Marketing/ Landing Pages
     And I click "Create Landing Page"
     And I fill "CMS Page Form" with:
-      | Titles | Page |
-    Then I should see URL Slug field filled with "page"
+      | Titles | Page Draft |
+    Then I should see URL Slug field filled with "page-draft"
     When I save and close form
     Then I should see "Page has been saved" flash message
 
@@ -31,7 +31,7 @@ Feature: ACL Drafts
       | cancelButton | Cancel                                                                                                                                                 |
     When I click "Yes" in confirmation dialogue
     Then I should see "Draft has been saved" flash message
-    And I should see URL Slug field filled with "page"
+    And I should see URL Slug field filled with "page-draft"
     When I fill "CMS Page Form" with:
       | Titles | John Doe Draft |
     And I save and close form
@@ -41,11 +41,11 @@ Feature: ACL Drafts
     Given I proceed as the Buyer
     And I login as "misty" user
     And I go to Marketing/ Landing Pages
-    And I click view "Page" in grid
+    And I click view "Page Draft" in grid
     When I click "Create draft"
     And I click "Yes" in confirmation dialogue
     Then I should see "Draft has been saved" flash message
-    And I should see URL Slug field filled with "page"
+    And I should see URL Slug field filled with "page-draft"
     When I fill "CMS Page Form" with:
       | Titles | Misty Draft |
     And I save and close form
@@ -54,7 +54,7 @@ Feature: ACL Drafts
   Scenario: Check draft grid actions from John Doe
     Given I proceed as the Admin
     And I go to Marketing/ Landing Pages
-    When I click view "Page" in grid
+    When I click view "Page Draft" in grid
     Then I should see following grid:
       | Title          | Slug           | Owner       |
       | John Doe Draft | john-doe-draft | John Doe    |
@@ -75,7 +75,7 @@ Feature: ACL Drafts
   Scenario: Check draft grid actions from Misty
     Given I proceed as the Buyer
     And I go to Marketing/ Landing Pages
-    When I click view "Page" in grid
+    When I click view "Page Draft" in grid
     Then I should see following grid:
       | Title          | Slug           | Owner       |
       | John Doe Draft | john-doe-draft | John Doe    |
@@ -105,7 +105,7 @@ Feature: ACL Drafts
   Scenario: Check John Doe permission
     Given I proceed as the Admin
     And I go to Marketing/ Landing Pages
-    When I click view "Page" in grid
+    When I click view "Page Draft" in grid
     Then I should not see "Create draft"
     And I should see following grid:
       | Title          | Slug           | Owner    |
@@ -122,7 +122,7 @@ Feature: ACL Drafts
   Scenario: Check Misty permission
     Given I proceed as the Buyer
     And I go to Marketing/ Landing Pages
-    When I click view "Page" in grid
+    When I click view "Page Draft" in grid
     Then I should not see "Create draft"
     And I should see following grid:
       | Title       | Slug        | Owner       |
@@ -148,7 +148,7 @@ Feature: ACL Drafts
   Scenario: Check John Doe view permission
     Given I proceed as the Admin
     And I go to Marketing/ Landing Pages
-    When I click view "Page" in grid
+    When I click view "Page Draft" in grid
     Then I should not see "Create draft"
     And I should see following grid:
       | Title          | Slug           | Owner       |
@@ -163,7 +163,7 @@ Feature: ACL Drafts
   Scenario: Check Misty view permission
     Given I proceed as the Buyer
     And I go to Marketing/ Landing Pages
-    When I click view "Page" in grid
+    When I click view "Page Draft" in grid
     Then I should not see "Create draft"
     And I should see following grid:
       | Title          | Slug           | Owner       |
@@ -187,7 +187,7 @@ Feature: ACL Drafts
   Scenario: Check duplicate permission
     Given I proceed as the Buyer
     And I go to Marketing/ Landing Pages
-    When I click view "Page" in grid
+    When I click view "Page Draft" in grid
     Then I should see following actions for Misty Draft in grid:
       | View      |
       | Edit      |
@@ -213,7 +213,7 @@ Feature: ACL Drafts
   Scenario: Check John Doe Delete All Drafts permission
     Given I proceed as the Admin
     And I go to Marketing/ Landing Pages
-    When I click view "Page" in grid
+    When I click view "Page Draft" in grid
     Then I should see following grid:
       | Title                    | Slug                   | Owner       |
       | John Doe Draft           | john-doe-draft         | John Doe    |
@@ -249,7 +249,7 @@ Feature: ACL Drafts
   Scenario: Check John Doe Delete Own Drafts permission
     Given I proceed as the Admin
     And I go to Marketing/ Landing Pages
-    When I click view "Page" in grid
+    When I click view "Page Draft" in grid
     Then I should see following grid:
       | Title                    | Slug                   | Owner       |
       | John Doe Draft           | john-doe-draft         | John Doe    |
@@ -281,7 +281,7 @@ Feature: ACL Drafts
   Scenario: Check John Doe Edit All Drafts permission
     Given I proceed as the Admin
     And I go to Marketing/ Landing Pages
-    When I click view "Page" in grid
+    When I click view "Page Draft" in grid
     Then I should see following grid:
       | Title                    | Slug                   | Owner       |
       | Misty Draft (Duplicated) | misty-draft-duplicated | Misty Grant |
@@ -310,7 +310,7 @@ Feature: ACL Drafts
   Scenario: Check John Doe Publish Drafts permission
     Given I proceed as the Admin
     And I go to Marketing/ Landing Pages
-    When I click view "Page" in grid
+    When I click view "Page Draft" in grid
     Then I should see following grid:
       | Title                    | Slug                   | Owner       |
       | Misty Draft (Duplicated) | misty-draft-duplicated | Misty Grant |

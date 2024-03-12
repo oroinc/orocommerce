@@ -9,13 +9,16 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class AddingUpdatedAtToShippingRule implements Migration, OrderedMigrationInterface
 {
+    /**
+     * {@inheritDoc}
+     */
     public function getOrder()
     {
         return 1;
     }
 
     /**
-     * @throws \Doctrine\DBAL\Schema\SchemaException
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

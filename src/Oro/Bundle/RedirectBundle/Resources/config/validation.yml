@@ -7,5 +7,4 @@ Oro\Bundle\RedirectBundle\Entity\Slug:
             - Length:
                 min: 3
                 max: 1024
-                allowEmptyString: false
             - Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~

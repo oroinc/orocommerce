@@ -3,81 +3,59 @@
 namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository;
 
 /**
  * This entity represents price list with price attributes
- *
- * @ORM\Table(name="oro_price_attribute_pl")
- * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository")
- * @Config(
- *      routeName="oro_pricing_price_attribute_price_list_index",
- *      routeView="oro_pricing_price_attribute_price_list_view",
- *      routeUpdate="oro_pricing_price_attribute_price_list_update",
- *      defaultValues={
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          },
- *          "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="organization",
- *              "owner_column_name"="organization_id"
- *          }
- *      }
- * )
  */
+#[ORM\Entity(repositoryClass: PriceAttributePriceListRepository::class)]
+#[ORM\Table(name: 'oro_price_attribute_pl')]
+#[Config(
+    routeName: 'oro_pricing_price_attribute_price_list_index',
+    routeView: 'oro_pricing_price_attribute_price_list_view',
+    routeUpdate: 'oro_pricing_price_attribute_price_list_update',
+    defaultValues: [
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'ownership' => [
+            'owner_type' => 'ORGANIZATION',
+            'owner_field_name' => 'organization',
+            'owner_column_name' => 'organization_id'
+        ]
+    ]
+)]
 class PriceAttributePriceList extends BasePriceList implements OrganizationAwareInterface
 {
     use OrganizationAwareTrait;
 
     /**
-     * @var Collection|PriceAttributeProductPrice[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice",
-     *      mappedBy="priceList",
-     *      fetch="EXTRA_LAZY"
-     * )
+     * @var Collection<int, PriceAttributeProductPrice>
      */
-    protected $prices;
+    #[ORM\OneToMany(mappedBy: 'priceList', targetEntity: PriceAttributeProductPrice::class, fetch: 'EXTRA_LAZY')]
+    protected ?Collection $prices = null;
 
     /**
-     * @var PriceAttributeCurrency[]|Collection
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\PricingBundle\Entity\PriceAttributeCurrency",
-     *      mappedBy="priceList",
-     *      cascade={"all"},
-     *      orphanRemoval=true
-     * )
+     * @var Collection<int, PriceAttributeCurrency>
      */
-    protected $currencies;
+    #[ORM\OneToMany(
+        mappedBy: 'priceList',
+        targetEntity: PriceAttributeCurrency::class,
+        cascade: ['all'],
+        orphanRemoval: true
+    )]
+    protected ?Collection $currencies = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="field_name", type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $fieldName;
+    #[ORM\Column(name: 'field_name', type: Types::STRING, length: 255)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $fieldName = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_enabled_in_export", type="boolean", options={"default"=false})
-     */
-    protected $enabledInExport = false;
+    #[ORM\Column(name: 'is_enabled_in_export', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $enabledInExport = false;
 
     /**
      * @return string

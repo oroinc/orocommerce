@@ -4,13 +4,15 @@ namespace Oro\Bundle\PaymentBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
@@ -18,197 +20,110 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 /**
  * Represents history of payment transactions.
  *
- * @ORM\Table(
- *      name="oro_payment_transaction",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="oro_pay_trans_access_uidx", columns={"access_identifier", "access_token"})
- *      }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository")
- * @Config()
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
+#[ORM\Entity(repositoryClass: PaymentTransactionRepository::class)]
+#[ORM\Table(name: 'oro_payment_transaction')]
+#[ORM\UniqueConstraint(name: 'oro_pay_trans_access_uidx', columns: ['access_identifier', 'access_token'])]
+#[Config]
 class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;
 
-    /**
-     * @var int
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\Column(name: 'entity_class', type: Types::STRING)]
+    protected ?string $entityClass = null;
+
+    #[ORM\Column(name: 'entity_identifier', type: Types::INTEGER)]
+    protected ?int $entityIdentifier = null;
+
+    #[ORM\Column(name: 'access_identifier', type: Types::STRING)]
+    protected ?string $accessIdentifier = null;
+
+    #[ORM\Column(name: 'access_token', type: Types::STRING)]
+    #[ConfigField(
+        defaultValues: ['dataaudit' => ['auditable' => false], 'importexport' => ['excluded' => true]],
+        mode: 'hidden'
+    )]
+    protected ?string $accessToken = null;
+
+    #[ORM\Column(name: 'payment_method', type: Types::STRING)]
+    protected ?string $paymentMethod = null;
+
+    #[ORM\Column(name: 'action', type: Types::STRING)]
+    protected ?string $action = null;
 
     /**
      * @var string
-     * @ORM\Column(name="entity_class", type="string")
      */
-    protected $entityClass;
-
-    /**
-     * @var int
-     * @ORM\Column(name="entity_identifier", type="integer")
-     */
-    protected $entityIdentifier;
-
-    /**
-     * @var string
-     * @ORM\Column(name="access_identifier", type="string")
-     */
-    protected $accessIdentifier;
-
-    /**
-     * @var string
-     * @ORM\Column(name="access_token", type="string")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=false
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      },
-     *      mode="hidden"
-     * )
-     */
-    protected $accessToken;
-
-    /**
-     * @var string
-     * @ORM\Column(name="payment_method", type="string")
-     */
-    protected $paymentMethod;
-
-    /**
-     * @var string
-     * @ORM\Column(name="action", type="string")
-     */
-    protected $action;
-
-    /**
-     * @var string
-     * @ORM\Column(name="reference", type="string", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=false
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      },
-     *      mode="hidden"
-     * )
-     */
+    #[ORM\Column(name: 'reference', type: Types::STRING, nullable: true)]
+    #[ConfigField(
+        defaultValues: ['dataaudit' => ['auditable' => false], 'importexport' => ['excluded' => true]],
+        mode: 'hidden'
+    )]
     protected $reference;
 
-    /**
-     * @var string
-     * @ORM\Column(name="amount", type="string")
-     */
-    protected $amount;
+    #[ORM\Column(name: 'amount', type: Types::STRING)]
+    protected ?string $amount = null;
+
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3)]
+    protected ?string $currency = null;
+
+    #[ORM\Column(name: 'active', type: Types::BOOLEAN)]
+    protected ?bool $active = false;
+
+    #[ORM\Column(name: 'successful', type: Types::BOOLEAN)]
+    protected ?bool $successful = false;
+
+    #[ORM\ManyToOne(targetEntity: PaymentTransaction::class, inversedBy: 'relatedPaymentTransactions')]
+    #[ORM\JoinColumn(name: 'source_payment_transaction', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?PaymentTransaction $sourcePaymentTransaction = null;
 
     /**
-     * @var string
-     * @ORM\Column(name="currency", type="string", length=3)
+     * @var Collection<int, PaymentTransaction>
      */
-    protected $currency;
-
-    /**
-     * @var bool
-     * @ORM\Column(name="active", type="boolean")
-     */
-    protected $active = false;
-
-    /**
-     * @var bool
-     * @ORM\Column(name="successful", type="boolean")
-     */
-    protected $successful = false;
-
-    /**
-     * @var PaymentTransaction
-     *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\PaymentBundle\Entity\PaymentTransaction",
-     *     inversedBy="relatedPaymentTransactions"
-     * )
-     * @ORM\JoinColumn(name="source_payment_transaction", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $sourcePaymentTransaction;
-
-    /**
-     * @var Collection|PaymentTransaction[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\PaymentBundle\Entity\PaymentTransaction",
-     *     mappedBy="sourcePaymentTransaction"
-     * )
-     */
-    protected $relatedPaymentTransactions;
+    #[ORM\OneToMany(mappedBy: 'sourcePaymentTransaction', targetEntity: PaymentTransaction::class)]
+    protected ?Collection $relatedPaymentTransactions = null;
 
     /**
      * @var array
-     * @ORM\Column(name="request", type="secure_array", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=false
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      },
-     *      mode="hidden"
-     * )
      */
+    #[ORM\Column(name: 'request', type: 'secure_array', nullable: true)]
+    #[ConfigField(
+        defaultValues: ['dataaudit' => ['auditable' => false], 'importexport' => ['excluded' => true]],
+        mode: 'hidden'
+    )]
     protected $request;
 
     /**
      * @var array
-     * @ORM\Column(name="response", type="secure_array", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=false
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      },
-     *      mode="hidden"
-     * )
      */
+    #[ORM\Column(name: 'response', type: 'secure_array', nullable: true)]
+    #[ConfigField(
+        defaultValues: ['dataaudit' => ['auditable' => false], 'importexport' => ['excluded' => true]],
+        mode: 'hidden'
+    )]
     protected $response;
 
     /**
      * @var array
-     * @ORM\Column(name="transaction_options", type="secure_array", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=false
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      },
-     *      mode="hidden"
-     * )
      */
+    #[ORM\Column(name: 'transaction_options', type: 'secure_array', nullable: true)]
+    #[ConfigField(
+        defaultValues: ['dataaudit' => ['auditable' => false], 'importexport' => ['excluded' => true]],
+        mode: 'hidden'
+    )]
     protected $transactionOptions;
 
-    /**
-     * @var CustomerUser
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
-     * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $frontendOwner;
+    #[ORM\ManyToOne(targetEntity: CustomerUser::class)]
+    #[ORM\JoinColumn(name: 'frontend_owner_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?CustomerUser $frontendOwner = null;
 
     public function __construct()
     {

@@ -2,50 +2,28 @@
 
 namespace Oro\Bundle\ProductBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 
 /**
  * Product unit entity.
- *
- * @ORM\Table(name="oro_product_unit")
- * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository")
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-briefcase"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          }
- *      }
- * )
  */
+#[ORM\Entity(repositoryClass: ProductUnitRepository::class)]
+#[ORM\Table(name: 'oro_product_unit')]
+#[Config(defaultValues: ['entity' => ['icon' => 'fa-briefcase'], 'dataaudit' => ['auditable' => true]])]
 class ProductUnit implements MeasureUnitInterface
 {
-    /**
-     * @var string
-     *
-     * @ORM\Id
-     * @ORM\Column(type="string", length=255)
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "identity"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $code;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
+    #[ConfigField(defaultValues: ['importexport' => ['identity' => true]])]
+    protected ?string $code = null;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="default_precision", type="integer")
-     */
-    protected $defaultPrecision;
+    #[ORM\Column(name: 'default_precision', type: Types::INTEGER)]
+    protected ?int $defaultPrecision = null;
 
     /**
      * Set code

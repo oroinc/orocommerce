@@ -3,17 +3,14 @@
 namespace Oro\Bundle\PaymentBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
 {
-    /**
-     * @var RenameExtension
-     */
-    protected $renameExtension;
+    use RenameExtensionAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -54,13 +51,5 @@ class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
     }
 }

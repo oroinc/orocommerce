@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadScopeCustomerDemoData;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -13,7 +14,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Sets proper visibility setting to demo categories
@@ -22,29 +23,23 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
+    use ContainerAwareTrait;
+
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
-            'Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData',
+            LoadCategoryDemoData::class,
             LoadScopeCustomerDemoData::class
         ];
     }
+
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroVisibilityBundle/Migrations/Data/Demo/ORM/data/categories-visibility.csv');
@@ -62,7 +57,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
             if ($row['scopeCustomer']) {
                 $customerCategoryVisibility = $this->createCustomerCategoryVisibility(
                     $category,
-                    $this->getScopeCustomer($manager, $row['scopeCustomer']),
+                    $this->getScope($manager, $row['scopeCustomer']),
                     $visibility
                 );
                 $manager->persist($customerCategoryVisibility);
@@ -70,7 +65,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
             if ($row['scopeCustomerGroup']) {
                 $customerGroupCategoryVisibility = $this->createCustomerGroupCategoryVisibility(
                     $category,
-                    $this->getScopeCustomerGroup($manager, $row['scopeCustomerGroup']),
+                    $this->getScope($manager, $row['scopeCustomerGroup']),
                     $visibility
                 );
                 $manager->persist($customerGroupCategoryVisibility);
@@ -81,10 +76,6 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
         $this->container->get('oro_visibility.visibility.cache.product.category.cache_builder')->buildCache();
     }
 
-    /**
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
-     */
     private function getCategory(ObjectManager $manager, string  $title): Category
     {
         $organization = $manager->getRepository(Organization::class)->getFirst();
@@ -96,65 +87,43 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
         return $queryBuilder->getQuery()->getSingleResult();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param int $id
-     * @return Scope
-     */
-    protected function getScopeCustomer(ObjectManager $manager, $id)
+    private function getScope(ObjectManager $manager, int $id): Scope
     {
-        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['id' => $id]);
+        return $manager->getRepository(Scope::class)->findOneBy(['id' => $id]);
     }
-    /**
-     * @param ObjectManager $manager
-     * @param int $id
-     * @return Scope
-     */
-    protected function getScopeCustomerGroup(ObjectManager $manager, $id)
-    {
-        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['id' => $id]);
-    }
-    /**
-     * @param Category $category
-     * @param string $visibility
-     * @return CategoryVisibility
-     */
-    protected function createCategoryVisibility(Category $category, $visibility)
+
+    private function createCategoryVisibility(Category $category, string $visibility): CategoryVisibility
     {
         $categoryVisibility = new CategoryVisibility();
-        $categoryVisibility
-            ->setCategory($category)
-            ->setVisibility($visibility);
+        $categoryVisibility->setCategory($category);
+        $categoryVisibility->setVisibility($visibility);
+
         return $categoryVisibility;
     }
-    /**
-     * @param Category $category
-     * @param Scope $scope
-     * @param string $visibility
-     * @return CustomerCategoryVisibility
-     */
-    protected function createCustomerCategoryVisibility(Category $category, Scope $scope, $visibility)
-    {
+
+    private function createCustomerCategoryVisibility(
+        Category $category,
+        Scope $scope,
+        string $visibility
+    ): CustomerCategoryVisibility {
         $customerCategoryVisibility = new CustomerCategoryVisibility();
-        $customerCategoryVisibility
-            ->setCategory($category)
-            ->setScope($scope)
-            ->setVisibility($visibility);
+        $customerCategoryVisibility->setCategory($category);
+        $customerCategoryVisibility->setScope($scope);
+        $customerCategoryVisibility->setVisibility($visibility);
+
         return $customerCategoryVisibility;
     }
-    /**
-     * @param Category $category
-     * @param Scope $scope
-     * @param string $visibility
-     * @return CustomerGroupCategoryVisibility
-     */
-    protected function createCustomerGroupCategoryVisibility(Category $category, Scope $scope, $visibility)
-    {
+
+    private function createCustomerGroupCategoryVisibility(
+        Category $category,
+        Scope $scope,
+        string $visibility
+    ): CustomerGroupCategoryVisibility {
         $customerGroupCategoryVisibility = new CustomerGroupCategoryVisibility();
-        $customerGroupCategoryVisibility
-            ->setCategory($category)
-            ->setScope($scope)
-            ->setVisibility($visibility);
+        $customerGroupCategoryVisibility->setCategory($category);
+        $customerGroupCategoryVisibility->setScope($scope);
+        $customerGroupCategoryVisibility->setVisibility($visibility);
+
         return $customerGroupCategoryVisibility;
     }
 }

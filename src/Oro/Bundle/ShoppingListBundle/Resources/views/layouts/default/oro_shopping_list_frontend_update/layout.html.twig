@@ -24,8 +24,9 @@
 {% endblock %}
 
 {% block _shopping_list_notes_add_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': 'btn btn--link btn--no-x-offset btn--no-y-offset',
+        '~class': 'btn btn--outlined btn--text btn--no-padding',
         'type': 'button',
         'data-role': 'add-notes'
     }) %}
@@ -37,12 +38,14 @@
     {% endif %}
 
     <button {{ block('block_attributes') }}>
-        <span class="fa-file-text-o" aria-hidden="true"></span>
+        {{ renderIcon.icon({name: 'file-text', extraClass: 'theme-icon--small'}) }}
         {{ 'oro.frontend.shoppinglist.note.add_entire_note'|trans }}
     </button>
 {% endblock %}
 
 {% block _shopping_list_notes_edit_form_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
     {% set attr = layout_attr_defaults(attr, {
         '~class': 'hide',
         'data-role': 'edit-notes-form'
@@ -59,23 +62,24 @@
         {%- apply spaceless -%}
         <div class="shopping-lists-modify">
             <span class="shopping-lists-modify__edit">
-                <button class="btn btn--info btn--size-xs"
+                <button class="btn btn--size-small"
                         type="button"
                         title="{{ 'Apply'|trans }}"
                         aria-label="{{ 'oro.frontend.shoppinglist.note.apply'|trans }}"
                         data-role="apply"
                         disabled="disabled"
                 >
-                    <span class="fa-check fa--no-offset" aria-hidden="true"></span>
+                    {{ renderIcon.icon({name: 'check', extraClass: 'theme-icon--small'}) }}
                 </button>
             </span>
             <span class="shopping-lists-modify__edit">
-                <button class="btn btn--size-xs"
+                <button class="btn btn--destructive btn--size-small"
                         type="button"
                         title="{{ 'Decline'|trans }}"
                         aria-label="{{ 'oro.frontend.shoppinglist.note.decline'|trans }}"
                         data-role="decline"
-                ><span class="fa-close fa--no-offset" aria-hidden="true"></span>
+                >
+                    {{ renderIcon.icon({name: 'close', extraClass: 'theme-icon--small'}) }}
                 </button>
             </span>
         </div>
@@ -102,8 +106,10 @@
 {% endblock %}
 
 {% block _shopping_list_notes_edit_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' btn btn--plain btn--size-s',
+        '~class': ' btn btn--outlined btn--text btn--size-small',
         'type': 'button',
         'title': 'Edit'|trans,
         'data-role': 'edit-notes',
@@ -111,6 +117,6 @@
     }) %}
 
     <button {{ block('block_attributes') }}>
-        <span class="fa-pencil fa--no-offset" aria-hidden="true"></span>
+        {{ renderIcon.icon({name: 'pencil'}) }}
     </button>
 {% endblock %}

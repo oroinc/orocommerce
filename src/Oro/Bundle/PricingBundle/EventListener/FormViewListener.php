@@ -77,7 +77,7 @@ class FormViewListener implements FeatureToggleableInterface
         $blockLabel = $this->translator->trans('oro.pricing.productprice.entity_plural_label');
         $scrollData->addNamedBlock(self::PRICING_BLOCK_NAME, $blockLabel, 1600);
         $subBlockId = $scrollData->addSubBlock(self::PRICING_BLOCK_NAME);
-        $scrollData->addSubBlockData(self::PRICING_BLOCK_NAME, $subBlockId, $template, 'productPriceAttributesPrices');
+        $scrollData->addSubBlockData(self::PRICING_BLOCK_NAME, $subBlockId, $template);
     }
 
     /**

@@ -6,6 +6,7 @@ oro:
             division_by_zero.message: 'Expression contains division by zero'
             field_is_not_allowed.message: 'Field "%fieldName%" is not allowed to be used'
             field_is_not_allowed_as.message: 'Field "%fieldName%" is not allowed to be used as "%inputName%"'
+            only_product_kit_can_have_kit_items.message: "The 'Kit Items' column should only be processed for products classified as 'Kit' type."
             product_kit_line_item_contains_required_kit_items:
                 missing_required_kit_item: 'Product kit {{ product_kit_sku }} is missing the required kit item {{ product_kit_item_label }}'
 
@@ -145,6 +146,14 @@ oro:
                 empty_sku: 'Related SKUs collection contains empty SKU. Item data: %data%'
                 self_relation: 'It is not possible to create relations from product to itself.'
                 max_relations: 'It is not possible to add more items, because of the limit of relations.'
+            kit_item:
+                not_found: 'Product Kit Item with #%id% ID was not found.'
+                unknown_fields: 'Product Kit Item on line %line% has unknown fields: "{{ fields }}".'
+                invalid_value:
+                    optional: 'Product Kit Item on line %line% has incorrect value for the field "optional": expected boolean (true, false, yes, no, 1, 0), got "{{ value }}".'
+                    id: 'Product Kit Item on line %line% has incorrect value for the field "id": expected empty value or integer, got "{{ value }}".'
+                    min_qty: 'Product Kit Item on line %line% has incorrect value for the field "min_qty": expected empty value or float (1, 0, 1.0, 0.0), got "{{ value }}".'
+                    max_qty: 'Product Kit Item on line %line% has incorrect value for the field "max_qty": expected empty value or float (1, 0, 1.0, 0.0), got "{{ value }}".'
 
 "Related Items functionality is disabled.": "Related Items functionality is disabled."
 "It is not possible to create relations from product to itself.": "It is not possible to create relations from product to itself."

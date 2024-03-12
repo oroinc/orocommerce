@@ -29,6 +29,17 @@
     }
 }
 
+.files-collection-table {
+    &__label {
+        width: 13%;
+        min-width: 100px;
+    }
+
+    &__field {
+        width: 29%;
+    }
+}
+
 .validation-error {
     .image-slide-collection {
         .select2-container {

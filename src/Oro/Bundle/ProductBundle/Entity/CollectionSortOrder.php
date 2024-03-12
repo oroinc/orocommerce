@@ -2,95 +2,50 @@
 
 namespace Oro\Bundle\ProductBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroProductBundle_Entity_CollectionSortOrder;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\ProductBundle\Entity\Repository\CollectionSortOrderRepository;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
 /**
  * Represents collection sort orders table
- * @ORM\Table(
- *     name="oro_product_collection_sort_order",
- *     uniqueConstraints={
- *          @ORM\UniqueConstraint(
- *              name="product_segment_sort_uniq_idx",
- *              columns={"product_id","segment_id"}
- *          )
- *      }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\CollectionSortOrderRepository")
- * @ORM\HasLifecycleCallbacks()
- * @Config(
- *      defaultValues={
- *          "dataaudit"={
- *              "auditable"=false
- *          }
- *      }
- * )
  * @mixin OroProductBundle_Entity_CollectionSortOrder
  */
+#[ORM\Entity(repositoryClass: CollectionSortOrderRepository::class)]
+#[ORM\Table(name: 'oro_product_collection_sort_order')]
+#[ORM\UniqueConstraint(name: 'product_segment_sort_uniq_idx', columns: ['product_id', 'segment_id'])]
+#[ORM\HasLifecycleCallbacks]
+#[Config(defaultValues: ['dataaudit' => ['auditable' => false]])]
 class CollectionSortOrder implements ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
     /**
      * @var float|null
-     *
-     * @ORM\Column(name="sort_order", type="float", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=false
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(name: 'sort_order', type: Types::FLOAT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => false], 'importexport' => ['excluded' => true]])]
     protected $sortOrder;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=false
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected Product $product;
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => false], 'importexport' => ['excluded' => true]])]
+    protected ?Product $product = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SegmentBundle\Entity\Segment")
-     * @ORM\JoinColumn(name="segment_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=false
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected Segment $segment;
+    #[ORM\ManyToOne(targetEntity: Segment::class)]
+    #[ORM\JoinColumn(name: 'segment_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => false], 'importexport' => ['excluded' => true]])]
+    protected ?Segment $segment = null;
 
     /**
      * @return int
@@ -105,10 +60,6 @@ class CollectionSortOrder implements ExtendEntityInterface
         return $this->product;
     }
 
-    /**
-     * @param Product $product
-     * @return CollectionSortOrder
-     */
     public function setProduct(Product $product): self
     {
         $this->product = $product;
@@ -120,10 +71,6 @@ class CollectionSortOrder implements ExtendEntityInterface
         return $this->segment;
     }
 
-    /**
-     * @param Segment $segment
-     * @return CollectionSortOrder
-     */
     public function setSegment(Segment $segment): self
     {
         $this->segment = $segment;
@@ -135,10 +82,6 @@ class CollectionSortOrder implements ExtendEntityInterface
         return $this->sortOrder;
     }
 
-    /**
-     * @param float|null $sortOrder
-     * @return CollectionSortOrder
-     */
     public function setSortOrder(?float $sortOrder): self
     {
         $this->sortOrder = $sortOrder;

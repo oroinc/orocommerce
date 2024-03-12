@@ -24,4 +24,4 @@ included:
             fallback:
             scalarValue:
             arrayValue:
-                oro_product_frontend_product_view: 'short'
+                oro_product_frontend_product_view: 'wide'

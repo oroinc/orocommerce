@@ -27,13 +27,12 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
     public function testProductGrid(array $expected, array $filter)
     {
         $this->markTestIncomplete("BB-6164");
-        $response = $this->client->requestGrid(
+        $response = $this->client->requestFrontendGrid(
             [
                 'gridName' => 'frontend-product-search-grid',
             ],
             $filter,
             true,
-            'oro_frontend_datagrid_index'
         );
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertSame($expected, array_column($result['data'], 'sku'));

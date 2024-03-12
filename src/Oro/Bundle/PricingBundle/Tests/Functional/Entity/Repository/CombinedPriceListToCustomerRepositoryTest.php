@@ -73,4 +73,19 @@ class CombinedPriceListToCustomerRepositoryTest extends AbstractCombinedPriceLis
 
         $this->assertEquals([$this->getReference(LoadWebsiteData::WEBSITE1)], $websites);
     }
+
+    public function testGetRelation()
+    {
+        $registry = $this->getContainer()->get('doctrine');
+        $repo = $registry->getRepository(CombinedPriceListToCustomer::class);
+
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        $customer = $this->getReference('customer.level_1.2');
+
+        $cpl = $this->getReference('2t_3f_1t');
+
+        $relation = $repo->getRelation($website, $customer);
+        $this->assertNotNull($relation);
+        $this->assertEquals($cpl->getId(), $relation->getFullChainPriceList()->getId());
+    }
 }

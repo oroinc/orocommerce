@@ -13,67 +13,27 @@ use Oro\Bundle\TaxBundle\Model\TaxCodes;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 /**
- * Resolver to apply taxes to shipping cost
+ * Resolver to apply taxes to shipping cost.
  */
 class ShippingResolver implements ResolverInterface
 {
-    use CalculateAdjustmentTrait;
-
-    /**
-     * @var TaxCalculatorInterface
-     */
-    protected $incTaxCalculator;
-
-    /**
-     * @var TaxCalculatorInterface
-     */
-    protected $excTaxCalculator;
-
-    /**
-     * @var MatcherInterface
-     */
-    protected $matcher;
-
-    /**
-     * @var TaxationSettingsProvider
-     */
-    protected $taxationSettingsProvider;
+    use TaxCalculateResolverTrait;
 
     public function __construct(
-        TaxCalculatorInterface $incTaxCalculator,
-        TaxCalculatorInterface $excTaxCalculator,
-        MatcherInterface $matcher,
-        TaxationSettingsProvider $taxationSettingsProvider
+        private TaxCalculatorInterface $incTaxCalculator,
+        private TaxCalculatorInterface $excTaxCalculator,
+        private MatcherInterface $matcher,
+        private TaxationSettingsProvider $taxationSettingsProvider
     ) {
-        $this->incTaxCalculator = $incTaxCalculator;
-        $this->excTaxCalculator = $excTaxCalculator;
-        $this->matcher = $matcher;
-        $this->taxationSettingsProvider = $taxationSettingsProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve(Taxable $taxable)
+    public function resolve(Taxable $taxable): void
     {
-        if (!$taxable->getItems()->count()) {
+        if (!$this->isApplicable($taxable)) {
             return;
         }
 
-        if ($taxable->getResult()->isResultLocked()) {
-            return;
-        }
-
-        if (null === $taxable->getShippingCost() || !$taxable->getShippingCost()->isPositiveOrZero()) {
-            return;
-        }
-
-        $address = $taxable->getTaxationAddress();
-        if (!$address) {
-            return;
-        }
-
-        $taxRules = $this->matcher->match($address, $this->getTaxCodes($taxable));
+        $taxRules = $this->matcher->match($taxable->getTaxationAddress(), $this->getTaxCodes($taxable));
 
         $taxRate = BigDecimal::zero();
         foreach ($taxRules as $taxRule) {
@@ -92,11 +52,7 @@ class ShippingResolver implements ResolverInterface
         $taxable->getResult()->offsetSet(Result::SHIPPING, $resultElement);
     }
 
-    /**
-     * @param Taxable $taxable
-     * @return TaxCodes
-     */
-    public function getTaxCodes(Taxable $taxable)
+    protected function getTaxCodes(Taxable $taxable): TaxCodes
     {
         $taxCodes = [];
         foreach ($this->taxationSettingsProvider->getShippingTaxCodes() as $shippingTaxCode) {
@@ -109,5 +65,13 @@ class ShippingResolver implements ResolverInterface
         }
 
         return TaxCodes::create($taxCodes);
+    }
+
+    private function isApplicable(Taxable $taxable): bool
+    {
+        return $taxable->getItems()->count() &&
+            !$taxable->getResult()->isResultLocked() &&
+            $taxable->getShippingCost()?->isPositiveOrZero() &&
+            $taxable->getTaxationAddress();
     }
 }

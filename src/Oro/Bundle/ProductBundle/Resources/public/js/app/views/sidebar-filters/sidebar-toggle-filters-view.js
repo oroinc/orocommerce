@@ -11,11 +11,12 @@ const EXPANDED = 'expanded';
 
 const config = {
     animationDuration: 150,
-    className: 'toggle-sidebar-btn btn btn--default btn--size-s',
+    className: 'toggle-sidebar-btn toggle-filters-action btn btn--outlined btn--no-padding btn--text',
+    text: 'oro.product.sidebar_filters.button.text',
     [`${EXPANDED}Title`]: 'oro.product.sidebar_filters.button.title.collapse',
-    [`${EXPANDED}Icon`]: 'fa-chevron-left fa--no-offset',
+    [`${EXPANDED}Icon`]: 'sliders',
     [`${COLLAPSED}Title`]: 'oro.product.sidebar_filters.button.title.expand',
-    [`${COLLAPSED}Icon`]: 'fa-filter fa--no-offset',
+    [`${COLLAPSED}Icon`]: 'sliders',
     ...moduleConfig(module.id)
 };
 
@@ -120,6 +121,7 @@ const SidebarToggleFiltersView = BaseView.extend({
         data.className = config.className;
         data.icon = config[`${stateKey}Icon`];
         data.title = config[`${stateKey}Title`];
+        data.text = config['text'];
 
         return data;
     },

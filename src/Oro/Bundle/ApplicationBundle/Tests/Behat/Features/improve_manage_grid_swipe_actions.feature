@@ -8,7 +8,7 @@ Feature: Improve manage grid swipe actions
   Scenario: Checked drag and drop option in "Manage grid" popup on mobile view
     Given I login as AmandaRCole@example.org the "Buyer" at "640_session" session
     And I set window size to 640x1100
-    And click "Account Mobile Button"
+    And I click "Account Dropdown"
     And click "Users"
     Then I should see following grid with exact columns order:
       | First Name | Last Name | Email Address           | Enabled | Confirmed |

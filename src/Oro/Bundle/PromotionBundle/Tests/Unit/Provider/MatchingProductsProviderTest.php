@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
@@ -51,11 +52,13 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetMatchingProductsFromCache()
     {
+        $organization = new Organization();
+        $organization->setId(23);
         /** @var Segment $segment */
         $segment = $this->getEntity(Segment::class, ['definition' => 'some definition']);
         $product = $this->getEntity(Product::class, ['id' => 123]);
 
-        $hash = md5('some definition_123');
+        $hash = md5('some definition_123_23');
 
         $this->matchingProductsCache->expects($this->once())
             ->method('get')
@@ -67,7 +70,7 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
         $this->segmentManager->expects($this->never())
             ->method('getSegmentQueryBuilder');
 
-        $this->provider->getMatchingProducts($segment, [(new DiscountLineItem())->setProduct($product)]);
+        $this->provider->getMatchingProducts($segment, [(new DiscountLineItem())->setProduct($product)], $organization);
     }
 
     public function testGetMatchingProductsThrowsExceptionWhenNoRootAlias()
@@ -75,12 +78,15 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('No root alias for segment\'s query builder');
 
+        $organization = new Organization();
+        $organization->setId(23);
+
         /** @var Segment $segment */
         $segment = $this->getEntity(Segment::class, ['definition' => 'some definition']);
         $this->expectsQueryBuilderWithNoRootAlias($segment);
 
         $lineItemProduct = $this->getEntity(Product::class, ['id' => 123]);
-        $hash = md5('some definition_123');
+        $hash = md5('some definition_123_23');
 
         $this->matchingProductsCache->expects($this->once())
             ->method('get')
@@ -90,7 +96,11 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
                 return $callback($item);
             });
 
-        $this->provider->getMatchingProducts($segment, [(new DiscountLineItem())->setProduct($lineItemProduct)]);
+        $this->provider->getMatchingProducts(
+            $segment,
+            [(new DiscountLineItem())->setProduct($lineItemProduct)],
+            $organization
+        );
     }
 
     public function testHasMatchingProductsThrowsExceptionWhenNoQueryBuilder()
@@ -115,7 +125,7 @@ class MatchingProductsProviderTest extends \PHPUnit\Framework\TestCase
 
         $lineItemProduct = $this->getEntity(Product::class, ['id' => 123]);
 
-        $hash = md5('some definition_123');
+        $hash = md5('some definition_123_');
         $this->matchingProductsCache->expects($this->once())
             ->method('get')
             ->with($hash)

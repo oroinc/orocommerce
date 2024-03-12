@@ -34,3 +34,11 @@ layout:
             optionValue:
                 # additional user check to correctly render the widget on the backend
                 visible: '=data["show_add_button"] and data["current_user"].isFrontendRequest()'
+        - '@setOption':
+            id: products
+            optionName: label
+            optionValue: '=data["locale"].getLocalizedValue(data["labels"])'
+        - '@setOption':
+            id: products
+            optionName: default_slider_options
+            optionValue: '=data["slider_options"]'

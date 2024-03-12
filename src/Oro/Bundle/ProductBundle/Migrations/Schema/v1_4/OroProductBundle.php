@@ -6,14 +6,14 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class OroProductBundle implements
     Migration,
@@ -22,45 +22,22 @@ class OroProductBundle implements
     AttachmentExtensionAwareInterface,
     ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+    use RenameExtensionAwareTrait;
     use AttachmentExtensionAwareTrait;
 
-    const PRODUCT_TABLE_NAME = 'orob2b_product';
-    const PRODUCT_UNIT_PRECISION_TABLE_NAME = 'orob2b_product_unit_precision';
-    const PRODUCT_IMAGE_TABLE_NAME = 'orob2b_product_image';
-    const PRODUCT_IMAGE_TYPE_TABLE_NAME = 'orob2b_product_image_type';
-    const PRODUCT_IMAGE_FIELD_NAME = 'image_id';
-    const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
-
     /**
-     * @var ContainerInterface
+     * {@inheritDoc}
      */
-    protected $container;
-
-    /**
-     * @var RenameExtension
-     */
-    protected $renameExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
+    public function getOrder(): int
     {
-        $this->renameExtension = $renameExtension;
+        return 10;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createConstraint(
             $schema,
@@ -97,15 +74,13 @@ class OroProductBundle implements
         $this->migrateImages($queries);
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     * @param string $tableName
-     * @param string $foreignTable
-     * @param array $fields
-     */
-    protected function createConstraint(Schema $schema, QueryBag $queries, $tableName, $foreignTable, array $fields)
-    {
+    private function createConstraint(
+        Schema $schema,
+        QueryBag $queries,
+        string $tableName,
+        string $foreignTable,
+        array $fields
+    ): void {
         $this->renameExtension->addForeignKeyConstraint(
             $schema,
             $queries,
@@ -120,9 +95,9 @@ class OroProductBundle implements
     /**
      * Update orob2b_product_unit_precision table
      */
-    protected function updateOroProductUnitPrecisionTable(Schema $schema, QueryBag $queries)
+    private function updateOroProductUnitPrecisionTable(Schema $schema, QueryBag $queries): void
     {
-        $table = $schema->getTable(self::PRODUCT_UNIT_PRECISION_TABLE_NAME);
+        $table = $schema->getTable('orob2b_product_unit_precision');
         $table->addColumn('conversion_rate', 'float', ['notnull' => false]);
         $table->addColumn('sell', 'boolean', ['notnull' => false]);
 
@@ -144,9 +119,9 @@ class OroProductBundle implements
     /**
      * Update orob2b_product table
      */
-    protected function updateOroProductTable(Schema $schema)
+    private function updateOroProductTable(Schema $schema): void
     {
-        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('orob2b_product');
         $table->addColumn('primary_unit_precision_id', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['primary_unit_precision_id'], 'idx_orob2b_product_primary_unit_precision_id');
     }
@@ -154,116 +129,98 @@ class OroProductBundle implements
     /**
      * Add orob2b_product foreign keys.
      */
-    protected function addOroProductForeignKeys(Schema $schema)
+    private function addOroProductForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('orob2b_product');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::PRODUCT_UNIT_PRECISION_TABLE_NAME),
+            $schema->getTable('orob2b_product_unit_precision'),
             ['primary_unit_precision_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
+    private function createOroProductImageTable(Schema $schema): void
     {
-        return 10;
-    }
-
-    protected function createOroProductImageTable(Schema $schema)
-    {
-        $table = $schema->createTable(self::PRODUCT_IMAGE_TABLE_NAME);
+        $table = $schema->createTable('orob2b_product_image');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => true]);
         $table->setPrimaryKey(['id']);
     }
 
-    protected function createOroProductImageTypeTable(Schema $schema)
+    private function createOroProductImageTypeTable(Schema $schema): void
     {
-        $table = $schema->createTable(self::PRODUCT_IMAGE_TYPE_TABLE_NAME);
+        $table = $schema->createTable('orob2b_product_image_type');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_image_id', 'integer');
         $table->addColumn('type', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
     }
 
-    protected function addOroProductImageForeignKeys(Schema $schema)
+    private function addOroProductImageForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::PRODUCT_IMAGE_TABLE_NAME);
+        $table = $schema->getTable('orob2b_product_image');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::PRODUCT_TABLE_NAME),
+            $schema->getTable('orob2b_product'),
             ['product_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 
-    protected function addOroProductImageTypeForeignKeys(Schema $schema)
+    private function addOroProductImageTypeForeignKeys(Schema $schema): void
     {
-        $table = $schema->getTable(self::PRODUCT_IMAGE_TYPE_TABLE_NAME);
+        $table = $schema->getTable('orob2b_product_image_type');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::PRODUCT_IMAGE_TABLE_NAME),
+            $schema->getTable('orob2b_product_image'),
             ['product_image_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
         );
     }
 
-    protected function addAttachmentAssociations(Schema $schema)
+    private function addAttachmentAssociations(Schema $schema): void
     {
         $this->attachmentExtension->addImageRelation(
             $schema,
-            self::PRODUCT_IMAGE_TABLE_NAME,
+            'orob2b_product_image',
             'image',
             [
                 'importexport' => ['excluded' => true]
             ],
-            self::MAX_PRODUCT_IMAGE_SIZE_IN_MB
+            10
         );
     }
 
-    protected function migrateImages(QueryBag $queries)
+    private function migrateImages(QueryBag $queries): void
     {
         $migrateImagesSqlMask = 'INSERT INTO %1$s (product_id, %2$s)
                                  SELECT id, %2$s FROM %3$s
                                  WHERE %2$s IS NOT NULL';
-
-        $queries->addPostQuery(
-            sprintf(
-                $migrateImagesSqlMask,
-                self::PRODUCT_IMAGE_TABLE_NAME,
-                self::PRODUCT_IMAGE_FIELD_NAME,
-                self::PRODUCT_TABLE_NAME
-            )
-        );
+        $queries->addPostQuery(sprintf(
+            $migrateImagesSqlMask,
+            'orob2b_product_image',
+            'image_id',
+            'orob2b_product'
+        ));
 
         $migrateImageTypesSqlMask = 'INSERT INTO %s (product_image_id, type)
                                      SELECT product.image_id, types.type FROM %s product
                                      CROSS JOIN (%s) types
                                      WHERE product.%s IS NOT NULL';
-
-        $queries->addPostQuery(
-            sprintf(
-                $migrateImageTypesSqlMask,
-                self::PRODUCT_IMAGE_TYPE_TABLE_NAME,
-                self::PRODUCT_TABLE_NAME,
-                $this->getImageTypesSubSelect(),
-                self::PRODUCT_IMAGE_FIELD_NAME
-            )
-        );
+        $queries->addPostQuery(sprintf(
+            $migrateImageTypesSqlMask,
+            'orob2b_product_image_type',
+            'orob2b_product',
+            $this->getImageTypesSubSelect(),
+            'image_id'
+        ));
     }
 
-    /**
-     * @return string
-     */
-    protected function getImageTypesSubSelect()
+    private function getImageTypesSubSelect(): string
     {
-        $imageTypeProvider = $this->container->get('oro_layout.provider.image_type');
         $selects = [];
-
+        $imageTypeProvider = $this->container->get('oro_layout.provider.image_type');
         foreach ($imageTypeProvider->getImageTypes() as $imageType) {
             $selects[] = sprintf('SELECT \'%s\' as type', $imageType->getName());
         }

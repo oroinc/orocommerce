@@ -14,28 +14,34 @@ use Oro\Bundle\SegmentBundle\Entity\SegmentSnapshot;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\SegmentBundle\Tests\Functional\DataFixtures\LoadSegmentData;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 class LoadProductCollectionContentVariants extends AbstractFixture implements DependentFixtureInterface
 {
-    const PRODUCT_COLLECTION_TEST_VARIANT = 'product_collection_test_variant';
-    const PRODUCT_STATIC_SEGMENT = 'product_static_segment';
-    const TEST_VARIANT_WITHOUT_SEGMENT = 'test_variant_without_segment';
-    const TEST_VARIANT_WITH_TEST_SEGMENT_1 = 'test_segment_variant.1';
-    const TEST_VARIANT_WITH_TEST_SEGMENT_2 = 'test_segment_variant.2';
-    const TEST_VARIANT_WITH_TEST_SEGMENT_3 = 'test_segment_variant.3';
+    public const PRODUCT_COLLECTION_TEST_VARIANT = 'product_collection_test_variant';
+    public const PRODUCT_STATIC_SEGMENT = 'product_static_segment';
+    public const TEST_VARIANT_WITHOUT_SEGMENT = 'test_variant_without_segment';
+    public const TEST_VARIANT_WITH_TEST_SEGMENT_1 = 'test_segment_variant.1';
+    public const TEST_VARIANT_WITH_TEST_SEGMENT_2 = 'test_segment_variant.2';
+    public const TEST_VARIANT_WITH_TEST_SEGMENT_3 = 'test_segment_variant.3';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return [LoadProductData::class, LoadSegmentData::class, LoadContentNodeData::class];
+        return [
+            LoadProductData::class,
+            LoadSegmentData::class,
+            LoadContentNodeData::class,
+            LoadOrganization::class
+        ];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->createContentVariantWithProductSegment($manager);
         $this->createContentVariantWithoutSegment($manager);
@@ -61,47 +67,44 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
         $manager->flush();
     }
 
-    private function createContentVariantWithProductSegment(ObjectManager $manager)
+    private function createContentVariantWithProductSegment(ObjectManager $manager): void
     {
         $this->createProductSegment($manager);
         $this->createProductSegmentSnapshot($manager);
         $this->createCollectionSortOrder($manager);
 
         $testContentVariant = new TestContentVariant();
-        $testContentVariant->setProductCollectionSegment(
-            $this->getReference(LoadProductCollectionContentVariants::PRODUCT_STATIC_SEGMENT)
-        );
+        $testContentVariant->setProductCollectionSegment($this->getReference(self::PRODUCT_STATIC_SEGMENT));
         $this->setReference(self::PRODUCT_COLLECTION_TEST_VARIANT, $testContentVariant);
         $manager->persist($testContentVariant);
     }
 
-    private function createContentVariantWithoutSegment(ObjectManager $manager)
+    private function createContentVariantWithoutSegment(ObjectManager $manager): void
     {
         $testContentVariant = new TestContentVariant();
         $this->setReference(self::TEST_VARIANT_WITHOUT_SEGMENT, $testContentVariant);
         $manager->persist($testContentVariant);
     }
 
-    private function createCollectionSortOrder(ObjectManager $manager)
+    private function createCollectionSortOrder(ObjectManager $manager): void
     {
         $collectionSortOrder1 = new CollectionSortOrder();
-        $collectionSortOrder1
-            ->setSegment($this->getReference(LoadProductCollectionContentVariants::PRODUCT_STATIC_SEGMENT));
+        $collectionSortOrder1->setSegment($this->getReference(self::PRODUCT_STATIC_SEGMENT));
         $collectionSortOrder1->setProduct($this->getReference(LoadProductData::PRODUCT_1));
         $collectionSortOrder1->setSortOrder(0.1);
         $manager->persist($collectionSortOrder1);
 
         $collectionSortOrder2 = new CollectionSortOrder();
-        $collectionSortOrder2
-            ->setSegment($this->getReference(LoadProductCollectionContentVariants::PRODUCT_STATIC_SEGMENT));
+        $collectionSortOrder2->setSegment($this->getReference(self::PRODUCT_STATIC_SEGMENT));
         $collectionSortOrder2->setProduct($this->getReference(LoadProductData::PRODUCT_2));
         $collectionSortOrder2->setSortOrder(0.2);
         $manager->persist($collectionSortOrder2);
     }
 
-    private function createProductSegment(ObjectManager $manager)
+    private function createProductSegment(ObjectManager $manager): void
     {
-        $organization = $manager->getRepository(Organization::class)->getFirst();
+        /** @var Organization $organization */
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
         $owner = $organization->getBusinessUnits()->first();
 
         $segmentType = $manager->getRepository(SegmentType::class)->find(SegmentType::TYPE_STATIC);
@@ -115,22 +118,17 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
         $entity->setOrganization($organization);
         $entity->setDefinition(json_encode([
             'columns' => [
-                [
-                    'func' => null,
-                    'label' => 'Label',
-                    'name' => 'id',
-                    'sorting' => ''
-                ]
+                ['func' => null, 'label' => 'Label', 'name' => 'id', 'sorting' => '']
             ],
-            'filters' =>[]
-        ]));
+            'filters' => []
+        ], JSON_THROW_ON_ERROR));
 
         $this->setReference(self::PRODUCT_STATIC_SEGMENT, $entity);
 
         $manager->persist($entity);
     }
 
-    private function createProductSegmentSnapshot(ObjectManager $manager)
+    private function createProductSegmentSnapshot(ObjectManager $manager): void
     {
         /** @var Segment $segment */
         $segment = $this->getReference(self::PRODUCT_STATIC_SEGMENT);
@@ -148,18 +146,12 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
         }
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string $reference
-     * @param TestContentNode $node
-     * @param Segment|null $segment
-     */
     private function createContentVariantWithTestSegment(
         ObjectManager $manager,
-        $reference,
+        string $reference,
         TestContentNode $node,
         Segment $segment = null
-    ) {
+    ): void {
         $testContentVariant = new TestContentVariant();
         $testContentVariant->setProductCollectionSegment($segment);
         $testContentVariant->setNode($node);

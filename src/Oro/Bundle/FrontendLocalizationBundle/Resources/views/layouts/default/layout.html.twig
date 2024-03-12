@@ -8,95 +8,52 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
-{% block localization_switcher_widget %}
-    {% if localizations|length > 1 %}
-        <div class="oro-toolbar oro-localization-switcher">
-            {% set togglerId = 'dropdown-'|uniqid %}
-            <div class="oro-toolbar__content localization-switcher localization-switcher--{{ selected_localization.formattingCode|lower }}" data-toggle="dropdown" data-popper="false" role="button" data-localization="{{ selected_localization.formattingCode|lower }}" id="{{ togglerId }}"
-                 aria-haspopup="true" aria-expanded="false"
-                 aria-label="{{ 'oro.frontendlocalization.select.label'|trans }}">
-                {{ selected_localization.titles|localized_value }}
-                <span class="oro-toolbar__icon" aria-hidden="true">
-                    <span class="fa-angle-down"></span>
-                </span>
-            </div>
-            {% set currentRoute = app.request.get('_route') %}
-            {% set routeParameters = app.request.get('_route_params') %}
-            {% if routeParameters['_used_slug'] is defined %}
-                {% set urlParts = [routeParameters['_used_slug'].url] %}
-                {% if routeParameters['_context_url_attributes'] is defined %}
-                    {% for key, context in routeParameters['_context_url_attributes'] %}
-                        {% if context['_used_slug'] is defined %}
-                            {% set urlParts = urlParts|merge([context['_used_slug'].url]) %}
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-                {% set routeParameters = routeParameters|merge({'_used_slug_url': urlParts}) %}
-            {% endif %}
-            {% set queryParameters = app.request.query.all %}
-            <div class="oro-toolbar__dropdown" role="menu" aria-labelledby="{{ togglerId }}">
-                <div data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
-                     data-page-component-options="{{ {
-                         'selectedLocalization': selected_localization.id,
-                         'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization',
-                         'currentRoute': currentRoute,
-                         'currentRouteParameters': routeParameters|json_encode,
-                         'currentQueryParameters': queryParameters|json_encode
-                     }|json_encode }}"
-                     data-dom-relocation-options="{{ {
-                         responsive: [
-                             {
-                                 viewport: 'tablet',
-                                 moveTo: '[data-switcher-localizations-target]'
-                             }
-                         ]
-                     }|json_encode }}"
-                >
-                    <ul class="oro-toolbar__list">
-                        {% for localization in localizations %}
-                            <li class="oro-toolbar__list-item localization-switcher__item localization-switcher__item--{{ localization.formattingCode|lower }}">
-                                {% set title = localization.titles|localized_value %}
-                                {% if selected_localization.id == localization.id %}
-                                    <span class="oro-toolbar__link oro-toolbar__link--active" dir="auto">
-                                        {{- title -}}
-                                    </span>
-                                {% else %}
-                                    <a class="oro-toolbar__link" href="#" data-localization="{{ localization.id }}" dir="auto">
-                                        {{- title -}}
-                                    </a>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    {% endif %}
+{% block _currency_localization_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-options': {
+            localizations: localizations|reduce((arr, localization) => arr|merge([{
+                id: localization.id,
+                value: localization.id,
+                name: localization.name,
+                title: localization.titles|localized_value,
+                formattingCode: localization.formattingCode|lower,
+                selected: localization == selected_localization,
+            }]), [])
+        }
+    }) %}
+
+    {% set useLocalizations = localizations|length > 1 %}
+
+    {{ parent_block_widget(block) }}
 {% endblock %}
 
-{% block _localization_switcher_trigger_widget %}
-    {% if localizations|length > 1 %}
-        <div class="header-row__container hidden-on-desktop">
-            <button class="header-row__trigger hidden-on-desktop"
-                type="button"
-                aria-label="{{ 'oro.frontendlocalization.select.label'|trans }}"
-                data-page-component-module="oroui/js/app/components/viewport-component"
-                data-page-component-options="{{ {
-                    viewport: 'tablet',
-                    component: 'oroui/js/app/components/view-component',
-                    view: 'orofrontend/default/js/app/views/fullscreen-popup-view',
-                    popupIcon: 'fa-globe fa--gray fa--x-large',
-                    popupLabel: 'oro.frontendlocalization.select.label'|trans,
-                    contentElement: '[data-localization-menu-container]',
-                    contentAttributes: {
-                        'class': 'oro-toolbar fullscreen-mode'
-                    }
-                }|json_encode() }}"
-            >
-                <span class="nav-trigger__icon nav-trigger__icon--transparent nav-trigger__icon--x-large" aria-hidden="true">
-                    <span class="fa-globe fa--dark-gray fa--no-offset"></span>
-                </span>
-            </button>
+{% block _currency_localization_container_inner_widget %}
+    {{ parent_block_widget(block) }}
+
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
+    {% if localizations|length == 2 %}
+        <div class="oro-toolbar__content localization-switcher">
+            {{ renderIcon.icon({name: 'globe', extraClass: 'theme-icon--medium oro-toolbar__icon'}) }}
+            {% for localization in localizations %}
+                {% if selected_localization.id == localization.id %}
+                    <span class="oro-toolbar__link oro-toolbar__link--active text-nowrap">{{ localization.title|trans }}</span>
+                {% else %}
+                    <a class="oro-toolbar__link text-nowrap" href="#" data-localization="{{ localization.id }}">{{ localization.title|trans }}</a>
+                {% endif %}
+                {% if loop.index == 1 %}
+                    <span class="divider"></span>
+                {% endif %}
+            {% endfor %}
         </div>
+    {% elseif localizations|length > 2 %}
+        <button
+            class="btn btn--outlined-inverse btn--text btn--no-padding localization-switcher localization-switcher--{{ selected_localization.formattingCode|lower }}"
+            type="button"
+        >
+            {{ renderIcon.icon({name: 'globe', extraClass: 'oro-toolbar__icon'}) }}
+            {{ selected_localization.titles|localized_value }}
+            {{ renderIcon.icon({name: 'chevron-down', extraClass: 'dropdown-menu-chevron'}) }}
+        </button>
     {% endif %}
 {% endblock %}

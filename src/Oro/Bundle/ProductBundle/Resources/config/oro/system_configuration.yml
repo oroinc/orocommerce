@@ -666,6 +666,20 @@ system_configuration:
                     oro.product.system_configuration.fields.schema_org_description_field.choice.long.label: 'oro_product_full_description'
                     oro.product.system_configuration.fields.schema_org_description_field.choice.short.label: 'oro_product_short_description'
 
+        oro_product.product_details_display_price_tiers_as: #BB-23597
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            options:
+                label: oro.product.system_configuration.fields.product_details_display_price_tiers_as.label
+                tooltip: oro.product.system_configuration.fields.product_details_display_price_tiers_as.tooltip
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    oro.product.system_configuration.fields.product_details_display_price_tiers_as.choice.multi-unit-table.label: 'multi-unit-table'
+                    oro.product.system_configuration.fields.product_details_display_price_tiers_as.choice.single-unit-table.label: 'single-unit-table'
+
     tree:
         system_configuration:
             platform:
@@ -823,6 +837,7 @@ system_configuration:
                                     theme_settings:
                                         children:
                                             - oro_product.product_image_placeholder
+                                            - oro_product.product_details_display_price_tiers_as #BB-23597
                     guests:
                         priority: 2000
                         children:

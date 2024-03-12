@@ -5,14 +5,14 @@ namespace Oro\Bundle\ConsentBundle\Migrations\Data\Demo\ORM;
 use Oro\Bundle\CMSBundle\Migrations\Data\AbstractLoadPageData;
 
 /**
- * Adds consent cms pages
+ * Loads consent CMS pages.
  */
 class LoadConsentCmsPagesDemoData extends AbstractLoadPageData
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getFilePaths()
+    protected function getFilePaths(): string
     {
         return $this->getFilePathsFromLocator(__DIR__ . '/data/consent_cms_pages.yml');
     }

@@ -8,12 +8,12 @@ Feature: Quick order form with anonymous user
   Scenario: Check quick order form from anonymous user without permissions
     Given I am on "/customer/product/quick-add"
     Then I should not see "404 Not Found"
-    And should see "Sign In"
+    And should see "Log In"
 
   Scenario: Check redirect to Quick Order Form page after login
     Given I fill form with:
       | Email Address | AmandaRCole@example.org |
       | Password      | AmandaRCole@example.org |
-    And click "Sign In"
-    Then I should see "Signed in as: Amanda Cole"
-    And should see "Quick Order Form"
+    And click "Log In"
+    Then I should see "Amanda Cole"
+    And should see "Quick Order"

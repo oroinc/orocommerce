@@ -31,6 +31,7 @@ define(function(require) {
             this.showListedPrice = options.showListedPrice;
             this.showValuePrice = options.showValuePrice;
             this.changeUnitLabel = options.changeUnitLabel;
+            this.showUnit = options.showUnit;
 
             _.each(this.modelAttr, function(attrValue, attrCode) {
                 this.model.set(attrCode, attrValue);
@@ -62,7 +63,8 @@ define(function(require) {
                 localeSettings: localeSettings,
                 numeral: numeral,
                 showValuePrice: this.showValuePrice,
-                showListedPrice: this.showListedPrice
+                showListedPrice: this.showListedPrice,
+                showUnit: this.showUnit
             };
         },
 

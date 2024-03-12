@@ -142,7 +142,7 @@ SQL;
         $dryRun = false
     ) {
         $sql = 'SELECT e.data FROM oro_entity_config as e WHERE e.class_name = ? LIMIT 1';
-        $entityRow = $this->connection->fetchAssoc($sql, [$className]);
+        $entityRow = $this->connection->fetchAssociative($sql, [$className]);
         $data = $entityRow['data'];
 
         $data = $data ? $this->connection->convertToPHPValue($data, Types::ARRAY) : [];

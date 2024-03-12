@@ -4,11 +4,14 @@ namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Provides demo fixture loading for price list relation.
@@ -17,30 +20,29 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
     ContainerAwareInterface,
     DependentFixtureInterface
 {
-    /**
-     * @var Website[]
-     */
-    protected $websites;
+    use ContainerAwareTrait;
+
+    private ?array $websites = null;
+    private ?array $priceLists = null;
 
     /**
-     * @var ContainerInterface
+     * {@inheritDoc}
      */
-    protected $container;
-
-    /**
-     * @var PriceList[]
-     */
-    protected $priceLists;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public function getDependencies(): array
     {
-        $this->container = $container;
+        return [
+            LoadCustomerDemoData::class,
+            LoadCustomerGroupDemoData::class,
+            LoadPriceListDemoData::class
+        ];
     }
 
-    protected function getPriceListByName(EntityManagerInterface $manager, string $name): PriceList
+    protected function getFileLocator(): FileLocatorInterface
+    {
+        return $this->container->get('file_locator');
+    }
+
+    protected function getPriceListByName(ObjectManager $manager, string $name): PriceList
     {
         foreach ($this->getPriceLists($manager) as $priceList) {
             if ($priceList->getName() === $name) {
@@ -51,7 +53,7 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
         throw new \LogicException(sprintf('There is no priceList with name "%s" .', $name));
     }
 
-    protected function getWebsiteByName(EntityManagerInterface $manager, string $name): Website
+    protected function getWebsiteByName(ObjectManager $manager, string $name): Website
     {
         foreach ($this->getWebsites($manager) as $website) {
             if ($website->getName() === $name) {
@@ -62,33 +64,21 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
         throw new \LogicException(sprintf('There is no website with name "%s" .', $name));
     }
 
-    protected function getWebsites(EntityManagerInterface $manager): array
+    protected function getWebsites(ObjectManager $manager): array
     {
-        if (!$this->websites) {
-            $this->websites = $manager->getRepository('OroWebsiteBundle:Website')->findAll();
+        if (null === $this->websites) {
+            $this->websites = $manager->getRepository(Website::class)->findAll();
         }
 
         return $this->websites;
     }
 
-    protected function getPriceLists(EntityManagerInterface $manager): array
+    protected function getPriceLists(ObjectManager $manager): array
     {
         if (!$this->priceLists) {
-            $this->priceLists = $manager->getRepository('OroPricingBundle:PriceList')->findAll();
+            $this->priceLists = $manager->getRepository(PriceList::class)->findAll();
         }
 
         return $this->priceLists;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData',
-            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
-        ];
     }
 }

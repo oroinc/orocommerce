@@ -73,7 +73,7 @@ Feature: RFQ from Shipping List
     And I click "Submit"
     And I should see "More Information Requested"
     And I proceed as the User
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click view "PO Test 01" in grid
     And I click "Provide More Information"
@@ -98,7 +98,7 @@ Feature: RFQ from Shipping List
     And click "Send"
     And I should see "Quote #31 successfully sent to customer" flash message
     When I proceed as the User
-    And I follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     And click view "PO Test 01" in grid
     Then should see "My Notes: This item was missed in the previous request"

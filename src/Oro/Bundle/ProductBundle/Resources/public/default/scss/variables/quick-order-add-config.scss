@@ -5,15 +5,15 @@ $quick-order-add-grid-area: add !default;
 $quick-order-add-clear-button-float: left !default;
 $quick-order-add-buttons-float: right !default;
 
-$quick-order-add-buttons-first-child-border-bottom: 1px solid get-color('additional', 'light') !default;
-$quick-order-add-buttons-inactive: get-color('additional', 'middle') !default;
+$quick-order-add-buttons-first-child-border-bottom: 1px solid get-color('neutral', 'grey1') !default;
+$quick-order-add-buttons-inactive: get-color('neutral', 'grey2') !default;
 $quick-order-add-label-margin: 0 0 10px !default;
 
 $quick-order-add-row-content-position: relative !default;
 $quick-order-add-row-content-display: grid !default;
 $quick-order-add-row-content-grid-template-areas: 'product quantity unit subtotal' !default;
 $quick-order-add-row-content-grid-template-columns: 1fr 60px 100px 114px !default;
-$quick-order-add-row-content-gap: $offset-x !default;
+$quick-order-add-row-content-gap: spacing('base') !default;
 
 $quick-order-add-result-sku-display: inline-block !default;
 
@@ -24,11 +24,11 @@ $quick-order-add-quantity-input-text-align: center !default;
 
 $quick-order-add-fields-validation-failed-grid-column-end: span 12 !default;
 
-$quick-order-add-error-margins: 0 -7px #{-$offset-y} !default;
+$quick-order-add-error-margins: 0 -7px #{-#{spacing('base')}} !default;
 
 $quick-order-add-mobile-bottom-margin: 0 0 5px !default;
 $quick-order-add-mobile-widget-content-margin: 5px 0 !default;
-$quick-order-add-mobile-row-border: 1px solid get-color('additional', 'light') !default;
+$quick-order-add-mobile-row-border: 1px solid get-color('neutral', 'grey1') !default;
 $quick-order-add-mobile-add-to-shopping-list-button: calc(100% - 40px) !default;
 $quick-order-add-mobile-error-margins: -10px 0 5px !default;
 $quick-order-add-mobile-price-dropdown-bottom: 5px !default;
@@ -38,4 +38,4 @@ $quick-order-add-mobile-row-content-grid-template-areas:
     'quantity unit'
     'subtotal subtotal' !default;
 $quick-order-add-mobile-row-content-grid-template-columns: 1fr 1fr !default;
-$quick-order-add-mobile-row-content-padding-bottom: $offset-y !default;
+$quick-order-add-mobile-row-content-padding-bottom: spacing('base') !default;

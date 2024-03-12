@@ -4,7 +4,6 @@ namespace Oro\Bundle\InventoryBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Migrations\Schema\OroCatalogBundleInstaller;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -16,12 +15,12 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class ExcludeFieldsFromExport implements Migration
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         // Works in case when "availability_date" column does not yet exist.
-        $table = $schema->getTable(OroCatalogBundleInstaller::ORO_CATALOG_CATEGORY_TABLE_NAME);
+        $table = $schema->getTable('oro_catalog_category');
         $table->changeColumn(
             'availability_date',
             [

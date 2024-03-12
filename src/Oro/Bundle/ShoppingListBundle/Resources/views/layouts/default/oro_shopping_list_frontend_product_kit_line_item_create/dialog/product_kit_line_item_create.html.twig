@@ -3,23 +3,18 @@
     {% set buttonOptions = {
         dataUrl: 'oro_shopping_list_frontend_product_kit_line_item_create',
         dataAttributes: {},
-        aCss: 'btn--info ',
-        iCss: 'fa fa-shopping-cart fa--fw fa--as-line',
-        labelInIcon: false,
+        aCss: '',
         form: form.vars.id
     } %}
 
     {% set newOptions = buttonOptions|merge({
         ariaLabel: 'oro.shoppinglist.actions.add_to_new_shopping_list.aria_label'|trans,
-        iCss: 'fa fa-plus fa--fw fa--as-line',
-        labelInIcon: false
+        iconName: 'plus'
     }) %}
 
     {% set removeOptions = buttonOptions|merge({
         dataUrl: 'oro_shopping_list_frontend_product_kit_line_item_create',
-        actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list'|trans,
-        iCss: 'fa fa-remove fa--fw fa--as-line',
-        labelInIcon: false
+        actionLabel: 'oro.shoppinglist.actions.remove_from_shopping_list_short'|trans
     }) %}
 
     {% set buttonsOptions = {
@@ -27,7 +22,7 @@
         current: buttonOptions,
         existing: buttonOptions,
         remove: removeOptions,
-        singleButtonACss : 'btn--info',
+        singleButtonACss : '',
         shoppingLists: shoppingLists,
         shoppingListRemoveEnabled: shoppingListRemoveEnabled,
         shoppingListUpdateEnabled: shoppingListUpdateEnabled,
@@ -49,7 +44,7 @@
                 'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
                 'widgetName': 'productAddToDropdownButtonProcessor',
                 'truncateLength': 25,
-                'decoreClass': 'btn--info',
+                'decoreClass': '',
                 'groupContainer': '<div class="btn-group btn-group--flex"></div>'
             }
         }) }}

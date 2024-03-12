@@ -60,6 +60,7 @@
 
     &__notes-container {
         display: flex;
+        align-items: center;
         margin-top: $grid-line-clip-none-offset;
         line-height: $shopping-lists-notes-line-height;
     }
@@ -72,8 +73,7 @@
     &__edit-notes {
         display: inline-flex;
         justify-content: center;
-        margin-left: $offset-x-s;
-        color: $launcher-item-icon-color;
+        margin-left: spacing('xs');
     }
 
     &__ellipsis {

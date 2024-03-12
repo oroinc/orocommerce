@@ -94,14 +94,10 @@
 
     .price-value-container {
         position: relative;
-    }
-
-    .prices-hint-toggler {
-        position: absolute;
-        top: 0;
-        padding: 0;
-        line-height: inherit;
-        border-width: 0;
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        gap: spacing('sm');
     }
 
     .grid-scrollable-container {
@@ -109,7 +105,7 @@
     }
 }
 
-@include breakpoint('desktop') {
+@include breakpoint('desktop-small') {
     .responsive-shopping-list-grid {
         .grid-body-cell-inventoryStatus {
             white-space: nowrap;
@@ -122,8 +118,7 @@
         .grid-body-cell-quantity:not(.editable),
         .grid-body-cell-unit,
         .grid-body-cell-price,
-        .grid-body-cell-subtotal,
-        .action-cell {
+        .grid-body-cell-subtotal {
             padding-top: $responsive-shopping-cell-desktop-offset;
         }
 

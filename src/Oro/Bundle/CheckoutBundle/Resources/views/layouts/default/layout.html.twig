@@ -61,7 +61,7 @@
             transition: transitionData.transition.name
         })
     %}
-    <a href="{{ transitionUrl }}"
+    <a href="{{ transitionUrl }}" class="checkout-form__btn-back no-decoration"
         {{ layout.transitionAttributes(transitionData, checkout) }}
         {{ layout.conditionMessages(transitionData) }}
     >
@@ -76,7 +76,7 @@
     {% if transitionData is defined and transitionData %}
         <div class="tooltip-container" {{ layout.conditionMessages(transitionData) }}>
             <button type="submit"
-                class="btn btn--info{% if not transitionData.isAllowed %} btn--disabled{% endif %} btn--size-m checkout-form__submit"
+                class="btn btn--outlined{% if not transitionData.isAllowed %} btn--disabled{% endif %} btn--size-small checkout-form__submit"
                 disabled="disabled"
                 {{ layout.transitionAttributes(transitionData, checkout, componentOptions) }}
             >
@@ -102,7 +102,7 @@
     {% else %}
         {% set transitionLabel = transitionData.transition.label|trans({},'workflows') %}
     {% endif %}
-    <a href="{{ transitionUrl }}" class="btn--plain"
+    <a href="{{ transitionUrl }}" class="btn--text"
        data-toggle="tooltip"
        data-title="{{ transitionLabel }}"
        data-html="true"

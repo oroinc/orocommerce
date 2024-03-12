@@ -1,0 +1,186 @@
+{% block _oro_rfp_frontend_request_product_kit_configuration_widget %}
+    {{ form_row(form._token) }}
+    {{ form_row(form.index) }}
+    {{ form_row(form.product) }}
+
+    <div {{ block('widget_container_attributes') }}>
+        {{ form_row(form.kitItemLineItems) }}
+    </div>
+{% endblock %}
+
+{% block _oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_row %}
+    <div class="fields-row-error">
+        {{ form_errors(form) }}
+    </div>
+
+    {{ form_widget(form) }}
+{% endblock %}
+
+{% block _oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_widget %}
+    <div {{ block('widget_container_attributes') }}>
+        <table class="product-kit-items-table">
+            <tbody class="product-kit-items-table__body">
+                {{ block('form_rows') }}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block _oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_entry_label %}
+    {% set label_attr = layout_attr_defaults(label_attr, {
+        '~class': ' h4 product-kit-items__label'
+    }) %}
+    {{ form_label(form, product_kit_item.labels|localized_value ~ ':', {label_attr: label_attr, tagName: 'h4'}) }}
+{% endblock %}
+
+{% block _oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_entry_row %}
+    <tr class="product-kit-items-table__row product-kit-items-table__row-entry">
+        <td class="product-kit-items-table__cell label-cell" colspan=3">
+            {{ form_label(form) }}
+        </td>
+        <td class="product-kit-items-table__cell quantity-cell">
+            <div class="product-item-quantity product-item-quantity--justify-end fields-row">
+                {% set unit_precision = value.id|default(0) ? value.productUnitPrecision : product_kit_item|oro_product_kit_item_unit_precision %}
+                {% set min_quantity = value.id|default(0) ? value.minimumQuantity : product_kit_item.minimumQuantity %}
+                {% set max_quantity = value.id|default(0) ? value.maximumQuantity : product_kit_item.maximumQuantity %}
+                {{ form_widget(form.quantity, {
+                    'attr': {
+                        'aria-label': 'oro.rfp.requestproductkititemlineitem.quantity.aria_label'|trans,
+                        'class': 'product-item-quantity__input',
+                        'data-floating-error': '',
+                        'data-boundaries-element': '[role="dialog"]',
+                        'data-role': 'kit-item-line-item-quantity',
+                        'data-input-widget': 'number',
+                        'data-precision': unit_precision,
+                        'data-minimum-quantity': min_quantity|default(1.0),
+                        'data-maximum-quantity': max_quantity
+                    }
+                }) }}
+                <div class="fields-row-error">
+                    {{ form_errors(form.quantity) }}
+                </div>
+            </div>
+        </td>
+    </tr>
+    {{ form_row(form.product, {label: false, kitItem: product_kit_item, productPrices: form.parent.vars.product_prices|default({})}) }}
+{% endblock %}
+
+{% block _oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_entry_product_row %}
+    {%- if not valid -%}
+        <tr class="product-kit-items-table__row product-kit-items-table__row-error">
+            <td colspan="3">
+                <div class="fields-row-error">
+                    {{ form_errors(form) }}
+                </div>
+            </td>
+        </tr>
+    {%- endif -%}
+    {%- for index, choice in choices -%}
+        {% set choiceID = form.children[index].vars.id|default(null) %}
+        {%- set product = choice.data -%}
+        <tr class="product-kit-items-table__row product-kit-items-table__row-product{% if loop.last %} product-last-in-group{% endif %}{% if product is null %} no-product-cell{% endif %}">
+            <td class="product-kit-items-table__cell radio-cell{% if product is null %} no-product-cell{% endif %}">{{- form_row(form[index], {label: false, product: product}) -}}</td>
+            <td class="product-kit-items-table__cell sku-cell{% if product is null %} no-product-cell{% endif %}">
+                <label {% if choiceID is not null %}for="{{ choiceID }}"{% endif %}>
+                    {%- if product -%}
+                        {{ product.skuUppercase }}
+                    {% else %}
+                        {{ 'oro.rfp.requestproductkititemlineitem.product.form.choices.none'|trans }}
+                    {% endif %}
+                </label>
+            </td>
+            <td class="product-kit-items-table__cell item-cell{% if product is null %} no-product-cell{% endif %}">
+                {% import '@OroUI/macros.html.twig' as UI %}
+                {% if product is not null %}
+                    {% set productImageData = product.imagesByType('listing').first.image|default(null) %}
+                    {% set productName = product.names|localized_value %}
+                    <div class="product-item grid-line-items">
+                        <div class="grid-line-items__row grid-line-items__row--offset-y-end product-item__image-holder--aspect-ratio product-item__image-holder--tiny">
+                            <div class="product-item__preview">
+                                {% include '@OroAttachment/Twig/picture.html.twig' with {
+                                    sources: product_filtered_picture_sources(productImageData, 'product_small'),
+                                    picture_attrs: {
+                                        class: 'product-item__preview-picture'
+                                    },
+                                    img_attrs: {
+                                        class: 'product-item__preview-image'
+                                    }
+                                } %}
+                            </div>
+                        </div>
+                        <div class="grid-line-items__row">
+                            <div class="grid-line-items__row-item height-as-image-mobile">
+                                <h3 class="grid-line-items__title">
+                                    {% set productId = product.id|default(0) %}
+                                    {% if productId and is_visible_product(productId) %}
+                                        {{ UI.link({
+                                            path: path('oro_product_frontend_product_view', {'id': productId}),
+                                            label : productName
+                                        }) }}
+                                    {% else %}
+                                        {{ productName|e }}
+                                    {% endif %}
+                                </h3>
+                            </div>
+                            <div class="grid-line-items__row-entry show-in-mobile">
+                                <div class="mobile-row shift-mobile-row">
+                                        <span class="highlighted-in-mobile break-all">
+                                            {{ product.skuUppercase }}
+                                        </span>
+                                    {%- set productPrice = productPrices[product.id|default(0)][kitItem.productUnit.code|default('')]|default([null])|first -%}
+                                    <span{% if productPrice %} class="bold"{% endif %} data-name="price-value"
+                                          {% if productPrice is null %}
+                                              data-blank-content="{{ 'oro.pricing.frontend.product_prices.price_not_found.short_label'|trans }}"
+                                          {% endif %}
+                                        >
+                                            {%- if productPrice is not null -%}
+                                                {{ productPrice.price.value|default(0)|oro_format_currency({'currency': productPrice.price.currency|default(null)}) }}
+                                            {%- endif -%}
+                                        </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </td>
+            <td class="product-kit-items-table__cell price-cell{% if product is null %} no-product-cell{% endif %}"
+                    {%- if product -%}
+                        {%- set productPrice = productPrices[product.id|default(0)][kitItem.productUnit.code|default('')]|default([null])|first -%}
+                        {%- if productPrice is null -%}
+                            data-blank-content="{{ 'oro.pricing.frontend.product_prices.price_not_found.short_label'|trans }}"
+                        {% endif %}
+                    {%- endif -%}
+            >
+                {%- if product -%}
+                    {%- set productPrice = productPrices[product.id|default(0)][kitItem.productUnit.code|default('')]|default([null])|first -%}
+                    {%- if productPrice is not null -%}
+                        <span data-name="price-value">
+                                {{ productPrice.price.value|default(0)|oro_format_currency({'currency': productPrice.price.currency|default(null)}) }}
+                            </span>
+                    {%- endif -%}
+                {%- endif -%}
+            </td>
+        </tr>
+    {%- endfor -%}
+{% endblock %}
+
+{% block _oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_entry_product_entry_widget %}
+    {% set label %}
+        {% if product is not null %}
+            {% set productName = product.names|localized_value %}
+            <span class="sr-only">{{ product.skuUppercase ~ ' - ' ~ productName }}</span>
+        {% else %}
+            <span class="sr-only">{{ 'oro.rfp.requestproductkititemlineitem.product.form.choices.none'|trans }}</span>
+        {% endif %}
+    {% endset %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-role': 'kit-item-line-item-product',
+    }) %}
+    {% set relatedQuantityFieldId = form.parent.parent.children.quantity.vars.id|default(null) %}
+    {% if relatedQuantityFieldId %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-related-quantity-field': '#' ~ relatedQuantityFieldId
+        }) %}
+    {% endif %}
+    {{ block('radio_widget') }}
+{% endblock %}

@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -15,46 +16,32 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchResultHistoryRepository;
 
 /**
  * Stores search results history items.
  *
  * Functional indexes:
  *  - website_search_result_history_term_lower_idx as LOWER("search_term")
- *
- * @ORM\Entity(
- *     repositoryClass="Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchResultHistoryRepository"
- * )
- * @ORM\Table(
- *     name="oro_website_search_result_history",
- *     uniqueConstraints={
- *         @ORM\UniqueConstraint(name="website_search_result_history_search_session_unq", columns={"search_session"})
- *     },
- *     indexes={
- *         @ORM\Index(name="website_search_result_history_sterm_hash_idx", columns={"normalized_search_term_hash"})
- *     }
- * )
- * @Config(
- *     routeName="oro_website_search_result_history_index",
- *     defaultValues={
- *         "entity"={
- *             "icon"="fa-search"
- *         },
- *         "ownership"={
- *             "owner_type"="BUSINESS_UNIT",
- *             "owner_field_name"="owner",
- *             "owner_column_name"="business_unit_owner_id",
- *             "organization_field_name"="organization",
- *             "organization_column_name"="organization_id"
- *         },
- *         "security"={
- *             "type"="ACL",
- *             "group_name"="commerce",
- *             "category"="search"
- *         }
- *     }
- * )
  */
+#[ORM\Entity(repositoryClass: SearchResultHistoryRepository::class)]
+#[ORM\Table(name: 'oro_website_search_result_history')]
+#[ORM\Index(columns: ['normalized_search_term_hash'], name: 'website_search_result_history_sterm_hash_idx')]
+#[ORM\UniqueConstraint(name: 'website_search_result_history_search_session_unq', columns: ['search_session'])]
+#[Config(
+    routeName: 'oro_website_search_result_history_index',
+    defaultValues: [
+        'entity' => ['icon' => 'fa-search'],
+        'ownership' => [
+            'owner_type' => 'BUSINESS_UNIT',
+            'owner_field_name' => 'owner',
+            'owner_column_name' => 'business_unit_owner_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id'
+        ],
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'search']
+    ]
+)]
 class SearchResultHistory implements
     ExtendEntityInterface,
     CreatedAtAwareInterface,
@@ -66,132 +53,49 @@ class SearchResultHistory implements
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="id", type="guid")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(name: 'id', type: Types::GUID)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'UUID')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
     protected $id;
 
-    /**
-     * @ORM\Column(
-     *     name="normalized_search_term_hash",
-     *     type="string",
-     *     length=32,
-     *     nullable=false
-     * )
-     */
-    private $normalizedSearchTermHash;
+    #[ORM\Column(name: 'normalized_search_term_hash', type: Types::STRING, length: 32, nullable: false)]
+    private ?string $normalizedSearchTermHash = null;
 
-    /**
-     * @ORM\Column(
-     *     name="result_type",
-     *     type="string",
-     *     length=32,
-     *     nullable=false
-     * )
-     */
-    private $resultType;
+    #[ORM\Column(name: 'result_type', type: Types::STRING, length: 32, nullable: false)]
+    private ?string $resultType = null;
 
-    /**
-     * @ORM\Column(
-     *     name="results_count",
-     *     type="integer",
-     *     nullable=false
-     * )
-     */
-    private $resultsCount;
+    #[ORM\Column(name: 'results_count', type: Types::INTEGER, nullable: false)]
+    private ?int $resultsCount = null;
 
-    /**
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website"
-     * )
-     * @ORM\JoinColumn(
-     *     name="website_id",
-     *     nullable=false,
-     *     onDelete="CASCADE"
-     * )
-     */
-    private $website;
+    #[ORM\ManyToOne(targetEntity: Website::class)]
+    #[ORM\JoinColumn(name: 'website_id', nullable: false, onDelete: 'CASCADE')]
+    private ?Website $website = null;
 
-    /**
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\LocaleBundle\Entity\Localization"
-     * )
-     * @ORM\JoinColumn(
-     *     name="localization_id",
-     *     nullable=true,
-     *     onDelete="SET NULL"
-     * )
-     */
-    private $localization;
+    #[ORM\ManyToOne(targetEntity: Localization::class)]
+    #[ORM\JoinColumn(name: 'localization_id', nullable: true, onDelete: 'SET NULL')]
+    private ?Localization $localization = null;
 
-    /**
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer"
-     * )
-     * @ORM\JoinColumn(
-     *     name="customer_id",
-     *     nullable=true,
-     *     onDelete="SET NULL"
-     * )
-     */
-    private $customer;
+    #[ORM\ManyToOne(targetEntity: Customer::class)]
+    #[ORM\JoinColumn(name: 'customer_id', nullable: true, onDelete: 'SET NULL')]
+    private ?Customer $customer = null;
 
-    /**
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser"
-     * )
-     * @ORM\JoinColumn(
-     *     name="customer_user_id",
-     *     nullable=true,
-     *     onDelete="SET NULL"
-     * )
-     */
-    private $customerUser;
+    #[ORM\ManyToOne(targetEntity: CustomerUser::class)]
+    #[ORM\JoinColumn(name: 'customer_user_id', nullable: true, onDelete: 'SET NULL')]
+    private ?CustomerUser $customerUser = null;
 
-    /**
-     * @ORM\Column(
-     *     name="customer_visitor_id",
-     *     type="integer",
-     *     nullable=true
-     * )
-     */
-    private $customerVisitorId;
+    #[ORM\Column(name: 'customer_visitor_id', type: Types::INTEGER, nullable: true)]
+    private ?int $customerVisitorId = null;
 
-    /**
-     * @ORM\Column(
-     *     name="search_session",
-     *     type="string",
-     *     length=36,
-     *     nullable=true
-     * )
-     */
-    private $searchSession;
+    #[ORM\Column(name: 'search_session', type: Types::STRING, length: 36, nullable: true)]
+    private ?string $searchSession = null;
 
-    /**
-     * @ORM\Column(
-     *     name="search_term",
-     *     type="string",
-     *     length=255,
-     *     nullable=false
-     * )
-     */
-    private $searchTerm;
+    #[ORM\Column(name: 'search_term', type: Types::STRING, length: 255, nullable: false)]
+    private ?string $searchTerm = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @Doctrine\ORM\Mapping\Column(name="created_at", type="datetime")
-     */
-    private $createdAt;
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $createdAt = null;
 
     public function getId(): ?string
     {

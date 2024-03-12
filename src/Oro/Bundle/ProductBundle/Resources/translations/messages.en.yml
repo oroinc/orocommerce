@@ -5,6 +5,8 @@ oro:
                 title: '{0} All Products|[1,Inf] Search Results for "%text%"'
             search_in_category:
                 title: '{0} All Products in %category%|[1,Inf] Search Results for "%text%" in %category%'
+        search_widget:
+            cancel: 'Cancel'
         entity_label: Product
         entity_plural_label: Products
         entity_grid_all_view_label: All %entity_plural_label%
@@ -113,15 +115,12 @@ oro:
             title: Product Page
             label: Page Template
             description: Page Template style used for displaying product in frontend store
-            short:
-                label: Short page
-                description: Short page template of product page (no additional attributes groups are displayed at all)
-            two_columns:
-                label: Two columns page
-                description: Two columns template of product page (additional attribute groups are displayed in two columns)
-            list:
-                label: List page
-                description: List template of product page (additional attribute groups are displayed in column one below another)
+            tabs:
+                label: Tabs Template
+                description: Tabs template of product page (additional attribute groups are displayed in tabs)
+            wide:
+                label: Wide Template
+                description: Wide Template of product page (additional attribute groups are displayed in collapse one below another for full page width)
         slugs:
             label:              'Slugs'
             singular_label:     'Slug'
@@ -762,6 +761,12 @@ oro:
                         meta.label: 'SEO Meta Description'
                         short.label: 'Simplified Short Description'
                         long.label: 'Simplified [Long] Description'
+                product_details_display_price_tiers_as: #BB-23597
+                    label: 'Display Price Tiers As'
+                    tooltip: 'Multi-unit table will show price tiers for all product units in the same table, which might not work well for products with many units or when quantity tiers are not aligned between units. Single-unit table will show price tiers only for the currently selected unit.'
+                    choice:
+                        multi-unit-table.label: 'Multi-unit table'
+                        single-unit-table.label: 'Single-unit table'
 
             notice:
                 product_image_watermark: >
@@ -858,6 +863,9 @@ oro:
                 action:
                     product:
                         view.aria_label: 'View %name% product'
+            gallery:
+                prev: 'Previous image'
+                next: 'Next image'
 
         export:
             inventory_status_only: "Inventory statuses only"
@@ -887,7 +895,7 @@ oro:
             message: "Cannot remove field because it's used as a variant field in the following configurable products: %skuList%"
 
         sticker:
-            new_arrival: 'New Arrival'
+            new_arrival: 'New'
             top_selling: 'Top Selling'
 
         brand:
@@ -999,6 +1007,22 @@ oro:
                         value:
                             no: No
                             yes: Yes
+                    labels:
+                        label: Labels
+                        singular_label: Label
+                        tooltip: If provided, this label will be displayed above the list of the products.
+                    autoplay:
+                        label: Enable Autoplay
+                    autoplay_speed:
+                        label: Autoplay Speed (Milliseconds)
+                    arrows:
+                        label: Show Arrows
+                    show_arrows_on_touchscreens:
+                        label: Show Arrows On Touchscreens
+                    dots:
+                        label: Show Dots
+                    infinite:
+                        label: Enable Infinite Scroll
 
         feature:
             quick_order_form:

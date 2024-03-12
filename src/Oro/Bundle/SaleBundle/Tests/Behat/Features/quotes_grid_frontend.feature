@@ -10,6 +10,7 @@ Feature: Quotes Grid Frontend
 
   Scenario: Check Grid
     Given I signed in as AmandaRCole@example.org on the store frontend
+    And I click "Account Dropdown"
     When I click "Quotes"
     And number of records in "AllQuotes" should be 13
     And I select 10 records per page in "AllQuotes"
@@ -300,7 +301,8 @@ Feature: Quotes Grid Frontend
       | Quote # | Owner       |
       | Quote6  | Amanda Cole |
     When I set "gridview1" grid view as default in "AllQuotes" frontend grid
-    Then I should see "View has been successfully updated" flash message
+    Then I should see "View has been successfully updated" flash message and I close it
+    And I click "Account Dropdown"
     When I click "Quotes"
     Then I should see "Gridview1"
     And I should see following grid with exact columns order:

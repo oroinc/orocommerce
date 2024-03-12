@@ -13,6 +13,7 @@ const QuickAddModel = BaseModel.extend({
             organization: '',
             quantity: null,
             unit: '',
+            type: '',
 
             product_units: {},
             units_loaded: false,

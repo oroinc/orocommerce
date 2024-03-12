@@ -2,31 +2,20 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_9;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class OroPricingBundle implements Migration, ConnectionAwareInterface, ContainerAwareInterface
+class OroPricingBundle implements Migration, ConnectionAwareInterface
 {
-    /**
-     * @var Container
-     */
-    protected $container;
+    use ConnectionAwareTrait;
 
     /**
-     * @var Connection
-     */
-    protected $connection;
-
-    /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -52,21 +41,5 @@ class OroPricingBundle implements Migration, ConnectionAwareInterface, Container
             $queries->addQuery("ALTER TABLE oro_price_product CHANGE id id CHAR(36) NOT NULL COMMENT '(DC2Type:guid)'");
             $table->setPrimaryKey(['id']);
         }
-    }
-
-    /**
-     * Sets the database connection
-     */
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 }

@@ -4,6 +4,10 @@ layout:
             id: line_item_form_update
             optionName: visible
             optionValue: '=data["feature"].isFeatureEnabled("guest_shopping_list") || data["feature"].isFeatureEnabled("guest_rfp")'
+        -   '@setOption':
+                id: line_item_form_fields_unit
+                optionName: visible
+                optionValue: '=data["feature"].isFeatureEnabled("guest_shopping_list") || data["feature"].isFeatureEnabled("guest_rfp")'
         - '@setOption':
             id: product_view_variant_field_container
             optionName: visible

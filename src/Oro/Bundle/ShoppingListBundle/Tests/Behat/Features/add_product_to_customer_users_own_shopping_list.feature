@@ -57,12 +57,12 @@ Feature: Add Product to Customer User's Own Shopping List
   Scenario: Clear the buyer's shopping list at first
     Given I proceed as the Buyer
     And I signed in as NancyJSallee@example.org on the store frontend
-    Then I should not see "3 Shopping Lists"
+    Then I should not see "3" in the "Shopping List Widget" element
     When I open page with shopping list "Shopping List 2"
     And I click "Shopping List Actions"
     And I click "Delete"
     And I click "Yes, delete"
-    Then I should see "Shopping List deleted" flash message
+    Then I should see "Shopping List deleted" flash message and I close it
 
   Scenario: Add a new product to shopping list as the buyer
     Given I type "BB04" in "search"
@@ -77,10 +77,11 @@ Feature: Add Product to Customer User's Own Shopping List
     And I click "Shopping List Actions"
     And I click "Delete"
     And I click "Yes, delete"
-    Then should see "Shopping List deleted" flash message
+    Then should see "Shopping List deleted" flash message and I close it
+    And reload the page
 
   Scenario: To add a new product to shopping list in quick order form as the buyer
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     Then I should not see "Add to Shopping List 3"
     When I type "BB04" in "SKU1" from "Quick Order Form"
     And I wait for products to load
@@ -94,7 +95,7 @@ Feature: Add Product to Customer User's Own Shopping List
     And I click "Shopping List Actions"
     And I click "Delete"
     And I click "Yes, delete"
-    Then should see "Shopping List deleted" flash message
+    Then should see "Shopping List deleted" flash message and I close it
 
   Scenario: Add a set of new product to shopping list by matrix order form as the buyer
     Given I type "CNFB" in "search"
@@ -114,7 +115,7 @@ Feature: Add Product to Customer User's Own Shopping List
     And I click "Shopping List Actions"
     And I click "Delete"
     And I click "Yes, delete"
-    Then should see "Shopping List deleted" flash message
+    Then should see "Shopping List deleted" flash message and I close it
 
   Scenario: Administrator sets option "Show All Lists In Shopping List Widgets" to No
     Given I proceed as the Admin
@@ -132,14 +133,14 @@ Feature: Add Product to Customer User's Own Shopping List
     Then I should not see "Add to Shopping List"
     When I type "4" in "Product Quantity"
     And I click "Update Shopping List 3"
-    Then I should see 'Product has been updated in "Shopping List 3"' flash message
+    Then I should see 'Product has been updated in "Shopping List 3"' flash message and I close it
     When I open page with shopping list "Shopping List 3"
     Then I should see following grid:
       | SKU  | Item                               | Qty Update All |
       | BB04 | Configurable Product 1 Note 4 text | 4 item         |
 
   Scenario: To add a new product to shopping list in quick order form as the buyer with "Show All Lists In Shopping List Widgets" option on
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     Then I should see "Add to Shopping List 3"
     When I type "BB04" in "SKU1" from "Quick Order Form"
     And I wait for products to load

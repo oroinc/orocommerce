@@ -46,7 +46,7 @@ class FrontendConsentProviderTest extends WebTestCase
         $customerUserData = $this->getReference($customerUserReference);
 
         self::getContainer()->get('security.token_storage')
-            ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
+            ->setToken(new UsernamePasswordToken($customerUserData, 'key'));
 
         $consentData = $this->provider->getAllConsentData();
         $this->assertExpectedConsents($consentData, $expectedConsentReferences);
@@ -91,7 +91,7 @@ class FrontendConsentProviderTest extends WebTestCase
         $customerUserData = $this->getReference($customerUserReference);
 
         self::getContainer()->get('security.token_storage')
-            ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
+            ->setToken(new UsernamePasswordToken($customerUserData, 'key'));
 
         $consentData = $this->provider->getNotAcceptedRequiredConsentData();
         $this->assertExpectedConsents($consentData, $expectedConsentReferences);
@@ -126,7 +126,7 @@ class FrontendConsentProviderTest extends WebTestCase
         $customerUserData = $this->getReference($customerUserReference);
 
         self::getContainer()->get('security.token_storage')
-            ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
+            ->setToken(new UsernamePasswordToken($customerUserData, 'key'));
 
         $consentAcceptance = new ConsentAcceptance();
         $consentAcceptance->setConsent($this->getReference(LoadConsentsData::CONSENT_REQUIRED_WITHOUT_NODE));
@@ -175,7 +175,7 @@ class FrontendConsentProviderTest extends WebTestCase
         $customerUserData = $this->getReference($customerUserReference);
 
         self::getContainer()->get('security.token_storage')
-            ->setToken(new UsernamePasswordToken($customerUserData, LoadCustomerUserData::PASSWORD, 'key'));
+            ->setToken(new UsernamePasswordToken($customerUserData, 'key'));
 
         $consentAcceptance = new ConsentAcceptance();
         $consentAcceptance->setConsent($this->getReference(LoadConsentsData::CONSENT_REQUIRED_WITHOUT_NODE));

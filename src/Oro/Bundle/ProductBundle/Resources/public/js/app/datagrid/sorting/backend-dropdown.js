@@ -21,6 +21,9 @@ define(function(require) {
         /** @property */
         className: '',
 
+        /** @property */
+        template: require('tpl-loader!oroproduct/templates/datagrid/backend-sorting-dropdown.html'),
+
         /**
          * @inheritdoc
          */

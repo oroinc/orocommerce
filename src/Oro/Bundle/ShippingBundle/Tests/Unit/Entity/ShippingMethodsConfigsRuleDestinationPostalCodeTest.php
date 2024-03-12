@@ -15,7 +15,7 @@ class ShippingMethodsConfigsRuleDestinationPostalCodeTest extends \PHPUnit\Frame
     public function testProperties()
     {
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['name', 'wewfe'],
             ['destination', new ShippingMethodsConfigsRuleDestination()],
         ];

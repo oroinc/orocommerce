@@ -99,7 +99,7 @@
         {% set generalData = generalData|merge([form_row(form.slugPrototypesWithRedirect)]) %}
     {% endif %}
     {% if form.status is defined %}
-        {% set generalData = generalData|merge([form_row(form.status)]) %}
+        {% set generalData = generalData|merge([form_row(form.status, {'separator':none})]) %}
     {% endif %}
     {% if form.featured is defined %}
         {% set generalData = generalData|merge([form_row(form.featured)]) %}

@@ -18,6 +18,7 @@ use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCase
 {
@@ -106,7 +107,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit\Framework\TestCa
     {
         return [
             [null],
-            [new \stdClass()]
+            [$this->createMock(UserInterface::class)]
         ];
     }
 

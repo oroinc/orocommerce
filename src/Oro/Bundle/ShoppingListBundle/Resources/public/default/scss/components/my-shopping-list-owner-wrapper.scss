@@ -5,7 +5,7 @@
     align-items: center;
     flex-wrap: wrap;
 
-    margin-bottom: $offset-y-s;
+    margin-bottom: spacing('xs');
     margin-left: auto;
 
     .action {
@@ -14,7 +14,7 @@
 
     .shopping-list-owner,
     &__actions {
-        padding: $offset-y-s 0;
+        padding: spacing('xs') 0;
     }
 
     &__actions {
@@ -26,7 +26,7 @@
 
     .separator {
         display: none;
-        margin: 0 ($offset-y-m + $offset-y-s);
+        margin: 0 (spacing('sm') + spacing('xs'));
         width: 1px;
         height: 16px;
 
@@ -36,5 +36,9 @@
 
     &.show-separator .separator {
         display: inline-flex;
+    }
+
+    .dropdown-item {
+        align-items: center;
     }
 }

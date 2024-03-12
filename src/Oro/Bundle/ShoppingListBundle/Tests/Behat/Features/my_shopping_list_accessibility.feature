@@ -12,8 +12,8 @@ Feature: My Shopping List Accessibility
 
   Scenario: Navigation inside of grid by Arrow Right key
     Given I login as AmandaRCole@example.org buyer
-    Then follow "Account"
-    And I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
     And I click Edit "Shopping List 1" in grid
     When I focus on "Shopping List Edit Grid Select Row 1 Input"
     Then I press "ArrowRight" key on "Shopping List Edit Grid Select Row 1 Input" element

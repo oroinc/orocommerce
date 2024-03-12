@@ -17,7 +17,7 @@ Feature: Product Image Placeholder in system configuration
   Scenario: Check no image on the product grid
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    When click "NewCategory"
+    When click "NewCategory" in hamburger menu
     Then should see "Empty Product Image" for "PSKU1" product
     And I should see picture for "PSKU1" product in the "ProductFrontendGrid"
     And should not see "Uploaded Product Image" for "PSKU1" product
@@ -53,7 +53,7 @@ Feature: Product Image Placeholder in system configuration
 
   Scenario: Check the product image placeholder on the product grid
     Given I proceed as the Buyer
-    When click "NewCategory"
+    When click "NewCategory" in hamburger menu
     Then should see "Uploaded Product Image" for "PSKU1" product
     And I should see picture for "PSKU1" product in the "ProductFrontendGrid"
     And should not see "Empty Product Image" for "PSKU1" product

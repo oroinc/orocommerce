@@ -4,40 +4,49 @@ namespace Oro\Bundle\WebCatalogBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroWebCatalogBundle_Entity_ContentVariant;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareTrait;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository;
 use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 /**
  * Entity that represents webcatalog content variants
  *
- * @ORM\Entity(repositoryClass="Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository")
- * @ORM\AssociationOverrides({
- *     @ORM\AssociationOverride(
- *          name="slugs",
- *          joinTable=@ORM\JoinTable(
- *              name="oro_web_catalog_variant_slug",
- *              joinColumns={
- *                  @ORM\JoinColumn(name="content_variant_id", referencedColumnName="id", onDelete="CASCADE")
- *              },
- *              inverseJoinColumns={
- *                  @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
- *              }
- *          )
- *      )
- * })
- * @ORM\Table(name="oro_web_catalog_variant")
- * @Config
  * @mixin OroWebCatalogBundle_Entity_ContentVariant
  */
+#[ORM\Entity(repositoryClass: ContentVariantRepository::class)]
+#[ORM\Table(name: 'oro_web_catalog_variant')]
+#[ORM\AssociationOverrides([
+    new ORM\AssociationOverride(
+        name: 'slugs',
+        joinColumns: [
+        new ORM\JoinColumn(
+            name: 'content_variant_id',
+            referencedColumnName: 'id',
+            onDelete: 'CASCADE'
+        )
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(
+                name: 'slug_id',
+                referencedColumnName: 'id',
+                unique: true,
+                onDelete: 'CASCADE'
+            )
+        ],
+        joinTable: new ORM\JoinTable(name: 'oro_web_catalog_variant_slug')
+    )
+])]
+#[Config]
 class ContentVariant implements
     ContentVariantInterface,
     ContentNodeAwareInterface,
@@ -48,68 +57,35 @@ class ContentVariant implements
     use SlugAwareTrait;
     use ExtendEntityTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\Column(name: 'type', type: Types::STRING, length: 255)]
+    protected ?string $type = null;
+
+    #[ORM\Column(name: 'system_page_route', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $systemPageRoute = null;
+
+    #[ORM\ManyToOne(targetEntity: ContentNode::class, inversedBy: 'contentVariants')]
+    #[ORM\JoinColumn(name: 'node_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?ContentNode $node = null;
+
+    #[ORM\Column(name: 'is_default', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $default = false;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="type", type="string", length=255)
+     * @var Collection<int, Scope>
      */
-    protected $type;
+    #[ORM\ManyToMany(targetEntity: Scope::class)]
+    #[ORM\JoinTable(name: 'oro_web_catalog_variant_scope')]
+    #[ORM\JoinColumn(name: 'variant_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'scope_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Collection $scopes = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="system_page_route", type="string", length=255, nullable=true)
-     */
-    protected $systemPageRoute;
-
-    /**
-     * @var ContentNode
-     *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentNode",
-     *     inversedBy="contentVariants"
-     * )
-     * @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $node;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="is_default", type="boolean", options={"default"=false})
-     */
-    protected $default = false;
-
-    /**
-     * @var Collection|Scope[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope"
-     * )
-     * @ORM\JoinTable(name="oro_web_catalog_variant_scope",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="variant_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="scope_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
-     */
-    protected $scopes;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="override_variant_configuration", type="boolean", options={"default"=false})
-     */
-    protected $overrideVariantConfiguration = false;
+    #[ORM\Column(name: 'override_variant_configuration', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $overrideVariantConfiguration = false;
 
     /**
      * @var boolean

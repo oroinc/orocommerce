@@ -155,7 +155,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with($this->isType('array'))
             ->willReturnCallback(
-                function (array $options) {
+                function (array $options) use ($resolver) {
                     $this->assertArrayHasKey('type_choices', $options);
                     $this->assertArrayHasKey('page_component', $options);
                     $this->assertArrayHasKey('page_component_options', $options);
@@ -178,6 +178,8 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
                         ],
                         $options['page_component_options']
                     );
+
+                    return $resolver;
                 }
             );
 

@@ -15,9 +15,10 @@ Feature: Configurable image slider
   Scenario: Create content widget
     Given I proceed as the Admin
     And login as administrator
-    And go to Marketing/Content Widgets
+
+    When go to Marketing/Content Widgets
     And click "Create Content Widget"
-    When fill "Content Widget Form" with:
+    And fill "Content Widget Form" with:
       | Type                          | Image Slider      |
       | Name                          | test_image_slider |
       | Number of Slides to Show      | 1                 |
@@ -28,23 +29,52 @@ Feature: Configurable image slider
       | Show Dots                     | true              |
       | Enable Infinite Scroll        | false             |
     And fill "Image Slider Form" with:
-      | Slide Order 1    | 1            |
-      | URL 1            | /product     |
-      | Target 1         | Same Window  |
-      | Title 1          | Slide 1      |
-      | Text Alignment 1 | Center       |
-      | Text 1           | Slide text 1 |
-    When I save and close form
-    Then I should see "This value should not be blank."
-    And I click on "Choose Main Slider Image 1"
+      | Slide Order 1    | 1              |
+      | URL 1            | /product       |
+      | Target 1         | Same Window    |
+      | Alt Image Text 1 | Slide 1        |
+      | Text Alignment 1 | Center         |
+      | Text 1           | Slide text 1   |
+      | Header 1         | Image Header 1 |
+    And I save and close form
+    Then I should see "At least one image is required. [Extra Large Image, Extra Large Image 2x, Extra Large Image 3x"
+    And I should see "At least one image is required. [Large Image, Large Image 2x, Large Image 3x]"
+    And I should see "At least one image is required. [Medium Image, Medium Image 2x, Medium Image 3x]"
+    And I should see "At least one image is required. [Small Image, Small Image 2x, Small Image 3x]"
+
+    When I click on "Choose Extra Large Slider Image1x 1"
     And I fill "Digital Asset Dialog Form" with:
       | File  | cat1.jpg |
       | Title | cat1.jpg |
     And I click "Upload"
     And click on cat1.jpg in grid
-    And I click on "Choose Medium Slider Image 1"
+    And I click on "Choose Extra Large Slider Image2x 1"
     And click on cat1.jpg in grid
-    When I save and close form
+    And I click on "Choose Extra Large Slider Image3x 1"
+    And click on cat1.jpg in grid
+
+    And I click on "Choose Large Slider Image1x 1"
+    And click on cat1.jpg in grid
+    And I click on "Choose Large Slider Image2x 1"
+    And click on cat1.jpg in grid
+    And I click on "Choose Large Slider Image3x 1"
+    And click on cat1.jpg in grid
+
+    And I click on "Choose Medium Slider Image1x 1"
+    And click on cat1.jpg in grid
+    And I click on "Choose Medium Slider Image2x 1"
+    And click on cat1.jpg in grid
+    And I click on "Choose Medium Slider Image3x 1"
+    And click on cat1.jpg in grid
+
+    And I click on "Choose Small Slider Image1x 1"
+    And click on cat1.jpg in grid
+    And I click on "Choose Small Slider Image2x 1"
+    And click on cat1.jpg in grid
+    And I click on "Choose Small Slider Image3x 1"
+    And click on cat1.jpg in grid
+
+    And I save and close form
     Then I should see "Content widget has been saved" flash message
     And I should see "Type: Image Slider"
     And I should see Content Widget with:
@@ -54,28 +84,52 @@ Feature: Configurable image slider
     Given I click "Edit"
     And click "Add"
     When fill "Image Slider Form" with:
-      | Slide Order 2    | 2            |
-      | URL 2            | /about       |
-      | Target 2         | New Window   |
-      | Title 2          | Slide 2      |
-      | Text Alignment 2 | Center       |
-      | Text 2           | Slide text 2 |
-    And I click on "Choose Main Slider Image 2"
+      | Slide Order 2    | 2              |
+      | URL 2            | /about         |
+      | Target 2         | New Window     |
+      | Alt Image Text 2 | Slide 2        |
+      | Text Alignment 2 | Center         |
+      | Text 2           | Slide text 2   |
+      | Header 2         | Image Header 2 |
+
+    And I click on "Choose Extra large Slider Image1x 2"
     And I fill "Digital Asset Dialog Form" with:
       | File  | cat2.jpg |
       | Title | cat2.jpg |
     And I click "Upload"
     And click on cat2.jpg in grid
+    And I click on "Choose Extra Large Slider Image2x 2"
+    And click on cat2.jpg in grid
+    And I click on "Choose Extra Large Slider Image3x 2"
+    And click on cat2.jpg in grid
 
-    And I click on "Choose Small Slider Image 2"
+    And I click on "Choose Large Slider Image1x 2"
+    And click on cat2.jpg in grid
+    And I click on "Choose Large Slider Image2x 2"
+    And click on cat2.jpg in grid
+    And I click on "Choose Large Slider Image3x 2"
+    And click on cat2.jpg in grid
+
+    And I click on "Choose Medium Slider Image1x 2"
+    And click on cat2.jpg in grid
+    And I click on "Choose Medium Slider Image2x 2"
+    And click on cat2.jpg in grid
+    And I click on "Choose Medium Slider Image3x 2"
+    And click on cat2.jpg in grid
+
+    And I click on "Choose Small Slider Image1x 2"
+    And click on cat2.jpg in grid
+    And I click on "Choose Small Slider Image2x 2"
+    And click on cat2.jpg in grid
+    And I click on "Choose Small Slider Image3x 2"
     And click on cat2.jpg in grid
 
     When I save and close form
     Then I should see "Content widget has been saved" flash message
     And I should see next rows in "Slides" table
-      | SLIDE ORDER | URL      | TITLE   | TEXT         | TEXT ALIGNMENT | TARGET WINDOW | MAIN IMAGE | MEDIUM IMAGE | SMALL IMAGE |
-      | 1           | /product | Slide 1 | Slide text 1 | Center         | Same Window   | cat1.jpg   | cat1.jpg     |             |
-      | 2           | /about   | Slide 2 | Slide text 2 | Center         | New Window    | cat2.jpg   |              | cat2.jpg    |
+      | SLIDE ORDER | URL      | ALT IMAGE TEXT | TEXT ALIGNMENT | TARGET WINDOW | EXTRA LARGE                | LARGE                      | MEDIUM                     | SMALL                      |
+      | 1           | /product | Slide 1        | Center         | Same Window   | cat1.jpg cat1.jpg cat1.jpg | cat1.jpg cat1.jpg cat1.jpg | cat1.jpg cat1.jpg cat1.jpg | cat1.jpg cat1.jpg cat1.jpg |
+      | 2           | /about   | Slide 2        | Center         | New Window    | cat2.jpg cat2.jpg cat2.jpg | cat2.jpg cat2.jpg cat2.jpg | cat2.jpg cat2.jpg cat2.jpg | cat2.jpg cat2.jpg cat2.jpg |
 
   Scenario: Edit user roles
     Given I go to System/User Management/Users
@@ -113,7 +167,7 @@ Feature: Configurable image slider
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on the homepage
-    When I click "Image slider page"
+    When I click "Image slider page" in hamburger menu
     Then Page title equals to "Image slider page"
     And I should see "Slide text 1"
     And I should not see "Slide text 2"
@@ -124,7 +178,7 @@ Feature: Configurable image slider
     Then I should see "All Products"
 
   Scenario: Check second slide
-    Given I click "Image slider page"
+    Given I click "Image slider page" in hamburger menu
     And I should see "Slide text 1"
     And I should not see "Slide text 2"
     When I click "Second Dot On Image Slider"
@@ -141,14 +195,14 @@ Feature: Configurable image slider
 
   Scenario: Ensure sliders are still functional
     Given I proceed as the Buyer
-    When I click "Image slider page"
+    And I click "Image slider page" in hamburger menu
     Then Page title equals to "Image slider page"
     And I should see "Slide text 1"
     And I should not see "Slide text 2"
     And I should not see "All Products"
     When I click "First Image Slide"
     Then I should see "All Products"
-    When I click "Image slider page"
+    When I click "Image slider page" in hamburger menu
     Then I should see "Slide text 1"
     And I should not see "Slide text 2"
     When I click "Second Dot On Image Slider"

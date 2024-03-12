@@ -2,12 +2,23 @@
 
 $product-view-attribute-font-weight: font-weight('bold') !default;
 
+$product-view-attribute-tab-content-display: none !default;
+$product-view-attribute-tab-content-padding-top: spacing('lg') !default;
+
+$product-view-attribute-group-border-bottom: 1px solid get-color('neutral', 'grey2') !default;
+
+$product-view-attribute-group-title-border-bottom: spacing('base') !default;
+$product-view-attribute-group-toggle-gap: spacing('sm') !default;
+
+$product-view-attribute-group-content-gap: spacing('md') !default;
+$product-view-attribute-content-gap: spacing('sm') !default;
+
 // Attributes containers
-$product-view-attributes-containers-border-color: get-color('additional', 'light') !default;
-$product-view-attributes-container-border-radius: 5px !default;
+$product-view-attributes-containers-border-color: get-color('neutral', 'grey1') !default;
+$product-view-attributes-container-border-radius: 4px !default;
 
 // Attributes panel
-$product-view-attribute-panel-offset-top: $offset-y-m !default;
+$product-view-attribute-panel-offset-top: spacing('sm') !default;
 
 // Attributes containers for mobile landscape
 $product-view-attributes-container-border-radius-mobile-l: 0 !default;
@@ -16,28 +27,43 @@ $product-view-attributes-container-border-radius-mobile-l: 0 !default;
 $product-view-attributes-tabs: '.product-attributes-tabs' !default;
 $product-view-attributes-tabs-item: '.product-attributes-tabs__item' !default;
 $product-view-attributes-tabs-link: '.product-attributes-tabs__link' !default;
-$product-view-attributes-tab-link-offset-inner: $offset-y !default;
-$product-view-attributes-tabs-bg: get-color('additional', 'base') !default;
-$product-view-attributes-tab-link-color: get-color('additional', 'dark') !default;
-$product-view-attributes-tab-link-active-bg: get-color('additional', 'ultra') !default;
+$product-view-attributes-tab-link-offset-inner: spacing('md') 0 !default;
+$product-view-attributes-tabs-bg: get-color('neutral', 'grey1') !default;
+$product-view-attributes-tab-link-color: get-color('text', 'primary') !default;
 $product-view-attributes-tabs-border-color: $product-view-attributes-containers-border-color !default;
 $product-view-attributes-tabs-border-radius: $product-view-attributes-container-border-radius !default;
-// Attributes tabs for mobile landscape
-$product-view-attributes-tabs-flex-direction-mobile-l: column !default;
-$product-view-attributes-tabs-border-radius-mobile-l: 0 !default;
-$product-view-attributes-tabs-link-text-align-mobile-l: left !default;
-$product-view-attributes-tabs-link-after-position-mobile-l: absolute !default;
-$product-view-attributes-tabs-link-after-right-mobile-l: 15px !default;
-$product-view-attributes-tabs-link-after-margin-top-mobile-l: -2px !default;
-$product-view-attributes-tabs-link-after-font-size-mobile-l: $base-font-size--large !default;
+$product-view-attributes-tabs-gap: 1px !default;
+$product-view-attributes-tabs-overflow-x: auto !default;
+
+$product-view-attributes-tab-link-font-weight: font-weight('semi-bold') !default;
+$product-view-attributes-tab-link-position: relative !default;
+$product-view-attributes-tab-link-text-decoration: none !default;
+$product-view-attributes-tab-link-text-transform: uppercase !default;
+$product-view-attributes-tab-link-white-space: nowrap !default;
+
+$product-view-attributes-tab-link-active-after-content: '' !default;
+$product-view-attributes-tab-link-active-after-background: get-color('primary', 'main') !default;
+$product-view-attributes-tab-link-active-after-height: 3px !default;
+$product-view-attributes-tab-link-active-after-border-radius: 4px 4px 0 0 !default;
+$product-view-attributes-tab-link-active-after-position: absolute !default;
+$product-view-attributes-tab-link-active-after-inset: auto 0 0 !default;
+
+$product-view-attributes-tabs-item-padding: 0 spacing('lg') !default;
+$product-view-attributes-tabs-item-position: relative !default;
+
+$product-view-attributes-tabs-item-after-content: '' !default;
+$product-view-attributes-tabs-item-after-background: get-color('neutral', 'grey3') !default;
+$product-view-attributes-tabs-item-after-width: 1px !default;
+$product-view-attributes-tabs-item-after-height: 20px !default;
+$product-view-attributes-tabs-item-after-position: absolute !default;
+$product-view-attributes-tabs-item-after-inset-block: 50% auto !default;
+$product-view-attributes-tabs-item-after-inset-inline: auto -1px !default;
+$product-view-attributes-tabs-item-after-transform: translateY(-50%) !default;
 
 // Attributes tab content
-$product-view-attributes-tab-content-gap: $offset-y !default;
-$product-view-attributes-tab-content-offset-inner: 40px !default;
+$product-view-attributes-tab-content-gap: spacing('base') !default;
+$product-view-attributes-tab-content-offset-inner: spacing('lg') 0 0 !default;
 $product-view-attributes-tab-content-attribute-weight: font-weight('bold') !default;
-
-// Attributes tab content for mobile landscape
-$product-view-attributes-tab-content-display-mobile-l: none !default;
 
 // Image sizes
 $desktop-product-view-attribute-image-size: 80px !default;
@@ -45,7 +71,7 @@ $mobile-big-product-view-attribute-image-size: 100px !default;
 $mobile-product-view-attribute-image-size: 95px !default;
 
 // Image attribute
-$product-view-attribute-image-border: 1px solid get-color('additional', 'light') !default;
+$product-view-attribute-image-border: 1px solid get-color('neutral', 'grey1') !default;
 
 // Images attribute
 $product-view-attribute-images-item-space: 8px !default;
@@ -56,6 +82,6 @@ $mobile-product-view-attribute-files-gradient-height: 60px !default;
 $product-view-attribute-files-gradient-background: linear-gradient(
     to bottom, rgba($body-bg-color, 0), $body-bg-color
 ) !default;
-$product-view-attribute-files-icon-color: get-color('ui', 'normal');
+$product-view-attribute-files-icon-color: get-color('secondary', 'c3');
 $mobile-product-view-attribute-files-item-inner-padding: 4px 16px !default;
 $mobile-product-view-attribute-files-item-outer-padding: 18px !default;

@@ -9,7 +9,7 @@ $product-filters-sidebar-flex-grow: 1 !default;
 $product-filters-sidebar-inner-offset: 22px !default;
 $product-filters-sidebar-border: 1px solid transparent !default;
 $product-filters-sidebar-border-image: linear-gradient(
-    to bottom, transparent 10px, get-color('additional', 'light') 10px
+    to bottom, transparent 10px, get-color('neutral', 'grey1') 10px
 ) 1 !default;
 $product-filters-sidebar-offset-top: 2px !default;
-$product-filters-sidebar-not-first-child-offset-top: $offset-y !default;
+$product-filters-sidebar-not-first-child-offset-top: spacing('base') !default;

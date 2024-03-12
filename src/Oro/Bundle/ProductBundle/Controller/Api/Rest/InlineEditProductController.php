@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Api\Rest;
 
+use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,12 +21,12 @@ use Symfony\Component\HttpFoundation\Response;
 class InlineEditProductController extends AbstractFOSRestController
 {
     /**
-     * @AclAncestor("oro_product_update")
      *
      * @param Request $request
      * @param Product $product
      * @return Response
      */
+    #[AclAncestor('oro_product_update')]
     public function patchNameAction(Request $request, Product $product)
     {
         $productName = $request->get('productName');
@@ -36,7 +37,7 @@ class InlineEditProductController extends AbstractFOSRestController
         }
 
         $redirectGenerationStrategy =
-            $this->get('oro_config.manager')->get('oro_redirect.redirect_generation_strategy');
+            $this->container->get('oro_config.manager')->get('oro_redirect.redirect_generation_strategy');
 
         switch ($redirectGenerationStrategy) {
             case Configuration::STRATEGY_ASK:
@@ -51,24 +52,24 @@ class InlineEditProductController extends AbstractFOSRestController
         }
 
         $productName = $this->container->get('oro_ui.html_tag_helper')->stripTags($productName);
-        $slug = $this->get('oro_entity_config.slug.generator')->slugify($productName);
+        $slug = $this->container->get('oro_entity_config.slug.generator')->slugify($productName);
 
         $product->setDefaultName($productName);
         $product->setDefaultSlugPrototype($slug);
         $product->getSlugPrototypesWithRedirect()->setCreateRedirect($createRedirect);
 
-        $this->getDoctrine()->getManagerForClass(Product::class)->flush();
+        $this->container->get('doctrine')->getManagerForClass(Product::class)->flush();
 
         return parent::handleView($this->view(['productName' => $productName], Response::HTTP_OK));
     }
 
     /**
-     * @AclAncestor("oro_product_update")
      *
      * @param Request $request
      * @param Product $product
      * @return Response
      */
+    #[AclAncestor('oro_product_update')]
     public function patchInventoryStatusAction(Request $request, Product $product)
     {
         $inventoryStatusId = $request->get('inventoryStatusId');
@@ -78,7 +79,7 @@ class InlineEditProductController extends AbstractFOSRestController
         }
 
         /** @var AbstractEnumValue $inventoryStatus */
-        $inventoryStatus = $this->getDoctrine()
+        $inventoryStatus = $this->container->get('doctrine')
             ->getRepository(ExtendHelper::buildEnumValueClassName('prod_inventory_status'))
             ->find($inventoryStatusId);
 
@@ -87,7 +88,7 @@ class InlineEditProductController extends AbstractFOSRestController
         }
 
         $product->setInventoryStatus($inventoryStatus);
-        $this->getDoctrine()->getManagerForClass(Product::class)->flush();
+        $this->container->get('doctrine')->getManagerForClass(Product::class)->flush();
 
         return parent::handleView($this->view([], Response::HTTP_OK));
     }
@@ -100,6 +101,7 @@ class InlineEditProductController extends AbstractFOSRestController
                 'oro_ui.html_tag_helper' => HtmlTagHelper::class,
                 'oro_entity_config.slug.generator' => SlugGenerator::class,
                 'oro_config.manager' => ConfigManager::class,
+                'doctrine' => ManagerRegistry::class,
             ]
         );
     }

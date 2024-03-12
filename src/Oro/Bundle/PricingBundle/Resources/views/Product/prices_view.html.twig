@@ -1,3 +1,13 @@
 {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{% if is_granted('oro_pricing_product_price_debug') %}
+    {{ UI.renderButtonsRow(UI.quickAccessButton({
+        'title': 'oro.pricing.productprice.debug.trace.label'|trans,
+        'label': 'oro.pricing.productprice.debug.trace.label'|trans,
+        'dataUrl': oro_datagrid_link('oro_pricing_price_product_debug_index', 'pricing-products-trace-grid', {'f[sku][value]': entity.sku}),
+        'iCss': 'fa-eye'
+    })) }}
+{% endif %}
 
 {{ dataGrid.renderGrid('product-prices-grid', {product_id: entity.id}, {cssClass: 'inner-grid'}) }}

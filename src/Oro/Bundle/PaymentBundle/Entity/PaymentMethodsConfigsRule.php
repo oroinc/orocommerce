@@ -4,15 +4,18 @@ namespace Oro\Bundle\PaymentBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroPaymentBundle_Entity_PaymentMethodsConfigsRule;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository;
+use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -20,30 +23,25 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 /**
  * Store payment method config rule in database.
  *
- * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository")
- * @ORM\Table(name="oro_payment_mtds_cfgs_rl")
- * @Config(
- *      routeName="oro_payment_methods_configs_rule_index",
- *      routeView="oro_payment_methods_configs_rule_view",
- *      routeCreate="oro_payment_methods_configs_rule_create",
- *      routeUpdate="oro_payment_methods_configs_rule_update",
- *      defaultValues={
- *          "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="organization",
- *              "owner_column_name"="organization_id"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          }
- *      }
- * )
  * @mixin OroPaymentBundle_Entity_PaymentMethodsConfigsRule
  */
+#[ORM\Entity(repositoryClass: PaymentMethodsConfigsRuleRepository::class)]
+#[ORM\Table(name: 'oro_payment_mtds_cfgs_rl')]
+#[Config(
+    routeName: 'oro_payment_methods_configs_rule_index',
+    routeView: 'oro_payment_methods_configs_rule_view',
+    routeCreate: 'oro_payment_methods_configs_rule_create',
+    routeUpdate: 'oro_payment_methods_configs_rule_update',
+    defaultValues: [
+        'ownership' => [
+            'owner_type' => 'ORGANIZATION',
+            'owner_field_name' => 'organization',
+            'owner_column_name' => 'organization_id'
+        ],
+        'dataaudit' => ['auditable' => true],
+        'security' => ['type' => 'ACL', 'group_name' => '']
+    ]
+)]
 class PaymentMethodsConfigsRule implements
     RuleOwnerInterface,
     OrganizationAwareInterface,
@@ -51,106 +49,57 @@ class PaymentMethodsConfigsRule implements
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer", name="id")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $id = null;
 
     /**
-     * @var Collection|PaymentMethodConfig[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig",
-     *     mappedBy="methodsConfigsRule",
-     *     cascade={"ALL"},
-     *     fetch="EAGER",
-     *     orphanRemoval=true
-     * )
+     * @var Collection<int, PaymentMethodConfig>
      */
-    protected $methodConfigs;
+    #[ORM\OneToMany(
+        mappedBy: 'methodsConfigsRule',
+        targetEntity: PaymentMethodConfig::class,
+        cascade: ['ALL'],
+        fetch: 'EAGER',
+        orphanRemoval: true
+    )]
+    protected ?Collection $methodConfigs = null;
+
+    #[ORM\ManyToOne(targetEntity: Rule::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(name: 'rule_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?Rule $rule = null;
 
     /**
-     * @var RuleInterface
-     *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\RuleBundle\Entity\Rule",
-     *     cascade={"persist", "remove"}
-     * )
-     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, PaymentMethodsConfigsRuleDestination>
      */
-    protected $rule;
+    #[ORM\OneToMany(
+        mappedBy: 'methodsConfigsRule',
+        targetEntity: PaymentMethodsConfigsRuleDestination::class,
+        cascade: ['ALL'],
+        fetch: 'EAGER',
+        orphanRemoval: true
+    )]
+    protected ?Collection $destinations = null;
+
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: false)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 10]])]
+    protected ?string $currency = null;
+
+    #[ORM\ManyToOne(targetEntity: Organization::class)]
+    #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?OrganizationInterface $organization = null;
 
     /**
-     * @var Collection|PaymentMethodsConfigsRuleDestination[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination",
-     *     mappedBy="methodsConfigsRule",
-     *     cascade={"ALL"},
-     *     fetch="EAGER",
-     *     orphanRemoval=true
-     * )
+     * @var Collection<int, Website>
      */
-    protected $destinations;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", length=3, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=10
-     *          }
-     *      }
-     *  )
-     */
-    protected $currency;
-
-    /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $organization;
-
-    /**
-     * @var Website[]|Collection
-     *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinTable(
-     *      name="oro_payment_mtds_rule_website",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="oro_payment_mtds_cfgs_rl_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
-     */
-    protected $websites;
+    #[ORM\ManyToMany(targetEntity: Website::class)]
+    #[ORM\JoinTable(name: 'oro_payment_mtds_rule_website')]
+    #[ORM\JoinColumn(name: 'oro_payment_mtds_cfgs_rl_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'website_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Collection $websites = null;
 
     public function __construct()
     {

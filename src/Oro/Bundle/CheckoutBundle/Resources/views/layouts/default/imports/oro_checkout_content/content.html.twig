@@ -119,7 +119,7 @@
     {% set editLink = workflowItem.data.get('edit_order_link') %}
     {% set attr = layout_attr_defaults(attr, {
         'href': editLink,
-        '~class': " checkout-order-summary__edit-link"
+        '~class': " checkout-order-summary__edit-link no-decoration"
     }) %}
     {% if editLink %}
         <a {{ block('block_attributes') }}>
@@ -173,7 +173,7 @@
     {% if notes is not null %}
 
         <div {{ block('block_attributes') }}>{{- notes -}}</div>
-        <button class="btn btn--link btn--no-x-offset btn--no-y-offset collapse-toggle"
+        <button class="btn btn--no-padding collapse-toggle"
                 data-toggle="collapse"
                 data-target="{{ '#' ~ collapseId }}"
                 aria-controls="{{ collapseId }}"

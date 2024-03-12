@@ -12,6 +12,6 @@ Feature: Breadcrumbs with hidden subcategory on product view page
     And I type "PSKU3" in "search"
     And click "Search Button"
     And I click "View Details" for "PSKU3" product
-    Then I should see "All Products / Printers / Product 3"
-    And I should not see "All Products / Retail Supplies / Printers / Product 3"
-    And I should not see "All Products / Product 3"
+    Then I should see "All Products Printers Product 3"
+    And I should not see "All Products Retail Supplies Printers Product 3"
+    And I should not see "All Products Product 3"

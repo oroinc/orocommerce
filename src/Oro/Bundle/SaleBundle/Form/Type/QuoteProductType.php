@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -23,14 +24,23 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class QuoteProductType extends AbstractType
 {
     private UnitLabelFormatterInterface $labelFormatter;
+
     private ManagerRegistry $doctrine;
+
+    private EventSubscriberInterface $quoteProductProductListener;
+
+    private EventSubscriberInterface $quoteProductOfferChecksumListener;
 
     public function __construct(
         UnitLabelFormatterInterface $labelFormatter,
-        ManagerRegistry $doctrine
+        ManagerRegistry $doctrine,
+        EventSubscriberInterface $quoteProductProductListener,
+        EventSubscriberInterface $quoteProductOfferChecksumListener
     ) {
         $this->labelFormatter = $labelFormatter;
         $this->doctrine = $doctrine;
+        $this->quoteProductProductListener = $quoteProductProductListener;
+        $this->quoteProductOfferChecksumListener = $quoteProductOfferChecksumListener;
     }
 
     /**
@@ -82,6 +92,7 @@ class QuoteProductType extends AbstractType
             'compactUnits' => $options['compact_units'],
             'isFreeForm' => $isFreeForm,
             'allowEditFreeForm' => $options['allow_add_free_form_items'],
+            'fullName' => $view->vars['full_name'],
         ];
     }
 
@@ -91,18 +102,36 @@ class QuoteProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('product', ProductSelectType::class, [
-                'required' => false,
-                'label' => 'oro.product.entity_label',
-                'create_enabled' => false,
-                'data_parameters' => [
-                    'scope' => 'quote'
-                ]
-            ])
+            ->add(
+                $builder
+                    ->create(
+                        'product',
+                        ProductSelectType::class,
+                        [
+                            'required'  => true,
+                            'autocomplete_alias' => 'oro_sale_product_visibility_limited',
+                            'grid_name' => 'products-select-grid',
+                            'grid_parameters' => [
+                                'types' => [Product::TYPE_SIMPLE, Product::TYPE_KIT]
+                            ],
+                            'label' => 'oro.product.entity_label',
+                            'create_enabled' => false,
+                            'data_parameters' => [
+                                'scope' => 'quote',
+                            ],
+                        ]
+                    )
+                    ->addEventSubscriber($this->quoteProductProductListener)
+            )
             ->add('productSku', TextType::class, [
                 'required' => false,
                 'label' => 'oro.product.sku.label',
             ])
+            ->add(
+                'kitItemLineItems',
+                QuoteProductKitItemLineItemCollectionType::class,
+                ['required' => false]
+            )
             ->add('productReplacement', ProductSelectType::class, [
                 'required' => false,
                 'label' => 'oro.sale.quoteproduct.product_replacement.label',
@@ -144,6 +173,8 @@ class QuoteProductType extends AbstractType
                 'required' => false,
                 'label' => 'oro.sale.quoteproduct.comment.label',
             ]);
+
+        $builder->addEventSubscriber($this->quoteProductOfferChecksumListener);
     }
 
     /**

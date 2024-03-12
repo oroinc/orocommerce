@@ -9,7 +9,7 @@ data:
         productId: '@product-3->id'
         productSku: '<toString(@product-3->sku)>'
         productName: '<toString(@product-3->defaultName)>'
-        quantity: 1
+        quantity: 2
         productUnitCode: '<toString(@product-kit-2-kit-item-1->productUnit->code)>'
         productUnitPrecision: 0
         sortOrder: 1

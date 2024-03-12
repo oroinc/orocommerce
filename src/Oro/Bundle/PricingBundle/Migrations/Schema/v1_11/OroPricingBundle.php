@@ -2,33 +2,19 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_11;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Schema\SchemaException;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroPricingBundle implements Migration, ConnectionAwareInterface
 {
-    /**
-     * @var Connection
-     */
-    protected $connection;
+    use ConnectionAwareTrait;
 
     /**
      * {@inheritDoc}
-     */
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @throws SchemaException If the index does not exist.
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -59,16 +45,6 @@ class OroPricingBundle implements Migration, ConnectionAwareInterface
             );
     }
 
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queryBag
-     * @param string $tableName
-     * @param string $oldCompositeIndexName
-     * @param string $newUniqueIndexName
-     * @param array $uniqueConstrainFields
-     *
-     * @return OroPricingBundle
-     */
     private function replaceCompositePrimaryKey(
         Schema $schema,
         QueryBag $queryBag,

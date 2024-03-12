@@ -3,7 +3,7 @@ data:
     attributes:
         productSku: product-2
         productName: product-2.names.default
-        quantity: 1
+        quantity: 2
         sortOrder: 1
         productUnitCode: item
         value: '11.5900'

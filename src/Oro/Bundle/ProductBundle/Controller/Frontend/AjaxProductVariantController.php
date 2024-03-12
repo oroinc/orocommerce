@@ -16,16 +16,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class AjaxProductVariantController extends AbstractController
 {
     /**
-     * @Route(
-     *      "/available-variants/{id}",
-     *      name="oro_product_frontend_ajax_product_variant_get_available",
-     *      requirements={"id"="\d+"}
-     * )
      *
      * @param Request $request
      * @param Product $product
      * @return Response
      */
+    #[Route(
+        path: '/available-variants/{id}',
+        name: 'oro_product_frontend_ajax_product_variant_get_available',
+        requirements: ['id' => '\d+']
+    )]
     public function getAvailableAction(Request $request, Product $product)
     {
         $response = [

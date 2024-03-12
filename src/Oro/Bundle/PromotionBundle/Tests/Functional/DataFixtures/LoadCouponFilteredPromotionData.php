@@ -4,26 +4,26 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 
 class LoadCouponFilteredPromotionData extends AbstractLoadPromotionData
 {
-    const PROMO_CORRESPONDING_SEVERAL_APPLIED_DISCOUNTS = 'promo_corresponding_several_applied_discounts';
-    const PROMO_CORRESPONDING_ONE_APPLIED_DISCOUNTS = 'promo_corresponding_one_applied_discounts';
-    const PROMO_NOT_CORRESPONDING_APPLIED_DISCOUNTS = 'promo_not_corresponding_applied_discounts';
-    const PROMO_WITHOUT_DISCOUNTS = 'promo_without_discounts';
+    public const PROMO_CORRESPONDING_SEVERAL_APPLIED_DISCOUNTS = 'promo_corresponding_several_applied_discounts';
+    public const PROMO_CORRESPONDING_ONE_APPLIED_DISCOUNTS = 'promo_corresponding_one_applied_discounts';
+    public const PROMO_NOT_CORRESPONDING_APPLIED_DISCOUNTS = 'promo_not_corresponding_applied_discounts';
+    public const PROMO_WITHOUT_DISCOUNTS = 'promo_without_discounts';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return [
-            LoadSegmentData::class,
-            LoadCouponFilterDiscountConfigurationData::class,
-        ];
+        return array_merge(
+            [LoadSegmentData::class, LoadCouponFilterDiscountConfigurationData::class],
+            parent::getDependencies()
+        );
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getPromotions()
+    protected function getPromotions(): array
     {
         return [
             self::PROMO_CORRESPONDING_SEVERAL_APPLIED_DISCOUNTS => [

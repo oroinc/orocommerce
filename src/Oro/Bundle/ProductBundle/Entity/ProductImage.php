@@ -4,11 +4,12 @@ namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroProductBundle_Entity_ProductImage;
 use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
@@ -16,77 +17,47 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  * Represents different types of product image, such as a image is used in the product details view,
  * a image is shown in the catalog listing, an additional product picture, etc.
  *
- * @ORM\Entity()
- * @ORM\Table(name="oro_product_image")
- * @ORM\HasLifecycleCallbacks
- * @Config
  *
  * @method File getImage()
  * @method ProductImage setImage(File $image)
  * @mixin OroProductBundle_Entity_ProductImage
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_product_image')]
+#[ORM\HasLifecycleCallbacks]
+#[Config]
 class ProductImage implements ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var integer
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $id = null;
+
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'images')]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Product $product = null;
 
     /**
-     * @var Product
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product", inversedBy="images")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @var Collection<int, ProductImageType>
      */
-    protected $product;
+    #[ORM\OneToMany(
+        mappedBy: 'productImage',
+        targetEntity: ProductImageType::class,
+        cascade: ['ALL'],
+        orphanRemoval: true,
+        indexBy: 'type'
+    )]
+    #[ConfigField(defaultValues: ['importexport' => ['full' => true]])]
+    protected ?Collection $types = null;
 
-    /**
-     * @var Collection|ProductImageType[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ProductBundle\Entity\ProductImageType",
-     *     mappedBy="productImage",
-     *     indexBy="type",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "full"=true
-     *          }
-     *     }
-     * )
-     */
-    protected $types;
-
-    /**
-     * @var \DateTime $updatedAt
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
+    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(
+        defaultValues: ['entity' => ['label' => 'oro.ui.updated_at'], 'importexport' => ['excluded' => true]]
+    )]
+    protected ?\DateTimeInterface $updatedAt = null;
 
     public function __construct()
     {
@@ -208,17 +179,13 @@ class ProductImage implements ExtendEntityInterface
         return $this->updatedAt;
     }
 
-    /**
-     * @ORM\PrePersist
-     */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         $this->setUpdatedAtToNow();
     }
 
-    /**
-     * @ORM\PreUpdate
-     */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->setUpdatedAtToNow();

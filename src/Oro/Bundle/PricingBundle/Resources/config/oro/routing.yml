@@ -23,6 +23,11 @@ oro_product_price_product:
     type:         annotation
     prefix:       /productprice/product
 
+oro_product_price_debug:
+    resource:     "@OroPricingBundle/Debug/Controller/DebugController.php"
+    type:         annotation
+    prefix:       /productprice/debug
+
 oro_product_price_frontend_ajax:
     resource:     "@OroPricingBundle/Controller/Frontend/AjaxProductPriceController.php"
     type:         annotation

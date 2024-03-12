@@ -7,6 +7,9 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 
+/**
+ * Creates TaxBaseExclusion model from array
+ */
 class TaxBaseExclusionFactory
 {
     /**
@@ -29,13 +32,13 @@ class TaxBaseExclusionFactory
 
         if (!empty($values['country'])) {
             /** @var Country $country */
-            $country = $this->doctrineHelper->getEntityReference('OroAddressBundle:Country', $values['country']);
+            $country = $this->doctrineHelper->getEntityReference(Country::class, $values['country']);
             $entity->setCountry($country);
         }
 
         if (!empty($values['region'])) {
             /** @var Region $region */
-            $region = $this->doctrineHelper->getEntityReference('OroAddressBundle:Region', $values['region']);
+            $region = $this->doctrineHelper->getEntityReference(Region::class, $values['region']);
             $entity->setRegion($region);
         }
 

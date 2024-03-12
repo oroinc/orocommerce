@@ -41,9 +41,9 @@ class EnumTypeHandlerTest extends WebTestCase
             ->method('execute')
             ->willReturn(
                 [
-                    $this->getItem('10 mm'),
-                    $this->getItem('10'),
-                    $this->getItem('10mm'),
+                    $this->getItem(10, '10 mm'),
+                    $this->getItem(10, '10'),
+                    $this->getItem(10, '10mm'),
                 ]
             );
 
@@ -88,10 +88,10 @@ class EnumTypeHandlerTest extends WebTestCase
         return $model;
     }
 
-    private function getItem(string $name): Item
+    private function getItem(int $id, string $name): Item
     {
         $item = new Item();
-        $item->id = $name;
+        $item->id = $id;
         $item->name = $name;
 
         return $item;

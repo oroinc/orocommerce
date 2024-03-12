@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
@@ -16,7 +15,7 @@ class LoadShoppingListProductKitLineItems extends AbstractShoppingListLineItemsF
     public const LINE_ITEM_1 = 'shopping_list_product_kit_line_item.1';
     public const LINE_ITEM_1_KIT_ITEM_1 = 'shopping_list_product_kit_item_line_item.1';
 
-    protected static $lineItems = [
+    protected static array $lineItems = [
         self::LINE_ITEM_1 => [
             'product' => LoadProductKitData::PRODUCT_KIT_1,
             'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
@@ -32,6 +31,21 @@ class LoadShoppingListProductKitLineItems extends AbstractShoppingListLineItemsF
         ],
     ];
 
+    /**
+     * {@inheritDoc}
+     */
+    public function getDependencies(): array
+    {
+        return [
+            LoadProductUnitPrecisions::class,
+            LoadShoppingLists::class,
+            LoadProductKitData::class,
+        ];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected function createLineItem(ObjectManager $manager, array $lineItemData): LineItem
     {
         $lineItem = parent::createLineItem($manager, $lineItemData);
@@ -39,15 +53,13 @@ class LoadShoppingListProductKitLineItems extends AbstractShoppingListLineItemsF
         foreach ($lineItemData['kitItemLineItems'] as $name => $kitItemLineItemData) {
             /** @var ProductKitItem $kitItem */
             $kitItem = $this->getReference($kitItemLineItemData['kitItem']);
-            /** @var Product $product */
-            $product = $this->getReference($kitItemLineItemData['product']);
 
-            $kitItemLineItem = (new ProductKitItemLineItem())
-                ->setKitItem($kitItem)
-                ->setProduct($product)
-                ->setQuantity($kitItemLineItemData['quantity'])
-                ->setUnit($kitItem->getProductUnit())
-                ->setSortOrder($kitItem->getSortOrder());
+            $kitItemLineItem = new ProductKitItemLineItem();
+            $kitItemLineItem->setKitItem($kitItem);
+            $kitItemLineItem->setProduct($this->getReference($kitItemLineItemData['product']));
+            $kitItemLineItem->setQuantity($kitItemLineItemData['quantity']);
+            $kitItemLineItem->setUnit($kitItem->getProductUnit());
+            $kitItemLineItem->setSortOrder($kitItem->getSortOrder());
 
             $this->setReference($name, $kitItemLineItem);
 
@@ -57,14 +69,5 @@ class LoadShoppingListProductKitLineItems extends AbstractShoppingListLineItemsF
         }
 
         return $lineItem;
-    }
-
-    public function getDependencies(): array
-    {
-        return [
-            LoadProductUnitPrecisions::class,
-            LoadShoppingLists::class,
-            LoadProductKitData::class,
-        ];
     }
 }

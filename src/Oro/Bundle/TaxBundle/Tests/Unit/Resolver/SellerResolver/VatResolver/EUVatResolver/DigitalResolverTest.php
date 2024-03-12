@@ -9,14 +9,14 @@ use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver;
 use Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class DigitalResolverTest extends \PHPUnit\Framework\TestCase
+class DigitalResolverTest extends TestCase
 {
-    /** @var DigitalItemResolver|\PHPUnit\Framework\MockObject\MockObject */
-    private $itemResolver;
+    private DigitalItemResolver|MockObject $itemResolver;
 
-    /** @var DigitalResolver */
-    private $resolver;
+    private DigitalResolver $resolver;
 
     protected function setUp(): void
     {
@@ -25,7 +25,7 @@ class DigitalResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver = new DigitalResolver($this->itemResolver);
     }
 
-    public function testResolve()
+    public function testResolve(): void
     {
         $taxableItem = new Taxable();
         $taxable = $this->getTaxable($taxableItem);
@@ -43,7 +43,23 @@ class DigitalResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    public function testEmptyParameters()
+    public function testEmptyCollection(): void
+    {
+        $this->itemResolver->expects($this->never())
+            ->method($this->anything());
+
+        $this->resolver->resolve(new Taxable());
+    }
+
+    public function testKitTaxableWithoutItems(): void
+    {
+        $this->itemResolver->expects($this->never())
+            ->method($this->anything());
+
+        $this->resolver->resolve((new Taxable())->setKitTaxable(true));
+    }
+
+    public function testEmptyParameters(): void
     {
         $taxableItem = new Taxable();
         $taxable = $this->getTaxable($taxableItem);
@@ -62,7 +78,7 @@ class DigitalResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    public function testResultLocked()
+    public function testResultLocked(): void
     {
         $result = new Result();
         $result->lockResult();
@@ -75,17 +91,7 @@ class DigitalResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
     }
 
-    private function getTaxable(Taxable $taxableItem): Taxable
-    {
-        $taxable = new Taxable();
-        $taxable->setDestination((new OrderAddress())->setCountry(new Country('UK')));
-        $taxable->setOrigin(new OrderAddress());
-        $taxable->addItem($taxableItem);
-
-        return $taxable;
-    }
-
-    public function testTaxableAddressIsOrigin()
+    public function testTaxableAddressIsOrigin(): void
     {
         $address = new OrderAddress();
         $address->setCountry(new Country('DE'));
@@ -103,5 +109,15 @@ class DigitalResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver->resolve($taxable);
 
         $this->assertSame($origin, $taxable->getTaxationAddress());
+    }
+
+    private function getTaxable(Taxable $taxableItem): Taxable
+    {
+        $taxable = new Taxable();
+        $taxable->setDestination((new OrderAddress())->setCountry(new Country('UK')));
+        $taxable->setOrigin(new OrderAddress());
+        $taxable->addItem($taxableItem);
+
+        return $taxable;
     }
 }

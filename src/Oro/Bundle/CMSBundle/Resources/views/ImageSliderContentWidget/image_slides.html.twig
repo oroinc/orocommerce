@@ -7,13 +7,13 @@
         <tr>
             <th>{{ 'oro.cms.imageslide.slide_order.label'|trans }}</th>
             <th>{{ 'oro.cms.imageslide.url.label'|trans }}</th>
-            <th>{{ 'oro.cms.imageslide.title.label'|trans }}</th>
-            <th>{{ 'oro.cms.imageslide.text.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.alt_image_text.label'|trans }}</th>
             <th>{{ 'oro.cms.imageslide.text_alignment.label'|trans }}</th>
             <th>{{ 'oro.cms.imageslide.display_in_same_window.label'|trans }}</th>
-            <th>{{ 'oro.cms.imageslide.main_image.label'|trans }}</th>
-            <th>{{ 'oro.cms.imageslide.medium_image.label'|trans }}</th>
-            <th>{{ 'oro.cms.imageslide.small_image.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.form.table.row.extra_large.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.form.table.row.large.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.form.table.row.medium.label'|trans }}</th>
+            <th>{{ 'oro.cms.imageslide.form.table.row.small.label'|trans }}</th>
         </tr>
         </thead>
 
@@ -27,14 +27,7 @@
                     {{ imageSlide.url }}
                 </td>
                 <td>
-                    {{ imageSlide.title }}
-                </td>
-                <td>
-                    {% if imageSlide.text|oro_html_sanitize %}
-                        {{ imageSlide.text|oro_html_sanitize }}
-                    {% else %}
-                        {{ dataGrid.renderBlankCellValue() }}
-                    {% endif %}
+                    {{ imageSlide.altImageText }}
                 </td>
                 <td>
                     {{ ('oro.cms.imageslide.text_alignment.value.' ~ imageSlide.textAlignment)|trans }}
@@ -47,20 +40,73 @@
                     {% endif %}
                 </td>
                 <td>
-                    {{ oro_file_view(imageSlide.mainImage, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                    {% if imageSlide.extraLargeImage %}
+                        <div>
+                            {{ oro_file_view(imageSlide.extraLargeImage, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                        </div>
+                    {% endif %}
+                    {% if imageSlide.extraLargeImage2x %}
+                        <div>
+                            {{ oro_file_view(imageSlide.extraLargeImage2x, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                        </div>
+                    {% endif %}
+                    {% if imageSlide.extraLargeImage3x %}
+                        <div>
+                            {{ oro_file_view(imageSlide.extraLargeImage3x, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                        </div>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if imageSlide.largeImage %}
+                        <div>
+                            {{ oro_file_view(imageSlide.largeImage, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+
+                        </div>
+                    {% endif %}
+                    {% if imageSlide.largeImage2x %}
+                        <div>
+                            {{ oro_file_view(imageSlide.largeImage2x, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+
+                        </div>
+                    {% endif %}
+                    {% if imageSlide.largeImage3x %}
+                        <div>
+                            {{ oro_file_view(imageSlide.largeImage3x, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                        </div>
+                    {% endif %}
                 </td>
                 <td>
                     {% if imageSlide.mediumImage %}
-                        {{ oro_file_view(imageSlide.mediumImage, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
-                    {% else %}
-                        {{ dataGrid.renderBlankCellValue() }}
+                        <div>
+                            {{ oro_file_view(imageSlide.mediumImage, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                        </div>
+                    {% endif %}
+                    {% if imageSlide.mediumImage2x %}
+                        <div>
+                            {{ oro_file_view(imageSlide.mediumImage2x, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                        </div>
+                    {% endif %}
+                    {% if imageSlide.mediumImage3x %}
+                        <div>
+                            {{ oro_file_view(imageSlide.mediumImage3x, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                        </div>
                     {% endif %}
                 </td>
                 <td>
                     {% if imageSlide.smallImage %}
-                        {{ oro_file_view(imageSlide.smallImage, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
-                    {% else %}
-                        {{ dataGrid.renderBlankCellValue() }}
+                        <div>
+                            {{ oro_file_view(imageSlide.smallImage, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                        </div>
+                    {% endif %}
+                    {% if imageSlide.smallImage2x %}
+                        <div>
+                            {{ oro_file_view(imageSlide.smallImage2x, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                        </div>
+                    {% endif %}
+                    {% if imageSlide.mediumImage3x %}
+                        <div>
+                            {{ oro_file_view(imageSlide.smallImage3x, {'galleryId': 'image-slide-' ~ imageSlide.id}) }}
+                        </div>
                     {% endif %}
                 </td>
             </tr>

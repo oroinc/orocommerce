@@ -4,156 +4,97 @@ namespace Oro\Bundle\RedirectBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
+use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Helper\UrlParameterHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
  * Slug entity class.
- *
- * @ORM\Table(
- *     name="oro_redirect_slug",
- *     indexes={
- *         @ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"}),
- *         @ORM\Index(name="oro_redirect_slug_slug", columns={"slug_prototype"}),
- *         @ORM\Index(name="oro_redirect_slug_route", columns={"route_name"}),
- *         @ORM\Index(name="oro_redirect_slug_parameters_hash_idx", columns={"parameters_hash"})
- *     },
- *     uniqueConstraints={
- *         @ORM\UniqueConstraint(
- *             name="oro_redirect_slug_uidx",
- *             columns={"organization_id","url_hash","scopes_hash"}
- *         )
- *     }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository")
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-share-square"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          },
- *          "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="organization",
- *              "owner_column_name"="organization_id"
- *          }
- *      }
- * )
- * @ORM\HasLifecycleCallbacks()
  */
+#[ORM\Entity(repositoryClass: SlugRepository::class)]
+#[ORM\Table(name: 'oro_redirect_slug')]
+#[ORM\Index(columns: ['url_hash'], name: 'oro_redirect_slug_url_hash')]
+#[ORM\Index(columns: ['slug_prototype'], name: 'oro_redirect_slug_slug')]
+#[ORM\Index(columns: ['route_name'], name: 'oro_redirect_slug_route')]
+#[ORM\Index(columns: ['parameters_hash'], name: 'oro_redirect_slug_parameters_hash_idx')]
+#[ORM\UniqueConstraint(
+    name: 'oro_redirect_slug_deferrable_uidx',
+    columns: ['organization_id', 'url_hash', 'scopes_hash']
+)]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    defaultValues: [
+        'entity' => ['icon' => 'fa-share-square'],
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'ownership' => [
+            'owner_type' => 'ORGANIZATION',
+            'owner_field_name' => 'organization',
+            'owner_column_name' => 'organization_id'
+        ]
+    ]
+)]
 class Slug implements OrganizationAwareInterface
 {
     use OrganizationAwareTrait;
 
     public const DELIMITER = '/';
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="url", type="string", length=1024)
-     */
-    protected $url;
+    #[ORM\Column(name: 'url', type: Types::STRING, length: 1024)]
+    protected ?string $url = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="slug_prototype", type="string", length=255, nullable=true)
-     */
-    protected $slugPrototype;
+    #[ORM\Column(name: 'slug_prototype', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $slugPrototype = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="url_hash", type="string", length=32)
-     */
-    protected $urlHash;
+    #[ORM\Column(name: 'url_hash', type: Types::STRING, length: 32)]
+    protected ?string $urlHash = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="route_name", type="string", length=255)
-     */
-    protected $routeName;
+    #[ORM\Column(name: 'route_name', type: Types::STRING, length: 255)]
+    protected ?string $routeName = null;
 
     /**
      * @var array
-     *
-     * @ORM\Column(name="route_parameters", type="array")
      */
+    #[ORM\Column(name: 'route_parameters', type: Types::ARRAY)]
     protected $routeParameters = [];
 
     /**
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
-     * @ORM\JoinTable(
-     *      name="oro_slug_scope",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="slug_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="scope_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
      *
-     * @var Scope[]|Collection
+     * @var Collection<int, Scope>
      */
-    protected $scopes;
+    #[ORM\ManyToMany(targetEntity: Scope::class)]
+    #[ORM\JoinTable(name: 'oro_slug_scope')]
+    #[ORM\JoinColumn(name: 'slug_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'scope_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Collection $scopes = null;
+
+    #[ORM\Column(name: 'scopes_hash', type: Types::STRING, length: 32)]
+    protected ?string $scopesHash = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="scopes_hash", type="string", length=32)
+     * @var Collection<int, Redirect>
      */
-    protected $scopesHash;
+    #[ORM\OneToMany(mappedBy: 'slug', targetEntity: Redirect::class)]
+    protected ?Collection $redirects = null;
 
-    /**
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\RedirectBundle\Entity\Redirect",
-     *     mappedBy="slug"
-     * )
-     *
-     * @var Redirect[]|Collection
-     */
-    protected $redirects;
+    #[ORM\ManyToOne(targetEntity: Localization::class)]
+    #[ORM\JoinColumn(name: 'localization_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['identity' => true]])]
+    protected ?Localization $localization = null;
 
-    /**
-     * @var Localization|null
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\LocaleBundle\Entity\Localization")
-     * @ORM\JoinColumn(name="localization_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "identity"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $localization;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="parameters_hash", type="string", length=32)
-     */
-    protected $parametersHash;
+    #[ORM\Column(name: 'parameters_hash', type: Types::STRING, length: 32)]
+    protected ?string $parametersHash = null;
 
     public function __construct()
     {

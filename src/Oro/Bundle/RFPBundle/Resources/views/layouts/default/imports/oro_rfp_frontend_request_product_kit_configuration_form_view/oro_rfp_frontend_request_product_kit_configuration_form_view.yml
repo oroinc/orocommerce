@@ -1,0 +1,18 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+              themes: 'oro_rfp_frontend_request_product_kit_configuration_form_view.html.twig'
+        - '@setFormTheme':
+              themes: '../../request_product_kit_item_line_items.form.html.twig'
+        - '@addTree':
+              items:
+                  __wrapper:
+                      blockType: container
+                  __form_fields:
+                      blockType: form_fields
+                      options:
+                          render_rest: false
+              tree:
+                  __root:
+                      __wrapper:
+                          __form_fields: ~

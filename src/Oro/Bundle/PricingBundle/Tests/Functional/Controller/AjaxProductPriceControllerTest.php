@@ -19,12 +19,12 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
 
         $this->loadFixtures([
             LoadCombinedProductPrices::class,
             LoadProductPrices::class,
-            LoadPriceListRelations::class,
+            LoadPriceListRelations::class
         ]);
     }
 
@@ -47,7 +47,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         );
         $crawler = $this->client->request('GET', $url);
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Save')->form(
             [
@@ -81,7 +81,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             )
         );
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Save')->form(
             [
@@ -97,26 +97,26 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
     protected function assertSubmitError(Form $form, string $message): void
     {
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
         $this->assertMatchesRegularExpression('/"savedId":[\s\d-]*/i', $html);
-        $error = $this->getContainer()->get('translator')
+        $error = self::getContainer()->get('translator')
             ->trans($message, [], 'validators');
         self::assertStringContainsString($error, $html);
     }
 
-    protected function assertSaved(Form $form)
+    protected function assertSaved(Form $form): void
     {
-        $this->client->followRedirects(true);
+        $this->client->followRedirects();
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
         $this->assertMatchesRegularExpression('/"savedId":"[\w\d-]+"/i', $html);

@@ -1,0 +1,25 @@
+include:
+    - '@OroLocaleBundle:LocalizationFixture.yml'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    business_unit2:
+        name: Second BusinessUnit
+        organization: '@organization'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    brand1NameDefault:
+        string: 'ACME'
+    brand2NameDefault:
+        string: 'DefaultBrandLtd'
+
+Oro\Bundle\ProductBundle\Entity\Brand:
+    brand1:
+        owner: '@business_unit'
+        organization: '@organization'
+        __calls:
+            - addName: ['@brand1NameDefault']
+    brand2:
+        owner: '@business_unit2'
+        organization: '@organization'
+        __calls:
+            - addName: ['@brand2NameDefault']

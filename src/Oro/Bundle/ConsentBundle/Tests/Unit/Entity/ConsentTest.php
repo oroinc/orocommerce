@@ -19,7 +19,7 @@ class ConsentTest extends \PHPUnit\Framework\TestCase
     {
         $now = new \DateTime('now');
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['owner', new User()],
             ['organization', new Organization()],
             ['createdAt', $now, false],

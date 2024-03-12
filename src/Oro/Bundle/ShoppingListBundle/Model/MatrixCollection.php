@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Model;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -11,9 +13,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 class MatrixCollection
 {
     /**
-     * @Assert\Valid
      * @var array|MatrixCollectionRow[]
      */
+    #[Assert\Valid]
     public $rows = [];
 
     /**
@@ -24,6 +26,14 @@ class MatrixCollection
     public $columns = [];
 
     public $dimensions = 0;
+
+    /** @var Product $product */
+    public $product;
+
+    /**
+     * @var ShoppingList $shoppingList
+     */
+    public $shoppingList;
 
     public function hasLineItems()
     {

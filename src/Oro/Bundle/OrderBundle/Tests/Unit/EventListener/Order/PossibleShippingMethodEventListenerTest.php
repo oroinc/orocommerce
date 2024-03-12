@@ -8,7 +8,9 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener;
 use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodOrganizationProvider;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -24,6 +26,9 @@ class PossibleShippingMethodEventListenerTest extends \PHPUnit\Framework\TestCas
     /** @var ShippingPricesConverter|\PHPUnit\Framework\MockObject\MockObject */
     private $priceConverter;
 
+    /** @var ShippingMethodOrganizationProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $organizationProvider;
+
     /** @var PossibleShippingMethodEventListener */
     private $listener;
 
@@ -32,18 +37,20 @@ class PossibleShippingMethodEventListenerTest extends \PHPUnit\Framework\TestCas
         $this->factory = $this->createMock(OrderShippingContextFactory::class);
         $this->priceProvider = $this->createMock(ShippingPriceProviderInterface::class);
         $this->priceConverter = $this->createMock(ShippingPricesConverter::class);
+        $this->organizationProvider = $this->createMock(ShippingMethodOrganizationProvider::class);
 
         $this->listener = new PossibleShippingMethodEventListener(
             $this->factory,
             $this->priceConverter,
-            $this->priceProvider
+            $this->priceProvider,
+            $this->organizationProvider
         );
     }
 
     /**
      * @dataProvider onOrderEventEmptyKeyDataProvider
      */
-    public function testOnOrderEventEmptyKey(array $submittedData)
+    public function testOnOrderEventEmptyKey(array $submittedData): void
     {
         $order = new Order();
         $this->factory->expects(self::never())
@@ -51,6 +58,9 @@ class PossibleShippingMethodEventListenerTest extends \PHPUnit\Framework\TestCas
 
         $this->priceProvider->expects(self::never())
             ->method('getApplicableMethodsViews');
+
+        $this->organizationProvider->expects(self::never())
+            ->method('setOrganization');
 
         $event = new OrderEvent($this->createMock(FormInterface::class), $order, $submittedData);
 
@@ -79,8 +89,11 @@ class PossibleShippingMethodEventListenerTest extends \PHPUnit\Framework\TestCas
         ShippingMethodViewCollection $methods,
         ?array $submittedData,
         array $expectedMethods
-    ) {
+    ): void {
+        $previousOrg = new Organization();
+        $organization = new Organization();
         $order = new Order();
+        $order->setOrganization($organization);
         $context = $this->createMock(ShippingContextInterface::class);
         $this->factory->expects(self::any())
             ->method('create')
@@ -96,6 +109,17 @@ class PossibleShippingMethodEventListenerTest extends \PHPUnit\Framework\TestCas
             ->method('getApplicableMethodsViews')
             ->with($context)
             ->willReturn($methods);
+
+        $this->organizationProvider->expects(self::once())
+            ->method('getOrganization')
+            ->willReturn($previousOrg);
+
+        $this->organizationProvider->expects(self::exactly(2))
+            ->method('setOrganization')
+            ->withConsecutive(
+                [$organization],
+                [$previousOrg]
+            );
 
         $event = new OrderEvent($this->createMock(FormInterface::class), $order, $submittedData);
 

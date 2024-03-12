@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -14,13 +15,13 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 class LoadProductCollectionContentVariantWithManuallyAddedData extends AbstractFixture implements
     DependentFixtureInterface
 {
-    const WEB_CATALOG = 'web-catalog';
+    public const WEB_CATALOG = 'web-catalog';
 
-    const CONTENT_VARIANT_WITH_FILTERS = 'content-variant-product-collection-with-filters';
-    const CONTENT_VARIANT_WITH_MANUALLY_ADDED = 'content-variant-product-collection-manually-added';
-    const CONTENT_VARIANT_WITH_MIXED = 'content-variant-product-collection-mixed';
+    public const CONTENT_VARIANT_WITH_FILTERS = 'content-variant-product-collection-with-filters';
+    public const CONTENT_VARIANT_WITH_MANUALLY_ADDED = 'content-variant-product-collection-manually-added';
+    public const CONTENT_VARIANT_WITH_MIXED = 'content-variant-product-collection-mixed';
 
-    const PRODUCT_COLLECTION_VARIANT_RELATIONS = [
+    private const PRODUCT_COLLECTION_VARIANT_RELATIONS = [
         self::CONTENT_VARIANT_WITH_FILTERS => LoadProductCollectionSegmentWithManuallyAddedData::SEGMENT_WITH_FILTERS,
         self::CONTENT_VARIANT_WITH_MANUALLY_ADDED
             => LoadProductCollectionSegmentWithManuallyAddedData::SEGMENT_WITH_MANUALLY_ADDED,
@@ -28,21 +29,20 @@ class LoadProductCollectionContentVariantWithManuallyAddedData extends AbstractF
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return [
-            LoadProductCollectionSegmentWithManuallyAddedData::class,
-        ];
+        return [LoadProductCollectionSegmentWithManuallyAddedData::class, LoadOrganization::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $organization = $manager->getRepository(Organization::class)->getFirst();
+        /** @var Organization $organization */
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
         $owner = $organization->getBusinessUnits()->first();
 
         $webCatalog = new WebCatalog();

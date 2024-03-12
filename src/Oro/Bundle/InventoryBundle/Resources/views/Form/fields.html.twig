@@ -21,7 +21,8 @@
     {{ block('oro_date_widget') }}
     {% if disabled %}
         <div class="notification--warning">
-            <i class="fa-exclamation-circle"></i>
+            {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+            {{ renderIcon.icon({name: 'alert-triangle', extraClass: 'theme-icon--small'}) }}
             <span class="notification__text">{{ 'oro.inventory.availability_date.warning'|trans }}</span>
         </div>
     {% endif %}

@@ -4,7 +4,7 @@ namespace Oro\Bundle\TaxBundle\Controller\Api\Rest;
 
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,17 +16,16 @@ use Symfony\Component\HttpFoundation\Response;
 class ProductTaxCodeController extends AbstractFOSRestController
 {
     /**
-     * @AclAncestor("oro_product_update")
      *
      * @param Request $request
      * @param Product $product
-     *
      * @return Response
      */
+    #[AclAncestor('oro_product_update')]
     public function patchAction(Request $request, Product $product)
     {
         $taxCodeId = $request->get('taxCode');
-        $doctrineHelper = $this->get('oro_entity.doctrine_helper');
+        $doctrineHelper = $this->container->get('oro_entity.doctrine_helper');
 
         /** @var ProductTaxCodeRepository $taxCodeRepository */
         $taxCodeRepository = $doctrineHelper->getEntityRepositoryForClass(ProductTaxCode::class);

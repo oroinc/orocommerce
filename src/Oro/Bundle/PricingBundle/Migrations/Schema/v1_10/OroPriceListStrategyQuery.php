@@ -62,7 +62,7 @@ WHERE c.entity = :entity';
             $statement->bindValue(':type', 'scalar', Types::STRING);
             $now = (new \DateTime())->setTimezone(new \DateTimeZone('UTC'));
             $statement->bindValue(':created_at', $now, Types::DATETIME_MUTABLE);
-            $statement->execute();
+            $statement->executeQuery();
         }
     }
 }

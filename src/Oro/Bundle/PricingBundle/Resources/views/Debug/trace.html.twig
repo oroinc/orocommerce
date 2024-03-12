@@ -1,0 +1,60 @@
+{% extends bap.layout %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% oro_title_set({params : {"%sku%": product.sku|default('N/A'|trans), "%name%": product.defaultName.string|default('N/A'|trans) }}) %}
+
+{% set breadcrumbs = {
+    'entity': product,
+    'indexPath': path('oro_pricing_price_product_debug_index'),
+    'indexLabel': 'oro.pricing.productprice.debug.page_title'|trans,
+    'entityTitle': product.sku ~ ' - ' ~ product.defaultName
+} %}
+
+{% block content %}
+    <div class="container-fluid page-title">
+        {% if requires_price_actualization %}
+            {% set titleButtons %}
+                {% set params = oro_action_widget_parameters()|merge({
+                    'entityClass': 'Oro\\Bundle\\PricingBundle\\Entity\\CombinedPriceList',
+                    'entityId': current_active_cpl.id
+                }) %}
+
+                {% include '@OroAction/Widget/_widget.html.twig' %}
+            {% endset %}
+        {% endif %}
+
+        <div class="navigation navbar-extra navbar-extra-right">
+            <div class="row">
+                <div class="pull-left-extra">
+                    <div class="page-title__path">
+                        <div class="top-row">
+                            {{ block("breadcrumbs", "@OroUI/actions/view.html.twig") }}
+                        </div>
+                    </div>
+                </div>
+                {% if titleButtons is defined %}
+                    {% apply spaceless %}
+                        <div class="pull-right title-buttons-container">
+                            {{ titleButtons }}
+                        </div>
+                    {% endapply %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="layout-content product-container">
+        <div class="scrollable-container sidebar-container">
+            {% embed "@OroUI/content_sidebar.html.twig" with {options: {
+                fixSidebarHeight: false
+            }} %}
+                {% block sidebar %}
+                    {{ render(controller('Oro\\Bundle\\PricingBundle\\Debug\\Controller\\DebugController::sidebarViewAction', {product: product})) }}
+                {% endblock sidebar %}
+
+                {% block content %}
+                    {% include '@OroPricing/Debug/traceContent.html.twig' %}
+                {% endblock content %}
+            {% endembed %}
+        </div>
+    </div>
+{% endblock content %}

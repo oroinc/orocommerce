@@ -1,0 +1,17 @@
+layout:
+    actions:
+        - '@addTree':
+              items:
+                  promotional:
+                      blockType: content_block
+                      prepend: true
+                      options:
+                          visible: '=data["theme_header_config"].getPromotionalBlockAlias()'
+                          alias: '=data["theme_header_config"].getPromotionalBlockAlias()'
+                          vars:
+                              hideTitle: true
+                          attr:
+                              class: 'promotional-content-container cms-typography page-header__element'
+              tree:
+                  top_nav_topbar_container_left:
+                      promotional: ~

@@ -45,7 +45,7 @@ class InventoryThresholdFallbackTest extends WebTestCase
 
     public function testCategoryInventoryThreshold()
     {
-        $newCategoryFallbackValue = 3.5;
+        // Get form
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
         $crawler = $this->client->request(
             'GET',
@@ -54,21 +54,26 @@ class InventoryThresholdFallbackTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $form = $crawler->selectButton('Save')->form();
+
+        // Ensure that the tested field has a value different from the value that it will be changed to
         $inventoryThresholdValue = $form->get('oro_catalog_category[inventoryThreshold][scalarValue]')->getValue();
-        $this->assertEmpty($inventoryThresholdValue);
+        $this->assertEquals('', $inventoryThresholdValue);
 
-        $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
-        $form['oro_catalog_category[inventoryThreshold][useFallback]'] = false;
-        $form['oro_catalog_category[inventoryThreshold][scalarValue]'] = $newCategoryFallbackValue;
+        // Fill the form
+        $this->updateFallbackField($form, '3.5', null, 'oro_catalog_category', 'inventoryThreshold');
+        unset($form['oro_catalog_category[inventoryThreshold][useFallback]']);
+
+        // Submit form
         $this->client->followRedirects();
-
         $crawler = $this->client->submit($form);
 
+        // Assert result
         $form = $crawler->selectButton('Save')->form();
-        $this->assertEquals(
-            $newCategoryFallbackValue,
-            $form->get('oro_catalog_category[inventoryThreshold][scalarValue]')->getValue()
-        );
+        $actualScalarValue = $form->get('oro_catalog_category[inventoryThreshold][scalarValue]')->getValue();
+        $this->assertEquals('3.5', $actualScalarValue);
+
+        // Ensure that the flash message was fired
+        $this->assertStringContainsString('Category has been saved', $this->client->getResponse()->getContent());
     }
 
     private function setProductInventoryThresholdField(

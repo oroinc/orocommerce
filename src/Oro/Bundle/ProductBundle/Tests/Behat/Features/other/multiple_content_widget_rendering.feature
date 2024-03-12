@@ -40,32 +40,49 @@ Feature: Multiple content widget rendering
       | Show Arrows                   | false        |
       | Show Dots                     | true         |
       | Enable Infinite Scroll        | false        |
-    And click "Add"
     And fill "Image Slider Form" with:
-      | Slide Order 1    | 1            |
-      | URL 1            | /product     |
-      | Target 1         | Same Window  |
-      | Title 1          | Slide 1      |
-      | Text Alignment 1 | Center       |
-      | Text 1           | Slide text 1 |
-      | Slide Order 2    | 2            |
-      | URL 2            | /about       |
-      | Target 2         | New Window   |
-      | Title 2          | Slide 2      |
-      | Text Alignment 2 | Center       |
-      | Text 2           | Slide text 2 |
-    And I click on "Choose Main Slider Image 1"
+      | Slide Order 1    | 1              |
+      | URL 1            | /product       |
+      | Target 1         | Same Window    |
+      | Alt Image Text 1 | Slide 1        |
+      | Text Alignment 1 | Center         |
+      | Text 1           | Slide text 1   |
+      | Header 1         | Image Header 1 |
+    And I click on "Choose Extra Large Slider Image1x 1"
     And I fill "Digital Asset Dialog Form" with:
       | File  | cat1.jpg |
       | Title | cat1.jpg |
     And I click "Upload"
     And click on cat1.jpg in grid
-    And I click on "Choose Main Slider Image 2"
+    And I click on "Choose Large Slider Image1x 1"
+    And click on cat1.jpg in grid
+    And I click on "Choose Medium Slider Image1x 1"
+    And click on cat1.jpg in grid
+    And I click on "Choose Small Slider Image1x 1"
+    And click on cat1.jpg in grid
+
+    And click "Add"
+    And fill "Image Slider Form" with:
+      | Slide Order 2    | 2              |
+      | URL 2            | /about         |
+      | Target 2         | New Window     |
+      | Alt Image Text 2 | Slide 2        |
+      | Text Alignment 2 | Center         |
+      | Text 2           | Slide text 2   |
+      | Header 2         | Image Header 2 |
+    And I click on "Choose Extra large Slider Image1x 2"
     And I fill "Digital Asset Dialog Form" with:
       | File  | cat2.jpg |
       | Title | cat2.jpg |
     And I click "Upload"
     And click on cat2.jpg in grid
+    And I click on "Choose Large Slider Image1x 2"
+    And click on cat2.jpg in grid
+    And I click on "Choose Medium Slider Image1x 2"
+    And click on cat2.jpg in grid
+    And I click on "Choose Small Slider Image1x 2"
+    And click on cat2.jpg in grid
+
     And I save and close form
     Then I should see "Content widget has been saved" flash message
 
@@ -93,7 +110,7 @@ Feature: Multiple content widget rendering
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I am on the homepage
-    When I click "Multiple Content Widgets Page"
+    When I click "Multiple Content Widgets Page" in hamburger menu
     Then Page title equals to "Multiple Content Widgets Page"
     And I should see "Additional test data"
     And I should see "Product1"

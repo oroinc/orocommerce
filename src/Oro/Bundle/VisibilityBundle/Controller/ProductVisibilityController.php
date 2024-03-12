@@ -6,7 +6,7 @@ use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopedDataType;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -29,39 +29,35 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ProductVisibilityController extends AbstractController
 {
-    /**
-     * @Route("/edit/{id}", name="oro_product_visibility_edit", requirements={"id"="\d+"})
-     * @Template
-     * @AclAncestor("oro_product_update")
-     */
+    #[Route(path: '/edit/{id}', name: 'oro_product_visibility_edit', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[AclAncestor('oro_product_update')]
     public function editAction(Request $request, Product $product): array|RedirectResponse
     {
-        $scopes = $this->get(VisibilityRootScopesProvider::class)->getScopes($product);
+        $scopes = $this->container->get(VisibilityRootScopesProvider::class)->getScopes($product);
         if (0 === count($scopes)) {
             $preloadedScopes = [];
         } else {
             $preloadedScopes = [reset($scopes)];
         }
 
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $product,
             $this->createScopedDataForm($product, $preloadedScopes),
-            $this->get(TranslatorInterface::class)->trans('oro.visibility.event.saved.message'),
+            $this->container->get(TranslatorInterface::class)->trans('oro.visibility.event.saved.message'),
             $request,
-            new VisibilityFormDataHandler($this->get(EventDispatcherInterface::class))
+            new VisibilityFormDataHandler($this->container->get(EventDispatcherInterface::class))
         );
     }
 
-    /**
-     * @Route(
-     *      "/edit/{productId}/scope/{id}",
-     *      name="oro_product_visibility_scoped",
-     *      requirements={"productId"="\d+", "id"="\d+"}
-     * )
-     * @ParamConverter("product", options={"id" = "productId"})
-     * @Template("@OroVisibility/ProductVisibility/widget/scope.html.twig")
-     * @AclAncestor("oro_product_update")
-     */
+    #[Route(
+        path: '/edit/{productId}/scope/{id}',
+        name: 'oro_product_visibility_scoped',
+        requirements: ['productId' => '\d+', 'id' => '\d+']
+    )]
+    #[ParamConverter('product', options: ['id' => 'productId'])]
+    #[Template('@OroVisibility/ProductVisibility/widget/scope.html.twig')]
+    #[AclAncestor('oro_product_update')]
     public function scopeWidgetAction(Product $product, Scope $scope): array
     {
         /** @var Form $form */
@@ -83,7 +79,8 @@ class ProductVisibilityController extends AbstractController
                 'ownership_disabled' => true,
                 'dynamic_fields_disabled' => true,
                 ScopedDataType::PRELOADED_SCOPES_OPTION => $preloadedScopes,
-                ScopedDataType::SCOPES_OPTION => $this->get(VisibilityRootScopesProvider::class)->getScopes($product),
+                ScopedDataType::SCOPES_OPTION => $this->container->get(VisibilityRootScopesProvider::class)
+                    ->getScopes($product),
                 ScopedDataType::TYPE_OPTION => EntityVisibilityType::class,
                 ScopedDataType::OPTIONS_OPTION => [
                     'dynamic_fields_disabled' => true,

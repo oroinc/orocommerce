@@ -3,8 +3,8 @@
 namespace Oro\Bundle\TaxBundle\Controller;
 
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -18,11 +18,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class TaxJurisdictionController extends AbstractController
 {
-    /**
-     * @Route("/", name="oro_tax_jurisdiction_index")
-     * @Template
-     * @AclAncestor("oro_tax_jurisdiction_view")     *
-     */
+    #[Route(path: '/', name: 'oro_tax_jurisdiction_index')]
+    #[Template]
+    #[AclAncestor('oro_tax_jurisdiction_view')]
     public function indexAction(): array
     {
         return [
@@ -30,16 +28,9 @@ class TaxJurisdictionController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/view/{id}", name="oro_tax_jurisdiction_view", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_tax_jurisdiction_view",
-     *      type="entity",
-     *      class="OroTaxBundle:TaxJurisdiction",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/view/{id}', name: 'oro_tax_jurisdiction_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_tax_jurisdiction_view', type: 'entity', class: TaxJurisdiction::class, permission: 'VIEW')]
     public function viewAction(TaxJurisdiction $taxJurisdiction): array
     {
         return [
@@ -47,31 +38,17 @@ class TaxJurisdictionController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/create", name="oro_tax_jurisdiction_create")
-     * @Template("@OroTax/TaxJurisdiction/update.html.twig")
-     * @Acl(
-     *      id="oro_tax_jurisdiction_create",
-     *      type="entity",
-     *      class="OroTaxBundle:TaxJurisdiction",
-     *      permission="CREATE"
-     * )
-     */
+    #[Route(path: '/create', name: 'oro_tax_jurisdiction_create')]
+    #[Template('@OroTax/TaxJurisdiction/update.html.twig')]
+    #[Acl(id: 'oro_tax_jurisdiction_create', type: 'entity', class: TaxJurisdiction::class, permission: 'CREATE')]
     public function createAction(): array|RedirectResponse
     {
         return $this->update(new TaxJurisdiction());
     }
 
-    /**
-     * @Route("/update/{id}", name="oro_tax_jurisdiction_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_tax_jurisdiction_update",
-     *      type="entity",
-     *      class="OroTaxBundle:TaxJurisdiction",
-     *      permission="EDIT"
-     * )
-     */
+    #[Route(path: '/update/{id}', name: 'oro_tax_jurisdiction_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_tax_jurisdiction_update', type: 'entity', class: TaxJurisdiction::class, permission: 'EDIT')]
     public function updateAction(TaxJurisdiction $taxJurisdiction): array|RedirectResponse
     {
         return $this->update($taxJurisdiction);
@@ -79,10 +56,11 @@ class TaxJurisdictionController extends AbstractController
 
     protected function update(TaxJurisdiction $taxJurisdiction): array|RedirectResponse
     {
-        return $this->get(UpdateHandlerFacade::class)->update(
+        return $this->container->get(UpdateHandlerFacade::class)->update(
             $taxJurisdiction,
             $this->createForm(TaxJurisdictionType::class, $taxJurisdiction),
-            $this->get(TranslatorInterface::class)->trans('oro.tax.controller.tax_jurisdiction.saved.message')
+            $this->container->get(TranslatorInterface::class)
+                ->trans('oro.tax.controller.tax_jurisdiction.saved.message')
         );
     }
 

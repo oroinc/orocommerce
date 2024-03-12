@@ -6,33 +6,19 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\EntityIdentifierRepository;
 
 /**
- * Splats given list of entities on chunks applicable and optimized for indexation process.
+ * Splits given list of entities on chunks applicable and optimized for indexation process.
  */
 class ReindexMessageGranularizer
 {
     use ContextTrait;
 
-    /**
-     * The maximum number of IDs per one reindex request message
-     *
-     * @var int
-     */
-    private $chunkSize = 100;
+    private int $chunkSize = 100;
 
-    /**
-     * @var EntityIdentifierRepository
-     */
-    private $identifierRepository;
-
-    public function __construct(EntityIdentifierRepository $identifierRepository)
+    public function __construct(private EntityIdentifierRepository $identifierRepository)
     {
-        $this->identifierRepository = $identifierRepository;
     }
 
-    /**
-     * @param int $chunkSize
-     */
-    public function setChunkSize($chunkSize)
+    public function setChunkSize(int $chunkSize): void
     {
         $this->chunkSize = $chunkSize;
     }
@@ -47,7 +33,7 @@ class ReindexMessageGranularizer
      *
      * @return iterable<array{class: array, context: array}>
      */
-    public function process($entities, array $websites, array $context): iterable
+    public function process(array|string $entities, array $websites, array $context): iterable
     {
         $entities = (array)$entities;
 
@@ -68,10 +54,10 @@ class ReindexMessageGranularizer
             }
         }
 
-        foreach ($websites as $website) {
-            foreach ($entities as $entity) {
-                $chunks = $this->getChunksOfIds($entity, $entityIds);
-                foreach ($chunks as $chunk) {
+        foreach ($entities as $entity) {
+            $chunks = $this->getChunksOfIds($entity, $entityIds);
+            foreach ($chunks as $chunk) {
+                foreach ($websites as $website) {
                     $itemContext = [];
                     $itemContext = $this->setContextEntityIds($itemContext, $chunk);
                     $itemContext = $this->setContextWebsiteIds($itemContext, [$website]);
@@ -85,12 +71,7 @@ class ReindexMessageGranularizer
         }
     }
 
-    /**
-     * @param string $entityClass
-     * @param array $ids
-     * @return iterable|array
-     */
-    private function getChunksOfIds($entityClass, array $ids)
+    private function getChunksOfIds(string $entityClass, array $ids)
     {
         if (empty($ids)) {
             $ids = $this->identifierRepository->getIds($entityClass);

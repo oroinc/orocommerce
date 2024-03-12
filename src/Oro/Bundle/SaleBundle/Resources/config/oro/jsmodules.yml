@@ -1,3 +1,5 @@
+aliases:
+    oro/select2-dependent-component$: orosale/js/app/components/select2-dependent-component
 app-modules:
     - orosale/js/app/modules/validator-constraints-module
 dynamic-imports:
@@ -6,9 +8,12 @@ dynamic-imports:
     orosale:
         - orosale/js/app/components/dependent-field-component
         - orosale/js/app/components/related-data-component
+        - orosale/js/app/components/quote-products-prices-component
         - orosale/js/app/views/address-view
         - orosale/js/app/views/line-item-offer-view
         - orosale/js/app/views/line-item-view
         - orosale/js/app/views/line-items-view
+        - orosale/js/app/views/kit-item-line-item-view
         - orosale/js/app/views/product-add-to-rfq-view
         - orosale/js/app/views/quote-possible-shipping-methods-view
+        - oro/select2-dependent-component

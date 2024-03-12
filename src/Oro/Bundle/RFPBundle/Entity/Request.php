@@ -4,6 +4,8 @@ namespace Oro\Bundle\RFPBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroRFPBundle_Entity_Request;
 use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableInterface;
@@ -14,12 +16,13 @@ use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwar
 use Oro\Bundle\EmailBundle\Entity\EmailOwnerInterface;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\RFPBundle\Entity\Repository\RequestRepository;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -28,43 +31,6 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 /**
  * Request for Quote entity
  *
- * @ORM\Table("oro_rfp_request")
- * @ORM\Entity(repositoryClass="Oro\Bundle\RFPBundle\Entity\Repository\RequestRepository")
- * @Config(
- *      routeName="oro_rfp_request_index",
- *      routeView="oro_rfp_request_view",
- *      routeUpdate="oro_rfp_request_update",
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-file-text"
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="quotes"
- *          },
- *          "ownership"={
- *              "owner_type"="USER",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="user_owner_id",
- *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="customerUser",
- *              "frontend_owner_column_name"="customer_user_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id",
- *              "frontend_customer_field_name"="customer",
- *              "frontend_customer_column_name"="customer_id"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "grid"={
- *              "default"="rfp-requests-grid",
- *              "context"="rfp-requests-for-context-grid"
- *          }
- *      }
- * )
- * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
@@ -73,6 +39,32 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  * @method AbstractEnumValue getCustomerStatus()
  * @mixin OroRFPBundle_Entity_Request
  */
+#[ORM\Entity(repositoryClass: RequestRepository::class)]
+#[ORM\Table('oro_rfp_request')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    routeName: 'oro_rfp_request_index',
+    routeView: 'oro_rfp_request_view',
+    routeUpdate: 'oro_rfp_request_update',
+    defaultValues: [
+        'entity' => ['icon' => 'fa-file-text'],
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'quotes'],
+        'ownership' => [
+            'owner_type' => 'USER',
+            'owner_field_name' => 'owner',
+            'owner_column_name' => 'user_owner_id',
+            'frontend_owner_type' => 'FRONTEND_USER',
+            'frontend_owner_field_name' => 'customerUser',
+            'frontend_owner_column_name' => 'customer_user_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id',
+            'frontend_customer_field_name' => 'customer',
+            'frontend_customer_column_name' => 'customer_id'
+        ],
+        'dataaudit' => ['auditable' => true],
+        'grid' => ['default' => 'rfp-requests-grid', 'context' => 'rfp-requests-for-context-grid']
+    ]
+)]
 class Request implements
     CustomerOwnerAwareInterface,
     EmailHolderInterface,
@@ -93,222 +85,92 @@ class Request implements
 
     const INTERNAL_STATUS_DELETED = 'deleted';
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\Column(name: 'first_name', type: Types::STRING, length: 255)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $firstName = null;
+
+    #[ORM\Column(name: 'last_name', type: Types::STRING, length: 255)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $lastName = null;
+
+    #[ORM\Column(name: 'email', type: Types::STRING, length: 255)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $email = null;
+
+    #[ORM\Column(name: 'phone', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $phone = null;
+
+    #[ORM\Column(name: 'company', type: Types::STRING, length: 255)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $company = null;
+
+    #[ORM\Column(name: 'role', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $role = null;
+
+    #[ORM\Column(name: 'note', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $note = null;
+
+    #[ORM\Column(name: 'cancellation_reason', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $cancellationReason = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="first_name", type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, RequestProduct>
      */
-    protected $firstName;
+    #[ORM\OneToMany(mappedBy: 'request', targetEntity: RequestProduct::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\OrderBy(['id' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $requestProducts = null;
+
+    #[ORM\Column(name: 'po_number', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $poNumber = null;
+
+    #[ORM\Column(name: 'ship_until', type: Types::DATE_MUTABLE, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?\DateTimeInterface $shipUntil = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="last_name", type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $lastName;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $email;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="phone", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $phone;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="company", type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $company;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="role", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $role;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="note", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $note;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="cancellation_reason", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $cancellationReason;
-
-    /**
-     * @var Collection|RequestProduct[]
-     *
-     * @ORM\OneToMany(targetEntity="RequestProduct", mappedBy="request", cascade={"ALL"}, orphanRemoval=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $requestProducts;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="po_number", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $poNumber;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="ship_until", type="date", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $shipUntil;
-
-    /**
-     * @var Collection|User[]
-     *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinTable(
-     *      name="oro_rfp_assigned_users",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="request_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
+     * @var Collection<int, User>
      **/
-    protected $assignedUsers;
+    #[ORM\ManyToMany(targetEntity: User::class)]
+    #[ORM\JoinTable(name: 'oro_rfp_assigned_users')]
+    #[ORM\JoinColumn(name: 'request_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Collection $assignedUsers = null;
 
     /**
-     * @var Collection|CustomerUser[]
-     *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
-     * @ORM\JoinTable(
-     *      name="oro_rfp_assigned_cus_users",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="request_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
+     * @var Collection<int, CustomerUser>
      **/
-    protected $assignedCustomerUsers;
+    #[ORM\ManyToMany(targetEntity: CustomerUser::class)]
+    #[ORM\JoinTable(name: 'oro_rfp_assigned_cus_users')]
+    #[ORM\JoinColumn(name: 'request_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'customer_user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Collection $assignedCustomerUsers = null;
 
     /**
-     * @var Collection|RequestAdditionalNote[]
-     *
-     * @ORM\OneToMany(targetEntity="RequestAdditionalNote", mappedBy="request", cascade={"ALL"}, orphanRemoval=true)
+     * @var Collection<int, RequestAdditionalNote>
      */
-    protected $requestAdditionalNotes;
+    #[ORM\OneToMany(
+        mappedBy: 'request',
+        targetEntity: RequestAdditionalNote::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    protected ?Collection $requestAdditionalNotes = null;
 
-    /**
-     * @var Website
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $website;
+    #[ORM\ManyToOne(targetEntity: Website::class)]
+    #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Website $website = null;
 
     /**
      * Constructor
@@ -536,9 +398,7 @@ class Request implements
         return $this->note;
     }
 
-    /**
-     * @ORM\PreUpdate
-     */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));

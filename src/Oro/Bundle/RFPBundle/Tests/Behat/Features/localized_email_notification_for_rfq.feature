@@ -103,7 +103,7 @@ Feature: Localized email notification for RFQ
 
     When I proceed as the User
     And I login as AmandaRCole@example.org buyer
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
     And I click "New Quote"
     And I fill form with:
@@ -168,15 +168,15 @@ Feature: Localized email notification for RFQ
     Then I should see "Configuration saved" flash message
 
     When I proceed as the User
+    And I click "Account Dropdown"
     And I click "Sign Out"
-    And I click "Localization Switcher"
     And I select "French Localization" localization
     And type "Product" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message and I close it
     When I open shopping list widget
-    And I click "View List"
+    And I click "Open List"
     And click "Request Quote"
     And I fill form with:
       | First Name    | Tester                |

@@ -43,7 +43,6 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
         calls:
-            - [addDriver, ['@oro_website_search.engine.orm.driver.mysql']]
             - [addDriver, ['@oro_website_search.engine.orm.driver.pgsql']]
 
     oro_website_search.engine.orm.driver.mysql:

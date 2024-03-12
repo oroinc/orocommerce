@@ -34,7 +34,7 @@ class OrderProductKitLineItemListenerTest extends TestCase
         $form
             ->expects(self::once())
             ->method('get')
-            ->willReturn([]);
+            ->willReturn($form);
         $order = new Order();
         $event = new OrderEvent($form, $order);
 
@@ -42,7 +42,10 @@ class OrderProductKitLineItemListenerTest extends TestCase
 
         $this->listener->onOrderEvent($event);
 
-        self::assertEquals(new \ArrayObject(['kitItemLineItems' => [], 'checksum' => []]), $event->getData());
+        self::assertEquals(
+            new \ArrayObject(['kitItemLineItems' => [], 'checksum' => [], 'disabledKitPrices' => []]),
+            $event->getData()
+        );
     }
 
     public function testOnOrderEventWhenHasLineItemWithoutData(): void
@@ -52,7 +55,7 @@ class OrderProductKitLineItemListenerTest extends TestCase
         $form
             ->expects(self::once())
             ->method('get')
-            ->willReturn([$lineItemForm]);
+            ->willReturn($lineItemForm);
         $order = new Order();
         $event = new OrderEvent($form, $order);
 
@@ -60,7 +63,10 @@ class OrderProductKitLineItemListenerTest extends TestCase
 
         $this->listener->onOrderEvent($event);
 
-        self::assertEquals(new \ArrayObject(['kitItemLineItems' => [], 'checksum' => []]), $event->getData());
+        self::assertEquals(
+            new \ArrayObject(['kitItemLineItems' => [], 'checksum' => [], 'disabledKitPrices' => []]),
+            $event->getData()
+        );
     }
 
     public function testOnOrderEventWhenHasLineItemWithoutProduct(): void
@@ -72,9 +78,12 @@ class OrderProductKitLineItemListenerTest extends TestCase
             ->expects(self::once())
             ->method('getData')
             ->willReturn($lineItem);
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('get')
+            ->with('lineItems')
+            ->willReturn($lineItemForm);
+        $lineItemForm->expects(self::once())
+            ->method('all')
             ->willReturn([$lineItemForm]);
         $order = new Order();
         $event = new OrderEvent($form, $order);
@@ -83,7 +92,10 @@ class OrderProductKitLineItemListenerTest extends TestCase
 
         $this->listener->onOrderEvent($event);
 
-        self::assertEquals(new \ArrayObject(['kitItemLineItems' => [], 'checksum' => []]), $event->getData());
+        self::assertEquals(
+            new \ArrayObject(['kitItemLineItems' => [], 'checksum' => [], 'disabledKitPrices' => []]),
+            $event->getData()
+        );
     }
 
     public function testOnOrderEventWhenHasLineItemWithNotProductKit(): void
@@ -96,9 +108,12 @@ class OrderProductKitLineItemListenerTest extends TestCase
             ->expects(self::once())
             ->method('getData')
             ->willReturn($lineItem);
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('get')
+            ->with('lineItems')
+            ->willReturn($lineItemForm);
+        $lineItemForm->expects(self::once())
+            ->method('all')
             ->willReturn([$lineItemForm]);
         $order = new Order();
         $event = new OrderEvent($form, $order);
@@ -107,16 +122,22 @@ class OrderProductKitLineItemListenerTest extends TestCase
 
         $this->listener->onOrderEvent($event);
 
-        self::assertEquals(new \ArrayObject(['kitItemLineItems' => [], 'checksum' => []]), $event->getData());
+        self::assertEquals(
+            new \ArrayObject(['kitItemLineItems' => [], 'checksum' => [], 'disabledKitPrices' => []]),
+            $event->getData()
+        );
     }
 
     public function testOnOrderEventWhenHasLineItemWithProductKit(): void
     {
         $form = $this->createMock(FormInterface::class);
         $lineItemForm = $this->createMock(FormInterface::class);
-        $form
-            ->expects(self::once())
+        $form->expects(self::once())
             ->method('get')
+            ->with('lineItems')
+            ->willReturn($lineItemForm);
+        $lineItemForm->expects(self::once())
+            ->method('all')
             ->willReturn([$lineItemForm]);
         $order = new Order();
         $event = new OrderEvent($form, $order);
@@ -151,6 +172,7 @@ class OrderProductKitLineItemListenerTest extends TestCase
                 [
                     'kitItemLineItems' => [$formView->vars['full_name'] => $html],
                     'checksum' => [$formView->vars['full_name'] => $lineItem->getChecksum()],
+                    'disabledKitPrices' => [$formView->vars['full_name'] => true],
                 ]
             ),
             $event->getData()

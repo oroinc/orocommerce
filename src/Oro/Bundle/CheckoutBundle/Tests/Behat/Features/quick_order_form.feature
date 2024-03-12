@@ -24,7 +24,7 @@ Feature: Quick order form
   Scenario: Submit forms with empty fields to check validation error
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     Then should see that "Quick Add Row Product Field" contains "Enter Product Name or Item Number" placeholder
     And should see that "Quick Add Row Quantity Field" contains "Qty #" placeholder
     And should see that "Paste Your Order Input Field" contains "Copy and paste your order." placeholder
@@ -38,7 +38,7 @@ Feature: Quick order form
     Then I should see that "Quick Add Form Validation" contains "Please add at least one item"
 
   Scenario: Check if the price depends on quantity
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | psku1 |
     And I wait for products to load
@@ -51,7 +51,7 @@ Feature: Quick order form
     Then "PSKU1" product should has "$90.00" value in price field
 
   Scenario: Get A Quote from quick order page
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | PSKU2 |
       | SKU2 | PSKU2 |
@@ -72,15 +72,15 @@ Feature: Quick order form
     And should see that "PO Number" contains "PO Number" placeholder
     And should see that "Assigned To Input Field" contains "Assigned To" placeholder
     And Request a Quote contains products
-      | Product2 | 2 | item |
-      | Product2 | 4 | set  |
-      | Product3 | 2 | item |
+      | PSKU2 - Product2 | 2 | item |
+      | PSKU2 - Product2 | 4 | set  |
+      | PSKU3 - Product3 | 2 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
   Scenario: Create an order from quick order page
     Given There are products in the system available for order
-    And I click "Quick Order Form"
+    And I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | PSKU1 |
       | SKU2 | PSKU2 |
@@ -106,7 +106,7 @@ Feature: Quick order form
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
   Scenario: Add to shopping list from quick order page
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | PSKU1 |
       | SKU2 | PSKU2 |
@@ -126,19 +126,19 @@ Feature: Quick order form
     And Page title equals to "Billing Information - Checkout"
 
   Scenario: Get A Quote from quick order page with product without price
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | PSKUwithlowercase |
     And I wait for products to load
     When I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
-      | Product4 | 1 | item |
+      | PSKUwithlowercase - Product4 | 1 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
   Scenario: Create an order from quick order page with product without price
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | PSKUwithlowercase |
     And I wait for products to load
@@ -160,7 +160,7 @@ Feature: Quick order form
       | Product1`"'&йёщ®&reg;> | 2 | items |
 
   Scenario: Verify disabled products are cannot be added via quick order form
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     When I fill "Quick Order Form" with:
       | SKU1 | pskulowercaseonly |
     And I wait for products to load
@@ -168,7 +168,7 @@ Feature: Quick order form
       | QTY1 | 1 |
     And I click "Get Quote"
     Then I should see text matching "Item number cannot be found"
-    And I click "Quick Order Form"
+    And I click "Quick Order"
     When I fill "Quick Order Form" with:
       | SKU1 | pskulowercaseonly |
     And I wait for products to load
@@ -176,7 +176,7 @@ Feature: Quick order form
       | QTY1 | 1 |
     And I click "Create Order"
     Then I should see text matching "Item number cannot be found"
-    And I click "Quick Order Form"
+    And I click "Quick Order"
     When I fill "Quick Order Form" with:
       | SKU1 | pskulowercaseonly |
     And I wait for products to load
@@ -187,20 +187,20 @@ Feature: Quick order form
     Then I should see text matching "Item number cannot be found"
 
   Scenario: User is able to use Quick Order Form (copy paste) and create RFQ
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU1 5\nPSKU3 2 |
     And I click "Verify Order"
     And I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
-      | Product1`"'&йёщ®&reg;> | 5 | item |
-      | Product3               | 2 | item |
+      | psku1 - Product1`"'&йёщ®&reg;> | 5 | item |
+      | PSKU3 - Product3               | 2 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
   Scenario: Create an order from quick order page (copy paste) with non exists quantity
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | SKU123 1 item |
     And I click "Verify Order"
@@ -214,7 +214,7 @@ Feature: Quick order form
     Then I should see "Cannot create order because Shopping List has no items with price" flash message
 
   Scenario: Create an order from quick order page (import) with non exists quantity
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     And I click "Get Directions"
     And I should see that "UiDialog Title" contains "Import Excel .CSV File"
     And I download "the CSV template"
@@ -232,7 +232,7 @@ Feature: Quick order form
     Then I should see "Cannot create order because Shopping List has no items with price" flash message
 
   Scenario: User is able to use Quick Order Form (copy paste) with specific unit info
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU2 3 set |
     And I click "Verify Order"
@@ -244,24 +244,24 @@ Feature: Quick order form
     And I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
-      | Product2 | 3 | set |
+      | PSKU2 - Product2 | 3 | set |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
   Scenario: User is able to use Quick Order Form (copy paste) and create RFQ with product without price
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKUwithlowercase 2 |
     And I click "Verify Order"
     And I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
-      | Product4 | 2 | item |
+      | PSKUwithlowercase - Product4 | 2 | item |
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
   Scenario: Check format validation
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU1 5 test |
     And I click "Verify Order"
@@ -292,7 +292,7 @@ Feature: Quick order form
     Then I should see that "Quick Add Copy Paste Validation" contains "Invalid format"
 
   Scenario: Check zero quantity items validation
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     When I fill in "Paste your order" with:
       """
       PSKU1,0,item
@@ -322,7 +322,7 @@ Feature: Quick order form
       """
 
   Scenario: Check copy paste validation if use semicolons or commas
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU1,2,item |
     And I click "Verify Order"
@@ -344,7 +344,7 @@ Feature: Quick order form
       | UNIT2 | item                           |
 
   Scenario: Merge quantities for existing items on verifying order from copy paste form
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     And I fill in "Paste your order" with:
       """
       PSKU1,2,item
@@ -378,7 +378,7 @@ Feature: Quick order form
       | UNIT3 | item                           |
 
   Scenario: Check upload import validation with empty file
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     And I click "Get Directions"
     And I should see that "UiDialog Title" contains "Import Excel .CSV File"
     And I download "the CSV template"
@@ -389,7 +389,7 @@ Feature: Quick order form
     Then I should see text matching "We have not been able to identify any product references in the uploaded file."
 
   Scenario: Check upload import validation in case when all rows are in wrong format
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     And I click "Get Directions"
     And I should see that "UiDialog Title" contains "Import Excel .CSV File"
     And I download "the CSV template"
@@ -413,7 +413,7 @@ Feature: Quick order form
     And I should see that "Quick Add Form Validation" contains "Item number cannot be found"
 
   Scenario: Check upload import validation in case when just some rows are in wrong format
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     And I click "Get Directions"
     And I should see that "UiDialog Title" contains "Import Excel .CSV File"
     And I download "the CSV template"
@@ -437,7 +437,7 @@ Feature: Quick order form
     And I should see that "Quick Add Form Validation" contains "Item number cannot be found"
 
   Scenario: Check upload import validation using unsupported file type
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     When I import unsupported file for quick order
     Then I should see "The mime type of the file is invalid (\"image/jpeg\"). Allowed mime types are \"text/csv\", \"text/plain\", \"application/zip\", \"application/vnd.oasis.opendocument.spreadsheet\", \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\", \"application/octet-stream\"."
 
@@ -455,7 +455,7 @@ Feature: Quick order form
 
   Scenario: Check CSV import with a unit that is not marked as sell unit
     Given I proceed as the Buyer
-    And I click "Quick Order Form"
+    And I click "Quick Order"
     And I click "Get Directions"
     And I should see that "UiDialog Title" contains "Import Excel .CSV File"
     And I download "the CSV template"
@@ -475,9 +475,8 @@ Feature: Quick order form
     And I should see "Unit 'set' doesn't exist for product PSKU1."
 
   Scenario: Check product and unit names are localized
-    Given I click "Localization Switcher"
-    And I select "Localization 1" localization
-    And I click "Quick Order Form"
+    Given I select "Localization 1" localization
+    And I click "Quick Order"
     And I click "Get Directions"
     And I should see that "UiDialog Title" contains "Import Excel .CSV File"
     And I download "the CSV template"
@@ -498,9 +497,8 @@ Feature: Quick order form
       | UNIT2 | item (lang1)                     |
 
   Scenario: Check unit names are localized in copy paste form
-    Given I click "Localization Switcher"
-    And I select "Zulu" localization
-    And I click "Quick Order Form"
+    Given I select "Zulu" localization
+    And I click "Quick Order"
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU2,1,item |
     And I click "Verify Order"
@@ -528,12 +526,12 @@ Feature: Quick order form
 
   Scenario: Quick order form empty row's validation
     Given I proceed as the Buyer
-    And I click "Quick Order Form"
+    And I click "Quick Order"
     When I click "Add to List 2"
     Then I should see that "Quick Add Form Validation" contains "Please add at least one item"
 
   Scenario: Quick order form 20+ rows duplicate submit buttons
-    Given I click "Quick Order Form"
+    Given I click "Quick Order"
     And I click on "Add More Rows"
     And I scroll to bottom
     And I click on "Add More Rows"

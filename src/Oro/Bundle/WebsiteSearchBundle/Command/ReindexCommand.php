@@ -72,8 +72,7 @@ You can limit the reindexation to a specific field group with the <info>--field-
   <info>php %command.full_name% --field-group=<fieldGroup></info>
 
 You can limit the reindexation to a specific entity with the <info>--class</info> option.
-Both the FQCN (Oro\Bundle\UserBundle\Entity\User) and short (OroUserBundle:User)
-class names are accepted:
+The FQCN (Oro\Bundle\UserBundle\Entity\User) class names are accepted:
 
   <info>php %command.full_name% --class=<entity></info>
 
@@ -243,7 +242,7 @@ HELP
             $result = range($range[0], $range[1]);
         } else {
             $result = $this->getLastEntityId($className);
-            $result = range(1, $result);
+            $result = range(1, $result ?? $chunkSize);
         }
 
         if (null !== $chunkSize) {

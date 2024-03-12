@@ -1,0 +1,57 @@
+{% block attribute_group_rest_widget %}
+    {%- import '@OroUI/macros.html.twig' as UI -%}
+    {% set content = '' %}
+    {% set visibleTabsOptions = [] %}
+    {% set tabsOptionsById = [] %}
+    {%- for tab in tabsOptions -%}
+        {% set tabsOptionsById = tabsOptionsById|merge({
+            (tab.id): tab
+        }) %}
+    {%- endfor -%}
+    {%- for child in block -%}
+        {%- if child.vars.visible -%}
+            {% set childContent = block_widget(child) %}
+            {%- if childContent|trim|length > 0 -%}
+                {% set content = content ~ childContent %}
+                {% set visibleTabsOptions = visibleTabsOptions|merge([tabsOptionsById[child.vars.group]]) %}
+            {%- endif -%}
+        {%- endif -%}
+    {%- endfor -%}
+    {%- if visibleTabsOptions is not empty -%}
+        <div {{ block('block_attributes') }}>
+            <div {{ UI.renderPageComponentAttributes({
+                module: 'oroentityconfig/js/attribute-group-tabs-component',
+                name: 'attribute-group-tabs-component',
+                options: {data: visibleTabsOptions}
+            }) }}>
+                <ul class="nav product-attributes-tabs">
+                    {% for item in visibleTabsOptions %}
+                        <li class="product-attributes-tabs__item">
+                            <a href="#" class="nav-link product-attributes-tabs__link">{{ item.label }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div>
+                {{- content|raw -}}
+            </div>
+        </div>
+    {%- endif -%}
+{% endblock %}
+
+{% block attribute_group_rest_attribute_group_widget %}
+    {% set content = block_widget(block) %}
+    {% if content|trim|length > 0 %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-page-component-module': 'oroentityconfig/js/attribute-group-tab-content-component',
+            '~data-page-component-options': {'id': group}|json_encode
+        }) %}
+        <div {{ block('block_attributes') }} class="tab-content product-view-attribute__tab-content">
+            {{ content|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block attribute_group_rest_attribute_widget %}
+    <div class="product-view-attribute__content">{{ block('attribute_label_widget') }} {{ block_widget(block) }}</div>
+{% endblock %}

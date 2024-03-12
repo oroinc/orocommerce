@@ -15,7 +15,7 @@
                data-name="field__product-subtotal" disabled aria-label="{{ 'oro.pricing.productprice.price_input.aria_label'|trans }}">
         {# to prevent popover from instant initialization toggleAttrValue is set to empty string #}
         {% set toggleAttrValue = '' %}
-        {% set productTierClass = productTierClass|default('btn btn--default btn--size-s product-tier-prices hidden') %}
+        {% set productTierClass = productTierClass|default('btn btn--outlined btn--text btn--size-small product-tier-prices hidden') %}
         {{ block('product_price_hint_trigger_info_js_widget') }}
     </div>
 {% endblock %}

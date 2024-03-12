@@ -4,17 +4,6 @@ services:
         tags:
             - { name: oro_action.condition, alias: quote_acceptable }
 
-    oro_sale.provider.quote_product_price:
-        class: 'Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider'
-        public: true
-        arguments:
-            - "@oro_pricing.provider.product_price"
-            - "@oro_pricing.model.product_price_scope_criteria_factory"
-            - "@oro_currency.config.currency"
-            - "@oro_entity.doctrine_helper"
-            - '@oro_security.acl_helper'
-            - '@oro_pricing.product_price_criteria_factory'
-
     oro_sale.validator.quote_product:
         class: 'Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProductValidator'
         tags:
@@ -51,7 +40,10 @@ services:
 
     oro_sale.line_item.converter.quote_demand:
         class: 'Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter'
-        public: false
+        arguments:
+            - '@oro_checkout.converter.product_kit_item_line_item_converter'
+            - '@validator'
+            - '@oro_checkout.provider.checkout_validation_groups_by_source_entity'
         tags:
             - { name: oro.checkout.line_item.converter, alias: quote_demand }
 
@@ -96,15 +88,27 @@ services:
             - [addEntity, ['a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress']]
             - [addEntity, ['au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress']]
 
-    oro_sale.privider.form_template_data.quote:
+    oro_sale.provider.form_template_data.quote:
         class: 'Oro\Bundle\SaleBundle\Form\QuoteFormTemplateDataProvider'
-        public: false
         arguments:
             - '@event_dispatcher'
-            - '@oro_sale.provider.quote_product_price'
-            - '@oro_sale.provider.quote_address_security'
         tags:
             - { name: oro_form.form_template_data_provider, alias: quote_update }
+
+    oro_sale.transit.normalize.verify_quote_template_data.processor:
+        class: Oro\Bundle\SaleBundle\WorkflowState\Processor\Transition\Template\VerifyQuoteTemplateDataProcessor
+        arguments:
+            - '@validator'
+            - [['Default', 'add_kit_item_line_item', 'quote_is_valid_for_sending_to_customer']]
+        tags:
+            -
+                name: oro_workflow.processor
+                action: transit
+                group: normalize
+                saved: false
+                state: ok
+                resultType: template_response
+                priority: 50
 
     oro_sale.provider.quote_address:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider'
@@ -142,8 +146,9 @@ services:
         class: 'Oro\Bundle\SaleBundle\Manager\QuoteDemandManager'
         public: true
         arguments:
-            - "@oro_pricing.subtotal_processor.total_processor_provider"
-            - "@oro_pricing.subtotal_processor.provider.subtotal_line_item"
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+            - '@oro_product.line_item_checksum_generator'
 
     oro_sale.event_listener.quote_update:
         class: 'Oro\Bundle\SaleBundle\EventListener\QuoteUpdateHandlerEventListener'
@@ -325,3 +330,66 @@ services:
             - quote_create_for_customer_user_link
         tags:
             - { name: oro_ui.view_action_provider, group: activity }
+
+    oro_sale.event_listener.quote_product_kit_line_item:
+        class: Oro\Bundle\SaleBundle\EventListener\QuoteProductKitLineItemListener
+        arguments:
+            - '@twig'
+        tags:
+            - { name: kernel.event_listener, event: oro_sale.quote, method: onQuoteEvent }
+
+    oro_sale.event_listener.quote_product_offer_checksum:
+        class: Oro\Bundle\SaleBundle\EventListener\QuoteProductOfferChecksumQuoteEventListener
+        tags:
+            - { name: kernel.event_listener, event: oro_sale.quote, method: onQuoteEvent }
+
+    oro_sale.product_kit.provider.product_kit_item_products:
+        class: Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider
+        arguments:
+            - '@oro_sale.product_kit.checker.product_kit_item_product_availability_checker'
+
+    oro_sale.product_kit.checker.product_kit_item_product_availability_checker:
+        class: Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker
+        arguments:
+            - '@validator'
+            - ['product_kit_item_product_is_available_for_quote']
+
+    oro_sale.product_kit.factory.quote_product_kit_item_line_item:
+        class: Oro\Bundle\SaleBundle\ProductKit\Factory\QuoteProductKitItemLineItemFactory
+        arguments:
+            - '@oro_sale.product_kit.provider.product_kit_item_products'
+
+    oro_sale.autocomplete.product_visibility_limited.search_handler:
+        parent: oro_product.autocomplete.product_visibility_limited.search_handler
+        calls:
+            - setNotAllowedProductTypes:
+                  -
+                      - !php/const Oro\Bundle\ProductBundle\Entity\Product::TYPE_CONFIGURABLE
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_sale_product_visibility_limited }
+
+    oro_sale.workflow_state.condition.is_quote_valid:
+        class: Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid
+        arguments:
+            - '@validator'
+        tags:
+            - { name: oro_action.condition, alias: is_quote_valid }
+
+    oro_sale.provider.quote_product_prices:
+        class: 'Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider'
+        public: true
+        arguments:
+            - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_pricing.provider.product_line_item_product_price'
+            - '@oro_pricing.user_currency_manager'
+
+    oro_sale.event_listener.quote_product_tier_prices:
+        class: Oro\Bundle\SaleBundle\EventListener\QuoteProductTierPricesQuoteEventListener
+        arguments:
+            - '@oro_sale.provider.quote_product_prices'
+        tags:
+            - { name: kernel.event_listener, event: oro_sale.quote, method: onQuoteEvent }
+
+    oro_sale.quote.pricing.comparator:
+        class: Oro\Bundle\SaleBundle\Quote\Pricing\QuotePricesComparator

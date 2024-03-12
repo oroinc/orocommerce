@@ -40,10 +40,15 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__content product-item__content--{{ class_prefix }}',
     }) %}
+    {% if matrixFormType is not defined %}
+        {% set matrixFormType = '' %}
+    {% endif %}
+    {% set isProductHasPrices = productPrices is defined and productPrices is not empty or
+        product is defined and product.prices is defined and matrixFormType == 'none' and product.prices is not empty
+    %}
     {% if
         microdataWithoutPricesDisabled == false or
-        productPrices is defined and productPrices is not empty or
-        product is defined and product.prices is defined and matrixFormType == 'none' and product.prices is not empty
+        (not is_price_hidden(product) and isProductHasPrices == true)
     %}
         {% set attr = layout_attr_defaults(attr, {
             'itemscope': '',
@@ -54,9 +59,9 @@
                 <meta itemprop="description" content="{{ product.schemaOrgDescription }}" />
             {% endset %}
         {% endif %}
-        {% if product.schemaOrgBrandName is defined %}
+        {% if product.schemaOrgBrandName is defined and product.schemaOrgBrandName|length %}
             {% set productSchemaOrgBrand %}
-                <span itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
+                <span class="hidden" itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
                     <meta itemprop="name" content="{{ product.schemaOrgBrandName }}" />
                 </span>
             {% endset %}
@@ -73,6 +78,22 @@
     </div>
 {% endblock %}
 
+{% block __oro_product_list_item__product_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__container product-item__container--{{ class_prefix }}',
+    }) %}
+
+    {% if matrixFormType == 'inline' %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-item__container--has-matrixform',
+        }) %}
+    {% endif %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block __oro_product_list_item__product_image_holder_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__image-holder product-item__image-holder--{{ class_prefix }}',
@@ -85,7 +106,7 @@
 
 {% block __oro_product_list_item__product_view_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__preview',
+        '~class': ' product-item__preview product-item__preview--{{ class_prefix }}',
         'href': path('oro_product_frontend_product_view', {id: product.id}),
         'aria-label': 'oro.product.frontend.index.view_details_prefix'|trans ~ ' ' ~ product.name
     }) %}
@@ -116,6 +137,7 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_popup_gallery_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% if product.hasImage %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' view-product-gallery',
@@ -124,7 +146,7 @@
             'aria-label': 'oro.product.images.zoom.label'|trans,
             'type': 'button'
         }) %}
-        <button {{ block('block_attributes') }}></button>
+        <button {{ block('block_attributes') }}>{{ renderIcon.icon({name: 'zoom-in'}) }}</button>
     {% endif %}
 {% endblock %}
 
@@ -133,7 +155,11 @@
         '~class': ' product-item__preview-picture',
         'data-object-fit': ''
     }) %}
-
+    {% if product.hasImage is defined and product.hasImage == false %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-item__preview-picture--no-image',
+        }) %}
+    {% endif %}
     {% if product.imageWebp is defined and product.imageWebp and product.imageWebp != product.image %}
         {% set sources = [{
             srcset: product.imageWebp,
@@ -147,7 +173,8 @@
             src: product.image,
             alt: product.name,
             class: 'product-item__preview-image',
-            itemprop: 'image'
+            itemprop: 'image',
+            loading: 'lazy'
         },
         picture_attrs: attr
     } %}
@@ -155,7 +182,7 @@
 
 {% block __oro_product_list_item__product_quick_view_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' btn btn--info'
+        '~class': ' btn btn--outlined'
     }) %}
     <button {{ block('block_attributes') }}>
         Quick View
@@ -168,7 +195,7 @@
     }) %}
     <h3 {{ block('block_attributes') }} itemprop="productID" content="{{ product.id }}">
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}"
-           class="view-product line-clamp"
+           class="view-product line-clamp no-decoration"
            itemprop="url"
            title="{{ product.name|e('html_attr') }}"
            {% if isTargetBlank is defined and isTargetBlank %}target="_blank"{% endif %}
@@ -180,7 +207,7 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__primary-content product-item__primary-content--{{ class_prefix }}'
     }) %}
-    {% if matrixFormType == 'inline' %}
+    {% if matrixFormType|default('') == 'inline' %}
         {% if class_prefix == 'list-view' %}
             {% set attr = layout_attr_defaults(attr, {
                 '~class': ' product-item__primary-content--remainder-width'
@@ -216,7 +243,7 @@
 
 {% block __oro_product_list_item__product_sku_widget %}
     <div>
-        {{- 'oro.product.frontend.index.item'|trans }} <span class="product-item__sku-value" itemprop="sku">{{- product.sku -}}</span>
+        <span class="product-item__sku-value" itemprop="sku">{{- product.sku -}}</span>
     </div>
 {% endblock %}
 
@@ -285,21 +312,4 @@
         <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
         {% endif %}
     {% endif %}
-{% endblock %}
-
-{% block __oro_product_list_item__product_more_info_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' oro-more-info-toggler oro-more-info-toggler--{{ class_prefix }}'
-    }) %}
-    <div {{ block('block_attributes') }}>
-        <i class="fa-play"></i>
-        <a href="#" data-more-info-expand>More Info</a>
-        <div class="oro-more-info-toggler__container" data-more-info>
-            <ul class="oro-more-info-toggler__list oro-more-info-toggler__list--{{ class_prefix }}">
-                <li><span class="text-uppercase">Mspr:</span> $24.99</li>
-                <li>Shipping Weight: .08 lbs.</li>
-                <li>80 Items to a Box</li>
-            </ul>
-        </div>
-    </div>
 {% endblock %}

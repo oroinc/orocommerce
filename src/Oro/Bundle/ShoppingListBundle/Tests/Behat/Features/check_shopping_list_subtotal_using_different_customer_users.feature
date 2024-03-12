@@ -75,9 +75,11 @@ Feature: Check shopping list subtotal using different customer users
     And I am on homepage
     And click "Add to Shopping List" for "Simple product 1" product
     And click "Add to Shopping List" for "Simple product 2" product
+    And I scroll to top
+    And I should see "Product has been added to" flash message and I close it
 
     When I open shopping list widget
-    Then I should see "2 Items | $90.00"
+    And I should see "2 items | $90.00"
 
     When I click "Shopping List" on shopping list widget
     Then should see "Subtotal $90.00"
@@ -91,7 +93,7 @@ Feature: Check shopping list subtotal using different customer users
 
     When I open shopping list widget
     # $90.00 because cache for AmandaRCole user is not created.
-    Then I should see "2 Items | $90.00"
+    Then I should see "2 items | $90.00"
 
     When I click "Shopping List" on shopping list widget
     Then I should see "Subtotal $50.00"
@@ -100,7 +102,7 @@ Feature: Check shopping list subtotal using different customer users
 
     When I open shopping list widget
     # $50.00 because cache for AmandaRCole created.
-    Then I should see "2 Items | $50.00"
+    Then I should see "2 items | $50.00"
 
   Scenario: Invalidate customer department shopping list cache
     Given I proceed as the CustomerDepartment
@@ -114,7 +116,7 @@ Feature: Check shopping list subtotal using different customer users
     And I am on homepage
     When I open shopping list widget
     # $45.00 because cache for AmandaRCole user is not valid.
-    Then I should see "1 Item | $45.00"
+    Then I should see "1 item | $45.00"
 
     When I click "Shopping List" on shopping list widget
     Then I should see "Subtotal $25.00"
@@ -122,7 +124,7 @@ Feature: Check shopping list subtotal using different customer users
     And should see "Total $22.50"
     When I open shopping list widget
     # 25.00 because cache for AmandaRCole created.
-    Then I should see "1 Item | $25.00"
+    Then I should see "1 item | $25.00"
 
   Scenario: Invalidate customer department shopping list cache
     Given I proceed as the Admin
@@ -144,12 +146,12 @@ Feature: Check shopping list subtotal using different customer users
     # Since no user has an up-to-date cache and AmandaRCole cannot generate a cache for MarleneSBradley since
     # all discounts are unknown, etc., the cache will be filled with the old one.
     # To update it, go to the shopping list view or edit page.
-    Then I should see "1 Item | $45.00"
+    Then I should see "1 item | $45.00"
 
   Scenario: Update cache from CustomerDepartment
     Given I proceed as the CustomerDepartment
-    And I follow "Account"
-    When I click on "Shopping Lists Navigation Link"
+    And I click "Account Dropdown"
+    When I click on "Shopping Lists"
     Then I should see following grid:
       | Name          | Subtotal | Items |
       | Shopping List | $40.00   | 1     |
@@ -157,7 +159,7 @@ Feature: Check shopping list subtotal using different customer users
 
     When I open shopping list widget
     # $45.00 because cache for AmandaRCole user is not valid.
-    Then I should see "1 Item | $40.00"
+    Then I should see "1 item | $40.00"
 
     When I click "Shopping List" on shopping list widget
     Then I should see "Subtotal $40.00"
@@ -170,7 +172,7 @@ Feature: Check shopping list subtotal using different customer users
 
     When I open shopping list widget
     # $40.00 because cache for AmandaRCole user is not valid.
-    Then I should see "1 Item | $40.00"
+    Then I should see "1 item | $40.00"
 
     When I click "Shopping List" on shopping list widget
     Then I should see "Subtotal $25.00"
@@ -178,4 +180,4 @@ Feature: Check shopping list subtotal using different customer users
     And should see "Total $22.50"
     When I open shopping list widget
     # $25.00 because cache for AmandaRCole created.
-    Then I should see "1 Item | $25.00"
+    Then I should see "1 item | $25.00"

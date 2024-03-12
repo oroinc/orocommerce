@@ -27,8 +27,7 @@ Feature: Promotion CRUD
       | Deactivate At (first)        | <DateTime:tomorrow>    |
       | Website                      | Default                |
       | Customer Group               | All Customers          |
-      | Labels                       | Promotion label       |
-#      | Descriptions                 | Promotion description |
+      | Storefront Labels            | Promotion label        |
     And I press "Add" in "Items To Discount" section
     And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in "UiDialog ActionPanel" element

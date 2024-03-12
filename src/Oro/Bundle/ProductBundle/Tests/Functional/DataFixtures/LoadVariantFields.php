@@ -8,7 +8,6 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
 use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Schema\OroFrontendTestFrameworkBundleInstaller;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\MakeProductAttributesTrait;
@@ -30,7 +29,7 @@ class LoadVariantFields extends AbstractFixture
      */
     public function load(ObjectManager $manager)
     {
-        $className = ExtendHelper::buildEnumValueClassName(OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_CODE);
+        $className = ExtendHelper::buildEnumValueClassName('variant_field_code');
 
         /** @var EnumValueRepository $enumRepo */
         $enumRepo = $manager->getRepository($className);
@@ -41,12 +40,7 @@ class LoadVariantFields extends AbstractFixture
             $manager->persist($enumOption);
         }
 
-        $this->makeProductAttributes(
-            [
-                OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_NAME => []
-            ],
-            ExtendScope::OWNER_CUSTOM
-        );
+        $this->makeProductAttributes(['test_variant_field' => []], ExtendScope::OWNER_CUSTOM);
 
         $defaultFamily = $manager->getRepository(AttributeFamily::class)
             ->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
@@ -56,10 +50,7 @@ class LoadVariantFields extends AbstractFixture
         $attributeGroup = $defaultFamily->getAttributeGroup(LoadProductDefaultAttributeFamilyData::GENERAL_GROUP_CODE);
 
         $configManager = $this->getConfigManager();
-        $variantField = $configManager->getConfigFieldModel(
-            Product::class,
-            OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_NAME
-        );
+        $variantField = $configManager->getConfigFieldModel(Product::class, 'test_variant_field');
 
         $attributeGroupRelation = new AttributeGroupRelation();
         $attributeGroupRelation->setEntityConfigFieldId($variantField->getId());

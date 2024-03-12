@@ -53,13 +53,9 @@ const FilterItemsHintView = BaseView.extend({
      * @inheritdoc
      */
     attributes: {
-        'class': 'filter-box',
-        'data-sticky-target': 'top-sticky-panel',
+        'class': 'filter-box sticky sticky--top',
         'data-sticky': JSON.stringify({
-            isSticky: true,
-            autoWidth: true,
-            toggleClass: 'datagrid-toolbar-sticky-container',
-            placeholderId: 'sticky_element_toolbar'
+            toggleClass: 'datagrid-toolbar-sticky-container'
         })
     },
 

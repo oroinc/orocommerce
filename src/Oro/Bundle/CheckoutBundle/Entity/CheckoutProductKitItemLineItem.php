@@ -4,9 +4,10 @@ namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Brick\Math\BigDecimal;
 use Brick\Math\Exception\MathException;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -14,74 +15,51 @@ use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemPriceAwareInterface;
 
 /**
  * Represents a checkout line item of a product kit item.
- *
- * @ORM\Table(name="oro_checkout_product_kit_item_line_item")
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- * @Config(
- *      mode="hidden"
- * )
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_checkout_product_kit_item_line_item')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(mode: 'hidden')]
 class CheckoutProductKitItemLineItem implements
     ProductKitItemLineItemPriceAwareInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected ?int $id = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="CheckoutLineItem", inversedBy="kitItemLineItems")
-     * @ORM\JoinColumn(name="line_item_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: CheckoutLineItem::class, inversedBy: 'kitItemLineItems')]
+    #[ORM\JoinColumn(name: 'line_item_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     protected ?CheckoutLineItem $lineItem = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductKitItem")
-     * @ORM\JoinColumn(name="product_kit_item_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: ProductKitItem::class)]
+    #[ORM\JoinColumn(name: 'product_kit_item_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     protected ?ProductKitItem $kitItem = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     protected ?Product $product = null;
 
-    /**
-     * @ORM\Column(name="quantity", type="float", nullable=false)
-     */
+    #[ORM\Column(name: 'quantity', type: Types::FLOAT, nullable: false)]
     protected float $quantity = 1;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="CASCADE", nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
+    #[ORM\JoinColumn(name: 'product_unit_id', referencedColumnName: 'code', nullable: false, onDelete: 'CASCADE')]
     protected ?ProductUnit $productUnit = null;
 
-    /**
-     * @ORM\Column(name="sort_order", type="integer", options={"default"=0}, nullable=false)
-     */
-    protected int $sortOrder = 0;
+    #[ORM\Column(name: 'sort_order', type: Types::INTEGER, nullable: false, options: ['default' => 0])]
+    protected ?int $sortOrder = 0;
 
-    /**
-     * @ORM\Column(name="value", type="money", nullable=true)
-     */
+    #[ORM\Column(name: 'value', type: 'money', nullable: true)]
     protected ?float $value = null;
 
-    /**
-     * @ORM\Column(name="currency", type="string", nullable=true)
-     */
+    #[ORM\Column(name: 'currency', type: Types::STRING, nullable: true)]
     protected ?string $currency = null;
 
     /**
      * Holds flag to determine if price can be changed
-     *
-     * @ORM\Column(name="is_price_fixed", type="boolean", options={"default"=false})
      */
-    protected bool $priceFixed = false;
+    #[ORM\Column(name: 'is_price_fixed', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $priceFixed = false;
 
     protected ?Price $price = null;
 
@@ -213,9 +191,7 @@ class CheckoutProductKitItemLineItem implements
         return $this;
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    #[ORM\PostLoad]
     public function createPrice(): void
     {
         if (null !== $this->value && null !== $this->currency) {
@@ -223,10 +199,8 @@ class CheckoutProductKitItemLineItem implements
         }
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updatePrice(): void
     {
         $this->value = $this->price?->getValue();

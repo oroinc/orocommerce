@@ -6,6 +6,7 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 class ProductFamilyBuilderTest extends WebTestCase
 {
@@ -13,11 +14,12 @@ class ProductFamilyBuilderTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
+        $this->loadFixtures([LoadOrganization::class]);
     }
 
     public function testGetFamilyAsNull()
     {
-        $factory = $this->getContainer()->get('oro_product.entity.builder.product_family');
+        $factory = self::getContainer()->get('oro_product.entity.builder.product_family');
         $this->assertNull($factory->getFamily());
     }
 
@@ -29,17 +31,16 @@ class ProductFamilyBuilderTest extends WebTestCase
             . 'of Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily.'
         );
 
-        $factory = $this->getContainer()->get('oro_product.entity.builder.product_family');
+        $factory = self::getContainer()->get('oro_product.entity.builder.product_family');
         $factory->addDefaultAttributeGroups();
     }
 
     public function testCreateDefaultFamily()
     {
-        $organization = $this->getContainer()->get('doctrine')
-            ->getRepository(Organization::class)
-            ->getFirst();
+        /** @var Organization $organization */
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
 
-        $factory = $this->getContainer()->get('oro_product.entity.builder.product_family');
+        $factory = self::getContainer()->get('oro_product.entity.builder.product_family');
         $productFamily = $factory->createDefaultFamily($organization)->getFamily();
 
         $this->assertInstanceOf(AttributeFamily::class, $productFamily);
@@ -49,11 +50,10 @@ class ProductFamilyBuilderTest extends WebTestCase
 
     public function testAddDefaultAttributeGroups()
     {
-        $organization = $this->getContainer()->get('doctrine')
-            ->getRepository(Organization::class)
-            ->getFirst();
+        /** @var Organization $organization */
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
 
-        $factory = $this->getContainer()->get('oro_product.entity.builder.product_family');
+        $factory = self::getContainer()->get('oro_product.entity.builder.product_family');
         $productFamily = $factory->createDefaultFamily($organization)
             ->addDefaultAttributeGroups()
             ->getFamily();

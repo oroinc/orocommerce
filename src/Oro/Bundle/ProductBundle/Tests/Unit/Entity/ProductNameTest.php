@@ -16,7 +16,7 @@ class ProductNameTest extends \PHPUnit\Framework\TestCase
         $this->assertPropertyAccessors(
             new ProductName(),
             [
-                ['id', '123'],
+                ['id', 123],
                 ['fallback', 'test'],
                 ['string', 'text string'],
                 ['localization',  new Localization()],

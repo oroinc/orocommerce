@@ -54,7 +54,7 @@ class FedexDeleteIntegrationSettingsServicesEntityListener
         }
 
         $channel = $args->getObjectManager()
-            ->getRepository('OroIntegrationBundle:Channel')
+            ->getRepository(Channel::class)
             ->findOneBy([
                 'type' => FedexChannel::TYPE,
                 'transport' => $settings

@@ -2,79 +2,43 @@
 
 namespace Oro\Bundle\PaymentBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroPaymentBundle_Entity_PaymentMethodsConfigsRuleDestinationPostalCode;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
  * Store payment method config rule destination post code in database.
  *
- * @ORM\Entity
- * @ORM\Table(name="oro_payment_mtdscfgsrl_dst_pc")
- * @ORM\HasLifecycleCallbacks
- * @Config(
- *     mode="hidden",
- * )
  * @mixin OroPaymentBundle_Entity_PaymentMethodsConfigsRuleDestinationPostalCode
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_payment_mtdscfgsrl_dst_pc')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(mode: 'hidden')]
 class PaymentMethodsConfigsRuleDestinationPostalCode implements ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="text", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "identity"=true,
-     *              "order"=10
-     *          }
-     *      }
-     * )
-     */
-    protected $name;
+    #[ORM\Column(type: Types::TEXT, nullable: false)]
+    #[ConfigField(
+        defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['identity' => true, 'order' => 10]]
+    )]
+    protected ?string $name = null;
 
-    /**
-     * @var PaymentMethodsConfigsRuleDestination
-     *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination",
-     *     inversedBy="postalCodes"
-     * )
-     * @ORM\JoinColumn(name="destination_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $destination;
+    #[ORM\ManyToOne(targetEntity: PaymentMethodsConfigsRuleDestination::class, inversedBy: 'postalCodes')]
+    #[ORM\JoinColumn(name: 'destination_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?PaymentMethodsConfigsRuleDestination $destination = null;
 
     /**
      * @return integer

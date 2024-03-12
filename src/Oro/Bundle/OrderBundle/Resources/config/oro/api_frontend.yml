@@ -44,7 +44,7 @@ api:
                 shippingMethod:
                     data_type: object
                     property_path: _
-                    depends_on: [shippingMethod, shippingMethodType]
+                    depends_on: [shippingMethod, shippingMethodType, organization.id]
                     exclusion_policy: all
                     fields:
                         code:
@@ -97,6 +97,16 @@ api:
                 subtotalValue:
                     form_options:
                         mapped: false
+            filters:
+                fields:
+                    identifier:
+                        allow_array: true
+                        options:
+                            case_insensitive: true
+                    poNumber:
+                        allow_array: true
+                        options:
+                            case_insensitive: true
             actions:
                 create:
                     form_options:

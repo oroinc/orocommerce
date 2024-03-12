@@ -16,7 +16,7 @@ class LoadShoppingListMixedLineItems extends LoadShoppingListProductKitLineItems
     public const LINE_ITEM_5 = 'shopping_list.line_item.4.configurable_variant_2';
     public const LINE_ITEM_1_KIT_ITEM_1 = 'shopping_list_product_kit_item_line_item.1';
 
-    protected static $lineItems = [
+    protected static array $lineItems = [
         self::LINE_ITEM_1 => [
             'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
             'product' => LoadProductKitData::PRODUCT_KIT_1,
@@ -62,6 +62,9 @@ class LoadShoppingListMixedLineItems extends LoadShoppingListProductKitLineItems
         ],
     ];
 
+    /**
+     * {@inheritDoc}
+     */
     public function getDependencies(): array
     {
         return [

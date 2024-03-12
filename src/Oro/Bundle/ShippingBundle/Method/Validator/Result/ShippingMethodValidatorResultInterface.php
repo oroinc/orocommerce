@@ -4,8 +4,13 @@ namespace Oro\Bundle\ShippingBundle\Method\Validator\Result;
 
 use Oro\Bundle\ShippingBundle\Method\Validator\Result;
 
+/**
+ * DTO for shipping method validation result
+ */
 interface ShippingMethodValidatorResultInterface
 {
+    const FIELD_ERRORS = 'errors';
+
     /**
      * @return Result\Factory\Common\CommonShippingMethodValidatorResultFactoryInterface
      */

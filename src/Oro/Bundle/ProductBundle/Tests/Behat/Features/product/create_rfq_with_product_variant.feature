@@ -75,7 +75,7 @@ Feature: Create RFQ with product variant
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
 
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | PROD_A_1 |
     And I wait for products to load
@@ -87,12 +87,12 @@ Feature: Create RFQ with product variant
     And I click "Search Button"
     Then I should not see "PROD_A_1" product
 
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Requests For Quote"
 
     When I click "New Quote"
     Then should not see the following options for "SKU" select in form "Frontstore RFQ Line Item Form1" pre-filled with "PROD":
-      | PROD_A_1 Product A 1 |
+      | PROD_A_1 - Product A 1 |
 
     When I open select entity popup for field "SKU" in form "Frontstore RFQ Line Item Form1"
     Then I should not see "PROD_A_1"
@@ -114,7 +114,7 @@ Feature: Create RFQ with product variant
     And I fill form with:
       | PO Number | RFQ001 |
     Then should see the following options for "SKU" select in form "Frontstore RFQ Line Item Form1" pre-filled with "PROD":
-      | PROD_A_1 Product A 1 |
+      | PROD_A_1 - Product A 1 |
 
     When I open select entity popup for field "SKU" in form "Frontstore RFQ Line Item Form1"
     Then I should see "PROD_A_1"
@@ -130,7 +130,7 @@ Feature: Create RFQ with product variant
 
     When click "Submit Request"
     Then should see "Request has been saved" flash message
-    And I should see "Item #: PROD_A_1"
+    And I should see "PROD_A_1"
 
     When I type "PROD_A_1" in "search"
     And I click "Search Button"
@@ -145,7 +145,7 @@ Feature: Create RFQ with product variant
   Scenario: Create RFQ from quick order form with enabled variants
     Given I proceed as the User
     And I am on the homepage
-    When I click "Quick Order Form"
+    When I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 | PROD_A_1 |
     And I wait for products to load
@@ -155,4 +155,4 @@ Feature: Create RFQ with product variant
       | PO Number | RFQ002 |
     When click "Submit Request"
     Then should see "Request has been saved" flash message
-    And I should see "Item #: PROD_A_1"
+    And I should see "PROD_A_1"

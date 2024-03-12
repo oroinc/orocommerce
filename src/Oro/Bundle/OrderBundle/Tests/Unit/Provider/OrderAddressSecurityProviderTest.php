@@ -71,7 +71,7 @@ class OrderAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
     public function testIsAddressGranted(
         string $userClass,
         string $addressType,
-        ?array $isGranted,
+        array $isGranted,
         ?bool $hasCustomerAddresses,
         ?bool $hasCustomerUserAddresses,
         ?bool $hasEntity,

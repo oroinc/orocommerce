@@ -118,7 +118,9 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->preTearDown();
 
         // Remove listener to not interact with other tests
-        $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
+        if ($this->listener) {
+            $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
+        }
 
         $this->clearIndexTextTable(IndexText::class);
     }

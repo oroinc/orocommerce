@@ -43,13 +43,15 @@ Feature: Storefront datagrids should work with active tags feature
   Scenario: Sign in as customer user and check Address book, Order history and Quotes
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I follow "Account"
 
-    When I click "Address Book"
+    And I click "Account Dropdown"
+    And I click "Address Book"
     Then I should see "There are no company addresses"
 
-    When I click "Order History"
+    And I click "Account Dropdown"
+    And I click "Order History"
     Then I should see "There are no open orders"
 
+    And I click "Account Dropdown"
     When I click "Quotes"
     Then I should see "There are no quotes"

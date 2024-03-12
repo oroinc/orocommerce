@@ -2,91 +2,51 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroShippingBundle_Entity_ShippingMethodTypeConfig;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository;
 
 /**
  * Store shipping method type config.
  *
- * @ORM\Table(name="oro_ship_method_type_config")
- * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository")
- * @Config
  * @mixin OroShippingBundle_Entity_ShippingMethodTypeConfig
  */
+#[ORM\Entity(repositoryClass: ShippingMethodTypeConfigRepository::class)]
+#[ORM\Table(name: 'oro_ship_method_type_config')]
+#[Config]
 class ShippingMethodTypeConfig implements ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer", name="id")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="type", type="string", length=255, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=10
-     *          }
-     *      }
-     * )
-     */
-    protected $type;
+    #[ORM\Column(name: 'type', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 10]])]
+    protected ?string $type = null;
 
     /**
      * @var array
-     *
-     * @ORM\Column(name="options", type="array")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=20
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(name: 'options', type: Types::ARRAY)]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 20]])]
     protected $options = [];
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="enabled", type="boolean", nullable=false, options={"default"=false})
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=30
-     *          }
-     *      }
-     * )
-     */
-    protected $enabled = false;
+    #[ORM\Column(name: 'enabled', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 30]])]
+    protected ?bool $enabled = false;
 
-    /**
-     * @var ShippingMethodConfig
-     *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig",
-     *     inversedBy="typeConfigs"
-     * )
-     * @ORM\JoinColumn(name="method_config_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $methodConfig;
+    #[ORM\ManyToOne(targetEntity: ShippingMethodConfig::class, inversedBy: 'typeConfigs')]
+    #[ORM\JoinColumn(name: 'method_config_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?ShippingMethodConfig $methodConfig = null;
 
     /**
      * @return mixed

@@ -6,22 +6,27 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
+/**
+ * Basic functionality when product single unit mode is disabled.
+ */
 class BasicProductUnitFieldsSettings implements ProductUnitFieldsSettingsInterface
 {
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
-
-    public function __construct(DoctrineHelper $doctrineHelper)
-    {
-        $this->doctrineHelper = $doctrineHelper;
+    public function __construct(
+        private DoctrineHelper $doctrineHelper
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isProductUnitSelectionVisible(Product $product)
+    public function isProductUnitSelectionVisible(Product $product): bool
+    {
+        return true;
+    }
+
+    public function isProductPrimaryUnitVisible(?Product $product = null): bool
+    {
+        return true;
+    }
+
+    public function isAddingAdditionalUnitsToProductAvailable(?Product $product = null): bool
     {
         return true;
     }
@@ -29,23 +34,7 @@ class BasicProductUnitFieldsSettings implements ProductUnitFieldsSettingsInterfa
     /**
      * {@inheritdoc}
      */
-    public function isProductPrimaryUnitVisible(Product $product = null)
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isAddingAdditionalUnitsToProductAvailable(Product $product = null)
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAvailablePrimaryUnitChoices(Product $product = null)
+    public function getAvailablePrimaryUnitChoices(?Product $product = null): array
     {
         return $this->doctrineHelper->getEntityRepository(ProductUnit::class)->findAll();
     }

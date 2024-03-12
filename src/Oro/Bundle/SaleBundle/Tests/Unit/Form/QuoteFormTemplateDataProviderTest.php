@@ -2,47 +2,32 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 use Oro\Bundle\SaleBundle\Form\QuoteFormTemplateDataProvider;
-use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
-use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\Stub\ClassWithToString;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 
-class QuoteFormTemplateDataProviderTest extends \PHPUnit\Framework\TestCase
+class QuoteFormTemplateDataProviderTest extends TestCase
 {
-    /** @var EventDispatcherInterface */
-    private $dispatcher;
+    private EventDispatcherInterface $dispatcher;
 
-    /** @var QuoteProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $productPriceProvider;
-
-    /** @var QuoteAddressSecurityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $addressSecurityProvider;
-
-    /** @var QuoteFormTemplateDataProvider */
-    private $provider;
+    private QuoteFormTemplateDataProvider $provider;
 
     protected function setUp(): void
     {
         $this->dispatcher = new EventDispatcher();
-        $this->productPriceProvider = $this->createMock(QuoteProductPriceProvider::class);
-        $this->addressSecurityProvider = $this->createMock(QuoteAddressSecurityProvider::class);
 
-        $this->provider = new QuoteFormTemplateDataProvider(
-            $this->dispatcher,
-            $this->productPriceProvider,
-            $this->addressSecurityProvider
-        );
+        $this->provider = new QuoteFormTemplateDataProvider($this->dispatcher);
     }
 
-    public function testGetData()
+    public function testGetData(): void
     {
         $quote = new Quote();
 
@@ -52,45 +37,37 @@ class QuoteFormTemplateDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $form = $this->createForm($formName, $quote);
 
-        $request = $this->createRequest();
-        $request->expects($this->once())->method('get')->with($formName)->willReturn($payload);
+        $request = $this->createMock(Request::class);
+        $request->expects(self::once())->method('get')->with($formName)->willReturn($payload);
 
         $this->dispatcher->addListener(
             QuoteEvent::NAME,
             function (QuoteEvent $event) use ($form, $quote, $payload) {
-                $this->assertSame($form, $event->getForm());
-                $this->assertSame($quote, $event->getQuote());
-                $this->assertEquals($payload, $event->getSubmittedData());
-                $data = $event->getData();
-                $data->offsetSet('quoteData', 'test');
+                self::assertSame($form, $event->getForm());
+                self::assertSame($quote, $event->getQuote());
+                self::assertEquals($payload, $event->getSubmittedData());
+
+                $event->getData()->offsetSet('quoteData', 'test');
             }
         );
 
         $formView = $this->createMock(FormView::class);
 
-        $form->expects($this->once())->method('createView')->willReturn($formView);
-        $this->productPriceProvider->expects($this->once())
-            ->method('getTierPrices')->with($quote)->willReturn(['$5', '$42', '$100500']);
-        $this->productPriceProvider->expects($this->once())->method('getMatchedPrices')->willReturn(['$42']);
-        $this->addressSecurityProvider->expects($this->once())
-            ->method('isAddressGranted')->with($quote, AddressType::TYPE_SHIPPING)->willReturn(true);
+        $form->expects(self::once())->method('createView')->willReturn($formView);
 
         $result = $this->provider->getData($quote, $form, $request);
 
-        $this->assertEquals(
+        self::assertEquals(
             [
                 'entity' => $quote,
                 'form' => $formView,
-                'tierPrices' => ['$5', '$42', '$100500'],
-                'matchedPrices' => ['$42'],
-                'isShippingAddressGranted' => true,
-                'quoteData' => ['quoteData' => 'test']
+                'quoteData' => ['quoteData' => 'test'],
             ],
             $result
         );
     }
 
-    public function testInvalidArgument()
+    public function testInvalidArgument(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -100,31 +77,22 @@ class QuoteFormTemplateDataProviderTest extends \PHPUnit\Framework\TestCase
 
         $entity = new ClassWithToString('else');
 
-        $this->provider->getData($entity, $this->createForm(), $this->createRequest());
+        $this->provider->getData($entity, $this->createForm(), $this->createMock(Request::class));
     }
 
-    /**
-     * @param string $name
-     * @param Quote|null $quote
-     * @return \PHPUnit\Framework\MockObject\MockObject|FormInterface
-     */
-    private function createForm($name = 'test_type', Quote $quote = null)
+    private function createForm(string $name = 'test_type', Quote $quote = null): FormInterface|MockObject
     {
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->any())->method('getName')->willReturn($name);
+        $form
+            ->method('getName')
+            ->willReturn($name);
 
         if ($quote) {
-            $form->expects($this->any())->method('getData')->willReturn($quote);
+            $form
+                ->method('getData')
+                ->willReturn($quote);
         }
 
         return $form;
-    }
-
-    /**
-     * @return Request|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createRequest()
-    {
-        return $this->createMock(Request::class);
     }
 }

@@ -5,12 +5,11 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Api\RestJsonApi;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolveCombinedPriceByPriceListTopic;
-use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadApiProductPricesWithRules;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesWithRules;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -33,7 +32,7 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_to_product');
         $this->getOptionalListenerManager()->enableListener('oro_pricing.entity_listener.price_list_currency');
 
-        $this->loadFixtures([LoadProductPricesWithRules::class, LoadPriceRuleLexemes::class]);
+        $this->loadFixtures([LoadApiProductPricesWithRules::class]);
     }
 
     public function testGetList()
@@ -572,10 +571,6 @@ class ProductPriceTest extends RestJsonApiTestCase
                     $priceList2Id => [$product1Id, $product5Id]
                 ]
             ]
-        );
-        self::assertMessageSent(
-            ResolvePriceListAssignedProductsTopic::getName(),
-            ['product' => [$priceList2Id => [$product5Id]]]
         );
     }
 

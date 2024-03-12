@@ -2,35 +2,31 @@
 
 namespace Oro\Bundle\CatalogBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
- * @ORM\Table(name="oro_category_def_prod_opts")
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks()
- */
+* Entity that represents Category Default Product Options
+*
+*/
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_category_def_prod_opts')]
+#[ORM\HasLifecycleCallbacks]
 class CategoryDefaultProductOptions
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="product_unit_code", referencedColumnName="code", onDelete="CASCADE")
-     */
-    protected $unit;
+    #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
+    #[ORM\JoinColumn(name: 'product_unit_code', referencedColumnName: 'code', onDelete: 'CASCADE')]
+    protected ?ProductUnit $unit = null;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="product_unit_precision", nullable=true, type="integer")
-     */
-    protected $precision;
+    #[ORM\Column(name: 'product_unit_precision', type: Types::INTEGER, nullable: true)]
+    protected ?int $precision = null;
 
     /**
      * @var CategoryUnitPrecision
@@ -66,18 +62,14 @@ class CategoryDefaultProductOptions
         return $this;
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    #[ORM\PostLoad]
     public function loadUnitPrecision()
     {
         $this->unitPrecision = CategoryUnitPrecision::create($this->precision, $this->unit);
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updateUnitPrecision()
     {
         if ($this->unitPrecision) {

@@ -143,7 +143,8 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                 'fieldName' => 'someField',
                 'data' => [
                     'view' => ['is_displayable' => true],
-                    'form' => ['is_enabled' => true]
+                    'form' => ['is_enabled' => true],
+                    'attribute' => ['is_attribute' => true],
                 ]
             ]
         );
@@ -502,8 +503,8 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                                 ],
                             ],
                         ],
-                        'multiFileField' => [
-                            'title' => 'translated multiFile field label',
+                        'group1' => [
+                            'title' => 'Group1Title',
                             'useSubBlockDivider' => true,
                             'subblocks' => [
                                 [
@@ -512,7 +513,6 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                                     ],
                                 ],
                             ],
-                            'priority' => 501,
                         ],
                     ],
                 ],
@@ -572,8 +572,8 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                                 ],
                             ],
                         ],
-                        'multiImageField' => [
-                            'title' => 'translated multiImage field label',
+                        'group1' => [
+                            'title' => 'Group1Title',
                             'useSubBlockDivider' => true,
                             'subblocks' => [
                                 [
@@ -582,7 +582,6 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                                     ],
                                 ],
                             ],
-                            'priority' => 501,
                         ],
                     ],
                 ],
@@ -932,8 +931,8 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                                 ],
                             ],
                         ],
-                        'multiFileField' => [
-                            'title' => 'translated multiFile field label',
+                        'group1' => [
+                            'title' => 'Group1Title',
                             'useSubBlockDivider' => true,
                             'subblocks' => [
                                 [
@@ -942,7 +941,6 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                                     ],
                                 ],
                             ],
-                            'priority' => 501,
                         ],
                     ],
                 ],
@@ -1003,8 +1001,8 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                                 ],
                             ],
                         ],
-                        'multiImageField' => [
-                            'title' => 'translated multiImage field label',
+                        'group1' => [
+                            'title' => 'Group1Title',
                             'useSubBlockDivider' => true,
                             'subblocks' => [
                                 [
@@ -1013,7 +1011,6 @@ class AttributeFormViewListenerTest extends \PHPUnit\Framework\TestCase
                                     ],
                                 ],
                             ],
-                            'priority' => 501,
                         ],
                     ],
                 ],

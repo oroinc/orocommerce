@@ -1,0 +1,132 @@
+include:
+    - '@OroCustomerBundle:CustomerAndCustomerUserWithAddressFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product_kit1:
+        sku: 'product-kit-01'
+        type: 'kit'
+        attributeFamily: '@defaultProductFamily'
+        __calls:
+            -   setDefaultName: ['Product Kit 01']
+            -   addKitItem: ['@product_kit1_item1']
+            -   addKitItem: ['@product_kit1_item2']
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+        inventoryStatus: '@enumInventoryStatuses'
+        primaryUnitPrecision: '@product_kit1_precision1'
+        unitPrecisions: ['@product_kit1_precision1']
+    simple_product{1..3}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'simple-product-<sprintf("%02d", $current)>'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@simple_product_precision<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        __calls:
+            -   setDefaultName: ['Simple Product <sprintf("%02d", $current)>']
+    simple_product4_disabled:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'simple-product-04'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@simple_product_precision4'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'disabled'
+        __calls:
+            -   setDefaultName: ['Simple Product 04 - Disabled']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product_kit1_precision1:
+        unit: '@piece'
+        precision: '2'
+    simple_product_precision{1..4}:
+        unit: '@piece'
+        precision: '2'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+    product_kit1_item1:
+        optional: false
+        sortOrder: 2
+        minimumQuantity: 1
+        maximumQuantity: 10
+        productUnit: '@piece'
+        __calls:
+            -   setDefaultLabel: ['Mandatory Item']
+            -   addKitItemProduct: ['@product_kit1_item1_product1']
+            -   addKitItemProduct: ['@product_kit1_item1_product2']
+            -   addKitItemProduct: ['@product_kit1_item1_product4_disabled']
+    product_kit1_item2:
+        optional: true
+        sortOrder: 1
+        minimumQuantity: 2
+        maximumQuantity: 5
+        productUnit: '@piece'
+        __calls:
+            -   setDefaultLabel: ['Optional Item']
+            -   addKitItemProduct: ['@product_kit1_item2_product3']
+            -   addKitItemProduct: ['@product_kit1_item2_product4_disabled']
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+    product_kit1_item1_product1:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product1'
+        sortOrder: 1
+        productUnitPrecision: '@simple_product_precision1'
+    product_kit1_item1_product2:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product2'
+        sortOrder: 2
+        productUnitPrecision: '@simple_product_precision2'
+    product_kit1_item1_product4_disabled:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product4_disabled'
+        sortOrder: 1
+        productUnitPrecision: '@simple_product_precision4'
+    product_kit1_item2_product3:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product3'
+        sortOrder: 1
+        productUnitPrecision: '@simple_product_precision3'
+    product_kit1_item2_product4_disabled:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product4_disabled'
+        sortOrder: 1
+        productUnitPrecision: '@simple_product_precision4'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price_product_kit1:
+        product: '@product_kit1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 123.4567
+    price_simple_product{1..3}:
+        product: '@simple_product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: '<(1.2345 * $current)>'
+    price_simple_product4_disabled:
+        product: '@simple_product4_disabled'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: '10'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    price_relation_product_kit1:
+        product: '@product_kit1'
+        priceList: '@defaultPriceList'
+    price_relation_simple_product{1..3}:
+        product: '@simple_product<current()>'
+        priceList: '@defaultPriceList'
+    price_relation_simple_product4_disabled:
+        product: '@simple_product4_disabled'
+        priceList: '@defaultPriceList'

@@ -42,7 +42,6 @@ class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
 
         return new UsernamePasswordOrganizationToken(
             $user,
-            false,
             'main',
             $user->getOrganization(),
             $user->getRoles()

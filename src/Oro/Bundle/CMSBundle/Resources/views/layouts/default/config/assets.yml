@@ -2,6 +2,10 @@ styles:
     inputs:
         - 'bundles/orocms/default/scss/variables/cms-typography-config.scss'
         - 'bundles/orocms/default/scss/variables/promo-slider-config.scss'
+        - 'bundles/orocms/default/scss/variables/illustration-carts-config.scss'
+        - 'bundles/orocms/default/scss/variables/promotion-block-config.scss'
 
         - 'bundles/orocms/default/scss/styles.scss'
         - 'bundles/orocms/default/scss/components/promo-slider.scss'
+        - 'bundles/orocms/default/scss/components/illustration-carts.scss'
+        - 'bundles/orocms/default/scss/components/promotion-block.scss'

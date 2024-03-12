@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM\Driver;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql\MysqlVersionCheckTrait;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
@@ -22,6 +23,8 @@ class DriverDecoratorTest extends WebTestCase
     use TrimMicrosecondsTrait;
     use SearchExtensionTrait;
     use MysqlVersionCheckTrait;
+
+    private AbstractPlatform $platform;
 
     protected function setUp(): void
     {

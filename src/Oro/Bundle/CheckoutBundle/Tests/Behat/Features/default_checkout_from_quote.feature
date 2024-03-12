@@ -25,7 +25,7 @@ Feature: Default Checkout From Quote
   Scenario: Create order from Quote PO1 and verify quantity
     Given AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I follow "Account"
+    And I click "Account Dropdown"
     And I click "Quotes"
     And I click view PO1 in grid
     When I click "Accept and Submit to Order"

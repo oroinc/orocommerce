@@ -172,7 +172,7 @@ Feature: Consent management via Management Console UI
   Scenario: Show consents on registration page
     Given I proceed as the User
     And I am on the homepage
-    When click "Register"
+    When click "Sign Up"
     Then I should see 2 elements "Required Consent"
     And I should see 3 elements "Optional Consent"
     And the "Presenting Personal Data" checkbox should not be checked
@@ -277,7 +277,8 @@ Feature: Consent management via Management Console UI
   Scenario: Manage consents from My profile page
     Given I proceed as the User
     And I signed in as AmandaRCole1@example.org on the store frontend
-    When follow "Account"
+    And I click "Account Dropdown"
+    And I click "My Profile"
     Then should see a "Data Protection Section" element
     And I should see "Unaccepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Data Protection Section" element
@@ -322,15 +323,14 @@ Feature: Consent management via Management Console UI
     And I save form
     And click "Yes, Decline"
     Then should see "Customer User profile updated" flash message
-    When follow "Account"
     Then I should see "Accepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Data Protection Section" element
     And I should see "Unaccepted Consent" element with text "Collecting and storing personal data" inside "Data Protection Section" element
 
   Scenario: Check consents section after changing customer user role
     Given I proceed as the User
-    And follow "Account"
-    And click "Users"
+    And I click "Account Dropdown"
+    And I click "Users"
     And click edit AmandaRCole1@example.org in grid
     And I fill form with:
       | Administrator | False |
@@ -348,6 +348,7 @@ Feature: Consent management via Management Console UI
 
   Scenario: Check mandatory consents before creating an RFQ
     Given I proceed as the User
+    And I click "Account Dropdown"
     When click "Requests For Quote"
     Then click "New Quote"
     And I should see 1 elements "Required Consent"
@@ -462,9 +463,10 @@ Feature: Consent management via Management Console UI
     And click "Save settings"
     # Proceeding to the registration form
     And I proceed as the User
+    And I click "Account Dropdown"
     And I click "Sign Out"
     And I am on the homepage
-    When click "Register"
+    When click "Sign Up"
     Then I should see 3 elements "Required Consent"
     And I fill form with:
       | Company Name                         | OroCommerce                 |
@@ -513,7 +515,7 @@ Feature: Consent management via Management Console UI
     # Proceeding to the registration form
     And I proceed as the User
     And I am on the homepage
-    When click "Register"
+    When click "Sign Up"
     Then I should see 3 elements "Required Consent"
     And I fill form with:
       | Company Name                         | OroCommerce                 |
@@ -564,16 +566,18 @@ Feature: Consent management via Management Console UI
   Scenario: Check mandatory consents on Checkout Page
     Given I proceed as the User
     And I signed in as AmandaRCole1@example.org on the store frontend
-    And follow "Account"
-    And I click "Edit Profile Button"
+    And I click "Account Dropdown"
+    And I click "My Profile"
+    And I click "Edit"
     And fill form with:
       | Presenting Personal Data             | false |
       | Collecting and storing personal data | false |
       | Email Newsletters                    | false |
     And I save form
     When click "Yes, Decline"
-    Then should see "Customer User profile updated" flash message
-    And click "Quick Order Form"
+    Then should see "Customer User profile updated" flash message and I close it
+    And reload the page
+    And click "Quick Order"
     And fill "Quick Order Form" with:
       | SKU1 |Lenovo_Vibe1_sku|
     And I wait for products to load
@@ -672,14 +676,16 @@ Feature: Consent management via Management Console UI
     And on the "Payment" checkout step I press Continue
     When I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
-    When I follow "Account"
+    And I click "Account Dropdown"
+    And I click "My Profile"
     Then I should see "Unaccepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Collecting and storing personal data" inside "Data Protection Section" element
 
   Scenario: Check that Agreements step is presenting if it was shown previously
-    Given I follow "Account"
-    And I click "Edit Profile Button"
+    And I click "Account Dropdown"
+    And I click "My Profile"
+    And I click "Edit"
     And I fill form with:
       | Test Consent 3 | false |
     When I save form
@@ -689,8 +695,9 @@ Feature: Consent management via Management Console UI
       | okButton     | Yes, Decline                                                    |
       | cancelButton | No, Cancel                                                      |
     And I click "Yes, Decline"
-    And I should see "Customer User profile updated" flash message
-    When I click "Quick Order Form"
+    And I should see "Customer User profile updated" flash message and I close it
+    And reload the page
+    When I click "Quick Order"
     And I fill "Quick Order Form" with:
       | SKU1 |Lenovo_Vibe1_sku|
     And I wait for products to load
@@ -700,17 +707,19 @@ Feature: Consent management via Management Console UI
     Then I should see "Agreements" in the "Checkout Step Title" element
     And I should see 1 elements "Required Consent"
     And the "Test Consent 3" checkbox should not be checked
-    When I follow "Account"
-    And I click "Edit Profile Button"
-    Then I fill form with:
+    And I click "Account Dropdown"
+    And I click "My Profile"
+    And I click "Edit"
+    And I fill form with:
       | Test Consent 3 | true |
     When I save form
-    Then I should see "Customer User profile updated" flash message
+    Then I should see "Customer User profile updated" flash message and I close it
     When I open shopping list widget
     And I click "View Details"
     And I click "Create Order"
     Then I should see "Agreements" in the "Checkout Step Title" element
     And I should see "All mandatory consents were accepted."
+    And I click "Account Dropdown"
     And I click "Sign Out"
 
   Scenario: Enable guest shopping list and guest checkout settings
@@ -742,7 +751,7 @@ Feature: Consent management via Management Console UI
     And I click "Add to Shopping List" for "Lenovo_Vibe1_sku" product
     And I should see "Product has been added to" flash message and I close it
     And I open shopping list widget
-    And I click "View List"
+    And I click "Open List"
     And click on "Create Order"
     And I click "Create An Account"
     And I fill "Registration Form" with:
@@ -785,6 +794,7 @@ Feature: Consent management via Management Console UI
   Scenario: Check mandatory consents on Checkout Page as unauthorized user
     Given I proceed as the User
     And I signed in as AmandaRCole1@example.org on the store frontend
+    And I click "Account Dropdown"
     And I click "Sign Out"
     And I am on homepage
     And type "Lenovo_Vibe1_sku" in "search"
@@ -792,7 +802,7 @@ Feature: Consent management via Management Console UI
     And I click "Add to Shopping List" for "Lenovo_Vibe1_sku" product
     And I should see "Product has been added to" flash message and I close it
     And I open shopping list widget
-    And I click "View List"
+    And I click "Open List"
     And click on "Create Order"
     And I click "Continue as a Guest"
     And I should see "Agreements" in the "Checkout Step Title" element
@@ -854,7 +864,8 @@ Feature: Consent management via Management Console UI
     And I type "Tester2@test.com" in "Confirm Password"
     When I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
-    When follow "Account"
+    And I click "Account Dropdown"
+    And I click "My Profile"
     Then should see a "Data Protection Section" element
     And I should see "Unaccepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Presenting Personal Data" inside "Data Protection Section" element
@@ -872,8 +883,9 @@ Feature: Consent management via Management Console UI
 
   Scenario: Consent dialog should open after changing an URL
     Given I proceed as the User
+    And I click "Account Dropdown"
     And I click "Sign Out"
-    And I click "Register"
+    And I click "Sign Up"
     When I click "Presenting Personal Data"
     Then I should see "UiDialog" with elements:
       | Title             | Presenting Personal Data |

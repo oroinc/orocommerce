@@ -4,8 +4,8 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToOneRelationQuery;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -15,47 +15,26 @@ class RemoveImageRelationOnProduct implements
     OrderedMigrationInterface,
     ExtendExtensionAwareInterface
 {
-    const PRODUCT_TABLE_NAME = 'orob2b_product';
-    const PRODUCT_IMAGE_FIELD_NAME = 'image_id';
-    const PRODUCT_IMAGE_FK_NAME = 'fk_orob2b_product_image_id';
-    const PRODUCT_IMAGE_ASSOCCIATION_NAME = 'image';
+    use ExtendExtensionAwareTrait;
 
     /**
-     * @var ExtendExtension
+     * {@inheritDoc}
      */
-    protected $extendExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function up(Schema $schema, QueryBag $queries)
-    {
-        $productClass = $this->extendExtension->getEntityClassByTableName('oro_product');
-        $productTable = $schema->getTable(self::PRODUCT_TABLE_NAME);
-        $productTable->removeForeignKey(self::PRODUCT_IMAGE_FK_NAME);
-        $productTable->dropColumn(self::PRODUCT_IMAGE_FIELD_NAME);
-
-        $queries->addQuery(
-            new RemoveManyToOneRelationQuery(
-                $productClass,
-                self::PRODUCT_IMAGE_ASSOCCIATION_NAME
-            )
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
+    public function getOrder(): int
     {
         return 20;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function up(Schema $schema, QueryBag $queries): void
+    {
+        $productClass = $this->extendExtension->getEntityClassByTableName('oro_product');
+        $productTable = $schema->getTable('orob2b_product');
+        $productTable->removeForeignKey('fk_orob2b_product_image_id');
+        $productTable->dropColumn('image_id');
+
+        $queries->addQuery(new RemoveManyToOneRelationQuery($productClass, 'image'));
     }
 }

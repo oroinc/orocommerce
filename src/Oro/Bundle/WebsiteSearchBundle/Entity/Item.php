@@ -5,23 +5,17 @@ namespace Oro\Bundle\WebsiteSearchBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\SearchBundle\Entity\AbstractItem;
 use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\ItemRepository;
 
 /**
  * Stores items in the index
- *
- * @ORM\Table(
- *    name="oro_website_search_item",
- *    uniqueConstraints={
- *      @ORM\UniqueConstraint(name="oro_website_search_item_uidx", columns={"entity", "record_id", "alias"})
- *    },
- *    indexes={
- *      @ORM\Index(name="oro_website_search_item_idxa", columns={"alias"}),
- *      @ORM\Index(name="oro_website_search_item_idxe", columns={"entity"})
- *    }
- * )
- * @ORM\HasLifecycleCallbacks
- * @ORM\Entity(repositoryClass="Oro\Bundle\WebsiteSearchBundle\Entity\Repository\ItemRepository")
  */
+#[ORM\Entity(repositoryClass: ItemRepository::class)]
+#[ORM\Table(name: 'oro_website_search_item')]
+#[ORM\Index(columns: ['alias'], name: 'oro_website_search_item_idxa')]
+#[ORM\Index(columns: ['entity'], name: 'oro_website_search_item_idxe')]
+#[ORM\UniqueConstraint(name: 'oro_website_search_item_uidx', columns: ['entity', 'record_id', 'alias'])]
+#[ORM\HasLifecycleCallbacks]
 class Item extends AbstractItem
 {
     /**

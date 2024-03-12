@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Form;
 
@@ -13,19 +13,14 @@ class ProductPriceTest extends WebTestCase
 
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
-            ]
-        );
+        $this->loadFixtures([LoadProductPrices::class]);
     }
 
     public function testCreateDuplicateEntry()
     {
-        /** @var ProductPrice $productPrice */
         $productPrice = $this->getPriceByReference('product_price.3');
 
         $form = $this->getWidgetForm($productPrice->getPriceList());
@@ -37,19 +32,15 @@ class ProductPriceTest extends WebTestCase
 
         $crawler = $this->client->submit($form);
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringContainsString(
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertStringContainsString(
             'Product has duplication of product prices. ' .
             'Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.',
             $crawler->html()
         );
     }
 
-    /**
-     * @param PriceList $priceList
-     * @return Form
-     */
-    protected function getWidgetForm(PriceList $priceList)
+    protected function getWidgetForm(PriceList $priceList): Form
     {
         $crawler = $this->client->request(
             'GET',
@@ -59,14 +50,14 @@ class ProductPriceTest extends WebTestCase
                     'operationName' => 'oro_pricing_add_product_price',
                     'route' => 'oro_pricing_price_list_view',
                     'entityId' => $priceList->getId(),
-                    'entityClass' => 'Oro\Bundle\PricingBundle\Entity\PriceList'
+                    'entityClass' => PriceList::class
                 ]
             ),
             ['_widgetContainer' => 'dialog']
         );
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
 
         return $crawler->selectButton('Save')->form();
     }

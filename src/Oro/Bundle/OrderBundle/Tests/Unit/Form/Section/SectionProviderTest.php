@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Section;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
 use Symfony\Component\Form\FormRegistryInterface;
-use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Form\ResolvedFormTypeInterface;
 
 class SectionProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -27,7 +27,7 @@ class SectionProviderTest extends \PHPUnit\Framework\TestCase
 
     private function configureFormRegistry(string $formClass, string $formName): void
     {
-        $formType = $this->createMock(FormTypeInterface::class);
+        $formType = $this->createMock(ResolvedFormTypeInterface::class);
         $formType->expects($this->any())
             ->method('getBlockPrefix')
             ->willReturn($formName);

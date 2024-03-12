@@ -15,6 +15,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\ReflectionUtil;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -30,7 +31,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
         $this->getContainer()->get('security.token_storage')
-            ->setToken(new UsernamePasswordToken(self::USER_NAME, self::AUTH_PW, 'user'));
+            ->setToken(new UsernamePasswordToken($this->createMock(UserInterface::class), 'user'));
 
         $this->assertNotEmpty(
             $paymentTransactionProvider->getActiveAuthorizePaymentTransaction(
@@ -59,7 +60,6 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->getReference(LoadCustomerUserData::LEVEL_1_1_EMAIL),
-                LoadCustomerUserData::LEVEL_1_1_PASSWORD,
                 'key'
             )
         );
@@ -91,7 +91,6 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->getReference(LoadCustomerUserData::LEVEL_1_1_EMAIL),
-                LoadCustomerUserData::LEVEL_1_1_PASSWORD,
                 'key'
             )
         );
@@ -115,7 +114,6 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->getReference(LoadCustomerUserData::EMAIL),
-                LoadCustomerUserData::PASSWORD,
                 'key'
             )
         );
@@ -153,7 +151,6 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
                 $this->getReference(LoadCustomerUserData::EMAIL),
-                LoadCustomerUserData::PASSWORD,
                 'key'
             )
         );
@@ -258,7 +255,7 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->getContainer()
             ->get('security.token_storage')
-            ->setToken(new AnonymousCustomerUserToken(self::USER_NAME, [], $visitor));
+            ->setToken(new AnonymousCustomerUserToken($visitor, []));
 
         $paymentTransaction = $this->getContainer()
             ->get('oro_payment.provider.payment_transaction')

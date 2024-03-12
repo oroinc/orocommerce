@@ -19,7 +19,7 @@ class DisableOrderAddressCreation implements ProcessorInterface
     {
         /** @var Context $context */
 
-        if ($context->isMasterRequest()) {
+        if ($context->isMainRequest()) {
             throw new AccessDeniedException(
                 'Use API resource to create an order. An order address can be created only together with an order.'
             );

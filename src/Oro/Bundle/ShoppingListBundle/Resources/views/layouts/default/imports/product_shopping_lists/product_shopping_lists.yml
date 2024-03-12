@@ -12,8 +12,6 @@ layout:
                             product: '=data.offsetExists("product") ? data["oro_product_variant"].getProductVariantOrProduct(data)'
                 __shopping_lists_template:
                     blockType: container
-                __shopping_lists_template_preview:
-                    blockType: block
                 __shopping_lists_popup:
                     blockType: container
                     options:
@@ -28,6 +26,5 @@ layout:
                 __root:
                     __shopping_lists:
                         __shopping_lists_template:
-                            __shopping_lists_template_preview: ~
                             __shopping_lists_popup:
                                 __shopping_lists_popup_template: ~

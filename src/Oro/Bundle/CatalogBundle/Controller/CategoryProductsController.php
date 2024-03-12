@@ -8,7 +8,7 @@ use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryProductsType;
 use Oro\Bundle\DataGridBundle\Controller\GridController;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -22,21 +22,19 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class CategoryProductsController extends AbstractController
 {
-    /**
-     * @Route(
-     *     "/update/{id}",
-     *     name="oro_catalog_category_products_update",
-     *     requirements={"id"="\d+"},
-     *     methods={"PUT"}
-     * )
-     * @AclAncestor("oro_catalog_category_update")
-     */
+    #[Route(
+        path: '/update/{id}',
+        name: 'oro_catalog_category_products_update',
+        requirements: ['id' => '\d+'],
+        methods: ['PUT']
+    )]
+    #[AclAncestor('oro_catalog_category_update')]
     public function productsUpdateAction(Category $category, Request $request): Response
     {
         $form = $this->createForm(CategoryProductsType::class);
         $handler = new CategoryHandler(
-            $this->get(ManagerRegistry::class)->getManagerForClass(Category::class),
-            $this->get(EventDispatcherInterface::class)
+            $this->container->get(ManagerRegistry::class)->getManagerForClass(Category::class),
+            $this->container->get(EventDispatcherInterface::class)
         );
 
         if ($handler->process($category, $form, $request)) {
@@ -56,19 +54,17 @@ class CategoryProductsController extends AbstractController
         return new JsonResponse($responseData, $statusCode);
     }
 
-    /**
-     * @Route(
-     *     "/manage-sort-order/{id}/widget",
-     *     name="oro_catalog_category_products_manage_sort_order_widget",
-     *     requirements={"id"="\d+"},
-     *     methods={"GET"}
-     * )
-     * @AclAncestor("oro_catalog_category_view")
-     * @Template
-     */
+    #[Route(
+        path: '/manage-sort-order/{id}/widget',
+        name: 'oro_catalog_category_products_manage_sort_order_widget',
+        requirements: ['id' => '\d+'],
+        methods: ['GET']
+    )]
+    #[Template]
+    #[AclAncestor('oro_catalog_category_view')]
     public function manageSortOrderWidgetAction(Category $category, Request $request): array
     {
-        return $this
+        return $this->container
             ->get(GridController::class)
             ->widgetAction($request, 'category-products-widget-grid');
     }

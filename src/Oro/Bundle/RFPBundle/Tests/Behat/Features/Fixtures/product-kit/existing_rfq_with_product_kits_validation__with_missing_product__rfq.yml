@@ -1,0 +1,98 @@
+Oro\Bundle\RFPBundle\Entity\Request:
+    request1:
+        po_number: 'PO013'
+        first_name: 'Amanda'
+        last_name: 'Cole'
+        email: 'AmandaRCole@example.org'
+        company: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        customer_user: '@amanda'
+
+Oro\Bundle\RFPBundle\Entity\RequestProduct:
+    request_product1:
+        request: '@request1'
+        product: '@simple_product1'
+        product_sku: 'simple-product-01'
+        requestProductItems: ['@request_product_item1']
+    # <with missing product>
+    request_product_kit1_line_item2:
+        request: '@request1'
+        product: '@product_kit1'
+        product_sku: 'product-kit-01'
+        requestProductItems: ['@request_product_kit1_line_item2_item1']
+        __calls:
+            - addKitItemLineItem: ['@request_product_kit1_line_item2_kit_item1']
+            - addKitItemLineItem: ['@request_product_kit1_line_item2_kit_item2']
+    # </with missing product>
+    # <with disabled product>
+    request_product_kit1_line_item3:
+        request: '@request1'
+        product: '@product_kit1'
+        product_sku: 'product-kit-01'
+        requestProductItems: [ '@request_product_kit1_line_item3_item1' ]
+        __calls:
+            - addKitItemLineItem: [ '@request_product_kit1_line_item3_kit_item1' ]
+            - addKitItemLineItem: [ '@request_product_kit1_line_item3_kit_item2' ]
+    # </with disabled product>
+
+Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+    request_product_item1:
+        request_product: '@request_product1'
+        quantity: 1
+        productUnit: '@piece'
+        product_unit_code: 'piece'
+        value: 2
+        currency: 'USD'
+    # <with missing product>
+    request_product_kit1_line_item2_item1:
+        request_product: '@request_product_kit1_line_item2'
+        quantity: 1
+        productUnit: '@piece'
+        product_unit_code: 'piece'
+        value: 104.69
+        currency: 'USD'
+    # </with missing product>
+    # <with disabled product>
+    request_product_kit1_line_item3_item1:
+        request_product: '@request_product_kit1_line_item3'
+        quantity: 1
+        productUnit: '@piece'
+        product_unit_code: 'piece'
+        value: 100
+        currency: 'USD'
+    # </with disabled product>
+
+Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem:
+    request_product_kit1_line_item2_kit_item1:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product3'
+        quantity: 2
+        productUnit: '@piece'
+        minimumQuantity: 0
+        maximumQuantity: 5
+    # <with missing product>
+    request_product_kit1_line_item2_kit_item2:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product5_to_delete'
+        quantity: 3
+        productUnit: '@piece'
+        minimumQuantity: 1
+        maximumQuantity: 10
+    # </with missing product>
+    request_product_kit1_line_item3_kit_item1:
+        kitItem: '@product_kit1_item2'
+        product: '@simple_product3'
+        quantity: 2
+        productUnit: '@piece'
+        minimumQuantity: 0
+        maximumQuantity: 5
+    # <with disabled product>
+    request_product_kit1_line_item3_kit_item2:
+        kitItem: '@product_kit1_item1'
+        product: '@simple_product4_disabled'
+        quantity: 3
+        productUnit: '@piece'
+        minimumQuantity: 1
+        maximumQuantity: 10
+    # </with disabled product>

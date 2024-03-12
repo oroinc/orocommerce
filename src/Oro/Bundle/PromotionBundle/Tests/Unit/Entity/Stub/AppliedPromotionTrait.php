@@ -9,7 +9,7 @@ trait AppliedPromotionTrait
     /**
      * @var Collection|AppliedPromotion[]
      */
-    protected $appliedPromotions;
+    protected ?Collection $appliedPromotions = null;
 
     /**
      * {@inheritdoc}

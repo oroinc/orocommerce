@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecisionValidator;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
@@ -46,7 +47,8 @@ class ProductKitItemLineItemQuantityUnitPrecisionValidatorTest extends Constrain
     {
         return new ProductKitItemLineItemQuantityUnitPrecisionValidator(
             $this->roundingService,
-            $this->unitLabelFormatter
+            $this->unitLabelFormatter,
+            new PropertyAccessor()
         );
     }
 
@@ -212,7 +214,7 @@ class ProductKitItemLineItemQuantityUnitPrecisionValidatorTest extends Constrain
         $this->assertNoViolation();
     }
 
-    public function testValidateWhenUnitPrecisionAware(): void
+    public function testValidateWhenHasUnitPrecisionPropertyPath(): void
     {
         $value = 12.3456;
         $precision = 2;
@@ -222,7 +224,9 @@ class ProductKitItemLineItemQuantityUnitPrecisionValidatorTest extends Constrain
             ->setProductUnitPrecision($precision);
         $this->setObject($kitItemLineItem);
 
-        $constraint = new ProductKitItemLineItemQuantityUnitPrecision();
+        $constraint = new ProductKitItemLineItemQuantityUnitPrecision(
+            ['unitPrecisionPropertyPath' => 'productUnitPrecision']
+        );
         $this->validator->validate($value, $constraint);
 
         $this
@@ -235,7 +239,7 @@ class ProductKitItemLineItemQuantityUnitPrecisionValidatorTest extends Constrain
             ->assertRaised();
     }
 
-    public function testValidateWhenUnitPrecisionAwareAndNoViolations(): void
+    public function testValidateWhenHasUnitPrecisionPropertyPathAndNoViolations(): void
     {
         $value = 12.34;
         $precision = 2;
@@ -245,7 +249,9 @@ class ProductKitItemLineItemQuantityUnitPrecisionValidatorTest extends Constrain
             ->setProductUnitPrecision($precision);
         $this->setObject($kitItemLineItem);
 
-        $constraint = new ProductKitItemLineItemQuantityUnitPrecision();
+        $constraint = new ProductKitItemLineItemQuantityUnitPrecision(
+            ['unitPrecisionPropertyPath' => 'productUnitPrecision']
+        );
         $this->validator->validate($value, $constraint);
 
         $this->assertNoViolation();

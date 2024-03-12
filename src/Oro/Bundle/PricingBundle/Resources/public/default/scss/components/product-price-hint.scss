@@ -5,7 +5,7 @@
     align-items: $product-price-hint-align-items;
 
     &__prices {
-        padding-top: $product-price-hint-prices-inner-offset-top;
-        padding-right: $product-price-hint-prices-inner-offset-top;
+        display: $product-price-hint-prices-display;
+        gap: $product-price-hint-prices-gap;
     }
 }

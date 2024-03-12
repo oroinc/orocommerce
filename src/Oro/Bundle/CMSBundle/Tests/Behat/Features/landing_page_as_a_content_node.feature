@@ -39,6 +39,7 @@ Feature: Landing Page as a Content Node
   Scenario: Open Landing Page
     Given I proceed as the Buyer
     And I am on the homepage
+    And I click on "Main Menu Button"
     Then I should see "Test page"
     When I click "Test page"
     Then Page title equals to "Test page"

@@ -14,13 +14,13 @@ $cms-typography-blockquote-font-size: $base-font-size--large + 2px !default;
 $cms-typography-blockquote-font-weight: font-weight('semi-bold') !default;
 $cms-typography-blockquote-line-height: 1.5 !default;
 $cms-typography-blockquote-font-style: normal !default;
-$cms-typography-blockquote-background-color: get-color('additional', 'base') !default;
+$cms-typography-blockquote-background-color: get-color('neutral', 'grey2') !default;
 $cms-typography-blockquote-inner-offset: $offset-twice 52px !default;
-$cms-typography-blockquote-color: get-color('additional', 'dark') !default;
+$cms-typography-blockquote-color: get-color('neutral', 'dark') !default;
 $cms-typography-blockquote-fa-icon: $fa-var-quote-left !default;
 $cms-typography-blockquote-fa-end-icon: $fa-var-quote-right !default;
 $cms-typography-blockquote-fa-icon-font-size: $base-font-size--large !default;
-$cms-typography-blockquote-fa-icon-color: get-color('additional', 'middle') !default;
+$cms-typography-blockquote-fa-icon-color: get-color('neutral', 'grey3') !default;
 $cms-typography-blockquote-fa-icon-top: 18px !default;
 $cms-typography-blockquote-fa-icon-left: 20px !default;
 
@@ -34,7 +34,7 @@ $cms-typography-list-inner-offset: 0 0 0 35px !default;
 // Images
 $cms-typography-img-max-width: 100% !default;
 $cms-typography-img-offset: 0 !default;
-$cms-typography-img-border: 1px solid get-color('additional', 'light') !default;
+$cms-typography-img-border: 1px solid get-color('neutral', 'grey1') !default;
 
 $cms-typography-figure-display: grid !default;
 $cms-typography-figure-offset: 0 auto $offset-default !default;
@@ -51,24 +51,24 @@ $cms-typography-figcaption-text-align: center !default;
 $cms-typography-figcaption-text-transform: uppercase !default;
 $cms-typography-figcaption-align-items: center !default;
 $cms-typography-figcaption-justify-content: center !default;
-$cms-typography-figcaption-color: get-color('additional', 'ultra') !default;
+$cms-typography-figcaption-color: get-color('neutral', 'white-100') !default;
 $cms-typography-figcaption-grid-column: 1 !default;
 $cms-typography-figcaption-grid-row: 1 !default;
 $cms-typography-figcaption-display: flex !default;
 $cms-typography-figcaption-offset: auto !default;
 $cms-typography-figcaption-offset-left: 20px !default;
 $cms-typography-figcaption-offset-right: 18px !default;
-$cms-typography-figcaption-padding: $offset-y $offset-x !default;
+$cms-typography-figcaption-padding: spacing('base') spacing('base') !default;
 
 // Heading
 $cms-typography-heading-offset: $headline-bottom-offset !default;
 
 // Divider
 $cms-typography-hr-offset: 0 0 20px !default;
-$cms-typography-border-top: 1px solid get-color('additional', 'light') !default;
+$cms-typography-border-top: 1px solid get-color('neutral', 'grey1') !default;
 
 // Code
-$cms-typography-code-border: 3px solid get-color('additional', 'base') !default;
+$cms-typography-code-border: 3px solid get-color('neutral', 'grey2') !default;
 $cms-typography-code-inner-offset: $offset-twice 22px !default;
 $cms-typography-code-offset: 0 0 $offset-twice !default;
 $cms-typography-code-font-family: 'Courier', 'Courier New', monospace !default;
@@ -90,7 +90,7 @@ $cms-typography-address-font-style: italic !default;
 
 // Time
 
-$cms-typography-time-color: get-color('additional', 'middle') !default;
+$cms-typography-time-color: get-color('neutral', 'grey3') !default;
 
 // NavTabs
 $cms-typography-nav-tabs-inner-offset: 0 !default;
@@ -100,5 +100,5 @@ $cms-typography-nav-tabs-offset: 0 !default;
 $cms-typography-tabbed-content-bottom-offset: $offset-triple !default;
 
 // Extra
-$cms-typography-extra-text-color: get-color('additional', 'middle') !default;
-$cms-typography-extra-block-bg-color: get-color('additional', 'base') !default;
+$cms-typography-extra-text-color: get-color('neutral', 'dark') !default;
+$cms-typography-extra-block-bg-color: get-color('neutral', 'grey3') !default;

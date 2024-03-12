@@ -10,7 +10,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -19,37 +19,24 @@ class LoadCustomerUsersData extends AbstractFixture implements ContainerAwareInt
 {
     use ContainerAwareTrait;
 
-    const ADMINISTRATOR = 'ROLE_FRONTEND_ADMINISTRATOR';
-    const BUYER         = 'ROLE_FRONTEND_BUYER';
+    public const ADMINISTRATOR = 'ROLE_FRONTEND_ADMINISTRATOR';
+    public const BUYER = 'ROLE_FRONTEND_BUYER';
 
-    const USER_NAME      = 'John';
-    const USER_LAST_NAME = 'Doe';
-    const USER_EMAIL     = 'user@example.com';
-    const USER_PASSWORD  = '123123';
+    public const USER_NAME = 'John';
+    public const USER_LAST_NAME = 'Doe';
+    public const USER_EMAIL = 'user@example.com';
+    public const USER_PASSWORD = '123123';
 
-    const SUB_ACCOUNT_USER_EMAIL = 'sub_customer@example.com';
-    const SUB_ACCOUNT_USER_PASSWORD ='147147';
+    public const SUB_ACCOUNT_USER_EMAIL = 'sub_customer@example.com';
+    public const SUB_ACCOUNT_USER_PASSWORD = '147147';
 
-    const SAME_ACCOUNT_USER_EMAIL    = 'same_customer@example.com';
-    const SAME_ACCOUNT_USER_PASSWORD = '456456';
+    public const SAME_ACCOUNT_USER_EMAIL = 'same_customer@example.com';
+    public const SAME_ACCOUNT_USER_PASSWORD = '456456';
 
-    const NOT_SAME_ACCOUNT_USER_EMAIL    = 'not_same_customer@example.com';
-    const NOT_SAME_ACCOUNT_USER_PASSWORD = '789789';
+    public const NOT_SAME_ACCOUNT_USER_EMAIL = 'not_same_customer@example.com';
+    public const NOT_SAME_ACCOUNT_USER_PASSWORD = '789789';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            LoadCustomers::class
-        ];
-    }
-
-    /**
-     * @var array
-     */
-    protected $users = [
+    private array $users = [
         [
             'first_name' => self::USER_NAME,
             'last_name' => self::USER_LAST_NAME,
@@ -92,11 +79,21 @@ class LoadCustomerUsersData extends AbstractFixture implements ContainerAwareInt
         ]
     ];
 
-    public function load(ObjectManager $manager)
+    /**
+     * {@inheritDoc}
+     */
+    public function getDependencies(): array
+    {
+        return [LoadCustomers::class, LoadOrganization::class];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager): void
     {
         /* @var BaseUserManager $userManager */
         $userManager = $this->container->get('oro_customer_user.manager');
-        $organization = $manager->getRepository(Organization::class)->getFirst();
         /* @var CustomerUserRoleRepository $customerUserRoleRepository */
         $customerUserRoleRepository =  $this->container->get('doctrine')->getRepository(CustomerUserRole::class);
 
@@ -124,9 +121,8 @@ class LoadCustomerUsersData extends AbstractFixture implements ContainerAwareInt
                 ->setEnabled($user['enabled'])
                 ->setSalt('')
                 ->setPlainPassword($user['password'])
-                ->setOrganization($organization)
-                ->addUserRole($role)
-            ;
+                ->setOrganization($this->getReference(LoadOrganization::ORGANIZATION))
+                ->addUserRole($role);
 
             $this->setReference($entity->getEmail(), $entity);
 

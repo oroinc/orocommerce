@@ -8,7 +8,6 @@ Oro\Bundle\TaxBundle\Entity\AbstractTaxCode:
             - Length:
                 min: 1
                 max: 255
-                allowEmptyString: false
 
 Oro\Bundle\TaxBundle\Entity\Tax:
     constraints:
@@ -19,7 +18,6 @@ Oro\Bundle\TaxBundle\Entity\Tax:
             - Length:
                 min: 1
                 max: 255
-                allowEmptyString: false
             - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
         rate:
             - NotBlank: ~
@@ -47,7 +45,6 @@ Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
             - Length:
                 min: 1
                 max: 255
-                allowEmptyString: false
             - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
         zipCodes:
             - Valid: ~

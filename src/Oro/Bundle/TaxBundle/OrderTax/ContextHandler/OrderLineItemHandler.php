@@ -2,70 +2,44 @@
 
 namespace Oro\Bundle\TaxBundle\OrderTax\ContextHandler;
 
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Entity\OrderHolderInterface;
 use Oro\Bundle\TaxBundle\Event\ContextEvent;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxCodeProvider;
 
+/**
+ * Set tax_code and digital flag values for orderLineItem context during tax calculation.
+ */
 class OrderLineItemHandler
 {
     /**
-     * @var TaxationAddressProvider
+     * @var string[]
      */
-    protected $addressProvider;
+    protected array $taxCodes = [];
 
-    /**
-     * @var TaxCodeProvider
-     */
-    protected $taxCodeProvider;
-
-    /**
-     * @var string
-     */
-    protected $orderLineItemClass;
-
-    /**
-     * @var TaxCodeInterface[]
-     */
-    protected $taxCodes = [];
-
-    /**
-     * @param TaxationAddressProvider $addressProvider
-     * @param TaxCodeProvider $taxCodeProvider
-     * @param string $orderLineItemClass
-     */
     public function __construct(
-        TaxationAddressProvider $addressProvider,
-        TaxCodeProvider $taxCodeProvider,
-        $orderLineItemClass
+        private TaxationAddressProvider $addressProvider,
+        private TaxCodeProvider $taxCodeProvider,
     ) {
-        $this->addressProvider = $addressProvider;
-        $this->taxCodeProvider = $taxCodeProvider;
-        $this->orderLineItemClass = $orderLineItemClass;
     }
 
-    public function onContextEvent(ContextEvent $contextEvent)
+    public function onContextEvent(ContextEvent $contextEvent): void
     {
-        /** @var OrderLineItem $lineItem */
         $lineItem = $contextEvent->getMappingObject();
-        $context = $contextEvent->getContext();
-
-        if (!$lineItem instanceof $this->orderLineItemClass) {
+        if (!$lineItem instanceof OrderHolderInterface) {
             return;
         }
+
+        $context = $contextEvent->getContext();
 
         $context->offsetSet(Taxable::DIGITAL_PRODUCT, $this->isDigital($lineItem));
         $context->offsetSet(Taxable::PRODUCT_TAX_CODE, $this->getProductTaxCode($lineItem));
         $context->offsetSet(Taxable::ACCOUNT_TAX_CODE, $this->getCustomerTaxCode($lineItem));
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     * @return bool
-     */
-    protected function isDigital(OrderLineItem $lineItem)
+    protected function isDigital(OrderHolderInterface $lineItem): bool
     {
         $productTaxCode = $this->getProductTaxCode($lineItem);
 
@@ -85,16 +59,12 @@ class OrderLineItemHandler
         return $this->addressProvider->isDigitalProductTaxCode($address->getCountryIso2(), $productTaxCode);
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     * @return null|TaxCodeInterface
-     */
-    protected function getProductTaxCode(OrderLineItem $lineItem)
+    protected function getProductTaxCode(OrderHolderInterface $lineItem): ?string
     {
         $cacheKey  = $this->getCacheTaxCodeKey(TaxCodeInterface::TYPE_PRODUCT, $lineItem);
         $cachedTaxCode = $this->getCachedTaxCode($cacheKey);
 
-        if ($cachedTaxCode !== false) {
+        if ($cachedTaxCode) {
             return $cachedTaxCode;
         }
 
@@ -108,16 +78,12 @@ class OrderLineItemHandler
         return $this->taxCodes[$cacheKey];
     }
 
-    /**
-     * @param OrderLineItem $lineItem
-     * @return null|string
-     */
-    protected function getCustomerTaxCode(OrderLineItem $lineItem)
+    protected function getCustomerTaxCode(OrderHolderInterface $lineItem): ?string
     {
         $cacheKey  = $this->getCacheTaxCodeKey(TaxCodeInterface::TYPE_ACCOUNT, $lineItem);
         $cachedTaxCode = $this->getCachedTaxCode($cacheKey);
 
-        if ($cachedTaxCode !== false) {
+        if ($cachedTaxCode) {
             return $cachedTaxCode;
         }
 
@@ -138,39 +104,20 @@ class OrderLineItemHandler
         return $taxCode;
     }
 
-    /**
-     * @param string $type
-     * @param object $object
-     * @return string|null
-     */
-    protected function getTaxCode($type, $object)
+    protected function getTaxCode(string $type, object $object): ?string
     {
-        $taxCode = $this->taxCodeProvider->getTaxCode((string)$type, $object);
-        return $taxCode ? $taxCode->getCode() : null;
+        return $this->taxCodeProvider->getTaxCode($type, $object)?->getCode();
     }
 
-    /**
-     * @param string $type
-     * @param OrderLineItem $orderLineItem
-     * @return string
-     */
-    protected function getCacheTaxCodeKey($type, OrderLineItem $orderLineItem)
+    protected function getCacheTaxCodeKey(string $type, OrderHolderInterface $orderLineItem): string
     {
         $id = $orderLineItem->getId() ?: spl_object_hash($orderLineItem);
 
         return implode(':', [$type, $id]);
     }
 
-    /**
-     * @param string $cacheKey
-     * @return false|TaxCodeInterface
-     */
-    protected function getCachedTaxCode($cacheKey)
+    protected function getCachedTaxCode(string $cacheKey): ?string
     {
-        if (!array_key_exists($cacheKey, $this->taxCodes)) {
-            return false;
-        }
-
-        return $this->taxCodes[$cacheKey];
+        return $this->taxCodes[$cacheKey] ?? null;
     }
 }

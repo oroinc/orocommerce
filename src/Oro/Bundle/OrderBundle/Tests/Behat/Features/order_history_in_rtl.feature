@@ -24,7 +24,7 @@ Feature: Order History in RTL
     And I signed in as AmandaRCole@example.org on the store frontend
 
   Scenario: Checks that Created At filter works correctly in Past Orders datagrid
-    Given I follow "Account"
+    And I click "Account Dropdown"
     And I click "Order History"
     And I should see following records in "PastOrdersGrid":
       | ORD#1 |

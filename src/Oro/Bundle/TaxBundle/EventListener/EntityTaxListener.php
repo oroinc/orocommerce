@@ -24,7 +24,7 @@ class EntityTaxListener
 
     public function onFlush(OnFlushEventArgs $event): void
     {
-        $em = $event->getEntityManager();
+        $em = $event->getObjectManager();
         $uow = $em->getUnitOfWork();
         $entities = $uow->getScheduledEntityUpdates();
         if (!$entities) {

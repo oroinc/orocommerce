@@ -1,0 +1,11 @@
+data:
+    type: productnames
+    id: '<toString(@product1_name->id)>'
+    attributes:
+        fallback: null
+        string: "An Updated Simple Name"
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product1->id)>'

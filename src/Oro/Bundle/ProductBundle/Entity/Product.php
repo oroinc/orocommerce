@@ -4,6 +4,8 @@ namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
 use Extend\Entity\Autocomplete\OroProductBundle_Entity_Product;
@@ -12,8 +14,8 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DenormalizedPropertyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamilyAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
@@ -23,6 +25,8 @@ use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
@@ -30,122 +34,6 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 /**
  * Product entity class.
  *
- * @ORM\Table(
- *      name="oro_product",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="uidx_oro_product_sku_organization",
- *          columns={"sku", "organization_id"})
- *      },
- *      indexes={
- *          @ORM\Index(name="idx_oro_product_sku", columns={"sku"}),
- *          @ORM\Index(name="idx_oro_product_sku_uppercase", columns={"sku_uppercase"}),
- *          @ORM\Index(name="idx_oro_product_default_name", columns={"name"}),
- *          @ORM\Index(name="idx_oro_product_default_uppercase", columns={"name_uppercase"}),
- *          @ORM\Index(name="idx_oro_product_created_at", columns={"created_at"}),
- *          @ORM\Index(name="idx_oro_product_updated_at", columns={"updated_at"}),
- *          @ORM\Index(name="idx_oro_product_status", columns={"status"}),
- *          @ORM\Index(
- *              name="idx_oro_product_created_at_id_organization",
- *              columns={"created_at", "id", "organization_id"}
- *          ),
- *          @ORM\Index(
- *              name="idx_oro_product_updated_at_id_organization",
- *              columns={"updated_at", "id", "organization_id"}
- *          ),
- *          @ORM\Index(
- *              name="idx_oro_product_sku_id_organization",
- *              columns={"sku", "id", "organization_id"}
- *          ),
- *          @ORM\Index(
- *              name="idx_oro_product_status_id_organization",
- *              columns={"status", "id", "organization_id"}
- *          ),
- *          @ORM\Index(
- *              name="idx_oro_product_featured",
- *              columns={"is_featured"},
- *              options={"where": "(is_featured = true)"}
- *          ),
- *          @ORM\Index(
- *              name="idx_oro_product_id_updated_at",
- *              columns={"id", "updated_at"}
- *          ),
- *          @ORM\Index(
- *              name="idx_oro_product_new_arrival",
- *              columns={"is_new_arrival"},
- *              options={"where": "(is_new_arrival = true)"}
- *          )
- *      }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository")
- * @ORM\AssociationOverrides({
- *      @ORM\AssociationOverride(
- *          name="slugPrototypes",
- *          joinTable=@ORM\JoinTable(
- *              name="oro_product_slug_prototype",
- *              joinColumns={
- *                  @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
- *              },
- *              inverseJoinColumns={
- *                  @ORM\JoinColumn(
- *                      name="localized_value_id",
- *                      referencedColumnName="id",
- *                      onDelete="CASCADE",
- *                      unique=true
- *                  )
- *              }
- *          )
- *      ),
- *     @ORM\AssociationOverride(
- *          name="slugs",
- *          joinTable=@ORM\JoinTable(
- *              name="oro_product_slug",
- *              joinColumns={
- *                  @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
- *              },
- *              inverseJoinColumns={
- *                  @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
- *              }
- *          )
- *      )
- * })
- * @Config(
- *      routeName="oro_product_index",
- *      routeView="oro_product_view",
- *      routeUpdate="oro_product_update",
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-briefcase"
- *          },
- *          "ownership"={
- *              "owner_type"="BUSINESS_UNIT",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="business_unit_owner_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="",
- *              "category"="catalog",
- *              "field_acl_supported"=true,
- *              "field_acl_enabled"=false
- *          },
- *          "form"={
- *              "form_type"="Oro\Bundle\ProductBundle\Form\Type\ProductSelectType",
- *              "grid_name"="products-select-grid"
- *          },
- *          "attribute"={
- *              "has_attributes"=true
- *          },
- *          "slug"={
- *              "source"="names"
- *          }
- *      }
- * )
- * @ORM\HasLifecycleCallbacks()
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -172,6 +60,94 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  * @method $this cloneLocalizedFallbackValueAssociations()
  * @mixin OroProductBundle_Entity_Product
  */
+#[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ORM\Table(name: 'oro_product')]
+#[ORM\Index(columns: ['sku'], name: 'idx_oro_product_sku')]
+#[ORM\Index(columns: ['sku_uppercase'], name: 'idx_oro_product_sku_uppercase')]
+#[ORM\Index(columns: ['name'], name: 'idx_oro_product_default_name')]
+#[ORM\Index(columns: ['name_uppercase'], name: 'idx_oro_product_default_uppercase')]
+#[ORM\Index(columns: ['created_at'], name: 'idx_oro_product_created_at')]
+#[ORM\Index(columns: ['updated_at'], name: 'idx_oro_product_updated_at')]
+#[ORM\Index(columns: ['status'], name: 'idx_oro_product_status')]
+#[ORM\Index(columns: ['created_at', 'id', 'organization_id'], name: 'idx_oro_product_created_at_id_organization')]
+#[ORM\Index(columns: ['updated_at', 'id', 'organization_id'], name: 'idx_oro_product_updated_at_id_organization')]
+#[ORM\Index(columns: ['sku', 'id', 'organization_id'], name: 'idx_oro_product_sku_id_organization')]
+#[ORM\Index(columns: ['status', 'id', 'organization_id'], name: 'idx_oro_product_status_id_organization')]
+#[ORM\Index(columns: ['is_featured'], name: 'idx_oro_product_featured', options: ['where' => '(is_featured = true)'])]
+#[ORM\Index(columns: ['id', 'updated_at'], name: 'idx_oro_product_id_updated_at')]
+#[ORM\Index(
+    columns: ['is_new_arrival'],
+    name: 'idx_oro_product_new_arrival',
+    options: ['where' => '(is_new_arrival = true)']
+)]
+#[ORM\UniqueConstraint(name: 'uidx_oro_product_sku_organization', columns: ['sku', 'organization_id'])]
+#[ORM\AssociationOverrides([
+    new ORM\AssociationOverride(
+        name: 'slugPrototypes',
+        joinColumns: [
+            new ORM\JoinColumn(
+                name: 'product_id',
+                referencedColumnName: 'id',
+                onDelete: 'CASCADE'
+            )
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(
+                name: 'localized_value_id',
+                referencedColumnName: 'id',
+                unique: true,
+                onDelete: 'CASCADE'
+            )
+        ],
+        joinTable: new ORM\JoinTable(name: 'oro_product_slug_prototype')
+    ),
+    new ORM\AssociationOverride(
+        name: 'slugs',
+        joinColumns: [
+            new ORM\JoinColumn(
+                name: 'product_id',
+                referencedColumnName: 'id',
+                onDelete: 'CASCADE'
+            )
+        ],
+        inverseJoinColumns: [
+            new ORM\JoinColumn(
+                name: 'slug_id',
+                referencedColumnName: 'id',
+                unique: true,
+                onDelete: 'CASCADE'
+            )
+        ],
+        joinTable: new ORM\JoinTable(name: 'oro_product_slug')
+    )
+])]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    routeName: 'oro_product_index',
+    routeView: 'oro_product_view',
+    routeUpdate: 'oro_product_update',
+    defaultValues: [
+        'entity' => ['icon' => 'fa-briefcase'],
+        'ownership' => [
+            'owner_type' => 'BUSINESS_UNIT',
+            'owner_field_name' => 'owner',
+            'owner_column_name' => 'business_unit_owner_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id'
+        ],
+        'dataaudit' => ['auditable' => true],
+        'security' => [
+            'type' => 'ACL',
+            'group_name' => '',
+            'category' => 'catalog',
+            'field_acl_supported' => true,
+            'field_acl_enabled' => false
+        ],
+        'form' => ['form_type' => ProductSelectType::class, 'grid_name' => 'products-select-grid'],
+        'attribute' => ['has_attributes' => true],
+        'slug' => ['source' => 'names']
+    ]
+)]
 class Product implements
     OrganizationAwareInterface,
     AttributeFamilyAwareInterface,
@@ -182,6 +158,7 @@ class Product implements
 {
     use SluggableTrait;
     use ExtendEntityTrait;
+
 
     const STATUS_DISABLED = 'disabled';
     const STATUS_ENABLED = 'enabled';
@@ -194,533 +171,288 @@ class Product implements
     const TYPE_CONFIGURABLE = 'configurable';
     const TYPE_KIT = 'kit';
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "identity"=true,
-     *              "order"=10
-     *          },
-     *          "attribute"={
-     *              "is_attribute"=true
-     *          },
-     *          "frontend"={
-     *              "use_in_export"=true
-     *          },
-     *          "security"={
-     *              "permissions"="EDIT"
-     *          },
-     *      }
-     * )
-     */
-    protected $sku;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    #[ConfigField(
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['identity' => true, 'order' => 10],
+            'attribute' => ['is_attribute' => true],
+            'frontend' => ['use_in_export' => true],
+            'security' => ['permissions' => 'EDIT']
+        ]
+    )]
+    protected ?string $sku = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="sku_uppercase", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      },
-     *     mode="hidden"
-     * )
-     */
-    protected $skuUppercase;
+    #[ORM\Column(name: 'sku_uppercase', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]], mode: 'hidden')]
+    protected ?string $skuUppercase = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="status", type="string", length=16, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=20
-     *          },
-     *          "security"={
-     *              "permissions"="VIEW;EDIT"
-     *          },
-     *      }
-     *  )
-     */
-    protected $status = self::STATUS_DISABLED;
+    #[ORM\Column(name: 'status', type: Types::STRING, length: 16, nullable: false)]
+    #[ConfigField(
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['order' => 20],
+            'security' => ['permissions' => 'VIEW;EDIT']
+        ]
+    )]
+    protected ?string $status = self::STATUS_DISABLED;
 
     /**
      * @var array
-     *
-     * @ORM\Column(name="variant_fields", type="array", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=80,
-     *              "process_as_scalar"=true
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(name: 'variant_fields', type: Types::ARRAY, nullable: true)]
+    #[ConfigField(
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['order' => 80, 'process_as_scalar' => true]
+        ]
+    )]
     protected $variantFields = [];
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(
+        defaultValues: ['entity' => ['label' => 'oro.ui.created_at'], 'importexport' => ['excluded' => true]]
+    )]
+    protected ?\DateTimeInterface $createdAt = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
+    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(
+        defaultValues: ['entity' => ['label' => 'oro.ui.updated_at'], 'importexport' => ['excluded' => true]]
+    )]
+    protected ?\DateTimeInterface $updatedAt = null;
 
     /**
      * @var bool
      */
     protected $updatedAtSet;
 
-    /**
-     * @var BusinessUnit
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\BusinessUnit")
-     * @ORM\JoinColumn(name="business_unit_owner_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $owner;
+    #[ORM\ManyToOne(targetEntity: BusinessUnit::class)]
+    #[ORM\JoinColumn(name: 'business_unit_owner_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
+    protected ?BusinessUnit $owner = null;
+
+    #[ORM\ManyToOne(targetEntity: Organization::class)]
+    #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
+    protected ?OrganizationInterface $organization = null;
 
     /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, ProductUnitPrecision>
      */
-    protected $organization;
+    #[ORM\OneToMany(
+        mappedBy: 'product',
+        targetEntity: ProductUnitPrecision::class,
+        cascade: ['ALL'],
+        fetch: 'EXTRA_LAZY',
+        orphanRemoval: true
+    )]
+    #[ORM\OrderBy(['id' => Criteria::ASC])]
+    #[ConfigField(
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['order' => 30, 'full' => true],
+            'security' => ['permissions' => 'VIEW;EDIT']
+        ]
+    )]
+    protected ?Collection $unitPrecisions = null;
+
+    #[ORM\OneToOne(targetEntity: ProductUnitPrecision::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'primary_unit_precision_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['order' => 25, 'full' => true],
+            'security' => ['permissions' => 'VIEW;EDIT']
+        ]
+    )]
+    protected ?ProductUnitPrecision $primaryUnitPrecision = null;
 
     /**
-     * @var Collection|ProductUnitPrecision[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="ProductUnitPrecision",
-     *     mappedBy="product",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true,
-     *     fetch="EXTRA_LAZY"
-     * )
-     * @ORM\OrderBy({"id" = "ASC"})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=30,
-     *              "full"=true
-     *          },
-     *          "security"={
-     *              "permissions"="VIEW;EDIT"
-     *          },
-     *      }
-     * )
+     * @var Collection<int, ProductName>
      */
-    protected $unitPrecisions;
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductName::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ConfigField(
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['order' => 40, 'full' => true, 'fallback_field' => 'string'],
+            'attribute' => ['is_attribute' => true],
+            'frontend' => ['use_in_export' => true],
+            'security' => ['permissions' => 'EDIT']
+        ]
+    )]
+    protected ?Collection $names = null;
 
     /**
-     * @var ProductUnitPrecision
-     *
-     * @ORM\OneToOne(targetEntity="ProductUnitPrecision", cascade={"persist"})
-     * @ORM\JoinColumn(name="primary_unit_precision_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=25,
-     *              "full"=true
-     *          },
-     *          "security"={
-     *              "permissions"="VIEW;EDIT"
-     *          },
-     *      }
-     * )
+     * @var Collection<int, ProductDescription>
      */
-    protected $primaryUnitPrecision;
+    #[ORM\OneToMany(
+        mappedBy: 'product',
+        targetEntity: ProductDescription::class,
+        cascade: ['ALL'],
+        fetch: 'EXTRA_LAZY',
+        orphanRemoval: true
+    )]
+    #[ConfigField(
+        defaultValues: [
+            'importexport' => ['order' => 60, 'full' => true, 'fallback_field' => 'wysiwyg'],
+            'attribute' => ['is_attribute' => true],
+            'attachment' => ['acl_protected' => false]
+        ]
+    )]
+    protected ?Collection $descriptions = null;
 
     /**
-     * @var Collection|ProductName[]
-     *
-     * @ORM\OneToMany(targetEntity="ProductName", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=40,
-     *              "full"=true,
-     *              "fallback_field"="string"
-     *          },
-     *          "attribute"={
-     *              "is_attribute"=true
-     *          },
-     *          "frontend"={
-     *              "use_in_export"=true
-     *          },
-     *          "security"={
-     *              "permissions"="EDIT"
-     *          },
-     *      }
-     * )
+     * @var Collection<int, ProductVariantLink>
      */
-    protected $names;
+    #[ORM\OneToMany(
+        mappedBy: 'parentProduct',
+        targetEntity: ProductVariantLink::class,
+        cascade: ['ALL'],
+        fetch: 'EXTRA_LAZY',
+        orphanRemoval: true
+    )]
+    #[ConfigField(
+        defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 90, 'full' => true]]
+    )]
+    protected ?Collection $variantLinks = null;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="ProductDescription",
-     *      mappedBy="product",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true,
-     *      fetch="EXTRA_LAZY"
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=60,
-     *              "full"=true,
-     *              "fallback_field"="wysiwyg"
-     *          },
-     *          "attribute"={
-     *              "is_attribute"=true
-     *          },
-     *          "attachment"={
-     *              "acl_protected"=false
-     *          }
-     *      }
-     * )
+     * @var Collection<int, ProductVariantLink>
      */
-    protected $descriptions;
+    #[ORM\OneToMany(
+        mappedBy: 'product',
+        targetEntity: ProductVariantLink::class,
+        cascade: ['ALL'],
+        fetch: 'EXTRA_LAZY',
+        orphanRemoval: true
+    )]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
+    protected ?Collection $parentVariantLinks = null;
 
     /**
-     * @var Collection|ProductVariantLink[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="ProductVariantLink",
-     *     mappedBy="parentProduct",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true,
-     *     fetch="EXTRA_LAZY"
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=90,
-     *              "full"=true,
-     *          }
-     *      }
-     * )
+     * @var Collection<int, ProductShortDescription>
      */
-    protected $variantLinks;
+    #[ORM\OneToMany(
+        mappedBy: 'product',
+        targetEntity: ProductShortDescription::class,
+        cascade: ['ALL'],
+        fetch: 'EXTRA_LAZY',
+        orphanRemoval: true
+    )]
+    #[ConfigField(
+        defaultValues: [
+            'importexport' => ['order' => 50, 'full' => true, 'fallback_field' => 'text'],
+            'attribute' => ['is_attribute' => true]
+        ]
+    )]
+    protected ?Collection $shortDescriptions = null;
 
     /**
-     * @var Collection|ProductVariantLink[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="ProductVariantLink",
-     *     mappedBy="product",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true,
-     *     fetch="EXTRA_LAZY"
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *               "excluded"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, ProductImage>
      */
-    protected $parentVariantLinks;
+    #[ORM\OneToMany(
+        mappedBy: 'product',
+        targetEntity: ProductImage::class,
+        cascade: ['ALL'],
+        fetch: 'EXTRA_LAZY',
+        orphanRemoval: true
+    )]
+    #[ConfigField(
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['excluded' => true],
+            'attribute' => ['is_attribute' => true]
+        ]
+    )]
+    protected ?Collection $images = null;
 
-    /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="ProductShortDescription",
-     *      mappedBy="product",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true,
-     *      fetch="EXTRA_LAZY"
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=50,
-     *              "full"=true,
-     *              "fallback_field"="text"
-     *          },
-     *          "attribute"={
-     *              "is_attribute"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $shortDescriptions;
+    #[ORM\Column(name: 'type', type: Types::STRING, length: 32, nullable: false)]
+    #[ConfigField(
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['order' => 20],
+            'security' => ['permissions' => 'VIEW;EDIT']
+        ]
+    )]
+    protected ?string $type = self::TYPE_SIMPLE;
 
-    /**
-     * @var Collection|ProductImage[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ProductBundle\Entity\ProductImage",
-     *     mappedBy="product",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true,
-     *     fetch="EXTRA_LAZY"
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *               "excluded"=true
-     *          },
-     *          "attribute"={
-     *              "is_attribute"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $images;
+    #[ORM\ManyToOne(targetEntity: AttributeFamily::class)]
+    #[ORM\JoinColumn(name: 'attribute_family_id', referencedColumnName: 'id', onDelete: 'RESTRICT')]
+    #[ConfigField(
+        defaultValues: [
+            'dataaudit' => ['auditable' => false],
+            'importexport' => ['order' => 10],
+            'security' => ['permissions' => 'VIEW;EDIT']
+        ]
+    )]
+    protected ?AttributeFamily $attributeFamily = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="type", type="string", length=32, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=20
-     *          },
-     *          "security"={
-     *              "permissions"="VIEW;EDIT"
-     *          },
-     *      }
-     *  )
-     */
-    protected $type = self::TYPE_SIMPLE;
+    #[ORM\Column(name: 'is_featured', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(
+        defaultValues: [
+            'attribute' => ['is_attribute' => true, 'visible' => false],
+            'security' => ['permissions' => 'VIEW;EDIT']
+        ]
+    )]
+    protected ?bool $featured = false;
 
-    /**
-     * @var AttributeFamily
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily")
-     * @ORM\JoinColumn(name="attribute_family_id", referencedColumnName="id", onDelete="RESTRICT")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=false
-     *          },
-     *          "importexport"={
-     *              "order"=10
-     *          },
-     *          "security"={
-     *              "permissions"="VIEW;EDIT"
-     *          },
-     *      }
-     *  )
-     */
-    protected $attributeFamily;
+    #[ORM\Column(name: 'is_new_arrival', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(
+        defaultValues: [
+            'attribute' => ['is_attribute' => true, 'visible' => false],
+            'security' => ['permissions' => 'VIEW;EDIT']
+        ]
+    )]
+    protected ?bool $newArrival = false;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_featured", type="boolean", options={"default"=false})
-     * @ConfigField(
-     *      defaultValues={
-     *          "attribute"={
-     *              "is_attribute"=true,
-     *              "visible"=false
-     *          },
-     *          "security"={
-     *              "permissions"="VIEW;EDIT"
-     *          },
-     *      }
-     *  )
-     */
-    protected $featured = false;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_new_arrival", type="boolean", options={"default"=false})
-     * @ConfigField(
-     *      defaultValues={
-     *          "attribute"={
-     *              "is_attribute"=true,
-     *              "visible"=false
-     *          },
-     *          "security"={
-     *              "permissions"="VIEW;EDIT"
-     *          },
-     *      }
-     *  )
-     */
-    protected $newArrival = false;
-
-    /**
-     * @var Brand
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Brand")
-     * @ORM\JoinColumn(name="brand_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "attribute"={
-     *              "is_attribute"=true,
-     *              "visible"=true
-     *          },
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $brand;
+    #[ORM\ManyToOne(targetEntity: Brand::class)]
+    #[ORM\JoinColumn(name: 'brand_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(
+        defaultValues: [
+            'attribute' => ['is_attribute' => true, 'visible' => true],
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['excluded' => true]
+        ]
+    )]
+    protected ?Brand $brand = null;
 
     /**
      * This is a mirror field for performance reasons only.
      * It mirrors getDefaultName()->getString().
      *
      * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      },
-     *      mode="hidden"
-     * )
      */
-    protected $denormalizedDefaultName;
+    #[ORM\Column(name: 'name', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]], mode: 'hidden')]
+    protected ?string $denormalizedDefaultName = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="name_uppercase", type="string", length=255, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      },
-     *      mode="hidden"
-     * )
-     */
-    protected $denormalizedDefaultNameUppercase;
+    #[ORM\Column(name: 'name_uppercase', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]], mode: 'hidden')]
+    protected ?string $denormalizedDefaultNameUppercase = null;
 
     /**
      * @var Collection<ProductKitItem>|null
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="ProductKitItem",
-     *     mappedBy="productKit",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true,
-     *     fetch="EXTRA_LAZY"
-     * )
-     * @OrderBy({"sortOrder"="ASC"})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *               "excluded"=true
-     *          }
-     *      }
-     * )
      */
+    #[ORM\OneToMany(
+        mappedBy: 'productKit',
+        targetEntity: ProductKitItem::class,
+        cascade: ['ALL'],
+        fetch: 'EXTRA_LAZY',
+        orphanRemoval: true
+    )]
+    #[OrderBy(['sortOrder' => Criteria::ASC])]
+    #[ConfigField(
+        defaultValues: [
+            'dataaudit' => ['auditable' => true],
+            'importexport' => ['excluded' => false, 'immutable' => true, 'full' => true, 'process_as_scalar' => true]
+        ]
+    )]
     protected ?Collection $kitItems = null;
 
     /**
@@ -1445,9 +1177,8 @@ class Product implements
 
     /**
      * Pre persist event handler.
-     *
-     * @ORM\PrePersist
      */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -1458,9 +1189,8 @@ class Product implements
 
     /**
      * Pre update event handler.
-     *
-     * @ORM\PreUpdate
      */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));

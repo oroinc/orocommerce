@@ -235,6 +235,11 @@ oro_behat_extension:
         locator: '//h2[contains(@class,"product-item__title product-item__title")]'
         type: xpath
 
+    Product Name Link:
+      selector:
+        locator: '//h2[contains(@class,"product-item__title product-item__title")]/a'
+        type: xpath
+
     Product Name in Embedded Block:
       selector:
         locator: '//h3[contains(@class,"product-item__title product-item__title")]'
@@ -246,14 +251,10 @@ oro_behat_extension:
         type: xpath
 
     Update Shopping List button:
-      selector:
-        locator: '//div/button[contains(text(),"Update Shopping List")]'
-        type: xpath
+      selector: 'button.btn-main:contains("Update Shopping List")'
 
     Add to Shopping List button:
-      selector:
-        locator: '//div/button[contains(text(),"Add to Shopping List")]'
-        type: xpath
+      selector: 'button.btn-main:contains("Add to Shopping List")'
 
     Gallery View:
       selector:
@@ -265,7 +266,7 @@ oro_behat_extension:
         locator: '//a[contains(@href,"list-view")]'
         type: xpath
 
-    No Image View:
+    Compact View:
       selector:
         locator: '//a[contains(@href,"no-image-view")]'
         type: xpath
@@ -444,7 +445,7 @@ oro_behat_extension:
 
     Update Line Item:
       selector:
-        locator: '//div[@class="request-form-editline" and @data-role="line-item-edit"]//button[@data-role="update"]'
+        locator: '//div[@class="request-form-editline" and @data-role="request-product-edit-mode-container"]//button[@data-role="update"]'
         type: xpath
 
     Delete Line Item:
@@ -552,6 +553,4 @@ oro_behat_extension:
         type: xpath
 
     Add to New Front Shopping List:
-      selector:
-        locator: '//div/button[@title="Add to New Front Shopping List"]'
-        type: xpath
+      selector: 'div button:contains("Add to New Front Shopping List")'

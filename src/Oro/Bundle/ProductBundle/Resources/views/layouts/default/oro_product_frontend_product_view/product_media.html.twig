@@ -31,6 +31,7 @@
 {% endblock %}
 
 {% block _product_view_media_gallery_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% import '@OroUI/macros.html.twig' as UI %}
 
     {% set zoomOptions = {
@@ -51,14 +52,54 @@
         draggable: true
     } %}
 
+    {% set prevArrow %}
+        <div class="slick-btn-wrapper slick-arrow-prev">
+            <button type="button" class="slick-arrow-btn" aria-label="{{ 'oro.product.frontend.gallery.prev'|trans }}">
+                {{ renderIcon.icon({name: oro_is_rtl_mode() ? 'chevron-right' : 'chevron-left', extraClass: 'theme-icon--medium'})}}
+            </button>
+        </div>
+    {% endset %}
+
+    {% set nextArrow %}
+        <div class="slick-btn-wrapper slick-arrow-next">
+            <button type="button" class="slick-arrow-btn"  aria-label="{{ 'oro.product.frontend.gallery.next'|trans }}">
+                {{ renderIcon.icon({name: oro_is_rtl_mode() ? 'chevron-left' : 'chevron-right', extraClass: 'theme-icon--medium'})}}
+            </button>
+        </div>
+    {% endset %}
+
     {% set navListOptions = {
-        slidesToShow: 4,
+        slidesToShow: (vertical|default(false)) ? 6 : 7,
         slidesToScroll: 1,
+        swipeToSlide: true,
         asNavFor: '.product-view-media-gallery',
         focusOnSelect: true,
         infinite: false,
         arrows: true,
-        draggable: true
+        draggable: true,
+        vertical: vertical|default(false),
+        verticalSwiping: vertical|default(false),
+        prevArrow: prevArrow,
+        nextArrow: nextArrow,
+        responsive: [
+            {
+                breakpoint: 1281,
+                settings: {
+                    slidesToShow: 6,
+                    vertical: false,
+                    verticalSwiping: false
+                }
+            },
+            {
+                breakpoint: 992,
+                settings: {
+                    slidesToShow: 5,
+                    arrows: false,
+                    vertical: false,
+                    verticalSwiping: false
+                }
+            },
+        ],
     } %}
 
 

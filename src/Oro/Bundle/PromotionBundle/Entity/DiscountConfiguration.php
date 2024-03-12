@@ -2,53 +2,38 @@
 
 namespace Oro\Bundle\PromotionBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroPromotionBundle_Entity_DiscountConfiguration;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
  * Store discount configuration in database.
  *
- * @ORM\Table(
- *     name="oro_promotion_discount_config",
- *     indexes={
- *         @ORM\Index(
- *              name="oro_promo_discount_type",
- *              columns={"type"}
- *         )
- *     }
- * )
- * @ORM\Entity()
- * @Config()
  * @mixin OroPromotionBundle_Entity_DiscountConfiguration
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_promotion_discount_config')]
+#[ORM\Index(columns: ['type'], name: 'oro_promo_discount_type')]
+#[Config]
 class DiscountConfiguration implements ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer", name="id")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="type", type="string", length=50, nullable=false)
-     */
-    protected $type;
+    #[ORM\Column(name: 'type', type: Types::STRING, length: 50, nullable: false)]
+    protected ?string $type = null;
 
     /**
      * @var array
-     *
-     * @ORM\Column(name="options", type="array", nullable=true)
      */
+    #[ORM\Column(name: 'options', type: Types::ARRAY, nullable: true)]
     protected $options = [];
 
     /**

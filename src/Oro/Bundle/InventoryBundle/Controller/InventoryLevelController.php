@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension;
@@ -11,7 +12,7 @@ use Oro\Bundle\InventoryBundle\Form\Type\InventoryLevelGridType;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -26,16 +27,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class InventoryLevelController extends AbstractController
 {
-    /**
-     * @Route("/", name="oro_inventory_level_index")
-     * @Template
-     * @Acl(
-     *      id="oro_inventory_level_view",
-     *      type="entity",
-     *      class="OroInventoryBundle:InventoryLevel",
-     *      permission="VIEW"
-     * )
-     */
+    #[Route(path: '/', name: 'oro_inventory_level_index')]
+    #[Template]
+    #[Acl(id: 'oro_inventory_level_view', type: 'entity', class: InventoryLevel::class, permission: 'VIEW')]
     public function indexAction(): array
     {
         return [
@@ -49,16 +43,10 @@ class InventoryLevelController extends AbstractController
 
     /**
      * Edit product inventory levels
-     *
-     * @Route("/update/{id}", name="oro_inventory_level_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_product_inventory_update",
-     *      type="entity",
-     *      class="OroInventoryBundle:InventoryLevel",
-     *      permission="EDIT"
-     * )
      */
+    #[Route(path: '/update/{id}', name: 'oro_inventory_level_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_product_inventory_update', type: 'entity', class: InventoryLevel::class, permission: 'EDIT')]
     public function updateAction(Product $product, Request $request): array|RedirectResponse
     {
         if (!$this->isGranted('EDIT', $product)) {
@@ -72,12 +60,12 @@ class InventoryLevelController extends AbstractController
         );
 
         $handler = new InventoryLevelHandler(
-            $this->getDoctrine()->getManagerForClass(InventoryLevel::class),
-            $this->get(QuantityRoundingService::class),
-            $this->get(InventoryManager::class)
+            $this->container->get('doctrine')->getManagerForClass(InventoryLevel::class),
+            $this->container->get(QuantityRoundingService::class),
+            $this->container->get(InventoryManager::class)
         );
 
-        $result = $this->get(UpdateHandlerFacade::class)->update(
+        $result = $this->container->get(UpdateHandlerFacade::class)->update(
             $product,
             $form,
             '',
@@ -100,7 +88,7 @@ class InventoryLevelController extends AbstractController
         }
 
         return $noDataReason
-            ? ['noDataReason' => $this->get(TranslatorInterface::class)->trans($noDataReason)]
+            ? ['noDataReason' => $this->container->get(TranslatorInterface::class)->trans($noDataReason)]
             : [];
     }
 
@@ -115,7 +103,8 @@ class InventoryLevelController extends AbstractController
                 TranslatorInterface::class,
                 QuantityRoundingService::class,
                 InventoryManager::class,
-                UpdateHandlerFacade::class
+                UpdateHandlerFacade::class,
+                'doctrine' => ManagerRegistry::class
             ]
         );
     }

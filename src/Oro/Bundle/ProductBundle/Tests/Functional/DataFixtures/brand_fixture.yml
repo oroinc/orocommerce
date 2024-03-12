@@ -1,5 +1,6 @@
 brand1:
     status: enabled
+    businessUnit: main-bu
     names:
         - { reference: brand-1.names.default, string: brand-1.names.default }
         - { reference: brand-1.names.en_CA, string: brand-1.names.en_CA, fallback: system, localization: en_CA }
@@ -15,6 +16,7 @@ brand1:
     reference: brand-1
 brand2:
     status: enabled
+    businessUnit: test-bu
     names:
         - { reference: brand-2.names.default, string: brand-2.names.default }
     slugPrototypes:

@@ -2,20 +2,28 @@
 
 namespace Oro\Bundle\CheckoutBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Migrations\Data\ORM\AbstractEmailFixture;
+use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
  * Update only not customized email templates
  */
-class UpdateOrderConfirmationEmailTemplate extends AbstractEmailFixture implements DependentFixtureInterface
+class UpdateOrderConfirmationEmailTemplate extends AbstractEmailFixture
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function loadTemplate(ObjectManager $manager, $fileName, array $file)
+    public function getDependencies(): array
+    {
+        return [LoadEmailTemplates::class];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function loadTemplate(ObjectManager $manager, $fileName, array $file): void
     {
         if ($fileName !== 'order_confirmation') {
             return;
@@ -34,9 +42,9 @@ class UpdateOrderConfirmationEmailTemplate extends AbstractEmailFixture implemen
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function findExistingTemplate(ObjectManager $manager, array $template)
+    protected function findExistingTemplate(ObjectManager $manager, array $template): ?EmailTemplate
     {
         if (!isset($template['params']['name'])
             || !isset($template['content'])
@@ -44,17 +52,17 @@ class UpdateOrderConfirmationEmailTemplate extends AbstractEmailFixture implemen
             return null;
         }
 
-        return $manager->getRepository('OroEmailBundle:EmailTemplate')->findOneBy([
+        return $manager->getRepository(EmailTemplate::class)->findOneBy([
             'name' => $template['params']['name'],
-            'entityName' => 'Oro\Bundle\OrderBundle\Entity\Order',
+            'entityName' => Order::class,
             'content' => $template['content']
         ]);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getEmailsDir()
+    public function getEmailsDir(): string
     {
         return $this->container
             ->get('kernel')
@@ -63,23 +71,11 @@ class UpdateOrderConfirmationEmailTemplate extends AbstractEmailFixture implemen
 
     /**
      * Return path to old email templates
-     *
-     * @return string
      */
-    public function getPreviousEmailsDir()
+    public function getPreviousEmailsDir(): string
     {
         return $this->container
             ->get('kernel')
             ->locateResource('@OroCheckoutBundle/Migrations/Data/ORM/data/emails/v1_0');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            LoadEmailTemplates::class
-        ];
     }
 }

@@ -6,5 +6,6 @@ configs:
 dynamic-imports:
     orocheckout:
         - oroshipping/js/app/views/shipping-methods-view
+        - oroshipping/js/app/views/group-shipping-methods-view
     orodatagrid:
         - oro/datagrid/cell/shipping-methods-cell

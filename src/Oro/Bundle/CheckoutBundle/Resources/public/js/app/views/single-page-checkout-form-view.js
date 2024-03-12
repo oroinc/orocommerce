@@ -211,6 +211,7 @@ define(function(require) {
             };
 
             mediator.trigger('checkout:payment:before-transit', eventData);
+            mediator.trigger('checkout:before-submit', eventData);
 
             if (eventData.stopped) {
                 return;

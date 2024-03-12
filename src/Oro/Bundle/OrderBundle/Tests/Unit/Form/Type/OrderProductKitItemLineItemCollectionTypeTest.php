@@ -47,6 +47,8 @@ class OrderProductKitItemLineItemCollectionTypeTest extends FormIntegrationTestC
 
     private ProductKitItem $kitItem4;
 
+    private OrderProductKitItemLineItemCollectionType $formType;
+
     protected function setUp(): void
     {
         $this->kitItemProduct1 = (new ProductStub())->setId(300);

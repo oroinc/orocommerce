@@ -20,6 +20,5 @@ Feature: Translation cache for multi-language application
 
   Scenario: Check Zulu on the storefront
     Given I signed in as AmandaRCole@example.org on the store frontend
-    And I click "Localization Switcher"
     When I select "Zulu" localization
     Then I should see that the page does not contain untranslated labels

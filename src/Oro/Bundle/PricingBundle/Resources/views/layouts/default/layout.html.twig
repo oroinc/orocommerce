@@ -8,55 +8,55 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
-{% block currency_switcher_widget %}
-    {% if currencies|length > 1 %}
-    <div class="oro-toolbar">
-        {% set togglerId = 'dropdown-'|uniqid %}
-        <div class="oro-toolbar__content currency-switcher currency-switcher--{{ selected_currency|lower }}" data-toggle="dropdown" data-popper="false" role="button" data-currency="{{ selected_currency|lower }}" id="{{ togglerId }}"
-             aria-haspopup="true" aria-expanded="false"
-             aria-label="{{ 'oro.pricing.productprice.currency.label'|trans }}">
-            {{- oro_currency_symbol(selected_currency) -}}
-            <span class="oro-toolbar__icon" aria-hidden="true">
-                <span class="fa-angle-down"></span>
-            </span>
-        </div>
+{% block _currency_localization_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-options': {
+            showCurrencySymbol: currency_display == 'symbol',
+            currencies: currencies|reduce((arr, currency) => arr|merge([{
+                symbol: oro_currency_symbol(currency),
+                name: oro_currency_name(currency),
+                title: currency_display == 'symbol' ? oro_currency_symbol(currency) : currency,
+                code: currency,
+                value: currency,
+                formattingCode: currency|lower,
+                selected: currency == selected_currency,
+            }]), [])
+        }
+    }) %}
 
-        <div class="oro-toolbar__dropdown" role="menu" aria-labelledby="{{ togglerId }}">
-            <div data-page-component-module="oropricing/js/app/components/currency-switcher-component"
-                 data-page-component-options="{{ {
-                     'selectedCurrency': selected_currency,
-                     'currencySwitcherRoute': 'oro_pricing_frontend_set_current_currency'
-                 }|json_encode }}"
-                 data-dom-relocation-options="{{ {
-                    responsive: [
-                        {
-                            viewport: 'tablet',
-                            moveTo: '[data-switcher-currency-target]'
-                        }
-                    ]
-                }|json_encode }}">
-                <ul class="oro-toolbar__list">
-                    {% for currency in currencies %}
-                    <li class="oro-toolbar__list-item currency-switcher__item currency-switcher__item--{{ currency|lower }}">
-                        {% if selected_currency == currency %}
-                            <span class="oro-toolbar__link oro-toolbar__link--active">
-                                {%- apply spaceless -%}
-                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>({{- oro_currency_name(currency) -}})
-                                {%- endapply -%}
-                            </span>
-                        {% else %}
-                            <a class="oro-toolbar__link" href="#" data-currency="{{ currency }}">
-                                {%- apply spaceless -%}
-                                <b class="oro-toolbar__currency">{{ oro_currency_symbol(currency) }}</b>({{- oro_currency_name(currency) -}})
-                                {%- endapply -%}
-                            </a>
-                        {% endif %}
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
+    {% set useCurrencies = currencies|length > 1 %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _currency_localization_container_inner_widget %}
+    {{ parent_block_widget(block) }}
+
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
+    {% if currencies|length == 2 %}
+        <div class="oro-toolbar__content currency-switcher">
+            {{ renderIcon.icon({name: 'credit-card', extraClass: 'theme-icon--medium oro-toolbar__icon'}) }}
+            {% for currency in currencies %}
+                {% if selected_currency == currency %}
+                    <span class="oro-toolbar__link oro-toolbar__link--active text-nowrap">{{ oro_currency_symbol(currency) }}</span>
+                {% else %}
+                    <a class="oro-toolbar__link text-nowrap" href="#" data-currency="{{ currency }}">{{ oro_currency_symbol(currency) }}</a>
+                {% endif %}
+                {% if loop.index == 1 %}
+                    <span class="divider"></span>
+                {% endif %}
+            {% endfor %}
         </div>
-    </div>
+    {% elseif currencies|length > 2 %}
+        <button
+            class="btn btn--outlined-inverse btn--text btn--no-padding currency-switcher currency-switcher--{{ selected_currency|lower }}"
+            type="button"
+        >
+            {{ renderIcon.icon({name: 'credit-card', extraClass: 'oro-toolbar__icon'}) }}
+            {{- oro_currency_symbol(selected_currency) -}}
+            {{ renderIcon.icon({name: 'chevron-down', extraClass: 'dropdown-menu-chevron'}) }}
+        </button>
     {% endif %}
 {% endblock %}
 
@@ -154,7 +154,7 @@
 {% endblock %}
 
 {% block product_price_hint_trigger_js_widget %}
-    {% set productTierClass = productTierClass|default('btn btn--default btn--size-s product-tier-prices') %}
+    {% set productTierClass = productTierClass|default('btn btn--outlined btn--text btn--size-small product-tier-prices') %}
     {% set productTierIcon = productTierIcon|default('fa-caret-down fa--no-offset') %}
     {% set productAriaLabel = productAriaLabel|default('oro.pricing.view_all_prices'|trans) %}
     {% if toggleAttrValue is not defined %}

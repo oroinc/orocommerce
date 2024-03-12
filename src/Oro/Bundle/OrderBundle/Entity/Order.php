@@ -4,6 +4,8 @@ namespace Oro\Bundle\OrderBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroOrderBundle_Entity_Order;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
@@ -15,11 +17,13 @@ use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwar
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EmailBundle\Model\EmailHolderNameInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\FormBundle\Form\Type\OroMoneyType;
+use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\OrderBundle\Model\DiscountAwareInterface;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -36,50 +40,6 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 /**
  * Order entity
  *
- * @ORM\Table(name="oro_order",indexes={@ORM\Index(name="oro_order_created_at_index", columns={"created_at"})})
- * @ORM\Entity(repositoryClass="Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository")
- * @Config(
- *      routeName="oro_order_index",
- *      routeView="oro_order_view",
- *      routeCreate="oro_order_create",
- *      routeUpdate="oro_order_update",
- *      routeCommerceView="oro_order_frontend_view",
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-usd",
- *              "contact_information"={
- *                  "email"={
- *                      {"fieldName"="contactInformation"}
- *                  }
- *              }
- *          },
- *          "ownership"={
- *              "owner_type"="USER",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="user_owner_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id",
- *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="customerUser",
- *              "frontend_owner_column_name"="customer_user_id",
- *              "frontend_customer_field_name"="customer",
- *              "frontend_customer_column_name"="customer_id"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="commerce",
- *              "category"="orders"
- *          },
- *          "grid"={
- *              "default"="orders-grid",
- *              "context"="orders-for-context-grid"
- *          }
- *      }
- * )
- * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -87,11 +47,42 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- *
  * @method AbstractEnumValue getInternalStatus()
  * @method $this setInternalStatus(AbstractEnumValue $status)
  * @mixin OroOrderBundle_Entity_Order
  */
+#[ORM\Entity(repositoryClass: OrderRepository::class)]
+#[ORM\Table(name: 'oro_order')]
+#[ORM\Index(columns: ['created_at'], name: 'oro_order_created_at_index')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    routeName: 'oro_order_index',
+    routeView: 'oro_order_view',
+    routeCreate: 'oro_order_create',
+    routeUpdate: 'oro_order_update',
+    routeCommerceView: 'oro_order_frontend_view',
+    defaultValues: [
+        'entity' => [
+            'icon' => 'fa-usd',
+            'contact_information' => ['email' => [['fieldName' => 'contactInformation']]]
+        ],
+        'ownership' => [
+            'owner_type' => 'USER',
+            'owner_field_name' => 'owner',
+            'owner_column_name' => 'user_owner_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id',
+            'frontend_owner_type' => 'FRONTEND_USER',
+            'frontend_owner_field_name' => 'customerUser',
+            'frontend_owner_column_name' => 'customer_user_id',
+            'frontend_customer_field_name' => 'customer',
+            'frontend_customer_column_name' => 'customer_id'
+        ],
+        'dataaudit' => ['auditable' => true],
+        'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'orders'],
+        'grid' => ['default' => 'orders-grid', 'context' => 'orders-for-context-grid']
+    ]
+)]
 class Order implements
     OrganizationAwareInterface,
     EmailHolderInterface,
@@ -116,114 +107,40 @@ class Order implements
 
     const INTERNAL_STATUS_CODE = 'order_internal_status';
 
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="identifier", type="string", length=255, unique=true, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $identifier;
+    #[ORM\Column(name: 'identifier', type: Types::STRING, length: 255, unique: true, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $identifier = null;
 
-    /**
-     * @var OrderAddress
-     *
-     * @ORM\OneToOne(targetEntity="OrderAddress", cascade={"persist"})
-     * @ORM\JoinColumn(name="billing_address_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $billingAddress;
+    #[ORM\OneToOne(targetEntity: OrderAddress::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'billing_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?OrderAddress $billingAddress = null;
 
-    /**
-     * @var OrderAddress
-     *
-     * @ORM\OneToOne(targetEntity="OrderAddress", cascade={"persist"})
-     * @ORM\JoinColumn(name="shipping_address_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $shippingAddress;
+    #[ORM\OneToOne(targetEntity: OrderAddress::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'shipping_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?OrderAddress $shippingAddress = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="po_number", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $poNumber;
+    #[ORM\Column(name: 'po_number', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $poNumber = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="customer_notes", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $customerNotes;
+    #[ORM\Column(name: 'customer_notes', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $customerNotes = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="ship_until", type="date", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $shipUntil;
+    #[ORM\Column(name: 'ship_until', type: Types::DATE_MUTABLE, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?\DateTimeInterface $shipUntil = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $currency;
+    #[ORM\Column(name: 'currency', type: Types::STRING, length: 3, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $currency = null;
 
     /**
      * Changes to this value object wont affect entity change set
@@ -235,67 +152,38 @@ class Order implements
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="subtotal_with_discounts", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'subtotal_with_discounts', type: 'money', nullable: true)]
     protected $subtotalWithDiscounts;
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="subtotal_currency", type="currency", length=3, nullable=true)
-     * @ConfigField(
-     *  defaultValues={
-     *      "dataaudit"={
-     *          "auditable"=true
-     *      },
-     *      "multicurrency"={
-     *          "target"="subtotal"
-     *      }
-     *  }
-     * )
      */
+    #[ORM\Column(name: 'subtotal_currency', type: 'currency', length: 3, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'multicurrency' => ['target' => 'subtotal']])]
     protected $subtotalCurrency;
 
     /**
      * @var double
-     *
-     * @ORM\Column(name="subtotal_value", type="money_value", nullable=true)
-     * @ConfigField(
-     *  defaultValues={
-     *      "form"={
-     *          "form_type"="Oro\Bundle\FormBundle\Form\Type\OroMoneyType",
-     *          "form_options"={
-     *              "constraints"={{"Range":{"min":0}}},
-     *          }
-     *      },
-     *      "dataaudit"={
-     *          "auditable"=true
-     *      },
-     *      "multicurrency"={
-     *          "target"="subtotal",
-     *          "virtual_field"="subtotalBaseCurrency"
-     *      }
-     *  }
-     * )
      */
+    #[ORM\Column(name: 'subtotal_value', type: 'money_value', nullable: true)]
+    #[ConfigField(
+        defaultValues: [
+            'form' => [
+                'form_type' => OroMoneyType::class,
+                'form_options' => ['constraints' => [['Range' => ['min' => 0]]]]
+            ],
+            'dataaudit' => ['auditable' => true],
+            'multicurrency' => ['target' => 'subtotal', 'virtual_field' => 'subtotalBaseCurrency']
+        ]
+    )]
     protected $subtotalValue;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="base_subtotal_value", type="money", nullable=true)
-     * @ConfigField(
-     *  defaultValues={
-     *      "dataaudit"={
-     *          "auditable"=true
-     *      },
-     *      "multicurrency"={
-     *          "target"="subtotal"
-     *      }
-     *  }
-     * )
      */
+    #[ORM\Column(name: 'base_subtotal_value', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'multicurrency' => ['target' => 'subtotal']])]
     protected $baseSubtotalValue;
 
     /**
@@ -308,148 +196,78 @@ class Order implements
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="total_currency", type="currency", length=3, nullable=true)
-     * @ConfigField(
-     *  defaultValues={
-     *      "dataaudit"={
-     *          "auditable"=true
-     *      },
-     *      "multicurrency"={
-     *          "target"="total"
-     *      }
-     *  }
-     * )
      */
+    #[ORM\Column(name: 'total_currency', type: 'currency', length: 3, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'multicurrency' => ['target' => 'total']])]
     protected $totalCurrency;
 
     /**
      * @var double
-     *
-     * @ORM\Column(name="total_value", type="money_value", nullable=true)
-     * @ConfigField(
-     *  defaultValues={
-     *      "form"={
-     *          "form_type"="Oro\Bundle\FormBundle\Form\Type\OroMoneyType",
-     *          "form_options"={
-     *              "constraints"={{"Range":{"min":0}}},
-     *          }
-     *      },
-     *      "dataaudit"={
-     *          "auditable"=true
-     *      },
-     *      "multicurrency"={
-     *          "target"="total",
-     *          "virtual_field"="totalBaseCurrency"
-     *      }
-     *  }
-     * )
      */
+    #[ORM\Column(name: 'total_value', type: 'money_value', nullable: true)]
+    #[ConfigField(
+        defaultValues: [
+            'form' => [
+                'form_type' => OroMoneyType::class,
+                'form_options' => ['constraints' => [['Range' => ['min' => 0]]]]
+            ],
+            'dataaudit' => ['auditable' => true],
+            'multicurrency' => ['target' => 'total', 'virtual_field' => 'totalBaseCurrency']
+        ]
+    )]
     protected $totalValue;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="base_total_value", type="money", nullable=true)
-     * @ConfigField(
-     *  defaultValues={
-     *      "dataaudit"={
-     *          "auditable"=true
-     *      },
-     *      "multicurrency"={
-     *          "target"="total"
-     *      }
-     *  }
-     * )
      */
+    #[ORM\Column(name: 'base_total_value', type: 'money', nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'multicurrency' => ['target' => 'total']])]
     protected $baseTotalValue;
 
-    /**
-     * @var Website
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $website;
+    #[ORM\ManyToOne(targetEntity: Website::class)]
+    #[ORM\JoinColumn(name: 'website_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Website $website = null;
 
     /**
-     * @var Collection|OrderLineItem[]
-     *
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderLineItem",
-     *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
-     * )
-     * @ORM\OrderBy({"id" = "ASC"})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, OrderLineItem>
      */
-    protected $lineItems;
+    #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderLineItem::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\OrderBy(['id' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $lineItems = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="shipping_method", type="string", length=255, nullable=true)
-     */
-    protected $shippingMethod;
+    #[ORM\Column(name: 'shipping_method', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $shippingMethod = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="shipping_method_type", type="string", length=255, nullable=true)
-     */
-    protected $shippingMethodType;
+    #[ORM\Column(name: 'shipping_method_type', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $shippingMethodType = null;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="estimated_shipping_cost_amount", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'estimated_shipping_cost_amount', type: 'money', nullable: true)]
     protected $estimatedShippingCostAmount;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="override_shipping_cost_amount", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'override_shipping_cost_amount', type: 'money', nullable: true)]
     protected $overriddenShippingCostAmount;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="source_entity_class", type="string", length=255, nullable=true)
-     */
-    protected $sourceEntityClass;
+    #[ORM\Column(name: 'source_entity_class', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $sourceEntityClass = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="source_entity_id", type="integer", nullable=true )
-     */
-    protected $sourceEntityId;
+    #[ORM\Column(name: 'source_entity_id', type: Types::INTEGER, nullable: true)]
+    protected ?int $sourceEntityId = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="source_entity_identifier", type="string", length=255, nullable=true)
-     */
-    protected $sourceEntityIdentifier;
+    #[ORM\Column(name: 'source_entity_identifier', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $sourceEntityIdentifier = null;
 
     /**
      * @var float
-     *
-     * @ORM\Column(name="total_discounts_amount", type="money", nullable=true)
      */
+    #[ORM\Column(name: 'total_discounts_amount', type: 'money', nullable: true)]
     protected $totalDiscountsAmount;
 
     /**
@@ -458,51 +276,33 @@ class Order implements
     protected $totalDiscounts;
 
     /**
-     * @var Collection|OrderDiscount[]
-     *
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderDiscount",
-     *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, OrderDiscount>
      */
-    protected $discounts;
+    #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderDiscount::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $discounts = null;
 
     /**
-     * @var Collection|OrderShippingTracking[]
-     *
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderShippingTracking",
-     *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, OrderShippingTracking>
      */
-    protected $shippingTrackings;
+    #[ORM\OneToMany(
+        mappedBy: 'order',
+        targetEntity: OrderShippingTracking::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $shippingTrackings = null;
+
+    #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'subOrders')]
+    #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Order $parent = null;
 
     /**
-     * @var Order
-     *
-     * @ORM\ManyToOne(targetEntity="Order", inversedBy="subOrders")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
+     * @var Collection<int, Order>
      */
-    protected $parent;
-
-    /**
-     * @var ArrayCollection
-     *
-     * @ORM\OneToMany(targetEntity="Order", mappedBy="parent", orphanRemoval=true, cascade={"all"})
-     */
-    protected $subOrders;
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: Order::class, cascade: ['all'], orphanRemoval: true)]
+    protected ?Collection $subOrders = null;
 
     /**
      * Constructor
@@ -516,9 +316,7 @@ class Order implements
         $this->loadMultiCurrencyFields();
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    #[ORM\PostLoad]
     public function loadMultiCurrencyFields()
     {
         $this->subtotal = MultiCurrency::create(
@@ -534,10 +332,9 @@ class Order implements
     }
 
     /**
-     * @ORM\PreFlush
-     *
      * @return void
      */
+    #[ORM\PreFlush]
     public function updateMultiCurrencyFields()
     {
         $this->fixCurrencyInMultiCurrencyFields();
@@ -637,9 +434,8 @@ class Order implements
 
     /**
      * Pre persist event handler
-     *
-     * @ORM\PrePersist
      */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -648,9 +444,8 @@ class Order implements
 
     /**
      * Pre update event handler
-     *
-     * @ORM\PreUpdate
      */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -1050,9 +845,7 @@ class Order implements
         return $this;
     }
 
-    /**
-     * @ORM\PostLoad
-     */
+    #[ORM\PostLoad]
     public function postLoad()
     {
         if (null !== $this->totalDiscountsAmount && null !== $this->currency) {
@@ -1150,10 +943,8 @@ class Order implements
         return $this;
     }
 
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function updateTotalDiscounts()
     {
         $this->totalDiscountsAmount = $this->totalDiscounts ? $this->totalDiscounts->getValue() : null;

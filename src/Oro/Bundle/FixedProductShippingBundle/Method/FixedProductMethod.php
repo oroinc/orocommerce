@@ -15,6 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 class FixedProductMethod implements ShippingMethodInterface, ShippingMethodIconAwareInterface
 {
     private string $identifier;
+    private string $name;
     private string $label;
     private string $icon;
     private bool $enabled;
@@ -22,6 +23,7 @@ class FixedProductMethod implements ShippingMethodInterface, ShippingMethodIconA
 
     public function __construct(
         string $identifier,
+        string $name,
         string $label,
         string $icon,
         bool $enabled,
@@ -29,6 +31,7 @@ class FixedProductMethod implements ShippingMethodInterface, ShippingMethodIconA
         ShippingCostProvider $shippingCostProvider
     ) {
         $this->identifier = $identifier;
+        $this->name = $name;
         $this->label = $label;
         $this->icon = $icon;
         $this->enabled = $enabled;
@@ -57,6 +60,11 @@ class FixedProductMethod implements ShippingMethodInterface, ShippingMethodIconA
     public function getIdentifier(): string
     {
         return $this->identifier;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     /**

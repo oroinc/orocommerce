@@ -8,6 +8,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class CurrentLocalizationExtensionTest extends \PHPUnit\Framework\TestCase
 {
@@ -58,7 +59,7 @@ class CurrentLocalizationExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->token->expects($this->once())
             ->method('getUser')
-            ->willReturn(new \stdClass());
+            ->willReturn($this->createMock(UserInterface::class));
 
         $this->localizationManager->expects($this->once())
             ->method('getCurrentLocalization')

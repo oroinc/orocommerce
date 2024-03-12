@@ -14,6 +14,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         - Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyProductKitItemsCollection: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemsOwnedByProductKit: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitPrecisionsCollectionReferencedByProductKitItems: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\OnlyProductKitCanHaveKitItems:
+            groups: [Import]
     properties:
         sku:
             - NotBlank:
@@ -21,7 +23,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Length:
                 min: 3
                 max: 255
-                allowEmptyString: false
             - Oro\Bundle\ProductBundle\Validator\Constraints\SkuRegex: ~
         unitPrecisions:
             - Count:
@@ -50,7 +51,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinkCollection: ~
         kitItems:
-            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
+            - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems:
+                groups: [ Default, Import ]
         images:
             - Oro\Bundle\PlatformBundle\Validator\Constraints\ValidLoadedItems: ~
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~
@@ -235,7 +237,7 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
     properties:
         labels:
             - Valid:
-                  traverse: true
+                  groups: [ Default, Import ]
             - Count:
                   min: 1
         productKit:
@@ -277,6 +279,8 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
                   max: 64
             - Choice: { callback: getFallbacks }
         string:
+            - NotBlank:
+                  groups: [ Import ]
             - Length:
                   max: 255
         kitItem:

@@ -4,8 +4,8 @@ namespace Oro\Bundle\ShippingBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -13,68 +13,63 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
-    /** @internal */
-    const SHIPPING_RULE_METHOD_CONFIG_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig';
-
-    /** @internal */
-    const SHIPPING_RULE_METHOD_TYPE_CONFIG_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig';
-
-    /** @internal */
-    const SHIPPING_RULE_DESTINATION_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination';
-
-    /** @var RenameExtension */
-    private $renameExtension;
+    use RenameExtensionAwareTrait;
 
     /**
-     * @return int
+     * {@inheritDoc}
      */
-    public function getOrder()
+    public function getOrder(): int
     {
         return 10;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         $this->renameShippingRuleMethodTypeConfig($schema, $queries);
         $this->renameShippingRuleMethodConfig($schema, $queries);
         $this->renameShippingDestination($queries);
     }
 
-    private function renameShippingRuleMethodConfig(Schema $schema, QueryBag $queries)
+    private function renameShippingRuleMethodConfig(Schema $schema, QueryBag $queries): void
     {
-        $this->renameExtension
-            ->renameTable($schema, $queries, 'oro_shipping_rule_mthd_config', 'oro_ship_method_config');
-        $this->addDeleteFormEntityConfigQuery($queries, static::SHIPPING_RULE_METHOD_CONFIG_CLASS_NAME);
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            'oro_shipping_rule_mthd_config',
+            'oro_ship_method_config'
+        );
+        $this->addDeleteFormEntityConfigQuery(
+            $queries,
+            'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig'
+        );
     }
 
-    private function renameShippingRuleMethodTypeConfig(Schema $schema, QueryBag $queries)
+    private function renameShippingRuleMethodTypeConfig(Schema $schema, QueryBag $queries): void
     {
-        $this->renameExtension
-            ->renameTable($schema, $queries, 'oro_shipping_rule_mthd_tp_cnfg', 'oro_ship_method_type_config');
-        $this->addDeleteFormEntityConfigQuery($queries, static::SHIPPING_RULE_METHOD_TYPE_CONFIG_CLASS_NAME);
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            'oro_shipping_rule_mthd_tp_cnfg',
+            'oro_ship_method_type_config'
+        );
+        $this->addDeleteFormEntityConfigQuery(
+            $queries,
+            'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig'
+        );
     }
 
-    private function renameShippingDestination(QueryBag $queries)
+    private function renameShippingDestination(QueryBag $queries): void
     {
-        $this->addDeleteFormEntityConfigQuery($queries, static::SHIPPING_RULE_DESTINATION_CLASS_NAME);
+        $this->addDeleteFormEntityConfigQuery(
+            $queries,
+            'Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination'
+        );
     }
 
-    /**
-     * @param QueryBag $queries
-     * @param string $className
-     */
-    private function addDeleteFormEntityConfigQuery(QueryBag $queries, $className)
+    private function addDeleteFormEntityConfigQuery(QueryBag $queries, string $className): void
     {
         $queries->addPostQuery(
             new ParametrizedSqlMigrationQuery(

@@ -176,6 +176,16 @@ oro_behat_extension:
         Content Widget Form:
             selector: 'form[name="oro_cms_content_widget"]'
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Default Label: 'oro_cms_content_widget[settings][labels][values][default]'
+                    Use Default: 'oro_cms_content_widget[settings][labels][values][localizations][1][use_fallback]'
+                    English (United States): 'oro_cms_content_widget[settings][labels][values][localizations][1][value]'
+
+        Content Widget Label Localization Form Fallbacks:
+            selector:
+                type: xpath
+                locator: '//label[text()="Label"]/ancestor::div[contains(@class, "control-group-oro_locale_localized_fallback_value_collection")]//button[contains(@class, "fallback-status")]'
 
         Slides:
             selector:
@@ -191,45 +201,121 @@ oro_behat_extension:
                     Slide Order 1: 'oro_cms_content_widget[settings][imageSlides][0][slideOrder]'
                     URL 1: 'oro_cms_content_widget[settings][imageSlides][0][url]'
                     Target 1: 'oro_cms_content_widget[settings][imageSlides][0][displayInSameWindow]'
-                    Title 1: 'oro_cms_content_widget[settings][imageSlides][0][title]'
+                    Alt Image Text 1: 'oro_cms_content_widget[settings][imageSlides][0][altImageText]'
                     Text Alignment 1: 'oro_cms_content_widget[settings][imageSlides][0][textAlignment]'
                     Text 1: 'oro_cms_content_widget[settings][imageSlides][0][text]'
+                    Header 1: 'oro_cms_content_widget[settings][imageSlides][0][header]'
 
                     Slide Order 2: 'oro_cms_content_widget[settings][imageSlides][1][slideOrder]'
                     URL 2: 'oro_cms_content_widget[settings][imageSlides][1][url]'
                     Target 2: 'oro_cms_content_widget[settings][imageSlides][1][displayInSameWindow]'
-                    Title 2: 'oro_cms_content_widget[settings][imageSlides][1][title]'
+                    Alt Image Text 2: 'oro_cms_content_widget[settings][imageSlides][1][altImageText]'
                     Text Alignment 2: 'oro_cms_content_widget[settings][imageSlides][1][textAlignment]'
                     Text 2: 'oro_cms_content_widget[settings][imageSlides][1][text]'
+                    Header 2: 'oro_cms_content_widget[settings][imageSlides][1][header]'
 
-        Choose Main Slider Image 1:
+        Choose Extra Large Slider Image1x 1:
             selector:
-                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][mainImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][extraLargeImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+        Choose Extra Large Slider Image2x 1:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][extraLargeImage2x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+        Choose Extra Large Slider Image3x 1:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][extraLargeImage3x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
                 type: xpath
 
-        Choose Medium Slider Image 1:
+        Choose Large Slider Image1x 1:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][largeImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+        Choose Large Slider Image2x 1:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][largeImage2x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+        Choose Large Slider Image3x 1:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][largeImage3x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+
+        Choose Medium Slider Image1x 1:
             selector:
                 locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][mediumImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
                 type: xpath
+        Choose Medium Slider Image2x 1:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][mediumImage2x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+        Choose Medium Slider Image3x 1:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][mediumImage3x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
 
-        Choose Small Slider Image 1:
+        Choose Small Slider Image1x 1:
             selector:
                 locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][smallImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
                 type: xpath
-
-        Choose Main Slider Image 2:
+        Choose Small Slider Image2x 1:
             selector:
-                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][mainImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][smallImage2x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+        Choose Small Slider Image3x 1:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][0][smallImage3x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
                 type: xpath
 
-        Choose Medium Slider Image 2:
+        Choose Extra Large Slider Image1x 2:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][extraLargeImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+        Choose Extra Large Slider Image2x 2:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][extraLargeImage2x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+        Choose Extra Large Slider Image3x 2:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][extraLargeImage3x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+
+        Choose Large Slider Image1x 2:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][largeImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+        Choose Large Slider Image2x 2:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][largeImage2x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+        Choose Large Slider Image3x 2:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][largeImage3x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+
+        Choose Medium Slider Image1x 2:
             selector:
                 locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][mediumImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
                 type: xpath
+        Choose Medium Slider Image2x 2:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][mediumImage2x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+        Choose Medium Slider Image3x 2:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][mediumImage3x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
 
-        Choose Small Slider Image 2:
+        Choose Small Slider Image1x 2:
             selector:
                 locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][smallImage][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+        Choose Small Slider Image2x 2:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][smallImage2x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
+                type: xpath
+        Choose Small Slider Image3x 2:
+            selector:
+                locator: '//div[input[@name="oro_cms_content_widget[settings][imageSlides][1][smallImage3x][digitalAsset]"]]/a[not(contains(@class,"hide"))]'
                 type: xpath
 
         First Dot On Image Slider:
@@ -242,7 +328,7 @@ oro_behat_extension:
             selector: 'div.promo-slider div:nth-child(1) a div.promo-slider__picture picture'
 
         Second Dot On Image Slider:
-            selector: 'div.promo-slider .slick-dots li:nth-child(2) button'
+            selector: '.promo-slider__navigation-holder .slick-dots li:nth-child(2) button'
 
         Second Image Slide:
             selector: 'div.promo-slider .slick-track div:nth-child(2)'

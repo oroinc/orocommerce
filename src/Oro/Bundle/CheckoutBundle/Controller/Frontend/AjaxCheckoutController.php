@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemGroupsShippingManager;
 use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManager;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,63 +19,61 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AjaxCheckoutController extends AbstractController
 {
-    /**
-     * @Route(
-     *      "/get-totals-for-checkout/{entityId}",
-     *      name="oro_checkout_frontend_totals",
-     *      requirements={"entityId"="\d+"}
-     * )
-     * @AclAncestor("oro_checkout_frontend_checkout")
-     *
-     * @param Request $request
-     * @param integer $entityId
-     *
-     * @return JsonResponse
-     */
-    public function getTotalsAction(Request $request, $entityId)
+    #[Route(
+        path: '/get-totals-for-checkout/{entityId}',
+        name: 'oro_checkout_frontend_totals',
+        requirements: ['entityId' => '\d+']
+    )]
+    #[AclAncestor('oro_checkout_frontend_checkout')]
+    public function getTotalsAction(Request $request, int $entityId): JsonResponse
     {
-        /** @var Checkout $checkout */
-        $checkout = $this->getDoctrine()->getManagerForClass(Checkout::class)
-            ->getRepository(Checkout::class)->getCheckoutWithRelations($entityId);
-
+        /** @var Checkout|null $checkout */
+        $checkout = $this->container->get('doctrine')->getRepository(Checkout::class)
+            ->getCheckoutWithRelations($entityId);
         if (!$checkout) {
             return new JsonResponse('', Response::HTTP_NOT_FOUND);
         }
+
         $this->denyAccessUnlessGranted('EDIT', $checkout);
 
         $this->setCorrectCheckoutShippingMethodData($checkout, $request);
 
-        return new JsonResponse($this->get(CheckoutTotalsProvider::class)->getTotalsArray($checkout));
+        return new JsonResponse($this->container->get(CheckoutTotalsProvider::class)->getTotalsArray($checkout));
     }
 
-    /**
-     * @param Checkout $checkout
-     * @param Request  $request
-     *
-     * @return Checkout
-     */
-    protected function setCorrectCheckoutShippingMethodData(Checkout $checkout, Request $request)
+    private function setCorrectCheckoutShippingMethodData(Checkout $checkout, Request $request): void
     {
-        $workflowTransitionData = $request->request->get('oro_workflow_transition');
-        if (!is_array($workflowTransitionData)
-            || !array_key_exists('shipping_method', $workflowTransitionData)
-            || !array_key_exists('shipping_method_type', $workflowTransitionData)
+        $workflowTransitionData = $request->request->all('oro_workflow_transition');
+        if (!\array_key_exists('shipping_method', $workflowTransitionData)
+            || !\array_key_exists('shipping_method_type', $workflowTransitionData)
         ) {
-            return $checkout;
+            return;
         }
 
         if (isset($workflowTransitionData['line_items_shipping_methods'])) {
-            $lineItemsShippingMethods = json_decode($workflowTransitionData['line_items_shipping_methods'], true);
-
             $this->container->get(CheckoutLineItemsShippingManager::class)
-                ->updateLineItemsShippingMethods($lineItemsShippingMethods, $checkout);
+                ->updateLineItemsShippingMethods(
+                    $this->decodeShippingMethods($workflowTransitionData['line_items_shipping_methods']),
+                    $checkout
+                );
+        }
+
+        if (isset($workflowTransitionData['line_item_groups_shipping_methods'])) {
+            $this->container->get(CheckoutLineItemGroupsShippingManager::class)
+                ->updateLineItemGroupsShippingMethods(
+                    $this->decodeShippingMethods($workflowTransitionData['line_item_groups_shipping_methods']),
+                    $checkout
+                );
         }
 
         $checkout
             ->setShippingMethod($workflowTransitionData['shipping_method'])
             ->setShippingMethodType($workflowTransitionData['shipping_method_type']);
+    }
 
-        return $checkout;
+    private function decodeShippingMethods(string $val): array
+    {
+        return json_decode($val, true, 512, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -85,7 +85,9 @@ class AjaxCheckoutController extends AbstractController
             parent::getSubscribedServices(),
             [
                 CheckoutTotalsProvider::class,
-                CheckoutLineItemsShippingManager::class
+                CheckoutLineItemsShippingManager::class,
+                CheckoutLineItemGroupsShippingManager::class,
+                'doctrine' => ManagerRegistry::class
             ]
         );
     }

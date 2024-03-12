@@ -10,7 +10,7 @@ Feature: Product Filters On Products Catalog
   Scenario: Check Price filter
     Given I proceed as the customer
     And I login as AmandaRCole@example.org buyer
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     And I open "Price" filter
     Then I should see "each" in the "FrontendProductGridFilters" element
     And I should see "hour" in the "FrontendProductGridFilters" element
@@ -64,7 +64,7 @@ Feature: Product Filters On Products Catalog
     And I check "Show Unit Code"
     And I save setting
     Then I proceed as the customer
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     And I open "Price" filter
     Then I should not see "each" in the "FrontendProductGridFilters" element
     And I should not see "hour" in the "FrontendProductGridFilters" element
@@ -80,7 +80,7 @@ Feature: Product Filters On Products Catalog
     And select "item" from "Default Primary Unit"
     And I save setting
     Then I proceed as the customer
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     And I set range filter "Price" as min value "12" and max value "16"
     Then should see filter hints in frontend grid:
       | Price: between 12.00 and 16.00 / item |

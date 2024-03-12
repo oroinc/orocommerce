@@ -14,6 +14,13 @@ workflows:
                             type: 'info'
                             message_parameters:
                                 id: $quote.qid
+                verify_transition_definition:
+                    actions:
+                        - '@flash_message':
+                            message: oro.sale.quote.message.quote.edit.success
+                            type: 'info'
+                            message_parameters:
+                                id: $quote.qid
                 clone_transition_definition:
                     actions:
                         - '@run_action_group':
@@ -56,7 +63,7 @@ workflows:
                 send_to_customer_transition_definition:
                     preactions:
                         - '@call_service_method':
-                            service: oro_sale.provider.quote_product_price
+                            service: oro_sale.provider.quote_product_prices
                             method: hasEmptyPrice
                             method_parameters: [$quote]
                             attribute: $hasEmptyPrice
@@ -64,19 +71,54 @@ workflows:
                         '@and':
                             - '@equal': [false, $hasEmptyPrice]
                     actions:
-                        - '@request_enum_entity':
-                            enum_code: 'quote_internal_status'
-                            attribute: $quote.internalStatus
-                            identifier: 'sent_to_customer'
-                        - '@run_action_group':
-                            action_group: oro_sale_notify_customer_by_email
-                            parameters_mapping:
-                                email: $email
-                        - '@flash_message':
-                            message: oro.sale.quote.message.quote.sent.success
-                            type: 'info'
-                            message_parameters:
-                                id: $quote.qid
+                        - '@assign_value': [$.result.isQuoteValid, false]
+                        - '@assign_value':
+                              conditions:
+                                  '@is_quote_valid':
+                                        quote: $quote
+                                        validationGroups: [[Default, add_kit_item_line_item, quote_is_valid_for_sending_to_customer]]
+                              parameters: [$.result.isQuoteValid, true]
+                        - '@tree':
+                            conditions:
+                                '@equal': [$.result.isQuoteValid, false]
+                            actions:
+                                - '@transit_workflow':
+                                    parameters:
+                                        entity: $quote
+                                        transition: '__start__'
+                                        workflow: $.definition.name
+                                - '@assign_url':
+                                    attribute: $.result.viewQuoteUrl
+                                    route: 'oro_sale_quote_view'
+                                    route_parameters:
+                                        id: $quote.id
+                                - '@redirect':
+                                    parameters:
+                                        route: 'oro_workflow_transition_form'
+                                        route_parameters:
+                                            workflowItemId: $.id
+                                            transitionName: 'verify_transition'
+                                            originalUrl: $.result.viewQuoteUrl
+                                - '@flash_message':
+                                    message: oro.sale.workflow.condition.quote_is_not_valid.message
+                                    type: 'warning'
+                        - '@tree':
+                            conditions:
+                                '@equal': [$.result.isQuoteValid, true]
+                            actions:
+                                - '@request_enum_entity':
+                                    enum_code: 'quote_internal_status'
+                                    attribute: $quote.internalStatus
+                                    identifier: 'sent_to_customer'
+                                - '@run_action_group':
+                                    action_group: oro_sale_notify_customer_by_email
+                                    parameters_mapping:
+                                        email: $email
+                                - '@flash_message':
+                                    message: oro.sale.quote.message.quote.sent.success
+                                    type: 'info'
+                                    message_parameters:
+                                        id: $quote.qid
                 cancel_transition_definition:
                     actions:
                         - '@request_enum_entity':

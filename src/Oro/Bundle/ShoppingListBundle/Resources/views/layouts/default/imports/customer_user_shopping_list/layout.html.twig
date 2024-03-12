@@ -1,5 +1,8 @@
 {% block  __datagrid_toolbar__datagrid_toolbar_leftside_container_widget %}
     <div class="datagrid-toolbar__start" data-section="left-side">
+        <% if (toolbarPosition === 'top') { %>
+            <div class="actions-panel" data-grid-extra-actions-panel></div>
+        <% } %>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -31,15 +34,6 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
-
-{%- block __customer_user_shopping_list__header_icon_widget -%}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' badge fa-clipboard',
-        'aria-hidden': 'true'
-    }) %}
-
-    <span {{ block('block_attributes') }}></span>
-{%- endblock -%}
 
 {%- block __customer_user_shopping_list__header_title_container_widget -%}
     {% set attr = layout_attr_defaults(attr, {
@@ -136,15 +130,8 @@
 
 {% block __customer_user_shopping_list__checkout_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' responsive-order-layout order-checkout-widget order-checkout-widget--offset-none ',
-        'data-sticky-target': 'top-sticky-panel',
-        'data-sticky': {
-            isSticky: true,
-            affixed: true,
-            autoWidth: false,
-            moveToPanel: false,
-            viewport: 'responsive-shopping-list-grid-overflow'
-        }
+        '~class': ' responsive-order-layout order-checkout-widget order-checkout-widget--offset-none sticky sticky--top',
+        'data-sticky': ''
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -172,9 +159,9 @@
         'data-name': 'empty-items__hide'
     }) %}
 
-    {% set actionButtonClass = actionButtonClass|default('btn btn--info btn--full direct-link') %}
-    {% set dropdownActionClass = dropdownActionClass|default('btn btn--block btn--info direct-link') %}
-    {% set dropdownToggleClass = dropdownToggleClass|default('btn btn--info  dropdown-toggle') %}
+    {% set actionButtonClass = actionButtonClass|default('btn btn--outlined btn--full direct-link') %}
+    {% set dropdownActionClass = dropdownActionClass|default('btn btn--block btn--outlined direct-link') %}
+    {% set dropdownToggleClass = dropdownToggleClass|default('btn btn--icon btn--outlined dropdown-toggle') %}
 
     {{ block('combined_buttons_widget') }}
 {% endblock %}

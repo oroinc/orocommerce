@@ -9,12 +9,12 @@
         'toggle label'
         'body body';
     grid-template-columns: auto 1fr;
-    gap: 0 $offset-x-m;
+    gap: 0 spacing('sm');
 
     &__body {
         grid-area: body;
         display: none;
-        padding-top: $offset-y-m;
+        padding-top: spacing('sm');
     }
 
     &__label {

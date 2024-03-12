@@ -4,6 +4,9 @@ namespace Oro\Bundle\PromotionBundle\Discount\Strategy;
 
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 
+/**
+ * Implements a discount strategy that combines all discounts.
+ */
 class ApplyAllStrategy extends AbstractStrategy
 {
     /**

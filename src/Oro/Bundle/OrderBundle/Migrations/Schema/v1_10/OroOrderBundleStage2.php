@@ -58,9 +58,7 @@ class OroOrderBundleStage2 implements Migration, OrderedMigrationInterface
     }
 
     /**
-     * Get the order of this migration
-     *
-     * @return integer
+     * {@inheritDoc}
      */
     public function getOrder()
     {

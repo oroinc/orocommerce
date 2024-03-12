@@ -53,7 +53,7 @@ class WebCatalogUsageListenerTest extends \PHPUnit\Framework\TestCase
         $uow = $this->createMock(UnitOfWork::class);
 
         $args->expects(self::once())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($em);
         $em->expects(self::once())
             ->method('getUnitOfWork')
@@ -78,7 +78,7 @@ class WebCatalogUsageListenerTest extends \PHPUnit\Framework\TestCase
         $uow = $this->createMock(UnitOfWork::class);
 
         $args->expects(self::once())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($em);
         $em->expects(self::once())
             ->method('getUnitOfWork')
@@ -102,7 +102,7 @@ class WebCatalogUsageListenerTest extends \PHPUnit\Framework\TestCase
         $uow = $this->createMock(UnitOfWork::class);
 
         $args->expects(self::once())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($em);
         $em->expects(self::once())
             ->method('getUnitOfWork')

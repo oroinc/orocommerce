@@ -2,7 +2,7 @@
 
 $product-view-media-gallery-border-width: 1px !default;
 $product-view-media-gallery-border: $product-view-media-gallery-border-width
-    solid get-color('additional', 'light') !default;
+    solid get-color('neutral', 'grey1') !default;
 $product-view-media-gallery-max-height: 380px !default;
 $product-view-media-gallery-image-max-height: $product-view-media-gallery-max-height -
     ($product-view-media-gallery-border-width * 2) !default;
@@ -12,25 +12,88 @@ $product-view-media-gallery-tab-content-max-width: 380px !default;
 $product-view-media-gallery-container-tab-content-max-width: $product-view-media-gallery-tab-content-max-width !default;
 $product-view-media-gallery-container-position: relative !default;
 
-$product-view-media-gallery-nav-arrow-width: 20px !default;
-$product-view-media-gallery-nav-max-height: 77px !default;
+$product-view-media-gallery-nav-arrow-width: 44px !default;
+$product-view-media-gallery-nav-arrow-height: 44px !default;
 $product-view-media-gallery-nav-offset-top: 20px !default;
-$product-view-media-gallery-nav-offset: $product-view-media-gallery-nav-offset-top
-    $product-view-media-gallery-nav-arrow-width 0 !default;
-$product-view-media-gallery-nav-item-offset-h: $offset-x-s !default;
+$product-view-media-gallery-nav-offset: 24px 0 0 !default;
+$product-view-media-gallery-nav-arrow-width: 0 !default;
+$product-view-media-gallery-nav-item-offset-h: spacing('xs') !default;
 $product-view-media-gallery-nav-item-offset-inner: 0 $product-view-media-gallery-nav-item-offset-h !default;
-$product-view-media-gallery-nav-image-border-color: 1px solid get-color('additional', 'light') !default;
-$product-view-media-gallery-nav-image-current-border-color: get-color('secondary', 'base', 50%) !default;
-$product-view-media-gallery-nav-arrow-height: 100% !default;
 $product-view-media-gallery-nav-arrow-border: 0 !default;
-$product-view-media-gallery-nav-arrow-bg: get-color('additional', 'light') !default;
-$product-view-media-gallery-nav-arrow-icon-prev: var(--fa-var-angle-left) !default;
-$product-view-media-gallery-nav-arrow-icon-next: var(--fa-var-angle-right) !default;
-$product-view-media-gallery-nav-arrow-icon-size: $base-font-size !default;
-$product-view-media-gallery-nav-arrow-side-position: -$product-view-media-gallery-nav-arrow-width !default;
+$product-view-media-gallery-nav-arrow-bg: get-color('neutral', 'grey1') !default;
+$product-view-media-gallery-nav-arrow-bg-hover: get-color('primary', 'light') !default;
+$product-view-media-gallery-nav-arrow-bg-focus: get-color('neutral', 'grey1') !default;
+$product-view-media-gallery-nav-arrow-side-position: 0 !default;
+$product-view-media-gallery-nav-arrow-border-radius: 100% !default;
 
-$product-view-media-gallery-nav-loading-url: get-color('additional', 'ultra')
-    url('#{$global-url}/orofrontend/default/images/loader.gif') no-repeat center center !default;
+$product-view-media-gallery-slick-slide-item-border: 1px solid get-var-color('neutral', 'grey2') !default;
+$product-view-media-gallery-slick-slide-current-item-border: 2px solid get-var-color('primary', 'main') !default;
+
+$product-view-media-gallery-nav-loading-url: get-color('neutral', 'white-100')
+    url('#{$global-url}/orofrontend/default/images/loader.svg') no-repeat center center !default;
 
 $product-view-media-gallery-nav-tab-content-max-width: $product-view-media-gallery-tab-content-max-width -
     $product-view-media-gallery-nav-arrow-width * 2 !default;
+
+$product-view-media-gallery-arrow-wrapper-bg: get-color('neutral', 'white-100') !default;
+$product-view-media-gallery-arrow-wrapper-box-shadow: -10px 0 20px 16px get-color('neutral', 'white-100'),
+                                                       10px 0 20px 16px get-color('neutral', 'white-100') !default;
+
+$product-view-media-gallery-image-width: 80px !default;
+$product-view-media-gallery-image-height: 80px !default;
+$product-view-media-gallery-image-border-radius: 100% !default;
+$product-view-media-gallery-image-width-tablet: 56px !default;
+$product-view-media-gallery-image-height-tablet: 56px !default;
+
+// Vertical Mode
+$vertical-product-view-media-wrapper-display: grid !default;
+$vertical-product-view-media-wrapper-grid-template-columns: 64px calc(100% - 64px - #{spacing('base')}) !default;
+$vertical-product-view-media-wrapper-gap: spacing('base') !default;
+
+$vertical-product-view-media-gallery-max-height: 480px !default;
+
+$vertical-product-view-media-gallery-container-grid-row: #{'1 / 2'} !default;
+$vertical-product-view-media-gallery-container-grid-column: #{'2 / 3'} !default;
+
+$vertical-product-view-media-gallery-image-item-height: 478px !default;
+
+$vertical-product-view-media-gallery-nav-grid-row: #{'1 / 2'} !default;
+$vertical-product-view-media-gallery-nav-grid-column: #{'1 / 2'} !default;
+$vertical-product-view-media-gallery-nav-height: 480px !default;
+$vertical-product-view-media-gallery-nav-margin-top: 0 !default;
+
+$vertical-product-view-media-gallery-nav-item-padding: 0 !default;
+$vertical-product-view-media-gallery-nav-item-margin: spacing('sm') 0 !default;
+$vertical-product-view-media-gallery-nav-item-border-width: 0 !default;
+
+$vertical-product-view-media-gallery-nav-image-width: 64px !default;
+$vertical-product-view-media-gallery-nav-image-height: 64px !default;
+
+$vertical-product-view-media-gallery-nav-slick-btn-wrapper-inset-inline: 0 !default;
+$vertical-product-view-media-gallery-nav-slick-btn-wrapper-justify-content: center !default;
+$vertical-product-view-media-gallery-nav-slick-btn-wrapper-box-shadow: none !default;
+
+$vertical-product-view-media-gallery-nav-slick-btn-before-content: '' !default;
+$vertical-product-view-media-gallery-nav-slick-btn-before-width: 100% !default;
+$vertical-product-view-media-gallery-nav-slick-btn-before-height: 20px !default;
+$vertical-product-view-media-gallery-nav-slick-btn-before-position: absolute !default;
+
+$vertical-product-view-media-gallery-nav-slick-arrow-prev-inset-block: 0 auto !default;
+
+$vertical-product-view-media-gallery-nav-slick-arrow-prev-after-background:
+    linear-gradient(
+        0deg, rgba(255, 255, 255, 0) 0%,
+        get-color('neutral', 'white-100') 100%
+    ) !default;
+$vertical-product-view-media-gallery-nav-slick-arrow-prev-after-top: 100% !default;
+
+$vertical-product-view-media-gallery-nav-slick-arrow-next-inset-block: auto 0 !default;
+
+$vertical-product-view-media-gallery-nav-slick-arrow-next-before-background:
+    linear-gradient(
+        0deg, get-color('neutral', 'white-100') 0%,
+        rgba(255, 255, 255, 0) 100%
+    ) !default;
+$vertical-product-view-media-gallery-nav-slick-arrow-next-before-bottom: 100% !default;
+
+$vertical-product-view-media-gallery-nav-slick-arrow-btn-transform: rotate(90deg) !default;

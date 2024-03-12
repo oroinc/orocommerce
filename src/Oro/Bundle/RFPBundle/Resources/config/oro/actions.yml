@@ -93,7 +93,7 @@ operations:
             - oro_rfp_frontend_request_index
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
         button_options:
-            class: btn--info
+            class: btn--outlined
             icon: fa-plus fa--small
         order: 10
         actions:
@@ -181,6 +181,9 @@ action_groups:
                     - [[keep], [property, ['Oro\Bundle\RFPBundle\Entity\RequestProduct', product]]]
                     - [[keep], [property, ['Oro\Bundle\RFPBundle\Entity\RequestProductItem', productUnit]]]
                     - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
+                    - [[keep], [property, ['Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem', product]]]
+                    - [[keep], [property, ['Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem', productUnit]]]
+                    - [[keep], [propertyType, ['Oro\Bundle\ProductBundle\Entity\ProductKitItem']]]
             - '@assign_value': [$.requestCopy.createdAt, $.currentDatetime]
             - '@assign_value': [$.requestCopy.updatedAt, $.currentDatetime]
             - '@flush_entity':

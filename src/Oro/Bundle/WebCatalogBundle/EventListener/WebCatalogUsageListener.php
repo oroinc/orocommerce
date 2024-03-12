@@ -33,7 +33,7 @@ class WebCatalogUsageListener
 
     public function onFlush(OnFlushEventArgs $args)
     {
-        if ($this->hasInsertedOrDeletedWebsites($args->getEntityManager()->getUnitOfWork())) {
+        if ($this->hasInsertedOrDeletedWebsites($args->getObjectManager()->getUnitOfWork())) {
             $this->cacheableWebCatalogUsageProvider->clearCache();
         }
     }

@@ -8,6 +8,9 @@ use Oro\Bundle\MoneyOrderBundle\Method\Config\Factory\MoneyOrderConfigFactoryInt
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Provides payment method configs for all enabled money order integrations
+ */
 class MoneyOrderConfigProvider implements MoneyOrderConfigProviderInterface
 {
     /**
@@ -86,8 +89,8 @@ class MoneyOrderConfigProvider implements MoneyOrderConfigProviderInterface
     protected function getEnabledIntegrationSettings()
     {
         try {
-            return $this->doctrine->getManagerForClass('OroMoneyOrderBundle:MoneyOrderSettings')
-                ->getRepository('OroMoneyOrderBundle:MoneyOrderSettings')
+            return $this->doctrine->getManagerForClass(MoneyOrderSettings::class)
+                ->getRepository(MoneyOrderSettings::class)
                 ->findWithEnabledChannel();
         } catch (\UnexpectedValueException $e) {
             $this->logger->critical($e->getMessage());

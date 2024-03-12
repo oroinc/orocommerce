@@ -18,19 +18,18 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class CheckoutTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
-    use EntityTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $now = new \DateTime('now');
         $properties = [
-            ['id', '123'],
+            ['id', 123],
             ['billingAddress', new OrderAddress()],
             ['saveBillingAddress', true],
             ['shipToBillingAddress', true],
@@ -56,54 +55,61 @@ class CheckoutTest extends \PHPUnit\Framework\TestCase
             ['registeredCustomerUser', new CustomerUser()]
         ];
 
-        $entity = new Checkout();
-        $this->assertPropertyAccessors($entity, $properties);
+        $checkout = new Checkout();
+        self::assertPropertyAccessors($checkout, $properties);
     }
 
-    public function testSetCustomerUser()
+    public function testLineItemGroupShippingData(): void
+    {
+        $checkout = new Checkout();
+        self::assertSame([], $checkout->getLineItemGroupShippingData());
+        self::assertNull(ReflectionUtil::getPropertyValue($checkout, 'lineItemGroupShippingData'));
+
+        $shippingData = ['product.category:1' => ['method' => 'method1', 'type' => 'type1']];
+        $checkout->setLineItemGroupShippingData($shippingData);
+        self::assertSame($shippingData, $checkout->getLineItemGroupShippingData());
+
+        $checkout->setLineItemGroupShippingData([]);
+        self::assertSame([], $checkout->getLineItemGroupShippingData());
+        self::assertNull(ReflectionUtil::getPropertyValue($checkout, 'lineItemGroupShippingData'));
+    }
+
+    public function testSetCustomerUser(): void
     {
         $customer = new Customer();
         $customerUser = new CustomerUser();
         $customerUser->setCustomer($customer);
-        $entity = new Checkout();
-        $entity->setCustomerUser($customerUser);
-        $this->assertSame($customer, $entity->getCustomer());
+        $checkout = new Checkout();
+        $checkout->setCustomerUser($customerUser);
+
+        self::assertSame($customer, $checkout->getCustomer());
     }
 
-    public function testPostLoad()
+    public function testPostLoad(): void
     {
-        $value = 1;
-        $currency = 'USD';
+        $checkout = new Checkout();
+        ReflectionUtil::setPropertyValue($checkout, 'shippingEstimateAmount', 1);
+        ReflectionUtil::setPropertyValue($checkout, 'shippingEstimateCurrency', 'USD');
+        ReflectionUtil::setPropertyValue($checkout, 'completedData', ['test' => 'value']);
 
-        $item = $this->getEntity(
-            'Oro\Bundle\CheckoutBundle\Entity\Checkout',
-            [
-                'shippingEstimateAmount' => $value,
-                'shippingEstimateCurrency' => $currency,
-                'completedData' => ['test' => 'value']
-            ]
-        );
+        $checkout->postLoad();
 
-        $item->postLoad();
-
-        $this->assertEquals(Price::create($value, $currency), $item->getShippingCost());
-        $this->assertEquals(new CompletedCheckoutData(['test' => 'value']), $item->getCompletedData());
+        self::assertEquals(Price::create(1, 'USD'), $checkout->getShippingCost());
+        self::assertEquals(new CompletedCheckoutData(['test' => 'value']), $checkout->getCompletedData());
     }
 
-    public function testUpdateShippingEstimate()
+    public function testUpdateShippingEstimate(): void
     {
-        $item = new Checkout();
-        $value = 1;
-        $currency = 'USD';
-        $item->setShippingCost(Price::create($value, $currency));
+        $checkout = new Checkout();
+        $checkout->setShippingCost(Price::create(1, 'USD'));
 
-        $item->updateShippingEstimate();
+        $checkout->updateShippingEstimate();
 
-        $this->assertEquals($value, $item->getShippingCost()->getValue());
-        $this->assertEquals($currency, $item->getShippingCost()->getCurrency());
+        self::assertEquals(1, $checkout->getShippingCost()->getValue());
+        self::assertEquals('USD', $checkout->getShippingCost()->getCurrency());
     }
 
-    public function testGetVisitor()
+    public function testGetVisitor(): void
     {
         $visitor = new CustomerVisitor();
         $visitor->setSessionId('session id');
@@ -117,37 +123,19 @@ class CheckoutTest extends \PHPUnit\Framework\TestCase
         $checkout = new Checkout();
         $checkout->setSource($checkoutSource);
 
-        $this->assertEquals('session id', $checkout->getVisitor()->getSessionId());
+        self::assertEquals('session id', $checkout->getVisitor()->getSessionId());
     }
 
-    /**
-     * @dataProvider getLineItemsDataProvider
-     */
-    public function testGetLineItems(array $lineItems, array $expected)
+    public function testGetLineItems(): void
     {
-        $entity = new Checkout();
+        $checkout = new Checkout();
+        self::assertEquals(new ArrayCollection([]), $checkout->getLineItems());
 
-        if ($lineItems) {
-            $entity->setLineItems(new ArrayCollection($lineItems));
-        }
-
-        $this->assertEquals(new ArrayCollection($expected), $entity->getLineItems());
-    }
-
-    public function getLineItemsDataProvider(): array
-    {
         $lineItem1 = $this->createMock(CheckoutLineItem::class);
         $lineItem2 = $this->createMock(CheckoutLineItem::class);
 
-        return [
-            'empty' => [
-                'lineItems' => [],
-                'expected' => [],
-            ],
-            'filled, repeated' => [
-                'lineItems' => [$lineItem1, $lineItem2, $lineItem1],
-                'expected' => [$lineItem1, $lineItem2],
-            ],
-        ];
+        $checkout->setLineItems(new ArrayCollection([$lineItem1, $lineItem2, $lineItem1]));
+
+        self::assertEquals(new ArrayCollection([$lineItem1, $lineItem2]), $checkout->getLineItems());
     }
 }

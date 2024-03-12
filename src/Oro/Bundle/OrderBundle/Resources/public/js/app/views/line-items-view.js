@@ -70,6 +70,14 @@ define(function(require) {
                 currency: this.options.currency,
                 customer: this.options.customer
             }));
+
+            mediator.trigger('entry-point:order:init');
+
+            const totals = {};
+            mediator.trigger('order:totals:get:current', totals);
+            if (!totals.result?.total?.amount) {
+                mediator.trigger('line-items-totals:update');
+            }
         },
 
         updateValidators: function(subtotals) {

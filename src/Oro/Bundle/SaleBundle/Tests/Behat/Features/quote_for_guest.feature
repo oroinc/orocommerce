@@ -121,6 +121,7 @@ Feature: Quote for guest
   Scenario: Logged in user has not access to quote from Quotes grid in profile
     Given I proceed as the Buyer
     And I am on the homepage
+    And I click "Account Dropdown"
     When I click "Quotes"
     Then I should see "There are no quotes"
 
@@ -188,6 +189,6 @@ Feature: Quote for guest
     And I click view Quote_1 in grid
     And I click truncated to 31 symbols Guest Quote Quote_1 link
     Then a new browser tab is opened and I switch to it
-    And I should see "Sign in"
+    And I should see "Log In"
     And I should see "QUOTE #QUOTE_1"
     And I should see "Accept and Submit to Order"

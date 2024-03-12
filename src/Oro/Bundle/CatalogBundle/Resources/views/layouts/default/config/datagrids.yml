@@ -1,0 +1,25 @@
+datagrids:
+    frontend-catalog-allproducts-grid:
+        extends: frontend-product-search-grid
+        source:
+            query:
+                select:
+                    - integer.category_id as categoryId
+                    - text.category_title_LOCALIZATION_ID as categoryTitle
+        columns:
+            categoryId: ~
+            categoryTitle: ~
+        sorters:
+            toolbar_sorting: false
+            disable_default_sorting: false
+            multiple_sorting: true
+            columns:
+                categoryTitle:
+                    data_name: text.category_title_LOCALIZATION_ID
+                    type: string
+            default:
+                categoryTitle: ASC
+        options:
+            toolbarOptions:
+                pagination:
+                    onePage: true

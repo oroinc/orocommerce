@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Form\Type\Filter;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -13,7 +14,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Builds form for ProductPriceFilter
- * adds 'unit' Choice field with choices from OroProductBundle:ProductUnit repository
+ * adds 'unit' Choice field with choices from Oro\Bundle\ProductBundle\Entity\ProductUnit repository
  */
 class ProductPriceFilterType extends AbstractType
 {
@@ -117,8 +118,8 @@ class ProductPriceFilterType extends AbstractType
     protected function getUnitChoices()
     {
         $unitCodes = $this->registry
-            ->getManagerForClass('OroProductBundle:ProductUnit')
-            ->getRepository('OroProductBundle:ProductUnit')
+            ->getManagerForClass(ProductUnit::class)
+            ->getRepository(ProductUnit::class)
             ->getAllUnitCodes();
 
         $choices = [];

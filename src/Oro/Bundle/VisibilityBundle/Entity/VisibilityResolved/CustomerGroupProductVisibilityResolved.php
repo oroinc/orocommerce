@@ -6,22 +6,19 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository;
 
 /**
- * @ORM\Entity(
- *    repositoryClass="Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository"
- * )
- * @ORM\Table(name="oro_cus_grp_prod_vsb_resolv")
- */
+* Entity that represents Customer Group Product Visibility Resolved
+*
+*/
+#[ORM\Entity(repositoryClass: CustomerGroupProductRepository::class)]
+#[ORM\Table(name: 'oro_cus_grp_prod_vsb_resolv')]
 class CustomerGroupProductVisibilityResolved extends BaseProductVisibilityResolved
 {
-    /**
-     * @var CustomerGroupProductVisibility
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility")
-     * @ORM\JoinColumn(name="source_product_visibility", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $sourceProductVisibility;
+    #[ORM\ManyToOne(targetEntity: CustomerGroupProductVisibility::class)]
+    #[ORM\JoinColumn(name: 'source_product_visibility', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?CustomerGroupProductVisibility $sourceProductVisibility = null;
 
     public function __construct(Scope $scope, Product $product)
     {

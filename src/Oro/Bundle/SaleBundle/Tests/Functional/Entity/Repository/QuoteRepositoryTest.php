@@ -10,6 +10,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\Repository\QuoteRepository;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
@@ -39,7 +40,6 @@ class QuoteRepositoryTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadQuoteData::class]);
 
         $this->em = $this->getContainer()
@@ -105,6 +105,9 @@ class QuoteRepositoryTest extends WebTestCase
             foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
                 $this->assertNotEmpty($quoteProductOffer->getQuantity());
             }
+            foreach ($quoteProduct->getKitItemLineItems() as $kitItemLineItem) {
+                $this->assertNotEmpty($kitItemLineItem->getQuantity());
+            }
         }
 
         $queries = $this->queryAnalyzer->getExecutedQueries();
@@ -113,14 +116,20 @@ class QuoteRepositoryTest extends WebTestCase
         $query = reset($queries);
 
         $quoteProductMetadata = $this->em->getClassMetadata(QuoteProduct::class);
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             sprintf('LEFT JOIN %s', $quoteProductMetadata->getTableName()),
             $query
         );
 
         $quoteProductOfferMetadata = $this->em->getClassMetadata(QuoteProductOffer::class);
-        static::assertStringContainsString(
+        self::assertStringContainsString(
             sprintf('LEFT JOIN %s', $quoteProductOfferMetadata->getTableName()),
+            $query
+        );
+
+        $quoteProductKitItemLineItemMetadata = $this->em->getClassMetadata(QuoteProductKitItemLineItem::class);
+        self::assertStringContainsString(
+            sprintf('LEFT JOIN %s', $quoteProductKitItemLineItemMetadata->getTableName()),
             $query
         );
     }

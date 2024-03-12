@@ -3,18 +3,23 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use PHPUnit\Framework\TestCase;
 
-class RequestProductItemTest extends \PHPUnit\Framework\TestCase
+class RequestProductItemTest extends TestCase
 {
     use EntityTestCaseTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
+        $checksum = sha1('sample-line-item');
         $properties = [
             ['id', 123],
             ['requestProduct', new RequestProduct()],
@@ -22,76 +27,118 @@ class RequestProductItemTest extends \PHPUnit\Framework\TestCase
             ['productUnit', new ProductUnit()],
             ['productUnitCode', 'unit-code'],
             ['price', new Price()],
+            ['checksum', $checksum],
         ];
 
-        static::assertPropertyAccessors(new RequestProductItem(), $properties);
+        $entity = new RequestProductItem();
+        self::assertPropertyAccessors($entity, $properties);
     }
 
-    public function testGetEntityIdentifier()
+    public function testKitItemLineItems(): void
+    {
+        $requestProductItem = new RequestProductItem();
+
+        self::assertCount(0, $requestProductItem->getKitItemLineItems());
+
+        $requestProduct = new RequestProduct();
+        $requestProductItem->setRequestProduct($requestProduct);
+
+        self::assertCount(0, $requestProductItem->getKitItemLineItems());
+
+        $productKitItem = new ProductKitItemStub(42);
+        $kitItemLineItem = (new RequestProductKitItemLineItem())
+            ->setKitItem($productKitItem);
+
+        $requestProduct->addKitItemLineItem($kitItemLineItem);
+
+        self::assertEquals(
+            [$productKitItem->getId() => (clone $kitItemLineItem)->setLineItem($requestProductItem)],
+            $requestProductItem->getKitItemLineItems()->toArray()
+        );
+    }
+
+    public function testGetEntityIdentifier(): void
     {
         $item = new RequestProductItem();
         $value = 321;
         ReflectionUtil::setId($item, $value);
-        $this->assertSame($value, $item->getEntityIdentifier());
+        self::assertSame($value, $item->getEntityIdentifier());
     }
 
-    public function testGetProductHolder()
+    public function testGetProductHolder(): void
     {
         $requestProduct = new RequestProduct();
 
         $item = new RequestProductItem();
         $item->setRequestProduct($requestProduct);
 
-        $this->assertSame($requestProduct, $item->getProductHolder());
+        self::assertSame($requestProduct, $item->getProductHolder());
     }
 
-    public function testSetProductUnit()
+    public function testSetProductUnit(): void
     {
-        $productUnit        = (new ProductUnit())->setCode('rfp-unit-code');
+        $productUnit = (new ProductUnit())->setCode('rfp-unit-code');
         $requestProductItem = new RequestProductItem();
 
-        $this->assertNull($requestProductItem->getProductUnitCode());
+        self::assertNull($requestProductItem->getProductUnitCode());
 
         $requestProductItem->setProductUnit($productUnit);
 
-        $this->assertEquals($productUnit->getCode(), $requestProductItem->getProductUnitCode());
+        self::assertEquals($productUnit->getCode(), $requestProductItem->getProductUnitCode());
     }
 
-    public function testSetPrice()
+    public function testSetPrice(): void
     {
         $price = Price::create(22, 'EUR');
 
         $item = new RequestProductItem();
         $item->setPrice($price);
 
-        $this->assertEquals($price, $item->getPrice());
+        self::assertEquals($price, $item->getPrice());
 
-        $this->assertEquals(22, ReflectionUtil::getPropertyValue($item, 'value'));
-        $this->assertEquals('EUR', ReflectionUtil::getPropertyValue($item, 'currency'));
+        self::assertEquals(22, ReflectionUtil::getPropertyValue($item, 'value'));
+        self::assertEquals('EUR', ReflectionUtil::getPropertyValue($item, 'currency'));
+
+        $item->setValue(34.5678);
+        self::assertEquals(Price::create(34.5678, 'EUR'), $item->getPrice());
+
+        $item->setCurrency('USD');
+        self::assertEquals(Price::create(34.5678, 'USD'), $item->getPrice());
     }
 
-    public function testLoadPrice()
+    public function testSetPriceWhenInvalid(): void
+    {
+        $entity = new OrderProductKitItemLineItem();
+
+        $price = Price::create('foobar', 'USD');
+        $entity->setPrice($price);
+        self::assertSame($price->getCurrency(), $entity->getCurrency());
+        self::assertSame(0.0, $entity->getValue());
+        self::assertSame($price, $entity->getPrice());
+    }
+
+    public function testLoadPrice(): void
     {
         $item = new RequestProductItem();
 
-        $this->assertNull($item->getPrice());
+        self::assertNull($item->getPrice());
 
         ReflectionUtil::setPropertyValue($item, 'value', 10);
         ReflectionUtil::setPropertyValue($item, 'currency', 'USD');
 
         $item->loadPrice();
 
-        $this->assertEquals(Price::create(10, 'USD'), $item->getPrice());
+        self::assertEquals(Price::create(10, 'USD'), $item->getPrice());
     }
 
-    public function testUpdatePrice()
+    public function testUpdatePrice(): void
     {
         $item = new RequestProductItem();
         $item->setPrice(Price::create(11, 'EUR'));
 
         $item->updatePrice();
 
-        $this->assertEquals(11, ReflectionUtil::getPropertyValue($item, 'value'));
-        $this->assertEquals('EUR', ReflectionUtil::getPropertyValue($item, 'currency'));
+        self::assertEquals(11, ReflectionUtil::getPropertyValue($item, 'value'));
+        self::assertEquals('EUR', ReflectionUtil::getPropertyValue($item, 'currency'));
     }
 }

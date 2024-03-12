@@ -11,18 +11,15 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class RemoveInvoiceEntityConfig implements Migration
 {
-    public function up(Schema $schema, QueryBag $queries)
-    {
-        self::removeInvoiceEntityConfig($queries);
-    }
-
-    public static function removeInvoiceEntityConfig(QueryBag $queries)
+    /**
+     * {@inheritDoc}
+     */
+    public function up(Schema $schema, QueryBag $queries): void
     {
         $classNames = [
             'Oro\Bundle\InvoiceBundle\Entity\Invoice',
             'Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem',
         ];
-
         foreach ($classNames as $className) {
             if (!class_exists($className, false)) {
                 $queries->addQuery(new RemoveTableQuery($className));

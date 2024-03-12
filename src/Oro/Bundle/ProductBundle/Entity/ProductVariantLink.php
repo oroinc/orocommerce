@@ -2,74 +2,38 @@
 
 namespace Oro\Bundle\ProductBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 
 /**
  * Entity class describe data in table oro_product_variant_link
- * @ORM\Entity
- * @ORM\Table(name="oro_product_variant_link")
- * @Config
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_product_variant_link')]
+#[Config]
 class ProductVariantLink
 {
-    /**
-     * @var integer
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $id = null;
 
-    /**
-     * @var Product
-     * @ORM\ManyToOne(targetEntity="Product", inversedBy="variantLinks")
-     * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false))
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $parentProduct;
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'variantLinks')]
+    #[ORM\JoinColumn(name: 'parent_product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?Product $parentProduct = null;
 
-    /**
-     * @var Product
-     * @ORM\ManyToOne(targetEntity="Product", inversedBy="parentVariantLinks")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=10,
-     *              "identity"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $product;
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'parentVariantLinks')]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 10, 'identity' => true]])]
+    protected ?Product $product = null;
 
-    /**
-     * @var bool
-     * @ORM\Column(name="visible", type="boolean", nullable=false, options={"default"=true})
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=20
-     *          }
-     *      }
-     * )
-     */
-    protected $visible = true;
+    #[ORM\Column(name: 'visible', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 20]])]
+    protected ?bool $visible = true;
 
     public function __construct(Product $parentProduct = null, Product $product = null)
     {

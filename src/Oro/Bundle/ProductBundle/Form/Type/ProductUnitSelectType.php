@@ -22,10 +22,7 @@ class ProductUnitSelectType extends AbstractProductAwareType
      */
     private $entityClass;
 
-    /**
-     * @var UnitLabelFormatterInterface
-     */
-    private $productUnitFormatter;
+    private UnitLabelFormatterInterface $productUnitFormatter;
 
     public function __construct(UnitLabelFormatterInterface $productUnitLabelFormatter)
     {

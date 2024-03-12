@@ -4,3 +4,8 @@ services:
         decorates: oro_entity.tests.entity_name_resolver.data_loader
         arguments:
             - '@.inner'
+
+    oro_rfp.tests.product_kit.factory.request_product_kit_item_line_item:
+        parent: oro_rfp.product_kit.factory.request_product_kit_item_line_item
+        decorates: oro_rfp.product_kit.factory.request_product_kit_item_line_item
+        public: true

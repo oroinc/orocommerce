@@ -95,64 +95,110 @@
 
 {% block __oro_rfp_frontend_request_edit__rfp_form_actions_back_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' btn'
+        '~class': ' btn btn--outlined'
     }) %}
     {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
 
 {% block __oro_rfp_frontend_request_edit__rfp_form_lineitems_container_widget %}
-    <div data-page-component-view="{{ {
-             view: 'ororfp/js/app/views/line-items-view',
-             tierPrices: tierPrices|default({}),
-             tierPricesRoute: 'oro_pricing_frontend_price_by_customer'
-         }|json_encode }}">
+    {% import '@OroUI/macros.html.twig' as UI %}
+    <div data-role="request-product-collection"
+         data-layout="separate"
+            {{ UI.renderPageComponentAttributes({
+                module: 'oroui/js/app/components/view-component',
+                options: {
+                    view: 'ororfp/js/app/views/frontend-request-product-collection-view'
+                }
+            }) }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block __oro_rfp_frontend_request_edit__rfp_form_lineitems_view_js_widget %}
-    <script type="text/template" id="rfp-form-line-item-view-template">
-        <% _.each(lines, function(line, index){ %>
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    <script type="text/template" id="request-product-view-mode-template">
+        <% if (!_.isEmpty(_.trim(requestProduct.productId))) { %>
             <div class="request-form-product__inner">
-                <% if (!index) { %>
                 <div class="request-form-product__item request-form-product__item--link">
-                    <span class="request-form-link"><%- product['defaultName.string'] %></span>
-                </div>
-                <% } %>
-                <div class="request-form-product__item request-form-product__item--quantity">
-                    <span class="request-form-quantity">
-                        <span class="request-form-quantity__label">{{ 'oro.rfp.frontend.request.lineitem.qty'|trans|e('html')|raw }}:</span>
-                        <span class="request-form-quantity__total"><%- line.quantity %></span>
-                        <span class="request-form-quantity__units"><%- _.__('oro.product.product_unit.' + line.unit + '.label.full') %></span>
+                    <span class="request-form-link">
+                        <a href="<%- routing.generate('oro_product_frontend_product_view', {id: requestProduct.productId}) %>" target="_blank"><%- requestProduct.productSku %> - <%- requestProduct.productName %></a>
                     </span>
-                </div>
-                <div class="request-form-product__item request-form-product__item--target">
-                    <dl class="request-form-amount">
-                        <dt class="request-form-amount__piece">
-                            <span class="request-form-amount__label">{{ 'oro.rfp.requestproductitem.price.label'|trans|e('html')|raw }}</span>
-                            <span class="request-form-amount__total"><%- formatter.formatCurrency(line.price, line.currency) %></span>
-                        </dt>
-                    </dl>
-                </div>
-                <div class="request-form-product__item request-form-product__item--listed">
-                    <dl class="request-form-amount">
-                        <dt class="request-form-amount__piece">
-                            <span class="request-form-amount__label">{{ 'oro.pricing.frontend.pricelist.index.listed_price'|trans|e('html')|raw }}</span>
-                            <span class="request-form-amount__total">
-                            <% if (line.found_price) { %>
-                                <%- formatter.formatCurrency(line.found_price.price, line.currency) %>
-                            <% } else { %>
-                                <%- _.__("N/A") %>
-                            <% } %>
-                            </span>
-                        </dt>
-                    </dl>
+
+                    <% if (requestProduct.productType === 'kit') { %>
+                        <div data-role="request-product-kit-configuration-view" class="product-kit-line-items">
+                            <% _.each(kitItemLineItems, function(kitItemLineItem, index){ %>
+                                <div class="hide-on-empty"
+                                     data-role="request-product-kit-item-line-item"
+                                     data-page-component-view="ororfp/js/app/views/frontend-request-product-kit-item-line-item-content-view"
+                                     data-page-component-options="<%- JSON.stringify({modelAttr: kitItemLineItem}) %>">
+                                    <div data-role="request-product-kit-item-line-item-view"></div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    <% } %>
                 </div>
             </div>
-        <% }) %>
-        <% if (!_.isEmpty(_.trim(comment))) { %>
-            <div class="request-form-product__item request-form-product__item--comment">
-                <p class="request-form-note">{{ 'oro.rfp.requestproductitem.note.label'|trans }}: <%- comment %></p>
+            <div class="request-form-product__inner request-form-product__inner--info">
+                <% _.each(requestProductItems, function(requestProductItem, index){ %>
+                    <div class="request-form-product__line">
+                        <div class="request-form-product__item request-form-product__item--quantity">
+                            <span class="request-form-quantity">
+                                <span class="request-form-quantity__label">{{ 'oro.rfp.frontend.request.lineitem.qty'|trans|e('html')|raw }}:</span>
+                                <span class="request-form-quantity__total"><%- numberFormatter.formatDecimal(requestProductItem.quantity) %></span>
+                                <span class="request-form-quantity__units"><%- _.__('oro.product.product_unit.' + requestProductItem.productUnit + '.label.full') %></span>
+                            </span>
+                        </div>
+                        <div class="request-form-product__item request-form-product__item--target">
+                            <dl class="request-form-amount">
+                                <dt class="request-form-amount__piece">
+                                    <span class="request-form-amount__label">{{ 'oro.rfp.requestproductitem.price.label'|trans|e('html')|raw }}</span>
+                                    <span class="request-form-amount__total"><%- numberFormatter.formatCurrency(numberFormatter.unformatStrict(requestProductItem.price), requestProductItem.currency) %></span>
+                                </dt>
+                            </dl>
+                        </div>
+                        <div class="request-form-product__item request-form-product__item--listed">
+                            <dl class="request-form-amount">
+                                <dt class="request-form-amount__piece">
+                                    <span class="request-form-amount__label">{{ 'oro.pricing.frontend.pricelist.index.listed_price'|trans|e('html')|raw }}</span>
+                                    <span class="request-form-amount__total">
+                                        <% if (requestProductItem.matchingPrice) { %>
+                                            <%- numberFormatter.formatCurrency(requestProductItem.matchingPrice, requestProductItem.currency) %>
+                                        <% } else { %>
+                                            <%- _.__("N/A") %>
+                                        <% } %>
+                                        </span>
+                                </dt>
+                            </dl>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+
+            <% if (!_.isEmpty(_.trim(requestProduct.comment))) { %>
+                <div class="request-form-product__item request-form-product__item--comment">
+                    <p class="request-form-note">{{ 'oro.rfp.requestproductitem.note.label'|trans }}: <%- requestProduct.comment %></p>
+                </div>
+            <% } %>
+        <% } %>
+    </script>
+{% endblock %}
+
+{% block __oro_rfp_frontend_request_edit__rfp_form_kititemlineitem_view_js_widget %}
+    <script type="text/template" id="rfp-request-product-kit-item-view-template">
+        <% if (!kitItemLineItem.isPendingRemove && (kitItemLineItem.productId || !kitItemLineItem.isValid)) { %>
+            <div class="product-kit-line-items__item">
+                <div>
+                    <span class="product-kit-line-items__item-name"><%- kitItemLineItem.kitItemLabel %></span>
+                    <span class="product-kit-line-items__item-quantity"><%- numberFormatter.formatDecimal(kitItemLineItem.quantity) %> <%- _.__('oro.product.product_unit.' + kitItemLineItem.productUnit + '.label.full') %></span>
+                </div>
+                <% if (kitItemLineItem.productSku !== '') { %>
+                    <% if (kitItemLineItem.isVisible) { %>
+                        <a href="<%- routing.generate('oro_product_frontend_product_view', {id: kitItemLineItem.productId}) %>" target="_blank"><%- kitItemLineItem.productSku %> - <%- kitItemLineItem.productName %></a>
+                    <% } else { %>
+                        <%- kitItemLineItem.productSku %> - <%- kitItemLineItem.productName %>
+                    <% } %>
+                <% } %>
             </div>
         <% } %>
     </script>

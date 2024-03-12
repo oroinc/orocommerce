@@ -3,23 +3,23 @@
 $checkout-padding: 24px !default;
 $checkout-padding-narrow: 12px 8px !default;
 $checkout-border-radius: $base-ui-element-border-radius !default;
-$checkout-background-color: get-color('additional', 'base') !default;
+$checkout-background-color: get-color('neutral', 'grey1') !default;
 
 $checkout-title-badge-size: 32px !default;
 $checkout-title-badge-font-size: $badge-font-size !default;
-$checkout-title-badge-offset: $offset-x-m !default;
+$checkout-title-badge-offset: spacing('sm') !default;
 
 $checkout-head-position: relative !default;
-$checkout-head-margin: 0 0 $offset-y !default;
+$checkout-head-margin: 0 0 spacing('base') !default;
 
-$checkout-approval-note-margin: $offset-x 0 0 !default;
+$checkout-approval-note-margin: spacing('base') 0 0 !default;
 
 $checkout-summary-grid-container-shadow-background: linear-gradient(
     to bottom, rgba(245 245 245 / 0%) 0%, rgba(245 245 245 / 100%) 100%
 ) !default;
 
 // Tablet
-$checkout-tablet-padding: $offset-y !default;
+$checkout-tablet-padding: spacing('base') !default;
 $checkout-tablet-border-radius: 0 !default;
 
 $checkout-submit-tooltip-left: auto !default;

@@ -78,4 +78,4 @@ Feature: Limit product filters and sorters in product catalog
 
   Scenario: Check that sorter "Relevance" is present and applied
     Given I should see "Relevance" in the "Frontend Product Grid Sorter" element
-    And should see "Sorted By: Relevance"
+    And should see "Sort By: Relevance"

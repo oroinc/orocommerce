@@ -2,15 +2,14 @@
     {% import _self as buttons %}
     {% set options = {
         defaultLabel: 'oro.shoppinglist.entity_label'|trans,
-        actionLabel: 'oro.shoppinglist.actions.add_to_shopping_list'|trans
+        actionLabel: 'oro.shoppinglist.actions.add_to_shopping_list_short'|trans
     }|merge(options) %}
     {{ buttons.getButton(options) }}
 {% endmacro %}
-
 {% macro addToButton(options) -%}
     {% import _self as buttons %}
     {% set options = {
-        actionLabel: 'oro.shoppinglist.actions.add_to_shopping_list'|trans
+        actionLabel: 'oro.shoppinglist.actions.add_to_shopping_list_short'|trans
     }|merge(options) %}
     {{ buttons.getButton(options) }}
 {% endmacro %}
@@ -40,13 +39,13 @@
 {% endmacro %}
 
 {% macro getButton(options) %}
-    {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroUI/layouts/macros.html.twig' as UI %}
 
     {% set options = {
         shoppingList: null,
         defaultLabel: '',
         ariaLabel: null,
-        btnCss: 'btn--info',
+        btnCss: '',
         dataAttributes: {}
     }|merge(options) %}
 
@@ -63,21 +62,15 @@
         'type': options.type|default('submit'),
         'dataAttributes': dataAttributes,
         'btnCss': 'btn btn--block btn-main add-to-shopping-list-button ' ~ options.btnCss,
-        'moreButtonExtraClass': 'btn--action',
+        'moreButtonExtraClass': '',
         'dataId': shoppingListId,
-        'label' : options.actionLabel|replace({
-            '{{ shoppingList }}': shoppingListLabel
-        })
+        'label': options.actionLabel,
+        'entityName': shoppingListLabel
     } %}
 
-    {% if options.iCss is defined %}
+    {% if options.iconName is defined %}
         {% set buttonOptions = buttonOptions|merge({
-            'iCss': options.iCss
-        }) %}
-    {% endif %}
-    {% if options.labelInIcon is defined %}
-        {% set buttonOptions = buttonOptions|merge({
-            'labelInIcon': options.labelInIcon
+            'iconName': options.iconName
         }) %}
     {% endif %}
     {% if options.ariaLabel %}
@@ -110,7 +103,7 @@
     {% import '@OroUI/macros.html.twig' as UI %}
     {% import _self as buttons %}
     {% set isShoppingListCreateEnabled =  (options.shoppingListCreateEnabled ?? true and feature_enabled('shopping_list_create') and is_granted('oro_shopping_list_frontend_create')) %}
-    {% set showSingleAddToShoppingListButton = isShoppingListCreateEnabled or not app.user %}
+    {% set showSingleAddToShoppingListButton = isShoppingListCreateEnabled or not is_authenticated() %}
     {% set shoppingListRemoveEnabled = options.shoppingListRemoveEnabled is defined ? options.shoppingListRemoveEnabled : true %}
     {% set shoppingListUpdateEnabled = options.shoppingListUpdateEnabled is defined ? options.shoppingListUpdateEnabled : true %}
     {% set shoppingListAddToEnabled = options.shoppingListAddToEnabled is defined ? options.shoppingListAddToEnabled : true %}

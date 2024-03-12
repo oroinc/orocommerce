@@ -12,7 +12,7 @@
         {% if product.isConfigurable %}
             {% set routeOptions = routeOptions|merge({'variantProductId': record.getRootEntity().product.id}) %}
         {% endif %}
-        <a href="{{ path('oro_product_frontend_product_view', routeOptions) }}">{{ product.names|localized_value|e }}</a>
+        <a class="no-decoration" href="{{ path('oro_product_frontend_product_view', routeOptions) }}">{{ product.names|localized_value|e }}</a>
     {% else %}
         {{ record.getValue('productName') }}
     {% endif %}

@@ -19,6 +19,8 @@ class DatagridKitLineItemsDataListenerTest extends TestCase
 {
     private EventDispatcherInterface|MockObject $eventDispatcher;
 
+    private DatagridKitLineItemsDataListener $listener;
+
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

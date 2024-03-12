@@ -14,6 +14,7 @@ use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationT
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -63,7 +64,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($this->context);
 
         $organization = $this->getReference('organization');
-        $token = new UsernamePasswordOrganizationToken('user', 'password', 'key', $organization);
+        $token = new UsernamePasswordOrganizationToken($this->createMock(UserInterface::class), 'key', $organization);
         $this->getContainer()->get('security.token_storage')->setToken($token);
     }
 

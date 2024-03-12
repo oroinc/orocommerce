@@ -1,24 +1,12 @@
 services:
-    Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener: '@oro_product.product_kit.event_listener.product_status_listener'
-    oro_product.product_kit.event_listener.product_status_listener:
-        class: Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener
+    Oro\Bundle\ProductBundle\ProductKit\EventListener\StatusListener: '@oro_product.product_kit.event_listener.status_listener'
+    oro_product.product_kit.event_listener.status_listener:
+        class: Oro\Bundle\ProductBundle\ProductKit\EventListener\StatusListener
         arguments:
-            - '@doctrine'
             - '@oro_product.product_kit.resolver.product_kit_status_resolver'
             - '@oro_product.product_kit.resolver.product_kit_inventory_status_resolver'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\Product, event: preUpdate, method: preUpdateProduct }
-            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\Product, event: postPersist, method: postPersistProduct }
-            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\Product, event: preRemove, method: preRemoveProduct }
-
-            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem, event: postPersist, method: postPersistProductKitItem }
-            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem, event: preUpdate, method: preUpdateProductKitItem }
-            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItem, event: preRemove, method: preRemoveProductKitItem }
-
-            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, event: postPersist, method: postPersistProductKitItemProduct }
-            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, event: preUpdate, method: preUpdateProductKitItemProduct }
-            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, event: preRemove, method: preRemoveProductKitItemProduct }
-
+            - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.event_listener, event: postFlush }
             - { name: doctrine.event_listener, event: onClear }
 
@@ -33,3 +21,37 @@ services:
         class: Oro\Bundle\ProductBundle\ProductKit\Resolver\ProductKitInventoryStatusResolver
         arguments:
             - '@doctrine'
+
+    oro_product.event_listener.website_search_reindex_product_kit:
+        class: Oro\Bundle\ProductBundle\ProductKit\EventListener\WebsiteSearchReindexProductKitListener
+        arguments:
+            - '@oro_website.indexation_entities_container'
+            - '@event_dispatcher'
+            - '@doctrine'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: onClear }
+            - { name: kernel.event_listener, event: oro_website_search.reindexation_request, method: onReindexationRequest }
+
+    oro_product.event_listener.search_product_kit:
+        class: Oro\Bundle\ProductBundle\ProductKit\EventListener\SearchProductKitListener
+        arguments:
+            - '@oro_search.mapper'
+            - '@oro_search.async.indexer'
+            - '@doctrine'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
+            - { name: kernel.event_listener, event: oro_search.before_index_entities, method: beforeIndexEntities }
+            - { name: kernel.event_listener, event: oro_search.prepare_entity_map, method: prepareEntityMapEvent }
+
+    oro_product.acl.product_voter:
+        class: Oro\Bundle\ProductBundle\Acl\Voter\ProductVoter
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_product.provider.product_kits_by_product'
+        calls:
+            - [ setClassName, [ 'Oro\Bundle\ProductBundle\Entity\Product' ] ]
+        tags:
+            - { name: security.voter }

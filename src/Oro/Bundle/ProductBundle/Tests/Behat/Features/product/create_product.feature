@@ -69,7 +69,7 @@ Feature: Create product
     When I save form
     Then I should see "Please remove not permitted HTML-tags in the content field: - \"src\" attribute on \"<iframe>\" should be removed (near <iframe src=" error message
     When fill "Create Product Form" with:
-      | Description | Sample content <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(13, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a> |
+      | Description | Sample content <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(57, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(57, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a> |
     And I save form
     Then I should see "Product has been saved" flash message
     And I should not see text matching "\{\{ wysiwyg_image\(" in WYSIWYG editor
@@ -117,7 +117,7 @@ Feature: Create product
     Given I proceed as the Admin
     And I click "Edit"
     When fill "Product Form" with:
-      | Description | Sample content <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(13, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a> Another image: <img alt=\"cat2_wysiwyg_image\" src=\"{{ wysiwyg_image(14, 'c840eec3-4b10-4682-b5cd-4d51fe008b6f') }}\"/> |
+      | Description | Sample content <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(57, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(57, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a> Another image: <img alt=\"cat2_wysiwyg_image\" src=\"{{ wysiwyg_image(14, 'c840eec3-4b10-4682-b5cd-4d51fe008b6f') }}\"/> |
     And I save form
     Then I should not see text matching "\{\{ wysiwyg_image\(" in WYSIWYG editor
     And I should not see text matching "\{\{ wysiwyg_file\(" in WYSIWYG editor

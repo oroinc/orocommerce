@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -175,7 +176,7 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
         $token
             ->expects(self::once())
             ->method('getUser')
-            ->willReturn('Anonymous Customer User');
+            ->willReturn($this->createMock(UserInterface::class));
 
         $this->tokenAccessor
             ->expects(self::once())
@@ -222,7 +223,7 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
         $token
             ->expects(self::once())
             ->method('getUser')
-            ->willReturn('Anonymous Customer User');
+            ->willReturn($this->createMock(UserInterface::class));
 
         $this->tokenAccessor
             ->expects(self::once())
@@ -387,7 +388,7 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
         $token
             ->expects(self::once())
             ->method('getUser')
-            ->willReturn('Anonymous Customer User');
+            ->willReturn($this->createMock(UserInterface::class));
 
         $this->tokenAccessor
             ->expects(self::once())
@@ -489,7 +490,7 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
         $token
             ->expects(self::once())
             ->method('getUser')
-            ->willReturn('Anonymous Customer User');
+            ->willReturn($this->createMock(UserInterface::class));
 
         $this->tokenAccessor
             ->expects(self::once())

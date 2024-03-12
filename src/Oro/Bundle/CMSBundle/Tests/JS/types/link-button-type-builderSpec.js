@@ -71,7 +71,7 @@ describe('orocms/js/app/grapesjs/types/link-block', () => {
 
             expect(linkButtonTypeBuilder.Model.prototype.defaults.tagName).toEqual('a');
             expect(linkButtonTypeBuilder.Model.prototype.defaults.classes).toEqual(
-                ['btn', 'btn--info']
+                ['btn', 'btn--outlined']
             );
 
             expect(linkButtonTypeBuilder.Model.prototype.editor).toBeDefined();
@@ -99,7 +99,7 @@ describe('orocms/js/app/grapesjs/types/link-block', () => {
 
             it('check "toHTML"', () => {
                 expect(linkBlockComponent.toHTML()).toEqual(
-                    '<a id="test" class="btn btn--info">oro.cms.wysiwyg.component.link_button.content</a>'
+                    '<a id="test" class="btn btn--outlined">oro.cms.wysiwyg.component.link_button.content</a>'
                 );
             });
 
@@ -114,13 +114,13 @@ describe('orocms/js/app/grapesjs/types/link-block', () => {
 
                 expect(linkBlockComponent.toHTML()).toEqual(
                     // eslint-disable-next-line
-                    '<a id="test" href="http://test.link" title="Link title" target="_blank" class="btn btn--info">oro.cms.wysiwyg.component.link_button.content</a>'
+                    '<a id="test" href="http://test.link" title="Link title" target="_blank" class="btn btn--outlined">oro.cms.wysiwyg.component.link_button.content</a>'
                 );
             });
 
             it('check "getAttributes"', () => {
                 expect(linkBlockComponent.getAttrToHTML()).toEqual({
-                    'class': 'btn btn--info',
+                    'class': 'btn btn--outlined',
                     'id': 'test'
                 });
             });

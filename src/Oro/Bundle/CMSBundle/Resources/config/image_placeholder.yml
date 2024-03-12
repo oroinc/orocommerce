@@ -15,3 +15,8 @@ services:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+
+    oro_cms.provider.image_slider_image_placeholder.default:
+        parent: oro_layout.provider.image_placeholder.default.abstract
+        arguments:
+            - 'bundles/orocms/images/no_image.png'

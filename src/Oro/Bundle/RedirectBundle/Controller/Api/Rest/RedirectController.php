@@ -24,7 +24,7 @@ class RedirectController extends AbstractFOSRestController
      */
     public function slugifyAction($string)
     {
-        $slug = ['slug' => $this->get('oro_entity_config.slug.generator')->slugify($string)];
+        $slug = ['slug' => $this->container->get('oro_entity_config.slug.generator')->slugify($string)];
         return new Response(json_encode($slug), Response::HTTP_OK);
     }
 }

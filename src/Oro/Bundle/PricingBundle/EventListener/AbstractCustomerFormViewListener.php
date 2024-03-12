@@ -95,7 +95,8 @@ abstract class AbstractCustomerFormViewListener implements FeatureToggleableInte
             '@OroPricing/Customer/price_list_view.html.twig',
             [
                 'priceLists' => $priceLists,
-                'fallback' => $fallback
+                'fallback' => $fallback,
+                'entity' => $event->getEntity()
             ]
         );
 

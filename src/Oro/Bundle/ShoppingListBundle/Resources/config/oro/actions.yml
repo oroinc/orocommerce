@@ -178,8 +178,6 @@ operations:
             - oro_shopping_list_frontend_update
         acl_resource: oro_rfp_frontend_request_create
         order: 220
-        button_options:
-            icon: fa-briefcase
         frontend_options:
             confirmation:
                 title: oro.shoppinglist.create_rfp_confirmation.title
@@ -188,6 +186,8 @@ operations:
                 cancelText: oro.shoppinglist.create_rfp_confirmation.cancel_button_title
                 hasEmptyMatrix: $.result.shoppingListHasEmptyMatrix
                 component: oroshoppinglist/js/shoppinglist-request-quote-confirmation
+            options:
+                icon: briefcase
         preactions:
             - '@call_service_method':
                 service: oro_shopping_list.manager.empty_matrix_grid
@@ -246,7 +246,7 @@ operations:
         entities:
             - Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
         button_options:
-            class: btn--action
+            class: btn--outlined
         preactions:
             - '@call_service_method':
                 attribute: $.result.isOneShoppingList
@@ -285,7 +285,7 @@ operations:
         routes:
             - oro_shopping_list_view
         button_options:
-            class: btn--action icons-holder-text
+            class: btn--outlined icons-holder-text
             icon: fa-clone
         preactions:
             - '@assign_value': [$.createEnabledForCustomerUser, false]

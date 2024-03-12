@@ -20,6 +20,7 @@ class MultiShippingMethodTest extends \PHPUnit\Framework\TestCase
         $this->shippingMethod = new MultiShippingMethod(
             self::IDENTIFIER,
             self::LABEL,
+            self::LABEL,
             self::ICON,
             true,
             $this->createMock(RoundingServiceInterface::class),
@@ -40,6 +41,11 @@ class MultiShippingMethodTest extends \PHPUnit\Framework\TestCase
     public function testGetIdentifier()
     {
         $this->assertEquals(self::IDENTIFIER, $this->shippingMethod->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $this->assertEquals(self::LABEL, $this->shippingMethod->getName());
     }
 
     public function testGetLabel()

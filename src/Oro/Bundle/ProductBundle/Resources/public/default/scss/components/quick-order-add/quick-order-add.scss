@@ -67,14 +67,7 @@
 
     &__remove-row {
         position: absolute;
-        bottom: 11px;
-        right: -28px;
-
-        @include fa-icon($fa-var-close, before, true) {
-            font-size: $base-font-size--m;
-
-            cursor: pointer;
-        }
+        right: -44px;
     }
 
     &__fields {
@@ -91,7 +84,7 @@
         @include clearfix();
 
         &:first-child {
-            padding-bottom: $offset-y;
+            padding-bottom: spacing('base');
 
             border-bottom: $quick-order-add-buttons-first-child-border-bottom;
         }
@@ -111,7 +104,7 @@
 
         .btn-group {
             // override platform styles
-            margin-left: $offset-x-m;
+            margin-left: spacing('sm');
 
             .btn-group {
                 margin: 0;
@@ -196,12 +189,6 @@
             .quick-order-add__col::before {
                 display: block;
             }
-        }
-
-        &__remove-row {
-            bottom: auto;
-            top: -2px;
-            right: 0;
         }
 
         &__error,

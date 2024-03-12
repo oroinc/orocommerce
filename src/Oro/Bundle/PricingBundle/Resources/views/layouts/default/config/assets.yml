@@ -2,7 +2,7 @@ styles:
     inputs:
         - 'bundles/oropricing/default/scss/variables/product-price-filter-config.scss'
         - 'bundles/oropricing/default/scss/variables/product-price-config.scss'
-        - 'bundles/oropricing/default/scss/variables/product-prices-config.scss'
+        - 'bundles/oropricing/default/scss/variables/product-prices-table-config.scss'
         - 'bundles/oropricing/default/scss/variables/product-totals-config.scss'
         - 'bundles/oropricing/default/scss/variables/product-price-hint-config.scss'
         - 'bundles/oropricing/default/scss/variables/product-price-hint-btn-config.scss'
@@ -12,6 +12,6 @@ styles:
         - 'bundles/oropricing/default/scss/components/product-price-hint-btn.scss'
         - 'bundles/oropricing/default/scss/components/product-price-filter.scss'
         - 'bundles/oropricing/default/scss/components/product-totals.scss'
-        - 'bundles/oropricing/default/scss/components/product-prices.scss'
+        - 'bundles/oropricing/default/scss/components/product-prices-table.scss'
         - 'bundles/oropricing/default/scss/components/product-price.scss'
         - 'bundles/oropricing/default/scss/components/quick-order-add.scss'

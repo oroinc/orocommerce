@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Async;
 
+use Oro\Bundle\MessageQueueBundle\Client\BufferedMessageProducer;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexGranulizedTopic;
 use Oro\Bundle\WebsiteSearchBundle\Async\Topic\WebsiteSearchReindexTopic;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
@@ -35,6 +36,8 @@ class WebsiteSearchReindexProcessor implements MessageProcessorInterface, TopicS
 
     private EventDispatcherInterface $eventDispatcher;
 
+    private int $messagesBufferSize = 10000;
+
     public function __construct(
         MessageProcessorInterface $delayedJobRunnerProcessor,
         WebsiteSearchReindexGranulizedProcessor $websiteSearchReindexGranulizedProcessor,
@@ -47,6 +50,11 @@ class WebsiteSearchReindexProcessor implements MessageProcessorInterface, TopicS
         $this->reindexMessageGranularizer = $reindexMessageGranularizer;
         $this->messageProducer = $messageProducer;
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    public function setMessagesBufferSize(int $messagesBufferSize): void
+    {
+        $this->messagesBufferSize = $messagesBufferSize;
     }
 
     public static function getSubscribedTopics(): array
@@ -88,7 +96,7 @@ class WebsiteSearchReindexProcessor implements MessageProcessorInterface, TopicS
             ->process($class, $this->getContextWebsiteIds($context), $context);
 
         $firstMessageBody = [];
-        foreach ($childMessages as $childMessageBody) {
+        foreach ($childMessages as $i => $childMessageBody) {
             if ($firstMessageBody === []) {
                 // Adds the first message body to a buffer to check if it is the only one - to process instantly.
                 $firstMessageBody = $childMessageBody;
@@ -98,12 +106,16 @@ class WebsiteSearchReindexProcessor implements MessageProcessorInterface, TopicS
             if ($firstMessageBody) {
                 // Sends the first message body to MQ as there is definitely the second one
                 // because we reached 2nd iteration.
-                $this->messageProducer->send(WebsiteSearchReindexGranulizedTopic::getName(), $firstMessageBody);
+                $this->sendMessage(WebsiteSearchReindexGranulizedTopic::getName(), $firstMessageBody, $i);
                 // Clears a buffer as we don't need it anymore.
                 $firstMessageBody = null;
             }
 
-            $this->messageProducer->send(WebsiteSearchReindexGranulizedTopic::getName(), $childMessageBody);
+            $this->sendMessage(WebsiteSearchReindexGranulizedTopic::getName(), $childMessageBody, $i);
+        }
+
+        if ($this->isMessageBufferingEnabled()) {
+            $this->messageProducer->flushBuffer();
         }
 
         if ($firstMessageBody) {
@@ -121,5 +133,19 @@ class WebsiteSearchReindexProcessor implements MessageProcessorInterface, TopicS
     {
         $event = new BeforeReindexEvent($class, $context);
         $this->eventDispatcher->dispatch($event, BeforeReindexEvent::EVENT_NAME);
+    }
+
+    private function sendMessage(string $topic, array $message, int $index): void
+    {
+        $this->messageProducer->send($topic, $message);
+        if ($index % $this->messagesBufferSize === 0 && $this->isMessageBufferingEnabled()) {
+            $this->messageProducer->flushBuffer();
+        }
+    }
+
+    private function isMessageBufferingEnabled(): bool
+    {
+        return  $this->messageProducer instanceof BufferedMessageProducer
+            && $this->messageProducer->isBufferingEnabled();
     }
 }

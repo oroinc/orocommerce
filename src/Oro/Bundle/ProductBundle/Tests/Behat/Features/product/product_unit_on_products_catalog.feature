@@ -5,14 +5,14 @@ Feature: Product Unit On Products Catalog
 
     Scenario: Create session
         Given I signed in as AmandaRCole@example.org on the store frontend
-        And I click "NewCategory"
+        And I click "NewCategory" in hamburger menu
     
     Scenario: Unit label when product have only one unit
         Given I should see "SKU1"
         When I should see "ProductUnitLabel" for "SKU1" product
-        Then I should not see "ProductUnitSelect" for "SKU1" product
+        Then I should see product unit selector as "single" for product with SKU "SKU1"
 
     Scenario: Unit Select when product have few units
         Given I should see "SKU2"
         When I should not see "ProductUnitLabel" for "SKU2" product
-        Then I should see "ProductUnitSelect" for "SKU2" product
+        Then I should see product unit selector as "toggle" for product with SKU "SKU2"

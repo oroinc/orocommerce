@@ -18,6 +18,8 @@ layout:
                     options:
                         vars:
                             microdataWithoutPricesDisabled: '=data["system_config_provider"].getValue("oro_product.microdata_without_prices_disabled")'
+                __product_container:
+                    blockType: container
                 __product_sticker_new:
                     blockType: product_sticker
                 __product_sticker_new_text:
@@ -27,9 +29,6 @@ layout:
                         mode: 'text'
                 __product_image_holder:
                     blockType: container
-                    options:
-                        attr:
-                            class: 'product-item__image-holder--aspect-ratio'
                 __product_view:
                     blockType: product_listing_view
                     options:
@@ -74,10 +73,7 @@ layout:
                     blockType: container
                     options:
                         visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update") && (context["is_logged_in"] || (!context["is_logged_in"] && data["feature"].isFeatureEnabled("guest_shopping_list")))'
-                __product_more_info:
-                    blockType: block
-                    options:
-                        visible: '=false'
+
             tree:
                 __root:
                     __product:
@@ -89,17 +85,17 @@ layout:
                                     __product_popup_gallery: ~
                                     __product_sticker_new: ~
                                     __product_quick_view: ~
-                                __product_title: ~
-                                __product_primary_content_container:
+                                __product_container:
+                                    __product_title: ~
                                     __product_specification:
                                         __product_sku_container:
                                             __product_sku: ~
                                         __product_mfg: ~
                                         __product_sticker_new_text: ~
-                                    __product_short_description: ~
-                                    __product_details: ~
-                                __product_secondary_content_container:
-                                    __product_secondary_content_first_container:
-                                        __product_specification_delivery: ~
-                                    __product_secondary_content_second_container:
-                                        __product_more_info: ~
+                                    __product_primary_content_container:
+                                        __product_short_description: ~
+                                        __product_details: ~
+                                    __product_secondary_content_container:
+                                        __product_secondary_content_first_container:
+                                            __product_specification_delivery: ~
+                                        __product_secondary_content_second_container:

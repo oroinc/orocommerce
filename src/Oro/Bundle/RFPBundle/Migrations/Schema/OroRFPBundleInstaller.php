@@ -4,10 +4,10 @@ namespace Oro\Bundle\RFPBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
@@ -29,41 +29,21 @@ class OroRFPBundleInstaller implements
     ExtendExtensionAwareInterface
 {
     use DatabasePlatformAwareTrait;
-
-    /** @var ActivityExtension */
-    protected $activityExtension;
-
-    /** @var ExtendExtension */
-    protected $extendExtension;
+    use ActivityExtensionAwareTrait;
+    use ExtendExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setActivityExtension(ActivityExtension $activityExtension)
+    public function getMigrationVersion(): string
     {
-        $this->activityExtension = $activityExtension;
+        return 'v1_14';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationVersion()
-    {
-        return 'v1_13';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
         $this->createOroRfpAssignedAccUsersTable($schema);
@@ -71,6 +51,7 @@ class OroRFPBundleInstaller implements
         $this->createOroRfpRequestTable($schema, $queries);
         $this->createOroRfpRequestProductTable($schema);
         $this->createOroRfpRequestProductItemTable($schema);
+        $this->createOroRfpRequestProductKitItemLineItemTable($schema);
         $this->createOroRfpRequestAddNoteTable($schema);
 
         /** Foreign keys generation **/
@@ -79,6 +60,7 @@ class OroRFPBundleInstaller implements
         $this->addOroRfpRequestForeignKeys($schema);
         $this->addOroRfpRequestProductForeignKeys($schema);
         $this->addOroRfpRequestProductItemForeignKeys($schema);
+        $this->addOroRfpRequestProductKitItemLineItemForeignKeys($schema);
         $this->addOroRfpRequestAddNoteForeignKeys($schema);
 
         $this->addActivityAssociations($schema);
@@ -88,29 +70,29 @@ class OroRFPBundleInstaller implements
     /**
      * Create oro_rfp_assigned_cus_users table
      */
-    protected function createOroRfpAssignedAccUsersTable(Schema $schema)
+    private function createOroRfpAssignedAccUsersTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_rfp_assigned_cus_users');
-        $table->addColumn('request_id', 'integer', []);
-        $table->addColumn('customer_user_id', 'integer', []);
+        $table->addColumn('request_id', 'integer');
+        $table->addColumn('customer_user_id', 'integer');
         $table->setPrimaryKey(['request_id', 'customer_user_id']);
     }
 
     /**
      * Create oro_rfp_assigned_users table
      */
-    protected function createOroRfpAssignedUsersTable(Schema $schema)
+    private function createOroRfpAssignedUsersTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_rfp_assigned_users');
-        $table->addColumn('request_id', 'integer', []);
-        $table->addColumn('user_id', 'integer', []);
+        $table->addColumn('request_id', 'integer');
+        $table->addColumn('user_id', 'integer');
         $table->setPrimaryKey(['request_id', 'user_id']);
     }
 
     /**
      * Create oro_rfp_request table
      */
-    protected function createOroRfpRequestTable(Schema $schema, QueryBag $queries)
+    private function createOroRfpRequestTable(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->createTable('oro_rfp_request');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -133,7 +115,7 @@ class OroRFPBundleInstaller implements
         $table->addColumn('deleted_at', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['website_id'], 'idx_de1d53c18f45c82', []);
+        $table->addIndex(['website_id'], 'idx_de1d53c18f45c82');
 
         $this->addOroRfpRequestEnumField($schema);
 
@@ -144,7 +126,7 @@ class OroRFPBundleInstaller implements
         }
     }
 
-    protected function addOroRfpRequestEnumField(Schema $schema)
+    private function addOroRfpRequestEnumField(Schema $schema): void
     {
         $customerStatusEnumTable = $this->extendExtension->addEnumField(
             $schema,
@@ -188,7 +170,7 @@ class OroRFPBundleInstaller implements
     /**
      * Create oro_rfp_request_product table
      */
-    protected function createOroRfpRequestProductTable(Schema $schema)
+    private function createOroRfpRequestProductTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_rfp_request_product');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -202,7 +184,7 @@ class OroRFPBundleInstaller implements
     /**
      * Create oro_rfp_request_prod_item table
      */
-    protected function createOroRfpRequestProductItemTable(Schema $schema)
+    private function createOroRfpRequestProductItemTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_rfp_request_prod_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -221,27 +203,28 @@ class OroRFPBundleInstaller implements
             ]
         );
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
         $table->setPrimaryKey(['id']);
     }
 
-    protected function createOroRfpRequestAddNoteTable(Schema $schema)
+    private function createOroRfpRequestAddNoteTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_rfp_request_add_note');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('request_id', 'integer', ['notnull' => false]);
         $table->addColumn('type', 'string', ['length' => 100]);
         $table->addColumn('author', 'string', ['length' => 100]);
-        $table->addColumn('user_id', 'integer', []);
-        $table->addColumn('text', 'text', []);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('user_id', 'integer');
+        $table->addColumn('text', 'text');
+        $table->addColumn('created_at', 'datetime');
+        $table->addColumn('updated_at', 'datetime');
         $table->setPrimaryKey(['id']);
     }
 
     /**
      * Add oro_rfp_assigned_cus_users foreign keys.
      */
-    protected function addOroRfpAssignedAccUsersForeignKeys(Schema $schema)
+    private function addOroRfpAssignedAccUsersForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_rfp_assigned_cus_users');
         $table->addForeignKeyConstraint(
@@ -261,7 +244,7 @@ class OroRFPBundleInstaller implements
     /**
      * Add oro_rfp_assigned_users foreign keys.
      */
-    protected function addOroRfpAssignedUsersForeignKeys(Schema $schema)
+    private function addOroRfpAssignedUsersForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_rfp_assigned_users');
         $table->addForeignKeyConstraint(
@@ -281,7 +264,7 @@ class OroRFPBundleInstaller implements
     /**
      * Add oro_rfp_request foreign keys.
      */
-    protected function addOroRfpRequestForeignKeys(Schema $schema)
+    private function addOroRfpRequestForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_rfp_request');
         $table->addForeignKeyConstraint(
@@ -319,7 +302,7 @@ class OroRFPBundleInstaller implements
     /**
      * Add oro_rfp_request_product foreign keys.
      */
-    protected function addOroRfpRequestProductForeignKeys(Schema $schema)
+    private function addOroRfpRequestProductForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_rfp_request_product');
         $table->addForeignKeyConstraint(
@@ -339,7 +322,7 @@ class OroRFPBundleInstaller implements
     /**
      * Add oro_rfp_request_prod_item foreign keys.
      */
-    protected function addOroRfpRequestProductItemForeignKeys(Schema $schema)
+    private function addOroRfpRequestProductItemForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_rfp_request_prod_item');
         $table->addForeignKeyConstraint(
@@ -356,7 +339,7 @@ class OroRFPBundleInstaller implements
         );
     }
 
-    protected function addOroRfpRequestAddNoteForeignKeys(Schema $schema)
+    private function addOroRfpRequestAddNoteForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_rfp_request_add_note');
         $table->addForeignKeyConstraint(
@@ -370,31 +353,78 @@ class OroRFPBundleInstaller implements
     /**
      * Enables Email activity for RFP entity
      */
-    protected function addActivityAssociations(Schema $schema)
+    private function addActivityAssociations(Schema $schema): void
     {
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_rfp_request');
         $this->activityExtension->addActivityAssociation($schema, 'oro_email', 'oro_rfp_request');
     }
 
-    /**
-     * @throws \Doctrine\DBAL\Schema\SchemaException
-     */
-    protected function addOwnerToOroEmailAddress(Schema $schema)
+    private function addOwnerToOroEmailAddress(Schema $schema): void
     {
         $table = $schema->getTable('oro_email_address');
-
         if ($table->hasColumn('owner_request_id')) {
             return;
         }
 
         $table->addColumn('owner_request_id', 'integer', ['notnull' => false]);
         $table->addIndex(['owner_request_id']);
-
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_rfp_request'),
             ['owner_request_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
+        );
+    }
+
+    private function createOroRfpRequestProductKitItemLineItemTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_rfp_request_prod_kit_item_line_item');
+        $table->addColumn('id', 'integer', ['notnull' => true, 'autoincrement' => true]);
+        $table->addColumn('request_product_id', 'integer', ['notnull' => true]);
+        $table->addColumn('product_kit_item_id', 'integer', ['notnull' => false]);
+        $table->addColumn('product_kit_item_id_fallback', 'integer', ['notnull' => true]);
+        $table->addColumn('product_kit_item_label', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('optional', 'boolean', ['notnull' => true, 'default' => false]);
+        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('product_id_fallback', 'integer', ['notnull' => true]);
+        $table->addColumn('product_sku', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('product_name', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('product_unit_code', 'string', ['notnull' => true, 'length' => 255]);
+        $table->addColumn('product_unit_precision', 'integer', ['notnull' => true]);
+        $table->addColumn('quantity', 'float', ['notnull' => true]);
+        $table->addColumn('minimum_quantity', 'float', ['notnull' => false]);
+        $table->addColumn('maximum_quantity', 'float', ['notnull' => false]);
+        $table->addColumn('sort_order', 'integer', ['notnull' => true, 'default' => 0]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    private function addOroRfpRequestProductKitItemLineItemForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_rfp_request_prod_kit_item_line_item');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_rfp_request_product'),
+            ['request_product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_kit_item'),
+            ['product_kit_item_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product_unit'),
+            ['product_unit_id'],
+            ['code'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 }

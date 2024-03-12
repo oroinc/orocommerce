@@ -69,7 +69,6 @@ class LoadProductPricesWithRules extends AbstractFixture implements DependentFix
     {
         return [
             LoadProductUnitPrecisions::class,
-            LoadPriceLists::class,
             LoadPriceRules::class,
         ];
     }
@@ -82,7 +81,7 @@ class LoadProductPricesWithRules extends AbstractFixture implements DependentFix
         $this->container = $container;
     }
 
-    private function getData(): array
+    protected function getData(): array
     {
         return [
             self::PRODUCT_PRICE_1 => [

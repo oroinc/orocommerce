@@ -1,5 +1,6 @@
 @ticket-BB-13658
 @ticket-BB-16335
+@ticket-BB-22546
 @fixture-OroProductBundle:product_frontend_single_unit_mode.yml
 
 Feature: Product frontend single unit mode
@@ -51,40 +52,23 @@ Feature: Product frontend single unit mode
     When I click "Search Button"
     And I click "View Details" for "PSKU2" product
     Then I should see an "Default Page Prices" element
-    And I should see "Each 1 $20.00" in the "Default Page Prices" element
+    And I should see "Each 1+ $20.00" in the "Default Page Prices" element
 
-  Scenario: Enable "Short page" view mode for product units
-    Given I proceed as the Admin
-    And I go to System/ Configuration
-    And I follow "Commerce/Design/Theme" on configuration sidebar
-    When I fill "Page Templates Form" with:
-      | Use Default  | false      |
-      | Product Page | Short page |
-    And I click "Save settings"
-    Then I should see "Configuration saved" flash message
-
-  Scenario: Verify that prices in "Related Products Block" are correctly displayed in "Short page" layout view
-    Given I proceed as the Buyer
-    When I type "PSKU1" in "search"
-    And click "Search Button"
-    And I click "View Details" for "PSKU1" product
-    Then I should see "Your Price: $20.00 / each" for "PSKU2" product
-    And I should see "Your Price: $30.00 / set" for "PSKU3" product
-    And I should see "Your Price: $40.00 / item" for "PSKU4" product
-
-  Scenario: Enable "Two columns page" view mode for product units
+  Scenario: Enable "Wide Template" view mode for product units
     Given I proceed as the Admin
     And I go to System/ Configuration
     And I follow "Commerce/Design/Theme" on configuration sidebar
     When I fill "Page Templates Form" with:
       | Use Default  | false            |
-      | Product Page | Two columns page |
+      | Product Page | Wide Template    |
     And I click "Save settings"
     Then I should see "Configuration saved" flash message
 
-  Scenario: Verify that prices in "Related Products Block" are correctly displayed in "Two columns page" layout view
+  Scenario: Verify that prices in "Related Products Block" are correctly displayed in "Wide Template" layout view
     Given I proceed as the Buyer
-    When I reload the page
+    When I type "PSKU1" in "search"
+    And click "Search Button"
+    And I click "View Details" for "PSKU1" product
     Then I should see "Your Price: $20.00 / each" for "PSKU2" product
     And I should see "Your Price: $30.00 / set" for "PSKU3" product
     And I should see "Your Price: $40.00 / item" for "PSKU4" product
@@ -95,21 +79,73 @@ Feature: Product frontend single unit mode
     And I follow "Commerce/Design/Theme" on configuration sidebar
     When I fill "Page Templates Form" with:
       | Use Default  | false     |
-      | Product Page | List page |
+      | Product Page | Tabs Template |
     And I click "Save settings"
     Then I should see "Configuration saved" flash message
 
-  Scenario: Verify that prices in "Related Products Block" are correctly displayed in "List page" layout view
+  Scenario: Verify that prices in "Related Products Block" are correctly displayed in "Tabs Template" layout view
     Given I proceed as the Buyer
     When I reload the page
     Then I should see "Your Price: $20.00 / each" for "PSKU2" product
     And I should see "Your Price: $30.00 / set" for "PSKU3" product
     And I should see "Your Price: $40.00 / item" for "PSKU4" product
 
-  Scenario: As guest user verify that prices are correctly displayed in "List page" layout view
-    When I click "Sign Out"
-    When I type "PSKU2" in "search"
+  Scenario: Check if price is displayed correctly for existing product kit on view page
+    Given I type "PSKU_KIT1" in "search"
+    And I click "Search Button"
+    And I click "View Details" for "PSKU_KIT1" product
+    When I click "Configure and Add to Shopping List"
+    Then I should see "Product Kit Dialog" with elements:
+      | Price | Price as configured: $30.00 |
+    And I should see "set" for "Product Kit Line Item Totals Form Unit" select
+    And I should see "each" for "Product Kit Line Item Totals Form Unit" select
+    And I should not see "item" for "Product Kit Line Item Totals Form Unit" select
+
+  Scenario: Create new product kit with Single Unit mode
+    Given I proceed as the Admin
+    When I go to Products/ Products
+    And click "Create Product"
+    And fill form with:
+      | Type | Kit |
+    And click "Continue"
+    And fill "Create Product Form" with:
+      | SKU    | PSKU_KIT2      |
+      | Name   | PSKU_KIT2 Name |
+      | Status | Enable         |
+    And I fill "ProductKitForm" with:
+      | Kit Item 1 Label            | Kit Item 1 |
+      | Kit Item 1 Sort Order       | 1          |
+      | Kit Item 1 Minimum Quantity | 1          |
+      | Kit Item 1 Maximum Quantity | 2          |
+    And I click "Add Product" in "Product Kit Item 1" element
+    And I click on PSKU4 in grid "KitItemProductsAddGrid"
+    And click "AddPrice"
+    And fill "Product Price Form" with:
+      | Price List | Default Price List |
+      | Quantity   | 1                  |
+      | Value      | 50                 |
+      | Currency   | $                  |
+    And I save and close form
+    Then I should see "Product has been saved" flash message
+
+  Scenario: Check if price is displayed correctly for new product kit on view page
+    Given I proceed as the Buyer
+    And I reload the page
+    And I type "PSKU_KIT2" in "search"
+    When I click "Search Button"
+    And I click "View Details" for "PSKU_KIT2" product
+    And I click "Configure and Add to Shopping List"
+    Then I should see "Product Kit Dialog" with elements:
+      | Price | Price as configured: $90.00 |
+    And I should see "item" for "Product Kit Line Item Totals Form Unit" select
+    And I should not see "set" for "Product Kit Line Item Totals Form Unit" select
+    And I should not see "each" for "Product Kit Line Item Totals Form Unit" select
+    And I close ui dialog
+
+  Scenario: As guest user verify that prices are correctly displayed in "Tabs Template" layout view
+    When I click "Account Dropdown"
+    And I click "Sign Out"
+    And I type "PSKU2" in "search"
     And click "Search Button"
     And I click "View Details" for "PSKU2" product
-    Then I should see "Listed Price: $20.00 / each"
     And I should not see "Price for requested quantity is not available"

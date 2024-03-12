@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_9;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -16,18 +16,7 @@ class UpdateRootCategoryTitle implements
     DatabasePlatformAwareInterface,
     OrderedMigrationInterface
 {
-    /**
-     * @var AbstractPlatform
-     */
-    private $platform;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDatabasePlatform(AbstractPlatform $platform)
-    {
-        $this->platform = $platform;
-    }
+    use DatabasePlatformAwareTrait;
 
     /**
      * {@inheritdoc}

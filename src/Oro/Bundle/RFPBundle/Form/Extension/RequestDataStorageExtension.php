@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
+use Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider;
 use Psr\Log\LoggerInterface;
@@ -100,17 +101,47 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
         $requestProduct->addRequestProductItem($requestProductItem);
 
         $this->fillEntityData($requestProductItem, $itemData);
+        $this->setDefaultProductUnit($requestProductItem, $product);
+        $this->addKitItemLineItems($requestProduct, $itemData);
 
-        if (!$requestProductItem->getProductUnit()) {
+        if ($requestProductItem->getProductUnit()) {
+            $entity->addRequestProduct($requestProduct);
+        }
+    }
+
+    private function addKitItemLineItems(RequestProduct $requestProduct, array $itemData): void
+    {
+        $kitItemLineItemsData = $itemData[ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEMS_DATA_KEY] ?? [];
+        foreach ($kitItemLineItemsData as $kitItemLineItemData) {
+            if (!isset($kitItemLineItemData[ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEM_KIT_ITEM_KEY])
+                || !isset($kitItemLineItemData[ProductDataStorage::PRODUCT_KIT_ITEM_LINE_ITEM_PRODUCT_KEY])
+            ) {
+                continue;
+            }
+
+            $kitItemLineItem = new RequestProductKitItemLineItem();
+            $this->fillEntityData($kitItemLineItem, $kitItemLineItemData);
+            $this->setDefaultProductUnit($kitItemLineItem, $kitItemLineItem->getProduct());
+            if (!$kitItemLineItem->getProductUnit()) {
+                continue;
+            }
+
+            $requestProduct->addKitItemLineItem($kitItemLineItem);
+        }
+    }
+
+    private function setDefaultProductUnit(
+        RequestProductItem|RequestProductKitItemLineItem $lineItem,
+        Product $product
+    ): void {
+        if (!$lineItem->getProductUnit()) {
             $unit = $this->getDefaultProductUnit($product);
             if (null === $unit) {
                 return;
             }
-            $requestProductItem->setProductUnit($unit);
-        }
 
-        if ($requestProductItem->getProductUnit()) {
-            $entity->addRequestProduct($requestProduct);
+            $lineItem->setProductUnit($unit);
+            $lineItem->setProductUnitCode($unit->getCode());
         }
     }
 

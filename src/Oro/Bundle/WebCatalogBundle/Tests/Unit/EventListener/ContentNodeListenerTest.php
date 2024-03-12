@@ -20,6 +20,9 @@ use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\DataMapperInterface;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\Test\FormInterface;
 
 class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
@@ -33,6 +36,8 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
     private MessageProducerInterface|\PHPUnit\Framework\MockObject\MockObject $messageProducer;
 
     private ResolveNodeSlugsMessageFactory|\PHPUnit\Framework\MockObject\MockObject $messageFactory;
+
+    private CollectionSortOrderHandler|\PHPUnit\Framework\MockObject\MockObject $collectionSortOrderHandler;
 
     private ContentNodeListener $contentNodeListener;
 
@@ -105,7 +110,7 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
         $form->expects($this->once())
             ->method('get')
             ->with('contentVariants')
-            ->willReturn([]);
+            ->willReturn($form);
         $event = $this->createMock(AfterFormProcessEvent::class);
         $event->expects($this->once())
             ->method('getForm')
@@ -162,11 +167,18 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
             ->method('has')
             ->with('productCollectionSegment')
             ->willReturn(true);
+        $formConfig = $this->createMock(FormConfigInterface::class);
+        $formConfig->method('getCompound')
+            ->willReturn(true);
+        $formConfig->method('getDataMapper')
+            ->willReturn($this->createMock(DataMapperInterface::class));
+        $contentVariantsForm = new Form($formConfig);
+        $contentVariantsForm->add($contentVariantForm);
         $contentNodeForm = $this->createMock(FormInterface::class);
         $contentNodeForm->expects($this->once())
             ->method('get')
             ->with('contentVariants')
-            ->willReturn([$contentVariantForm]);
+            ->willReturn($contentVariantsForm);
         $event = $this->createMock(AfterFormProcessEvent::class);
         $event->expects($this->once())
             ->method('getForm')

@@ -30,7 +30,7 @@ class SlugListener implements OptionalListenerInterface
             return;
         }
 
-        $changedSlugs = $this->getUpdatedSlugs($event->getEntityManager()->getUnitOfWork());
+        $changedSlugs = $this->getUpdatedSlugs($event->getObjectManager()->getUnitOfWork());
         foreach ($changedSlugs as $changedSlug) {
             $this->synchronizeRedirectScopes($changedSlug);
         }

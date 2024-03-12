@@ -2,30 +2,25 @@
 
 namespace Oro\Bundle\FrontendTestFrameworkBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity()
- * @ORM\Table(name="oro_test_content_node")
- */
+* Entity that represents Test Content Node
+*
+*/
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_test_content_node')]
 class TestContentNode
 {
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    private ?int $id = null;
 
-    /**
-     * @var TestWebCatalog
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestWebCatalog")
-     * @ORM\JoinColumn(name="web_catalog", referencedColumnName="id",nullable=true)
-     */
-    protected $webCatalog;
+    #[ORM\ManyToOne(targetEntity: TestWebCatalog::class)]
+    #[ORM\JoinColumn(name: 'web_catalog', referencedColumnName: 'id', nullable: true)]
+    protected ?TestWebCatalog $webCatalog = null;
 
     /**
      * @return integer

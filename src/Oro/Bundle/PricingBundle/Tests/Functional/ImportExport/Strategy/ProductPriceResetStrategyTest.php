@@ -31,7 +31,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
 
         $this->loadFixtures([LoadProductPrices::class]);
 
-        $container = $this->getContainer();
+        $container = self::getContainer();
 
         $this->strategy = new ProductPriceResetStrategy(
             $container->get('event_dispatcher'),
@@ -49,7 +49,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($this->context);
         $this->strategy->setEntityName(ProductPrice::class);
         $this->strategy->setOwnershipSetter($container->get('oro_organization.entity_ownership_associations_setter'));
-        $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
+        $this->shardManager = $container->get('oro_pricing.shard_manager');
     }
 
     public function testProcessResetPriceListProductPrices()
@@ -59,10 +59,9 @@ class ProductPriceResetStrategyTest extends WebTestCase
 
         $productPrice = $this->getPriceByReference('product_price.1');
 
-        $actualPrices = $this->getContainer()->get('doctrine')
-            ->getRepository(ProductPrice::class)
+        $actualPrices = self::getContainer()->get('doctrine')->getRepository(ProductPrice::class)
             ->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList->getId()]);
-        $this->assertCount(8, $actualPrices);
+        self::assertCount(8, $actualPrices);
 
         $expectedPricesIds = [
             $productPrice->getId(),
@@ -78,33 +77,32 @@ class ProductPriceResetStrategyTest extends WebTestCase
         );
 
         foreach ($expectedPricesIds as $price) {
-            $this->assertContains($price, $actualPricesIds);
+            self::assertContains($price, $actualPricesIds);
         }
 
         $body['process'] = ProcessorRegistry::TYPE_IMPORT;
         $body['processorAlias'] = 'oro_pricing_product_price.reset';
         $body['options']['price_list_id'] = $priceList->getId();
 
-        $this->getContainer()->get('event_dispatcher')->dispatch(
+        self::getContainer()->get('event_dispatcher')->dispatch(
             new BeforeImportChunksEvent($body),
             Events::BEFORE_CREATING_IMPORT_CHUNK_JOBS
         );
 
-        $this->assertEquals([], $this->context->getErrors());
+        self::assertEquals([], $this->context->getErrors());
 
         // ProductPriceResetStrategy works in conjunction with PreChunksMessageProcessor
         // which clears the price list before importing prices in chunks
-        $this->assertEmpty(
-            $this->getContainer()->get('doctrine')
-                ->getRepository(ProductPrice::class)
+        self::assertEmpty(
+            self::getContainer()->get('doctrine')->getRepository(ProductPrice::class)
                 ->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList->getId()])
         );
 
         $this->strategy->process($productPrice);
 
-        $this->assertNotEmpty($productPrice->getPrice());
-        $this->assertEquals('USD', $productPrice->getPrice()->getCurrency());
-        $this->assertEquals(12.2, $productPrice->getPrice()->getValue());
-        $this->assertNotEmpty($productPrice->getProduct());
+        self::assertNotEmpty($productPrice->getPrice());
+        self::assertEquals('USD', $productPrice->getPrice()->getCurrency());
+        self::assertEquals(12.2, $productPrice->getPrice()->getValue());
+        self::assertNotEmpty($productPrice->getProduct());
     }
 }

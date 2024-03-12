@@ -163,11 +163,17 @@ Delete a collection of line item records.
 
 **The required field.**
 
+**In the case of products with type `kit` this is a read-only field. A passed value will be ignored.
+The calculated price is the result of the following: a product kit product price taken from a price list + kit item line items' prices taken from the request body.
+
 #### update
 
 {@inheritdoc}
 
 **This field must not be empty, if it is passed.**
+
+**In the case of products with type `kit` this is a read-only field. A passed value will be ignored.
+The calculated price is the result of the following: a product kit product price taken from a price list + kit item line items' prices taken from the request body.
 
 ### currency
 

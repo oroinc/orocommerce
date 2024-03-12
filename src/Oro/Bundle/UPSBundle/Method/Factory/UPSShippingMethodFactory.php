@@ -58,7 +58,7 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
             $types[] = $this->methodTypeFactory->create($channel, $shippingService);
         }
 
-        return new UPSShippingMethod(
+        $method = new UPSShippingMethod(
             $this->integrationIdentifierGenerator->generateIdentifier($channel),
             (string)$this->localizationHelper->getLocalizedValue($transport->getLabels()),
             $this->integrationIconProvider->getIcon($channel),
@@ -69,5 +69,6 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
             $this->shippingPriceCache,
             $channel->isEnabled()
         );
+        return $method->setName($channel->getName());
     }
 }

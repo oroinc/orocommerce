@@ -31,14 +31,15 @@ layout:
                 action: reset
                 text:
                     label: 'oro.frontend.shoppinglist.matrix_grid_order.close'
-                style: 'btn btn--action btn--size-s'
+                attr:
+                    class: 'btn--outlined btn--size-small '
             prepend: true
         - '@setOption':
             id: matrix_grid_order_form_actions_submit
-            optionName: style
-            optionValue: 'btn btn--info btn--size-s'
+            optionName: attr.class
+            optionValue: 'btn--outlined btn--size-small'
         - '@appendOption':
             id: matrix_grid_order_matrix_form_clear_button
-            optionName: style
-            optionValue: 'btn--size-s clear-button--mobile'
+            optionName: attr.class
+            optionValue: 'btn--size-small clear-button--mobile'
     conditions: 'context["is_mobile"]'

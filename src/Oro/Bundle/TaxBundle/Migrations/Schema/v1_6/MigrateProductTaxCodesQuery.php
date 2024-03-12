@@ -57,7 +57,7 @@ SQL;
 
         $this->logQuery($logger, $query);
 
-        $taxCodes = $this->connection->fetchAll($query);
+        $taxCodes = $this->connection->fetchAllAssociative($query);
 
         return $taxCodes ?: [];
     }

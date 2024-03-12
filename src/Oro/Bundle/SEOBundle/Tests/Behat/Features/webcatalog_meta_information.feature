@@ -46,7 +46,8 @@ Feature: Webcatalog meta information
 
   Scenario: Meta information for product list page should be displayed correctly
     Given I am on homepage
-    And I follow "Headlamps"
+    And I click "Headlamps" in hamburger menu
+    And I click "All Headlamps" in hamburger menu
     Then Page title equals to "Headlamps"
     And Page meta title equals "Headlamps Meta Title"
     And Page meta description equals "Headlamps Meta Description"

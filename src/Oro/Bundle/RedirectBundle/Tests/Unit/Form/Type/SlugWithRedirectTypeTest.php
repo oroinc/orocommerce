@@ -133,7 +133,12 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
             'This value should contain only latin letters, numbers and symbols "-._~".',
             $error->getMessage()
         );
-        $this->assertEquals(['{{ value }}' => '"test-prefix/test-prototype"'], $error->getMessageParameters());
+
+        $expectedMessageParameters = [
+            '{{ value }}' => '"test-prefix/test-prototype"',
+            '{{ pattern }}' => '/^[a-zA-Z0-9\-\.\_\~]*$/',
+        ];
+        $this->assertEquals($expectedMessageParameters, $error->getMessageParameters());
     }
 
     public function testConfigureOptions()

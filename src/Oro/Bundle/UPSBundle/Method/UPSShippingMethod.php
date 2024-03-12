@@ -34,6 +34,7 @@ class UPSShippingMethod implements
         . ' ?[0-9A-Z]|[\dT]\d\d\d ?\d\d\d\d ?\d\d\d)\b/ix';
 
     private string $identifier;
+    private string $name;
     private string $label;
     private ?string $icon;
     private array $types;
@@ -65,6 +66,12 @@ class UPSShippingMethod implements
         $this->enabled = $enabled;
     }
 
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -87,6 +94,11 @@ class UPSShippingMethod implements
     public function getIdentifier(): string
     {
         return $this->identifier;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     /**

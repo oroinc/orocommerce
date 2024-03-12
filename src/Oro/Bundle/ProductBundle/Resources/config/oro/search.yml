@@ -53,6 +53,7 @@ search:
         route:
             name:                       oro_product_brand_index
         search_template:                '@OroProduct/Brand/searchResult.html.twig'
+        acl_permission:                 'VIEW'
         fields:
             -
                 name: names

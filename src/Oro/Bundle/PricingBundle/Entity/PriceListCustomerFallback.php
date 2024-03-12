@@ -5,30 +5,23 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAwareInterface;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerFallbackRepository;
 
 /**
- * @ORM\Table(
- *      name="oro_price_list_cus_fb",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="oro_price_list_cus_fb_unq", columns={
- *              "customer_id",
- *              "website_id"
- *          })
- *      }
- * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerFallbackRepository")
- */
+* Entity that represents Price List Customer Fallback
+*
+*/
+#[ORM\Entity(repositoryClass: PriceListCustomerFallbackRepository::class)]
+#[ORM\Table(name: 'oro_price_list_cus_fb')]
+#[ORM\UniqueConstraint(name: 'oro_price_list_cus_fb_unq', columns: ['customer_id', 'website_id'])]
 class PriceListCustomerFallback extends PriceListFallback implements CustomerAwareInterface
 {
     const ACCOUNT_GROUP = 0;
     const CURRENT_ACCOUNT_ONLY = 1;
 
-    /** @var Customer
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer")
-     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    protected $customer;
+    #[ORM\ManyToOne(targetEntity: Customer::class)]
+    #[ORM\JoinColumn(name: 'customer_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Customer $customer = null;
 
     /**
      * @return Customer

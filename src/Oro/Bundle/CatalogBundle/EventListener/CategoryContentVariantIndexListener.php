@@ -79,7 +79,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
 
     public function onFlush(OnFlushEventArgs $event)
     {
-        $unitOfWork = $event->getEntityManager()->getUnitOfWork();
+        $unitOfWork = $event->getObjectManager()->getUnitOfWork();
         $categories = [];
         $websiteIds = [];
 

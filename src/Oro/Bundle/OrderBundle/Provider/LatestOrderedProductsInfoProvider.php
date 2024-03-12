@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Provider;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 
 /**
@@ -95,7 +96,7 @@ class LatestOrderedProductsInfoProvider
     protected function getOrderRepository()
     {
         return $this->registry
-            ->getManagerForClass('OroOrderBundle:Order')
-            ->getRepository('OroOrderBundle:Order');
+            ->getManagerForClass(Order::class)
+            ->getRepository(Order::class);
     }
 }

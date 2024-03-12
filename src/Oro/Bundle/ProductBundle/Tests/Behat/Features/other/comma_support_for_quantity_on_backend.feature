@@ -10,16 +10,15 @@ Feature: Comma support for quantity on backend
 
   Scenario: Check quantity decimal separator for default locale
     Given I signed in as AmandaRCole@example.org on the store frontend
-    And I click "NewCategory"
+    And I click "NewCategory" in hamburger menu
     When I type "3." in "ProductQuantityField"
     Then ProductQuantityField field should has 3.0000 value
     When I type "3," in "ProductQuantityField"
     Then ProductQuantityField field should has 3 value
 
   Scenario: Check quantity decimal separator for different locale
-    Given I click "Localization Switcher"
-    And I select "German Localization" localization
-    And I click "NewCategory"
+    Given I select "German Localization" localization
+    And I click "NewCategory" in hamburger menu
     When I type "3," in "ProductQuantityField"
     Then ProductQuantityField field should has 3,0000 value
     When I type "3." in "ProductQuantityField"

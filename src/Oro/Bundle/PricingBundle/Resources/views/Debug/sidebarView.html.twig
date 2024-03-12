@@ -1,0 +1,30 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{% set pageComponentOptions = {
+    'customersSelector': '#' ~ customers.vars.id,
+    'dateSelector': '#hidden_' ~ date.vars.id,
+    'showDevelopersInfoSelector': '#' ~ showDevelopersInfo.vars.id,
+    'showDetailedAssignmentInfoSelector': '#' ~ showDetailedAssignmentInfo.vars.id,
+    'productId': product.id
+} %}
+
+{% if websites is defined %}
+    {% set pageComponentOptions = pageComponentOptions|merge({
+        'websitesSelector': '#' ~ websites.vars.id
+    }) %}
+{% endif %}
+
+{% form_theme showDetailedAssignmentInfo with '@OroPricing/Form/sidebar.html.twig' %}
+{% form_theme showDevelopersInfo with '@OroPricing/Form/sidebar.html.twig' %}
+
+<div class="sidebar-items form-vertical"
+    {{ UI.renderPageComponentAttributes({
+        view: 'oropricing/js/app/views/product-price-debug-details-sidebar-view',
+        options: pageComponentOptions|json_encode
+    }) }}>
+    {% if websites is defined %}{{ form_row(websites) }}{% endif %}
+    {% if customers is defined %}{{ form_row(customers) }}{% endif %}
+    {% if date is defined %}{{ form_row(date) }}{% endif %}
+    {% if showDetailedAssignmentInfo is defined %}{{ form_row(showDetailedAssignmentInfo) }}{% endif %}
+    {% if showDevelopersInfo is defined %}{{ form_row(showDevelopersInfo) }}{% endif %}
+</div>

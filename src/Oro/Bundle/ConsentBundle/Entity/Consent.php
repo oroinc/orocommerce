@@ -4,12 +4,14 @@ namespace Oro\Bundle\ConsentBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroConsentBundle_Entity_Consent;
+use Oro\Bundle\ConsentBundle\Entity\Repository\ConsentRepository;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -21,43 +23,33 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 /**
  * Entity holds information about consent
  *
- * @ORM\Entity(repositoryClass="Oro\Bundle\ConsentBundle\Entity\Repository\ConsentRepository")
- * @ORM\Table(
- *     name="oro_consent",
- *     indexes={@ORM\Index(name="consent_created_idx",columns={"created_at"})}
- * )
- * @Config(
- *      routeName="oro_consent_index",
- *      routeView="oro_consent_view",
- *      routeUpdate="oro_consent_update",
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-check-square"
- *          },
- *          "ownership"={
- *              "owner_type"="USER",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="user_owner_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id",
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="",
- *              "category"="account_management"
- *          }
- *      }
- * )
- * @ORM\HasLifecycleCallbacks()
  *
  * @method LocalizedFallbackValue getName(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultName()
  * @method setDefaultName(string $value)
  * @mixin OroConsentBundle_Entity_Consent
  */
+#[ORM\Entity(repositoryClass: ConsentRepository::class)]
+#[ORM\Table(name: 'oro_consent')]
+#[ORM\Index(columns: ['created_at'], name: 'consent_created_idx')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    routeName: 'oro_consent_index',
+    routeView: 'oro_consent_view',
+    routeUpdate: 'oro_consent_update',
+    defaultValues: [
+        'entity' => ['icon' => 'fa-check-square'],
+        'ownership' => [
+            'owner_type' => 'USER',
+            'owner_field_name' => 'owner',
+            'owner_column_name' => 'user_owner_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id'
+        ],
+        'dataaudit' => ['auditable' => true],
+        'security' => ['type' => 'ACL', 'group_name' => '', 'category' => 'account_management']
+    ]
+)]
 class Consent implements
     DatesAwareInterface,
     OrganizationAwareInterface,
@@ -67,91 +59,39 @@ class Consent implements
     use AuditableUserAwareTrait;
     use ExtendEntityTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_consent_name",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="consent_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
-    protected $names;
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_consent_name')]
+    #[ORM\JoinColumn(name: 'consent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Collection $names = null;
+
+    #[ORM\ManyToOne(targetEntity: ContentNode::class, inversedBy: 'referencedConsents')]
+    #[ORM\JoinColumn(name: 'content_node_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?ContentNode $contentNode = null;
+
+    #[ORM\Column(name: 'mandatory', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?bool $mandatory = true;
 
     /**
-     * @var ContentNode
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentNode", inversedBy="referencedConsents")
-     * @ORM\JoinColumn(name="content_node_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, ConsentAcceptance>
      */
-    protected $contentNode;
+    #[ORM\OneToMany(mappedBy: 'consent', targetEntity: ConsentAcceptance::class, cascade: ['persist'])]
+    protected ?Collection $acceptances = null;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="mandatory", type="boolean", nullable=false, options={"default": true})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $mandatory = true;
-
-    /**
-     * @var ConsentAcceptance[]|ArrayCollection
-     *
-     * @ORM\OneToMany(targetEntity="ConsentAcceptance", mappedBy="consent", cascade={"persist"})
-     */
-    protected $acceptances;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="declined_notification", type="boolean", nullable=false, options={"default": true})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $declinedNotification = true;
+    #[ORM\Column(name: 'declined_notification', type: Types::BOOLEAN, nullable: false, options: ['default' => true])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?bool $declinedNotification = true;
 
     /**
      * {@inheritdoc}

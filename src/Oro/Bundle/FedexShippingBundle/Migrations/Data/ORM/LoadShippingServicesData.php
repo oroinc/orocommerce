@@ -6,14 +6,16 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
-use Oro\Bundle\FedexShippingBundle\Entity\ShippingServiceRule;
 
+/**
+ * Loads shipping services.
+ */
 class LoadShippingServicesData extends AbstractFixture implements OrderedFixtureInterface
 {
     /**
      * {@inheritDoc}
      */
-    public function getOrder()
+    public function getOrder(): int
     {
         return 20;
     }
@@ -21,21 +23,15 @@ class LoadShippingServicesData extends AbstractFixture implements OrderedFixture
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         foreach ($this->getData() as $data) {
-            /** @var ShippingServiceRule $rule */
-            $rule = $this->getReference($data['rule']);
-
             $service = new FedexShippingService();
-            $service
-                ->setDescription($data['description'])
-                ->setCode($data['code'])
-                ->setRule($rule);
-
+            $service->setDescription($data['description']);
+            $service->setCode($data['code']);
+            $service->setRule($this->getReference($data['rule']));
             $manager->persist($service);
         }
-
         $manager->flush();
     }
 

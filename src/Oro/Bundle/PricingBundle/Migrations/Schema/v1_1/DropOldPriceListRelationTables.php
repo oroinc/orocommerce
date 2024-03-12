@@ -3,29 +3,18 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class DropOldPriceListRelationTables implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
-    /**
-     * @var RenameExtension
-     */
-    protected $renameExtension;
+    use RenameExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
-    }
-
-    /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getOrder()
     {
@@ -33,7 +22,7 @@ class DropOldPriceListRelationTables implements Migration, RenameExtensionAwareI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

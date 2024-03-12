@@ -9,22 +9,20 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class RemoveStatusEnumField implements Migration, OrderedMigrationInterface
 {
-    const PRODUCT_TABLE_NAME = 'orob2b_product';
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getOrder()
+    public function getOrder(): int
     {
         return 20;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
-        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table = $schema->getTable('orob2b_product');
         $table->changeColumn('status', ['notnull' => true]);
         $table->dropColumn('status_id');
     }

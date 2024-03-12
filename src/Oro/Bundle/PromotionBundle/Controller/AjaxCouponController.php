@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
 use Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,16 +18,16 @@ use Symfony\Component\Routing\Annotation\Route;
 class AjaxCouponController extends AbstractController
 {
     /**
-     * @Route(
-     *     "/get-added-coupons-table/{addedCouponIds}",
-     *     name="oro_promotion_get_added_coupons_table",
-     *     defaults={"addedCouponIds"="0"}
-     * )
-     * @AclAncestor("oro_promotion_coupon_view")
      *
      * @param string $addedCouponIds
      * @return JsonResponse
      */
+    #[Route(
+        path: '/get-added-coupons-table/{addedCouponIds}',
+        name: 'oro_promotion_get_added_coupons_table',
+        defaults: ['addedCouponIds' => 0]
+    )]
+    #[AclAncestor('oro_promotion_coupon_view')]
     public function getAddedCouponsTableAction($addedCouponIds)
     {
         $coupons = $this->getCouponRepository()->getCouponsWithPromotionByIds(explode(',', $addedCouponIds));
@@ -41,28 +42,28 @@ class AjaxCouponController extends AbstractController
     }
 
     /**
-     * @Route("/validate-coupon-applicability", name="oro_promotion_validate_coupon_applicability")
-     * @AclAncestor("oro_promotion_coupon_view")
      *
      * @param Request $request
      * @return JsonResponse
      */
+    #[Route(path: '/validate-coupon-applicability', name: 'oro_promotion_validate_coupon_applicability')]
+    #[AclAncestor('oro_promotion_coupon_view')]
     public function validateCouponApplicabilityAction(Request $request)
     {
-        return $this->get(CouponValidationHandler::class)->handle($request);
+        return $this->container->get(CouponValidationHandler::class)->handle($request);
     }
 
     /**
-     * @Route(
-     *     "/get-applied-coupons-data/{couponIds}",
-     *     name="oro_promotion_get_applied_coupons_data",
-     *     defaults={"couponIds"="0"}
-     * )
-     * @AclAncestor("oro_promotion_coupon_view")
      *
      * @param string $couponIds
      * @return JsonResponse
      */
+    #[Route(
+        path: '/get-applied-coupons-data/{couponIds}',
+        name: 'oro_promotion_get_applied_coupons_data',
+        defaults: ['couponIds' => 0]
+    )]
+    #[AclAncestor('oro_promotion_coupon_view')]
     public function getAppliedCouponsData($couponIds)
     {
         $data = [];
@@ -83,7 +84,7 @@ class AjaxCouponController extends AbstractController
      */
     private function getCouponRepository()
     {
-        return $this->get('doctrine')
+        return $this->container->get(ManagerRegistry::class)
             ->getManagerForClass(Coupon::class)
             ->getRepository(Coupon::class);
     }
@@ -97,6 +98,7 @@ class AjaxCouponController extends AbstractController
             parent::getSubscribedServices(),
             [
                 CouponValidationHandler::class,
+                ManagerRegistry::class,
             ]
         );
     }

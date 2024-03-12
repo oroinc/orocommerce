@@ -21,7 +21,6 @@ Feature: Payment Pro Express payments should display products with localized dat
   Scenario: Successful first order payment with  PayPal PayFlow Gateway
     Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
     And I am on the homepage
-    And I click "Localization Switcher"
     And I select "Zulu" localization
     And I open page with shopping list List 1
     And I click "Create Order"

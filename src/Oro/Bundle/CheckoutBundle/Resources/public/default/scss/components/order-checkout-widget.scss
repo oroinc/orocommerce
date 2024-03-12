@@ -1,19 +1,24 @@
 /* @theme: default; */
 
 .order-checkout-widget {
-    position: relative;
-    margin-top: $offset-x;
+    margin-top: spacing('base');
 
     padding-top: 0;
 
     @include clearfix();
+
+    --sticky-position-top-offset: calc(var(--sticky-page-header-element-offset-top, 0) + #{spacing('base')});
 
     &--offset-none {
         margin-top: 0;
     }
 
     &__container-wrapper {
-        margin-bottom: $offset-y-m;
+        margin-bottom: spacing('sm');
+
+        .dropdown-item {
+            align-items: center;
+        }
 
         @include clearfix();
     }
@@ -21,7 +26,7 @@
     &__container {
         float: right;
 
-        padding: $offset-x;
+        padding: spacing('base');
 
         border-radius: $base-ui-element-border-radius;
         background: $order-checkout-widget-container-background;
@@ -36,7 +41,7 @@
 
         th,
         td {
-            padding: $offset-y-s 0;
+            padding: spacing('xs') 0;
         }
 
         th {
@@ -85,7 +90,7 @@
 
         .widget-content {
             .btn-group {
-                margin: 0 0 $offset-y-m;
+                margin: 0 0 spacing('sm');
             }
         }
     }

@@ -8,16 +8,16 @@ Feature: Check filter values for product grid on front store
 
   Scenario: Check filter max length limitation for sku
     Given I login as AmandaRCole@example.org buyer
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     And filter SKU as is equal to "asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd"
     Then I should see "Please enter at most 255 characters" flash message
 
   Scenario: Check filter max length limitation for any text
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     And filter Any Text as contains "asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd"
     Then I should see "Please enter at most 255 characters" flash message
 
   Scenario: Check filter max length limitation for name
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     And filter Name as is equal to "asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd"
     Then I should see "Please enter at most 255 characters" flash message

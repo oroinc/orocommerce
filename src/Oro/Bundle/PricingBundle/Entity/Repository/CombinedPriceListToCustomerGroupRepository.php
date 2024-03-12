@@ -3,7 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -61,5 +63,17 @@ class CombinedPriceListToCustomerGroupRepository extends PriceListToCustomerGrou
             ->setParameter('priceList', $combinedPriceList);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function getRelation(Website $website, CustomerGroup $customerGroup): ?CombinedPriceListToCustomerGroup
+    {
+        $qb = $this->createQueryBuilder('rel');
+        $qb->where($qb->expr()->eq('rel.customerGroup', ':customerGroup'))
+            ->andWhere($qb->expr()->eq('rel.website', ':website'))
+            ->setParameter('customerGroup', $customerGroup)
+            ->setParameter('website', $website)
+            ->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

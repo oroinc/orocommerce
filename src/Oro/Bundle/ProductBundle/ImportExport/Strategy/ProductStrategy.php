@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\Strategy;
 
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\BatchBundle\Item\Support\ClosableInterface;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductKitItemRepository;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -79,9 +83,13 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         // Postpone configurable products processing after simple ones
         // incremented_read option is set during postponed rows processing
         if (!$this->context->hasOption('incremented_read') && $entity->getType() === Product::TYPE_CONFIGURABLE) {
-            $this->context->addPostponedRow($this->context->getValue('rawItemData'));
-            $this->context->setValue('postponedRowsDelay', 0);
+            $this->addPostponedRow();
+            return null;
+        }
 
+        // Postpone rows with missing product kit item products
+        if ($entity->getType() === Product::TYPE_KIT && $this->isKitPostponedRow($entity)) {
+            $this->addPostponedRow();
             return null;
         }
 
@@ -97,6 +105,12 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         $this->eventDispatcher->dispatch($event, ProductStrategyEvent::PROCESS_BEFORE);
 
         return parent::beforeProcessEntity($entity);
+    }
+
+    protected function addPostponedRow(): void
+    {
+        $this->context->addPostponedRow($this->context->getValue('rawItemData'));
+        $this->context->setValue('postponedRowsDelay', 0);
     }
 
     /**
@@ -157,6 +171,23 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
     /**
      * {@inheritdoc}
      */
+    protected function findExistingEntity($entity, array $searchContext = [])
+    {
+        // Ensures that the found ProductKitItem belongs to the same organization as Product.
+        if ($entity instanceof ProductKitItem && $entity->getId() && $this->processingEntity?->getOrganization()) {
+            return $this->getProductKitItemRepository()
+                ->getProductKitItemByIdAndOrganization(
+                    $entity->getId(),
+                    $this->processingEntity->getOrganization()->getId()
+                );
+        }
+
+        return parent::findExistingEntity($entity, $searchContext);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function findEntityByIdentityValues($entityName, array $identityValues)
     {
         if (is_a($entityName, $this->variantLinkClass, true)) {
@@ -199,8 +230,16 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
             $isPersistRelation
         );
 
-        if (!$searchContext && in_array($fieldName, ['primaryUnitPrecision', 'unitPrecisions'], true)) {
-            $searchContext = ['product' => $entity];
+        if (!$searchContext) {
+            if (in_array($fieldName, ['primaryUnitPrecision', 'unitPrecisions'], true)) {
+                $searchContext = ['product' => $entity];
+            } elseif ($entity instanceof ProductKitItem && $fieldName === 'kitItemProducts') {
+                // Ensures that the ProductKitItem::$kitItemProducts collection is not totally recreated. Instead,
+                // already existing ProductKitItemProduct entities are found using search context with the kitItem
+                // specified here and a product that will be added as an identity field of ProductKitItemProduct in
+                // AbstractImportStrategy::findExistingEntityByIdentityFields
+                $searchContext = ['kitItem' => $entity];
+            }
         }
 
         return $searchContext;
@@ -221,31 +260,12 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
             return $this->processedProducts[$entity->getSkuUppercase()];
         }
 
+        // Create new kit items by ignoring ID when the not existing product kit.
+        if ($entity instanceof ProductKitItem && $entity->getId() && !$entity->getProductKit()?->getId()) {
+            $this->fieldHelper->setObjectValue($entity, 'id', null);
+        }
+
         return parent::processEntity($entity, $isFullData, $isPersistNew, $itemData, $searchContext, $entityIsRelation);
-    }
-
-    /**
-     * Get additional search parameter name to find only related entities
-     *
-     * @param string $entityName
-     * @param string $fieldName
-     * @return string|null
-     */
-    protected function getInvertedFieldName($entityName, $fieldName)
-    {
-        $inversedFieldName = $this->databaseHelper->getInversedRelationFieldName($entityName, $fieldName);
-
-        if ($inversedFieldName && $this->databaseHelper->isCascadePersist($entityName, $fieldName)
-            && $this->databaseHelper->isSingleInversedRelation($entityName, $fieldName)
-        ) {
-            return $inversedFieldName;
-        }
-
-        if (!$inversedFieldName && $fieldName === 'primaryUnitPrecision') {
-            return 'product';
-        }
-
-        return null;
     }
 
     /**
@@ -276,6 +296,21 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         }
 
         parent::importExistingEntity($entity, $existingEntity, $itemData, $excludedFields);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function importEntityFields($entity, $existingEntity, $isFullData, $entityIsRelation, $itemData)
+    {
+        // Ensures that ProductKitItem which does not belong to Product will not be changed.
+        if ($existingEntity instanceof ProductKitItem &&
+            $this->processingEntity->getId() !== $existingEntity->getProductKit()->getId()
+        ) {
+            return $existingEntity;
+        }
+
+        return parent::importEntityFields($entity, $existingEntity, $isFullData, $entityIsRelation, $itemData);
     }
 
     /**
@@ -325,6 +360,25 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
     }
 
     /**
+     * Ensures ProductKitItem::$kitItemProducts and ProductKitItem::$labels are reverted when product entity
+     * is invalided.
+     */
+    protected function invalidateEntity($entity)
+    {
+        if ($entity->isKit()) {
+            $kitItemsCollection = $entity->getKitItems();
+            // Ensures that ProductKitItem related entities are detached when a product is invalidated and detached.
+            if ($kitItemsCollection instanceof PersistentCollection) {
+                foreach ($kitItemsCollection->getSnapshot() as $kitItem) {
+                    $this->relatedEntityStateHelper->rememberAlteredCollectionsItems($kitItem);
+                }
+            }
+        }
+
+        parent::invalidateEntity($entity);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function processValidationErrors($entity, array $validationErrors)
@@ -355,5 +409,55 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         if ($relationEntity instanceof ProductVariantLink) {
             $this->processedVariantLinks[] = $relationEntity;
         }
+    }
+
+    /**
+     * Checks that all Kit Item Products exist in the ORO system.
+     */
+    protected function isKitPostponedRow(Product $entity): bool
+    {
+        $kitItemSkus = [];
+        foreach ($entity->getKitItems() as $kitItem) {
+            $kitItemSkus[] = array_map(
+                static fn ($item) => $item?->getProduct()?->getSkuUppercase(),
+                $kitItem->getKitItemProducts()->toArray()
+            );
+        }
+
+        $kitItemSkus = array_unique(array_filter(array_merge(...$kitItemSkus)));
+        if (!$kitItemSkus) {
+            return false;
+        }
+
+        $skus = [];
+        foreach ($this->processedProducts as $sku => $product) {
+            if (in_array($sku, $kitItemSkus, true)) {
+                $skus[] = $sku;
+            }
+        }
+
+        $result = array_map(static fn ($item) => $item['sku'], $this->getProductSkusBySkus($kitItemSkus));
+        $skus = array_unique(array_merge($skus, $result));
+
+        return count($kitItemSkus) > count($skus);
+    }
+
+    protected function getProductSkusBySkus(array $skus): array
+    {
+        return $this->getProductRepository()
+            ->getBySkuQueryBuilder($skus)
+            ->select('product.skuUppercase as sku')
+            ->getQuery()
+            ->getResult();
+    }
+
+    protected function getProductRepository(): ProductRepository
+    {
+        return $this->doctrineHelper->getEntityRepository(Product::class);
+    }
+
+    protected function getProductKitItemRepository(): ProductKitItemRepository
+    {
+        return $this->doctrineHelper->getEntityRepository(ProductKitItem::class);
     }
 }

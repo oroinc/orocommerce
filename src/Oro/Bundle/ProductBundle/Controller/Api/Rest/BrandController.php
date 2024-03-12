@@ -3,11 +3,13 @@
 namespace Oro\Bundle\ProductBundle\Controller\Api\Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\ProductBundle\Entity\Brand;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 use Oro\Bundle\SoapBundle\Form\Handler\ApiFormHandler;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * REST API CRUD controller for Brand entity
@@ -21,10 +23,10 @@ class BrandController extends RestController
      *     description="Get sissue",
      *     resource=true
      * )
-     * @AclAncestor("oro_product_brand_view")
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
+    #[AclAncestor('oro_product_brand_view')]
     public function getAction(int $id)
     {
         return $this->handleGetRequest($id);
@@ -42,15 +44,10 @@ class BrandController extends RestController
      *          {"name"="id", "dataType"="integer"},
      *      }
      * )
-     * @Acl(
-     *      id="oro_product_brand_delete",
-     *      type="entity",
-     *      class="OroProductBundle:Brand",
-     *      permission="DELETE"
-     * )
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
+    #[Acl(id: 'oro_product_brand_delete', type: 'entity', class: Brand::class, permission: 'DELETE')]
     public function deleteAction(int $id)
     {
         return $this->handleDeleteRequest($id);
@@ -63,7 +60,7 @@ class BrandController extends RestController
      */
     public function getManager()
     {
-        return $this->get('oro_product.brand.manager.api');
+        return $this->container->get('oro_product.brand.manager.api');
     }
 
     /**

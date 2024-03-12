@@ -179,7 +179,7 @@ Feature: Sales Representative Info
       | Guest Contact         | Test guest contact |
     And click "Save settings"
     And I proceed as the User
+    And I click "Account Dropdown"
     And click "Sign Out"
     And I should see "Sales Representative Info" block with:
       | Test guest contact |
-

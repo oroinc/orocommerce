@@ -1,0 +1,145 @@
+{% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__wrapper_widget %}
+    {% set class_prefix = 'request-product-kit-configuration-form' %}
+    {% do block|merge_context({
+        class_prefix: class_prefix,
+        form: form,
+        product: form.vars.data.product|default(null)
+    }) %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' {{ class_prefix }}'
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__header_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-popup__header',
+        'data-dialog-extra-header-content': ''
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__header_product_picture_widget %}
+    {% set productImageData = product.imagesByType('listing').first.image|default(null) %}
+    <div class="product-item product-popup__header-img">
+        <div class="product-item__image-holder--aspect-ratio product-item__image-holder--tiny">
+            <div class="product-item__preview">
+                {% include '@OroAttachment/Twig/picture.html.twig' with {
+                    sources: product_filtered_picture_sources(productImageData, 'product_small'),
+                    picture_attrs: attr,
+                    picture_attrs: {
+                        class: 'product-item__preview-picture'
+                    },
+                    img_attrs: {
+                        class: 'product-item__preview-image'
+                    }
+                } %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__header_product_attributes_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-popup__header-attributes',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ parent_block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__header_product_name_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-popup__header-title h1 h-normal',
+    }) %}
+
+    <p {{ block('block_attributes') }}>{{ block_widget(block) }}</p>
+{% endblock %}
+
+{% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__header_product_name_text_widget %}
+    {{ product.names|default([])|length ? product.names|localized_value|e : 'N/A'|trans }}
+{% endblock %}
+
+{% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__header_product_sku_widget %}
+    <span {{ block('block_attributes') }}>
+        {{ 'oro.product.frontend.index.item'|trans }}
+        <span>{{ product.sku|default('N/A'|trans) }}</span>
+    </span>
+{% endblock %}
+
+{% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__form_actions_submit_widget %}
+    {% set text = 'oro.frontend.rfp.request_product_kit_configuration_dialog.actions.submit'|trans %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__form_start_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': class_prefix ~ '__form fields-row',
+        'novalidate': 'novalidate',
+        'data-page-component-view': 'ororfp/js/app/views/frontend-request-product-kit-configuration-form-view'
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__product_totals_widget %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        'id': form.vars.id ~ 'totals',
+        '~class': ' product-totals-main product-totals',
+        'data-role': 'totals'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <div class="product-totals__wrapper">
+            <div class="product-totals__total-price"
+                    {{- UI.renderPageComponentAttributes({
+                        module: 'oroui/js/app/components/view-component',
+                        options: {
+                            view: 'ororfp/js/app/views/frontend-request-product-kit-configuration-price-view',
+                            formSelector: '#' ~ form.vars.id
+                        }
+                    }) }}>
+                <div class="product-totals__label">
+                    {{ 'oro.frontend.rfp.request_product_kit_configuration_dialog.price.label'|trans }}
+                </div>
+                <div data-role="formatted-price" class="product-totals__total-price-value">{{ 'N/A'|trans }}</div>
+            </div>
+        </div>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__product_totals_controls_widget %}
+    <div class="product-totals__controls" data-role="totals-controls">
+        <div class="product-item-quantity fields-row">
+            {{ form_widget(form.quantity, {
+                'label': false,
+                'attr': {
+                    'readonly': 'readonly',
+                    'aria-disabled': 'true',
+                    'class': 'product-item-quantity__input',
+                    'data-floating-error': '',
+                    'data-boundaries-element': '[role="dialog"]'
+                }}) }}
+            {{ form_widget(form.productUnit, {
+                'attr': {
+                    'readonly': 'readonly',
+                    'aria-disabled': 'true',
+                    'class': 'product-item-quantity__choice',
+                }}) }}
+            <div class="fields-row-error">
+                {{- form_errors(form.quantity) -}}
+                {{- form_errors(form.productUnit) -}}
+            </div>
+        </div>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

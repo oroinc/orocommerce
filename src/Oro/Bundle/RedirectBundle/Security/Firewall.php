@@ -61,7 +61,7 @@ class Firewall
             $this->context->fromRequest($event->getRequest());
         }
 
-        if ($event->isMasterRequest()) {
+        if ($event->isMainRequest()) {
             $this->slugApplied = false;
         }
         $this->baseFirewall->onKernelRequest($event);
@@ -74,7 +74,7 @@ class Firewall
     {
         if ($this->matchedUrlDecisionMaker->matches($event->getRequest()->getPathInfo())) {
             $request = $event->getRequest();
-            if ($event->isMasterRequest()
+            if ($event->isMainRequest()
                 && !$event->hasResponse()
                 && $request->attributes->has('_resolved_slug_url')
             ) {

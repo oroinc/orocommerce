@@ -37,7 +37,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         LocalizationHelper $localizationHelper,
         FrontendHelper $frontendHelper
     ) {
-        parent::__construct($entityName, ['sku', 'defaultName.string']);
+        parent::__construct($entityName, ['sku', 'defaultName.string', 'type']);
         $this->requestStack = $requestStack;
         $this->productManager = $productManager;
         $this->searchRepository = $searchRepository;
@@ -58,16 +58,18 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
 
         if (\is_object($item) && method_exists($item, 'getSelectedData')) {
             $selectedData = $item->getSelectedData();
-            if (isset($selectedData['sku'], $selectedData['name'])) {
+            if (isset($selectedData['sku'], $selectedData['name'], $selectedData['type'])) {
                 $result += [
                     'sku'                => $selectedData['sku'],
-                    'defaultName.string' => $selectedData['name']
+                    'defaultName.string' => $selectedData['name'],
+                    'type'               => $selectedData['type'],
                 ];
             }
         } elseif ($item instanceof Product) {
             $result += [
                 'sku'                => $item->getSku(),
-                'defaultName.string' => (string)$this->localizationHelper->getLocalizedValue($item->getNames())
+                'defaultName.string' => (string)$this->localizationHelper->getLocalizedValue($item->getNames()),
+                'type'               => $item->getType(),
             ];
         } else {
             throw new InvalidArgumentException('Given item could not be converted');
@@ -135,7 +137,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     protected function getSearchQuery(string $search, int $firstResult, int $maxResults): SearchQueryInterface
     {
         $request = $this->requestStack->getCurrentRequest();
-        $skus = null !== $request ? (array)$request->request->get('sku') : [];
+        $skus = (array)$request?->request->all('sku');
         if ($skus) {
             $searchQuery = $this->searchRepository->getFilterSkuQuery($skus);
         } else {
@@ -162,7 +164,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     protected function filterSearchResult(array $items): array
     {
         $request = $this->requestStack->getCurrentRequest();
-        if (null !== $request && \count($items) > 1 && \count((array)$request->request->get('sku')) === 1) {
+        if (null !== $request && \count($items) > 1 && \count((array)$request->request->all('sku')) === 1) {
             $productName = $request->request->get('productName');
             if ($productName) {
                 $matchedItems = [];

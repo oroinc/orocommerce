@@ -9,41 +9,30 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 
 /**
+ * Represents BaseProductVisibilityResolved class
+ *
  * @method BaseProductVisibilityResolved setSourceProductVisibility(VisibilityInterface $sourceProductVisibility = null)
  * @method VisibilityInterface getSourceProductVisibility()
- *
- * @ORM\MappedSuperclass
  */
+#[ORM\MappedSuperclass]
 abstract class BaseProductVisibilityResolved extends BaseVisibilityResolved
 {
     const SOURCE_STATIC = 1;
     const SOURCE_CATEGORY = 2;
 
-    /**
-     * @var Scope
-     *
-     * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
-     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    protected $scope;
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: Scope::class)]
+    #[ORM\JoinColumn(name: 'scope_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Scope $scope = null;
 
-    /**
-     * @var Product
-     *
-     * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $product;
+    #[ORM\Id]
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Product $product = null;
 
-    /**
-     * @var Category
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CatalogBundle\Entity\Category")
-     * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $category;
+    #[ORM\ManyToOne(targetEntity: Category::class)]
+    #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Category $category = null;
 
     public function __construct(Scope $scope, Product $product)
     {

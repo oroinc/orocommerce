@@ -4,81 +4,60 @@ namespace Oro\Bundle\PromotionBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 /**
- * Coupon ORM Entity repository.
+ * Doctrine repository for Coupon entity.
  */
 class CouponRepository extends EntityRepository
 {
     /**
-     * @param array $ids
+     * @param int[] $ids
+     *
      * @return Coupon[]
      */
-    public function getCouponsWithPromotionByIds(array $ids)
+    public function getCouponsWithPromotionByIds(array $ids): array
     {
-        $queryBuilder = $this->createQueryBuilder('coupon');
-
-        return $queryBuilder
+        return $this->createQueryBuilder('coupon')
             ->innerJoin('coupon.promotion', 'promotion')
-            ->andWhere($queryBuilder->expr()->in('coupon.id', ':ids'))
+            ->andWhere('coupon.id IN(:ids)')
             ->setParameter('ids', $ids)
-            ->getQuery()->getResult();
+            ->getQuery()
+            ->getResult();
     }
 
     /**
-     * @param array|int[]|Promotion[] $promotions
-     * @param array $couponCodes|string[]
+     * @param int[]    $promotionIds
+     * @param string[] $couponCodes
      *
-     * @return array
+     * @return int[]
      */
-    public function getPromotionsWithMatchedCoupons(array $promotions, array $couponCodes): array
+    public function getPromotionsWithMatchedCoupons(array $promotionIds, array $couponCodes): array
     {
-        $queryBuilder = $this->createQueryBuilder('coupon');
-
-        $result = $queryBuilder->select('DISTINCT IDENTITY(coupon.promotion) AS id')
-            ->where($queryBuilder->expr()->in('IDENTITY(coupon.promotion)', ':promotions'))
-            ->andWhere($queryBuilder->expr()->in('coupon.code', ':couponCodes'))
-            ->andWhere($queryBuilder->expr()->eq('coupon.enabled', ':enabled'))
-            ->setParameter('promotions', $promotions)
-            ->setParameter('couponCodes', array_map('strval', $couponCodes)) //Ensure coupon codes are passed as strings
+        $rows =  $this->createQueryBuilder('coupon')
+            ->select('DISTINCT IDENTITY(coupon.promotion) AS id')
+            ->where('coupon.promotion IN(:promotions)')
+            ->andWhere('coupon.code IN(:couponCodes)')
+            ->andWhere('coupon.enabled = :enabled')
+            ->setParameter('promotions', $promotionIds)
+            ->setParameter('couponCodes', $couponCodes)
             ->setParameter('enabled', true)
-            ->getQuery()->getArrayResult();
+            ->getQuery()
+            ->getArrayResult();
 
-        return array_column($result, 'id');
+        return array_column($rows, 'id');
     }
 
-    /**
-     * @param string $couponCode
-     * @param bool $caseInsensitive
-     * @return Coupon|null
-     */
-    public function getSingleCouponByCode(string $couponCode, bool $caseInsensitive = false)
+    public function getSingleCouponByCode(string $couponCode, bool $caseInsensitive = false): ?Coupon
     {
-        $qb = $this->createQueryBuilder('coupon');
-        if ($caseInsensitive) {
-            $field = 'coupon.codeUppercase';
-            $code = strtoupper($couponCode);
-        } else {
-            $field = 'coupon.code';
-            $code = $couponCode;
-        }
+        /** @var Coupon[] $coupons */
+        $coupons = $this->createQueryBuilder('coupon')
+            ->where(sprintf('coupon.%s = :code', $caseInsensitive ? 'codeUppercase' : 'code'))
+            ->setParameter('code', $caseInsensitive ? strtoupper($couponCode) : $couponCode)
+            ->getQuery()
+            ->getResult();
 
-        $qb->where($qb->expr()->eq($field, ':code'))
-            ->setParameter('code', $code);
-
-        /** @var Coupon[] $result */
-        $result = $qb->getQuery()->getResult();
-        if (!$result || count($result) !== 1) {
-            return null;
-        }
-        $coupon = reset($result);
-
-        // MySQL does not perform case-sensitive search by default, this check added to make search platform independent
-        if ($coupon && !$caseInsensitive && $coupon->getCode() !== $couponCode) {
-            return null;
-        }
-
-        return $coupon;
+        return \count($coupons) === 1
+            ? reset($coupons)
+            : null;
     }
 }

@@ -51,10 +51,10 @@ Feature: Direct URLs functionality
     Then I should see "Menu item saved successfully" flash message
     And I proceed as the User
     And I am on the homepage
-    And click "All Products"
+    And I click "All Products" in hamburger menu
     When click "View Details" for "Lenovo Vibe" product
     Then I should be on "/lenovo-vibe-1"
-    When click "Lenovo Vibe"
+    When click "Lenovo Vibe" in hamburger menu
     Then I should be on "/lenovo-vibe"
 
   Scenario: Check Product and Category URLs (Enable Direct URLs - disabled)
@@ -69,10 +69,10 @@ Feature: Direct URLs functionality
     And I proceed as the User
     When I reload the page
     Then should see "404 Not Found"
-    And click "All Products"
+    And click "All Products" in hamburger menu
     When click "View Details" for "Lenovo Vibe" product
     Then I should be on "/product/view/1"
-    When click "Lenovo Vibe"
+    When click "Lenovo Vibe" in hamburger menu
     Then I should be on "/product/?categoryId=2&includeSubcategories=1"
 
   Scenario: Check Product and Category URLs Prefix (Enable Direct URLs - enabled)
@@ -94,7 +94,7 @@ Feature: Direct URLs functionality
     And click "All Products"
     When click "View Details" for "Lenovo Vibe" product
     Then I should be on "/ProdPrefix/lenovo-vibe-1"
-    When click "Lenovo Vibe"
+    When click "Lenovo Vibe" in hamburger menu
     Then I should be on "/CategoryPrefix/lenovo-vibe"
 
   Scenario: Check that it possible to set same URL Slug for Product and Category if they have URLs Prefix (Enable Direct URLs - enabled)
@@ -110,7 +110,7 @@ Feature: Direct URLs functionality
     And click "All Products"
     And click "View Details" for "Lenovo Vibe" product
     Then I should be on "/ProdPrefix/lenovo-vibe"
-    When click "Lenovo Vibe"
+    When click "Lenovo Vibe" in hamburger menu
     Then I should be on "/CategoryPrefix/lenovo-vibe"
     When click "View Details" for "Lenovo Vibe" product
     Then I should be on "/CategoryPrefix/lenovo-vibe/_item/lenovo-vibe"

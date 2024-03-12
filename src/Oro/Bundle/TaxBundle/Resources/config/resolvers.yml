@@ -1,0 +1,141 @@
+services:
+    oro_tax.resolver.item.abstract:
+        class: 'Oro\Bundle\TaxBundle\Resolver\AbstractItemResolver'
+        public: false
+        arguments:
+            - '@oro_tax.resolver.unit'
+            - '@oro_tax.resolver.row_total'
+            - '@oro_tax.matcher.resolvable_matcher'
+
+    oro_tax.resolver.unit:
+        class: 'Oro\Bundle\TaxBundle\Resolver\UnitResolver'
+        public: false
+        arguments:
+            - '@oro_tax.calculator'
+
+    oro_tax.resolver.row_total:
+        class: 'Oro\Bundle\TaxBundle\Resolver\RowTotalResolver'
+        public: false
+        arguments:
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_tax.calculator'
+            - '@oro_tax.resolver.rounding'
+
+    # Before tax resolve
+    oro_tax.order_tax.resolver.skip_order_tax_recalculation:
+        class: 'Oro\Bundle\TaxBundle\OrderTax\Resolver\SkipOrderTaxRecalculationResolver'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_tax.manager.tax_manager'
+            - '@oro_frontend.request.frontend_helper'
+            - '@event_dispatcher'
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve_before }
+
+    # Tax resolve
+    oro_tax.resolver.eu_kit_item_digital:
+        class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalKitItemResolver'
+        parent: 'oro_tax.resolver.item.abstract'
+        public: false
+
+    oro_tax.resolver.eu_item_digital:
+        class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver'
+        parent: 'oro_tax.resolver.item.abstract'
+        public: false
+        arguments:
+            $kitItemResolver: '@oro_tax.resolver.eu_kit_item_digital'
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve, priority: 20 }
+
+    oro_tax.resolver.eu_digital:
+        class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalResolver'
+        public: false
+        arguments:
+            - '@oro_tax.resolver.eu_item_digital'
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve, priority: 10 }
+
+    oro_tax.resolver.us_sales_tax_digital.kit_item:
+        class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalKitItemResolver'
+        public: false
+
+    oro_tax.resolver.us_sales_tax_digital.item:
+        class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalItemResolver'
+        public: false
+        arguments:
+            - '@oro_tax.resolver.us_sales_tax_digital.kit_item'
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve, priority: 40 }
+
+    oro_tax.resolver.us_sales_tax_digital:
+        class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\USSalesTaxResolver\DigitalResolver'
+        public: false
+        arguments:
+            - '@oro_tax.resolver.us_sales_tax_digital.item'
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve, priority: 30 }
+
+    oro_tax.resolver.customer_address.kit_item:
+        class: 'Oro\Bundle\TaxBundle\Resolver\CustomerAddress\CustomerAddressKitItemResolver'
+        parent: 'oro_tax.resolver.item.abstract'
+        public: false
+
+    oro_tax.resolver.customer_address.item:
+        class: 'Oro\Bundle\TaxBundle\Resolver\CustomerAddress\CustomerAddressItemResolver'
+        parent: 'oro_tax.resolver.item.abstract'
+        public: false
+        arguments:
+            $kitItemResolver: '@oro_tax.resolver.customer_address.kit_item'
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve, priority: -32 }
+
+    oro_tax.resolver.customer_address:
+        class: 'Oro\Bundle\TaxBundle\Resolver\CustomerAddress\CustomerAddressResolver'
+        public: false
+        arguments:
+            - '@oro_tax.resolver.customer_address.item'
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve, priority: -32 }
+
+    # After tax resolve
+    oro_tax.resolver.kit_adjust:
+        class: 'Oro\Bundle\TaxBundle\Resolver\KitAdjustResolver'
+        public: false
+        arguments:
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_tax.resolver.rounding'
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve_after, priority: -32 }
+
+    oro_tax.resolver.shipping:
+        class: 'Oro\Bundle\TaxBundle\Resolver\ShippingResolver'
+        public: false
+        arguments:
+            - '@oro_tax.calculator.included_tax'
+            - '@oro_tax.calculator.tax'
+            - '@oro_tax.matcher.resolvable_matcher'
+            - '@oro_tax.provider.taxation_settings_provider'
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve_after, priority: -64 }
+
+    oro_tax.resolver.total:
+        class: 'Oro\Bundle\TaxBundle\Resolver\TotalResolver'
+        public: false
+        arguments:
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_tax.resolver.rounding'
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve_after, priority: -128 }
+
+    oro_tax.resolver.rounding:
+        class: 'Oro\Bundle\TaxBundle\Resolver\RoundingResolver'
+        public: false
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve_after, priority: -255 }
+
+    oro_tax.resolver.currency:
+        class: 'Oro\Bundle\TaxBundle\Resolver\CurrencyResolver'
+        public: false
+        tags:
+            - { name: oro_tax.resolver, event: oro_tax.resolve_after, priority: -255 }

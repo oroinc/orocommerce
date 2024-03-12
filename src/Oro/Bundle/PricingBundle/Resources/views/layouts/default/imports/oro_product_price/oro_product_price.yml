@@ -18,6 +18,7 @@ layout:
                         vars:
                             showListedPrice: true
                             showValuePrice: true
+                            showUnit: true
                             forceComponentRender: false
                 __product_prices:
                     blockType: container

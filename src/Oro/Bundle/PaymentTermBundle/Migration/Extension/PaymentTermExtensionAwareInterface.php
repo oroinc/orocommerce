@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentTermBundle\Migration\Extension;
 
 /**
- * PaymentTermExtensionAwareInterface should be implemented by migrations that depends on a PaymentTermExtension.
+ * This interface should be implemented by migrations that depend on {@see PaymentTermExtension}.
  */
 interface PaymentTermExtensionAwareInterface
 {

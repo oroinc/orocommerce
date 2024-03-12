@@ -9,8 +9,11 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItem;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface;
 
-class ProductKitItemLineItemsAwareStub extends ProductLineItem implements ProductKitItemLineItemsAwareInterface
+class ProductKitItemLineItemsAwareStub extends ProductLineItem implements
+    ProductLineItemChecksumAwareInterface,
+    ProductKitItemLineItemsAwareInterface
 {
     private Collection $kitItemLineItems;
 

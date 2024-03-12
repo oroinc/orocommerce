@@ -7,8 +7,10 @@ use Oro\Bundle\CMSBundle\Form\Handler\ContentTemplateHandler;
 use Oro\Bundle\CMSBundle\Form\Type\ContentTemplateType;
 use Oro\Bundle\CMSBundle\Provider\ContentTemplateContentProvider;
 use Oro\Bundle\FormBundle\Model\UpdateHandlerFacade;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,16 +24,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ContentTemplateController extends AbstractController
 {
-    /**
-     * @Route("/", name="oro_cms_content_template_index")
-     * @Template
-     * @Acl(
-     *     id="oro_cms_content_template_view",
-     *     type="entity",
-     *     class="OroCMSBundle:ContentTemplate",
-     *     permission="VIEW"
-     * )
-     */
+    #[Route(path: '/', name: 'oro_cms_content_template_index')]
+    #[Template]
+    #[Acl(id: 'oro_cms_content_template_view', type: 'entity', class: ContentTemplate::class, permission: 'VIEW')]
     public function indexAction(): array
     {
         return [
@@ -39,11 +34,9 @@ class ContentTemplateController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/view/{id}", name="oro_cms_content_template_view", requirements={"id"="\d+"})
-     * @Template
-     * @AclAncestor("oro_cms_content_template_view")
-     */
+    #[Route(path: '/view/{id}', name: 'oro_cms_content_template_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[AclAncestor('oro_cms_content_template_view')]
     public function viewAction(ContentTemplate $template): array
     {
         return [
@@ -51,11 +44,9 @@ class ContentTemplateController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/widget/{id}", name="oro_cms_content_template_widget", requirements={"id"="\d+"})
-     * @Template
-     * @AclAncestor("oro_cms_content_template_view")
-     */
+    #[Route(path: '/widget/{id}', name: 'oro_cms_content_template_widget', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[AclAncestor('oro_cms_content_template_view')]
     public function widgetAction(ContentTemplate $template): array
     {
         return [
@@ -64,42 +55,32 @@ class ContentTemplateController extends AbstractController
     }
 
     /**
-     * @Route("/create", name="oro_cms_content_template_create")
-     * @Template("@OroCMS/ContentTemplate/update.html.twig")
-     * @Acl(
-     *      id="oro_cms_content_template_create",
-     *      type="entity",
-     *      class="OroCMSBundle:ContentTemplate",
-     *      permission="CREATE"
-     * )
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
+    #[Route(path: '/create', name: 'oro_cms_content_template_create')]
+    #[Template('@OroCMS/ContentTemplate/update.html.twig')]
+    #[Acl(id: 'oro_cms_content_template_create', type: 'entity', class: ContentTemplate::class, permission: 'CREATE')]
     public function createAction(Request $request): array|RedirectResponse
     {
         return $this->update(new ContentTemplate(), $request, true);
     }
 
     /**
-     * @Route("/update/{id}", name="oro_cms_content_template_update", requirements={"id"="\d+"})
-     * @Template("@OroCMS/ContentTemplate/update.html.twig")
-     * @Acl(
-     *      id="oro_cms_content_template_update",
-     *      type="entity",
-     *      class="OroCMSBundle:ContentTemplate",
-     *      permission="EDIT"
-     * )
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
+    #[Route(path: '/update/{id}', name: 'oro_cms_content_template_update', requirements: ['id' => '\d+'])]
+    #[Template('@OroCMS/ContentTemplate/update.html.twig')]
+    #[Acl(id: 'oro_cms_content_template_update', type: 'entity', class: ContentTemplate::class, permission: 'EDIT')]
     public function updateAction(ContentTemplate $contentTemplate, Request $request): array|RedirectResponse
     {
         return $this->update($contentTemplate, $request);
     }
 
     /**
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     private function update(
         ContentTemplate $contentTemplate,
@@ -122,10 +103,8 @@ class ContentTemplateController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/content/{id}", name="oro_cms_content_template_content", requirements={"id"="\d+"})
-     * @AclAncestor("oro_cms_content_template_view")
-     */
+    #[Route(path: '/content/{id}', name: 'oro_cms_content_template_content', requirements: ['id' => '\d+'])]
+    #[AclAncestor('oro_cms_content_template_view')]
     public function getContentAction(ContentTemplate $contentTemplate): JsonResponse
     {
         return new JsonResponse(

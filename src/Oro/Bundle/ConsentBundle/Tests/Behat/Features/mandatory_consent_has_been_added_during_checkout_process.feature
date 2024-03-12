@@ -78,7 +78,7 @@ Feature: Mandatory Consent has been added during Checkout process
   Scenario: Check mandatory consents on Checkout Page
     Given I proceed as the Buyer
     When I signed in as AmandaRCole@example.org on the store frontend
-    And click "Quick Order Form"
+    And click "Quick Order"
     And fill "Quick Order Form" with:
       | SKU1 | Lenovo_Vibe1_sku |
     And I wait for products to load
@@ -101,8 +101,9 @@ Feature: Mandatory Consent has been added during Checkout process
   Scenario: Decline consent from My profile page
     When I set alias "checkout" for the current browser tab
     And I open a new browser tab and set "profile" alias for it
-    And follow "Account"
-    And I click "Edit Profile Button"
+    And I click "Account Dropdown"
+    And I click "My Profile"
+    And I click "Edit"
     Then the "Collecting and storing personal data" checkbox should be checked
     And the "Email Newsletters" checkbox should be checked
     When fill form with:
@@ -130,6 +131,7 @@ Feature: Mandatory Consent has been added during Checkout process
     And on the "Payment" checkout step I press Continue
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
-    When I follow "Account"
+    And I click "Account Dropdown"
+    And I click "My Profile"
     Then I should see "Accepted Consent" element with text "Email Newsletters" inside "Data Protection Section" element
     And I should see "Accepted Consent" element with text "Collecting and storing personal data" inside "Data Protection Section" element

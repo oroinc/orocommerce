@@ -3,8 +3,8 @@
 namespace Oro\Bundle\OrderBundle\Migrations\Schema\v1_12;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -13,16 +13,7 @@ use Oro\Bundle\OrderBundle\Migrations\Data\ORM\LoadOrderInternalStatuses;
 
 class OroOrderBundle implements Migration, ExtendExtensionAwareInterface
 {
-    /** @var ExtendExtension */
-    private $extendExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
+    use ExtendExtensionAwareTrait;
 
     /**
      * {@inheritdoc}

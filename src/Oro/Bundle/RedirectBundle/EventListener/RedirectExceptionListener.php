@@ -47,7 +47,7 @@ class RedirectExceptionListener
     private function isRedirectRequired(ExceptionEvent $event): bool
     {
         return
-            $event->isMasterRequest()
+            $event->isMainRequest()
             && !$event->hasResponse()
             && $event->getThrowable() instanceof NotFoundHttpException
             && $this->matchedUrlDecisionMaker->matches($event->getRequest()->getPathInfo());

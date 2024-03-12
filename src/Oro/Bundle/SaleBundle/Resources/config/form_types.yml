@@ -14,8 +14,15 @@ services:
         arguments:
             - '@oro_product.formatter.product_unit_label'
             - '@doctrine'
+            - '@oro_sale.form.event_listener.quote_product_product'
+            - '@oro_sale.form.event_listener.quote_product_offer_checksum'
         tags:
-            - { name: form.type, alias: oro_sale_quote_product }
+            - { name: form.type }
+
+    oro_sale.form.event_listener.quote_product_offer_checksum:
+        class: Oro\Bundle\SaleBundle\Form\EventListener\QuoteProductOfferChecksumListener
+        arguments:
+            - '@oro_product.line_item_checksum_generator'
 
     oro_sale.form.type.quote_product_offer:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType'
@@ -49,6 +56,7 @@ services:
             - '@oro_product.storage.product_data_storage'
             - '@form.property_accessor'
             - '@doctrine'
+            - '@oro_product.line_item_checksum_generator'
             - '@logger'
         tags:
             - { name: form.type_extension }
@@ -100,9 +108,10 @@ services:
     oro_sale.form.event_listener.quote_update:
         class: 'Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber'
         arguments:
-            - '@oro_sale.provider.quote_product_price'
+            - '@doctrine'
+            - '@oro_sale.provider.quote_product_prices'
+            - '@oro_sale.quote.pricing.comparator'
             - '@translator'
-            - '@oro_entity.doctrine_helper'
 
     oro_sale.form_type.contact_info_customer_options_type:
         class: Oro\Bundle\SaleBundle\Form\Type\ContactInfoSourceOptionsType
@@ -132,3 +141,30 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: form.type, alias: oro_sale_contact_info_manual_text }
+
+    oro_sale.form.event_listener.quote_product_product:
+        class: Oro\Bundle\SaleBundle\Form\EventListener\QuoteProductProductListener
+        arguments:
+            - '@oro_entity.tools.entity_state_checker'
+
+    oro_sale.form.event_listener.quote_product_kit_item_line_item_default_data:
+        class: Oro\Bundle\SaleBundle\Form\EventListener\QuoteProductKitItemLineItemDefaultDataListener
+        arguments:
+            - '@oro_sale.product_kit.factory.quote_product_kit_item_line_item'
+
+    oro_sale.form.type.quote_product_kit_item_line_item_collection:
+        class: Oro\Bundle\SaleBundle\Form\Type\QuoteProductKitItemLineItemCollectionType
+        tags:
+            - { name: form.type }
+
+    oro_sale.form.type.quote_product_kit_item_line_item:
+        class: Oro\Bundle\SaleBundle\Form\Type\QuoteProductKitItemLineItemType
+        arguments:
+            - '@oro_sale.product_kit.provider.product_kit_item_products'
+            - '@oro_sale.form.event_listener.quote_product_kit_item_line_item_default_data'
+            - '@oro_sale.form.event_listener.quote_product_kit_item_line_item_ghost_option'
+        tags:
+            - { name: form.type }
+
+    oro_sale.form.event_listener.quote_product_kit_item_line_item_ghost_option:
+        class: Oro\Bundle\SaleBundle\Form\EventListener\QuoteProductKitItemLineItemGhostOptionListener

@@ -26,8 +26,8 @@ class CheckoutSplitter
     public function split(Checkout $checkout, array $groupedLineItems): array
     {
         $groupedCheckouts = [];
-        foreach ($groupedLineItems as $groupingPath => $lineItems) {
-            $groupedCheckouts[$groupingPath] = $this->checkoutFactory->createCheckout($checkout, $lineItems);
+        foreach ($groupedLineItems as $lineItemGroupKey => $lineItems) {
+            $groupedCheckouts[$lineItemGroupKey] = $this->checkoutFactory->createCheckout($checkout, $lineItems);
         }
 
         return $groupedCheckouts;

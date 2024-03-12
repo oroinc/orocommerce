@@ -1,0 +1,22 @@
+/* @theme: default; */
+// @productTheme: tabs-theme;
+
+.tabs-theme {
+    .product-view {
+        &__additional {
+            margin-top: $product-view-additional-tabs-theme-top-offset;
+            display: grid;
+            gap: 48px;
+        }
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .tabs-theme {
+        .product-view {
+            &__additional {
+                margin-top: $product-view-additional-tabs-theme-top-offset-mobile-big;
+            }
+        }
+    }
+}

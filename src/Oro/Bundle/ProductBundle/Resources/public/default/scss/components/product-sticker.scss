@@ -1,86 +1,46 @@
 /* @theme: default; */
 
 .product-sticker {
-    padding: $product-sticker-inner-offset;
+    @extend %label-placeholder;
 
-    &--top-left {
-        top: $product-sticker-icon-top-left-pos-top;
-        left: $product-sticker-icon-top-left-pos-left;
+    min-height: $product-sticker-min-height;
+    display: $product-sticker-display;
+    align-items: $product-sticker-align-items;
+    padding: $product-sticker-padding;
+    z-index: $product-sticker-z-index;
+    position: $product-sticker-position;
+
+    &--start-start {
+        inset-block-start: $product-sticker-start-start-block-start;
+        inset-inline-start: $product-sticker-start-start-inline-start;
+        border-end-end-radius: $product-sticker-border-radius;
     }
 
-    &--top-right {
-        top: $product-sticker-icon-top-right-pos-top;
-        right: $product-sticker-icon-top-right-pos-right;
+    &--start-end {
+        inset-block-start: $product-sticker-start-end-block-start;
+        inset-inline-end: $product-sticker-start-end-inline-end;
+        border-end-start-radius: $product-sticker-border-radius;
     }
 
-    &--bottom-right {
-        bottom: $product-sticker-icon-bottom-right-pos-bottom;
-        right: $product-sticker-icon-bottom-right-pos-right;
+    &--end-end {
+        inset-block-end: $product-sticker-end-end-block-end;
+        inset-inline-end: $product-sticker-end-end-inline-end;
+        border-start-start-radius: $product-sticker-border-radius;
     }
 
-    &--bottom-left {
-        bottom: $product-sticker-icon-bottom-left-pos-bottom;
-        left: $product-sticker-icon-bottom-left-pos-left;
+    &--end-start {
+        inset-block-end: $product-sticker-end-start-block-end;
+        inset-inline-start: $product-sticker-end-start-inline-start;
+        border-start-end-radius: $product-sticker-border-radius;
     }
 
-    &--center {
-        top: 50%;
-        left: 50%;
-
-        transform: translate(-50%, -50%);
+    &--new_arrival {
+        background: $product-sticker-new-arrival-background;
+        color: $product-sticker-new-arrival-color;
     }
 
-    &--text {
-        font-weight: $product-sticker-text-font-weight;
-
-        &-new_arrival {
-            color: $product-sticker-text-new-arrival-color;
-        }
-    }
-
-    &--icon {
-        z-index: z('base') + 1;
-
-        @include aspect-ratio($position: absolute);
-
-        &-new_arrival {
-            width: $product-sticker-icon-size;
-
-            background: $product-sticker-icon-new-arrival-background;
-            background-size: $product-sticker-icon-new-arrival-background-size;
-        }
-
-        &-static-size {
-            width: $product-sticker-icon-static-size;
-            height: $product-sticker-icon-static-size;
-        }
-    }
-
-    .product-view-media-gallery__nav + & {
-        &--bottom-right {
-            bottom: $product-sticker-icon-bottom-right-gallery-pos-bottom;
-        }
-
-        &--bottom-left {
-            bottom: $product-sticker-icon-bottom-left-gallery-pos-bottom;
-        }
-    }
-}
-
-@include breakpoint('tablet-small') {
-    .product-sticker {
-        &--top-right {
-            top: $product-sticker-icon-top-right-tablet-small-pos-top;
-            right: $product-sticker-icon-top-right-tablet-small-pos-right;
-        }
-    }
-}
-
-@include breakpoint('mobile-landscape') {
-    .product-sticker {
-        &--top-right {
-            top: $product-sticker-icon-top-right-mobile-landscape-pos-top;
-            right: $product-sticker-icon-top-right-mobile-landscape-pos-right;
-        }
+    &--sale {
+        background: $product-sticker-sale-background;
+        color: $product-sticker-sale-color;
     }
 }

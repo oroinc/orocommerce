@@ -33,6 +33,7 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
         'Approve',
     ];
     protected const TRANSITIONS = [
+        'verify_transition',
         'edit_transition',
         'clone_transition',
         'delete_transition',

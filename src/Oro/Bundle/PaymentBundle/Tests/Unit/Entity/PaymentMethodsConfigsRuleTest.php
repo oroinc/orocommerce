@@ -17,7 +17,7 @@ class PaymentMethodsConfigsRuleTest extends \PHPUnit\Framework\TestCase
     public function testAccessors()
     {
         $properties = [
-            ['id', '1'],
+            ['id', 1],
             ['rule', new Rule()],
             ['currency', 'USD'],
             ['organization', new Organization()],

@@ -42,10 +42,6 @@
         &_more-info {
             position: relative;
 
-            .validation-failed {
-                white-space: normal;
-            }
-
             &:hover {
                 .product__qty-input_more-info__popup {
                     display: block;
@@ -60,12 +56,18 @@
     }
 
     &__specification {
+        &--gallery-view {
+            margin-bottom: spacing('sm');
+        }
+
         &--list-view {
-            margin: 0 0 ($offset-y-m * 2);
+            grid-area: specification;
+            margin: 0 0 spacing('base');
         }
 
         &--no-image-view {
-            margin: 0 0 $offset-y-m;
+            grid-area: specification;
+            margin: 0 0 spacing('sm');
 
             &.product__specification--delivery {
                 display: none;
@@ -81,13 +83,23 @@
 
     &__description {
         &-content {
-            margin: 0 0 15px;
+            margin: 0 0 spacing('base');
         }
     }
 
     &__static-unit {
         min-width: 82px;
         padding: 13px 12px;
+    }
+}
+
+@include breakpoint('tablet') {
+    .product {
+        &__view-details-link {
+            &--list-view {
+                display: none;
+            }
+        }
     }
 }
 
@@ -130,8 +142,6 @@
 
         &__specification {
             &--list-view {
-                margin: 0;
-
                 &.product__specification--delivery {
                     display: none;
                 }
@@ -139,6 +149,7 @@
 
             &--no-image-view {
                 margin: 0;
+                grid-area: specification;
             }
         }
     }

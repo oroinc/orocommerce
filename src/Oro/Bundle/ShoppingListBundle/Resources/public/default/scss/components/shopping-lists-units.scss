@@ -1,25 +1,18 @@
 /* @theme: default; */
 
 .shopping-lists-units {
-    position: relative;
-
-    display: block;
-    padding: 4px 7px 4px 0;
+    padding: $shopping-lists-units-inner-offset;
 
     @include clearfix();
 
-    &:first-child {
-        display: block;
-        margin-top: 0;
-    }
-
     &__number {
-        display: inline-block;
-        min-width: $offset-x-m;
+        width: $shopping-lists-units-number-width;
+        text-align: $shopping-lists-units-number-text-align;
     }
 
     &__static {
-        padding-right: $offset-x-m;
+        display: $shopping-lists-units-static-display;
+        align-items: $shopping-lists-units-static-align-items;
     }
 
     &__separate {
@@ -27,9 +20,7 @@
     }
 
     &__actions {
-        float: right;
-
-        color: $shopping-lists-units-actions-color;
+        margin-left: $shopping-lists-units-actions-outer-offset-left;
     }
 
     &:hover &__actions {
@@ -37,10 +28,24 @@
     }
 }
 
+@include breakpoint('mobile-landscape') {
+    .shopping-lists-units {
+        &__number {
+            width: initial;
+        }
+    }
+}
+
 @include breakpoint('mobile') {
     .shopping-lists-units {
+        padding: $shopping-lists-units-inner-offset-mobile;
+
         &__static {
             padding-right: 0;
+        }
+
+        &__number {
+            width: auto;
         }
     }
 }

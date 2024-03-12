@@ -13,18 +13,14 @@ use Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderLineItemAfterDiscountsMapper
 use Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class OrderLineItemAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
+class OrderLineItemAfterDiscountsMapperTest extends TestCase
 {
-    /** @var TaxMapperInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $innerMapper;
-
-    /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $taxationSettingsProvider;
-
-    /** @var PromotionExecutor|\PHPUnit\Framework\MockObject\MockObject */
-    private $promotionExecutor;
-
+    private TaxMapperInterface|MockObject $innerMapper;
+    private TaxationSettingsProvider|MockObject $taxationSettingsProvider;
+    private PromotionExecutor|MockObject $promotionExecutor;
     private OrderLineItemAfterDiscountsMapper $orderLineItemAfterDiscountsMapper;
 
     protected function setUp(): void
@@ -62,6 +58,7 @@ class OrderLineItemAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $discountLineItem = new DiscountLineItem();
+        $discountLineItem->setSourceLineItem($lineItem);
         $discountContext = new DiscountContext();
         $discountContext->setLineItems([$discountLineItem]);
 
@@ -207,17 +204,31 @@ class OrderLineItemAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
         $lineItem = new OrderLineItem();
         $lineItem
             ->setPrice($price)
-            ->setOrder($order);
+            ->setOrder($order)
+            ->setProductSku('item')
+            ->setQuantity(1)
+            ->setProductUnitCode('item')
+            ->setValue(100);
         $this->innerMapper->expects(self::once())
             ->method('map')
             ->with($lineItem)
             ->willReturn($taxable);
+
+        $lineItem1 = new OrderLineItem();
+        $lineItem1
+            ->setPrice($price)
+            ->setOrder($order)
+            ->setProductSku('item')
+            ->setQuantity(2)
+            ->setProductUnitCode('item')
+            ->setValue(100);
 
         $this->taxationSettingsProvider->expects(self::once())
             ->method('isCalculateAfterPromotionsEnabled')
             ->willReturn(true);
 
         $discountLineItem = new DiscountLineItem();
+        $discountLineItem->setSourceLineItem($lineItem1);
         $discountContext = new DiscountContext();
         $discountContext->setLineItems([$discountLineItem]);
 
@@ -298,5 +309,113 @@ class OrderLineItemAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
                 'expectedTaxablePrice' => 2,
             ]
         ];
+    }
+
+    public function testMapKitLineItem(): void
+    {
+        $taxable = new Taxable();
+        $taxable->setPrice(1000);
+        $taxable->setKitTaxable(true);
+        $taxable->setQuantity(2);
+        $taxable->addItem($this->createKitItemTaxable(100, 2));
+        $taxable->addItem($this->createKitItemTaxable(200, 2));
+
+        $order = new Order();
+        $price = new Price();
+        $lineItem = new OrderLineItem();
+        $lineItem
+            ->setPrice($price)
+            ->setOrder($order);
+        $this->innerMapper->expects(self::once())
+            ->method('map')
+            ->with($lineItem)
+            ->willReturn($taxable);
+
+        $this->taxationSettingsProvider->expects(self::once())
+            ->method('isCalculateAfterPromotionsEnabled')
+            ->willReturn(true);
+
+        $discountLineItem = new DiscountLineItem();
+        $discountLineItem
+            ->setSourceLineItem($lineItem)
+            ->setPrice(Price::create(1300, 'USD'))
+            ->setSubtotal(2600)
+            ->setSubtotalAfterDiscounts(2340);
+        $discountContext = new DiscountContext();
+        $discountContext->setLineItems([$discountLineItem]);
+
+        $this->promotionExecutor->expects(self::once())
+            ->method('supports')
+            ->with($order)
+            ->willReturn(true);
+        $this->promotionExecutor->expects(self::once())
+            ->method('execute')
+            ->with($order)
+            ->willReturn($discountContext);
+
+        $actualTaxable = $this->orderLineItemAfterDiscountsMapper->map($lineItem);
+        $items = [];
+        foreach ($actualTaxable->getItems() as $item) {
+            $items[] = $item;
+        }
+
+        self::assertEquals(BigDecimal::of(899.99997)->toScale(12), $actualTaxable->getPrice());
+        self::assertEquals(BigDecimal::of(90.00001)->toScale(6), $items[0]->getPrice());
+        self::assertEquals(BigDecimal::of(180.000020)->toScale(6), $items[1]->getPrice());
+    }
+
+    private function createKitItemTaxable(float $price, int $quantity): Taxable
+    {
+        return (new Taxable())
+            ->setPrice($price)
+            ->setCurrency('USD')
+            ->setQuantity($quantity);
+    }
+
+    public function testMapWithSuborders(): void
+    {
+        $taxable = new Taxable();
+        $taxable->setPrice(4);
+
+        $order = new Order();
+        $suborder = new Order();
+        $order->addSubOrder($suborder);
+        $price = new Price();
+        $lineItem = new OrderLineItem();
+        $lineItem
+            ->setPrice($price)
+            ->setOrder($suborder);
+        $this->innerMapper->expects(self::once())
+            ->method('map')
+            ->with($lineItem)
+            ->willReturn($taxable);
+
+        $this->taxationSettingsProvider->expects(self::once())
+            ->method('isCalculateAfterPromotionsEnabled')
+            ->willReturn(true);
+
+        $discountLineItem = new DiscountLineItem();
+        $discountLineItem
+            ->setSourceLineItem($lineItem)
+            ->setSubtotal(3)
+            ->setSubtotalAfterDiscounts(2);
+        $discountContext = new DiscountContext();
+        $discountContext->setLineItems([$discountLineItem]);
+
+        $this->promotionExecutor->expects(self::once())
+            ->method('supports')
+            ->with($suborder)
+            ->willReturn(true);
+        $this->promotionExecutor->expects(self::once())
+            ->method('execute')
+            ->with($suborder)
+            ->willReturn($discountContext);
+
+        $expectedTaxable = clone $taxable;
+        $expectedTaxable->setPrice(
+            BigDecimal::of(2)->toScale(TaxationSettingsProvider::CALCULATION_SCALE)
+        );
+
+        self::assertEquals($expectedTaxable, $this->orderLineItemAfterDiscountsMapper->map($lineItem));
     }
 }

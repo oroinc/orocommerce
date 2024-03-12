@@ -44,12 +44,16 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
                     - checkout_line_items_data
                     # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                     - order_line_item_to_checkout_line_item_convert
+                    # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
+                    - quote_demand_line_item_to_checkout_line_item_convert
         -   Oro\Bundle\InventoryBundle\Validator\Constraints\QuantityToOrder:
                 maxMessage: 'oro.inventory.reorder.quantity_to_order.max_message'
                 minMessage: 'oro.inventory.reorder.quantity_to_order.min_message'
                 groups:
                     # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                     - checkout_start_from_order
+                    # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
+                    - order_line_item_to_checkout_line_item_convert
         -   Oro\Bundle\InventoryBundle\Validator\Constraints\QuantityToOrder:
                 groups:
                     # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
@@ -87,6 +91,8 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
                     - checkout_line_items_data
                     # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                     - order_line_item_to_checkout_line_item_convert
+                    # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
+                    - quote_demand_line_item_to_checkout_line_item_convert
         -   Oro\Bundle\InventoryBundle\Validator\Constraints\IsLowInventoryLevel:
                 payload:
                     # Option "severity" is handled by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
@@ -119,14 +125,18 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
                         - checkout_pre_order_create_from_quotedemand
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
+                        # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
+                        - quote_demand_line_item_to_checkout_line_item_convert
         shippingMethod:
-            -   Length:
-                    max: 255
-                    allowEmptyString: true
+            - AtLeastOneOf:
+                -   Blank: ~
+                -   Length:
+                        max: 255
         shippingMethodType:
-            -   Length:
-                    max: 255
-                    allowEmptyString: true
+            - AtLeastOneOf:
+                -   Blank: ~
+                -   Length:
+                        max: 255
         shippingEstimateAmount:
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         product:
@@ -139,15 +149,24 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
                     groups:
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
+            -   Expression:
+                    expression: 'value || this.getKitItemLineItems().isEmpty()'
+                    groups:
+                        # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
+                        - quote_demand_line_item_to_checkout_line_item_convert
             - Oro\Bundle\OrderBundle\Validator\Constraints\HasSupportedInventoryStatus:
                   groups:
                       # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                       - order_line_item_to_checkout_line_item_convert
+                      # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
+                      - quote_demand_line_item_to_checkout_line_item_convert
         productUnit:
             -   NotNull:
                     groups:
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
+                        # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
+                        - quote_demand_line_item_to_checkout_line_item_convert
 
 Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem:
     properties:
@@ -168,6 +187,8 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem:
                         - checkout_line_items_data
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
+                        # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
+                        - quote_demand_line_item_to_checkout_line_item_convert
         quantity:
             -   NotNull: ~
             -   Type:
@@ -183,6 +204,8 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem:
                         - checkout_line_items_data
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
+                        # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
+                        - quote_demand_line_item_to_checkout_line_item_convert
             -   Range:
                     minPropertyPath: 'kitItem.minimumQuantity'
                     maxPropertyPath: 'kitItem.maximumQuantity'
@@ -192,12 +215,18 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem:
                     groups:
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_order
+                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
+                        - checkout_start_from_quotedemand
                         # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
                         - datagrid_line_items_data
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
                         - checkout_pre_order_create_from_shoppinglist
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
                         - checkout_pre_order_create_from_order
+                        # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
+                        - order_line_item_to_checkout_line_item_convert
+                        # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
+                        - quote_demand_line_item_to_checkout_line_item_convert
             -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision:
                     groups:
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
@@ -208,6 +237,8 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem:
                         - checkout_line_items_data
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
+                        # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
+                        - quote_demand_line_item_to_checkout_line_item_convert
         productUnit:
             -   NotNull: ~
             -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductUnitAvailable:
@@ -220,6 +251,8 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem:
                         - checkout_line_items_data
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
+                        # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
+                        - quote_demand_line_item_to_checkout_line_item_convert
         sortOrder:
             -   NotNull: ~
             -   Type:

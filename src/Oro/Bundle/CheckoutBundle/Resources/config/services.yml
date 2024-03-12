@@ -34,8 +34,7 @@ services:
             - '@oro_checkout.data_provider.converter.checkout_line_items'
             - '@oro_pricing.user_currency_manager'
             - '@oro_config.manager'
-        calls:
-            - [setMemoryCacheProvider, ['@oro_checkout.data_provider.manager.checkout_line_items.cache']]
+            - '@oro_checkout.data_provider.manager.checkout_line_items.cache'
 
     oro_checkout.data_provider.manager.checkout_line_items.cache:
         parent: oro.cache.provider.memory_cache
@@ -353,7 +352,7 @@ services:
     oro_checkout.workflow_state.handler.checkout_error:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler'
         arguments:
-            - '@session.flash_bag'
+            - '@request_stack'
 
     oro_checkout.workflow.manager.b2b_flow_checkout:
         parent: oro_workflow.abstract.workflow_aware_manager
@@ -508,12 +507,32 @@ services:
         tags:
             - { name: layout.data_provider, alias: 'checkout_shipping_methods' }
 
+    oro_checkout.checkout_sub_order_shipping_price_provider:
+        class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutSubOrderShippingPriceProvider'
+        public: true
+        arguments:
+            - '@oro_checkout.shipping_method.provider_main'
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_shipping.method.org_provider'
+
     oro_checkout.condition.checkout_has_applicable_shipping_methods:
         class: 'Oro\Bundle\CheckoutBundle\Condition\CheckoutHasApplicableShippingMethods'
         arguments:
             - '@oro_checkout.available_shipping_method_checker'
         tags:
             - { name: oro_action.condition, alias: 'checkout_has_applicable_shipping_methods' }
+
+    oro_checkout.provider.multi_shipping.group_shipping_methods:
+        class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutGroupShippingMethodsProvider'
+        public: true
+        arguments:
+            - '@oro_checkout.shipping_method.provider_main'
+            - '@oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping'
+            - '@oro_checkout.factory.multi_shipping.checkout_factory'
+            - '@oro_shipping.multi_shipping.group_line_item_helper'
+            - '@oro_shipping.method.org_provider'
+        tags:
+            - { name: layout.data_provider, alias: 'checkout_group_shipping_methods' }
 
     oro_checkout.datagrid.action_permission_provider:
         class: 'Oro\Bundle\CheckoutBundle\Datagrid\ActionPermissionProvider'
@@ -655,8 +674,12 @@ services:
             - '@oro_visibility.provider.resolved_product_visibility_provider'
             - '@oro_checkout.provider.checkout_validation_groups_by_source_entity'
             - '@validator'
+            - '@oro_checkout.data_provider.checkout.cache'
         tags:
             - { name: checkout.data_provider.line_item }
+
+    oro_checkout.data_provider.checkout.cache:
+        parent: oro.cache.provider.memory_cache
 
     oro_checkout.provider.subtotal:
         class: 'Oro\Bundle\CheckoutBundle\Provider\SubtotalProvider'
@@ -817,8 +840,11 @@ services:
                 - 'b2b_flow_checkout_single_page_start_from_shoppinglist'
 
     oro_checkout.datagrid.extension.frontend_checkout_line_items_grid:
-        class: 'Oro\Bundle\CheckoutBundle\Datagrid\FrontendLineItemsGridExtension'
+        class: Oro\Bundle\CheckoutBundle\Datagrid\FrontendLineItemsGridExtension
         arguments:
+            -
+                - 'frontend-checkout-line-items-grid'
+                - 'frontend-single-page-checkout-line-items-grid'
             - '@doctrine'
             - '@oro_config.manager'
             - '@oro_checkout.provider.checkout_line_items'

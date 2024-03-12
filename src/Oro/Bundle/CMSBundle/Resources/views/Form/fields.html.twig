@@ -115,6 +115,7 @@
 {% endblock %}
 
 {% macro image_slide_collection_item_prototype(widget) %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.prototype.vars.name %}
@@ -137,14 +138,133 @@
             {% endif %}
     >
         <div class="row-oro oro-multiselect-holder{% if not allow_delete %} not-removable{% endif %}">
-            {% set text_fiels_html %}
+            {% set fileFields = [
+                "extraLargeImage",
+                "extraLargeImage2x",
+                "extraLargeImage3x",
+                "largeImage",
+                "largeImage2x",
+                "largeImage3x",
+                "mediumImage",
+                "mediumImage2x",
+                "mediumImage3x",
+                "smallImage",
+                "smallImage2x",
+                "smallImage3x"
+            ] %}
+            {% set fileFieldsToRender = [] %}
+            {% for fieldName, field in form -%}
+                {% if fieldName in fileFields %}
+                    {% set fileFieldsToRender = fileFieldsToRender|merge([field]) %}
+                {% endif %}
+            {% endfor %}
+            {% set text_fields_html %}
                 {{ form_row(form.text) }}
             {% endset %}
-                <div class="responsive-block">
-                    {{ form_rest(form) }}
+            {% set text_fields_table_html %}
+                <table class="table table-bordered files-collection-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <div>
+                                    {{ 'oro.cms.imageslide.form.table.header.image_type.label'|trans }}
+                                </div>
+                            </th>
+                            <th>
+                                <div>
+                                    {{ 'oro.cms.imageslide.form.table.header.image_standart_size.label'|trans }}
+                                    {{ UI.tooltip('oro.cms.imageslide.form.table.header.image_standart_size.tooltip'|trans) }}
+                                </div>
+                            </th>
+                            <th>
+                                <div>
+                                    {{ 'oro.cms.imageslide.form.table.header.image_2x_size.label'|trans }}
+                                    {{ UI.tooltip('oro.cms.imageslide.form.table.header.image_2x_size.tooltip'|trans) }}
+                                </div>
+                            </th>
+                            <th>
+                                <div>
+                                    {{ 'oro.cms.imageslide.form.table.header.image_3x_size.label'|trans }}
+                                    {{ UI.tooltip('oro.cms.imageslide.form.table.header.image_3x_size.tooltip'|trans) }}
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    {% set rowStart = 0 %}
+                    {% set rowEnd = 2 %}
+                    {% set rows = [{
+                        'row': 'oro.cms.imageslide.form.table.row.extra_large',
+                        'fields': [
+                            'oro.cms.imageslide.extra_large_image.label',
+                            'oro.cms.imageslide.extra_large_image2x.label',
+                            'oro.cms.imageslide.extra_large_image3x.label'
+                        ]
+                    }, {
+                        'row': 'oro.cms.imageslide.form.table.row.large',
+                        'fields': [
+                            'oro.cms.imageslide.large_image.label',
+                            'oro.cms.imageslide.large_image2x.label',
+                            'oro.cms.imageslide.large_image3x.label'
+                        ]
+                    }, {
+                        'row': 'oro.cms.imageslide.form.table.row.medium',
+                        'fields': [
+                            'oro.cms.imageslide.medium_image.label',
+                            'oro.cms.imageslide.medium_image2x.label',
+                            'oro.cms.imageslide.medium_image3x.label'
+                        ]
+                    }, {
+                        'row': 'oro.cms.imageslide.form.table.row.small',
+                        'fields': [
+                            'oro.cms.imageslide.small_image.label',
+                            'oro.cms.imageslide.small_image2x.label',
+                            'oro.cms.imageslide.small_image3x.label'
+                    ]}]%}
+                    {% for row in rows %}
+                        <tbody class="fields-row" data-prototype-name>
+                            <tr>
+                                <td class="files-collection-table__label">
+                                    <label for="{{ fileFieldsToRender[rowStart].vars.id }}" class="required">
+                                        {{ UI.tooltip((row.row ~ '.tooltip')|trans) }}
+                                        {{ (row.row ~ '.label')|trans }}<em>*</em>
+                                    </label>
+                                    <input type="hidden" disabled
+                                           data-validate-element
+                                           data-validation="{{ {
+                                               NotBlankGroup: {
+                                                   message: 'oro.cms.image_slider.image.has_at_least_one_size_image.message',
+                                                   placeholders: {
+                                                       'fields': row.fields|map(field => field|trans)|join(', ')
+                                                   },
+                                                   selector: '[data-name="field__digital-asset"]'
+                                               }
+                                           }|json_encode }}">
+                                </td>
+                                {% for rowIndex in range(rowStart, rowEnd) %}
+                                    {% set rowStart = rowStart + 1 %}
+                                    {% set rowEnd = rowEnd + 1 %}
+                                        <td class="files-collection-table__field">
+                                            {{ form_widget(fileFieldsToRender[rowIndex]) }}
+                                        </td>
+                                {% endfor %}
+                            </tr>
+                            <tr>
+                                <td class="fields-row-error empty-hidden" colspan="{{ rows|length }}"></td>
+                            </tr>
+                        </tbody>
+                    {% endfor %}
+                </table>
+                {% endset %}
+                <div class="clearfix">
+                    <div class="responsive-block">
+                        {{ form_rest(form) }}
+                    </div>
+                    <div class="responsive-block">
+                        {{ text_fields_html }}
+                    </div>
                 </div>
-                <div class="responsive-block">
-                    {{ text_fiels_html }}
+                <div class="grid-scrollable-container">
+                    {{ text_fields_table_html }}
                 </div>
             {% if allow_delete %}
                 <button class="removeRow btn btn-icon btn-square-light"
@@ -295,7 +415,7 @@
             {% endif %}
     >
         <div class="row-oro oro-multiselect-holder{% if not allow_delete %} not-removable{% endif %}">
-            {% set text_fiels_html %}
+            {% set text_fields_html %}
                 {{ form_row(form.content) }}
             {% endset %}
 
@@ -303,7 +423,7 @@
                 {{ form_rest(form) }}
             </div>
             <div class="section-content">
-                {{ text_fiels_html }}
+                {{ text_fields_html }}
             </div>
 
             {% if allow_delete %}

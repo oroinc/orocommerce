@@ -187,7 +187,7 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
     protected function getProductPriceRepository()
     {
         return $this->getManager()
-            ->getRepository('OroPricingBundle:ProductPrice');
+            ->getRepository(ProductPrice::class);
     }
 
     /**
@@ -195,7 +195,7 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
      */
     protected function getManager()
     {
-        return $this->registry->getManagerForClass('OroPricingBundle:ProductPrice');
+        return $this->registry->getManagerForClass(ProductPrice::class);
     }
 
     /**

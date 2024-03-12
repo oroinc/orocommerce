@@ -2,51 +2,234 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Api\Rest;
 
+use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadBrandData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
+use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
+use Oro\Bundle\UserBundle\Entity\User;
 
-class BrandApiTest extends WebTestCase
+/**
+ * @dbIsolationPerTest
+ */
+class BrandApiTest extends RestJsonApiTestCase
 {
+    use RolePermissionExtension;
     protected function setUp(): void
     {
         $this->initClient([], self::generateWsseAuthHeader());
         $this->loadFixtures([LoadBrandData::class]);
     }
 
-    public function testGetAction()
+    public function testGetAction(): void
     {
+        $this->updateRolePermission(
+            User::ROLE_ADMINISTRATOR,
+            Brand::class,
+            AccessLevel::GLOBAL_LEVEL
+        );
+
         /** @var Brand $brand */
-        $brand = self::getContainer()->get('doctrine')
-            ->getRepository(Brand::class)
-            ->findOneBy([]);
+        $brand = $this->getReference(LoadBrandData::BRAND_1);
 
         $id = $brand->getId();
 
-        $this->assertGreaterThan(0, $id);
+        self::assertGreaterThan(0, $id);
 
-        $this->client->jsonRequest('GET', $this->getUrl('oro_api_get_brand', ['id' => $id]));
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->get(['entity' => 'brands', 'id' => $id]);
     }
 
-    public function testDeleteAction()
+    public function testGetActionWhenBrandPermissionIsSetToNone(): void
     {
-        /** @var Brand $brand */
-        $brand = self::getContainer()->get('doctrine')
-            ->getRepository(Brand::class)
-            ->findOneBy([]);
+        $this->updateRolePermission(
+            User::ROLE_ADMINISTRATOR,
+            Brand::class,
+            AccessLevel::NONE_LEVEL
+        );
 
-        $id = $brand->getId();
+        /** @var Brand $brand1 */
+        $brand1 = $this->getReference(LoadBrandData::BRAND_1);
+        /** @var Brand $brand2 */
+        $brand2 = $this->getReference(LoadBrandData::BRAND_2);
 
-        $this->assertGreaterThan(0, $id);
+        $id1 = $brand1->getId();
+        $id2 = $brand2->getId();
 
-        $this->client->jsonRequest('GET', $this->getUrl('oro_api_get_brand', ['id' => $id]));
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $response = $this->get(
+            ['entity' => 'brands', 'id' => $id1],
+            assertValid: false
+        );
 
-        $this->client->jsonRequest('DELETE', $this->getUrl('oro_api_delete_brand', ['id' => $id]));
-        $this->assertEquals(204, $this->client->getResponse()->getStatusCode());
+        self::assertResponseStatusCodeEquals($response, 403);
 
-        $this->client->jsonRequest('GET', $this->getUrl('oro_api_get_brand', ['id' => $id]));
-        $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
+        $response = $this->get(
+            ['entity' => 'brands', 'id' => $id2],
+            assertValid: false
+        );
+
+        self::assertResponseStatusCodeEquals($response, 403);
+    }
+
+    public function testGetActionWithBrandViewPermissionToBusinessUnit(): void
+    {
+        $this->updateRolePermission(
+            User::ROLE_ADMINISTRATOR,
+            Brand::class,
+            AccessLevel::LOCAL_LEVEL
+        );
+
+        /** @var Brand $brand1 */
+        $brand1 = $this->getReference(LoadBrandData::BRAND_1);
+        /** @var Brand $brand2 */
+        $brand2 = $this->getReference(LoadBrandData::BRAND_2);
+
+        $id1 = $brand1->getId();
+        $id2 = $brand2->getId();
+
+        $this->get(['entity' => 'brands', 'id' => $id1]);
+
+        $response = $this->get(
+            ['entity' => 'brands', 'id' => $id2],
+            assertValid: false
+        );
+
+        self::assertResponseStatusCodeEquals($response, 403);
+    }
+
+    public function testGetListAction(): void
+    {
+        $this->updateRolePermission(
+            User::ROLE_ADMINISTRATOR,
+            Brand::class,
+            AccessLevel::GLOBAL_LEVEL
+        );
+
+        $response = $this->cget(['entity' => 'brands']);
+        $content = self::jsonToArray($response->getContent());
+        $data = $content['data'] ?? [];
+
+        self::assertCount(2, $data);
+    }
+
+    public function testGetListActionWithBrandViewPermissionToBusinessUnit(): void
+    {
+        $this->updateRolePermission(
+            User::ROLE_ADMINISTRATOR,
+            Brand::class,
+            AccessLevel::LOCAL_LEVEL
+        );
+
+        /** @var Brand $brand1 */
+        $brand1 = $this->getReference(LoadBrandData::BRAND_1);
+
+        $response = $this->cget(['entity' => 'brands']);
+        $content = self::jsonToArray($response->getContent());
+        $data = $content['data'] ?? [];
+
+        self::assertCount(1, $data);
+        self::assertArrayContains(['type' => 'brands', 'id' => (string)$brand1->getId()], current($data));
+    }
+
+    public function testPatchAction(): void
+    {
+        $this->updateRolePermissions(
+            User::ROLE_ADMINISTRATOR,
+            Brand::class,
+            [
+                'VIEW'   => AccessLevel::GLOBAL_LEVEL,
+                'DELETE' => AccessLevel::GLOBAL_LEVEL,
+                'EDIT' => AccessLevel::GLOBAL_LEVEL
+            ]
+        );
+
+        $brand2 = $this->getReference(LoadBrandData::BRAND_2);
+        $this->patch(
+            ['entity' => 'brands', 'id' => (string)$brand2->getId()],
+            [
+                'data' => [
+                    'id' => (string)$brand2->getId(),
+                    'type' => 'brands', 'attributes' => ['status' => 'disabled']
+                ]
+            ]
+        );
+    }
+
+    public function testPatchActionWithBrandEditPermissionToBusinessUnit(): void
+    {
+        $this->updateRolePermissions(
+            User::ROLE_ADMINISTRATOR,
+            Brand::class,
+            [
+                'VIEW'   => AccessLevel::GLOBAL_LEVEL,
+                'DELETE' => AccessLevel::GLOBAL_LEVEL,
+                'EDIT' => AccessLevel::LOCAL_LEVEL
+            ]
+        );
+
+        $brand2 = $this->getReference(LoadBrandData::BRAND_2);
+        $response = $this->patch(
+            ['entity' => 'brands', 'id' => (string)$brand2->getId()],
+            [
+                'data' => [
+                    'id' => (string)$brand2->getId(),
+                    'type' => 'brands', 'attributes' => ['status' => 'disabled']
+                ]
+            ],
+            assertValid: false
+        );
+        self::assertResponseStatusCodeEquals($response, 403);
+    }
+
+    public function testDeleteAction(): void
+    {
+        $this->updateRolePermissions(
+            User::ROLE_ADMINISTRATOR,
+            Brand::class,
+            [
+                'VIEW'   => AccessLevel::GLOBAL_LEVEL,
+                'DELETE' => AccessLevel::GLOBAL_LEVEL,
+            ]
+        );
+
+        $brand1 = $this->getReference(LoadBrandData::BRAND_1);
+        $brand2 = $this->getReference(LoadBrandData::BRAND_2);
+
+        $id1 = $brand1->getId();
+        $id2 = $brand2->getId();
+
+        self::assertGreaterThan(0, $id1);
+        self::assertGreaterThan(0, $id2);
+
+        $this->get(['entity' => 'brands', 'id' => $id1]);
+        $this->get(['entity' => 'brands', 'id' => $id2]);
+
+        $this->delete(['entity' => 'brands', 'id' => $id1]);
+
+        $this->get(['entity' => 'brands', 'id' => $id2]);
+        $response = $this->get(['entity' => 'brands', 'id' => $id1], assertValid: false);
+        self::assertResponseStatusCodeEquals($response, 404);
+    }
+
+    public function testDeleteActionWithBrandDeletePermissionToBusinessUnit(): void
+    {
+        $this->updateRolePermissions(
+            User::ROLE_ADMINISTRATOR,
+            Brand::class,
+            [
+                'VIEW'   => AccessLevel::GLOBAL_LEVEL,
+                'DELETE' => AccessLevel::LOCAL_LEVEL,
+            ]
+        );
+
+        $brand2 = $this->getReference(LoadBrandData::BRAND_2);
+
+        $id2 = $brand2->getId();
+
+        self::assertGreaterThan(0, $id2);
+
+        $this->get(['entity' => 'brands', 'id' => $id2]);
+
+        $response = $this->delete(['entity' => 'brands', 'id' => $id2], assertValid: false);
+        self::assertResponseStatusCodeEquals($response, 403);
     }
 }

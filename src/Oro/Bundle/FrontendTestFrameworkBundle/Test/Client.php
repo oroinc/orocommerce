@@ -33,23 +33,12 @@ class Client extends BaseClient
     }
 
     /**
-     * @param array|string $gridParameters
-     * @param array $filter
-     * @param bool $isRealRequest
-     * @return Response
-     */
-    public function requestFrontendGrid($gridParameters, $filter = [], $isRealRequest = false)
-    {
-        return $this->requestGrid($gridParameters, $filter, $isRealRequest, 'oro_frontend_datagrid_index');
-    }
-
-    /**
      * {@inheritdoc}
      */
-    protected function isHashNavigationRequest($uri, array $parameters, array $server)
+    protected function isContentResponse($content)
     {
         // no hash navigation at frontend
-        return parent::isHashNavigationRequest($uri, $parameters, $server) && !$this->isFrontendUri($uri);
+        return parent::isContentResponse($content) && !$this->isFrontendUri($this->request->getUri());
     }
 
     /**

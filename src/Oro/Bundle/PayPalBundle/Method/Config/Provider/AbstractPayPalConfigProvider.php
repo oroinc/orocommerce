@@ -8,6 +8,9 @@ use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalConfigFactoryInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalConfigInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Provides payment method configs for all enabled PayPal integrations
+ */
 abstract class AbstractPayPalConfigProvider
 {
     /**
@@ -79,8 +82,8 @@ abstract class AbstractPayPalConfigProvider
     protected function getEnabledIntegrationSettings()
     {
         try {
-            return $this->doctrine->getManagerForClass('OroPayPalBundle:PayPalSettings')
-                ->getRepository('OroPayPalBundle:PayPalSettings')
+            return $this->doctrine->getManagerForClass(PayPalSettings::class)
+                ->getRepository(PayPalSettings::class)
                 ->getEnabledSettingsByType($this->getType());
         } catch (\UnexpectedValueException $e) {
             $this->logger->critical($e->getMessage());

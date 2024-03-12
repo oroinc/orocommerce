@@ -2,175 +2,84 @@
 
 namespace Oro\Bundle\TaxBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository;
 
 /**
  * Entity that represents tax rule
- *
- * @ORM\Entity(repositoryClass="Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository")
- * @ORM\Table(name="oro_tax_rule")
- * @ORM\HasLifecycleCallbacks
- * @Config(
- *      routeName="oro_tax_rule_index",
- *      routeView="oro_tax_rule_view",
- *      routeUpdate="oro_tax_rule_update",
- *      defaultValues={
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          },
- *          "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="organization",
- *              "owner_column_name"="organization_id"
- *          }
- *      }
- * )
  */
+#[ORM\Entity(repositoryClass: TaxRuleRepository::class)]
+#[ORM\Table(name: 'oro_tax_rule')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    routeName: 'oro_tax_rule_index',
+    routeView: 'oro_tax_rule_view',
+    routeUpdate: 'oro_tax_rule_update',
+    defaultValues: [
+        'security' => ['type' => 'ACL', 'group_name' => ''],
+        'ownership' => [
+            'owner_type' => 'ORGANIZATION',
+            'owner_field_name' => 'organization',
+            'owner_column_name' => 'organization_id'
+        ]
+    ]
+)]
 class TaxRule implements DatesAwareInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="description", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=500
-     *          }
-     *      }
-     * )
-     */
-    protected $description;
+    #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 500]])]
+    protected ?string $description = null;
 
-    /**
-     * @var ProductTaxCode
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\ProductTaxCode")
-     * @ORM\JoinColumn(name="product_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "identity"=true,
-     *              "order"=200
-     *          }
-     *      }
-     * )
-     */
-    protected $productTaxCode;
+    #[ORM\ManyToOne(targetEntity: ProductTaxCode::class)]
+    #[ORM\JoinColumn(name: 'product_tax_code_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['identity' => true, 'order' => 200]])]
+    protected ?ProductTaxCode $productTaxCode = null;
 
-    /**
-     * @var CustomerTaxCode
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\CustomerTaxCode")
-     * @ORM\JoinColumn(name="customer_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "identity"=true,
-     *              "order"=100
-     *          }
-     *      }
-     * )
-     */
-    protected $customerTaxCode;
+    #[ORM\ManyToOne(targetEntity: CustomerTaxCode::class)]
+    #[ORM\JoinColumn(name: 'customer_tax_code_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['identity' => true, 'order' => 100]])]
+    protected ?CustomerTaxCode $customerTaxCode = null;
 
-    /**
-     * @var Tax
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\Tax")
-     * @ORM\JoinColumn(name="tax_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "identity"=true,
-     *              "order"=400
-     *          }
-     *      }
-     * )
-     */
-    protected $tax;
+    #[ORM\ManyToOne(targetEntity: Tax::class)]
+    #[ORM\JoinColumn(name: 'tax_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['identity' => true, 'order' => 400]])]
+    protected ?Tax $tax = null;
 
-    /**
-     * @var TaxJurisdiction
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\TaxJurisdiction")
-     * @ORM\JoinColumn(name="tax_jurisdiction_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "identity"=true,
-     *              "order"=300
-     *          }
-     *      }
-     * )
-     */
-    protected $taxJurisdiction;
+    #[ORM\ManyToOne(targetEntity: TaxJurisdiction::class)]
+    #[ORM\JoinColumn(name: 'tax_jurisdiction_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['identity' => true, 'order' => 300]])]
+    protected ?TaxJurisdiction $taxJurisdiction = null;
 
-    /**
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     *
-     * @var \DateTime
-     */
-    protected $createdAt;
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(
+        defaultValues: ['entity' => ['label' => 'oro.ui.created_at'], 'importexport' => ['excluded' => true]]
+    )]
+    protected ?\DateTimeInterface $createdAt = null;
 
-    /**
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     *
-     * @var \DateTime
-     */
-    protected $updatedAt;
+    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(
+        defaultValues: ['entity' => ['label' => 'oro.ui.updated_at'], 'importexport' => ['excluded' => true]]
+    )]
+    protected ?\DateTimeInterface $updatedAt = null;
 
     /**
      * @var bool
      */
     protected $updatedAtSet;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: Organization::class)]
+    #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
     private ?Organization $organization = null;
 
     /**

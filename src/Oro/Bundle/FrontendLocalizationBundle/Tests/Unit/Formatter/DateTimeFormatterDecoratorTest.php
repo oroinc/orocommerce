@@ -86,6 +86,11 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $this->formatter->expects($this->once())
+            ->method('getPattern')
+            ->with(\IntlDateFormatter::SHORT, \IntlDateFormatter::LONG, self::US_LOCALE)
+            ->willReturn("MMMM d, y 'at' h:mm:ss a z");
+
+        $this->formatter->expects($this->once())
             ->method('format')
             ->with($date, \IntlDateFormatter::SHORT, \IntlDateFormatter::LONG, self::US_LOCALE)
             ->willReturn($expected);
@@ -130,6 +135,12 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $this->formatter->expects($this->once())
+            ->method('getPattern')
+            ->with(\IntlDateFormatter::SHORT, \IntlDateFormatter::NONE, self::US_LOCALE)
+            ->willReturn("MMMM d, y 'at' h:mm:ss a z");
+
+
+        $this->formatter->expects($this->once())
             ->method('formatDate')
             ->with($date, \IntlDateFormatter::SHORT, self::US_LOCALE)
             ->willReturn($expected);
@@ -167,6 +178,11 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
         $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn(true);
+
+        $this->formatter->expects($this->once())
+            ->method('getPattern')
+            ->with(\IntlDateFormatter::SHORT, \IntlDateFormatter::NONE, self::US_LOCALE)
+            ->willReturn("MMMM d, y 'at' h:mm:ss a z");
 
         $this->formatter->expects($this->once())
             ->method('formatYear')
@@ -208,6 +224,11 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $this->formatter->expects($this->once())
+            ->method('getPattern')
+            ->with(\IntlDateFormatter::SHORT, \IntlDateFormatter::NONE, self::US_LOCALE)
+            ->willReturn("MMMM d, y 'at' h:mm:ss a z");
+
+        $this->formatter->expects($this->once())
             ->method('formatQuarter')
             ->with($date, \IntlDateFormatter::SHORT, self::US_LOCALE)
             ->willReturn($expected);
@@ -247,6 +268,11 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $this->formatter->expects($this->once())
+            ->method('getPattern')
+            ->with(\IntlDateFormatter::SHORT, \IntlDateFormatter::NONE, self::US_LOCALE)
+            ->willReturn("MMMM d, y 'at' h:mm:ss a z");
+
+        $this->formatter->expects($this->once())
             ->method('formatMonth')
             ->with($date, \IntlDateFormatter::SHORT, self::US_LOCALE)
             ->willReturn($expected);
@@ -284,6 +310,11 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
         $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn(true);
+
+        $this->formatter->expects($this->once())
+            ->method('getPattern')
+            ->with(\IntlDateFormatter::SHORT, \IntlDateFormatter::NONE, self::US_LOCALE)
+            ->willReturn("MMMM d, y 'at' h:mm:ss a z");
 
         $this->formatter->expects($this->once())
             ->method('formatDay')

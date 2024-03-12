@@ -8,4 +8,9 @@
         gap: $product-totals-gap;
         align-items: flex-end;
     }
+
+    .form-actions .pull-right {
+        // Sketching an action panel
+        float: initial;
+    }
 }

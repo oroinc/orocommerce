@@ -89,7 +89,7 @@
 
 {% block  __oro_product_grid__product_view_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__preview',
+        '~class': ' product-item__preview product-item__preview--{{ class_prefix }}',
         'href': product.view_link,
         'aria-label': 'oro.product.frontend.index.view_details_prefix'|trans ~ ' ' ~ product.name
     }) %}
@@ -117,6 +117,7 @@
 {% endblock %}
 
 {% block __oro_product_grid__product_popup_gallery_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% if product.hasImage %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' view-product-gallery',
@@ -125,7 +126,7 @@
             'aria-label': 'oro.product.images.zoom.label'|trans,
             'type': 'button'
         }) %}
-        <button {{ block('block_attributes') }}></button>
+        <button {{ block('block_attributes') }}>{{ renderIcon.icon({name: 'zoom-in'}) }}</button>
     {% endif %}
 {% endblock %}
 
@@ -134,21 +135,25 @@
         '~class': ' product-item__preview-picture',
         'data-object-fit': ''
     }) %}
-
+    {% if product.hasImage is defined and product.hasImage == false %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-item__preview-picture--no-image',
+        }) %}
+    {% endif %}
     {% if product.imageWebp is defined and product.imageWebp and product.imageWebp != product.image %}
         {% set sources = [{
             srcset: product.imageWebp,
             type: 'image/webp'
         }] %}
     {% endif %}
-
     {% include '@OroAttachment/Twig/picture.html.twig' with {
         sources: sources|default([]),
         img_attrs: {
             src: product.image,
             alt: product.name,
             class: 'product-item__preview-image',
-            itemprop: 'image'
+            itemprop: 'image',
+            loading: 'lazy'
         },
         picture_attrs: attr
     } %}
@@ -161,7 +166,7 @@
 
     <h2 {{ block('block_attributes') }}>
         <a href="{{ product.view_link }}"
-           class="view-product{% if 'gallery-view' in class_prefix %} line-clamp{% endif %}"
+           class="view-product no-decoration {% if 'gallery-view' in class_prefix %} line-clamp{% endif %}"
            itemprop="url"
            title="{{ block('container_widget')|trim|raw }}"
         >

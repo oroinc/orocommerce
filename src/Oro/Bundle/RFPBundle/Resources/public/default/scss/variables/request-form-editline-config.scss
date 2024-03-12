@@ -2,5 +2,5 @@
 
 @use 'sass:color';
 
-$request-form-editline-background: color.adjust(get-color('additional', 'base'), $lightness: 2%) !default;
-$request-form-editline-border: 1px solid get-color('additional', 'light') !default;
+$request-form-editline-background: get-color('neutral', 'grey1') !default;
+$request-form-editline-border: 1px solid get-color('neutral', 'grey2') !default;

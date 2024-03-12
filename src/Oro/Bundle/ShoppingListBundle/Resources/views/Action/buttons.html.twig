@@ -3,22 +3,19 @@
 {% set buttonOptions = {
     dataUrl: false,
     dataAttributes: {},
-    aCss: 'btn--info ',
-    iCss: 'fa fa-shopping-cart fa--fw fa--as-line',
-    labelInIcon: false
+    aCss: ''
 } %}
 
 {% set newOptions = buttonOptions|merge({
     ariaLabel: 'oro.shoppinglist.actions.add_to_new_shopping_list.aria_label'|trans,
-    iCss: 'fa fa-plus fa--fw fa--as-line',
-    labelInIcon: false
+    iconName: 'plus'
 }) %}
 
 {% set buttonsOptions = {
     new: newOptions,
     current: buttonOptions,
     existing: buttonOptions,
-    singleButtonACss : 'btn--info',
+    singleButtonACss : '',
     shoppingLists: actionData.shoppingLists,
     componentModule: params.buttonOptions.page_component_module|default('oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view'),
     componentOptions: {
@@ -39,7 +36,7 @@
                 'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
                 'widgetName': 'productAddToDropdownButtonProcessor',
                 'truncateLength': 25,
-                'decoreClass': 'btn--info'
+                'decoreClass': ''
             }
         }) }}
     </div>

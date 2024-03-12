@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
+use Attribute;
 use Symfony\Component\Validator\Constraint;
 
 /**
+ * UniqueProductPrices constraint
+ *
  * @Annotation
  */
+#[Attribute]
 class UniqueProductPrices extends Constraint
 {
     /**

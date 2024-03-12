@@ -2,6 +2,7 @@
 {% if value and value|length > 0 %}
     {% set shownUnit = '' %}
 
+    {% block prices_table %}
     <table>
         {% for key, price in value %}
             {% if shownUnit != price.unitCode %}
@@ -27,4 +28,5 @@
             </tr>
         {% endfor %}
     </table>
+    {% endblock prices_table %}
 {% endif %}

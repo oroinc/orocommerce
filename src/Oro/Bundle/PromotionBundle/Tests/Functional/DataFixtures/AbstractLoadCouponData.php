@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 abstract class AbstractLoadCouponData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -17,6 +18,7 @@ abstract class AbstractLoadCouponData extends AbstractFixture implements Depende
     {
         return [
             LoadPromotionData::class,
+            LoadOrganization::class
         ];
     }
 
@@ -53,6 +55,8 @@ abstract class AbstractLoadCouponData extends AbstractFixture implements Depende
                 $validUntil = new \DateTime($couponData['validUntil']);
                 $coupon->setValidUntil($validUntil);
             }
+
+            $coupon->setOrganization($this->getReference(LoadOrganization::ORGANIZATION));
 
             $manager->persist($coupon);
             $this->setReference($key, $coupon);

@@ -66,7 +66,7 @@ class Processor implements LoggerAwareInterface
         if (!$sent) {
             $this->logger->error('Unable to send email', [
                 'template' => $template,
-                'username' => $user->getUsername(),
+                'username' => $user->getUserIdentifier(),
                 'request' => (string) $request,
             ]);
         }

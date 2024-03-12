@@ -2,25 +2,24 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
 /**
- * @ORM\Table(name="oro_shipping_freight_class")
- * @ORM\Entity
- * @Config
- */
+* Entity that represents Freight Class
+*
+*/
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_shipping_freight_class')]
+#[Config]
 class FreightClass implements MeasureUnitInterface, FreightClassInterface
 {
-    /**
-     * @var string
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\Column(name="code", type="string", length=255, nullable=false)
-     */
-    protected $code;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'NONE')]
+    #[ORM\Column(name: 'code', type: Types::STRING, length: 255, nullable: false)]
+    protected ?string $code = null;
 
     /**
      * @param string $code

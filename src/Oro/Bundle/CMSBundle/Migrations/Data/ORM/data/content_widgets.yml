@@ -1,0 +1,32 @@
+featured-products:
+  name: 'featured-products'
+  type: product_segment
+  label: 'Featured Products'
+  settings:
+    maximum_items: 10
+    minimum_items: 3
+    autoplaySpeed: 4000
+    use_slider_on_mobile: true
+    show_add_button: true
+    arrows: true
+    segment: oro_product.segment.featured_products.name
+    autoplay: false
+    show_arrows_on_touchscreens: false
+    dots: false
+    infinite: false
+new-arrivals:
+  name: 'new-arrivals'
+  type: product_segment
+  label: 'New Arrivals'
+  settings:
+    maximum_items: 6
+    minimum_items: 3
+    autoplaySpeed: 4000
+    use_slider_on_mobile: false
+    show_add_button: true
+    arrows: true
+    segment: oro_product.segment.new_arrival.name
+    autoplay: false
+    show_arrows_on_touchscreens: false
+    dots: false
+    infinite: false

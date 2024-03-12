@@ -16,6 +16,10 @@ const QuickAddRowPricesView = BaseView.extend({
 
     priceNotFoundTemplate: '<div class="text-center"><%- _.__("oro.pricing.product_prices.price_not_found") %></div>',
 
+    notConfiguredProductKitPriceTemplate: '<div class="text-center">' +
+        '<%- _.__("oro.pricing.product_prices.product_kit.not_configured") %>' +
+    '</div>',
+
     elem: {
         subtotal: '[data-name="field__product-subtotal"]',
         pricesHint: '[data-role="price-hint-trigger"]'
@@ -76,8 +80,9 @@ const QuickAddRowPricesView = BaseView.extend({
     calcSubtotal() {
         const priceObj = this.model.get('price');
         const quantity = this.model.get('quantity');
+        const type = this.model.get('type');
 
-        if (priceObj && quantity) {
+        if (priceObj && quantity && type !== 'kit') {
             return NumberFormatter.formatCurrency(
                 numeral(priceObj.price).multiply(quantity).value(),
                 priceObj.currency
@@ -122,7 +127,9 @@ const QuickAddRowPricesView = BaseView.extend({
             $(event.target).trigger(event);
         }
 
-        const templateName = !_.isEmpty(attrs.prices) ? 'pricesHintTemplateContent' : 'priceNotFoundTemplate';
+        const templateName = attrs.type === 'kit'
+            ? 'notConfiguredProductKitPriceTemplate'
+            : !_.isEmpty(attrs.prices) ? 'pricesHintTemplateContent' : 'priceNotFoundTemplate';
         const pricesHintContentTemplate = this.getTemplateFunction(templateName);
 
         this.$pricesHint.data(Popover.DATA_KEY).updateContent(

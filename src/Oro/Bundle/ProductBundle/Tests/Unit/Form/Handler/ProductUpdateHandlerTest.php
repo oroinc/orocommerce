@@ -1127,7 +1127,9 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('has')
             ->willReturnMap([
                 ['appendRelated', true],
-                ['removeRelated', true],
+                ['appendRelated', true],
+                ['removeUpsell', false],
+                ['appendUpsell', false],
             ]);
         $form->expects($this->any())
             ->method('getErrors')

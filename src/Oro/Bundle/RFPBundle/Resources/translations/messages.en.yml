@@ -101,6 +101,11 @@ oro:
             comment:
                 label:                  'Notes'
                 description:            The note made regarding the individual product in the RFQ.
+                form:
+                    label: 'Add a Note to This Item'
+            kit_item_line_items:
+                label: Kit Item Line Items
+                description: Stores the collection of kit item line items when the request product is a kit
             message:
                 product.blank:          'Please select a product'
 
@@ -130,6 +135,71 @@ oro:
                 label:                  'Price Currency'
                 description:            The currency in which the suggested price for the selected product in the RFQ is defined.
             note.label:                 'Note'
+            checksum:
+                label: Checksum
+                description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times
+
+        requestproductkititemlineitem:
+            entity_label: Request Product Kit Item Line Item
+            entity_plural_label: Request Product Kit Item Line Items
+            entity_grid_all_view_label: All %entity_plural_label%
+            entity_frontend_grid_all_view_label: All %entity_plural_label%
+            entity_description: Represents the line item of a product kit item in a request for quote
+            id.label: ID
+            request_product:
+                label: Request Product
+                description: The product for which the RFQ is made
+            kit_item:
+                label: Product Kit Item
+                description: The related product kit item
+            kit_item_id:
+                label: Product Kit Item Id
+                description: The related product kit item ID. Automatically filled from the related kit item. Contains ID even if the related kit item is deleted
+            kit_item_label:
+                label: Product Kit Item Label
+                description: The default label of the requested product kit item. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+            optional:
+                label: Optional
+                description: Indicates whether this kit item is required for purchase, or can be skipped by the customer. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+            product:
+                label: Product
+                description: The requested kit item product
+                form:
+                    choices:
+                        none: None
+            product_id:
+                label: Product Id
+                description: ID of the requested kit item product. Automatically filled from the related product. Contains ID even if the related product is deleted
+            product_sku:
+                label: Product SKU
+                description: A unique human-readable product identifier. Automatically filled from the related product. Contains data even if the related product is deleted
+            product_name:
+                label: Product Name
+                description: The default name of the requested product. Automatically filled from the related product. Contains data even if the related product is deleted
+            quantity:
+                label: Quantity
+                description: The quantity of product kit item units to be purchased
+                aria_label: Product Kit Item Quantity
+                form:
+                    tooltip: 'The quantity of product kit item units to be purchased: {{ unit_precision_info }}'
+            minimum_quantity:
+                label: Minimum Quantity
+                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+            maximum_quantity:
+                label: Maximum Quantity
+                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+            product_unit:
+                label: Unit of Quantity
+                description: The unit of quantity of the kit item product was purchased in
+            product_unit_precision:
+                label: Unit Precision
+                description: The unit precision of the related product. Automatically filled from the related product. Contains data even if the related product is deleted
+            product_unit_code:
+                label: Product Unit Code
+                description: The code of the product unit of the kit item product was purchased in. Automatically filled from the related product unit. Contains data even if the related product unit is deleted
+            sort_order:
+                label: Sort Order
+                description: Used to sort kit item line item products when displaying. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
 
         requestadditionalnote:
             entity_label: 'Request Additional Note'
@@ -247,6 +317,9 @@ oro:
                     notes: 'Notes'
                     add: 'Add Another Product'
                     qty: 'QTY'
+                    delete.label: 'Delete'
+                    cancel.label: 'Cancel'
+                    update.label: 'Update'
 
         feature:
             label: Back-Office Requests for Quotes
@@ -262,6 +335,7 @@ oro:
         product:
             view:
                 request_a_quote: 'Request a Quote'
+                request_a_quote_more_units: '{1}*Also sold as {{ units }}. Request a quote to obtain pricing.|]2,Inf[*Also sold as {{ units }} and {{ andUnit }}. Request a quote to obtain pricing.'
         rfp:
             list: 'RFQs'
             request:
@@ -317,6 +391,15 @@ oro:
                     delete: 'Delete'
             action:
                 request.edit: 'Edit'
+            request_product_kit_configuration_view:
+                edit_button:
+                    label: 'Configure'
+                    aria_label: 'Edit product kit configuration'
+            request_product_kit_configuration_dialog:
+                price:
+                    label: 'Price as configured:'
+                actions:
+                    submit: 'Save'
             data_storage:
                 cannot_be_added_to_rfq: 'Some products are not available and cannot be added to RFQ:'
                 no_products_be_added_to_rfq: 'No products could be added to RFQ.'

@@ -5,57 +5,60 @@ namespace Oro\Bundle\CheckoutBundle\Manager\MultiShipping;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\AvailableLineItemShippingMethodsProvider;
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\LineItemShippingPriceProviderInterface;
+use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\LineItemShippingMethodsProviderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\ShippingBundle\Provider\GroupLineItemHelperInterface;
+use Oro\Bundle\ShippingBundle\Provider\MultiShippingCostCalculator;
 
 /**
  * Implements logic to handle line items shipping data actions.
  */
 class CheckoutLineItemsShippingManager
 {
-    public const SHIPPING_METHOD_FIELD = 'method';
-    public const SHIPPING_METHOD_TYPE_FIELD = 'type';
+    private const METHOD = 'method';
+    private const TYPE = 'type';
+    private const IDENTIFIER = 'identifier';
+    private const TYPES = 'types';
 
-    private AvailableLineItemShippingMethodsProvider $lineItemShippingMethodsProvider;
+    private LineItemShippingMethodsProviderInterface $lineItemShippingMethodsProvider;
     private CheckoutLineItemsProvider $lineItemsProvider;
-    private LineItemShippingPriceProviderInterface $shippingPricePriceProvider;
+    private MultiShippingCostCalculator $shippingCostCalculator;
+    private GroupLineItemHelperInterface $groupLineItemHelper;
 
     public function __construct(
-        AvailableLineItemShippingMethodsProvider $lineItemShippingMethodsProvider,
+        LineItemShippingMethodsProviderInterface $lineItemShippingMethodsProvider,
         CheckoutLineItemsProvider $lineItemsProvider,
-        LineItemShippingPriceProviderInterface $shippingPricePriceProvider
+        MultiShippingCostCalculator $shippingCostCalculator,
+        GroupLineItemHelperInterface $groupLineItemHelper
     ) {
         $this->lineItemShippingMethodsProvider = $lineItemShippingMethodsProvider;
         $this->lineItemsProvider = $lineItemsProvider;
-        $this->shippingPricePriceProvider = $shippingPricePriceProvider;
+        $this->shippingCostCalculator = $shippingCostCalculator;
+        $this->groupLineItemHelper = $groupLineItemHelper;
     }
 
     /**
      * Update line items shipping methods from provided data.
      *
-     * @param array $shippingData ['2BV:item' => ['method' => 'flat_rate_1', 'type' => 'primary'], ... ]
-     * @param Checkout $checkout
-     * @param bool $useDefaults
+     * @param array|null $shippingData ['2BV:item' => ['method' => 'flat_rate_1', 'type' => 'primary'], ... ]
+     * @param Checkout   $checkout
+     * @param bool       $useDefaults
      */
     public function updateLineItemsShippingMethods(
-        array $shippingData,
+        ?array $shippingData,
         Checkout $checkout,
         bool $useDefaults = false
     ): void {
-        $checkoutLineItems = $this->lineItemsProvider->getCheckoutLineItems($checkout);
-        foreach ($checkoutLineItems as $lineItem) {
-            $lineItemIdentifier = $this->getLineItemIdentifier($lineItem);
-            $lineItemShippingData = $shippingData[$lineItemIdentifier] ?? [];
-
-            if ($useDefaults && empty($lineItemShippingData)) {
+        $lineItems = $this->lineItemsProvider->getCheckoutLineItems($checkout);
+        foreach ($lineItems as $lineItem) {
+            $lineItemShippingData = $this->getLineItemShippingData($shippingData, $lineItem);
+            if ($useDefaults && !$lineItemShippingData) {
                 $lineItemShippingData = $this->getDefaultLineItemShippingMethod($lineItem);
             }
-
-            if (!empty($lineItemShippingData)) {
-                $lineItem->setShippingMethod($lineItemShippingData[self::SHIPPING_METHOD_FIELD] ?? null);
-                $lineItem->setShippingMethodType($lineItemShippingData[self::SHIPPING_METHOD_TYPE_FIELD] ?? null);
+            if ($lineItemShippingData) {
+                $lineItem->setShippingMethod($lineItemShippingData[self::METHOD]);
+                $lineItem->setShippingMethodType($lineItemShippingData[self::TYPE]);
             }
         }
     }
@@ -74,8 +77,8 @@ class CheckoutLineItemsShippingManager
         foreach ($lineItems as $lineItem) {
             $identifier = $this->getLineItemIdentifier($lineItem);
             $lineItemsShippingData[$identifier] = [
-                self::SHIPPING_METHOD_FIELD => $lineItem->getShippingMethod(),
-                self::SHIPPING_METHOD_TYPE_FIELD => $lineItem->getShippingMethodType()
+                self::METHOD => $lineItem->getShippingMethod(),
+                self::TYPE   => $lineItem->getShippingMethodType()
             ];
         }
 
@@ -84,22 +87,34 @@ class CheckoutLineItemsShippingManager
 
     public function updateLineItemsShippingPrices(Checkout $checkout): void
     {
+        $groupingFieldPath = $this->groupLineItemHelper->getGroupingFieldPath();
+        $isLineItemsGroupedByOrganization = $this->groupLineItemHelper->isLineItemsGroupedByOrganization(
+            $groupingFieldPath
+        );
         $lineItems = $this->lineItemsProvider->getCheckoutLineItems($checkout);
         foreach ($lineItems as $lineItem) {
             if (!$lineItem->getShippingMethod()) {
                 continue;
             }
-
-            $lineItem->setShippingEstimateAmount(
-                $this->shippingPricePriceProvider->getPrice($lineItem)?->getValue()
+            $organization = null;
+            if ($isLineItemsGroupedByOrganization) {
+                $organization = $this->groupLineItemHelper->getGroupingFieldValue($lineItem, $groupingFieldPath);
+            }
+            $shippingPrice = $this->shippingCostCalculator->calculateShippingPrice(
+                $checkout,
+                [$lineItem],
+                $lineItem->getShippingMethod(),
+                $lineItem->getShippingMethodType(),
+                $organization
             );
+            $lineItem->setShippingEstimateAmount($shippingPrice?->getValue());
+            $lineItem->setCurrency($shippingPrice?->getCurrency());
         }
     }
 
     public function getLineItemIdentifier(ProductLineItemInterface $lineItem): string
     {
         $key = implode(':', [$lineItem->getProductSku(), $lineItem->getProductUnitCode()]);
-
         if ($lineItem instanceof ProductKitItemLineItemsAwareInterface) {
             $key .= ':' . $lineItem->getChecksum();
         }
@@ -110,21 +125,28 @@ class CheckoutLineItemsShippingManager
     private function getDefaultLineItemShippingMethod(CheckoutLineItem $lineItem): array
     {
         $shippingMethods = $this->lineItemShippingMethodsProvider->getAvailableShippingMethods($lineItem);
-
-        if (!empty($shippingMethods)) {
+        if ($shippingMethods) {
             $defaultShippingMethod = reset($shippingMethods);
-            $defaultShippingMethodType = isset($defaultShippingMethod['types'])
-                ? reset($defaultShippingMethod['types'])
+            $defaultShippingMethodType = isset($defaultShippingMethod[self::TYPES])
+                ? reset($defaultShippingMethod[self::TYPES])
                 : [];
-
             if ($defaultShippingMethodType) {
                 return [
-                    self::SHIPPING_METHOD_FIELD => $defaultShippingMethod['identifier'],
-                    self::SHIPPING_METHOD_TYPE_FIELD => $defaultShippingMethodType['identifier']
+                    self::METHOD => $defaultShippingMethod[self::IDENTIFIER],
+                    self::TYPE   => $defaultShippingMethodType[self::IDENTIFIER]
                 ];
             }
         }
 
         return [];
+    }
+
+    private function getLineItemShippingData(?array $shippingData, CheckoutLineItem $lineItem): array
+    {
+        if (!$shippingData) {
+            return [];
+        }
+
+        return $shippingData[$this->getLineItemIdentifier($lineItem)] ?? [];
     }
 }

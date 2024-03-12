@@ -1,83 +1,38 @@
 /* @theme: default; */
 
-$product-view-aside-state: left !default;
-$product-view-aside-width: 415px !default;
-$product-view-aside-offset-bottom: $offset-y !default;
-$product-view-aside-offset-y: 35px !default;
-$product-view-aside-inner-offset: 0 $product-view-aside-offset-y 0 0 !default;
-$product-view-aside-tablet-inner-offset: 0 !default;
+$product-view-gap: spacing('xxxl') !default;
 
-$product-view-primary-state: right !default;
-$product-view-primary-width: calc(100% - #{$product-view-aside-width}) !default;
+$product-view-top-offset: null !default;
+$product-view-primary-bottom-offset: spacing('sm') !default;
+$product-view-primary-gap: spacing('md') spacing('sm') !default;
+$product-view-primary-padding: 0 0 spacing('md') !default;
 
-$product-view-main-state: right !default;
-$product-view-main-width: calc(100% - #{$product-view-aside-width}) !default;
-$product-view-main-offset-bottom: $offset-y !default;
+$product-view-main-grid-template-areas:
+    'aside content'
+    'aside details' !default;
+$product-view-main-grid-template-rows: auto 1fr !default;
+$product-view-main-grid-template-columns: minmax(0, 700px) minmax(0, 590px) !default;
+$product-view-main-gap: spacing('xl') spacing('huge') !default;
 
-$product-view-content-inner-offset: 15px 0 0 0 !default;
-$product-view-content-border: 1px solid get-color('additional', 'light') !default;
+$product-view-additional-wide-bottom-offset: spacing('xxxl') !default;
 
-$product-view-variant-field-margin-bottom: $offset-y !default;
+// Tablet small
+$product-view-main-gap-tablet-small: spacing('lg') spacing('xl') !default;
 
-$product-view-specification-width: 250px !default;
+// Mobile big
 
-$product-view-specification-inner-offset: 0 20px 0 0 !default;
+$product-view-gap-mobile-big: spacing('xxl') !default;
+$product-view-main-grid-template-areas-mobile-big:
+    'aside content'
+    'details details' !default;
 
-$product-view-description-width: calc(100% - #{$product-view-specification-width}) !default;
-$product-view-description-first-child-width: 100% !default;
-$product-view-description-inner-offset: 0 !default;
-$product-view-description-first-child-inner-offset: 0 !default;
+// Mobile
+$product-view-main-grid-template-areas-mobile:
+    'aside'
+    'content'
+    'details' !default;
+$product-view-main-grid-template-rows-mobile: auto !default;
+$product-view-main-grid-template-columns-mobile: 100% !default;
 
-$product-view-description-tablet-inner-offset: 0 !default;
-
-$product-view-additional-state: left !default;
-$product-view-additional-width: 100% !default;
-
-$product-view-related-items-state: left !default;
-$product-view-related-items-width: 100% !default;
 $product-view-related-items-product-price-width: 100% !default;
-$product-view-related-list-offset: 0 $embedded-list-slider-btn-arrow-width !default;
-
-// Tablet
-
-$product-view-aside-tablet-width: 100% !default;
-
-$product-view-primary-tablet-state: left !default;
-$product-view-primary-tablet-width: 100% !default;
-
-$product-view-main-tablet-width: 100% !default;
-
-$product-view-tablet-specification-width: 100% !default;
-
-$product-view-description-tablet-width: 100% !default;
-
-$product-view-specification-colored-position: relative !default;
-$product-view-specification-colored-width: 300px !default;
-$product-view-specification-colored-inner-offset: 20px 25px !default;
-$product-view-specification-colored-background: get-color('additional', 'base') !default;
-$product-view-specification-colored-border-radius: 2px !default;
-
-$product-view-description-short-width: calc(100% - 320px) !default;
-
-$product-view-description-short-width-tablet: 100% !default;
-
-$product-view-description-paragraphs-line-height: 1.4;
-
-$product-view-line-item-form-padding-top-tablet: 15px !default;
-$product-view-line-item-form-border-top-tablet: 1px solid get-color('additional', 'light') !default;
-
-$product-view-shopping-lists-content-min-height-tablet: 42px !default;
-
-$product-view-primary-margin-top-tablet: 0 !default;
-$product-view-primary-text-align-tablet: center !default;
-$product-view-primary-page-title-font-size-tablet: $base-font-size--l !default;
-$product-view-primary-page-title-line-height-tablet: 1.2 !default;
-
-$product-view-primary-wrapper-display-tablet: flex !default;
-$product-view-primary-wrapper-flex-direction-tablet: column-reverse !default;
-$product-view-primary-wrapper-margin-top-tablet: null !default;
-
-$product-view-default-theme-product-price-display-desktop: none !default;
-$product-view-default-theme-product-prices-display-tablet: none !default;
-
-$product-view-primary-wrapper-margin-top-mobile-landscape: 10px !default;
+$product-view-related-list-offset: 0 !default;

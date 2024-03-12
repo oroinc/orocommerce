@@ -62,7 +62,7 @@ class InventoryDecrementFallbackTest extends WebTestCase
 
     public function testCategoryDecrementQuantity()
     {
-        $newCategoryFallbackValue = true;
+        // Get form
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
         $crawler = $this->client->request(
             'GET',
@@ -71,20 +71,24 @@ class InventoryDecrementFallbackTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $form = $crawler->selectButton('Save')->form();
+
+        // Ensure that the tested field has a value different from the value that it will be changed to
         $inventoryDecrementValue = $form->get('oro_catalog_category[decrementQuantity][scalarValue]')->getValue();
-        $this->assertEmpty($inventoryDecrementValue);
+        $this->assertEquals('0', $inventoryDecrementValue);
 
-        $form['input_action'] = $crawler->selectButton('Save')->attr('data-action');
-        $form['oro_catalog_category[decrementQuantity][useFallback]'] = false;
-        $form['oro_catalog_category[decrementQuantity][scalarValue]'] = $newCategoryFallbackValue;
+        // Fill the form
+        $this->updateFallbackField($form, '1', null, 'oro_catalog_category', 'decrementQuantity');
+
+        // Submit form
         $this->client->followRedirects();
-
         $crawler = $this->client->submit($form);
 
+        // Assert result
         $form = $crawler->selectButton('Save')->form();
-        $this->assertEquals(
-            $newCategoryFallbackValue,
-            $form->get('oro_catalog_category[decrementQuantity][scalarValue]')->getValue()
-        );
+        $actualScalarValue = $form->get('oro_catalog_category[decrementQuantity][scalarValue]')->getValue();
+        $this->assertEquals('1', $actualScalarValue);
+
+        // Ensure that the flash message was fired
+        $this->assertStringContainsString('Category has been saved', $this->client->getResponse()->getContent());
     }
 }

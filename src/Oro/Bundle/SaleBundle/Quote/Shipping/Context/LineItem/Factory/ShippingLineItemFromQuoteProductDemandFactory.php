@@ -32,12 +32,13 @@ class ShippingLineItemFromQuoteProductDemandFactory extends ShippingLineItemFrom
         }
 
         $quoteProductOffer = $productLineItem->getQuoteProductOffer();
-        $shippingOptions = $this->getShippingOptionsIndexedByProductId([$quoteProductOffer]);
 
-        $shippingLineItem = $this->createShippingLineItem($quoteProductOffer, $shippingOptions);
+        $this->shippingLineItemOptionsModifier->loadShippingOptions([$quoteProductOffer]);
+
+        $shippingLineItem = $this->createShippingLineItem($quoteProductOffer);
         $shippingLineItem->setQuantity($productLineItem->getQuantity());
 
-        $this->clearUnits();
+        $this->shippingLineItemOptionsModifier->clear();
 
         return $shippingLineItem;
     }
@@ -62,17 +63,18 @@ class ShippingLineItemFromQuoteProductDemandFactory extends ShippingLineItemFrom
             $quoteProductOffer = $productLineItem->getQuoteProductOffer();
             $quoteProductOffers[$key] = $quoteProductOffer;
         }
-        $shippingOptions = $this->getShippingOptionsIndexedByProductId($quoteProductOffers);
+
+        $this->shippingLineItemOptionsModifier->loadShippingOptions($quoteProductOffers);
 
         $shippingLineItems = [];
         foreach ($quoteProductOffers as $key => $quoteProductOffer) {
-            $shippingLineItem = $this->createShippingLineItem($quoteProductOffer, $shippingOptions);
+            $shippingLineItem = $this->createShippingLineItem($quoteProductOffer);
             $shippingLineItem->setQuantity($productLineItems[$key]->getQuantity());
 
             $shippingLineItems[] = $shippingLineItem;
         }
 
-        $this->clearUnits();
+        $this->shippingLineItemOptionsModifier->clear();
 
         return new ArrayCollection($shippingLineItems);
     }

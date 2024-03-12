@@ -2,7 +2,7 @@ data:
     type: orderproductkititemlineitems
     attributes:
         productSku: '@product-3->sku'
-        quantity: 1
+        quantity: 2
         sortOrder: 1
         productUnitCode: item
         value: '11.5900'

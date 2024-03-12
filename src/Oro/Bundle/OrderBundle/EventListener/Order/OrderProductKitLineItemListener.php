@@ -10,6 +10,7 @@ use Twig\Environment;
 
 /**
  * Adds the rendered kitItemLineItems form collection to the OrderEvent data for each order product kit line item.
+ * Also, adds a disabled flag for the price field of the kit line item.
  */
 class OrderProductKitLineItemListener
 {
@@ -29,9 +30,8 @@ class OrderProductKitLineItemListener
 
     public function onOrderEvent(OrderEvent $event): void
     {
-        $kitItemLineItems = [];
-        $checksum = [];
-        $lineItemsForm = $event->getForm()->get('lineItems');
+        $kitItemLineItems = $checksum = $disabledKitPrices = [];
+        $lineItemsForm = $event->getForm()->get('lineItems')->all();
         foreach ($lineItemsForm as $lineItemForm) {
             /** @var OrderLineItem|null $orderLineItem */
             $orderLineItem = $lineItemForm->getData();
@@ -46,9 +46,14 @@ class OrderProductKitLineItemListener
                 ['form' => $formView['kitItemLineItems']]
             );
             $checksum[$fullName] = $orderLineItem->getChecksum();
+
+            if ($orderLineItem?->getProduct()?->isKit()) {
+                $disabledKitPrices[$fullName] = true;
+            }
         }
 
         $event->getData()->offsetSet('checksum', $checksum);
         $event->getData()->offsetSet('kitItemLineItems', $kitItemLineItems);
+        $event->getData()->offsetSet('disabledKitPrices', $disabledKitPrices);
     }
 }

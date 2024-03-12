@@ -1,6 +1,7 @@
 /* @theme: default; */
-$responsive-shopping-list-layout-background: get-color('additional', 'base') !default;
+$responsive-shopping-list-layout-background: get-color('neutral', 'grey1') !default;
 $responsive-shopping-cell-desktop-offset: 23px !default;
+$responsive-shopping-action-cell-desktop-offset: spacing('sm') !default;
 $responsive-shopping-sub-cell-desktop-offset: 18px !default;
 // Manually calculated a half of cells' height
 $responsive-shopping-cell-half-height: 18px !default;
@@ -10,7 +11,7 @@ $responsive-shopping-list-extension-row-top-offset: 0 !default;
 $responsive-shopping-list-extension-row-bottom-offset: 7px !default;
 $responsive-shopping-sub-row-border-width: 12px !default;
 $responsive-shopping-sub-row-border-offset: $responsive-shopping-sub-row-border-width
-    solid get-color('additional', 'ultra') !default;
+    solid get-color('neutral', 'white-100') !default;
 
 $responsive-shopping-sub-row-cell-inner-offset: 8px !default;
 $responsive-shopping-sub-row-cell-desktop-inner-offset: $datagrid-body-cell-offset * .5 !default;
@@ -32,9 +33,9 @@ $responsive-shopping-body-cell-offset-y-mobile: 2px !default;
 $responsive-shopping-grid-row-offset-mobile: 12px !default;
 $responsive-shopping-sub-row-offset-top-mobile: 12px !default;
 $responsive-shopping-sub-row-offset-bottom-mobile: 8px !default;
-$responsive-shopping-sub-row-border-mobile-color: get-color('additional', 'light') !default;
+$responsive-shopping-sub-row-border-mobile-color: get-color('neutral', 'grey1') !default;
 $responsive-shopping-sub-row-border-mobile: 1px solid $responsive-shopping-sub-row-border-mobile-color !default;
-$responsive-shopping-grid-row-border-mobile: 2px dashed get-color('additional', 'middle');
+$responsive-shopping-grid-row-border-mobile: 2px dashed get-color('neutral', 'grey2');
 $responsive-shopping-header-row-border-mobile: 1px solid $responsive-shopping-sub-row-border-mobile-color !default;
 
 $responsive-shopping-extension-row-error-offset-mobile: 0 !default;

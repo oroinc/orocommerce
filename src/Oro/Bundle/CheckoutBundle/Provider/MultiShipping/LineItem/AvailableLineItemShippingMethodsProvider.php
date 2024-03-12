@@ -5,8 +5,8 @@ namespace Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactoryInterface;
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\DefaultMultipleShippingMethodProvider;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodOrganizationProvider;
 use Symfony\Contracts\Service\ResetInterface;
 
@@ -18,19 +18,16 @@ class AvailableLineItemShippingMethodsProvider implements
     ResetInterface
 {
     private CheckoutShippingMethodsProviderInterface $shippingMethodsProvider;
-    private DefaultMultipleShippingMethodProvider $multiShippingMethodProvider;
     private CheckoutFactoryInterface $checkoutFactory;
     private ShippingMethodOrganizationProvider $organizationProvider;
-    private array $cachedLineItemsShippingMethods = [];
+    private array $cachedShippingMethods = [];
 
     public function __construct(
         CheckoutShippingMethodsProviderInterface $shippingMethodsProvider,
-        DefaultMultipleShippingMethodProvider $multiShippingMethodProvider,
         CheckoutFactoryInterface $checkoutFactory,
         ShippingMethodOrganizationProvider $organizationProvider
     ) {
         $this->shippingMethodsProvider = $shippingMethodsProvider;
-        $this->multiShippingMethodProvider = $multiShippingMethodProvider;
         $this->checkoutFactory = $checkoutFactory;
         $this->organizationProvider = $organizationProvider;
     }
@@ -40,7 +37,7 @@ class AvailableLineItemShippingMethodsProvider implements
      */
     public function reset(): void
     {
-        $this->cachedLineItemsShippingMethods = [];
+        $this->cachedShippingMethods = [];
     }
 
     /**
@@ -49,33 +46,33 @@ class AvailableLineItemShippingMethodsProvider implements
     public function getAvailableShippingMethods(CheckoutLineItem $lineItem): array
     {
         $lineItemId = $lineItem->getId();
-        if (!isset($this->cachedLineItemsShippingMethods[$lineItemId])) {
-            $checkout = $this->checkoutFactory->createCheckout($lineItem->getCheckout(), [$lineItem]);
-            $this->organizationProvider->setOrganization($lineItem->getProduct()->getOrganization());
-            try {
-                $this->cachedLineItemsShippingMethods[$lineItemId] = $this->getApplicableMethodsViews($checkout);
-            } finally {
-                $this->organizationProvider->setOrganization(null);
-            }
+        if (!isset($this->cachedShippingMethods[$lineItemId])) {
+            $this->cachedShippingMethods[$lineItemId] = $this->getApplicableMethodsViews($lineItem);
         }
 
-        return $this->cachedLineItemsShippingMethods[$lineItemId];
+        return $this->cachedShippingMethods[$lineItemId];
     }
 
-    private function getApplicableMethodsViews(Checkout $checkout): array
+    private function getApplicableMethodsViews(CheckoutLineItem $lineItem): array
     {
-        $shippingMethods = $this->shippingMethodsProvider->getApplicableMethodsViews($checkout)->toArray();
-        if ($this->multiShippingMethodProvider->hasShippingMethods()) {
-            // Configured multi_shipping method should not be available for line items.
-            // It should be set for checkout entity only.
-            $multipleShippingMethodIdentifiers = $this->multiShippingMethodProvider->getShippingMethods();
-            $shippingMethods = array_filter(
-                $shippingMethods,
-                static fn (string $identifier) => !\in_array($identifier, $multipleShippingMethodIdentifiers, true),
-                ARRAY_FILTER_USE_KEY
-            );
+        return $this->loadApplicableMethodsViews(
+            $this->checkoutFactory->createCheckout($lineItem->getCheckout(), [$lineItem]),
+            $lineItem->getProduct()?->getOrganization()
+        );
+    }
+
+    private function loadApplicableMethodsViews(Checkout $checkout, ?Organization $organization): array
+    {
+        if (null === $organization) {
+            return $this->shippingMethodsProvider->getApplicableMethodsViews($checkout)->toArray();
         }
 
-        return $shippingMethods;
+        $previousOrganization = $this->organizationProvider->getOrganization();
+        $this->organizationProvider->setOrganization($organization);
+        try {
+            return $this->shippingMethodsProvider->getApplicableMethodsViews($checkout)->toArray();
+        } finally {
+            $this->organizationProvider->setOrganization($previousOrganization);
+        }
     }
 }

@@ -16,7 +16,7 @@ Feature: Sidebar filters on product listing page
   Scenario: Ensure that filters are collapsed at catalog page
     Given I proceed as the customer
     And I login as AmandaRCole@example.org buyer
-    When I click "NewCategory"
+    When I click "NewCategory" in hamburger menu
     Then I should see an "Toggle Sidebar Button" element
     And I should not see an "Filters In Sidebar" element
     And I should not see an "Toggle Sidebar Button Expanded" element

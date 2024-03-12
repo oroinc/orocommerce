@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\WYSIWYG;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\CMSBundle\WYSIWYG\WYSIWYGProcessedEntityDTO;
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
@@ -10,7 +10,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $em;
 
     /** @var PropertyAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -18,7 +18,7 @@ class WYSIWYGProcessedEntityDTOTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->em = $this->createMock(EntityManager::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 

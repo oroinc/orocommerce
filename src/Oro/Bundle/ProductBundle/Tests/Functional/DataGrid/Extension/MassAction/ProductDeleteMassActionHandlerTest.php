@@ -67,4 +67,54 @@ class ProductDeleteMassActionHandlerTest extends WebTestCase
             self::getContainer()->get('doctrine')->getManagerForClass(Product::class)->find(Product::class, $id)
         );
     }
+
+    public function testMassDeleteActionTryToDeleteKitProductWithRelatedSimpleProduct(): void
+    {
+        $productKit = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
+        $product = $this->getReference(LoadProductData::PRODUCT_4);
+        $values = [$product->getId(), $productKit->getId()];
+
+        $this->ajaxRequest(
+            'DELETE',
+            $this->getUrl(
+                'oro_datagrid_mass_action',
+                [
+                    'gridName' => 'products-grid',
+                    'actionName' => 'delete',
+                    'values' => $values,
+                ]
+            )
+        );
+
+        $data = self::getJsonResponseContent($this->client->getResponse(), 200);
+        self::assertTrue($data['successful']);
+        self::assertSame($data['count'], 2);
+
+        self::assertEmpty(
+            self::getContainer()->get('doctrine')->getRepository(Product::class)->findBy(['id' => $values])
+        );
+    }
+
+    public function testMassDeleteActionTryToDeleteAllProducts(): void
+    {
+        $this->ajaxRequest(
+            'DELETE',
+            $this->getUrl(
+                'oro_datagrid_mass_action',
+                [
+                    'gridName' => 'products-grid',
+                    'actionName' => 'delete',
+                    'inset' => false
+                ]
+            )
+        );
+
+        $data = self::getJsonResponseContent($this->client->getResponse(), 200);
+        self::assertTrue($data['successful']);
+        self::assertSame($data['count'], 9);
+
+        self::assertEmpty(
+            self::getContainer()->get('doctrine')->getRepository(Product::class)->findAll()
+        );
+    }
 }

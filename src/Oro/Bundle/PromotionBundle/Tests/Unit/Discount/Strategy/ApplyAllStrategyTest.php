@@ -2,19 +2,21 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Strategy;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
+use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\ApplyAllStrategy;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
+use Oro\Bundle\PromotionBundle\Model\MultiShippingPromotionData;
 
 class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ApplyAllStrategy
-     */
-    private $strategy;
+    private ApplyAllStrategy $strategy;
 
     protected function setUp(): void
     {
@@ -23,27 +25,19 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
 
     public function testGetLabel(): void
     {
-        $this->assertEquals('oro.promotion.discount.strategy.apply_all.label', $this->strategy->getLabel());
+        self::assertEquals('oro.promotion.discount.strategy.apply_all.label', $this->strategy->getLabel());
     }
 
     /**
-     * @dataProvider processProvider
-     * @param DiscountContext $discountContext
-     * @param float $contextSubtotalAmount
-     * @param float $shippingCost
-     * @param array $discounts
-     * @param float $expectedSubtotal
-     * @param float $expectedShippingCost
-     * @param array $expectedDiscountsInformation
-     * @param array $expectedLineItemsSubtotalAfterDiscounts
+     * @dataProvider processDataProvider
      */
     public function testProcess(
         DiscountContext $discountContext,
-        $contextSubtotalAmount,
-        $shippingCost,
+        float $contextSubtotalAmount,
+        float $shippingCost,
         array $discounts,
-        $expectedSubtotal,
-        $expectedShippingCost,
+        float $expectedSubtotal,
+        float $expectedShippingCost,
         array $expectedDiscountsInformation,
         array $expectedLineItemsSubtotalAfterDiscounts
     ): void {
@@ -51,22 +45,22 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
         $discountContext->setSubtotal($contextSubtotalAmount);
 
         $this->strategy->process($discountContext, $discounts);
-        $this->assertEquals($expectedSubtotal, $discountContext->getSubtotal());
-        $this->assertEquals($expectedShippingCost, $discountContext->getShippingCost());
-        $this->assertEquals(
+        self::assertEquals($expectedSubtotal, $discountContext->getSubtotal());
+        self::assertEquals($expectedShippingCost, $discountContext->getShippingCost());
+        self::assertEquals(
             $expectedDiscountsInformation['lineItems'],
             $this->getLineItemsDiscountsInformation($discountContext)
         );
-        $this->assertEquals(
+        self::assertEquals(
             $expectedDiscountsInformation['subtotal'],
             $discountContext->getSubtotalDiscountsInformation()
         );
-        $this->assertEquals(
+        self::assertEquals(
             $expectedDiscountsInformation['shipping'],
             $discountContext->getShippingDiscountsInformation()
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedLineItemsSubtotalAfterDiscounts,
             $this->getLineItemsSubtotalsAfterDiscounts($discountContext)
         );
@@ -75,7 +69,7 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function processProvider(): array
+    public function processDataProvider(): array
     {
         $discountContext = new DiscountContext();
 
@@ -94,32 +88,30 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
         $discountContext->setLineItems([$discountLineItem1, $discountLineItem2]);
 
         // Add subtotal discounts
-        $subtotalDiscountAmount1 = 100.00;
-        $subtotalDiscountAmount2 = 50.00;
+        $subtotalDiscountAmount1 = 100.0;
+        $subtotalDiscountAmount2 = 50.0;
         $subtotalDiscount1 = $this->createDiscount($discountContext, $discountContext, $subtotalDiscountAmount1);
         $subtotalDiscount2 = $this->createDiscount($discountContext, $discountContext, $subtotalDiscountAmount2);
         $discountContext->addSubtotalDiscount($subtotalDiscount1);
         $discountContext->addSubtotalDiscount($subtotalDiscount2);
 
         // Add shipping discounts
-        $discountContext->setShippingCost(30.00);
-        $shippingDiscountAmount1 = 5.00;
-        $shippingDiscountAmount2 = 3.00;
-        $shippingDiscount1 = $this->createDiscount($discountContext, $discountContext, $shippingDiscountAmount1);
-        $shippingDiscount2 = $this->createDiscount($discountContext, $discountContext, $shippingDiscountAmount2);
-        $discountContext->addShippingDiscount($shippingDiscount1);
-        $discountContext->addShippingDiscount($shippingDiscount2);
+        $discountContext->setShippingCost(30.0);
+        $shippingDiscountAmount1 = 5.0;
+        $shippingDiscountAmount2 = 3.0;
+        $shippingDiscount1 = $this->createShippingDiscount($shippingDiscountAmount1);
+        $shippingDiscount2 = $this->createShippingDiscount($shippingDiscountAmount2);
 
         // Create new context for case when discount amounts greater than subtotal and shipping cost
         $newDiscountContext = new DiscountContext();
-        $newSubtotalDiscountAmount = 100.00;
+        $newSubtotalDiscountAmount = 100.0;
         $newSubtotalDiscount = $this->createDiscount(
             $newDiscountContext,
             $newDiscountContext,
             $newSubtotalDiscountAmount
         );
         $newDiscountContext->addSubtotalDiscount($newSubtotalDiscount);
-        $newShippingDiscountAmount = 50.00;
+        $newShippingDiscountAmount = 50.0;
         $newShippingDiscount = $this->createDiscount(
             $newDiscountContext,
             $newDiscountContext,
@@ -130,8 +122,8 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
         return [
             'when discount amounts greater than subtotal' => [
                 'context' => $discountContext,
-                'contextSubtotalAmount' => 1000.00,
-                'shippingCost' => 30.00,
+                'contextSubtotalAmount' => 1000.0,
+                'shippingCost' => 30.0,
                 'discounts' => [
                     $lineItemSubtotalDiscount1,
                     $lineItemSubtotalDiscount2,
@@ -141,13 +133,13 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
                     $shippingDiscount1,
                     $shippingDiscount2,
                 ],
-                'expectedSubtotal' => 850.00,
-                'expectedShippingCost' => 22.00,
+                'expectedSubtotal' => 850.0,
+                'expectedShippingCost' => 22.0,
                 'expectedDiscountsInformation' => [
                     'lineItems' => [
-                        new DiscountInformation($lineItemSubtotalDiscount1, 0.00),
-                        new DiscountInformation($lineItemSubtotalDiscount2, 0.00),
-                        new DiscountInformation($lineItemSubtotalDiscount22, 0.00),
+                        new DiscountInformation($lineItemSubtotalDiscount1, 0.0),
+                        new DiscountInformation($lineItemSubtotalDiscount2, 0.0),
+                        new DiscountInformation($lineItemSubtotalDiscount22, 0.0),
                     ],
                     'subtotal' => [
                         new DiscountInformation($subtotalDiscount1, $subtotalDiscountAmount1),
@@ -162,14 +154,14 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
             ],
             'when discount amounts less than subtotal' => [
                 'context' => $newDiscountContext,
-                'contextSubtotalAmount' => 80.00,
-                'shippingCost' => 20.00,
+                'contextSubtotalAmount' => 80.0,
+                'shippingCost' => 20.0,
                 'discounts' => [
                     $newSubtotalDiscount,
                     $newShippingDiscount,
                 ],
-                'expectedSubtotal' => 0.00,
-                'expectedShippingCost' => 0.00,
+                'expectedSubtotal' => 0.0,
+                'expectedShippingCost' => 0.0,
                 'expectedDiscountsInformation' => [
                     'lineItems' => [],
                     'subtotal' => [
@@ -184,33 +176,72 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @param DiscountContext $discountContext
-     * @param SubtotalAwareInterface $subtotalAware
-     * @param float $discountAmount
-     * @return DiscountInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    public function testProcessMultiShippingDiscounts(): void
+    {
+        $discountContext = new DiscountContext();
+        $discountContext->setShippingCost(30.0);
+        $discountContext->setSubtotal(1000.0);
+
+        $shippingDiscountAmount1 = 10.0;
+        $multiShippingDiscountAmount2 = 3.0;
+        $multiShippingDiscountAmount3 = 1.0;
+        $shippingDiscountPromotion1 = new Promotion();
+        $shippingDiscountPromotion2 = $this->createMock(MultiShippingPromotionData::class);
+        $shippingDiscountPromotion2->expects(self::once())
+            ->method('getShippingCost')
+            ->willReturn(Price::create($multiShippingDiscountAmount2, 'USD'));
+        $shippingDiscountPromotion3 = $this->createMock(MultiShippingPromotionData::class);
+        $shippingDiscountPromotion3->expects(self::once())
+            ->method('getShippingCost')
+            ->willReturn(Price::create($multiShippingDiscountAmount3, 'USD'));
+        $shippingDiscount1 = $this->createShippingDiscount($shippingDiscountAmount1, $shippingDiscountPromotion1);
+        $shippingDiscount2 = $this->createShippingDiscount(5.0, $shippingDiscountPromotion2);
+        $shippingDiscount3 = $this->createShippingDiscount(4.0, $shippingDiscountPromotion3);
+
+        $this->strategy->process($discountContext, [$shippingDiscount1, $shippingDiscount2, $shippingDiscount3]);
+        self::assertEquals(1000.0, $discountContext->getSubtotal());
+        self::assertEquals(16.0, $discountContext->getShippingCost());
+        self::assertEquals(
+            [
+                new DiscountInformation($shippingDiscount1, $shippingDiscountAmount1),
+                new DiscountInformation($shippingDiscount2, $multiShippingDiscountAmount2),
+                new DiscountInformation($shippingDiscount3, $multiShippingDiscountAmount3)
+            ],
+            $discountContext->getShippingDiscountsInformation()
+        );
+    }
+
     private function createDiscount(
         DiscountContext $discountContext,
         SubtotalAwareInterface $subtotalAware,
-        $discountAmount = 0.00
-    ) {
+        float $discountAmount = 0.0
+    ): DiscountInterface {
         $discount = $this->createMock(DiscountInterface::class);
-        $discount->expects($this->any())
+        $discount->expects(self::any())
             ->method('calculate')
             ->with($subtotalAware)
             ->willReturn($discountAmount);
-        $discount->expects($this->any())
+        $discount->expects(self::any())
             ->method('apply')
             ->with($discountContext);
 
         return $discount;
     }
+    private function createShippingDiscount(float $amount, ?PromotionDataInterface $promotion = null): ShippingDiscount
+    {
+        $discount = new ShippingDiscount();
+        $discount->configure([
+            ShippingDiscount::DISCOUNT_TYPE => ShippingDiscount::TYPE_AMOUNT,
+            ShippingDiscount::DISCOUNT_VALUE => $amount,
+            ShippingDiscount::DISCOUNT_CURRENCY => 'USD',
+        ]);
+        if (null !== $promotion) {
+            $discount->setPromotion($promotion);
+        }
 
-    /**
-     * @param DiscountContext $discountContext
-     * @return array|DiscountInformation[]
-     */
+        return $discount;
+    }
+
     private function getLineItemsDiscountsInformation(DiscountContext $discountContext): array
     {
         $discountsInformation = [];

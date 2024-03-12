@@ -24,6 +24,7 @@ services:
             - '@oro_sale.quote.first_offers_shipping_context_factory'
             - '@oro_order.converter.shipping_prices'
             - '@oro_shipping.shipping_price.provider'
+            - '@oro_shipping.method.org_provider'
         tags:
             - { name: kernel.event_listener, event: oro_sale.quote, method: onEvent }
 
@@ -86,5 +87,5 @@ services:
     oro_sale.quote.shipping.context.line_item.factory.shipping_line_item_from_quote_product_demand_factory:
         class: Oro\Bundle\SaleBundle\Quote\Shipping\Context\LineItem\Factory\ShippingLineItemFromQuoteProductDemandFactory
         arguments:
-            - '@doctrine'
             - '@oro_shipping.context.line_item.factory.shipping_kit_item_line_item_from_product_kit_item_line_item_factory'
+            - '@oro_shipping.context.line_item.shipping_line_item_options_modifier'

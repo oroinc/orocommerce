@@ -73,12 +73,13 @@ Feature: Pricing rounding
     And Subtotals Calculation Precision in Sales Documents field should has 4 value
     And I proceed as the customer
     And I signed in as AmandaRCole@example.org on the store frontend
-    When click "NewCategory"
+    When click "NewCategory" in hamburger menu
     Then should see "Your Price: $7.45 / item" for "Phone" product
     And should see "Listed Price: $7.45 / item" for "Phone" product
     And should see "Your Price: $4.54 / item" for "Light" product
     And should see "Listed Price: $4.54 / item" for "Light" product
     And click "Add to Shopping List" for "Phone" product
+    And click on "Flash Message Close Button"
     When I hover on "Shopping Cart"
     And I click "Shopping List" on shopping list widget
     Then should see "Subtotal $7.45"
@@ -89,8 +90,9 @@ Feature: Pricing rounding
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
     And should see "New Front Shopping List"
-    And click "NewCategory"
+    And click "NewCategory" in hamburger menu
     When click "Add to New Front Shopping List" for "Light" product
+    And click on "Flash Message Close Button"
     And I hover on "Shopping Cart"
     And I click "New Front Shopping List" on shopping list widget
     Then should see "Subtotal $4.54"
@@ -162,20 +164,20 @@ Feature: Pricing rounding
     And click "Submit Order"
     And I see the "Thank You" page with "Thank You For Your Purchase!" title
 
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q123 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $7"
     And should see "Total $7"
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q456 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $5"
     And should see "Total $5"
-    And follow "Account"
-    When click "Order History"
+    And I click "Account Dropdown"
+    And click "Order History"
     Then should see following "PastOrdersGrid" grid:
       | Order Number | Total  |
       | 2            | $8.00  |
@@ -230,25 +232,26 @@ Feature: Pricing rounding
     And should see "Total $8"
 
     And I proceed as the customer
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q123 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $7.5"
     And should see "Total $7.5"
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q456 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $4.5"
     And should see "Total $4.5"
 
-    When click "NewCategory"
+    When click "NewCategory" in hamburger menu
     Then should see "Your Price: $7.45 / item" for "Phone" product
     And should see "Listed Price: $7.45 / item" for "Phone" product
     And should see "Your Price: $4.54 / item" for "Light" product
     And should see "Listed Price: $4.54 / item" for "Light" product
     And click "Add to Shopping List" for "Phone" product
+    And click on "Flash Message Close Button"
     When I hover on "Shopping Cart"
     And I click "Shopping List" on shopping list widget
     Then should see "Subtotal $7.5"
@@ -279,8 +282,9 @@ Feature: Pricing rounding
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
     And should see "New Front Shopping List"
-    And click "NewCategory"
+    And click "NewCategory" in hamburger menu
     When click "Add to New Front Shopping List" for "Light" product
+    And click on "Flash Message Close Button"
     And I hover on "Shopping Cart"
     And click "New Front Shopping List" on shopping list widget
     Then should see "Subtotal $4.5"
@@ -304,8 +308,8 @@ Feature: Pricing rounding
       | PO Number | Order4 |
     And click "Submit Order"
     And I see the "Thank You" page with "Thank You For Your Purchase!" title
-    And follow "Account"
-    When click "Order History"
+    And I click "Account Dropdown"
+    And click "Order History"
     Then should see following "PastOrdersGrid" grid:
       | Order Number | Total  |
       | 4            | $7.50  |
@@ -348,25 +352,25 @@ Feature: Pricing rounding
       | Price List         | Quantity | Unit | Value |
       | Default Price List | 1        | item | 7.45  |
     And I proceed as the customer
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q123 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $7"
     And should see "Total $7"
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q456 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $5"
     And should see "Total $5"
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q789 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $8"
     And should see "Total $8"
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q321 in grid
     And click "Accept and Submit to Order"
@@ -392,19 +396,19 @@ Feature: Pricing rounding
       | Price List         | Quantity | Unit | Value |
       | Default Price List | 1        | item | 7.45  |
     And I proceed as the customer
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q123 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $8"
     And should see "Total $8"
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q456 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $5"
     And should see "Total $5"
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q789 in grid
     And click "Accept and Submit to Order"
@@ -429,19 +433,19 @@ Feature: Pricing rounding
       | Price List         | Quantity | Unit | Value |
       | Default Price List | 1        | item | 7.45  |
     And I proceed as the customer
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q123 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $7"
     And should see "Total $7"
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q456 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $4"
     And should see "Total $4"
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q789 in grid
     And click "Accept and Submit to Order"
@@ -466,13 +470,13 @@ Feature: Pricing rounding
       | Price List         | Quantity | Unit | Value |
       | Default Price List | 1        | item | 7.45  |
     And I proceed as the customer
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q321 in grid
     And click "Accept and Submit to Order"
     Then should see "Subtotal $4"
     And should see "Total $4"
-    And follow "Account"
+    And I click "Account Dropdown"
     And click "Quotes"
     When click on Q654 in grid
     And click "Accept and Submit to Order"
@@ -506,6 +510,7 @@ Feature: Pricing rounding
     And type "SKU789" in "search"
     And I click "Search Button"
     And I click "Add to Shopping List" for "SKU789" product
+    And click on "Flash Message Close Button"
     And I hover on "Shopping Cart"
     And I click "Shopping List" on shopping list widget
     And I wait line items are initialized

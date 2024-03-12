@@ -32,7 +32,6 @@ Feature: Show default Shopping List on top of Choose Action drop-down
   Scenario: Product mass actions in bottom sticky panel (tablet)
     Given I set window size to 992x1024
     Then I should not see "ProductFrontendMassActionButton"
-    When I click on "ProductFrontendMassActionHeadButtonTablet"
     And I check PSKU1 record in "Product Frontend Grid" grid
     Then I should see "ProductFrontendMassPanelInBottomSticky" element inside "Bottom Active Sticky Panel" element
     When I uncheck PSKU1 record in "Product Frontend Grid" grid
@@ -46,10 +45,9 @@ Feature: Show default Shopping List on top of Choose Action drop-down
 
   Scenario: Product mass actions search is hidden (tablet)
     Given I set window size to 992x1024
-    When I click on "ProductFrontendMassActionHeadButtonTablet"
     And I scroll to bottom
     And I check PSKU20 record in "Product Frontend Grid" grid
-    Then I should see "ProductFrontendMassAddPanelInBottomSticky" element inside "Bottom Active Sticky Panel" element
+    Then I should see "ProductFrontendMassAddPanelInBottomSticky" element inside "Bottom Not Active Sticky Panel" element
     And I click "ProductFrontendMassAddPanelInBottomSticky"
     Then I should see "1 product was added" flash message
     And I should not see "ProductFrontendMassClosePanel"
@@ -126,7 +124,6 @@ Feature: Show default Shopping List on top of Choose Action drop-down
 
   Scenario: Product mass actions search is visible if number of actions more then 5 (tablet)
     Given I set window size to 992x1024
-    When I click on "ProductFrontendMassActionHeadButtonTablet"
     And I check PSKU1 record in "Product Frontend Grid" grid
     And I should see "ProductFrontendMassAddPanelInBottomSticky" element with text "Add to Shopping List 5" inside "Bottom Active Sticky Panel" element
     And I click "ProductFrontendMassOpenInDialog"

@@ -12,15 +12,10 @@ use Oro\Bundle\UserBundle\Entity\User;
 interface SubOrderOwnerProviderInterface
 {
     /**
-     * Possible values for $groupingPath:
-     * * '<property path>:<property value>'
-     * * 'other-items'
-     * {@see LineItemsGrouping\GroupLineItemsByConfiguredFields::getGroupedLineItems} for details.
-     *
      * @param Collection<int, CheckoutLineItem> $lineItems
-     * @param string                            $groupingPath 'product.owner:1' or 'other-items' for example
+     * @param string                            $lineItemGroupKey
      *
      * @return User
      */
-    public function getOwner(Collection $lineItems, string $groupingPath): User;
+    public function getOwner(Collection $lineItems, string $lineItemGroupKey): User;
 }

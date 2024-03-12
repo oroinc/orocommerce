@@ -4,91 +4,60 @@ namespace Oro\Bundle\ShippingBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroShippingBundle_Entity_ShippingMethodConfig;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 /**
  * Store shipping method config in database.
  *
- * @ORM\Table(name="oro_ship_method_config")
- * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository")
- * @Config
  * @mixin OroShippingBundle_Entity_ShippingMethodConfig
  */
+#[ORM\Entity(repositoryClass: ShippingMethodConfigRepository::class)]
+#[ORM\Table(name: 'oro_ship_method_config')]
+#[Config]
 class ShippingMethodConfig implements ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer", name="id")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="method", type="string", length=255, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=10
-     *          }
-     *      }
-     * )
-     */
-    protected $method;
+    #[ORM\Column(name: 'method', type: Types::STRING, length: 255, nullable: false)]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 10]])]
+    protected ?string $method = null;
 
     /**
      * @var array
-     *
-     * @ORM\Column(name="options", type="array")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=0
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(name: 'options', type: Types::ARRAY)]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 0]])]
     protected $options = [];
 
     /**
-     * @var Collection|ShippingMethodTypeConfig[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig",
-     *     mappedBy="methodConfig",
-     *     cascade={"ALL"},
-     *     fetch="EAGER",
-     *     orphanRemoval=true
-     * )
+     * @var Collection<int, ShippingMethodTypeConfig>
      */
-    protected $typeConfigs;
+    #[ORM\OneToMany(
+        mappedBy: 'methodConfig',
+        targetEntity: ShippingMethodTypeConfig::class,
+        cascade: ['ALL'],
+        fetch: 'EAGER',
+        orphanRemoval: true
+    )]
+    protected ?Collection $typeConfigs = null;
 
-    /**
-     * @var ShippingMethodsConfigsRule
-     *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule",
-     *     inversedBy="methodConfigs"
-     * )
-     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $methodConfigsRule;
+    #[ORM\ManyToOne(targetEntity: ShippingMethodsConfigsRule::class, inversedBy: 'methodConfigs')]
+    #[ORM\JoinColumn(name: 'rule_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?ShippingMethodsConfigsRule $methodConfigsRule = null;
 
     public function __construct()
     {

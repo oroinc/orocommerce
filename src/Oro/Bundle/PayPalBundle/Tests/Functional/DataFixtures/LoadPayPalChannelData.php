@@ -3,25 +3,21 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
-use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 
-class LoadPayPalChannelData extends AbstractFixture implements ContainerAwareInterface
+class LoadPayPalChannelData extends AbstractFixture implements DependentFixtureInterface
 {
     public const PAYPAL_PAYFLOW_GATAWAY1 = 'paypal:channel_1';
     public const PAYPAL_PAYFLOW_GATAWAY2 = 'paypal:channel_2';
     public const PAYPAL_PAYMENTS_PRO1 = 'paypal:channel_3';
     public const PAYPAL_PAYMENTS_PRO2 = 'paypal:channel_4';
 
-    /**
-     * @var array Channels configuration
-     */
-    private $channelData = [
+    private array $channelData = [
         self::PAYPAL_PAYFLOW_GATAWAY1 => [
             'name' => 'PayPal1',
             'type' => 'paypal_payflow_gateway',
@@ -45,37 +41,27 @@ class LoadPayPalChannelData extends AbstractFixture implements ContainerAwareInt
     ];
 
     /**
-     * @var ContainerInterface
+     * {@inheritDoc}
      */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
+    public function getDependencies(): array
     {
-        $this->container = $container;
+        return [LoadOrganization::class, LoadUser::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $userManager = $this->container->get('oro_user.manager');
-        $admin = $userManager->findUserByEmail(LoadAdminUserData::DEFAULT_ADMIN_EMAIL);
-        $organization = $manager->getRepository(Organization::class)->getFirst();
-
         foreach ($this->channelData as $reference => $data) {
             $entity = new Channel();
             $entity->setName($data['name']);
             $entity->setType($data['type']);
             $entity->setEnabled($data['enabled']);
-            $entity->setDefaultUserOwner($admin);
-            $entity->setOrganization($organization);
+            $entity->setDefaultUserOwner($this->getReference(LoadUser::USER));
+            $entity->setOrganization($this->getReference(LoadOrganization::ORGANIZATION));
             $entity->setTransport(new PayPalSettings());
             $this->setReference($reference, $entity);
-
             $manager->persist($entity);
         }
         $manager->flush();

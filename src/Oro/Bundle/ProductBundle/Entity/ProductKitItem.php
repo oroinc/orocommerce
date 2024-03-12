@@ -4,96 +4,96 @@ namespace Oro\Bundle\ProductBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductKitItemRepository;
 
 /**
  * Represents a product kit item.
  *
- * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductKitItemRepository")
- * @ORM\Table(name="oro_product_kit_item")
- * @ORM\HasLifecycleCallbacks
- * @Config()
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- *
  * @method ProductKitItemLabel getLabel(Localization $localization = null)
  * @method ProductKitItemLabel getDefaultLabel()
  * @method $this cloneLocalizedFallbackValueAssociations()
  */
+#[ORM\Entity(repositoryClass: ProductKitItemRepository::class)]
+#[ORM\Table(name: 'oro_product_kit_item')]
+#[ORM\HasLifecycleCallbacks]
+#[Config]
 class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
 {
     use ExtendEntityTrait;
     use DatesAwareTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
     protected ?int $id = null;
 
     /**
-     * @ORM\OneToMany(
-     *     targetEntity="ProductKitItemLabel",
-     *     mappedBy="kitItem",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true
-     * )
+     * @var Collection<int, ProductKitItemLabel>
      */
-    protected $labels;
+    #[ORM\OneToMany(
+        mappedBy: 'kitItem',
+        targetEntity: ProductKitItemLabel::class,
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
+    #[ConfigField(
+        defaultValues: ['importexport' => ['immutable' => true, 'full' => true, 'fallback_field' => 'string']]
+    )]
+    protected ?Collection $labels = null;
 
-    /**
-     * @ORM\Column(name="sort_order", type="integer", options={"default"=0})
-     */
-    protected int $sortOrder = 0;
+    #[ORM\Column(name: 'sort_order', type: Types::INTEGER, options: ['default' => 0])]
+    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
+    protected ?int $sortOrder = 0;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Product", inversedBy="kitItems")
-     * @ORM\JoinColumn(name="product_kit_id", referencedColumnName="id", onDelete="CASCADE")
-     */
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'kitItems')]
+    #[ORM\JoinColumn(name: 'product_kit_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
     protected ?Product $productKit = null;
 
     /**
-     * @var Collection<ProductKitItemProduct>
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="ProductKitItemProduct",
-     *     mappedBy="kitItem",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true,
-     *     fetch="EXTRA_LAZY"
-     * )
-     * @OrderBy({"sortOrder"="ASC"})
+     * @var Collection<int, ProductKitItemProduct>
      */
-    protected $kitItemProducts;
+    #[ORM\OneToMany(
+        mappedBy: 'kitItem',
+        targetEntity: ProductKitItemProduct::class,
+        cascade: ['ALL'],
+        fetch: 'EXTRA_LAZY',
+        orphanRemoval: true
+    )]
+    #[OrderBy(['sortOrder' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true, 'full' => true]])]
+    protected ?Collection $kitItemProducts = null;
 
-    /**
-     * @ORM\Column(name="optional", type="boolean", options={"default"=false})
-     */
-    protected bool $optional = false;
+    #[ORM\Column(name: 'optional', type: Types::BOOLEAN, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
+    protected ?bool $optional = false;
 
-    /**
-     * @ORM\Column(name="minimum_quantity", type="float", nullable=true)
-     */
+    #[ORM\Column(name: 'minimum_quantity', type: Types::FLOAT, nullable: true)]
+    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
     protected ?float $minimumQuantity = null;
 
-    /**
-     * @ORM\Column(name="maximum_quantity", type="float", nullable=true)
-     */
+    #[ORM\Column(name: 'maximum_quantity', type: Types::FLOAT, nullable: true)]
+    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
     protected ?float $maximumQuantity = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="ProductUnit")
-     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", onDelete="SET NULL")
-     */
+    #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
+    #[ORM\JoinColumn(name: 'unit_code', referencedColumnName: 'code', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['importexport' => ['immutable' => true]])]
     protected ?ProductUnit $productUnit = null;
 
     public function __construct()
@@ -102,18 +102,14 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
         $this->kitItemProducts = new ArrayCollection();
     }
 
-    /**
-     * @ORM\PrePersist
-     */
+    #[ORM\PrePersist]
     public function prePersist(): void
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
-    /**
-     * @ORM\PreUpdate
-     */
+    #[ORM\PreUpdate]
     public function preUpdate(): void
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -242,9 +238,9 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
      */
     public function getProducts(): Collection
     {
-        return $this->kitItemProducts->map(
-            static fn (ProductKitItemProduct $kitItemProduct) => $kitItemProduct->getProduct()
-        );
+        return $this->kitItemProducts
+            ->filter(static fn (ProductKitItemProduct $kitItemProduct) => $kitItemProduct->getProduct() !== null)
+            ->map(static fn (ProductKitItemProduct $kitItemProduct) => $kitItemProduct->getProduct());
     }
 
     public function setOptional(bool $optional): self

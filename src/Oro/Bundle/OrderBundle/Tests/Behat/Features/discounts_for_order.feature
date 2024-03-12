@@ -11,6 +11,7 @@ Feature: Discounts for Order
     And go to Sales/Orders
     And click edit SimpleOrder in grid
     And I save and close form
+    And I click "Save" in modal window
 
   Scenario: Add special discount from Order view page
     When click "Add Special Discount"

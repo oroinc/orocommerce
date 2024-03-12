@@ -22,6 +22,7 @@ class OroFixedProductBundleInstaller implements Installation
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createOroFixedProductTransportLabelTable($schema);
+
         $this->addOroFixedProductTransportLabelForeignKeys($schema);
     }
 
@@ -29,11 +30,11 @@ class OroFixedProductBundleInstaller implements Installation
     {
         if (!$schema->hasTable('oro_fixed_product_transp_label')) {
             $table = $schema->createTable('oro_fixed_product_transp_label');
-            $table->addColumn('transport_id', 'integer', []);
-            $table->addColumn('localized_value_id', 'integer', []);
-            $table->addUniqueIndex(['localized_value_id'], 'oro_fixed_product_transp_label_localized_value_id');
+            $table->addColumn('transport_id', 'integer');
+            $table->addColumn('localized_value_id', 'integer');
             $table->setPrimaryKey(['transport_id', 'localized_value_id']);
-            $table->addIndex(['transport_id'], 'oro_fixed_product_transp_label_transport_id', []);
+            $table->addUniqueIndex(['localized_value_id'], 'oro_fixed_product_transp_label_localized_value_id');
+            $table->addIndex(['transport_id'], 'oro_fixed_product_transp_label_transport_id');
         }
     }
 

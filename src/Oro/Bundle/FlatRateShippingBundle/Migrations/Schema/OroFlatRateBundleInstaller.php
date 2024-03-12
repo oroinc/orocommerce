@@ -13,17 +13,17 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroFlatRateBundleInstaller implements Installation
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getMigrationVersion()
+    public function getMigrationVersion(): string
     {
         return 'v1_0';
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
         $this->createOroFlatRateTransportLabelTable($schema);
@@ -35,22 +35,22 @@ class OroFlatRateBundleInstaller implements Installation
     /**
      * Create oro_flat_rate_transport_label table
      */
-    protected function createOroFlatRateTransportLabelTable(Schema $schema)
+    private function createOroFlatRateTransportLabelTable(Schema $schema): void
     {
         if (!$schema->hasTable('oro_flat_rate_transport_label')) {
             $table = $schema->createTable('oro_flat_rate_transport_label');
-            $table->addColumn('transport_id', 'integer', []);
-            $table->addColumn('localized_value_id', 'integer', []);
-            $table->addUniqueIndex(['localized_value_id'], 'oro_flat_rate_transport_label_localized_value_id');
+            $table->addColumn('transport_id', 'integer');
+            $table->addColumn('localized_value_id', 'integer');
             $table->setPrimaryKey(['transport_id', 'localized_value_id']);
-            $table->addIndex(['transport_id'], 'oro_flat_rate_transport_label_transport_id', []);
+            $table->addUniqueIndex(['localized_value_id'], 'oro_flat_rate_transport_label_localized_value_id');
+            $table->addIndex(['transport_id'], 'oro_flat_rate_transport_label_transport_id');
         }
     }
 
     /**
      * Add oro_flat_rate_transport_label foreign keys.
      */
-    protected function addOroFlatRateTransportLabelForeignKeys(Schema $schema)
+    private function addOroFlatRateTransportLabelForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_flat_rate_transport_label');
         if (!$table->hasForeignKey('transport_id')) {

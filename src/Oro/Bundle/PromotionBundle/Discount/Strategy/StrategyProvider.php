@@ -5,21 +5,12 @@ namespace Oro\Bundle\PromotionBundle\Discount\Strategy;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 /**
- * This class is responsible for getting selected strategy from registry based on chosen strategy in system config
+ * Provides a discount strategy chosen in the system configuration.
  */
 class StrategyProvider
 {
-    const CONFIG_KEY = 'oro_promotion.discount_strategy';
-
-    /**
-     * @var StrategyRegistry
-     */
-    private $strategyRegistry;
-
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
+    private StrategyRegistry $strategyRegistry;
+    private ConfigManager $configManager;
 
     public function __construct(
         StrategyRegistry $strategyRegistry,
@@ -29,13 +20,10 @@ class StrategyProvider
         $this->configManager = $configManager;
     }
 
-    /**
-     * @return null|StrategyInterface
-     */
-    public function getActiveStrategy()
+    public function getActiveStrategy(): ?StrategyInterface
     {
-        $selectedStrategyAlias = $this->configManager->get(self::CONFIG_KEY);
-
-        return $this->strategyRegistry->getStrategyByAlias($selectedStrategyAlias);
+        return $this->strategyRegistry->getStrategyByAlias(
+            $this->configManager->get('oro_promotion.discount_strategy')
+        );
     }
 }

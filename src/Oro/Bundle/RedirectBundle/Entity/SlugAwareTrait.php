@@ -4,27 +4,21 @@ namespace Oro\Bundle\RedirectBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 
+/**
+* SlugAware trait
+*
+*/
 trait SlugAwareTrait
 {
     /**
-     * @var Collection|Slug[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\RedirectBundle\Entity\Slug",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, Slug>
      */
-    protected $slugs;
+    #[ORM\ManyToMany(targetEntity: Slug::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?Collection $slugs = null;
 
     /**
      * @return Collection|Slug[]

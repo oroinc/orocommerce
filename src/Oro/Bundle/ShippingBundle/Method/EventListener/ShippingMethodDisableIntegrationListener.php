@@ -6,31 +6,16 @@ use Oro\Bundle\IntegrationBundle\Event\Action\ChannelDisableEvent;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Handler\ShippingMethodDisableHandlerInterface;
 
+/**
+ * Listener for user disables or removes the integration currently used in shipping rules,
+ */
 class ShippingMethodDisableIntegrationListener
 {
-    /**
-     * @var IntegrationIdentifierGeneratorInterface
-     */
-    private $methodIdentifierGenerator;
-
-    /**
-     * @var ShippingMethodDisableHandlerInterface
-     */
-    private $shippingMethodDisableHandler;
-
-    /**
-     * @param string                                        $channelType
-     * @param IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator
-     * @param ShippingMethodDisableHandlerInterface         $shippingMethodDisableHandler
-     */
     public function __construct(
-        $channelType,
-        IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator,
-        ShippingMethodDisableHandlerInterface $shippingMethodDisableHandler
+        private string $channelType,
+        private IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator,
+        private ShippingMethodDisableHandlerInterface $shippingMethodDisableHandler
     ) {
-        $this->channelType = $channelType;
-        $this->methodIdentifierGenerator = $methodIdentifierGenerator;
-        $this->shippingMethodDisableHandler = $shippingMethodDisableHandler;
     }
 
     public function onIntegrationDisable(ChannelDisableEvent $event)

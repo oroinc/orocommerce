@@ -87,7 +87,7 @@ Feature: Webcatalog titles
   Scenario Outline: Validate page title
     Given I proceed as the Buyer
     And I am on the homepage
-    When I click "<Variant title>"
+    When I click "<Variant title>" in hamburger menu
     Then Page title equals to "<Variant title>"
 
     When I proceed as the Admin

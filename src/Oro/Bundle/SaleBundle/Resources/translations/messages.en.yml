@@ -180,6 +180,9 @@ oro:
             product_replacement.removed: '{title} - removed'
             free_form_product.label: 'Product (free-form)'
             free_form_product_replacement.label: 'Product Replacement (free-form)'
+            kit_item_line_items:
+                label: Kit Item Line Items
+                description: Stores the collection of kit item line items when the quote product is a kit
             type:
                 label: 'Type'
                 requested: 'Requested'
@@ -192,6 +195,75 @@ oro:
             select:
                 product: Select product
                 free_form: Free-form entry
+
+        quoteproductkititemlineitem:
+            entity_label: Quote Product Kit Item Line Item
+            entity_plural_label: Quote Product Kit Item Line Items
+            entity_grid_all_view_label: All %entity_plural_label%
+            entity_frontend_grid_all_view_label: All %entity_plural_label%
+            entity_description: Represents the line item of a product kit item in a quote product line item
+            id.label: ID
+            quote_product:
+                label: Quote Product Line Item
+                description: The related quote product line item
+            kit_item:
+                label: Product Kit Item
+                description: The related product kit item
+            kit_item_id:
+                label: Product Kit Item Id
+                description: The related product kit item ID. Automatically filled from the related kit item. Contains ID even if the related kit item is deleted
+            kit_item_label:
+                label: Product Kit Item Label
+                description: The default label of the quote product kit item. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+            optional:
+                label: Optional
+                description: Indicates whether this kit item is required for purchase, or can be skipped by the customer. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+            product:
+                label: Product
+                description: The kit item product
+                form:
+                    choices:
+                        none: None
+            product_id:
+                label: Product Id
+                description: ID of the kit item product. Automatically filled from the related product. Contains ID even if the related product is deleted
+            product_sku:
+                label: Product SKU
+                description: A unique human-readable product identifier. Automatically filled from the related product. Contains data even if the related product is deleted
+            product_name:
+                label: Product Name
+                description: The default name of the kit item product. Automatically filled from the related product. Contains data even if the related product is deleted
+            quantity:
+                label: Quantity
+                description: The quantity of product kit item units to be purchased
+                form:
+                    tooltip: 'The quantity of product kit item units to be purchased: {{ unit_precision_info }}'
+            minimum_quantity:
+                label: Minimum Quantity
+                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+            maximum_quantity:
+                label: Maximum Quantity
+                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+            product_unit:
+                label: Unit of Quantity
+                description: The unit of quantity of the kit item product was purchased in
+            product_unit_precision:
+                label: Unit Precision
+                description: The unit precision of the related product. Automatically filled from the related product. Contains data even if the related product is deleted
+            product_unit_code:
+                label: Product Unit Code
+                description: The code of the product unit of the kit item product was purchased in. Automatically filled from the related product unit. Contains data even if the related product unit is deleted
+            sort_order:
+                label: Sort Order
+                description: Used to sort kit item line item products when displaying. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+            price:
+                label: Price
+            value:
+                label: Price Value
+                description: Price for a product kit item line item product unit
+            currency:
+                label: Price Currency
+                description:  A currency for a product kit item line item price
 
         quoteproductoffer:
             item: '{0}{units}, {price} per {unit}|{1}{units} or more, {price} per {unit}'
@@ -217,6 +289,9 @@ oro:
             product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
+            checksum:
+                label: Checksum
+                description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times
 
         quoteproductrequest:
             item: '{units}, {price} per {unit}'
@@ -236,6 +311,9 @@ oro:
             product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
+            checksum:
+                label: Checksum
+                description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times
 
         quoteaddress:
             entity_label: Quote Address
@@ -288,6 +366,9 @@ oro:
             quantity.label: Quantity
             quote_demand.label: 'Quote Demand'
             quote_product_offer.label: 'Quote Product Offer'
+            checksum:
+                label: Checksum
+                description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times
 
         controller:
             quote:
@@ -350,6 +431,9 @@ oro:
                 user_profile_data.label: 'Use My Profile Data'
                 enter_manually.label: 'Enter Manually'
                 use_system.label: 'Use System'
+
+        workflow.condition:
+            quote_is_not_valid.message: You have been redirected to the Quote Edit page as a Quote has not acceptable configuration and requires your attention. Please, review and update it to proceed.
 
     frontend:
         sale:

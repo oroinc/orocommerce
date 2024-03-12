@@ -14,40 +14,23 @@ use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Abstract class for page data fixture.
+ * The base class for fixtures that load storefront pages.
  */
 abstract class AbstractLoadPageData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
 {
+    use ContainerAwareTrait;
     use UserUtilityTrait;
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var array
-     */
-    protected $pages = [];
 
     /**
      * {@inheritDoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadAdminUserData::class
@@ -57,7 +40,7 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $organization = $this->getOrganization($manager);
 
@@ -84,19 +67,16 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @return Organization
-     */
-    protected function getOrganization(ObjectManager $manager)
+    protected function getOrganization(ObjectManager $manager): Organization
     {
-        return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        return $manager->getRepository(Organization::class)->getFirst();
     }
 
     /**
      * @param ObjectManager $manager
-     * @param string $filePath
-     * @param Organization $organization
+     * @param string        $filePath
+     * @param Organization  $organization
+     *
      * @return Page[]
      */
     protected function loadFromFile(ObjectManager $manager, string $filePath, Organization $organization): array
@@ -108,6 +88,9 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
             $page->addTitle((new LocalizedFallbackValue())->setString($row['title']));
             $page->addSlugPrototype((new LocalizedFallbackValue())->setString($row['slug']));
             $page->setContent($row['content']);
+            if ($row['contentStyle'] ?? '') {
+                $page->setContentStyle($row['contentStyle']);
+            }
             $page->setOrganization($organization);
 
             $pages[$reference] = $page;
@@ -116,19 +99,11 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
         return $pages;
     }
 
-    /**
-     * @return string
-     */
-    abstract protected function getFilePaths();
+    abstract protected function getFilePaths(): string;
 
-    /**
-     * @param string $path
-     * @return array|string
-     */
-    protected function getFilePathsFromLocator($path)
+    protected function getFilePathsFromLocator(string $path): array|string
     {
-        $locator = $this->container->get('file_locator');
-        return $locator->locate($path);
+        return $this->container->get('file_locator')->locate($path);
     }
 
     protected function createDigitalAsset(
@@ -139,20 +114,20 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
     ): DigitalAsset {
         $user = $this->getFirstUser($manager);
 
-        $daTitle = new LocalizedFallbackValue();
-        $daTitle->setString($title);
-        $manager->persist($daTitle);
+        $digitalAssetTitle = new LocalizedFallbackValue();
+        $digitalAssetTitle->setString($title);
+        $manager->persist($digitalAssetTitle);
 
         $imagePath = $this->getFilePathsFromLocator($sourcePath);
-        $sourceFile = $fileManager->createFileEntity(is_array($imagePath) ? current($imagePath) : $imagePath);
+        $sourceFile = $fileManager->createFileEntity(\is_array($imagePath) ? current($imagePath) : $imagePath);
         $sourceFile->setOwner($user);
         $manager->persist($sourceFile);
 
         $digitalAsset = new DigitalAsset();
-        $digitalAsset->addTitle($daTitle)
-            ->setSourceFile($sourceFile)
-            ->setOwner($user)
-            ->setOrganization($user->getOrganization());
+        $digitalAsset->addTitle($digitalAssetTitle);
+        $digitalAsset->setSourceFile($sourceFile);
+        $digitalAsset->setOwner($user);
+        $digitalAsset->setOrganization($user->getOrganization());
         $manager->persist($digitalAsset);
 
         return $digitalAsset;

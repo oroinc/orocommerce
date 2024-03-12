@@ -21,6 +21,7 @@ class QuoteBackofficeDefaultWorkflowTest extends BaseQuoteBackofficeWorkflowTest
         'Reopen',
     ];
     protected const TRANSITIONS = [
+        'verify_transition',
         'edit_transition',
         'clone_transition',
         'delete_transition',

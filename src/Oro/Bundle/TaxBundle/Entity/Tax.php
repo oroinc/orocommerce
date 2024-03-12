@@ -2,130 +2,60 @@
 
 namespace Oro\Bundle\TaxBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 
 /**
  * Entity that represents tax
- *
- * @ORM\Entity
- * @ORM\Table(name="oro_tax")
- * @ORM\HasLifecycleCallbacks
- * @Config(
- *      routeName="oro_tax_index",
- *      routeView="oro_tax_view",
- *      routeUpdate="oro_tax_update",
- *      defaultValues={
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
- *          },
- *      }
- * )
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_tax')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    routeName: 'oro_tax_index',
+    routeView: 'oro_tax_view',
+    routeUpdate: 'oro_tax_update',
+    defaultValues: ['security' => ['type' => 'ACL', 'group_name' => '']]
+)]
 class Tax implements DatesAwareInterface
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]])]
+    protected ?int $id = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255, unique=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *              },
-     *          "importexport"={
-     *              "order"=100,
-     *              "identity"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $code;
+    #[ORM\Column(type: Types::STRING, length: 255, unique: true)]
+    #[ConfigField(
+        defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 100, 'identity' => true]]
+    )]
+    protected ?string $code = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="description", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=200
-     *          }
-     *      }
-     * )
-     */
-    protected $description;
+    #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 200]])]
+    protected ?string $description = null;
 
     /**
      * @var int
-     *
-     * @ORM\Column(type="percent")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=300
-     *          }
-     *      }
-     * )
      */
+    #[ORM\Column(type: 'percent')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 300]])]
     protected $rate;
 
-    /**
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     *
-     * @var \DateTime
-     */
-    protected $createdAt;
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(
+        defaultValues: ['entity' => ['label' => 'oro.ui.created_at'], 'importexport' => ['excluded' => true]]
+    )]
+    protected ?\DateTimeInterface $createdAt = null;
 
-    /**
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     *
-     * @var \DateTime
-     */
-    protected $updatedAt;
+    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(
+        defaultValues: ['entity' => ['label' => 'oro.ui.updated_at'], 'importexport' => ['excluded' => true]]
+    )]
+    protected ?\DateTimeInterface $updatedAt = null;
 
     /**
      * @var bool

@@ -11,6 +11,7 @@ Feature: Order promotions
     And click "edit" on first row in grid
     # Need to re-calculate discounts
     When I save form
+    And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
     When click "Order Totals"
     Then I see next subtotals for "Backend Order":

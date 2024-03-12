@@ -2,44 +2,21 @@
 
 namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_3;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Migrations\Schema\v1_2\DropEntityConfigFieldQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareTrait;
 
 class ReorganizePageSlugs implements Migration, DatabasePlatformAwareInterface, SlugExtensionAwareInterface
 {
-    /**
-     * @var AbstractPlatform
-     */
-    protected $platform;
-
-    /**
-     * @var SlugExtension
-     */
-    protected $slugExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDatabasePlatform(AbstractPlatform $platform)
-    {
-        $this->platform = $platform;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSlugExtension(SlugExtension $extension)
-    {
-        $this->slugExtension = $extension;
-    }
+    use DatabasePlatformAwareTrait;
+    use SlugExtensionAwareTrait;
 
     /**
      * {@inheritdoc}

@@ -4,7 +4,6 @@ namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -26,7 +25,7 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadPaymentRuleIntegrationData::class,
@@ -37,16 +36,14 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
     }
 
     /**
-     * @param EntityManager $manager
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $paymentTransactionProvider = $this->container->get('oro_payment.provider.payment_transaction');
 
-        $orders = $this->container->get('doctrine')->getRepository('OroOrderBundle:Order')->findAll();
-
         /** @var Order[] $orders */
+        $orders = $manager->getRepository(Order::class)->findAll();
         foreach ($orders as $order) {
             $paymentTransaction = $paymentTransactionProvider->getPaymentTransaction($order);
             if (!$paymentTransaction) {
@@ -57,10 +54,9 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
                 );
             }
 
-            $paymentTransaction
-                ->setAmount($order->getTotal())
-                ->setCurrency($order->getCurrency())
-                ->setSuccessful(true);
+            $paymentTransaction->setAmount($order->getTotal());
+            $paymentTransaction->setCurrency($order->getCurrency());
+            $paymentTransaction->setSuccessful(true);
 
             $paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
         }
@@ -68,19 +64,13 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
         $manager->flush();
     }
 
-    /**
-     * @return string
-     */
-    private function getPaymentTermMethodIdentifier()
+    private function getPaymentTermMethodIdentifier(): string
     {
         return $this->container->get('oro_payment_term.config.integration_method_identifier_generator')
             ->generateIdentifier($this->getPaymentTermIntegrationChannel());
     }
 
-    /**
-     * @return Channel|object
-     */
-    private function getPaymentTermIntegrationChannel()
+    private function getPaymentTermIntegrationChannel(): Channel
     {
         return $this->getReference(LoadPaymentRuleIntegrationData::PAYMENT_TERM_INTEGRATION_CHANNEL_REFERENCE);
     }
