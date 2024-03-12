@@ -66,3 +66,13 @@ services:
             - '@oro_action.action_executor'
         tags:
             - { name: 'oro_action_group_service' }
+
+    oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_address:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToShippingAddress
+        public: true
+        arguments:
+            - '@oro_action.action_executor'
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_checkout.provider.grouped_line_items'
+        tags:
+            - { name: 'oro_workflow.transition_service' }

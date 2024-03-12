@@ -52,7 +52,7 @@ class QuoteAcceptable extends AbstractCondition implements ContextAccessorAwareI
 
         $default = array_shift($options);
 
-        if (is_bool($default)) {
+        if (is_bool($default) || $default instanceof PropertyPathInterface) {
             $this->default = $default;
         }
 
@@ -65,8 +65,9 @@ class QuoteAcceptable extends AbstractCondition implements ContextAccessorAwareI
     protected function isConditionAllowed($context)
     {
         $quote = $this->getQuote($context);
+        $default = $this->contextAccessor->getValue($context, $this->default);
 
-        return $quote ? $quote->isAcceptable() : $this->default;
+        return $quote ? $quote->isAcceptable() : $default;
     }
 
     /**

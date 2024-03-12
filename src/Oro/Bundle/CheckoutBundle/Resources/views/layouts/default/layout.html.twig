@@ -44,7 +44,7 @@
         <div>{{ 'oro.checkout.workflow.unavailable_transition.message'|trans }}</div>
         <ul>
             {% for error in transitionData.errors %}
-                <li>{{ error.message|trans(error.parameters)|nl2br }}</li>
+                <li>{{ error.message|trans(error.parameters|default({}))|nl2br }}</li>
             {% endfor %}
         </ul>
     {%- endapply -%}
