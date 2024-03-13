@@ -7,6 +7,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -244,6 +245,7 @@ class OrderTest extends RestJsonApiTestCase
         /** @var Order $item */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals('2345678', $order->getPoNumber());
+        self::assertSame($this->getReference(LoadOrderUsers::ORDER_USER_2), $order->getCreatedBy());
         self::assertSame('73.5400', $order->getSubtotal());
         self::assertSame('73.5400', $order->getTotal());
         self::assertNull($order->getTotalDiscounts());
@@ -471,6 +473,41 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame('444.5000', $updatedOrder->getSubtotal());
         self::assertSame('444.5000', $updatedOrder->getTotal());
         self::assertNull($updatedOrder->getTotalDiscounts());
+    }
+
+    public function testUpdateCreatedBy(): void
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $orderId = $order->getId();
+
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => $orderId],
+            [
+                'data' => [
+                    'type'          => 'orders',
+                    'id'            => (string)$orderId,
+                    'relationships' => [
+                        'createdBy' => [
+                            'data' => [
+                                'type' => 'users',
+                                'id'   => '<toString(@order.simple_user2->id)>'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'extra fields constraint',
+                'detail' => 'This form should not contain extra fields: "createdBy".'
+            ],
+            $response
+        );
     }
 
     public function testAddProductKitLineItem(): void

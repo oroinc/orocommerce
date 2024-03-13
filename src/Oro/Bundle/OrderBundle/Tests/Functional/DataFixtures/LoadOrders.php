@@ -47,6 +47,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         ],
         self::ORDER_2 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
+            'createdBy' => LoadOrderUsers::ORDER_USER_1,
             'customerUser' => self::ACCOUNT_USER,
             'poNumber' => 'PO2',
             'customerNotes' => 'Test customer user notes',
@@ -57,6 +58,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         ],
         self::ORDER_3 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
+            'createdBy' => LoadOrderUsers::ORDER_USER_2,
             'customerUser' => self::ACCOUNT_USER,
             'poNumber' => 'PO3',
             'customerNotes' => 'Test customer user notes',
@@ -87,6 +89,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         ],
         self::ORDER_6 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
+            'createdBy' => LoadOrderUsers::ORDER_USER_2,
             'customerUser' => self::ACCOUNT_USER,
             'poNumber' => 'PO6',
             'customerNotes' => 'Test customer user notes',
@@ -189,6 +192,16 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             ->setCustomer($customerUser->getCustomer())
             ->setWebsite($website)
             ->setCustomerUser($customerUser);
+
+        if (isset($orderData['createdBy'])) {
+            /** @var User $createdByUser */
+            $createdByUser = $this->getReference($orderData['createdBy']);
+            if (!$createdByUser->getOrganization()) {
+                $createdByUser->setOrganization($this->getReference('organization'));
+            }
+
+            $order->setCreatedBy($createdByUser);
+        }
 
         if (isset($orderData['parentOrder'])) {
             $order->setParent($this->getReference($orderData['parentOrder']));
