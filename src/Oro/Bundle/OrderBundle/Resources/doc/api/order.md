@@ -163,6 +163,18 @@ Delete a collection of order records.
 
 **The required field.**
 
+### createdBy
+
+#### create, get
+
+Represents a back-office user which created the Order
+
+#### update
+
+Represents a back-office user which created the Order
+
+**The read-only field. A passed value will be ignored.**
+
 ### lineItems
 
 #### create
@@ -262,6 +274,22 @@ Example:
 }
 ```
 {@/request}
+
+### createdBy
+
+#### get_subresource
+
+Retrieve a record of a back-office user which created the Order.
+
+#### get_relationship
+
+Retrieve ID of a back-office user which created the Order.
+
+#### update_relationship
+
+Back-office user which created the Order.
+
+**The read-only field. A passed value will be ignored.**
 
 ### customerUser
 

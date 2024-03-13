@@ -27,7 +27,9 @@ oro:
             description:                  Unique identifier that is used as a reference for the order.
             short_label:                  'Order #'
         owner.label: Owner
-        created_by.label: Created By
+        created_by:
+            label: Created By
+            description: Represents a back-office user which created the Order.
         created_by_seller:
             label: Created By Seller
             yes.label: Yes

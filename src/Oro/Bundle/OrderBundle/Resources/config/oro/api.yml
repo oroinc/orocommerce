@@ -43,8 +43,13 @@ api:
                             form_options:
                                 mapped: false
                         createdBy:
-                            exclude: true
+                            form_options:
+                                mapped: false
                 update_list: true
+            subresources:
+                createdBy:
+                    actions:
+                        update_relationship: false
 
         Extend\Entity\EV_Order_Internal_Status:
             actions: false

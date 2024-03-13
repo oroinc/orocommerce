@@ -192,13 +192,13 @@ class OrderController extends AbstractController
             $orderRequestHandler = $this->container->get(OrderRequestHandler::class);
             $order->setCustomer($orderRequestHandler->getCustomer());
             $order->setCustomerUser($orderRequestHandler->getCustomerUser());
-        }
 
-        if (\in_array($request->getMethod(), ['PUT'], true)) {
-            $user = $this->getUser();
+            if (null === $order->getId()) {
+                $user = $this->getUser();
 
-            if ($user instanceof User) {
-                $order->setCreatedBy($user);
+                if ($user instanceof User) {
+                    $order->setCreatedBy($user);
+                }
             }
         }
 

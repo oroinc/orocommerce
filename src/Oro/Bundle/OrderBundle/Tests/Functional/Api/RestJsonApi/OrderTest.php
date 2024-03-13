@@ -9,6 +9,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
@@ -245,7 +246,7 @@ class OrderTest extends RestJsonApiTestCase
         /** @var Order $item */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals('2345678', $order->getPoNumber());
-        self::assertSame($this->getReference(LoadOrderUsers::ORDER_USER_2), $order->getCreatedBy());
+        self::assertSame($this->getReference(LoadOrderUsers::ORDER_USER_1), $order->getCreatedBy());
         self::assertSame('73.5400', $order->getSubtotal());
         self::assertSame('73.5400', $order->getTotal());
         self::assertNull($order->getTotalDiscounts());
@@ -475,7 +476,7 @@ class OrderTest extends RestJsonApiTestCase
         self::assertNull($updatedOrder->getTotalDiscounts());
     }
 
-    public function testUpdateCreatedBy(): void
+    public function testCreatedByCannotBeUpdated(): void
     {
         /** @var Order $order */
         $order = $this->getReference(LoadOrders::ORDER_1);
@@ -497,17 +498,13 @@ class OrderTest extends RestJsonApiTestCase
                     ]
                 ]
             ],
-            [],
-            false
         );
 
-        $this->assertResponseValidationError(
-            [
-                'title'  => 'extra fields constraint',
-                'detail' => 'This form should not contain extra fields: "createdBy".'
-            ],
-            $response
-        );
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+
+        /** @var Order $item */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertNull($order->getCreatedBy());
     }
 
     public function testAddProductKitLineItem(): void

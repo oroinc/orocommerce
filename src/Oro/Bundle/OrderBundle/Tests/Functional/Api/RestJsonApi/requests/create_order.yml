@@ -20,6 +20,10 @@ data:
               data:
                   type: organizations
                   id: '<toString(@simple_order->organization->id)>'
+          createdBy:
+              data:
+                  type: users
+                  id: '<toString(@simple_order2->createdBy->id)>'
           customerUser:
               data:
                    type: customerusers
