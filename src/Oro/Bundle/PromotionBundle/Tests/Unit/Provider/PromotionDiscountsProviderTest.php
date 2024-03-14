@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
@@ -11,6 +12,7 @@ use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Model\MultiShippingPromotionData;
 use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
+use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProviderInterface;
 use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProvider;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub\DiscountStub;
@@ -35,7 +37,7 @@ class PromotionDiscountsProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->promotionProvider = $this->createMock(PromotionProvider::class);
         $this->discountFactory = $this->createMock(DiscountFactory::class);
-        $this->matchingProductsProvider = $this->createMock(MatchingProductsProvider::class);
+        $this->matchingProductsProvider = $this->createMock(MatchingProductsProviderInterface::class);
 
         $this->discountsProvider = new PromotionDiscountsProvider(
             $this->promotionProvider,
@@ -68,6 +70,7 @@ class PromotionDiscountsProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetDiscounts(): void
     {
+        $organization = new Organization();
         $sourceEntity = new Order();
         $lineItems = [new DiscountLineItem(), new DiscountLineItem()];
 
@@ -76,6 +79,7 @@ class PromotionDiscountsProviderTest extends \PHPUnit\Framework\TestCase
 
         $firstSegment = $this->getSegment(1);
         $firstPromotion = $this->getPromotion($firstSegment);
+        $firstPromotion->setOrganization($organization);
 
         $secondSegment = $this->getSegment(2);
         $secondPromotion = $this->getMultiShippingPromotion($secondSegment, [$lineItems[1]]);
@@ -104,8 +108,8 @@ class PromotionDiscountsProviderTest extends \PHPUnit\Framework\TestCase
         $this->matchingProductsProvider->expects(self::exactly(2))
             ->method('getMatchingProducts')
             ->withConsecutive(
-                [$firstSegment, $lineItems],
-                [$secondSegment, $secondPromotion->getLineItems()]
+                [$firstSegment, $lineItems, $organization],
+                [$secondSegment, $secondPromotion->getLineItems(), null]
             )
             ->willReturnOnConsecutiveCalls(
                 $firstMatchingProducts,

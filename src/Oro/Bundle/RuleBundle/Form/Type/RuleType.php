@@ -12,6 +12,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for Rule entity.
+ */
 class RuleType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_rule';
@@ -26,19 +29,32 @@ class RuleType extends AbstractType
             $nameOptions['tooltip'] = $options['name_tooltip'];
         }
 
+        $enabledOptions = [
+            'required' => false,
+            'label' => 'oro.rule.enabled.label'
+        ];
+        if ($options['enabled_tooltip']) {
+            $enabledOptions['tooltip'] = $options['enabled_tooltip'];
+        }
+
+        $sortOrderOptions = ['label' => 'oro.rule.sort_order.label'];
+        if ($options['sortOrder_tooltip']) {
+            $sortOrderOptions['tooltip'] = $options['sortOrder_tooltip'];
+        }
+
+        $stopProcessingOptions = [
+            'required' => false,
+            'label' => 'oro.rule.stop_processing.label',
+        ];
+        if ($options['stopProcessing_tooltip']) {
+            $stopProcessingOptions['tooltip'] = $options['stopProcessing_tooltip'];
+        }
+
         $builder
             ->add('name', TextType::class, $nameOptions)
-            ->add('enabled', CheckboxType::class, [
-                'required' => false,
-                'label' => 'oro.rule.enabled.label'
-            ])
-            ->add('sortOrder', IntegerType::class, [
-                'label' => 'oro.rule.sort_order.label'
-            ])
-            ->add('stopProcessing', CheckboxType::class, [
-                'required' => false,
-                'label' => 'oro.rule.stop_processing.label',
-            ])
+            ->add('enabled', CheckboxType::class, $enabledOptions)
+            ->add('sortOrder', IntegerType::class, $sortOrderOptions)
+            ->add('stopProcessing', CheckboxType::class, $stopProcessingOptions)
             ->add('expression', TextareaType::class, [
                 'label'    => 'oro.rule.expression.label',
                 'required' => false,
@@ -53,7 +69,10 @@ class RuleType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Rule::class,
-            'name_tooltip' => null
+            'name_tooltip' => null,
+            'enabled_tooltip' => null,
+            'sortOrder_tooltip' => null,
+            'stopProcessing_tooltip' => null
         ]);
     }
 

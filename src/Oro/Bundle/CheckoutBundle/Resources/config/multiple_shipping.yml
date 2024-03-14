@@ -10,7 +10,6 @@ services:
         public: true
         arguments:
             - '@oro_checkout.provider.multi_shipping.line_item_group_title'
-            - '@oro_checkout.provider.multi_shipping_config'
             - '@oro_checkout.provider.grouped_line_items'
         tags:
             - { name: layout.data_provider, alias: oro_checkout_group_line_items }
@@ -19,8 +18,17 @@ services:
         class: Oro\Bundle\CheckoutBundle\Layout\DataProvider\MultiShipping\ContinueTransitionButtonDataProvider
         arguments:
             - '@oro_checkout.layout.data_provider.transition'
+            - 'orocheckout/js/app/components/multi-shipping-transition-button-component'
         tags:
             - { name: layout.data_provider, alias: oro_checkout_continue_transition_data }
+
+    oro_checkout.layout.provider.group_continue_transition_button_data:
+        class: Oro\Bundle\CheckoutBundle\Layout\DataProvider\MultiShipping\ContinueTransitionButtonDataProvider
+        arguments:
+            - '@oro_checkout.layout.data_provider.transition'
+            - 'orocheckout/js/app/components/multi-shipping-per-group-transition-button-component'
+        tags:
+            - { name: layout.data_provider, alias: oro_checkout_group_continue_transition_data }
 
     oro_checkout.layout.extension.multi_shipping_context:
         class: Oro\Bundle\CheckoutBundle\Layout\Extension\MultiShippingContextConfigurator
@@ -40,10 +48,20 @@ services:
     oro_checkout.condition.line_items_shipping_method_has_enabled_shipping_rules:
         class: Oro\Bundle\CheckoutBundle\Condition\LineItemsShippingMethodsHasEnabledShippingRules
         arguments:
-            - '@oro_shipping.repository.shipping_methods_configs_rule'
+            - '@doctrine'
             - '@oro_checkout.provider.checkout_line_items'
         tags:
             - { name: oro_action.condition, alias: line_items_shipping_methods_has_enabled_shipping_rules }
+
+    oro_checkout.condition.line_item_groups_shipping_method_has_enabled_shipping_rules:
+        class: Oro\Bundle\CheckoutBundle\Condition\LineItemGroupsShippingMethodsHasEnabledShippingRules
+        arguments:
+            - '@doctrine'
+            - '@oro_checkout.provider.checkout_line_items'
+            - '@oro_checkout.provider.multi_shipping.grouped_line_items_provider'
+            - '@oro_checkout.factory.multi_shipping.checkout_factory'
+        tags:
+            - { name: oro_action.condition, alias: line_item_groups_shipping_methods_has_enabled_shipping_rules }
 
     oro_checkout.workflow_state.condition.is_multi_shipping_enabled:
         class: Oro\Bundle\CheckoutBundle\Condition\IsMultiShippingEnabled
@@ -52,10 +70,33 @@ services:
         tags:
             - { name: oro_action.condition, alias: is_multishipping_enabled }
 
+    oro_checkout.workflow_state.condition.is_multi_shipping_enabled_per_line_item:
+        class: Oro\Bundle\CheckoutBundle\Condition\IsMultiShippingEnabledPerLineItem
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+        tags:
+            - { name: oro_action.condition, alias: is_multishipping_enabled_per_line_item }
+
+    oro_checkout.workflow_state.condition.is_multi_shipping_enabled_per_line_item_group:
+        class: Oro\Bundle\CheckoutBundle\Condition\IsMultiShippingEnabledPerLineItemGroup
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+        tags:
+            - { name: oro_action.condition, alias: is_multishipping_enabled_per_line_item_group }
+
     oro_checkout.workflow_state.condition.is_line_items_shipping_methods_update_required:
         class: Oro\Bundle\CheckoutBundle\Condition\IsLineItemsShippingMethodsUpdateRequired
         tags:
             - { name: oro_action.condition, alias: is_line_items_shipping_methods_update_required }
+
+    oro_checkout.workflow_state.condition.is_line_item_groups_shipping_methods_update_required:
+        class: Oro\Bundle\CheckoutBundle\Condition\IsLineItemGroupsShippingMethodsUpdateRequired
+        arguments:
+            - '@oro_checkout.provider.checkout_line_items'
+            - '@oro_checkout.provider.multi_shipping.grouped_line_items_provider'
+            - '@oro_checkout.factory.multi_shipping.checkout_factory'
+        tags:
+            - { name: oro_action.condition, alias: is_line_item_groups_shipping_methods_update_required }
 
     oro_checkout.action.split_checkout_line_items:
         class: Oro\Bundle\CheckoutBundle\Action\MultiShipping\SplitCheckoutAction
@@ -89,6 +130,15 @@ services:
             - '@doctrine'
             - '@oro_checkout.manager.multi_shipping.checkout_line_items_shipping'
 
+    oro_checkout.action.multi_shipping.groups_default_shipping_method_setter:
+        class: Oro\Bundle\CheckoutBundle\Action\MultiShipping\DefaultMultiShippingGroupMethodSetter
+        public: true
+        arguments:
+            - '@oro_checkout.provider.multi_shipping.default_shipping_method'
+            - '@oro_checkout.shipping_method.provider_main'
+            - '@doctrine'
+            - '@oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping'
+
     oro_checkout.provider.multi_shipping.sub_order_owner:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOwnerProvider
         public: true
@@ -102,6 +152,12 @@ services:
     oro_checkout.provider.multi_shipping.sub_order_organization:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOrganizationProvider
         public: true
+
+    oro_checkout.provider.multi_shipping.sub_order_shipping_method_setter:
+        class: Oro\Bundle\CheckoutBundle\Action\MultiShipping\SubOrderMultiShippingMethodSetter
+        public: true
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
 
     oro_checkout.provider.grouped_line_items:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider
@@ -123,27 +179,24 @@ services:
             - '@oro_checkout.factory.multi_shipping.checkout_factory'
 
     oro_checkout.provider.multi_shipping.grouped_line_items_provider:
-        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemsGrouping\GroupLineItemsByConfiguredFields
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemsGrouping\GroupedLineItemsProvider
         arguments:
-            - '@oro_checkout.provider.multi_shipping_config'
-            - '@property_accessor'
-            - '@oro_entity.doctrine_helper'
-
-    oro_checkout.provider.multi_shipping.single_line_item_shipping_price:
-        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\SingleLineItemShippingPriceProvider
-        arguments:
-            - '@oro_shipping.shipping_price.provider'
-            - '@oro_checkout.provider.shipping_context'
-            - '@oro_checkout.factory.multi_shipping.checkout_factory'
-            - '@oro_shipping.method.org_provider'
+            - '@oro_shipping.multi_shipping.group_line_item_helper'
 
     oro_checkout.provider.multi_shipping.available_line_item_shipping_methods:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\AvailableLineItemShippingMethodsProvider
         arguments:
             - '@oro_checkout.shipping_method.provider_main'
-            - '@oro_checkout.provider.multi_shipping.default_shipping_method'
             - '@oro_checkout.factory.multi_shipping.checkout_factory'
             - '@oro_shipping.method.org_provider'
+
+    oro_checkout.provider.multi_shipping.available_line_item_group_shipping_methods:
+        class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItemsGrouping\AvailableLineItemGroupShippingMethodsProvider
+        arguments:
+            - '@oro_checkout.shipping_method.provider_main'
+            - '@oro_checkout.factory.multi_shipping.checkout_factory'
+            - '@oro_shipping.method.org_provider'
+            - '@oro_shipping.multi_shipping.group_line_item_helper'
 
     oro_checkout.factory.multi_shipping.checkout_factory:
         class: Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactory
@@ -163,6 +216,7 @@ services:
                 - 'website'
                 - 'shippingMethod'
                 - 'shippingMethodType'
+                - 'lineItemGroupShippingData'
                 - 'paymentMethod'
                 - 'poNumber'
                 - 'shipUntil'
@@ -175,9 +229,19 @@ services:
         arguments:
             - '@oro_checkout.provider.multi_shipping.available_line_item_shipping_methods'
             - '@oro_checkout.provider.checkout_line_items'
-            - '@oro_checkout.provider.multi_shipping.single_line_item_shipping_price'
+            - '@oro_shipping.multi_shipping.cost_calculator'
+            - '@oro_shipping.multi_shipping.group_line_item_helper'
 
-    oro_checkout.event_listener.fronetnd_checkout_line_items:
+    oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping:
+        class: Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemGroupsShippingManager
+        public: true
+        arguments:
+            - '@oro_checkout.provider.multi_shipping.available_line_item_group_shipping_methods'
+            - '@oro_checkout.provider.checkout_line_items'
+            - '@oro_shipping.multi_shipping.cost_calculator'
+            - '@oro_shipping.multi_shipping.group_line_item_helper'
+
+    oro_checkout.event_listener.frontend_checkout_line_items:
         class: Oro\Bundle\CheckoutBundle\EventListener\FrontendCheckoutLineItemsDatagridEventListener
         arguments:
             - '@doctrine'
@@ -198,7 +262,7 @@ services:
     oro_checkout.provider.multi_shipping.promotion.split_checkout:
         class: Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SplitCheckoutProvider
         arguments:
-            - '@doctrine'
+            - '@oro_checkout.helper.checkout_workflow_helper'
             - '@oro_checkout.splitter.checkout_splitter'
             - '@oro_checkout.provider.grouped_line_items'
             - '@oro_checkout.provider.multi_shipping_config'

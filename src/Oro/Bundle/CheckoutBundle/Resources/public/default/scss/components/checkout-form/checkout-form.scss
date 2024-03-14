@@ -116,6 +116,10 @@
     .form-field-CVV2 {
         margin-right: spacing('sm');
     }
+
+    .checkout-group-shipping-methods {
+        margin-bottom: spacing('base');
+    }
 }
 
 @include breakpoint('tablet') {

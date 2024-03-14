@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Twig;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -15,8 +16,7 @@ use Twig\TwigFunction;
  */
 class OrderShippingExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
+    private ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -24,21 +24,9 @@ class OrderShippingExtension extends AbstractExtension implements ServiceSubscri
     }
 
     /**
-     * @return ShippingMethodLabelTranslator|null
+     * {@inheritDoc}
      */
-    protected function getLabelTranslator()
-    {
-        try {
-            return $this->container->get('oro_shipping.translator.shipping_method_label');
-        } catch (ServiceNotFoundException $e) {
-            return null;
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction(
@@ -48,32 +36,41 @@ class OrderShippingExtension extends AbstractExtension implements ServiceSubscri
         ];
     }
 
-    /**
-     * @param string $shippingMethodName
-     * @param string $shippingTypeName
-     *
-     * @return string
-     */
-    public function getShippingMethodLabel($shippingMethodName, $shippingTypeName)
-    {
-        $labelTranslator = $this->getLabelTranslator();
-        if (null === $labelTranslator) {
-            return $shippingMethodName . ', ' . $shippingTypeName;
-        }
-
-        return $labelTranslator->getShippingMethodWithTypeLabel(
-            $shippingMethodName,
-            $shippingTypeName
+    public function getShippingMethodLabel(
+        ?string $shippingMethod,
+        ?string $shippingMethodType,
+        Organization|int|null $organization = null
+    ): string {
+        return $this->getShippingMethodLabelTranslator()->getShippingMethodWithTypeLabel(
+            $shippingMethod,
+            $shippingMethodType,
+            \is_int($organization) ? $this->getOrganization($organization) : $organization
         );
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices(): array
     {
         return [
             'oro_shipping.translator.shipping_method_label' => ShippingMethodLabelTranslator::class,
+            DoctrineHelper::class
         ];
+    }
+
+    private function getShippingMethodLabelTranslator(): ShippingMethodLabelTranslator
+    {
+        return $this->container->get('oro_shipping.translator.shipping_method_label');
+    }
+
+    private function getDoctrineHelper(): DoctrineHelper
+    {
+        return $this->container->get(DoctrineHelper::class);
+    }
+
+    private function getOrganization(int $organizationId): Organization
+    {
+        return $this->getDoctrineHelper()->getEntityReference(Organization::class, $organizationId);
     }
 }

@@ -12,15 +12,10 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 interface SubOrderOrganizationProviderInterface
 {
     /**
-     * Possible values for $groupingPath:
-     * * '<property path>:<property value>'
-     * * 'other-items'
-     * {@see LineItemsGrouping\GroupLineItemsByConfiguredFields::getGroupedLineItems} for details.
-     *
      * @param Collection<int, CheckoutLineItem> $lineItems
-     * @param string                            $groupingPath 'product.owner:1' or 'other-items' for example
+     * @param string                            $lineItemGroupKey
      *
      * @return Organization
      */
-    public function getOrganization(Collection $lineItems, string $groupingPath): Organization;
+    public function getOrganization(Collection $lineItems, string $lineItemGroupKey): Organization;
 }

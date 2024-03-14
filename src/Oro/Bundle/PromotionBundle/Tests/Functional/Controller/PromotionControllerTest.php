@@ -16,15 +16,15 @@ class PromotionControllerTest extends WebTestCase
         ]);
     }
 
-    public function testIndex()
+    public function testIndex(): void
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_promotion_index'));
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('promotion-grid', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertStringContainsString('promotion-grid', $crawler->html());
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_promotion_create'));
         $form = $crawler->selectButton('Close')->form();
@@ -42,15 +42,14 @@ class PromotionControllerTest extends WebTestCase
         $form['oro_promotion[productsSegment][definition]']
             = '{"filters":[{"columnName":"id","criterion":{"filter":"number","data":{"value":10,"type":"2"}}}]}';
         $form['oro_promotion[labels][values][default]'] = 'Default label';
-        $form['oro_promotion[descriptions][values][default]'] = 'Default descriptions';
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringContainsString('Promotion has been saved', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertStringContainsString('Promotion has been saved', $crawler->html());
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $promotionId = $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId();
         $crawler = $this->client->request('GET', $this->getUrl('oro_promotion_update', ['id' => $promotionId]));
@@ -61,22 +60,19 @@ class PromotionControllerTest extends WebTestCase
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringContainsString('Promotion has been saved', $crawler->html());
+        self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        self::assertStringContainsString('Promotion has been saved', $crawler->html());
     }
 
-    public function testView()
+    public function testView(): void
     {
         $promotionId = $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId();
         $this->client->request('GET', $this->getUrl('oro_promotion_view', ['id' => $promotionId]));
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        self::assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
-    /**
-     * @return int
-     */
-    protected function getOwnerId()
+    protected function getOwnerId(): int
     {
         return $this->getContainer()->get('oro_security.token_accessor')->getUserId();
     }

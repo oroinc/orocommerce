@@ -145,7 +145,7 @@ class CouponFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             ->method('getPromotionsWithMatchedCoupons')
             ->with(
                 [$appliedPromotionWithCoupon->getId(), $appliedPromotionWithoutCoupon->getId()],
-                ['123', 'XYZ']
+                self::identicalTo(['123', 'XYZ'])
             )
             ->willReturn([5]);
 

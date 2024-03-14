@@ -15,7 +15,6 @@ layout:
             prepend: true
             options:
                 icon: times
-                style: 'clear-button'
                 attr:
                     title: oro.frontend.shoppinglist.matrix_grid_order.clear.tooltip
                     data-role: 'clear'

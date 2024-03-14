@@ -100,7 +100,9 @@ class CouponFiltrationService extends AbstractSkippableFiltrationService
         }
 
         if ($promotions) {
-            $matchedPromotionIds = $this->getMatchedPromotionsIds($promotionIds, array_keys($appliedCouponCodes));
+            // ensure that numeric coupon codes are passed as strings
+            $couponCodes = array_map('strval', array_keys($appliedCouponCodes));
+            $matchedPromotionIds = $this->getMatchedPromotionsIds($promotionIds, $couponCodes);
             foreach ($promotions as $promotion) {
                 if (isset($matchedPromotionIds[$promotion->getId()])) {
                     $filteredRuleOwners[] = $promotion;

@@ -24,6 +24,7 @@ services:
             - '@oro_sale.quote.first_offers_shipping_context_factory'
             - '@oro_order.converter.shipping_prices'
             - '@oro_shipping.shipping_price.provider'
+            - '@oro_shipping.method.org_provider'
         tags:
             - { name: kernel.event_listener, event: oro_sale.quote, method: onEvent }
 

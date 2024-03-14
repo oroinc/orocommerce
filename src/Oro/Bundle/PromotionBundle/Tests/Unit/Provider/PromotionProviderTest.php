@@ -3,41 +3,32 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
-use Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
+use Oro\Bundle\PromotionBundle\Provider\AvailablePromotionProviderInterface;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 use Oro\Bundle\PromotionBundle\RuleFiltration\AbstractSkippableFiltrationService;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Stub\AppliedPromotionsAwareStub;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class PromotionProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    /** @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $contextDataConverter;
 
     /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $ruleFiltrationService;
 
-    /** @var ContextDataConverterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $contextDataConverter;
-
     /** @var AppliedPromotionMapper|\PHPUnit\Framework\MockObject\MockObject */
     private $promotionMapper;
 
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenAccessor;
-
-    /** @var MemoryCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $memoryCacheProvider;
+    /** @var AvailablePromotionProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $availablePromotionProvider;
 
     /** @var PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $promotionAwareHelper;
@@ -47,194 +38,210 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->ruleFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);
         $this->contextDataConverter = $this->createMock(ContextDataConverterInterface::class);
+        $this->ruleFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);
         $this->promotionMapper = $this->createMock(AppliedPromotionMapper::class);
-
-        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->availablePromotionProvider = $this->createMock(AvailablePromotionProviderInterface::class);
         $this->promotionAwareHelper = $this->createMock(PromotionAwareEntityHelper::class);
-        $this->tokenAccessor->expects($this->any())
-            ->method('getOrganizationId')
-            ->willReturn(1);
 
-        $this->memoryCacheProvider = $this->createMock(MemoryCacheProviderInterface::class);
-        $this->memoryCacheProvider->expects($this->any())
+        $memoryCacheProvider = $this->createMock(MemoryCacheProviderInterface::class);
+        $memoryCacheProvider->expects(self::any())
             ->method('get')
             ->willReturnCallback(fn ($cacheKeyArguments, $callback) => $callback());
 
         $this->provider = new PromotionProvider(
-            $this->doctrine,
-            $this->ruleFiltrationService,
             $this->contextDataConverter,
+            $this->ruleFiltrationService,
             $this->promotionMapper,
-            $this->tokenAccessor,
-            $this->memoryCacheProvider,
-            $this->promotionAwareHelper
+            $this->availablePromotionProvider,
+            $this->promotionAwareHelper,
+            $memoryCacheProvider
         );
     }
 
     public function testGetPromotions(): void
     {
-        $appliedPromotionEntity1 = new AppliedPromotion();
-        $appliedPromotionEntity1->setPromotionData(['some data']);
-        $appliedPromotionEntity2 = new AppliedPromotion();
-        $appliedPromotionEntity2->setPromotionData(['some data']);
-        $appliedPromotionEntity3 = new AppliedPromotion();
+        $appliedPromotion1 = new AppliedPromotion();
+        $appliedPromotion1->setPromotionData(['some data']);
+        $appliedPromotion2 = new AppliedPromotion();
+        $appliedPromotion2->setPromotionData(['some data']);
+        $appliedPromotion3 = new AppliedPromotion();
 
-        $appliedPromotion1 = $this->createMock(AppliedPromotionData::class);
-        $appliedPromotion2 = $this->createMock(AppliedPromotionData::class);
+        $appliedPromotionData1 = $this->createMock(AppliedPromotionData::class);
+        $appliedPromotionData2 = $this->createMock(AppliedPromotionData::class);
 
-        $this->promotionMapper->expects($this->exactly(2))
-            ->method('mapAppliedPromotionToPromotionData')
-            ->willReturnMap([
-                [$appliedPromotionEntity1, $appliedPromotion1],
-                [$appliedPromotionEntity2, $appliedPromotion2]
-            ]);
+        $this->promotionAwareHelper->expects(self::any())
+            ->method('isPromotionAware')
+            ->willReturn(true);
 
         $sourceEntity = $this->createMock(AppliedPromotionsAwareStub::class);
-        $sourceEntity->expects($this->any())
+        $sourceEntity->expects(self::any())
             ->method('getAppliedPromotions')
-            ->willReturn(new ArrayCollection([
-                $appliedPromotionEntity1,
-                $appliedPromotionEntity2,
-                $appliedPromotionEntity3
-            ]));
+            ->willReturn(new ArrayCollection([$appliedPromotion1, $appliedPromotion2, $appliedPromotion3]));
+
+        $this->promotionMapper->expects(self::exactly(2))
+            ->method('mapAppliedPromotionToPromotionData')
+            ->willReturnMap([
+                [$appliedPromotion1, $appliedPromotionData1],
+                [$appliedPromotion2, $appliedPromotionData2]
+            ]);
 
         $filteredPromotion = $this->createMock(PromotionDataInterface::class);
         $promotions = [$filteredPromotion, $this->createMock(PromotionDataInterface::class)];
 
-        $this->assertPromotions($promotions);
-        $this->contextDataConverter->expects($this->once())
+        $contextData = ['key' => 'val'];
+        $this->contextDataConverter->expects(self::once())
             ->method('getContextData')
             ->with($sourceEntity)
-            ->willReturn([]);
+            ->willReturn($contextData);
 
-        $this->ruleFiltrationService->expects($this->once())
+        $this->availablePromotionProvider->expects(self::once())
+            ->method('getAvailablePromotions')
+            ->with($contextData)
+            ->willReturn($promotions);
+
+        $this->ruleFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
-            ->with(array_merge([$appliedPromotion1, $appliedPromotion2], $promotions), [])
-            ->willReturn([$appliedPromotion1, $appliedPromotion2, $filteredPromotion]);
+            ->with(array_merge([$appliedPromotionData1, $appliedPromotionData2], $promotions), $contextData)
+            ->willReturn([$appliedPromotionData1, $appliedPromotionData2, $filteredPromotion]);
 
-        $this->promotionAwareHelper->expects($this->any())->method('isPromotionAware')->willReturn(true);
-        $result = $this->provider->getPromotions($sourceEntity);
-        $this->assertSame([$appliedPromotion1, $appliedPromotion2, $filteredPromotion], $result);
+        self::assertSame(
+            [$appliedPromotionData1, $appliedPromotionData2, $filteredPromotion],
+            $this->provider->getPromotions($sourceEntity)
+        );
     }
 
     public function testGetPromotionsWhenNoOrganizationInSecurityContext(): void
     {
-        $appliedPromotionEntity1 = new AppliedPromotion();
-        $appliedPromotionEntity1->setPromotionData(['some data']);
-        $appliedPromotionEntity2 = new AppliedPromotion();
-        $appliedPromotionEntity2->setPromotionData(['some data']);
-        $appliedPromotionEntity3 = new AppliedPromotion();
+        $appliedPromotion1 = new AppliedPromotion();
+        $appliedPromotion1->setPromotionData(['some data']);
+        $appliedPromotion2 = new AppliedPromotion();
+        $appliedPromotion2->setPromotionData(['some data']);
+        $appliedPromotion3 = new AppliedPromotion();
 
-        $appliedPromotion1 = $this->createMock(AppliedPromotionData::class);
-        $appliedPromotion2 = $this->createMock(AppliedPromotionData::class);
+        $appliedPromotionData1 = $this->createMock(AppliedPromotionData::class);
+        $appliedPromotionData2 = $this->createMock(AppliedPromotionData::class);
 
-        $this->promotionMapper->expects($this->exactly(2))
-            ->method('mapAppliedPromotionToPromotionData')
-            ->willReturnMap([
-                [$appliedPromotionEntity1, $appliedPromotion1],
-                [$appliedPromotionEntity2, $appliedPromotion2]
-            ]);
+        $this->promotionAwareHelper->expects(self::any())
+            ->method('isPromotionAware')
+            ->willReturn(true);
 
         $sourceEntity = $this->createMock(AppliedPromotionsAwareStub::class);
-        $sourceEntity->expects($this->any())
+        $sourceEntity->expects(self::any())
             ->method('getAppliedPromotions')
-            ->willReturn(new ArrayCollection([
-                $appliedPromotionEntity1,
-                $appliedPromotionEntity2,
-                $appliedPromotionEntity3
-            ]));
+            ->willReturn(new ArrayCollection([$appliedPromotion1, $appliedPromotion2, $appliedPromotion3]));
 
-        // All promotions with the not corresponding organization will be filtered in query.
-        $this->assertPromotions([]);
+        $this->promotionMapper->expects(self::exactly(2))
+            ->method('mapAppliedPromotionToPromotionData')
+            ->willReturnMap([
+                [$appliedPromotion1, $appliedPromotionData1],
+                [$appliedPromotion2, $appliedPromotionData2]
+            ]);
 
-        $this->contextDataConverter->expects($this->once())
+        $contextData = ['key' => 'val'];
+        $this->contextDataConverter->expects(self::once())
             ->method('getContextData')
             ->with($sourceEntity)
+            ->willReturn($contextData);
+
+        // All promotions with the not corresponding organization will be filtered in query.
+        $this->availablePromotionProvider->expects(self::once())
+            ->method('getAvailablePromotions')
+            ->with($contextData)
             ->willReturn([]);
 
-        $this->ruleFiltrationService->expects($this->once())
+        $this->ruleFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
-            ->with([$appliedPromotion1, $appliedPromotion2], [])
-            ->willReturn([$appliedPromotion1, $appliedPromotion2]);
+            ->with([$appliedPromotionData1, $appliedPromotionData2], $contextData)
+            ->willReturn([$appliedPromotionData1, $appliedPromotionData2]);
 
-        $this->promotionAwareHelper->expects($this->any())->method('isPromotionAware')->willReturn(true);
-        $result = $this->provider->getPromotions($sourceEntity);
-        $this->assertSame([$appliedPromotion1, $appliedPromotion2], $result);
+        self::assertSame(
+            [$appliedPromotionData1, $appliedPromotionData2],
+            $this->provider->getPromotions($sourceEntity)
+        );
     }
 
     public function testIsPromotionAppliedWhenPromotionIsApplied(): void
     {
         $sourceEntity = new \stdClass();
         $promotion = $this->createMock(PromotionDataInterface::class);
-        $promotion->expects($this->any())
+        $promotion->expects(self::any())
             ->method('getId')
             ->willReturn(5);
         $promotions = [$promotion];
 
-        $this->assertPromotions($promotions);
-        $this->contextDataConverter->expects($this->once())
+        $contextData = ['key' => 'val'];
+        $this->contextDataConverter->expects(self::once())
             ->method('getContextData')
             ->with($sourceEntity)
-            ->willReturn([]);
+            ->willReturn($contextData);
 
-        $this->ruleFiltrationService->expects($this->once())
-            ->method('getFilteredRuleOwners')
-            ->with($promotions, [])
+        $this->availablePromotionProvider->expects(self::once())
+            ->method('getAvailablePromotions')
+            ->with($contextData)
             ->willReturn($promotions);
 
-        $this->assertTrue($this->provider->isPromotionApplied($sourceEntity, $promotion));
+        $this->ruleFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->with($promotions, $contextData)
+            ->willReturn($promotions);
+
+        self::assertTrue($this->provider->isPromotionApplied($sourceEntity, $promotion));
     }
 
     public function testIsPromotionAppliedWhenPromotionIsNotApplied(): void
     {
         $sourceEntity = new \stdClass();
         $anotherPromotion = $this->createMock(PromotionDataInterface::class);
-        $anotherPromotion->expects($this->any())
+        $anotherPromotion->expects(self::any())
             ->method('getId')
             ->willReturn(7);
 
         $promotion = $this->createMock(PromotionDataInterface::class);
-        $promotion->expects($this->any())
+        $promotion->expects(self::any())
             ->method('getId')
             ->willReturn(5);
         $promotions = [$anotherPromotion];
 
-        $this->assertPromotions($promotions);
-        $this->contextDataConverter->expects($this->once())
+        $contextData = ['key' => 'val'];
+        $this->contextDataConverter->expects(self::once())
             ->method('getContextData')
             ->with($sourceEntity)
-            ->willReturn([]);
+            ->willReturn($contextData);
 
-        $this->ruleFiltrationService->expects($this->once())
-            ->method('getFilteredRuleOwners')
-            ->with($promotions, [])
+        $this->availablePromotionProvider->expects(self::once())
+            ->method('getAvailablePromotions')
+            ->with($contextData)
             ->willReturn($promotions);
 
-        $this->assertFalse($this->provider->isPromotionApplied($sourceEntity, $promotion));
+        $this->ruleFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->with($promotions, $contextData)
+            ->willReturn($promotions);
+
+        self::assertFalse($this->provider->isPromotionApplied($sourceEntity, $promotion));
     }
 
     public function testIsPromotionApplicableWhenPromotionIsApplicable(): void
     {
         $sourceEntity = new \stdClass();
         $promotion = $this->createMock(PromotionDataInterface::class);
-        $promotion->expects($this->any())
+        $promotion->expects(self::any())
             ->method('getId')
             ->willReturn(5);
 
-        $this->contextDataConverter->expects($this->once())
+        $contextData = ['key' => 'val'];
+        $this->contextDataConverter->expects(self::once())
             ->method('getContextData')
             ->with($sourceEntity)
-            ->willReturn([]);
+            ->willReturn($contextData);
 
-        $this->ruleFiltrationService->expects($this->once())
+        $this->ruleFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
-            ->with([$promotion], [])
+            ->with([$promotion], $contextData)
             ->willReturn([$promotion]);
 
-        $this->assertTrue($this->provider->isPromotionApplicable($sourceEntity, $promotion));
+        self::assertTrue($this->provider->isPromotionApplicable($sourceEntity, $promotion));
     }
 
     public function testIsPromotionApplicableWhenPromotionIsNotApplicable(): void
@@ -242,21 +249,22 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
         $sourceEntity = new \stdClass();
 
         $promotion = $this->createMock(PromotionDataInterface::class);
-        $promotion->expects($this->any())
+        $promotion->expects(self::any())
             ->method('getId')
             ->willReturn(5);
 
-        $this->contextDataConverter->expects($this->once())
+        $contextData = ['key' => 'val'];
+        $this->contextDataConverter->expects(self::once())
             ->method('getContextData')
             ->with($sourceEntity)
-            ->willReturn([]);
+            ->willReturn($contextData);
 
-        $this->ruleFiltrationService->expects($this->once())
+        $this->ruleFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
-            ->with([$promotion], [])
+            ->with([$promotion], $contextData)
             ->willReturn([]);
 
-        $this->assertFalse($this->provider->isPromotionApplicable($sourceEntity, $promotion));
+        self::assertFalse($this->provider->isPromotionApplicable($sourceEntity, $promotion));
     }
 
     public function testIsPromotionApplicableWithSkippedFilters(): void
@@ -265,42 +273,24 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
         $skippedFilters = ['SomeFilterClass'];
 
         $promotion = $this->createMock(PromotionDataInterface::class);
-        $promotion->expects($this->any())
+        $promotion->expects(self::any())
             ->method('getId')
             ->willReturn(5);
-        $context = ['some context item'];
 
-        $this->contextDataConverter->expects($this->once())
+        $contextData = ['key' => 'val'];
+        $this->contextDataConverter->expects(self::once())
             ->method('getContextData')
             ->with($sourceEntity)
-            ->willReturn($context);
+            ->willReturn($contextData);
 
-        $expectedContext = [
-            'some context item',
-            AbstractSkippableFiltrationService::SKIP_FILTERS_KEY => $skippedFilters
-        ];
-
-        $this->ruleFiltrationService->expects($this->once())
+        $this->ruleFiltrationService->expects(self::once())
             ->method('getFilteredRuleOwners')
-            ->with([$promotion], $expectedContext)
+            ->with(
+                [$promotion],
+                array_merge($contextData, [AbstractSkippableFiltrationService::SKIP_FILTERS_KEY => $skippedFilters])
+            )
             ->willReturn([]);
 
-        $this->assertFalse($this->provider->isPromotionApplicable($sourceEntity, $promotion, $skippedFilters));
-    }
-
-    /**
-     * @param Promotion[] $promotions
-     */
-    private function assertPromotions(array $promotions): void
-    {
-        $repository = $this->createMock(PromotionRepository::class);
-        $repository->expects($this->once())
-            ->method('getAvailablePromotions')
-            ->willReturn($promotions);
-
-        $this->doctrine->expects($this->once())
-            ->method('getRepository')
-            ->with(Promotion::class)
-            ->willReturn($repository);
+        self::assertFalse($this->provider->isPromotionApplicable($sourceEntity, $promotion, $skippedFilters));
     }
 }

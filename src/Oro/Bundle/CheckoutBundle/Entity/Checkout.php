@@ -20,6 +20,7 @@ use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
@@ -135,6 +136,10 @@ class Checkout implements
      */
     #[ORM\Column(name: 'completed_data', type: 'json_array')]
     protected $completedData;
+
+    #[ORM\Column(name: 'line_item_group_shipping_data', type: 'json', nullable: true)]
+    #[ConfigField(mode: 'hidden')]
+    private ?array $lineItemGroupShippingData = null;
 
     /**
      * @var Collection<int, CheckoutLineItem>
@@ -435,6 +440,18 @@ class Checkout implements
         }
 
         return $this->completedData;
+    }
+
+    public function getLineItemGroupShippingData(): array
+    {
+        return $this->lineItemGroupShippingData ?? [];
+    }
+
+    public function setLineItemGroupShippingData(array $lineItemGroupShippingData): static
+    {
+        $this->lineItemGroupShippingData = $lineItemGroupShippingData ?: null;
+
+        return $this;
     }
 
     #[ORM\PostLoad]

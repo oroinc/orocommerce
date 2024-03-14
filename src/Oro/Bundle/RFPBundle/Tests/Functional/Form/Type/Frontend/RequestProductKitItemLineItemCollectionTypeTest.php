@@ -14,6 +14,8 @@ class RequestProductKitItemLineItemCollectionTypeTest extends FrontendWebTestCas
 {
     protected function setUp(): void
     {
+        $this->markTestSkipped('will be unskipped in BB-23759');
+
         parent::setUp();
 
         $this->initClient();

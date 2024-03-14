@@ -237,6 +237,7 @@ action_groups:
                         attribute: $.childOrderIdentifier
                         string: $.childOrderIdentifierTemplate
                         stringSuffix: $.loopIndex
+
                     - '@call_service_method':
                         service: oro_checkout.provider.multi_shipping.sub_order_owner
                         method: getOwner
@@ -250,6 +251,14 @@ action_groups:
                           attribute: $.childOrderOrganization
                           method_parameters:
                               - $.splitCheckout.lineItems
+                              - $.groupingPath
+
+                    - '@call_service_method':
+                          service: oro_checkout.provider.multi_shipping.sub_order_shipping_method_setter
+                          method: setShippingMethod
+                          method_parameters:
+                              - $.checkout
+                              - $.splitCheckout
                               - $.groupingPath
 
                     - '@call_service_method':
@@ -270,6 +279,7 @@ action_groups:
                             - [[keep], [propertyName, [organization]]]
                             - [[shallowCopy], [propertyType, ['\DateTime']]]
                     - '@flush_entity': $.billingAddress
+
                     - '@duplicate':
                         target: $.splitCheckout.shippingAddress
                         attribute: $.shippingAddress
@@ -285,10 +295,12 @@ action_groups:
                     - '@flush_entity': $.shippingAddress
 
                     # Update checkout shipping price to provide correct shipping price for order.
-                    - '@run_action_group':
-                        action_group: oro_update_shipping_price
-                        parameters_mapping:
-                            checkout: $.splitCheckout
+                    - '@call_service_method':
+                          service: oro_checkout.checkout_sub_order_shipping_price_provider
+                          method: getPrice
+                          method_parameters: [$.splitCheckout, $.childOrderOrganization]
+                          attribute: $.splitCheckout.shippingCost
+
                     - '@get_order_line_items':
                         attribute: $.orderLineItems
                         checkout: $.splitCheckout

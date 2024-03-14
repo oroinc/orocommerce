@@ -1,0 +1,20 @@
+layout:
+    imports:
+        -
+            id: checkout_group_shipping_method
+            root: __checkout_order_summary_line_items_container
+            namespace: checkout_order_summary_line_items
+
+    actions:
+        - '@setBlockTheme':
+              themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/shipping_method_per_line_item_group.html.twig'
+
+        - '@setOption':
+              id: checkout_button_continue
+              optionName: transitionData
+              optionValue: '=data["oro_checkout_group_continue_transition_data"].getContinueTransition(data["workflowItem"])'
+
+        - '@remove':
+              id: shipping_methods
+
+    conditions: 'context["workflowStepName"]=="enter_shipping_method" && context["multi_shipping_type"]=="per_line_item_group" && context["workflowName"]=="b2b_flow_checkout"'

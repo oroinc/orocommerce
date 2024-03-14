@@ -180,8 +180,7 @@
 {% endblock %}
 
 {% block _order_shipping_method_widget %}
-
-    {% set text = oro_order_shipping_method_label(shippingMethod, shippingMethodType) %}
+    {% set text = oro_order_shipping_method_label(shippingMethod, shippingMethodType, organization) %}
 
     {{ parent_block_widget(block) }}
 {% endblock %}

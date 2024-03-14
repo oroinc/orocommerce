@@ -19,134 +19,107 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
+
         $this->configProvider = new ConfigProvider($this->configManager);
     }
 
-    public function testIsLineItemsGroupingEnabled()
+    public function testIsLineItemsGroupingEnabledWhenEnabled(): void
     {
-        $this->configManager->expects($this->exactly(2))
+        $this->configManager->expects(self::once())
             ->method('get')
-            ->willReturnMap([
-                ['oro_checkout.enable_shipping_method_selection_per_line_item', false, false, null, true],
-                ['oro_checkout.enable_line_item_grouping', false, false, null, true],
-            ]);
+            ->with('oro_checkout.enable_line_item_grouping')
+            ->willReturn(true);
 
-        $this->assertTrue($this->configProvider->isLineItemsGroupingEnabled());
+        self::assertTrue($this->configProvider->isLineItemsGroupingEnabled());
     }
 
-    public function testIsLineItemsGroupingEnabledIfMultiShippingDisabled()
+    public function testIsLineItemsGroupingEnabledWhenDisabled(): void
     {
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
-            ->with('oro_checkout.enable_shipping_method_selection_per_line_item')
+            ->with('oro_checkout.enable_line_item_grouping')
             ->willReturn(false);
 
-        $this->assertFalse($this->configProvider->isLineItemsGroupingEnabled());
+        self::assertFalse($this->configProvider->isLineItemsGroupingEnabled());
     }
 
-    public function testIsLineItemsGroupingEnabledIfConfigValueDisabled()
-    {
-        $this->configManager->expects($this->exactly(2))
-            ->method('get')
-            ->willReturnMap([
-                ['oro_checkout.enable_shipping_method_selection_per_line_item', false, false, null, true],
-                ['oro_checkout.enable_line_item_grouping', false, false, null, false],
-            ]);
-
-        $this->assertFalse($this->configProvider->isLineItemsGroupingEnabled());
-    }
-
-    public function testGetGroupLineItemsByField()
+    public function testGetGroupLineItemsByField(): void
     {
         $configValue = 'product.owner';
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_checkout.group_line_items_by')
             ->willReturn($configValue);
 
-        $this->assertEquals($configValue, $this->configProvider->getGroupLineItemsByField());
+        self::assertEquals($configValue, $this->configProvider->getGroupLineItemsByField());
     }
 
-    public function testIsCreateSubOrdersForEachGroupEnabled()
+    public function testIsCreateSubOrdersForEachGroupEnabled(): void
     {
-        $this->configManager->expects($this->exactly(3))
+        $this->configManager->expects(self::exactly(2))
             ->method('get')
             ->willReturnMap([
-                ['oro_checkout.enable_shipping_method_selection_per_line_item', false, false, null, true],
                 ['oro_checkout.enable_line_item_grouping', false, false, null, true],
                 ['oro_checkout.create_suborders_for_each_group', false, false, null, true]
             ]);
 
-        $this->assertTrue($this->configProvider->isCreateSubOrdersForEachGroupEnabled());
+        self::assertTrue($this->configProvider->isCreateSubOrdersForEachGroupEnabled());
     }
 
-    public function testIsCreateSubOrdersForEachGroupEnabledIfConfigDisabled()
+    public function testIsCreateSubOrdersForEachGroupEnabledIfConfigDisabled(): void
     {
-        $this->configManager->expects($this->exactly(3))
+        $this->configManager->expects(self::exactly(2))
             ->method('get')
             ->willReturnMap([
-                ['oro_checkout.enable_shipping_method_selection_per_line_item', false, false, null, true],
                 ['oro_checkout.enable_line_item_grouping', false, false, null, true],
                 ['oro_checkout.create_suborders_for_each_group', false, false, null, false]
             ]);
 
-        $this->assertFalse($this->configProvider->isCreateSubOrdersForEachGroupEnabled());
+        self::assertFalse($this->configProvider->isCreateSubOrdersForEachGroupEnabled());
     }
 
-    public function testIsCreateSubOrdersForEachGroupIfMultiShippingDisabled()
+    public function testIsCreateSubOrdersForEachGroupIfGroupingConfigDisabled(): void
     {
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
-            ->with('oro_checkout.enable_shipping_method_selection_per_line_item')
+            ->with('oro_checkout.enable_line_item_grouping')
             ->willReturn(false);
 
-        $this->assertFalse($this->configProvider->isCreateSubOrdersForEachGroupEnabled());
+        self::assertFalse($this->configProvider->isCreateSubOrdersForEachGroupEnabled());
     }
 
-    public function testIsCreateSubOrdersForEachGroupIfGroupingConfigDisabled()
+    public function testIsShowSubordersInOrderHistoryEnabled(): void
     {
-        $this->configManager->expects($this->exactly(2))
-            ->method('get')
-            ->willReturnMap([
-                ['oro_checkout.enable_shipping_method_selection_per_line_item', false, false, null, true],
-                ['oro_checkout.enable_line_item_grouping', false, false, null, false],
-            ]);
-
-        $this->assertFalse($this->configProvider->isCreateSubOrdersForEachGroupEnabled());
-    }
-
-    public function testIsShowSubordersInOrderHistoryEnabled()
-    {
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_checkout.show_suborders_in_order_history')
             ->willReturn(true);
 
-        $this->assertTrue($this->configProvider->isShowSubordersInOrderHistoryEnabled());
+        self::assertTrue($this->configProvider->isShowSubordersInOrderHistoryEnabled());
     }
 
-    public function testIsShowSubordersInOrderHistoryEnabledIfConfigDisabled()
+    public function testIsShowSubordersInOrderHistoryEnabledIfConfigDisabled(): void
     {
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_checkout.show_suborders_in_order_history')
             ->willReturn(false);
 
-        $this->assertFalse($this->configProvider->isShowSubordersInOrderHistoryEnabled());
+        self::assertFalse($this->configProvider->isShowSubordersInOrderHistoryEnabled());
     }
 
     /**
      * @dataProvider isShowMainOrdersInOrderHistoryEnabledProvider
      */
-    public function testIsShowMainOrdersAndSubOrdersInOrderHistoryEnabled($parameters, $expected)
+    public function testIsShowMainOrdersAndSubOrdersInOrderHistoryEnabled(array $parameters, bool $expected): void
     {
-        $this->configManager->expects($this->any())
+        $this->configManager->expects(self::any())
             ->method('get')
             ->willReturnCallback(function ($parameterName) use ($parameters) {
                 return $parameters[$parameterName];
             });
 
-        $this->assertEquals($expected, $this->configProvider->isShowMainOrdersAndSubOrdersInOrderHistoryEnabled());
+        self::assertEquals($expected, $this->configProvider->isShowMainOrdersAndSubOrdersInOrderHistoryEnabled());
     }
 
     public function isShowMainOrdersInOrderHistoryEnabledProvider(): array
@@ -186,15 +159,15 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider isShowMainOrderInOrderHistoryDisabledProvider
      */
-    public function testIsShowMainOrderInOrderHistoryDisabled($parameters, $expected)
+    public function testIsShowMainOrderInOrderHistoryDisabled(array $parameters, bool $expected): void
     {
-        $this->configManager->expects($this->any())
+        $this->configManager->expects(self::any())
             ->method('get')
             ->willReturnCallback(function ($parameterName) use ($parameters) {
                 return $parameters[$parameterName];
             });
 
-        $this->assertEquals($expected, $this->configProvider->isShowMainOrderInOrderHistoryDisabled());
+        self::assertEquals($expected, $this->configProvider->isShowMainOrderInOrderHistoryDisabled());
     }
 
     public function isShowMainOrderInOrderHistoryDisabledProvider(): array
@@ -231,23 +204,57 @@ class ConfigProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testIsShippingSelectionByLineItemEnabled()
+    public function testIsShippingSelectionByLineItemEnabled(): void
     {
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_checkout.enable_shipping_method_selection_per_line_item')
             ->willReturn(true);
 
-        $this->assertTrue($this->configProvider->isShippingSelectionByLineItemEnabled());
+        self::assertTrue($this->configProvider->isShippingSelectionByLineItemEnabled());
     }
 
-    public function testIsShippingSelectionByLineItemDisabled()
+    public function testIsShippingSelectionByLineItemDisabled(): void
     {
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_checkout.enable_shipping_method_selection_per_line_item')
             ->willReturn(false);
 
-        $this->assertFalse($this->configProvider->isShippingSelectionByLineItemEnabled());
+        self::assertFalse($this->configProvider->isShippingSelectionByLineItemEnabled());
+    }
+
+    public function testIsMultiShippingEnabled(): void
+    {
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_checkout.enable_line_item_grouping')
+            ->willReturn(true);
+
+        self::assertTrue($this->configProvider->isMultiShippingEnabled());
+    }
+
+    public function testIsMultiShippingEnabledWithoutGroupingOfLineItems(): void
+    {
+        $this->configManager->expects(self::exactly(2))
+            ->method('get')
+            ->willReturnMap([
+                ['oro_checkout.enable_line_item_grouping', false, false, null, false],
+                ['oro_checkout.enable_shipping_method_selection_per_line_item', false, false, null, true]
+            ]);
+
+        self::assertTrue($this->configProvider->isMultiShippingEnabled());
+    }
+
+    public function testIsMultiShippingDisabled(): void
+    {
+        $this->configManager->expects(self::exactly(2))
+            ->method('get')
+            ->willReturnMap([
+                ['oro_checkout.enable_line_item_grouping', false, false, null, false],
+                ['oro_checkout.enable_shipping_method_selection_per_line_item', false, false, null, false]
+            ]);
+
+        self::assertFalse($this->configProvider->isMultiShippingEnabled());
     }
 }

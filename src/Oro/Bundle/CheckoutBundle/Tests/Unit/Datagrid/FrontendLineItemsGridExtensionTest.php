@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Datagrid\FrontendLineItemsGridExtension;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
@@ -15,53 +14,49 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class FrontendLineItemsGridExtensionTest extends TestCase
+class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
 {
-    private CheckoutRepository|MockObject $checkoutRepository;
+    /** @var CheckoutRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutRepository;
 
-    private CheckoutLineItemRepository|MockObject $lineItemRepository;
+    /** @var CheckoutLineItemRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $lineItemRepository;
 
-    private ConfigManager|MockObject $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    private CheckoutLineItemsProvider|MockObject $checkoutLineItemsProvider;
+    /** @var CheckoutLineItemsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutLineItemsProvider;
 
-    private ParameterBag $parameters;
+    /** @var ParameterBag */
+    private $parameters;
 
-    private FrontendLineItemsGridExtension $extension;
+    /** @var FrontendLineItemsGridExtension */
+    private $extension;
 
     protected function setUp(): void
     {
         $this->checkoutRepository = $this->createMock(CheckoutRepository::class);
         $this->lineItemRepository = $this->createMock(CheckoutLineItemRepository::class);
-
-        $manager = $this->createMock(ObjectManager::class);
-        $manager
-            ->method('getRepository')
-            ->willReturnMap(
-                [
-                    [Checkout::class, $this->checkoutRepository],
-                    [CheckoutLineItem::class, $this->lineItemRepository],
-                ]
-            );
-
-        $registry = $this->createMock(ManagerRegistry::class);
-        $registry
-            ->method('getManagerForClass')
-            ->willReturn($manager);
-
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->checkoutLineItemsProvider = $this->createMock(CheckoutLineItemsProvider::class);
-
         $this->parameters = new ParameterBag();
 
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
+            ->method('getRepository')
+            ->willReturnMap([
+                [Checkout::class, null, $this->checkoutRepository],
+                [CheckoutLineItem::class, null, $this->lineItemRepository]
+            ]);
+
         $this->extension = new FrontendLineItemsGridExtension(
-            $registry,
+            ['frontend-checkout-line-items-grid', 'frontend-single-page-checkout-line-items-grid'],
+            $doctrine,
             $this->configManager,
             $this->checkoutLineItemsProvider
         );
@@ -92,27 +87,13 @@ class FrontendLineItemsGridExtensionTest extends TestCase
     public function testSetParameters(): void
     {
         $this->extension->setParameters(
-            new ParameterBag(
-                [
-                    ParameterBag::MINIFIED_PARAMETERS => [
-                        'g' => [
-                            'group' => true,
-                        ],
-                    ],
-                ],
-            )
+            new ParameterBag([ParameterBag::MINIFIED_PARAMETERS => ['g' => ['group' => true]]])
         );
 
         self::assertEquals(
             [
-                ParameterBag::MINIFIED_PARAMETERS => [
-                    'g' => [
-                        'group' => true,
-                    ],
-                ],
-                ParameterBag::ADDITIONAL_PARAMETERS => [
-                    'group' => true,
-                ],
+                ParameterBag::MINIFIED_PARAMETERS => ['g' => ['group' => true]],
+                ParameterBag::ADDITIONAL_PARAMETERS => ['group' => true]
             ],
             $this->extension->getParameters()->all()
         );
@@ -134,16 +115,16 @@ class FrontendLineItemsGridExtensionTest extends TestCase
                 'options' => [
                     'toolbarOptions' => [
                         'pageSize' => [
-                            'items' => [10, 25, 50, 100],
-                        ],
-                    ],
-                ],
+                            'items' => [10, 25, 50, 100]
+                        ]
+                    ]
+                ]
             ]
         );
 
-        $this->configManager
+        $this->configManager->expects(self::once())
             ->method('get')
-            ->with('oro_checkout.checkout_max_line_items_per_page', false, false, null)
+            ->with('oro_checkout.checkout_max_line_items_per_page')
             ->willReturn(1000);
 
         $checkout = $this->createCheckout(900);
@@ -170,37 +151,34 @@ class FrontendLineItemsGridExtensionTest extends TestCase
                                 25,
                                 50,
                                 100,
-                                [
-                                    'label' => 'oro.checkout.grid.toolbar.pageSize.all.label',
-                                    'size' => 1000,
-                                ],
-                            ],
-                        ],
-                    ],
+                                ['label' => 'oro.checkout.grid.toolbar.pageSize.all.label', 'size' => 1000]
+                            ]
+                        ]
+                    ]
                 ],
                 'source' => [
                     'query' => [
                         'select' => [
-                            'lineItem.id',
-                        ],
-                    ],
-                ],
+                            'lineItem.id'
+                        ]
+                    ]
+                ]
             ],
             $config->toArray()
         );
     }
 
-    public function testProcessConfigsWithoutId(): void
+    public function testProcessConfigsWhenNoCheckoutId(): void
     {
         $config = DatagridConfiguration::create(
             [
                 'options' => [
                     'toolbarOptions' => [
                         'pageSize' => [
-                            'items' => [10, 25, 50, 100],
-                        ],
-                    ],
-                ],
+                            'items' => [10, 25, 50, 100]
+                        ]
+                    ]
+                ]
             ]
         );
 
@@ -214,17 +192,72 @@ class FrontendLineItemsGridExtensionTest extends TestCase
                 'options' => [
                     'toolbarOptions' => [
                         'pageSize' => [
-                            'items' => [10, 25, 50, 100],
-                        ],
-                    ],
+                            'items' => [10, 25, 50, 100]
+                        ]
+                    ]
                 ],
                 'source' => [
                     'query' => [
                         'select' => [
-                            'lineItem.id',
-                        ],
-                    ],
+                            'lineItem.id'
+                        ]
+                    ]
+                ]
+            ],
+            $config->toArray()
+        );
+    }
+
+    public function testProcessConfigsWhenCheckoutNotFound(): void
+    {
+        $this->parameters->set('checkout_id', 42);
+
+        $config = DatagridConfiguration::create(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
+                            'items' => [10, 25, 50, 100]
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_checkout.checkout_max_line_items_per_page')
+            ->willReturn(1000);
+
+        $this->checkoutRepository->expects(self::once())
+            ->method('find')
+            ->with(42)
+            ->willReturn(null);
+
+        $this->extension->processConfigs($config);
+
+        self::assertEquals(
+            [
+                'options' => [
+                    'toolbarOptions' => [
+                        'pageSize' => [
+                            'items' => [
+                                10,
+                                25,
+                                50,
+                                100,
+                                ['label' => 'oro.checkout.grid.toolbar.pageSize.all.label', 'size' => 1000]
+                            ]
+                        ]
+                    ]
                 ],
+                'source' => [
+                    'query' => [
+                        'select' => [
+                            'lineItem.id'
+                        ]
+                    ]
+                ]
             ],
             $config->toArray()
         );
@@ -239,16 +272,16 @@ class FrontendLineItemsGridExtensionTest extends TestCase
                 'options' => [
                     'toolbarOptions' => [
                         'pageSize' => [
-                            'items' => [10, 25, 50, 100],
-                        ],
-                    ],
-                ],
+                            'items' => [10, 25, 50, 100]
+                        ]
+                    ]
+                ]
             ]
         );
 
-        $this->configManager
+        $this->configManager->expects(self::once())
             ->method('get')
-            ->with('oro_checkout.checkout_max_line_items_per_page', false, false, null)
+            ->with('oro_checkout.checkout_max_line_items_per_page')
             ->willReturn(1000);
 
         $checkout = $this->createCheckout(2000);
@@ -270,17 +303,17 @@ class FrontendLineItemsGridExtensionTest extends TestCase
                 'options' => [
                     'toolbarOptions' => [
                         'pageSize' => [
-                            'items' => [10, 25, 50, 100, 1000],
-                        ],
-                    ],
+                            'items' => [10, 25, 50, 100, 1000]
+                        ]
+                    ]
                 ],
                 'source' => [
                     'query' => [
                         'select' => [
-                            'lineItem.id',
-                        ],
-                    ],
-                ],
+                            'lineItem.id'
+                        ]
+                    ]
+                ]
             ],
             $config->toArray()
         );
@@ -295,16 +328,16 @@ class FrontendLineItemsGridExtensionTest extends TestCase
                 'options' => [
                     'toolbarOptions' => [
                         'pageSize' => [
-                            'items' => [10, 25, 50, 100],
-                        ],
-                    ],
-                ],
+                            'items' => [10, 25, 50, 100]
+                        ]
+                    ]
+                ]
             ]
         );
 
-        $this->configManager
+        $this->configManager->expects(self::once())
             ->method('get')
-            ->with('oro_checkout.checkout_max_line_items_per_page', false, false, null)
+            ->with('oro_checkout.checkout_max_line_items_per_page')
             ->willReturn(1000);
 
         $checkout = $this->createCheckout(999);
@@ -331,21 +364,18 @@ class FrontendLineItemsGridExtensionTest extends TestCase
                                 25,
                                 50,
                                 100,
-                                [
-                                    'label' => 'oro.checkout.grid.toolbar.pageSize.all.label',
-                                    'size' => 1000,
-                                ],
-                            ],
-                        ],
-                    ],
+                                ['label' => 'oro.checkout.grid.toolbar.pageSize.all.label', 'size' => 1000]
+                            ]
+                        ]
+                    ]
                 ],
                 'source' => [
                     'query' => [
                         'select' => [
-                            'lineItem.id',
-                        ],
-                    ],
-                ],
+                            'lineItem.id'
+                        ]
+                    ]
+                ]
             ],
             $config->toArray()
         );
@@ -360,10 +390,10 @@ class FrontendLineItemsGridExtensionTest extends TestCase
                 'options' => [
                     'toolbarOptions' => [
                         'pageSize' => [
-                            'items' => [10, 25, 50, 100],
-                        ],
-                    ],
-                ],
+                            'items' => [10, 25, 50, 100]
+                        ]
+                    ]
+                ]
             ]
         );
 
@@ -377,9 +407,9 @@ class FrontendLineItemsGridExtensionTest extends TestCase
                 'options' => [
                     'toolbarOptions' => [
                         'pageSize' => [
-                            'items' => [10, 25, 50, 100],
-                        ],
-                    ],
+                            'items' => [10, 25, 50, 100]
+                        ]
+                    ]
                 ],
                 'source' => [
                     'query' => [
@@ -390,10 +420,10 @@ class FrontendLineItemsGridExtensionTest extends TestCase
                             'AND (innerItem.parentProduct = lineItem.parentProduct ' .
                             'OR innerItem.product = lineItem.product) ' .
                             'AND innerItem.checkout = lineItem.checkout ' .
-                            'AND innerItem.productUnit = lineItem.productUnit) as allLineItemsIds',
-                        ],
-                    ],
-                ],
+                            'AND innerItem.productUnit = lineItem.productUnit) as allLineItemsIds'
+                        ]
+                    ]
+                ]
             ],
             $config->toArray()
         );
@@ -409,16 +439,16 @@ class FrontendLineItemsGridExtensionTest extends TestCase
                 'options' => [
                     'toolbarOptions' => [
                         'pageSize' => [
-                            'items' => [10, 25, 50, 100],
-                        ],
-                    ],
-                ],
+                            'items' => [10, 25, 50, 100]
+                        ]
+                    ]
+                ]
             ]
         );
 
-        $this->configManager
+        $this->configManager->expects(self::once())
             ->method('get')
-            ->with('oro_checkout.checkout_max_line_items_per_page', false, false, null)
+            ->with('oro_checkout.checkout_max_line_items_per_page')
             ->willReturn(1000);
 
         $checkout = $this->createCheckout(10);
@@ -445,29 +475,26 @@ class FrontendLineItemsGridExtensionTest extends TestCase
                                 25,
                                 50,
                                 100,
-                                [
-                                    'label' => 'oro.checkout.grid.toolbar.pageSize.all.label',
-                                    'size' => 1000,
-                                ],
-                            ],
-                        ],
-                    ],
+                                ['label' => 'oro.checkout.grid.toolbar.pageSize.all.label', 'size' => 1000]
+                            ]
+                        ]
+                    ]
                 ],
                 'source' => [
                     'query' => [
                         'select' => [
-                            'lineItem.id',
+                            'lineItem.id'
                         ],
                         'where' => [
                             'and' => [
-                                'lineItem.id IN (:acceptable_ids)',
-                            ],
-                        ],
+                                'lineItem.id IN (:acceptable_ids)'
+                            ]
+                        ]
                     ],
                     'bind_parameters' => [
-                        'acceptable_ids',
-                    ],
-                ],
+                        'acceptable_ids'
+                    ]
+                ]
             ],
             $config->toArray()
         );
@@ -489,16 +516,8 @@ class FrontendLineItemsGridExtensionTest extends TestCase
         self::assertEquals(
             [
                 'canBeGrouped' => true,
-                'initialState' => [
-                    'parameters' => [
-                        'group' => false,
-                    ],
-                ],
-                'state' => [
-                    'parameters' => [
-                        'group' => false,
-                    ],
-                ],
+                'initialState' => ['parameters' => ['group' => false]],
+                'state' => ['parameters' => ['group' => false]]
             ],
             $data->toArray()
         );
@@ -547,7 +566,6 @@ class FrontendLineItemsGridExtensionTest extends TestCase
     private function createCheckout(int $lineItemsCount): Checkout
     {
         $checkout = new Checkout();
-
         for ($i = 0; $i < $lineItemsCount; $i++) {
             $checkout->addLineItem(new CheckoutLineItem());
         }

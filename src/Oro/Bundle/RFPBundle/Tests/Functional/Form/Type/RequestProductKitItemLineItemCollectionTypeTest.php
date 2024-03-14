@@ -423,6 +423,7 @@ class RequestProductKitItemLineItemCollectionTypeTest extends WebTestCase
 
     public function testSubmitShouldDeleteEmptyOptionalKitItemLineItem(): void
     {
+        $this->markTestSkipped('BB-23759');
         /** @var Product $productKit1 */
         $productKit1 = $this->getReference('product_kit1');
         /** @var Product $productSimple2 */

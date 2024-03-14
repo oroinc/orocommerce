@@ -20,20 +20,17 @@ class CouponApplicabilityValidationService
     const MESSAGE_PROMOTION_NOT_APPLICABLE = 'oro.promotion.coupon.violation.coupon_promotion_not_applicable';
 
     public function __construct(
-        private CouponValidationService    $couponValidationService,
         private PromotionProvider          $promotionProvider,
         private EntityCouponsProvider      $entityCouponsProvider,
-        private PromotionAwareEntityHelper $promotionAwareHelper
+        private PromotionAwareEntityHelper $promotionAwareHelper,
+        private iterable                   $couponValidators
     ) {
     }
 
     /**
-     * @param Coupon $coupon
-     * @param object $entity
-     * @param array $skipFilters
-     * @return array
+     * @return array|string[] Array of violation messages.
      */
-    public function getViolations(Coupon $coupon, $entity, array $skipFilters = []): array
+    public function getViolations(Coupon $coupon, object $entity, array $skipFilters = []): array
     {
         if (!$entity instanceof CustomerOwnerAwareInterface
             || !$this->promotionAwareHelper->isCouponAware($entity)) {
@@ -43,8 +40,7 @@ class CouponApplicabilityValidationService
             );
         }
 
-        $violations = $this->couponValidationService->getViolations($coupon, $entity->getCustomerUser());
-
+        $violations = $this->getViolationsByCouponValidators($coupon, $entity);
         if (!empty($violations)) {
             return $violations;
         }
@@ -68,5 +64,24 @@ class CouponApplicabilityValidationService
         $entity->removeAppliedCoupon($appliedCoupon);
 
         return [];
+    }
+
+    private function getViolationsByCouponValidators(Coupon $coupon, object $entity): array
+    {
+        $violations = [];
+
+        /** @var CouponValidatorInterface $validator */
+        foreach ($this->couponValidators as $validator) {
+            $violationMessages = $validator->getViolationMessages($coupon, $entity);
+            if (null !== $violations) {
+                $violations[] = $violationMessages;
+            }
+        }
+
+        if ($violations) {
+            $violations = array_merge(...$violations);
+        }
+
+        return $violations;
     }
 }

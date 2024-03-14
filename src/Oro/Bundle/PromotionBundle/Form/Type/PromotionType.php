@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
 use Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalsCollectionType;
-use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentType;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
@@ -14,7 +13,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Count;
 
 /**
  * Provides functionality to create or edit a Promotion entity
@@ -32,7 +30,12 @@ class PromotionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('rule', RuleType::class, ['name_tooltip' => 'oro.promotion.name.tooltip'])
+            ->add('rule', RuleType::class, [
+                'name_tooltip' => 'oro.promotion.name.tooltip',
+                'enabled_tooltip' => 'oro.promotion.enabled.tooltip',
+                'sortOrder_tooltip' => 'oro.promotion.sort_order.tooltip',
+                'stopProcessing_tooltip' => 'oro.promotion.stop_processing.tooltip'
+            ])
             ->add(
                 'useCoupons',
                 ChoiceType::class,
@@ -63,8 +66,7 @@ class PromotionType extends AbstractType
                 ScopeCollectionType::class,
                 [
                     'label' => 'oro.promotion.restrictions.label',
-                    'required' => true,
-                    'constraints' => [new Count(['min' => 1])],
+                    'required' => false,
                     'entry_options' => [
                         'scope_type' => self::SCOPE_TYPE
                     ],
@@ -84,23 +86,6 @@ class PromotionType extends AbstractType
                     'label' => 'oro.promotion.labels.label',
                     'tooltip' => 'oro.promotion.labels.tooltip',
                     'required' => false,
-                ]
-            )
-            ->add(
-                'descriptions',
-                LocalizedFallbackValueCollectionType::class,
-                [
-                    'label' => 'oro.promotion.descriptions.label',
-                    'tooltip' => 'oro.promotion.descriptions.tooltip',
-                    'required' => false,
-                    'field' => 'text',
-                    'entry_type' => OroRichTextType::class,
-                    'entry_options' => [
-                        'wysiwyg_options' => [
-                            'elementpath' => true,
-                            'resize' => true,
-                        ],
-                    ],
                 ]
             );
     }

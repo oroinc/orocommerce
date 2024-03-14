@@ -107,10 +107,6 @@ system_configuration:
                 tooltip: oro.checkout.system_configuration.fields.enable_line_item_grouping.tooltip
                 attr:
                     'data-dependee-id': 'enable_line_item_grouping'
-                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
-                    'data-depend-on': 'enable_shipping_method_selection_per_line_item'
-                    'data-page-component-options': '{"selectors": {"rowContainer": "fieldset"}}'
-                    'data-show-if': 'checked'
 
         oro_checkout.group_line_items_by:
             data_type: string
@@ -172,8 +168,6 @@ system_configuration:
             options:
                 label: oro.checkout.system_configuration.fields.enable_shipping_method_selection_per_line_item.label
                 tooltip: oro.checkout.system_configuration.fields.enable_shipping_method_selection_per_line_item.tooltip
-                attr:
-                    'data-dependee-id': 'enable_shipping_method_selection_per_line_item'
 
     tree:
         system_configuration:

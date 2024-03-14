@@ -18,7 +18,7 @@ use Oro\Component\Math\RoundingMode;
  */
 class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
 {
-    private ?DiscountContextInterface $discountContext = null;
+    private array $discountContexts = [];
 
     public function __construct(
         private TaxMapperInterface $innerMapper,
@@ -35,18 +35,25 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
         $taxable = $this->innerMapper->map($lineItem);
 
         $order = $lineItem->getOrder();
+        if ($order && !$order->getSubOrders()->isEmpty()) {
+            $orders = $order->getSubOrders();
+        } else {
+            $orders = [$order];
+        }
 
-        if ($lineItem->getPrice() &&
-            $this->taxationSettingsProvider->isCalculateAfterPromotionsEnabled() &&
-            $this->promotionExecutor->supports($order)
-        ) {
-            $discountContext = $this->getDiscountContext($order);
+        foreach ($orders as $order) {
+            if ($lineItem->getPrice() &&
+                $this->taxationSettingsProvider->isCalculateAfterPromotionsEnabled() &&
+                $this->promotionExecutor->supports($order)
+            ) {
+                $discountContext = $this->getDiscountContext($order);
 
-            /** @var DiscountLineItemInterface $discountLineItem */
-            foreach ($discountContext->getLineItems() as $discountLineItem) {
-                if ($discountLineItem->getSourceLineItem() === $lineItem) {
-                    $this->adjustTaxable($taxable, $discountLineItem);
-                    break;
+                /** @var DiscountLineItemInterface $discountLineItem */
+                foreach ($discountContext->getLineItems() as $discountLineItem) {
+                    if ($this->isLineItemTheSame($discountLineItem->getSourceLineItem(), $lineItem)) {
+                        $this->adjustTaxable($taxable, $discountLineItem);
+                        break;
+                    }
                 }
             }
         }
@@ -54,13 +61,22 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
         return $taxable;
     }
 
+    private function isLineItemTheSame(OrderLineItem $item1, OrderLineItem $item2): bool
+    {
+        return $item1->getProductSku() === $item2->getProductSku()
+            && $item1->getQuantity() === $item2->getQuantity()
+            && $item1->getProductUnitCode() === $item2->getProductUnitCode()
+            && $item1->getValue() === $item2->getValue();
+    }
+
     private function getDiscountContext(Order $order): DiscountContextInterface
     {
-        if (null === $this->discountContext) {
-            $this->discountContext = $this->promotionExecutor->execute($order);
+        $orderId = spl_object_id($order);
+        if (!\array_key_exists($orderId, $this->discountContexts)) {
+            $this->discountContexts[$orderId] = $this->promotionExecutor->execute($order);
         }
 
-        return $this->discountContext;
+        return $this->discountContexts[$orderId];
     }
 
     private function adjustTaxable(Taxable $taxable, DiscountLineItemInterface $discountLineItem): void

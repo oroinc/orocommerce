@@ -162,6 +162,7 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
 
         $this->splitCheckoutProvider->expects($this->once())
             ->method('getSubCheckouts')
+            ->with(self::identicalTo($checkout))
             ->willReturn([$subCheckout1, $subCheckout2]);
 
         $this->memoryCacheProvider->expects($this->exactly(3))
@@ -198,6 +199,7 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
 
         $this->splitCheckoutProvider->expects($this->once())
             ->method('getSubCheckouts')
+            ->with(self::identicalTo($checkout))
             ->willReturn([]);
 
         $this->memoryCacheProvider->expects($this->once())

@@ -75,7 +75,6 @@ class PromotionTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('productsSegment'));
         $this->assertTrue($form->has('labels'));
-        $this->assertTrue($form->has('descriptions'));
     }
 
     /**
@@ -120,11 +119,6 @@ class PromotionTypeTest extends FormIntegrationTestCase
         $promotion->addLabel($label);
         $promotion->addScope((new ScopeStub())->setLocale('EN'));
 
-        $descriptionString = 'some description';
-        $description = (new LocalizedFallbackValue())
-            ->setText($descriptionString);
-        $promotion->addDescription($description);
-
         /** @var DiscountConfiguration $discountConfiguration */
         $discountConfiguration = $this->getEntity(DiscountConfiguration::class, ['type' => 'order']);
         $promotion->setDiscountConfiguration($discountConfiguration);
@@ -158,7 +152,6 @@ class PromotionTypeTest extends FormIntegrationTestCase
                     'discountConfiguration' => 'order',
                     'productsSegment' => ['name' => 'some name'],
                     'labels' => [['string' => $labelString]],
-                    'descriptions' => [['text' => $descriptionString]],
                     'scopes' => [
                         ['locale' => 'EN']
                     ]

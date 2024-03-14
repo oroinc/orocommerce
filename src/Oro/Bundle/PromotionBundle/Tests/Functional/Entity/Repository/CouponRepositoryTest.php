@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Entity\Repository;
 
-use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionData;
@@ -16,40 +15,69 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class CouponRepositoryTest extends WebTestCase
 {
+    private CouponRepository $repository;
+
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
-        $this->loadFixtures([
-            LoadCouponData::class
-        ]);
+        $this->loadFixtures([LoadCouponData::class]);
+        $this->repository = $this->getEntityManager()->getRepository(Coupon::class);
     }
 
-    public function testGetCouponsWithPromotionByIds()
+    private function getEntityManager(): EntityManagerInterface
+    {
+        return self::getContainer()->get('doctrine')->getManagerForClass(Coupon::class);
+    }
+
+    private function createCoupon(string $code): void
+    {
+        $coupon = new Coupon();
+        $coupon->setCode($code);
+        $coupon->setUsesPerCoupon(999);
+        $coupon->setUsesPerPerson(999);
+        $coupon->setEnabled(true);
+
+        $em = $this->getEntityManager();
+        $em->persist($coupon);
+        $em->flush($coupon);
+    }
+
+    private function getCoupon(string $reference): Coupon
+    {
+        return $this->getReference($reference);
+    }
+
+    private function getPromotion(string $reference): Promotion
+    {
+        return $this->getReference($reference);
+    }
+
+    public function testGetCouponsWithPromotionByIds(): void
     {
         $ids = [
-            $this->getReference(LoadCouponData::COUPON_WITHOUT_PROMO_AND_VALID_UNTIL)->getId(),
-            $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL)->getId(),
-            $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)->getId(),
+            $this->getCoupon(LoadCouponData::COUPON_WITHOUT_PROMO_AND_VALID_UNTIL)->getId(),
+            $this->getCoupon(LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL)->getId(),
+            $this->getCoupon(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)->getId(),
             -1
         ];
-        $result = $this->getCouponRepository()->getCouponsWithPromotionByIds($ids);
+        $result = $this->repository->getCouponsWithPromotionByIds($ids);
         usort($result, static function (Coupon $a, Coupon $b) {
             return $a->getUsesPerCoupon() <=> $b->getUsesPerCoupon();
         });
         $this->assertEquals(
             [
-                $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL),
-                $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL),
+                $this->getCoupon(LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL),
+                $this->getCoupon(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL),
             ],
             $result
         );
     }
 
-    public function testGetPromotionsWithMatchedCoupons()
+    public function testGetPromotionsWithMatchedCoupons(): void
     {
         $promotionsIds = [
-            $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId(),
-            $this->getReference(LoadPromotionData::ORDER_AMOUNT_PROMOTION)->getId(),
+            $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId(),
+            $this->getPromotion(LoadPromotionData::ORDER_AMOUNT_PROMOTION)->getId(),
         ];
         $couponCodes = [
             LoadCouponData::COUPON_WITH_PROMO_AND_EXPIRED,
@@ -57,106 +85,60 @@ class CouponRepositoryTest extends WebTestCase
             LoadCouponData::COUPON_DISABLED,
         ];
 
-        $result = $this->getCouponRepository()->getPromotionsWithMatchedCoupons($promotionsIds, $couponCodes);
+        $result = $this->repository->getPromotionsWithMatchedCoupons($promotionsIds, $couponCodes);
 
-        $this->assertEquals([$this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId()], $result);
+        $this->assertEquals([$this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId()], $result);
     }
 
-    public function testGetPromotionsWithMatchedCouponsWithNumericCouponCode()
+    public function testGetSingleCouponByCodeCaseSensitiveFound(): void
     {
-        $promotionsIds = [$this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId()];
-
-        $this->assertEmpty($this->getCouponRepository()->getPromotionsWithMatchedCoupons($promotionsIds, [1234567]));
-    }
-
-    public function testGetCouponByCodeCaseSensitiveFound()
-    {
-        $coupon = $this->getCouponRepository()
-            ->getSingleCouponByCode(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL, false);
-        $this->assertNotNull($coupon);
-        $this->assertInstanceOf(Coupon::class, $coupon);
+        $coupon = $this->repository->getSingleCouponByCode(
+            LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL
+        );
         $this->assertEquals(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL, $coupon->getCode());
     }
 
-    public function testGetCouponByCodeCaseSensitiveNotFound()
+    public function testGetSingleCouponByCodeCaseSensitiveNotFound(): void
     {
-        $coupon = $this->getCouponRepository()
-            ->getSingleCouponByCode(strtoupper(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL), false);
+        $coupon = $this->repository->getSingleCouponByCode(
+            strtoupper(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)
+        );
         $this->assertNull($coupon);
     }
 
-    public function testGetCouponByCodeCaseInsensitiveFoundMoreThanOneInsensitiveResult()
+    public function testGetSingleCouponByCodeCaseInsensitiveNotFound(): void
     {
-        if (!$this->isPostgreSql()) {
-            $this->markTestSkipped('Applicable only for PostgreSQL');
-        }
-
-        $code = ucfirst(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
-        $this->createCoupon($code);
-
-        $coupon = $this->getCouponRepository()
-            ->getSingleCouponByCode(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL, true);
+        $coupon = $this->repository->getSingleCouponByCode('other', true);
         $this->assertNull($coupon);
     }
 
-    public function testGetCouponByCodeCaseSensitiveFoundMoreThanOneInsensitiveResult()
+    public function testGetSingleCouponByCodeCaseInsensitiveFoundMoreThanOneInsensitiveResult(): void
     {
-        if (!$this->isPostgreSql()) {
-            $this->markTestSkipped('Applicable only for PostgreSQL');
-        }
+        $this->createCoupon(ucfirst(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL));
 
-        $code = ucfirst(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL);
-        $this->createCoupon($code);
+        $coupon = $this->repository->getSingleCouponByCode(
+            LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL,
+            true
+        );
+        $this->assertNull($coupon);
+    }
 
-        $coupon = $this->getCouponRepository()
-            ->getSingleCouponByCode(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL, false);
-        $this->assertInstanceOf(Coupon::class, $coupon);
+    public function testGetSingleCouponByCodeCaseSensitiveFoundMoreThanOneInsensitiveResult(): void
+    {
+        $this->createCoupon(ucfirst(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL));
+
+        $coupon = $this->repository->getSingleCouponByCode(
+            LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL
+        );
         $this->assertEquals(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL, $coupon->getCode());
     }
 
-    public function testGetCouponByCodeCaseInsensitiveFound()
+    public function testGetSingleCouponByCodeCaseInsensitiveFound(): void
     {
-        $coupon = $this->getCouponRepository()
-            ->getSingleCouponByCode(strtoupper(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL), true);
-        $this->assertNotNull($coupon);
-        $this->assertInstanceOf(Coupon::class, $coupon);
+        $coupon = $this->repository->getSingleCouponByCode(
+            ucfirst(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL),
+            true
+        );
         $this->assertEquals(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL, $coupon->getCode());
-    }
-
-    /**
-     * @return ObjectRepository|CouponRepository
-     */
-    private function getCouponRepository()
-    {
-        return $this->getEntityManager()->getRepository(Coupon::class);
-    }
-
-    private function isPostgreSql(): bool
-    {
-        return $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof PostgreSqlPlatform;
-    }
-
-    /**
-     * @return EntityManagerInterface
-     */
-    private function getEntityManager()
-    {
-        return self::getContainer()->get('doctrine')->getManagerForClass(Coupon::class);
-    }
-
-    private function createCoupon(string $code): Coupon
-    {
-        $manager = $this->getEntityManager();
-        $coupon = new Coupon();
-        $coupon
-            ->setCode($code)
-            ->setUsesPerCoupon(999)
-            ->setUsesPerPerson(999)
-            ->setEnabled(true);
-
-        $manager->persist($coupon);
-        $manager->flush($coupon);
-
-        return $coupon;
     }
 }

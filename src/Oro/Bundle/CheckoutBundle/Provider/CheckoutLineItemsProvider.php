@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Provider;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -24,20 +23,19 @@ class CheckoutLineItemsProvider
     }
 
     /**
-     * Returns an array of product SKUs which were removed or have different quantity, unit or checksum.
+     * Gets an array of product SKUs which were removed or have different quantity, unit or checksum.
      *
-     * @param Collection<ProductLineItemInterface> $lineItems
-     * @param Collection<ProductLineItemInterface> $sourceLineItems
+     * @param Collection<int, ProductLineItemInterface> $lineItems
+     * @param Collection<int, ProductLineItemInterface> $sourceLineItems
      *
      * @return string[]
      */
     public function getProductSkusWithDifferences(Collection $lineItems, Collection $sourceLineItems): array
     {
         $changed = [];
-        $lineItemsKeys = array_map([$this, 'getLineItemKey'], $lineItems->toArray());
+        $lineItemKeyMap = $this->getLineItemKeyMap($lineItems);
         foreach ($sourceLineItems as $sourceLineItem) {
-            $sourceLineItemKey = $this->getLineItemKey($sourceLineItem);
-            if (!in_array($sourceLineItemKey, $lineItemsKeys, true)) {
+            if (!isset($lineItemKeyMap[$this->getLineItemKey($sourceLineItem)])) {
                 $changed[] = $sourceLineItem->getProductSku();
             }
         }
@@ -49,16 +47,30 @@ class CheckoutLineItemsProvider
      * Gets checkout line items which expected to be converted into OrderLineItems filtering items
      * which could not be ordered. Array keys are preserved.
      *
-     * @psalm-return ArrayCollection<int, CheckoutLineItem>
+     * @psalm-return Collection<int, CheckoutLineItem>
      */
-    public function getCheckoutLineItems(Checkout $checkout): ArrayCollection
+    public function getCheckoutLineItems(Checkout $checkout): Collection
     {
-        $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
-        $orderLineItemsKeys = array_map([$this, 'getLineItemKey'], $orderLineItems->toArray());
+        $orderLineItemKeyMap = $this->getLineItemKeyMap($this->checkoutLineItemsManager->getData($checkout));
 
         return $checkout->getLineItems()->filter(
-            fn (CheckoutLineItem $lineItem) => \in_array($this->getLineItemKey($lineItem), $orderLineItemsKeys, true)
+            fn (CheckoutLineItem $lineItem) => isset($orderLineItemKeyMap[$this->getLineItemKey($lineItem)])
         );
+    }
+
+    /**
+     * @param Collection<int, ProductLineItemInterface> $lineItems
+     *
+     * @return array [line item key => true, ...]
+     */
+    private function getLineItemKeyMap(Collection $lineItems): array
+    {
+        $result = [];
+        foreach ($lineItems as $lineItem) {
+            $result[$this->getLineItemKey($lineItem)] = true;
+        }
+
+        return $result;
     }
 
     private function getLineItemKey(ProductLineItemInterface $item): string
