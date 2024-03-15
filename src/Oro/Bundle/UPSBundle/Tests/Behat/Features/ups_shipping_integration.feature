@@ -9,18 +9,21 @@ Feature: UPS shipping integration
       | Type   | UPS          |
       | Country| United States|
     Then should see the following options for "Shipping Service" select:
-    |UPS 2nd Day Air              |
-    |UPS 2nd Day Air A.M.         |
-    |UPS 3 Day Select             |
-    |UPS Ground                   |
-    |UPS Next Day Air             |
-    |UPS Next Day Air Early       |
-    |UPS Next Day Air Saver       |
-    |UPS Standard                 |
-    |UPS Worldwide Expedited      |
-    |UPS Worldwide Express Freight|
-    |UPS Worldwide Express Plus   |
-    |UPS Worldwide Saver          |
+      |UPS 2nd Day Air                     |
+      |UPS 2nd Day Air A.M.                |
+      |UPS 3 Day Select                    |
+      |UPS Ground                          |
+      |UPS Next Day Air                    |
+      |UPS Next Day Air Early              |
+      |UPS Next Day Air Saver              |
+      |UPS Standard                        |
+      |UPS Worldwide Economy DDP           |
+      |UPS Worldwide Economy DDU           |
+      |UPS Worldwide Expedited             |
+      |UPS Worldwide Express Freight       |
+      |UPS Worldwide Express Freight Midday|
+      |UPS Worldwide Express Plus          |
+      |UPS Worldwide Saver                 |
     And should not see the following options for "Shipping Service" select:
       |UPS Access Point|
       |UPS Expedited   |
@@ -28,13 +31,16 @@ Feature: UPS shipping integration
     When I fill "Integration Form" with:
       | Country| United Kingdom|
     Then should see the following options for "Shipping Service" select:
-      |UPS Access Point             |
-      |UPS Expedited                |
-      |UPS Express                  |
-      |UPS Standard                 |
-      |UPS Worldwide Express Freight|
-      |UPS Worldwide Express Plus   |
-      |UPS Worldwide Saver          |
+      |UPS Access Point Economy            |
+      |UPS Expedited                       |
+      |UPS Express                         |
+      |UPS Standard                        |
+      |UPS Worldwide Economy DDP           |
+      |UPS Worldwide Economy DDU           |
+      |UPS Worldwide Express Freight       |
+      |UPS Worldwide Express Freight Midday|
+      |UPS Worldwide Express Plus          |
+      |UPS Worldwide Saver                 |
     And should not see the following options for "Shipping Service" select:
       |UPS 2nd Day Air              |
       |UPS 2nd Day Air A.M.         |
