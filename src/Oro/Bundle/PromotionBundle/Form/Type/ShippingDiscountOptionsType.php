@@ -7,22 +7,15 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ *  Form type for Shipping Discount Options.
+ */
 class ShippingDiscountOptionsType extends AbstractType
 {
-    const NAME = 'oro_promotion_shipping_discount_options';
-
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add(
@@ -40,7 +33,7 @@ class ShippingDiscountOptionsType extends AbstractType
      */
     public function getBlockPrefix(): string
     {
-        return self::NAME;
+        return 'oro_promotion_shipping_discount_options';
     }
 
     /**
