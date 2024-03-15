@@ -15,6 +15,7 @@ use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\PromotionBundle\Form\Type\ShippingDiscountOptionsType;
 use Oro\Bundle\PromotionBundle\Form\Type\ShippingMethodTypesChoiceType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProvider;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
@@ -117,21 +118,41 @@ class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
         $localeSettings = $this->createMock(LocaleSettings::class);
         $numberFormatter = $this->createMock(NumberFormatter::class);
         $provider = $this->createMock(ShippingMethodProviderInterface::class);
+        $providerChoices = $this->createMock(ShippingMethodChoicesProvider::class);
         $iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
         $assetHelper = $this->createMock(Packages::class);
 
         $flatRatePrimaryShippingType = new ShippingMethodTypeStub();
         $flatRatePrimaryShippingType->setIdentifier('primary');
+        $flatRatePrimaryShippingType->setLabel('Flat Rate Shipping (Primary)');
         $flatRateSecondaryShippingType = new ShippingMethodTypeStub();
         $flatRateSecondaryShippingType->setIdentifier('secondary');
+        $flatRateSecondaryShippingType->setLabel('Flat Rate Shipping (Secondary)');
 
         $flatRateShippingMethod = new ShippingMethodStub();
         $flatRateShippingMethod->setIdentifier('flat_rate_2');
+        $flatRateShippingMethod->setLabel('Flat Rate Shipping');
         $flatRateShippingMethod->setTypes([$flatRatePrimaryShippingType, $flatRateSecondaryShippingType]);
 
-        $provider->expects($this->any())
-            ->method('getShippingMethods')
-            ->willReturn([$flatRateShippingMethod]);
+        $providerChoices->expects($this->any())
+            ->method('getMethodTypes')
+            ->willReturn([
+                $flatRatePrimaryShippingType->getLabel() => json_encode([
+                    ShippingDiscount::SHIPPING_METHOD => $flatRateShippingMethod->getIdentifier(),
+                    ShippingDiscount::SHIPPING_METHOD_TYPE => $flatRatePrimaryShippingType->getIdentifier()
+                ]),
+                $flatRateSecondaryShippingType->getLabel() => json_encode([
+                    ShippingDiscount::SHIPPING_METHOD => $flatRateShippingMethod->getIdentifier(),
+                    ShippingDiscount::SHIPPING_METHOD_TYPE => $flatRateSecondaryShippingType->getIdentifier()
+                ]),
+            ]);
+
+        $shippingMethodTypesChoice = new ShippingMethodTypesChoiceType(
+            $provider,
+            $iconProvider,
+            $assetHelper
+        );
+        $shippingMethodTypesChoice->setProvider($providerChoices);
 
         return [
             new PreloadedExtension(
@@ -139,7 +160,7 @@ class ShippingDiscountOptionsTypeTest extends FormIntegrationTestCase
                     new MultiCurrencyType(),
                     new DiscountOptionsType(),
                     new OroMoneyType($localeSettings, $numberFormatter),
-                    new ShippingMethodTypesChoiceType($provider, $iconProvider, $assetHelper),
+                    $shippingMethodTypesChoice,
                     CurrencySelectionType::class => new CurrencySelectionTypeStub(),
                 ],
                 [

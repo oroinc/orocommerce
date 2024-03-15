@@ -5,6 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Form\Type;
 use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProvider;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Symfony\Component\Asset\Packages as AssetHelper;
 use Symfony\Component\Form\AbstractType;
@@ -12,17 +13,15 @@ use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ *  Provides shipping method choices to create or edit a Promotion entity
+ */
 class ShippingMethodTypesChoiceType extends AbstractType
 {
-    const NAME = 'oro_promotion_shipping_methods';
+    public const NAME = 'oro_promotion_shipping_methods';
 
     /**
-     * @var AssetHelper
-     */
-    private $assetHelper;
-
-    /**
-     * @var ShippingMethodProviderInterface
+     * @var ShippingMethodProviderInterface|ShippingMethodChoicesProvider
      */
     private $provider;
 
@@ -30,6 +29,11 @@ class ShippingMethodTypesChoiceType extends AbstractType
      * @var ShippingMethodIconProviderInterface
      */
     private $iconProvider;
+
+    /**
+     * @var AssetHelper
+     */
+    private $assetHelper;
 
     public function __construct(
         ShippingMethodProviderInterface $provider,
@@ -41,10 +45,15 @@ class ShippingMethodTypesChoiceType extends AbstractType
         $this->assetHelper = $assetHelper;
     }
 
+    public function setProvider(ShippingMethodProviderInterface|ShippingMethodChoicesProvider $provider): void
+    {
+        $this->provider = $provider;
+    }
+
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new CallbackTransformer(
             function ($shippingArrayInfo) {
@@ -59,13 +68,21 @@ class ShippingMethodTypesChoiceType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'placeholder' => false,
             'choices' => $this->getChoices(),
             'choice_attr' => function ($choice) {
-                return $this->getChoiceAttributes($choice);
+                $attributes = [];
+                $choiceInfo = json_decode($choice, true);
+                $iconUri = $this->iconProvider->getIcon($choiceInfo[ShippingDiscount::SHIPPING_METHOD]);
+
+                if ($iconUri) {
+                    $attributes = ['data-icon' => $this->assetHelper->getUrl($iconUri)];
+                }
+
+                return $attributes;
             },
             'configs' => [
                 'showIcon' => true,
@@ -77,7 +94,7 @@ class ShippingMethodTypesChoiceType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return OroChoiceType::class;
     }
@@ -85,7 +102,7 @@ class ShippingMethodTypesChoiceType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->getBlockPrefix();
     }
@@ -93,34 +110,17 @@ class ShippingMethodTypesChoiceType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
-    /**
-     * @param string $choice Shipping method identifier
-     *
-     * @return array
-     */
-    private function getChoiceAttributes($choice)
+    private function getChoices(): array
     {
-        $attributes = [];
-        $choiceInfo = json_decode($choice, true);
-        $iconUri = $this->iconProvider->getIcon($choiceInfo[ShippingDiscount::SHIPPING_METHOD]);
-
-        if ($iconUri) {
-            $attributes = ['data-icon' => $this->assetHelper->getUrl($iconUri)];
+        if (!$this->provider instanceof ShippingMethodProviderInterface) {
+            return $this->provider->getMethodTypes();
         }
 
-        return $attributes;
-    }
-
-    /**
-     * @return array
-     */
-    private function getChoices()
-    {
         $shippingTypeChoices = [];
         $shippingMethods = $this->provider->getShippingMethods();
         foreach ($shippingMethods as $shippingMethod) {

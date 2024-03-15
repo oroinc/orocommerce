@@ -593,6 +593,8 @@ services:
             - '@assets.packages'
         tags:
             - { name: form.type, alias: oro_promotion_shipping_methods }
+        calls:
+            - [ 'setProvider', [ '@oro_shipping.provider.shipping_methods_choices' ] ]
 
     oro_promotion.coupon_generation.handler:
         class: 'Oro\Bundle\PromotionBundle\CouponGeneration\CouponGenerationHandler'

@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
@@ -38,6 +39,26 @@ class ShippingMethodChoicesProvider
                     $label .= $this->getShippingMethodIdLabel($shippingMethod);
                 }
                 $result[$label] = $shippingMethod->getIdentifier();
+            }
+        }
+
+        return $result;
+    }
+
+    public function getMethodTypes(): array
+    {
+        $result = [];
+        $shippingMethods = $this->shippingMethodProvider->getShippingMethods();
+        foreach ($shippingMethods as $shippingMethod) {
+            if ($shippingMethod->isEnabled() && $this->hasOptionsConfigurationForm($shippingMethod)) {
+                $shippingTypes = $shippingMethod->getTypes();
+                foreach ($shippingTypes as $shippingType) {
+                    $info = json_encode([
+                        ShippingDiscount::SHIPPING_METHOD => $shippingMethod->getIdentifier(),
+                        ShippingDiscount::SHIPPING_METHOD_TYPE => $shippingType->getIdentifier()
+                    ]);
+                    $result[$shippingType->getLabel()] = $info;
+                }
             }
         }
 
