@@ -8,6 +8,7 @@ oro:
                 sitemap_product.title: Product
                 sitemap_category.title: Category
                 sitemap_page.title: Page
+                sitemap_robots_txt.title: Robots.txt
             fields:
                 changefreq:
                     choice:
@@ -36,6 +37,9 @@ oro:
                 sitemap_include_landing_pages_not_in_web_catalog:
                     label: Include Landing Pages Not Used In Web Catalog
                     tooltip: Enable the option to include both assigned to web catalog nodes and unassigned landing pages into the sitemap file
+                sitemap_robots_txt_template:
+                    label: Robots.txt Template
+                    tooltip: The links to the sitemap file(s) will be automatically added by the system.
 oro.product.meta_titles:
     label: Meta title
     description: The meta title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)

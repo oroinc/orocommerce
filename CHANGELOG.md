@@ -48,6 +48,9 @@ The current file describes significant changes in the code that may affect the u
 #### SaleBundle
 * Added the `readonly` attribute for the price field of the product kit line item in the quote form.
 
+#### SEOBundle
+* Added the ability to manage robots.txt template via system configuration.
+
 #### TaxBundle
 * Added new tax calculation logic for product kits. Now the total tax for the product kit is the sum of the taxes for the kit and its items.
 * Added `\Oro\Bundle\TaxBundle\Resolver\KitAdjustResolver` resolver to adjust tax amount for product kits.
