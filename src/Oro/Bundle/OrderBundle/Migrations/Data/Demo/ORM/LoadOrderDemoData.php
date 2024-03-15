@@ -13,7 +13,6 @@ use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData;
-use Oro\Bundle\DemoDataBundle\Migrations\Data\Demo\ORM\LoadUserData;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -50,7 +49,6 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     public function getDependencies(): array
     {
         return [
-            LoadUserData::class,
             LoadCustomerDemoData::class,
             LoadCustomerUserDemoData::class,
             LoadPaymentTermDemoData::class,
