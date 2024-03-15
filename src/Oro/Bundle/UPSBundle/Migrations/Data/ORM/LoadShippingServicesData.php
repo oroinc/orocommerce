@@ -11,6 +11,9 @@ use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Loads shipping services.
+ */
 class LoadShippingServicesData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     /**
