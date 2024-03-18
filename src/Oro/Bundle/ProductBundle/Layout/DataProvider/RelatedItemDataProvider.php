@@ -7,9 +7,9 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\ProductView;
+use Oro\Bundle\ProductBundle\Provider\ProductListBlockConfigInterface;
 use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
-use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UIBundle\Provider\UserAgentProviderInterface;
 
@@ -18,36 +18,17 @@ use Oro\Bundle\UIBundle\Provider\UserAgentProviderInterface;
  */
 class RelatedItemDataProvider
 {
-    private FinderStrategyInterface $finderStrategy;
-    private RelatedItemConfigProviderInterface $configProvider;
-    private UserAgentProviderInterface $userAgentProvider;
-    private ManagerRegistry $doctrine;
-    private ProductManager $productManager;
-    private AclHelper $aclHelper;
-    private ProductListBuilder $productListBuilder;
-    private string $productListType;
-
-    /** @var array [product id => [related product view, ...], ...] */
     private array $relatedItems = [];
 
     public function __construct(
-        FinderStrategyInterface $finderStrategy,
-        RelatedItemConfigProviderInterface $configProvider,
-        UserAgentProviderInterface $userAgentProvider,
-        ManagerRegistry $doctrine,
-        ProductManager $productManager,
-        AclHelper $aclHelper,
-        ProductListBuilder $productListBuilder,
-        string $productListType
+        private FinderStrategyInterface $finderStrategy,
+        private ProductListBlockConfigInterface $configProvider,
+        private UserAgentProviderInterface $userAgentProvider,
+        private ManagerRegistry $doctrine,
+        private ProductManager $productManager,
+        private AclHelper $aclHelper,
+        private ProductListBuilder $productListBuilder,
     ) {
-        $this->finderStrategy = $finderStrategy;
-        $this->configProvider = $configProvider;
-        $this->userAgentProvider = $userAgentProvider;
-        $this->doctrine = $doctrine;
-        $this->productManager = $productManager;
-        $this->aclHelper = $aclHelper;
-        $this->productListBuilder = $productListBuilder;
-        $this->productListType = $productListType;
     }
 
     /**
@@ -77,11 +58,8 @@ class RelatedItemDataProvider
 
     private function loadRelatedItems(Product $product): array
     {
-        $relatedProductIds = $this->finderStrategy->findIds(
-            $product,
-            $this->configProvider->isBidirectional(),
-            $this->configProvider->getLimit()
-        );
+        $relatedProductIds = $this->finderStrategy->findIds($product);
+
         if (!$this->hasMoreThanRequiredMinimum($relatedProductIds)) {
             return [];
         }
@@ -100,7 +78,10 @@ class RelatedItemDataProvider
             return [];
         }
 
-        return $this->productListBuilder->getProductsByIds($this->productListType, array_column($rows, 'id'));
+        return $this->productListBuilder->getProductsByIds(
+            $this->configProvider->getProductListType(),
+            array_column($rows, 'id')
+        );
     }
 
     private function hasMoreThanRequiredMinimum(array $rows): bool

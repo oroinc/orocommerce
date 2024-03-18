@@ -76,17 +76,19 @@ class FinderDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
     {
         $product = $this->getProduct(1);
         $foundProductIds = [2, 3];
-        $bidirectional = true;
         $limit = 10;
 
         $this->configProvider->expects(self::once())
             ->method('isEnabled')
             ->willReturn(true);
+        $this->configProvider->expects(self::once())
+            ->method('getLimit')
+            ->willReturn($limit);
         $this->repository->expects(self::once())
             ->method('findUpsellIds')
             ->with($product->getId(), $limit)
             ->willReturn($foundProductIds);
 
-        self::assertSame($foundProductIds, $this->strategy->findIds($product, $bidirectional, $limit));
+        self::assertSame($foundProductIds, $this->strategy->findIds($product));
     }
 }
