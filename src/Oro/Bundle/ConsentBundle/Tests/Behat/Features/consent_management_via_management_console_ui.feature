@@ -873,13 +873,7 @@ Feature: Consent management via Management Console UI
 
   Scenario: Set Secure URL and usual URL
     Given I proceed as the Admin
-    And go to System/ Configuration
-    And follow "System Configuration/Websites/Routing" on configuration sidebar
-    And I fill "Routing Settings Form" with:
-      | URL        | http://localhost  |
-      | Secure URL | https://localhost |
-    When I click "Save settings"
-    Then I should see "Configuration saved" flash message
+    And I set global website url from application url
 
   Scenario: Consent dialog should open after changing an URL
     Given I proceed as the User

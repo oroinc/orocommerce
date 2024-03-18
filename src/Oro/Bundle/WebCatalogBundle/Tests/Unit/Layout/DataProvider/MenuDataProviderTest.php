@@ -1,6 +1,6 @@
 <?php
 
-namespace Unit\Layout\DataProvider;
+namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -19,41 +19,39 @@ use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
-/**
- * Component added back for theme layout BC from version 5.0
- */
 class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private ManagerRegistry $doctrine;
+    private $doctrine;
 
     /** @var WebCatalogProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private WebCatalogProvider $webCatalogProvider;
+    private $webCatalogProvider;
 
     /** @var RequestWebContentScopeProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private RequestWebContentScopeProvider $requestWebContentScopeProvider;
+    private $requestWebContentScopeProvider;
 
     /** @var ContentNodeTreeResolver|\PHPUnit\Framework\MockObject\MockObject */
-    private ContentNodeTreeResolver $contentNodeTreeResolver;
+    private $contentNodeTreeResolver;
 
     /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private LocalizationHelper $localizationHelper;
+    private $localizationHelper;
 
     /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private CacheProvider $cacheProvider;
+    private $cacheProvider;
 
     /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
-    private WebsiteManager $websiteManager;
+    private $websiteManager;
 
     /** @var CacheProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private CacheItemPoolInterface|MockObject $cache;
-    private MenuDataProvider $menuDataProvider;
+    private $cache;
+
+    /** @var MenuDataProvider */
+    private $menuDataProvider;
 
     protected function setUp(): void
     {
@@ -91,8 +89,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getScopes')
             ->willReturn([$scope]);
 
-        $this->webCatalogProvider
-            ->expects($this->once())
+        $this->webCatalogProvider->expects($this->once())
             ->method('getNavigationRootWithCatalogRootFallback')
             ->willReturn($rootNode);
 
@@ -118,7 +115,9 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($website);
 
         $item = $this->createMock(ItemInterface::class);
-        $item->method('isHit')->willReturn(false);
+        $item->expects($this->any())
+            ->method('isHit')
+            ->willReturn(false);
 
         $this->cache->expects($this->any())
             ->method('getItem')
@@ -163,7 +162,9 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($rootNode);
 
         $item = $this->createMock(ItemInterface::class);
-        $item->method('isHit')->willReturn(true);
+        $item->expects($this->any())
+            ->method('isHit')
+            ->willReturn(true);
 
         $this->cache->expects($this->any())
             ->method('getItem')
@@ -174,7 +175,9 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
                 )
             )
             ->willReturn($item);
-        $item->method('get')->willReturn([MenuDataProvider::CHILDREN => $expectedData]);
+        $item->expects($this->any())
+            ->method('get')
+            ->willReturn([MenuDataProvider::CHILDREN => $expectedData]);
 
         $actual = $this->menuDataProvider->getItems($maxNodesNestedLevel);
         $this->assertEquals($expectedData, $actual);

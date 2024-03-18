@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
-use GuzzleHttp\ClientInterface;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\EventSubscriber\FileSubscriber;
 use Oro\Bundle\AttachmentBundle\Form\Type\FileType;
@@ -146,9 +145,7 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
             ->method('validate')
             ->willReturn(new ConstraintViolationList());
 
-        $fileType = new FileType(
-            new ExternalFileFactory($this->createMock(ClientInterface::class))
-        );
+        $fileType = new FileType($this->createMock(ExternalFileFactory::class));
         $fileType->setEventSubscriber(new FileSubscriber($validator));
 
         $htmlTagProvider = $this->createMock(HtmlTagProvider::class);

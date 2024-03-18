@@ -74,7 +74,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I click "Kit Item Line Item 2 Product 1"
     Then I should see "Product Kit Dialog" with elements:
       | Price | Price as configured: $256.77 |
-    When I click "Update Shopping List" in "ShoppingListButtonGroup" element
+    When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $256.77"
     And I should see "Discount -$25.68"
     And I should see "Total $231.09"
@@ -98,7 +98,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I click "Kit Item Line Item 2 Product 2"
     Then I should see "Product Kit Dialog" with elements:
       | Price | Price as configured: $259.25 |
-    When I click "Update Shopping List" in "ShoppingListButtonGroup" element
+    When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $259.25"
     And I should see "Discount -$25.93"
     And I should see "Total $233.32"
@@ -124,7 +124,7 @@ Feature: Create Order from Checkout with product kits and taxes
       | Kit Item Line Item 2 Quantity | 3 |
     Then I should see "Product Kit Dialog" with elements:
       | Price | Price as configured: $276.55 |
-    When I click "Update Shopping List" in "ShoppingListButtonGroup" element
+    When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $276.55"
     And I should see "Discount -$27.66"
     And I should see "Total $248.89"
@@ -149,7 +149,7 @@ Feature: Create Order from Checkout with product kits and taxes
       | Quantity | 3 |
     Then I should see "Product Kit Dialog" with elements:
       | Price | Price as configured: $414.83 |
-    When I click "Update Shopping List" in "ShoppingListButtonGroup" element
+    When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $414.83"
     And I should see "Discount -$41.48"
     And I should see "Total $373.35"

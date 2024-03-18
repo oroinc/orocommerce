@@ -45,7 +45,6 @@ services:
             - '@oro_product.product.manager'
             - '@oro_security.acl_helper'
             - '@oro_product.product_list_builder'
-            - 'related_products'
         tags:
             - { name: layout.data_provider, alias: oro_product_related_products }
 
@@ -79,6 +78,5 @@ services:
             - '@oro_product.product.manager'
             - '@oro_security.acl_helper'
             - '@oro_product.product_list_builder'
-            - 'upsell_products'
         tags:
             - { name: layout.data_provider, alias: oro_product_upsell_products }

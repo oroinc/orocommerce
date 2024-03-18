@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Persistence\ObjectRepository;
-use GuzzleHttp\ClientInterface;
 use Oro\Bundle\AttachmentBundle\Form\Type\FileType;
 use Oro\Bundle\AttachmentBundle\Tools\ExternalFileFactory;
 use Oro\Bundle\CMSBundle\ContentWidget\ImageSliderContentWidgetType;
@@ -213,12 +212,9 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
 
     protected function getExtensions(): array
     {
-        $fileType = new FileType(
-            new ExternalFileFactory($this->createMock(ClientInterface::class))
-        );
+        $fileType = new FileType($this->createMock(ExternalFileFactory::class));
         $fileType->setEventSubscriber(
             new class() implements EventSubscriberInterface {
-                /** {@inheritdoc} */
                 public static function getSubscribedEvents(): array
                 {
                     return [];

@@ -237,4 +237,23 @@ class FrontendShoppingListProductsProviderTest extends TestCase
 
         $this->provider->getLastProductsGroupedByShoppingList($shoppingLists, $productCount, $localization);
     }
+
+    public function testThatProductsReturnedFromShoppingList()
+    {
+        $this->shoppingListLineItemsDataProvider
+            ->expects(self::once())
+            ->method('getShoppingListLineItems')
+            ->with($shoppingList = $this->createMock(ShoppingList::class))
+            ->willReturn([$lineItem = $this->createMock(LineItem::class)]);
+
+        $lineItem
+            ->expects(self::once())
+            ->method('getProduct')
+            ->willReturn($product = $this->createMock(Product::class));
+
+        self::assertEquals(
+            [$product],
+            $this->provider->getShoppingListProducts($shoppingList)
+        );
+    }
 }

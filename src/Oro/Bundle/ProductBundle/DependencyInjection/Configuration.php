@@ -22,13 +22,13 @@ class Configuration implements ConfigurationInterface
     const MAX_NUMBER_OF_UPSELL_PRODUCTS = 'max_number_of_upsell_products';
     const MAX_NUMBER_OF_UPSELL_PRODUCTS_COUNT = 25;
     const RELATED_PRODUCTS_MAX_ITEMS = 'related_products_max_items';
-    const RELATED_PRODUCTS_MAX_ITEMS_COUNT = 4;
+    const RELATED_PRODUCTS_MAX_ITEMS_COUNT = 5;
     const RELATED_PRODUCTS_MIN_ITEMS = 'related_products_min_items';
     const RELATED_PRODUCTS_MIN_ITEMS_COUNT = 3;
     const RELATED_PRODUCTS_SHOW_ADD_BUTTON = 'related_products_show_add_button';
     const RELATED_PRODUCTS_USE_SLIDER_ON_MOBILE = 'related_products_use_slider_on_mobile';
     const UPSELL_PRODUCTS_MAX_ITEMS = 'upsell_products_max_items';
-    const UPSELL_PRODUCTS_MAX_ITEMS_COUNT = 4;
+    const UPSELL_PRODUCTS_MAX_ITEMS_COUNT = 5;
     const UPSELL_PRODUCTS_MIN_ITEMS = 'upsell_products_min_items';
     const UPSELL_PRODUCTS_MIN_ITEMS_COUNT = 3;
     const UPSELL_PRODUCTS_SHOW_ADD_BUTTON = 'upsell_products_show_add_button';
