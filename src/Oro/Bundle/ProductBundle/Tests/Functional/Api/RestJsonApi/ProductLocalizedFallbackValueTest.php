@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
-use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductDescription;
@@ -31,8 +30,7 @@ class ProductLocalizedFallbackValueTest extends RestJsonApiTestCase
         ]);
 
         $this->loadFixtures([
-            LoadAdminCustomerUserData::class,
-            '@OroProductBundle/Tests/Functional/Api/DataFixtures/product.yml',
+            '@OroProductBundle/Tests/Functional/Api/DataFixtures/product.yml'
         ]);
     }
 

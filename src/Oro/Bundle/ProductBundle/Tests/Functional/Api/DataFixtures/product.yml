@@ -2,13 +2,14 @@ dependencies:
     - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
     - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
     - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
-    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadFrontendApiWebsiteData
+    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadCustomerUserRoles
+    - Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite
+    - Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData
+    - Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountryData
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
     - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductAttributesData
-    - Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData
-    - Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountryData
 
 initial: true
 
@@ -277,6 +278,10 @@ Extend\Entity\EV_Test_Prod_Attr_M_Enum:
         __construct: ['option3', 'Option 3', 3, false]
 
 Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer:
+        name: 'Customer'
+        organization: '@organization'
+        owner: '@user'
     customer1:
         name: 'Company 1'
         parent: '@customer'
