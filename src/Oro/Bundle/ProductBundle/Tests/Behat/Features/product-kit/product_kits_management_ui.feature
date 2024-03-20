@@ -1,3 +1,4 @@
+@regression
 @feature-BB-21124
 @ticket-BB-22446
 @fixture-OroProductBundle:product_kits_management_ui.yml
