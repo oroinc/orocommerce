@@ -513,7 +513,6 @@ Feature: Pricing rounding
     And click on "Flash Message Close Button"
     And I hover on "Shopping Cart"
     And I click "Shopping List" on shopping list widget
-    And I wait line items are initialized
     And I click on "Shopping List Line Item 1 Quantity"
     And I type "3" in "Shopping List Line Item 1 Quantity Input"
     And I click on "Shopping List Line Item 1 Save Changes Button"

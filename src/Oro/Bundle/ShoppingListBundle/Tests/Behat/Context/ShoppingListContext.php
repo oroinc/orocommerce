@@ -60,16 +60,6 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
     }
 
     /**
-     * @When /^I wait line items are initialized/
-     */
-    public function waitLineItemsInitialization(): void
-    {
-//        $this->spin(function () {
-//            return $this->getSession()->evaluateScript("return 0 != $('input[name=product_qty]:enabled').length");
-//        }, 10);
-    }
-
-    /**
      * @Then /^(?:|I )see next subtotals for "(?P<elementName>[\w\s]+)":$/
      * @Then /^(?:|I )see following subtotals for "(?P<elementName>[\w\s]+)":$/
      *

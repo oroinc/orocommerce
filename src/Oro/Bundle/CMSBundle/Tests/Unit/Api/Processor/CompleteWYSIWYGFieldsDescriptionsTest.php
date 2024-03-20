@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\ApiDoc\EntityDescriptionProvider;
-use Oro\Bundle\ApiBundle\Processor\GetConfig\CompleteDescriptions\FieldDescriptionUtil;
 use Oro\Bundle\ApiBundle\Request\ApiAction;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\GetConfig\ConfigProcessorTestCase;
 use Oro\Bundle\CMSBundle\Api\Processor\CompleteWYSIWYGFieldsDescriptions;
@@ -188,7 +187,8 @@ class CompleteWYSIWYGFieldsDescriptionsTest extends ConfigProcessorTestCase
         $this->processor->process($this->context);
 
         $expectedConfig = $config;
-        $expectedConfig['fields']['field1']['description'] = $fieldDocumentation . "\n\n" . $descriptionFileContent;
+        $expectedConfig['fields']['field1']['description'] =
+            '<p>' . $fieldDocumentation . "</p>\n<p>" . $descriptionFileContent . '</p>';
         $this->assertConfig($expectedConfig, $this->context->getResult());
     }
 
@@ -515,7 +515,11 @@ class CompleteWYSIWYGFieldsDescriptionsTest extends ConfigProcessorTestCase
 
         $expectedConfig = $config;
         $expectedConfig['fields']['field1']['description'] =
-            $descriptionFileContent . "\n\n" . FieldDescriptionUtil::MODIFY_READ_ONLY_FIELD_DESCRIPTION;
+            '<p>'
+            . $descriptionFileContent
+            . '</p>'
+            . "\n"
+            . '<p><strong>The read-only field. A passed value will be ignored.</strong></p>';
         $this->assertConfig($expectedConfig, $this->context->getResult());
     }
 
@@ -542,7 +546,8 @@ class CompleteWYSIWYGFieldsDescriptionsTest extends ConfigProcessorTestCase
         $this->processor->process($this->context);
 
         $expectedConfig = $config;
-        $expectedConfig['fields']['field1']['description'] = $fieldDocumentation . "\n\n" . $descriptionFileContent;
+        $expectedConfig['fields']['field1']['description'] =
+            '<p>' . $fieldDocumentation . "</p>\n<p>" . $descriptionFileContent . '</p>';
         $this->assertConfig($expectedConfig, $this->context->getResult());
     }
 

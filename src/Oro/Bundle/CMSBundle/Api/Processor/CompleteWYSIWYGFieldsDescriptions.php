@@ -131,7 +131,7 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
 
         $fieldDescription = $this->entityDescriptionProvider->getFieldDocumentation($entityClass, $fieldName);
         if ($fieldDescription) {
-            $result = $fieldDescription . "\n\n" . $result;
+            $result = FieldDescriptionUtil::addFieldNote($fieldDescription, $result);
         }
 
         return $result;
@@ -159,11 +159,11 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
 
         $fieldDescription = $this->entityDescriptionProvider->getFieldDocumentation($entityClass, $fieldName);
         if ($fieldDescription) {
-            $result = $fieldDescription . "\n\n" . $result;
+            $result = FieldDescriptionUtil::addFieldNote($fieldDescription, $result);
         }
 
         if (ApiAction::CREATE === $targetAction || ApiAction::UPDATE === $targetAction) {
-            $result .= "\n\n" . FieldDescriptionUtil::MODIFY_READ_ONLY_FIELD_DESCRIPTION;
+            $result = FieldDescriptionUtil::addReadOnlyFieldNote($result);
         }
 
         return $result;

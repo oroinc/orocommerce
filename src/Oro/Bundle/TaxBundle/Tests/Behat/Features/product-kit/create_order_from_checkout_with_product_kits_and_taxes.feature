@@ -48,7 +48,6 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Change product kit line item quantity
     When I click "Edit items"
-    And I wait line items are initialized
     And I click on "Shopping List Line Item 1 Quantity"
     And I type "2" in "Shopping List Line Item 1 Quantity Input"
     And I click "Shopping List Line Item 1 Save Changes Button"
@@ -69,7 +68,6 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Add product kit item line item product
     When I click "Edit items"
-    And I wait line items are initialized
     And I click "Shopping List 1 Kit Line Item Edit Button"
     And I click "Kit Item Line Item 2 Product 1"
     Then I should see "Product Kit Dialog" with elements:
@@ -93,7 +91,6 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Change product kit item line item product
     When I click "Edit items"
-    And I wait line items are initialized
     And I click "Shopping List 1 Kit Line Item Edit Button"
     And I click "Kit Item Line Item 2 Product 2"
     Then I should see "Product Kit Dialog" with elements:
@@ -117,7 +114,6 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Change product kit item line item quantity
     When I click "Edit items"
-    And I wait line items are initialized
     And I click "Shopping List 1 Kit Line Item Edit Button"
     When I fill "Product Kit Line Item Form" with:
       | Kit Item Line Item 1 Quantity | 2 |
@@ -143,7 +139,6 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Add one more product kit line item
     When I click "Edit items"
-    And I wait line items are initialized
     And I click "Shopping List 1 Kit Line Item Edit Button"
     When I fill "Product Kit Line Item Totals Form" with:
       | Quantity | 3 |
