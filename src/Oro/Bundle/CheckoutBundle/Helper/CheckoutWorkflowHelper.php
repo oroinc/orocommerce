@@ -3,8 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\Helper;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
@@ -39,7 +37,6 @@ class CheckoutWorkflowHelper
     private CheckoutLineItemsManager $lineItemsManager;
     private CheckoutLineItemGroupingInvalidationHelper $checkoutLineItemGroupingInvalidationHelper;
     private CustomerRegistrationHandler $registrationHandler;
-    private ActionGroupRegistry $actionGroupRegistry;
     private ForgotPasswordHandler $forgotPasswordHandler;
     private CheckoutErrorHandler $errorHandler;
     private TranslatorInterface $translator;
@@ -47,7 +44,6 @@ class CheckoutWorkflowHelper
 
     public function __construct(
         WorkflowManager $workflowManager,
-        ActionGroupRegistry $actionGroupRegistry,
         TransitionProvider $transitionProvider,
         TransitionFormProvider $transitionFormProvider,
         CheckoutErrorHandler $errorHandler,
@@ -59,7 +55,6 @@ class CheckoutWorkflowHelper
         TranslatorInterface $translator
     ) {
         $this->workflowManager = $workflowManager;
-        $this->actionGroupRegistry = $actionGroupRegistry;
         $this->transitionProvider = $transitionProvider;
         $this->transitionFormProvider = $transitionFormProvider;
         $this->errorHandler = $errorHandler;
@@ -73,9 +68,6 @@ class CheckoutWorkflowHelper
 
     public function processWorkflowAndGetCurrentStep(Request $request, Checkout $checkout): WorkflowStep
     {
-        $this->actionGroupRegistry->findByName('actualize_currency')
-            ->execute(new ActionData(['checkout' => $checkout]));
-
         $workflowItem = $this->getWorkflowItem($checkout);
         $stopPropagation = $this->stopPropagation($workflowItem);
         if ($stopPropagation) {
@@ -139,7 +131,7 @@ class CheckoutWorkflowHelper
             }
         }
 
-        if ($allOrderLineItemsCount !== $checkout->getLineItems()->count()) {
+        if ($allOrderLineItemsCount !== $checkout->getLineItems()?->count()) {
             $request->getSession()->getFlashBag()->add(
                 'warning',
                 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
@@ -154,7 +146,10 @@ class CheckoutWorkflowHelper
             return;
         }
 
-        $this->eventDispatcher->dispatch(new CheckoutTransitionBeforeEvent($workflowItem, $transition));
+        $this->eventDispatcher->dispatch(
+            new CheckoutTransitionBeforeEvent($workflowItem, $transition),
+            'oro_checkout.transition_request.before'
+        );
 
         $errors = new ArrayCollection();
 
@@ -179,7 +174,8 @@ class CheckoutWorkflowHelper
         }
 
         $this->eventDispatcher->dispatch(
-            new CheckoutTransitionAfterEvent($workflowItem, $transition, $isAllowed, $errors)
+            new CheckoutTransitionAfterEvent($workflowItem, $transition, $isAllowed, $errors),
+            'oro_checkout.transition_request.after'
         );
 
         $this->transitionProvider->clearCache();

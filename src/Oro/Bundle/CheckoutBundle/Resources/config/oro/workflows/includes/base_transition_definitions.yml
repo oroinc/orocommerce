@@ -12,11 +12,6 @@ workflows:
                         parameters:
                             entity: $checkout
                             token: $state_token
-                    - '@generate_uuid':
-                        conditions:
-                            '@blank': $state_token
-                        parameters:
-                          attribute: $state_token
 
             start_from_quickorderform_definition:
                 preactions:
@@ -145,7 +140,6 @@ workflows:
                     - '@assign_value':
                         - [$payment_method, null]
                         - [$payment_in_progress, false]
-                    - '@generate_uuid': $state_token
 
             payment_error_definition:
                 actions:
@@ -157,4 +151,3 @@ workflows:
                             '@not_empty': $order
                         parameters: [$order]
                     - '@unset_value': [$.data.order]
-                    - '@generate_uuid': $state_token

@@ -1,3 +1,6 @@
+imports:
+    - { resource: '../includes/base_transition_definitions.yml', workflow: b2b_flow_checkout, as: b2b_flow_checkout_single_page, replace: []}
+
 workflows:
     b2b_flow_checkout_single_page:
         transition_definitions:
@@ -126,16 +129,6 @@ workflows:
                                  service: oro_checkout.action.default_shipping_method_setter
                                  method: setDefaultShippingMethod
                                  method_parameters: [$checkout]
-                    - '@delete_checkout_state':
-                        entity: $checkout
-                        token: $state_token
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.currentCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.currentCheckoutState
-                        token: $state_token
                     - '@assign_value': [$.result.responseData.stateSaved, true]
 
             create_order_transition_definition:
@@ -236,12 +229,6 @@ workflows:
                                 is_ajax: true
                                 expected_key: _wid
                                 expected_value: ajax_checkout
-                        - '@is_checkout_state_valid':
-                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                            parameters:
-                                entity: $checkout
-                                token: $state_token
-                                current_state: $.result.currentCheckoutState
                         - '@is_consents_accepted':
                             acceptedConsents: $customerConsents
                             message: oro.checkout.workflow.condition.required_consents_should_be_checked_on_single_page_checkout.message
@@ -509,5 +496,3 @@ workflows:
                             allow_manual_source_remove: $allow_manual_source_remove
                             remove_source: $remove_source
                             clear_source: $clear_source
-                    - '@delete_checkout_state':
-                          entity: $checkout

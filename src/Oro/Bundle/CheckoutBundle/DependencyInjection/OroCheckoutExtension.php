@@ -22,6 +22,7 @@ class OroCheckoutExtension extends Extension
         $loader->load('services.yml');
         $loader->load('services_api.yml');
         $loader->load('services_checkout.yml');
+        $loader->load('services_checkout_state_listeners.yml');
         $loader->load('block_types.yml');
         $loader->load('form_types.yml');
         $loader->load('controllers.yml');

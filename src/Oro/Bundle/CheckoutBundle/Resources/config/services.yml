@@ -773,7 +773,6 @@ services:
         public: true
         arguments:
             - '@oro_workflow.manager'
-            - '@oro_action.action_group_registry'
             - '@oro_checkout.layout.data_provider.transition'
             - '@oro_checkout.layout.data_provider.transition_form'
             - '@oro_checkout.workflow_state.handler.checkout_error'
@@ -870,14 +869,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: -10 }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: -10 }
-
-    oro_checkout.listener.checkout_transition:
-        class: 'Oro\Bundle\CheckoutBundle\EventListener\CheckoutTransitionEventSubscriber'
-        arguments:
-            - '@oro_checkout.workflow_state.manager.checkout_state_diff'
-            - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
-        tags:
-            - { name: kernel.event_subscriber }
 
     oro_checkout.form.data_transformer.order_address_to_address_identifier:
         class: 'Oro\Bundle\CheckoutBundle\Form\DataTransformer\OrderAddressToAddressIdentifierViewTransformer'

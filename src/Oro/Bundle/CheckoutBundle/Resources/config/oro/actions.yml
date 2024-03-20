@@ -682,36 +682,7 @@ action_groups:
             - '@flush_entity': $.workflowItem
 
     actualize_currency:
-        parameters:
-            checkout:
-                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
-        actions:
-            - '@call_service_method':
-                attribute: $.currentCurrency
-                service: oro_pricing.user_currency_manager
-                method: getUserCurrency
-            - '@tree':
-                conditions:
-                    '@not':
-                        - '@equal': [$.currentCurrency, $.checkout.currency]
-                actions:
-                    - '@call_service_method':
-                        service: oro_pricing.user_currency_manager
-                        method: saveSelectedCurrency
-                        method_parameters: [$.checkout.currency]
-                    - '@assign_constant_value':
-                        attribute: $.currencyNameViewStyle
-                        value: Oro\Bundle\CurrencyBundle\Provider\ViewTypeProviderInterface::VIEW_TYPE_NAME
-                    - '@call_service_method':
-                        attribute: $.currencyName
-                        service: oro_currency.helper.currency_name
-                        method: getCurrencyName
-                        method_parameters: [$.checkout.currency, $.currencyNameViewStyle]
-                    - '@flash_message':
-                        message: oro.checkout.frontend.checkout.cannot_change_currency
-                        message_parameters:
-                            currency: $.currencyName
-                        type: 'warning'
+        service: oro_checkout.action_group.actualize_currency
 
     update_checkout_state:
         parameters:
@@ -721,6 +692,9 @@ action_groups:
                 type: string
             update_checkout_state:
                 type: ~
+            force_update:
+                type: bool
+                default: false
         actions:
             - '@assign_value':
                 conditions:
@@ -738,6 +712,7 @@ action_groups:
             - '@tree':
                 conditions:
                     '@or':
+                        - '@equal': [$.force_update, true]
                         - '@equal': [$.updateCheckoutState, true]
                         - '@no_elements': $.savedCheckoutState
                 actions:

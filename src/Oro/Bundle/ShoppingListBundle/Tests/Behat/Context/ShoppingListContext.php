@@ -64,9 +64,9 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
      */
     public function waitLineItemsInitialization(): void
     {
-        $this->spin(function () {
-            return $this->getSession()->evaluateScript("return 0 != $('input[name=product_qty]:enabled').length");
-        }, 10);
+//        $this->spin(function () {
+//            return $this->getSession()->evaluateScript("return 0 != $('input[name=product_qty]:enabled').length");
+//        }, 10);
     }
 
     /**

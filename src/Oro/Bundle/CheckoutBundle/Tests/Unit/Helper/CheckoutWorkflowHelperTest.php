@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Helper;
 
-use Oro\Bundle\ActionBundle\Model\ActionGroup;
-use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutLineItemGroupingInvalidationHelper;
@@ -30,16 +28,12 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutLineItemGroupingInvalidationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutLineItemGroupingInvalidationHelper;
 
-    /** @var ActionGroupRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $actionGroupRegistry;
-
     /** @var CheckoutWorkflowHelper */
     private $helper;
 
     protected function setUp(): void
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);
-        $this->actionGroupRegistry = $this->createMock(ActionGroupRegistry::class);
         $transitionProvider = $this->createMock(TransitionProvider::class);
         $transitionFormProvider = $this->createMock(TransitionFormProvider::class);
         $errorHandler = $this->createMock(CheckoutErrorHandler::class);
@@ -54,7 +48,6 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
 
         $this->helper = new CheckoutWorkflowHelper(
             $this->workflowManager,
-            $this->actionGroupRegistry,
             $transitionProvider,
             $transitionFormProvider,
             $errorHandler,
@@ -155,12 +148,6 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
                 'layout_block_ids' => ['some_block']
             ]
         );
-        $actionGroup = $this->createMock(ActionGroup::class);
-        $this->actionGroupRegistry->expects(self::once())
-            ->method('findByName')
-            ->willReturn($actionGroup);
-        $actionGroup->expects(self::once())
-            ->method('execute');
 
         $items = [$this->getWorkflowItem(1)];
         $this->workflowManager->expects(self::once())
@@ -187,12 +174,6 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
                 'transition' => 'payment_error'
             ]
         );
-        $actionGroup = $this->createMock(ActionGroup::class);
-        $this->actionGroupRegistry->expects(self::once())
-            ->method('findByName')
-            ->willReturn($actionGroup);
-        $actionGroup->expects(self::once())
-            ->method('execute');
 
         $items = [$this->getWorkflowItem(1)];
         $this->workflowManager->expects(self::once())
@@ -228,12 +209,6 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
                 'transition' => 'payment_error'
             ]
         );
-        $actionGroup = $this->createMock(ActionGroup::class);
-        $this->actionGroupRegistry->expects(self::once())
-            ->method('findByName')
-            ->willReturn($actionGroup);
-        $actionGroup->expects(self::once())
-            ->method('execute');
 
         $items = [$this->getWorkflowItem(1)];
         $this->workflowManager->expects(self::once())

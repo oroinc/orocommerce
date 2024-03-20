@@ -1,6 +1,6 @@
 services:
     oro_checkout.action_group.b2b_flow_checkout.address_actions:
-        class: Oro\Bundle\CheckoutBundle\Action\B2bFlowCheckout\ActionGroup\AddressActions
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActions
         public: true
         arguments:
             - '@doctrine'
@@ -9,7 +9,7 @@ services:
             - { name: 'oro_action_group_service' }
 
     oro_checkout.action_group.b2b_flow_checkout.order_actions:
-        class: Oro\Bundle\CheckoutBundle\Action\B2bFlowCheckout\ActionGroup\OrderActions
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\OrderActions
         public: true
         arguments:
             - '@doctrine'
@@ -24,7 +24,7 @@ services:
             - { name: 'oro_action_group_service' }
 
     oro_checkout.action_group.b2b_flow_checkout.split_order_actions:
-        class: Oro\Bundle\CheckoutBundle\Action\B2bFlowCheckout\ActionGroup\SplitOrderActions
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\SplitOrderActions
         public: true
         arguments:
             - '@oro_checkout.action_group.b2b_flow_checkout.order_actions'
@@ -40,7 +40,7 @@ services:
             - { name: 'oro_action_group_service' }
 
     oro_checkout.action_group.b2b_flow_checkout.checkout_actions:
-        class: Oro\Bundle\CheckoutBundle\Action\B2bFlowCheckout\ActionGroup\CheckoutActions
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CheckoutActions
         public: true
         arguments:
             - '@oro_security.token_accessor'
@@ -54,7 +54,7 @@ services:
             - { name: 'oro_action_group_service' }
 
     oro_checkout.action_group.b2b_flow_checkout.customer_user_actions:
-        class: Oro\Bundle\CheckoutBundle\Action\B2bFlowCheckout\ActionGroup\CustomerUserActions
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CustomerUserActions
         public: true
         arguments:
             - '@doctrine'
@@ -74,5 +74,72 @@ services:
             - '@oro_action.action_executor'
             - '@oro_checkout.provider.multi_shipping_config'
             - '@oro_checkout.provider.grouped_line_items'
+            - '@oro_checkout.action_group.b2b_flow_checkout.customer_user_actions'
+            - '@oro_checkout.action_group.b2b_flow_checkout.address_actions'
         tags:
             - { name: 'oro_workflow.transition_service' }
+
+    oro_checkout.action_group.actualize_currency:
+        class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ActualizeCurrency
+        arguments:
+            - '@oro_action.action_executor'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_currency.helper.currency_name'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    oro_checkout.event_listener.checkout_request_actualize_currency:
+        class: Oro\Bundle\CheckoutBundle\EventListener\CheckoutRequestActualizeCurrencyListener
+        arguments:
+            - '@oro_checkout.action_group.actualize_currency'
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest }
+
+    oro_checkout.event_listener.checkout_request_preload_entities:
+        class: Oro\Bundle\CheckoutBundle\EventListener\CheckoutRequestPreloadEntitiesListener
+        arguments:
+            - '@Oro\Bundle\EntityBundle\Manager\PreloadingManager'
+        calls:
+            -
+                - 'setPreloadConfig'
+                -
+                    -
+                        product:
+                            backOrder: []
+                            category:
+                                backOrder: []
+                                decrementQuantity: []
+                                highlightLowInventory: []
+                                inventoryThreshold: []
+                                isUpcoming: []
+                                lowInventoryThreshold: []
+                                manageInventory: []
+                                maximumQuantityToOrder: []
+                                minimumQuantityToOrder: []
+                            decrementQuantity: []
+                            highlightLowInventory: []
+                            inventoryThreshold: []
+                            isUpcoming: []
+                            lowInventoryThreshold: []
+                            manageInventory: []
+                            maximumQuantityToOrder: []
+                            minimumQuantityToOrder: []
+                            unitPrecisions: []
+                        kitItemLineItems:
+                            kitItem:
+                                labels: []
+                                productUnit: []
+                            product:
+                                names: []
+                                unitPrecisions: []
+                                images:
+                                    types: []
+                                    image:
+                                        digitalAsset:
+                                            titles: []
+                                            sourceFile:
+                                                digitalAsset: []
+                            productUnit: []
+
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest }

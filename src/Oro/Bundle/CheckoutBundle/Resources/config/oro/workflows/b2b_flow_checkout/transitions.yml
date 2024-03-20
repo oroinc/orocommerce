@@ -58,14 +58,6 @@ workflows:
                                     - '@equal': [$checkout.customerUser.isGuest, false]
                             actions:
                                 - '@assign_value': [$customerConsents, null]
-                        - '@run_action_group':
-                            action_group: update_checkout_state
-                            parameters_mapping:
-                                checkout: $checkout
-                                state_token: $state_token
-                                update_checkout_state: $.result.updateCheckoutState
-                            results:
-                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         customerConsents:
                             form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
@@ -87,15 +79,6 @@ workflows:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
                 form_options:
-                    form_init:
-                        - '@run_action_group':
-                            action_group: update_checkout_state
-                            parameters_mapping:
-                                checkout: $checkout
-                                state_token: $state_token
-                                update_checkout_state: $.result.updateCheckoutState
-                            results:
-                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
@@ -126,15 +109,6 @@ workflows:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
                 form_options:
-                    form_init:
-                        - '@run_action_group':
-                            action_group: update_checkout_state
-                            parameters_mapping:
-                                checkout: $checkout
-                                state_token: $state_token
-                                update_checkout_state: $.result.updateCheckoutState
-                            results:
-                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         shipping_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
@@ -174,14 +148,6 @@ workflows:
                               method: getCheckoutLineItemGroupsShippingData
                               method_parameters: [$checkout]
                               attribute: $line_item_groups_shipping_methods
-                        - '@run_action_group':
-                            action_group: update_checkout_state
-                            parameters_mapping:
-                                checkout: $checkout
-                                state_token: $state_token
-                                update_checkout_state: $.result.updateCheckoutState
-                            results:
-                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         shipping_method:
                             options:
@@ -237,14 +203,6 @@ workflows:
                                     conditions:
                                         '@not_empty': [$.result.validatePaymentTransaction]
                                     parameters: [$payment_validate, false]
-                        - '@run_action_group':
-                            action_group: update_checkout_state
-                            parameters_mapping:
-                                checkout: $checkout
-                                state_token: $state_token
-                                update_checkout_state: $.result.updateCheckoutState
-                            results:
-                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         payment_method: ~
                         payment_validate:
@@ -328,14 +286,6 @@ workflows:
                                     parameters_mapping:
                                         checkout: $checkout
                         - '@assign_value': [$late_registration.email, $email]
-                        - '@run_action_group':
-                            action_group: update_checkout_state
-                            parameters_mapping:
-                                checkout: $checkout
-                                state_token: $state_token
-                                update_checkout_state: $.result.updateCheckoutState
-                            results:
-                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         remove_source: ~
                         po_number: ~

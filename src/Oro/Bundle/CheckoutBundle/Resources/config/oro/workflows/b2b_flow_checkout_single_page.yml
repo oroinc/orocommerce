@@ -1,7 +1,5 @@
 imports:
     - { resource: 'includes/attributes.yml', workflow: b2b_flow_checkout, as: b2b_flow_checkout_single_page, replace: [] }
-    - { resource: 'includes/base_transitions.yml', workflow: b2b_flow_checkout, as: b2b_flow_checkout_single_page, replace: []}
-    - { resource: 'includes/base_transition_definitions.yml', workflow: b2b_flow_checkout, as: b2b_flow_checkout_single_page, replace: []}
 
     - { resource: 'b2b_flow_checkout_single_page/steps.yml' }
     - { resource: 'b2b_flow_checkout_single_page/transitions.yml' }

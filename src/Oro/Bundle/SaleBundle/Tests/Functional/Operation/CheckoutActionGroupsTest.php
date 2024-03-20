@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Operation;
 
-use Oro\Bundle\CheckoutBundle\Action\B2bFlowCheckout\ActionGroup\AddressActions;
-use Oro\Bundle\CheckoutBundle\Action\B2bFlowCheckout\ActionGroup\CheckoutActions;
-use Oro\Bundle\CheckoutBundle\Action\B2bFlowCheckout\ActionGroup\OrderActions;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActions;
+use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CheckoutActions;
+use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\OrderActions;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;

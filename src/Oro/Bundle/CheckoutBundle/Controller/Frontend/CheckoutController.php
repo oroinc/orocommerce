@@ -4,8 +4,8 @@ namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutRequestEvent;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper;
-use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Handles checkout logic.
@@ -37,56 +38,8 @@ class CheckoutController extends AbstractController
     {
         $this->disableGarbageCollector();
 
-        $this->container->get(PreloadingManager::class)->preloadInEntities(
-            $checkout->getLineItems()->toArray(),
-            [
-                'product' => [
-                    'backOrder' => [],
-                    'category' => [
-                        'backOrder' => [],
-                        'decrementQuantity' => [],
-                        'highlightLowInventory' => [],
-                        'inventoryThreshold' => [],
-                        'isUpcoming' => [],
-                        'lowInventoryThreshold' => [],
-                        'manageInventory' => [],
-                        'maximumQuantityToOrder' => [],
-                        'minimumQuantityToOrder' => [],
-                    ],
-                    'decrementQuantity' => [],
-                    'highlightLowInventory' => [],
-                    'inventoryThreshold' => [],
-                    'isUpcoming' => [],
-                    'lowInventoryThreshold' => [],
-                    'manageInventory' => [],
-                    'maximumQuantityToOrder' => [],
-                    'minimumQuantityToOrder' => [],
-                    'unitPrecisions' => [],
-                ],
-                'kitItemLineItems' => [
-                    'kitItem' => [
-                        'labels' => [],
-                        'productUnit' => [],
-                    ],
-                    'product' => [
-                        'names' => [],
-                        'images' => [
-                            'image' => [
-                                'digitalAsset' => [
-                                    'titles' => [],
-                                    'sourceFile' => [
-                                        'digitalAsset' => [],
-                                    ],
-                                ],
-                            ],
-                            'types' => [],
-                        ],
-                        'unitPrecisions' => [],
-                    ],
-                    'productUnit' => [],
-                ],
-            ]
-        );
+        $event = new CheckoutRequestEvent($request, $checkout);
+        $this->container->get(EventDispatcherInterface::class)->dispatch($event, 'oro_checkout.request');
 
         $currentStep = $this->container->get(CheckoutWorkflowHelper::class)
             ->processWorkflowAndGetCurrentStep($request, $checkout);
@@ -151,7 +104,7 @@ class CheckoutController extends AbstractController
             [
                 KernelInterface::class,
                 CheckoutWorkflowHelper::class,
-                PreloadingManager::class,
+                EventDispatcherInterface::class,
             ]
         );
     }
