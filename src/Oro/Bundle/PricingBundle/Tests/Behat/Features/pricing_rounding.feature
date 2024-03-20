@@ -508,7 +508,6 @@ Feature: Pricing rounding
     And I click "Add to Shopping List" for "SKU789" product
     And I hover on "Shopping Cart"
     And I click "Shopping List" on shopping list widget
-    And I wait line items are initialized
     And I click on "Shopping List Line Item 1 Quantity"
     And I type "3" in "Shopping List Line Item 1 Quantity Input"
     And I click on "Shopping List Line Item 1 Save Changes Button"

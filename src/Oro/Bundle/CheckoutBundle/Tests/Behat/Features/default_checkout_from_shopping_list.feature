@@ -21,7 +21,6 @@ Feature: Default Checkout From Shopping List
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
     And I scroll to top
-    And I wait line items are initialized
     And I click "Create Order"
     Then Checkout "Order Summary Products Grid" should contain products:
       | Product1`"'&йёщ®&reg;> | 5 | items |
@@ -36,7 +35,6 @@ Feature: Default Checkout From Shopping List
     And I click "Check Out" on row "List 1" in grid "OpenOrdersGrid"
 
     When I click "Edit items"
-    And I wait line items are initialized
     And I type "10" in "Shopping List Line Item 1 Quantity"
     And I should see "Record has been successfully updated" flash message
     And I scroll to top
