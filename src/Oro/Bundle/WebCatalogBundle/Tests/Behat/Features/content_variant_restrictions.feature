@@ -18,10 +18,10 @@ Feature: Content Variant restrictions
     And I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click on "Show Variants Dropdown"
-    And I click "Add System Page"
+    And I click "Add Landing Page"
     And I fill "Content Node Form" with:
-      | Titles            | Web Catalog Root                        |
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
+      | Titles       | Web Catalog Root |
+      | Landing Page | Homepage         |
     When I save form
     Then I should see "Content Node has been saved" flash message
     And I click "Create Content Node"

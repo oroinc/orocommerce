@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CMSBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\CMSBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -18,7 +18,9 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 /**
  * Demo fixture for loading demo image slider images cache.
  */
-class LoadImageSliderImageCache extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
+class LoadImageSliderImageCacheDemoData extends AbstractFixture implements
+    DependentFixtureInterface,
+    ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
@@ -28,7 +30,7 @@ class LoadImageSliderImageCache extends AbstractFixture implements DependentFixt
     public function getDependencies(): array
     {
         return [
-            LoadImageSlider::class,
+            LoadImageSliderDemoData::class,
         ];
     }
 
@@ -45,12 +47,12 @@ class LoadImageSliderImageCache extends AbstractFixture implements DependentFixt
     {
         $imageSlides = $manager->getRepository(ImageSlide::class)->findAll();
         $locator = $this->container->get('file_locator');
-        $imageDir = $locator->locate('@OroCMSBundle/Migrations/Data/ORM/data/promo-slider');
+        $imageDir = $locator->locate('@OroCMSBundle/Migrations/Data/Demo/ORM/data/promo-slider');
         $imageDir = is_array($imageDir) ? current($imageDir) : $imageDir;
 
         $getters = array_map(
             fn (string $imageType) => sprintf('get%s', ucfirst($imageType)),
-            LoadImageSlider::IMAGE_TYPES
+            LoadImageSliderDemoData::IMAGE_TYPES
         );
 
         foreach ($imageSlides as $imageSlide) {

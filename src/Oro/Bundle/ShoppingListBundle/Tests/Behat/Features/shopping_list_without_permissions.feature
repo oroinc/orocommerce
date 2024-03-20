@@ -46,7 +46,7 @@ Feature: Shopping list without permissions
     And I should see "Shopping List 1" on shopping list widget
     And I click "Shopping List 1" on shopping list widget
     When I am on homepage
-    Then I should see "Shopping list"
+    Then I should see "1" in the "Shopping List Widget" element
     When I open product with sku "PSKU1" on the store frontend
     Then I should see "Add to Shopping List"
 

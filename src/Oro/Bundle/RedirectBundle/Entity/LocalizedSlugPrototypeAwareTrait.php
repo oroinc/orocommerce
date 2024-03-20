@@ -65,4 +65,11 @@ trait LocalizedSlugPrototypeAwareTrait
     {
         return $this->slugPrototypes->contains($slugPrototype);
     }
+
+    public function resetSlugPrototypes(): self
+    {
+        $this->slugPrototypes?->clear();
+
+        return $this;
+    }
 }

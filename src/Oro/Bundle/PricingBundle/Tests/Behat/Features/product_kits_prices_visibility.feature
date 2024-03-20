@@ -11,6 +11,8 @@ Feature: Product kits prices visibility
       | Buyer | second_session |
     And I proceed as the Admin
     And I login as administrator
+    And I add New Arrivals widget before content for "Homepage" page
+    And I add Featured Products widget after content for "Homepage" page
     When go to System/ Configuration
     And I follow "Commerce/Catalog/Related Items" on configuration sidebar
     And I fill "RelatedProductsConfig" with:
@@ -56,9 +58,6 @@ Feature: Product kits prices visibility
       | simpleproduct03 | $31.00 / piece     | $31.00 / piece       |
 
   Scenario: Check product prices in category page
-    And I should see "FEATURED CATEGORIES"
-    And should see "3 items" for "NewCategory" category
-
     When I click "NewCategory" in hamburger menu
     Then I should not see "Product Price Container" for "productkit1" product
     And should not see "$11.00" for "productkit1" product

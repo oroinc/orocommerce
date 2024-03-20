@@ -5,20 +5,42 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\DataProvider;
 use Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class CanonicalDataProviderTest extends \PHPUnit\Framework\TestCase
+class CanonicalDataProviderTest extends TestCase
 {
-    public function testGetUrl()
-    {
-        /** @var CanonicalUrlGenerator|\PHPUnit\Framework\MockObject\MockObject $canonicalUrlGenerator */
-        $canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
-        $canonicalUrlGenerator->expects($this->any())
-            ->method('getUrl')
-            ->willReturn('some-url');
-        /** @var SluggableInterface|\PHPUnit\Framework\MockObject\MockObject $data */
-        $data = $this->createMock(SluggableInterface::class);
-        $canonicalDataProvider = new CanonicalDataProvider($canonicalUrlGenerator);
+    private CanonicalUrlGenerator|MockObject $canonicalUrlGenerator;
 
-        $this->assertEquals('some-url', $canonicalDataProvider->getUrl($data));
+    private CanonicalDataProvider $canonicalDataProvider;
+
+    protected function setUp(): void
+    {
+        $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);
+        $this->canonicalDataProvider = new CanonicalDataProvider($this->canonicalUrlGenerator);
+    }
+
+    public function testGetUrl(): void
+    {
+        $url = 'http://localhost/some-url';
+        $data = $this->createMock(SluggableInterface::class);
+
+        $this->canonicalUrlGenerator->expects(self::once())
+            ->method('getUrl')
+            ->with($data)
+            ->willReturn($url);
+
+        self::assertEquals($url, $this->canonicalDataProvider->getUrl($data));
+    }
+
+    public function getHomePageUrl(): void
+    {
+        $url = 'http://localhost/';
+        $this->canonicalUrlGenerator->expects(self::once())
+            ->method('getAbsoluteUrl')
+            ->with('/')
+            ->willReturn($url);
+
+        self::assertEquals($url, $this->canonicalDataProvider->getHomePageUrl());
     }
 }

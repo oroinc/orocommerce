@@ -37,8 +37,8 @@ class FrontendControllerTest extends WebTestCase
         $content = $result->getContent();
 
         self::assertNotEmpty($content);
-        self::assertStringContainsString('list-slider-component', $content);
-        self::assertStringContainsString('Featured Products', $content);
-        self::assertStringContainsString('Top Selling Items', $content);
+        self::assertStringContainsString('home-page', $content);
+        self::assertStringNotContainsString('Featured Products', $content);
+        self::assertStringNotContainsString('Top Selling Items', $content);
     }
 }

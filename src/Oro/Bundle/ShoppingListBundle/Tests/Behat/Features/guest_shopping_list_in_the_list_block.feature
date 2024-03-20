@@ -21,14 +21,17 @@ Feature: Guest shopping list in the list block
   Scenario: Create shopping list on frontend
     Given I proceed as the Buyer
     When I am on homepage
-    Then I should see "Shopping list"
+    Then I should see "0" in the "Shopping List Widget" element
     And I should not see "In Shopping List"
     When type "PSKU1" in "search"
-    And I click "Add to Shopping List" for "PSKU1" product
+    And I click "Search Button"
+    And I should see "Product 1"
+    And I should see "Add to Shopping List"
+    And I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message and I close it
     And I should see "In shopping list"
     When I am on homepage
-    Then I should see "In Shopping List"
+    Then I should see "$1.00"
 
   Scenario: Create checkout and remove all products from shopping list
     When I open shopping list widget

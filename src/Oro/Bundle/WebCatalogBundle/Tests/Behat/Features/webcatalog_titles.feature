@@ -30,8 +30,8 @@ Feature: Webcatalog titles
     And I click on "Show Variants Dropdown"
     And I click "Add System Page"
     And I fill "Content Node" with:
-      | Title             | SYSTEM PAGE TITLE                       |
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
+      | Title             | SYSTEM PAGE TITLE                  |
+      | System Page Route | Oro Product Frontend Product Index |
     And I click "Save"
     Then should see "Content Node has been saved" flash message
 
@@ -102,7 +102,7 @@ Feature: Webcatalog titles
 
     Examples:
       | Variant title         | Original title                  |
-      | SYSTEM PAGE TITLE     | Welcome - Home page             |
+      | SYSTEM PAGE TITLE     | All Products                    |
       | PRODUCT PAGE TITLE    | 220 Lumen Rechargeable Headlamp |
       | LANDING PAGE TITLE    | Test CMS Page                   |
       | CATEGORY PAGE TITLE   | Headlamps                       |

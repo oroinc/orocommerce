@@ -23,8 +23,14 @@ Feature: Display product listing image instead of main image on the home page
     And I save form
     Then I should see "Product has been saved" flash message
     And I remember "main" image filtered ID
+
+    And I add Featured Products widget after content for "Homepage" page
+    And I update settings for "featured-products" content widget:
+      | minimum_items | 1 |
+
     Then I am on homepage
-    Then I should see remembered "main" image in "Top Selling Items" section
+    # TODO: Uncomment and apply after adding Top Selling Items content block
+#    Then I should see remembered "main" image in "Top Selling Items" section
     Then I should see remembered "main" image in "Featured Products" section
 
   Scenario: Check that listing image is displayed if it is present
@@ -45,5 +51,6 @@ Feature: Display product listing image instead of main image on the home page
     Then I click "Edit"
     And I remember "listing" image filtered ID
     Then I am on homepage
-    Then I should see remembered "listing" image in "Top Selling Items" section
+    # TODO: Uncomment and apply after adding Top Selling Items content block
+#    Then I should see remembered "listing" image in "Top Selling Items" section
     Then I should see remembered "listing" image in "Featured Products" section

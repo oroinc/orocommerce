@@ -8,17 +8,16 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Layout\DataProvider\TitleDataProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
+class TitleDataProviderTest extends TestCase
 {
-    /** @var RequestWebContentVariantProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $requestWebContentVariantProvider;
+    private RequestWebContentVariantProvider|MockObject $requestWebContentVariantProvider;
 
-    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $localizationHelper;
+    private LocalizationHelper|MockObject $localizationHelper;
 
-    /** @var TitleDataProvider */
-    private $titleDataProvider;
+    private TitleDataProvider $titleDataProvider;
 
     protected function setUp(): void
     {
@@ -31,7 +30,7 @@ class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetTitleFromNode()
+    public function testGetTitleFromNode(): void
     {
         $default = 'default';
         $expectedTitle = 'node title';
@@ -63,7 +62,7 @@ class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedTitle, $this->titleDataProvider->getTitle($default));
     }
 
-    public function testGetTitleFromNodeEmptyTitle()
+    public function testGetTitleFromNodeEmptyTitle(): void
     {
         $default = 'default';
 
@@ -94,7 +93,7 @@ class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($default, $this->titleDataProvider->getTitle($default));
     }
 
-    public function testGetTitleFromNodeWithDisabledRewrite()
+    public function testGetTitleFromNodeWithDisabledRewrite(): void
     {
         $default = 'default';
 
@@ -120,7 +119,7 @@ class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($default, $this->titleDataProvider->getTitle($default));
     }
 
-    public function testGetTitleDefault()
+    public function testGetTitleDefault(): void
     {
         $default = 'default';
 
@@ -132,5 +131,34 @@ class TitleDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getLocalizedValue');
 
         $this->assertEquals($default, $this->titleDataProvider->getTitle($default));
+    }
+
+    /**
+     * @dataProvider isRenderTitleDataProvider
+     */
+    public function isRenderTitle(?ContentVariant $contentVariant, bool $expected): void
+    {
+        $this->requestWebContentVariantProvider->expects(self::once())
+            ->willReturn($contentVariant);
+
+        self::assertEquals($expected, $this->titleDataProvider->isRenderTitle());
+    }
+
+    public function isRenderTitleDataProvider(): array
+    {
+        return [
+            'not found content variant' => [
+                'contentVariant' => null,
+                'expected' => true,
+            ],
+            'doNotRenderTitle is true' => [
+                'contentVariant' => (new ContentVariant())->setDoNotRenderTitle(true),
+                'expected' => true,
+            ],
+            'doNotRenderTitle is false' => [
+                'contentVariant' => null,
+                'expected' => new ContentVariant(),
+            ],
+        ];
     }
 }

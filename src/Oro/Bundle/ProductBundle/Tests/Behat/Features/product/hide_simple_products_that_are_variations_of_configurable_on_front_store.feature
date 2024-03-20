@@ -60,6 +60,12 @@ Feature: Hide simple products that are variations of configurable on front store
     And I save form
     Then I should see "Successfully updated" flash message
 
+    # Prepare content blocks
+    And I add New Arrivals widget before content for "Homepage" page
+    And I add Featured Products widget after content for "Homepage" page
+    And I update settings for "featured-products" content widget:
+      | minimum_items | 1 |
+
   Scenario: Prepare configurable products
 
     # Variants for CNF_A

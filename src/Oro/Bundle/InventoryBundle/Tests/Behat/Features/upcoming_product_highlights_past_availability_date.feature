@@ -80,8 +80,8 @@ Feature: Upcoming product highlights past availability date
   Scenario: Check that 'Upcoming' details correctly displayed on frontend product pages:
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
-    And I scroll to text "NewCategory2"
-    And I click on "NewCategory2 category"
+    And I click "NewCategory" in hamburger menu
+    And I click "NewCategory2" in hamburger menu
     Then I should see "This product will be available on 12/1/2040" for "SKU2" product
     Then I should not see "This product will be available later" for "SKU3" product
     When I click "View Details" for "SKU2" product

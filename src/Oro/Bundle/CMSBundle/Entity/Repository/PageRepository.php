@@ -12,12 +12,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
  */
 class PageRepository extends EntityRepository
 {
-    /**
-     * @param string $title
-     * @param Localization|null $localization
-     * @return null|Page
-     */
-    public function findOneByTitle($title, Localization $localization = null)
+    public function findOneByTitle(string $title, Localization $localization = null, bool $partial = true): ?Page
     {
         $qb = $this->createQueryBuilder('page');
 
@@ -27,8 +22,12 @@ class PageRepository extends EntityRepository
             $joinExpr = $qb->expr()->eq('title.localization', ':localization');
             $qb->setParameter('localization', $localization);
         }
+
+        if ($partial) {
+            $qb->select('partial page.{id}');
+        }
+
         return $qb
-            ->select('partial page.{id}')
             ->innerJoin('page.titles', 'title', Join::WITH, $joinExpr)
             ->andWhere('title.string = :title')
             ->setParameter('title', $title)
@@ -37,12 +36,7 @@ class PageRepository extends EntityRepository
             ->getOneOrNullResult();
     }
 
-    /**
-     * @param array $pageIds
-     *
-     * @return array
-     */
-    public function getNonExistentPageIds(array $pageIds)
+    public function getNonExistentPageIds(array $pageIds): array
     {
         if (empty($pageIds)) {
             return [];

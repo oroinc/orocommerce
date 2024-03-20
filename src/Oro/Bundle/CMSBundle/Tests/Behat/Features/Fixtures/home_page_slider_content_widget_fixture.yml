@@ -1,0 +1,99 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    home_page_slider_title:
+        string: 'Home Page Slider'
+
+Oro\Bundle\AttachmentBundle\Entity\File:
+    seasonal_sale_file:
+        owner: '@admin'
+        filename: 'seasonal_sale.jpeg'
+        file_size: 20000
+        originalFilename: 'original-seasonal_sale.jpeg'
+        extension: 'jpeg'
+        mimeType: 'image/jpeg'
+    bright_new_day_in_lighting_file:
+        owner: '@admin'
+        filename: 'bright_new_day_in_lighting.jpeg'
+        file_size: 20000
+        originalFilename: 'original-bright_new_day_in_lighting.jpeg'
+        extension: 'jpeg'
+        mimeType: 'image/jpeg'
+    best_priced_medical_supplies_file:
+        owner: '@admin'
+        filename: 'best_priced_medical_supplies.jpeg'
+        file_size: 20000
+        originalFilename: 'original-best_priced_medical_supplies.jpeg'
+        extension: 'jpeg'
+        mimeType: 'image/jpeg'
+
+Oro\Bundle\CMSBundle\Entity\ContentWidget:
+    home_page_slider_content_widget:
+        name: 'home-page-slider'
+        widgetType: 'image_slider'
+        organization: '@organization'
+        settings:
+            slidesToShow: 1
+            slidesToScroll: 1
+            autoplay: false
+            dots: true
+            infinite: true
+
+Oro\Bundle\CMSBundle\Entity\ImageSlide:
+    seasonal_sale:
+        slideOrder: '1'
+        url: '/product/'
+        displayInSameWindow: true
+        altImageText: 'Seasonal Sale'
+        header: 'Seasonal Sale'
+        text: 'Get 25 Percent Off the Order Total With a Coupon Code SALE25'
+        textAlignment: 'left'
+        contentWidget: '@home_page_slider_content_widget'
+        organization: '@organization'
+        extraLargeImage: '@seasonal_sale_file'
+        largeImage: '@seasonal_sale_file'
+        mediumImage: '@seasonal_sale_file'
+        smallImage: '@seasonal_sale_file'
+    bright_new_day_in_lighting:
+        slideOrder: '2'
+        url: '/navigation-root/new-arrivals/lighting-products'
+        displayInSameWindow: true
+        altImageText: 'Bright New Day In Lighting'
+        header: 'Bright New Day In Lighting'
+        text: 'Explore our new-season collection of models and brands'
+        textAlignment: 'center'
+        contentWidget: '@home_page_slider_content_widget'
+        organization: '@organization'
+        extraLargeImage: '@bright_new_day_in_lighting_file'
+        largeImage: '@bright_new_day_in_lighting_file'
+        mediumImage: '@bright_new_day_in_lighting_file'
+        smallImage: '@bright_new_day_in_lighting_file'
+    best_priced_medical_supplies:
+        slideOrder: '3'
+        url: '/medical/medical-apparel'
+        displayInSameWindow: true
+        altImageText: 'Best-Priced Medical Supplies'
+        header: 'Best-Priced Medical Supplies'
+        text: 'Find and buy quality medical equipment and home healthcare supplies'
+        textAlignment: 'right'
+        contentWidget: '@home_page_slider_content_widget'
+        organization: '@organization'
+        extraLargeImage: '@best_priced_medical_supplies_file'
+        largeImage: '@best_priced_medical_supplies_file'
+        mediumImage: '@best_priced_medical_supplies_file'
+        smallImage: '@best_priced_medical_supplies_file'
+
+Oro\Bundle\CMSBundle\Entity\TextContentVariant:
+    home_page_slider_text_content_variant:
+        contentBlock: '@home_page_slider_content_block'
+        content: >
+            <div data-title="home-page-slider" data-type="image_slider" class="content-widget content-placeholder">{{ widget("home-page-slider") }}</div>
+
+Oro\Bundle\CMSBundle\Entity\ContentBlock:
+    home_page_slider_content_block:
+        organization: '@organization'
+        owner: '@business_unit'
+        alias: 'home-page-slider'
+        titles: ['@home_page_slider_title']
+        __calls:
+            - addScope: ['@default_scope']
+            - addContentVariant: ['@home_page_slider_text_content_variant']
+        enabled: true

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CMSBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\CMSBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Persistence\ObjectManager;
 use Gaufrette\Adapter as GaufretteAdapter;
@@ -11,7 +11,7 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 /**
  * Demo fixture for loading demo image slider images webp cache.
  */
-class LoadImageSliderImageWebpCache extends LoadImageSliderImageCache
+class LoadImageSliderImageWebpCacheDemoData extends LoadImageSliderImageCacheDemoData
 {
     public function load(ObjectManager $manager): void
     {

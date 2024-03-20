@@ -15,8 +15,7 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class SystemPageVariantTypeTest extends FormIntegrationTestCase
 {
-    /** @var SystemPageVariantType */
-    private $type;
+    private SystemPageVariantType $type;
 
     protected function setUp(): void
     {
@@ -24,9 +23,6 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getExtensions(): array
     {
         return [
@@ -46,35 +42,43 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
         $form = $this->factory->create(SystemPageVariantType::class, null, ['web_catalog' => null]);
 
-        $this->assertTrue($form->has('systemPageRoute'));
-        $this->assertTrue($form->has('scopes'));
-        $this->assertTrue($form->has('type'));
+        self::assertTrue($form->has('systemPageRoute'));
+        self::assertTrue($form->has('scopes'));
+        self::assertTrue($form->has('type'));
+
+        self::assertFormOptionEqual(['frontend' => true], 'options_filter', $form->get('systemPageRoute'));
+        self::assertFormOptionEqual('/^oro_\w+(?<!frontend_root)$/', 'name_filter', $form->get('systemPageRoute'));
+        self::assertFormOptionEqual(SystemPageVariantType::MENU_NAME, 'menu_name', $form->get('systemPageRoute'));
     }
 
-    public function testGetBlockPrefix()
+    public function testGetBlockPrefix(): void
     {
         $type = new SystemPageVariantType();
-        $this->assertEquals(SystemPageVariantType::NAME, $type->getBlockPrefix());
+        self::assertEquals('oro_web_catalog_system_page_variant', $type->getBlockPrefix());
     }
 
     /**
      * @dataProvider submitDataProvider
      */
-    public function testSubmit(ContentVariant $existingData, array $submittedData, ContentVariant $expectedData)
+    public function testSubmit(ContentVariant $existingData, array $submittedData, ContentVariant $expectedData): void
     {
         $form = $this->factory->create(SystemPageVariantType::class, $existingData, ['web_catalog' => null]);
 
-        $this->assertEquals($existingData, $form->getData());
+        self::assertEquals($existingData, $form->getData());
 
         $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
-        $this->assertTrue($form->isSynchronized());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
 
-        $this->assertEquals($expectedData, $form->getData());
+        self::assertEquals($expectedData, $form->getData());
+
+        self::assertFormOptionEqual(['frontend' => true], 'options_filter', $form->get('systemPageRoute'));
+        self::assertFormOptionEqual('/^oro_\w+(?<!frontend_root)$/', 'name_filter', $form->get('systemPageRoute'));
+        self::assertFormOptionEqual(SystemPageVariantType::MENU_NAME, 'menu_name', $form->get('systemPageRoute'));
     }
 
     public function submitDataProvider(): array

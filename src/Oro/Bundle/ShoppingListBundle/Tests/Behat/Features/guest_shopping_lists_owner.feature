@@ -27,8 +27,7 @@ Feature: Guest shopping lists owner
 
   Scenario: Create shopping list on frontend
     Given I proceed as the Buyer
-    When I am on homepage
-    Then I should see "Shopping list"
+    And I am on homepage
     When type "PSKU1" in "search"
     And I click "Search Button"
     Then I should see "Product1"

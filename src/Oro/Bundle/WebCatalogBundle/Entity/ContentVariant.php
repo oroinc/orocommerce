@@ -87,6 +87,9 @@ class ContentVariant implements
     #[ORM\Column(name: 'override_variant_configuration', type: Types::BOOLEAN, options: ['default' => false])]
     protected ?bool $overrideVariantConfiguration = false;
 
+    #[ORM\Column(name: 'do_not_render_title', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $doNotRenderTitle = false;
+
     /**
      * @var boolean
      */
@@ -263,5 +266,17 @@ class ContentVariant implements
     public function isExpanded(): bool
     {
         return $this->expanded;
+    }
+
+    public function setDoNotRenderTitle(bool $doNotRenderTitle): self
+    {
+        $this->doNotRenderTitle = $doNotRenderTitle;
+
+        return $this;
+    }
+
+    public function isDoNotRenderTitle(): bool
+    {
+        return $this->doNotRenderTitle;
     }
 }

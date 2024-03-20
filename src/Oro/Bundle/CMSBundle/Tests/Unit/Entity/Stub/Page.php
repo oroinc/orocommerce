@@ -11,13 +11,17 @@ class Page extends BasePage
 
     protected $organizationField;
 
-    /**
-     * @var array
-     */
-    protected $localizedFields = [
+    protected array $localizedFields = [
         'title' => 'titles',
         'slug' => 'slugs',
     ];
+
+    public function __construct(int $id = null)
+    {
+        parent::__construct();
+
+        $this->id = $id;
+    }
 
     /**
      * {@inheritdoc}

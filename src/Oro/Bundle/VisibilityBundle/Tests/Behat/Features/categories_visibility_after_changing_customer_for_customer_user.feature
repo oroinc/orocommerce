@@ -23,10 +23,13 @@ Feature: Categories visibility after changing Customer for Customer User
       | Visibility To Customers Second | Hidden  |
     And I save form
     Then I should see "Category has been saved" flash message
+
     When I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
+    And I click on "Main Menu Button"
     Then I should see "Medical Apparel"
     And I should see "Lighting Products"
+
     When I proceed as the Admin
     And I go to Customers/Customer Users
     And click edit Amanda in grid
@@ -34,7 +37,9 @@ Feature: Categories visibility after changing Customer for Customer User
       | Customer | second |
     And I save form
     Then I should see "Customer user has been saved" flash message
+
     When I proceed as the Buyer
     And I go to homepage
+    And I click on "Main Menu Button"
     Then I should not see "Medical Apparel"
     And I should see "Lighting Products"

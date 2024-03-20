@@ -39,13 +39,15 @@ Feature: Calculate taxes after promotions
     When I go to Sales/Orders
     And I click "Create Order"
     And click "Add Product"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
       | PO Number     | PONumber1   |
       | Product       | SKU1        |
       | Price         | 2           |
       | Quantity      | 5           |
+    And I wait for products to load
+    And click "Add Product"
+    And fill "Order Form" with:
       | Product2      | SKU2        |
       | Price2        | 2           |
       | Quantity2     | 5           |
@@ -113,13 +115,15 @@ Feature: Calculate taxes after promotions
     When I go to Sales/Orders
     And I click "Create Order"
     And click "Add Product"
-    And click "Add Product"
     And fill "Order Form" with:
       | Customer User | Amanda Cole |
       | PO Number     | PONumber3   |
       | Product       | SKU1        |
       | Price         | 2           |
       | Quantity      | 5           |
+    And I wait for products to load
+    And click "Add Product"
+    And fill "Order Form" with:
       | Product2      | SKU2        |
       | Price2        | 2           |
       | Quantity2     | 5           |

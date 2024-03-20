@@ -72,7 +72,7 @@ Feature: Check shopping list subtotal using different customer users
   Scenario: Create Shopping List as department customer
     Given I proceed as the CustomerDepartment
     And I login as MarleneSBradley@example.com buyer
-    And I am on homepage
+    And I am on "/product"
     And click "Add to Shopping List" for "Simple product 1" product
     And click "Add to Shopping List" for "Simple product 2" product
     And I scroll to top

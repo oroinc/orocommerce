@@ -43,7 +43,6 @@ Feature: Category products sort order
   Scenario: Category correctly sorted in frontend
     Given I operate as the Buyer
     When I am on homepage
-    Then I should see "4 items" for "Test Category" category
     When I click "Test Category" in hamburger menu
     Then PSKU4 must be first record in "Product Frontend Grid"
     And PSKU2 must be second record in "Product Frontend Grid"
@@ -76,7 +75,6 @@ Feature: Category products sort order
   Scenario: Category sort order updated in frontend
     Given I operate as the Buyer
     When I am on homepage
-    Then I should see "4 items" for "Test Category" category
     When I click "Test Category" in hamburger menu
     Then PSKU5 must be first record in "Product Frontend Grid"
     And PSKU3 must be second record in "Product Frontend Grid"

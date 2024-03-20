@@ -27,10 +27,11 @@ Feature: Consent may be declined by customer user
 
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Store and Process" in grid
-    And I click "Add System Page"
+    And I click on "Show Variants Dropdown"
+    And I click "Add Landing Page"
     And I fill "Content Node Form" with:
-      | Titles            | Home page                               |
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
+      | Titles       | Home page |
+      | Landing Page | Homepage  |
     And I save form
     Then I should see "Content Node has been saved" flash message
 

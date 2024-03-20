@@ -9,10 +9,13 @@ Feature: Override product variations functionality
   I need to be able to use override product variants configuration option to make simple products
   in category or product collection are visible on storefront
 
-  Scenario: Create sessions
+  Scenario: Feature background
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
+
+    And I add New Arrivals widget after content for "Homepage" page
+    And I add Featured Products widget after content for "Homepage" page
 
   Scenario: Prepare first product attribute
     Given I proceed as the Admin
@@ -49,11 +52,12 @@ Feature: Override product variations functionality
     And I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
 
-    When I click on "Show Variants Dropdown"
-    And I click on "First Content Variant Expand Button"
+    When I click on "Remove Variant Button"
+    And I click on "Show Variants Dropdown"
+    And I click "Add Landing Page"
     And I fill "Content Node Form" with:
-      | Titles            | Home page                               |
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
+      | Titles       | Home page |
+      | Landing Page | Homepage  |
     And I save form
     Then I should see "Content Node has been saved" flash message
     When I click "Create Content Node"
@@ -118,17 +122,12 @@ Feature: Override product variations functionality
     And I should see "1GB83" product
 
   Scenario: Show that override product variant configuration option does not affects on New Arrivals Block and Featured Products Block
-    When I proceed as the Admin
-    And I go to System/Configuration
-    And follow "Commerce/Product/Promotions" on configuration sidebar
-    And fill "Promotions Form" with:
-      | Minimum Items Default | false |
-      | Minimum Items         | 0     |
-    And I save form
-    Then I should see "Configuration saved" flash message
-
-    When I proceed as the Buyer
-    And I am on the homepage
+    Given I update settings for "new-arrivals" content widget:
+      | minimum_items | 1 |
+      | maximum_items | 1 |
+    And I update settings for "featured-products" content widget:
+      | minimum_items | 1 |
+    When I am on the homepage
     Then should not see the following products in the "New Arrivals Block":
       | SKU   |
       | 1GB81 |

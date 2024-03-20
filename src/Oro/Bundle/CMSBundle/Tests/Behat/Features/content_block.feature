@@ -4,6 +4,8 @@
 @feature-BAP-19790
 @fixture-OroCMSBundle:CustomerUserFixture.yml
 @fixture-OroCMSBundle:WysiwygRoleFixture.yml
+@fixture-OroCMSBundle:home_page_slider_content_widget_fixture.yml
+
 Feature: Content Block
   In order to modify some predefined marketing content on the store frontend
   As an Administrator
@@ -61,7 +63,8 @@ Feature: Content Block
 
   Scenario: Block for authenticated non authenticated users
     Given login as administrator
-    And I go to Marketing/ Content Blocks
+    And I add Home Page Slider content block before content for "Homepage" page
+    When I go to Marketing/ Content Blocks
     And I click "edit" on row "home-page-slider" in grid
     And fill "Content Block Form" with:
       | Customer Group | All Customers |
@@ -84,7 +87,7 @@ Feature: Content Block
     Then I should see "Content block has been saved" flash message
     When I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
-    Then I should see "Best-Priced Medical Supplies"
+    Then I should see a "Homepage Slider" element
     When I signed in as NancyJSallee@example.org on the store frontend
     Then I should see "Test block"
 

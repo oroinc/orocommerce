@@ -15,6 +15,11 @@ oro.cms:
         slug_prototypes:
             label:              'URL Slug'
             singular_label:     'Slug Prototype'
+        create_url_slug:
+            label: 'Create a URL slug'
+            tooltip: > 
+                If you intend to use this landing page as a content variant in the web catalog, 
+                it is recommended not to generate a URL and instead use the URL generated in the web catalog to prevent duplication of URLs for the same page.
         form.choose:            'Choose a Landing Page...'
         content_variant_type.label: 'Landing Page'
         enabled.label:          'Enabled'
@@ -286,6 +291,9 @@ oro.cms:
     system_configuration:
         fields:
             landing_page_direct_url_prefix.label: 'Landing Page URL prefix'
+            home_page:
+                label: Homepage
+                tooltip: 'Choose the homepage from the landing pages.'
 
     privilege:
         category:

@@ -361,6 +361,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.cms_page, method: restrictQueryBuilder }
 
+    oro_seo.event_listener.restrict_sitemap_cms_page_by_url_slugs:
+        class: 'Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByUrlSlugsListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.cms_page, method: restrictQueryBuilder }
+
     oro_seo.sitemap.provider.restrict_cms_page_by_web_catalog_provider:
         class: Oro\Bundle\SEOBundle\Sitemap\Provider\CmsPageSitemapRestrictionProvider
         public: false

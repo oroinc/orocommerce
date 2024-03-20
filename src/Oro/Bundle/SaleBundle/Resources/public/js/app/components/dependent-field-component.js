@@ -26,11 +26,15 @@ define(function(require) {
      *  "pre_configured" or ("allow_user" and "custom") - in case if multiple choices are allowed.
      *  4) data-show-if="checked" - dependent element will be shown if dependee is checked - in case of checkbox.
      *  Use "unchecked" for the opposite condition.
+     *  5) data-disable-element="input" - element in the dependent element will be disabled if the dependee is hiding
      *
      *  - "data-hide-if" attribute is optional and should be filled with condition which represents the list of
      *  value(s) of dependee, which are required to hide the dependent element. This option has higher priority
      *  than showing option, so if both "data-show-if" and "data-hide-if" are true, than the dependent element will be
      *  hidden.
+     *
+     *  - "data-disable-element" - attribute is optional and should be used if need to additionally to disable
+     *  some form elements in dependee element.
      */
     const DependentFieldComponent = BaseComponent.extend({
         /**
@@ -128,6 +132,13 @@ define(function(require) {
         },
 
         /**
+         * @returns {string}
+         */
+        getDisableElement: function() {
+            return this.$el.data('disableElement');
+        },
+
+        /**
          * Evaluate condition
          *
          * @returns {boolean}
@@ -200,8 +211,23 @@ define(function(require) {
         updateDependentFields: function() {
             if (this.evaluateCondition()) {
                 this.$el.closest(this.options.selectors.rowContainer).show();
+                this.setDisableState(false);
             } else {
                 this.$el.closest(this.options.selectors.rowContainer).hide();
+                this.setDisableState(true);
+            }
+        },
+
+        /**
+         * @param {boolean} flag
+         */
+        setDisableState: function(flag) {
+            const disableElementSelector = this.getDisableElement();
+            if (disableElementSelector) {
+                this.$el
+                    .closest(this.options.selectors.rowContainer)
+                    .find(disableElementSelector)
+                    .prop('disabled', flag);
             }
         }
     });

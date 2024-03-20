@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Oro\Bundle\CMSBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\CMSBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -25,7 +25,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 /**
  * Adds content block with Image Slider content widget in it.
  */
-class LoadImageSlider extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
+class LoadImageSliderDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     use ContainerAwareTrait;
     use UserUtilityTrait;
@@ -116,6 +116,11 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
     public function load(ObjectManager $manager): void
     {
         $user = $this->getFirstUser($manager);
+
+        $contentWidget = $this->getContentWidgetByName($manager, static::HOME_PAGE_SLIDER_ALIAS);
+        if ($contentWidget instanceof ContentWidget) {
+            return;
+        }
 
         $widget = new ContentWidget();
         $widget->setWidgetType(ImageSliderContentWidgetType::getName());
@@ -218,7 +223,9 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
     {
         $locator = $this->container->get('file_locator');
 
-        $imagePath = $locator->locate(sprintf('@OroCMSBundle/Migrations/Data/ORM/data/promo-slider/%s.png', $filename));
+        $imagePath = $locator->locate(
+            sprintf('@OroCMSBundle/Migrations/Data/Demo/ORM/data/promo-slider/%s.png', $filename)
+        );
         if (is_array($imagePath)) {
             $imagePath = current($imagePath);
         }
@@ -244,5 +251,18 @@ class LoadImageSlider extends AbstractFixture implements DependentFixtureInterfa
         $manager->flush();
 
         return $image;
+    }
+
+    private function getContentWidgetByName(ObjectManager $manager, string $name): ?ContentWidget
+    {
+        $qb = $manager->getRepository(ContentWidget::class)->createQueryBuilder('cw');
+
+        return $qb
+            ->andWhere('cw.name = :name AND cw.organization = :organization')
+            ->setParameter('name', $name)
+            ->setParameter('organization', $this->getOrganization($manager))
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }
