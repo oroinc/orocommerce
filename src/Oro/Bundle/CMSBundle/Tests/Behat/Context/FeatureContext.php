@@ -4,6 +4,9 @@ namespace Oro\Bundle\CMSBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CMSBundle\Entity\ContentWidget;
+use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygCodeTypeBlockEditor;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
@@ -812,5 +815,137 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         } catch (ElementNotFoundException $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Example: When I update settings for "name" content widget:
+     *     | minimum_items | 3 |
+     *     | maximum_items | 6 |
+     *
+     * @When /^(?:|I )update settings for "(?P<name>(?:[^"]|\\")*)" content widget:$/
+     */
+    public function updateSettingsForContentWidget(string $name, TableNode $table): void
+    {
+        $contentWidget = $this->getDoctrine()->getRepository(ContentWidget::class)->findOneBy(['name' => $name]);
+        self::assertNotNull($contentWidget, sprintf('There is no content widget with "%s" name', $name));
+
+        $settings = $contentWidget->getSettings();
+        foreach ($table->getRows() as $row) {
+            $settings[$row[0]] = $row[1];
+        }
+        $contentWidget->setSettings($settings);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->flush();
+    }
+
+    /**
+     * Example: When I add Home Page Slider widget before content for "About" page
+     *
+     * @codingStandardsIgnoreStart
+     * @When /^(?:|I )add Home Page Slider (widget|content block) (before|after) content for "(?P<name>(?:[^"]|\\")*)" page$/
+     * @codingStandardsIgnoreEnd
+     */
+    public function addHomePageSliderForPage(string $type, string $position, string $pageName): void
+    {
+        $homePageSlider = <<<EOF
+<div 
+    data-title="Home Page Slider" 
+    class="content-block content-placeholder">
+    {{ content_block("home-page-slider") }}
+</div>
+EOF;
+
+        if ($type === 'widget') {
+            $homePageSlider = <<<EOF
+<div 
+    data-title="home-page-slider" 
+    data-type="image_slider" 
+    class="content-widget content-placeholder">
+    {{ widget("home-page-slider") }}
+</div>
+EOF;
+        }
+
+        $this->setContentForPage(
+            $homePageSlider,
+            $position,
+            $pageName
+        );
+    }
+
+    /**
+     * Example: When I add New Arrivals widget before content for "About" page
+     *
+     * @When /^(?:|I )add New Arrivals widget (before|after) content for "(?P<name>(?:[^"]|\\")*)" page$/
+     */
+    public function addNewArrivalsWidgetForPage(string $position, string $pageName): void
+    {
+        $newArrivalsWidget = <<<EOF
+<div 
+    data-title="New Arrivals" 
+    data-type="product_segment" 
+    class="content-widget content-placeholder">
+    {{ widget("new-arrivals") }}
+</div>
+EOF;
+
+        $this->setContentForPage(
+            $newArrivalsWidget,
+            $position,
+            $pageName
+        );
+    }
+
+    /**
+     * Example: When I add Featured Products widget before content for "About" page
+     *
+     * @When /^(?:|I )add Featured Products widget (before|after) content for "(?P<name>(?:[^"]|\\")*)" page$/
+     */
+    public function addFeaturedProductsWidgetForPage(string $position, string $pageName): void
+    {
+        $featuredProductsWidget = <<<EOF
+<div 
+    data-title="Featured Products" 
+    data-type="product_segment" 
+    class="content-widget content-placeholder">
+    {{ widget("featured-products") }}
+</div>
+EOF;
+
+        $this->setContentForPage(
+            $featuredProductsWidget,
+            $position,
+            $pageName
+        );
+    }
+
+    /**
+     * Example: When I set "Text" before content for "About" page
+     *
+     * @When /^(?:|I )set "(?P<text>(?:[^"]|\\")*)" (before|after) content for "(?P<name>(?:[^"]|\\")*)" page$/
+     */
+    public function setContentForPage(string $text, string $position, string $pageName): void
+    {
+        $page = $this->getDoctrine()->getRepository(Page::class)->findOneByTitle($pageName, null, false);
+        self::assertNotNull($page, sprintf('There is no page with "%s" title', $pageName));
+
+        $text = stripcslashes($text);
+        $content = trim(sprintf(
+            '%s %s %s',
+            $position === 'before' ? $text : '',
+            $page->getContent(),
+            $position === 'after' ? $text : '',
+        ));
+
+        $page->setContent($content);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->flush();
+    }
+
+    private function getDoctrine(): ManagerRegistry
+    {
+        return $this->getAppContainer()->get('doctrine');
     }
 }

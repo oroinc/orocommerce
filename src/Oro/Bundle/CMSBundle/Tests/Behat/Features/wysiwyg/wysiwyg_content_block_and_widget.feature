@@ -1,4 +1,6 @@
 @regression
+@fixture-OroCMSBundle:home_page_slider_content_widget_fixture.yml
+
 Feature: WYSIWYG content block and widget
 
   Scenario: Create landing page

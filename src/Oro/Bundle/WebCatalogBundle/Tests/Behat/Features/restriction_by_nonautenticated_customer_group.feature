@@ -19,15 +19,15 @@ Feature: Restriction by non-autenticated customer group
       | System Page Route                | Oro Contactus Bridge Contact Us Page (Contact Us) |
     And I click "Add System Page"
     And I fill "Content Node Form" with:
-      | Titles                           | Welcome Node                            |
-      | System Page Route                | Oro Frontend Root (Welcome - Home page) |
-      | First System Page Customer Group | Non-Authenticated Visitors              |
+      | Titles                           | Welcome Node                                 |
+      | System Page Route                | Oro Product Frontend Product Index (%title%) |
+      | First System Page Customer Group | Non-Authenticated Visitors                   |
     When I save form
     Then I should see "Content Node has been saved" flash message
 
   Scenario: Non authenticated user sees home page
     When I am on homepage
-    Then I should see "FEATURED CATEGORIES"
+    Then I should see a "ProductFrontendGrid" element
 
   Scenario: Authenticated user sees contact us page
     When I login as AmandaRCole@example.org buyer

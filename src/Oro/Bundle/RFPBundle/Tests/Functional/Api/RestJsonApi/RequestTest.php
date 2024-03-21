@@ -11,9 +11,6 @@ use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 class RequestTest extends RestJsonApiTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();

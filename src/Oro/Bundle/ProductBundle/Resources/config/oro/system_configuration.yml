@@ -849,6 +849,7 @@ system_configuration:
                                         children:
                                             - oro_product.microdata_without_prices_disabled
                                             - oro_product.schema_org_description_field
+
         organization_configuration:
             commerce:
                 children:

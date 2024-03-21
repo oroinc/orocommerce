@@ -1,6 +1,5 @@
 promotional-content:
     title: 'Promotional Content'
-    useForSystemConfig: true
     variant:
         default: true
         content: '<a title="Fast &amp; Free Shipping for orders over $45" href="#" class="page-header__promotional-block">Fast &amp; Free Shipping for orders over $45</a>'

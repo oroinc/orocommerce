@@ -11,6 +11,7 @@ use Oro\Bundle\DigitalAssetBundle\Entity\DigitalAsset;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -26,6 +27,8 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
 {
     use ContainerAwareTrait;
     use UserUtilityTrait;
+
+    protected array $imagesMap = [];
 
     /**
      * {@inheritDoc}
@@ -49,9 +52,11 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
         $loadedPages = [];
         foreach ((array)$this->getFilePaths() as $filePath) {
             $pages = $this->loadFromFile($manager, $filePath, $organization);
-            foreach ($pages as $page) {
+            foreach ($pages as $reference => $page) {
                 $manager->persist($page);
                 $loadedPages[] = $page;
+
+                $this->setReference($reference, $page);
             }
         }
         $manager->flush();
@@ -83,15 +88,35 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
     {
         $rows = Yaml::parse(file_get_contents($filePath));
         $pages = [];
+        $fileManager = $this->container->get('oro_attachment.file_manager');
         foreach ($rows as $reference => $row) {
-            $page = new Page();
-            $page->addTitle((new LocalizedFallbackValue())->setString($row['title']));
-            $page->addSlugPrototype((new LocalizedFallbackValue())->setString($row['slug']));
-            $page->setContent($row['content']);
+            $isPageShouldBeUpdated = $row['update'] ?? false;
+            if ($isPageShouldBeUpdated) {
+                if ($row['title'] ?? null) {
+                    $page = $this->getPageByTitle($manager, $row['title']);
+                } else {
+                    throw new \InvalidArgumentException(
+                        sprintf(
+                            'The "title" option is required when "update" flag is set. Page reference: %s.',
+                            $reference
+                        )
+                    );
+                }
+            } else {
+                $page = new Page();
+                $page->addTitle((new LocalizedFallbackValue())->setString($row['title']));
+                if ($row['slug'] ?? '') {
+                    $page->addSlugPrototype((new LocalizedFallbackValue())->setString($row['slug']));
+                }
+                $page->setOrganization($organization);
+            }
+
+            $page->setContent(
+                $this->getPageContent($manager, $fileManager, $reference, $row['content'] ?? '')
+            );
             if ($row['contentStyle'] ?? '') {
                 $page->setContentStyle($row['contentStyle']);
             }
-            $page->setOrganization($organization);
 
             $pages[$reference] = $page;
         }
@@ -131,5 +156,50 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
         $manager->persist($digitalAsset);
 
         return $digitalAsset;
+    }
+
+    protected function getPageContent(
+        ObjectManager $manager,
+        $fileManager,
+        string $pageReference,
+        string $content
+    ): string {
+        if (!isset($this->imagesMap[$pageReference])) {
+            return $content;
+        }
+
+        foreach ($this->imagesMap[$pageReference] as $source => $placeholder) {
+            $parts = explode('/', $source);
+
+            $digitalAsset = $this->createDigitalAsset(
+                $manager,
+                $fileManager,
+                $source,
+                sprintf('%s_%s', $pageReference, array_pop($parts))
+            );
+
+            $manager->flush();
+
+            $content = str_replace(
+                $placeholder,
+                sprintf("{{ wysiwyg_image('%d','%s') }}", $digitalAsset->getId(), UUIDGenerator::v4()),
+                $content
+            );
+        }
+
+        return $content;
+    }
+
+    protected function getPageByTitle(ObjectManager $manager, string $title): ?Page
+    {
+        $qb = $manager->getRepository(Page::class)->createQueryBuilder('page');
+
+        return $qb
+            ->innerJoin('page.titles', 'title')
+            ->andWhere('title.string = :title')
+            ->setParameter('title', $title)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

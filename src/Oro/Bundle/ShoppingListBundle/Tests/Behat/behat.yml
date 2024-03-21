@@ -804,5 +804,7 @@ oro_behat_extension:
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\ScrollspyContext
         - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\PricingBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\WysiwygContext
+        - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

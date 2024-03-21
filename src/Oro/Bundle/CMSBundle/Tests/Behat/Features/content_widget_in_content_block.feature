@@ -1,4 +1,5 @@
 @ticket-BB-17552
+@fixture-OroCMSBundle:home_page_slider_content_widget_fixture.yml
 
 Feature: Content Widget in Content Block
   In order to display content widgets on store front
@@ -17,7 +18,7 @@ Feature: Content Widget in Content Block
   Scenario: Add content widget to content block
     Given I proceed as the Admin
     And I login as administrator
-
+    And I add Home Page Slider content block before content for "Homepage" page
     When go to Marketing/ Content Widgets
     And click "Create Content Widget"
     And fill "Content Widget Form" with:

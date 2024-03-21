@@ -166,6 +166,7 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
                 ->findOneByName($params['title']);
             $accessor->setValue($variant, 'product_collection_segment', $segment);
         }
+        $variant->setDoNotRenderTitle($params['doNotRenderTitle'] ?? false);
 
         return $variant;
     }

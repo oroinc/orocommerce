@@ -27,10 +27,11 @@ Feature: Consent are stored correctly even if consent content node is not a part
     When I click "Save and Close"
     Then I should see "Web Catalog has been saved" flash message
     And I click "Edit Content Tree"
-    And I click "Add System Page"
+    And I click on "Show Variants Dropdown"
+    And I click "Add Landing Page"
     And I fill "Content Node Form" with:
-      | Titles            | Home page                               |
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
+      | Titles       | Home page |
+      | Landing Page | Homepage  |
     When I save form
     Then I click "Create Content Node"
     And I click on "Show Variants Dropdown"

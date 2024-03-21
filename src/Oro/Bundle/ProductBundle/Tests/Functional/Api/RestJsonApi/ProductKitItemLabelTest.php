@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
-use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductKitItemLabelTest extends RestJsonApiTestCase
@@ -12,8 +11,7 @@ class ProductKitItemLabelTest extends RestJsonApiTestCase
     {
         parent::setUp();
         $this->loadFixtures([
-            LoadAdminCustomerUserData::class,
-            '@OroProductBundle/Tests/Functional/Api/DataFixtures/product.yml',
+            '@OroProductBundle/Tests/Functional/Api/DataFixtures/product.yml'
         ]);
     }
 

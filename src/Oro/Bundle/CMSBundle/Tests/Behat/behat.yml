@@ -401,6 +401,9 @@ oro_behat_extension:
                         type: 'xpath'
                         locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[@type="checkbox"]'
 
+        URL Slug Form Field:
+            selector: 'input[name="oro_cms_page[slugPrototypesWithRedirect][slugPrototypes][values][default]"]'
+
         Tabbed Content Widget Layout Select:
             selector: 'select[name="oro_cms_content_widget[layout]"]'
 
@@ -633,12 +636,24 @@ oro_behat_extension:
 
         ClassInputPanel:
             selector: '#gjs-clm-new'
+
+        Create A URL Slug:
+            selector:
+                locator: '//input[@name="oro_cms_page[createUrlSlug]"]'
+                type: xpath
+
+        Homepage:
+            class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+            selector:
+                type: xpath
+                locator: '//input[@name="routing[oro_cms___home_page][value]"]'
+
     suites:
         OroCMSBundle:
             contexts:
                 - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
                 - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
-                - Oro\Bundle\FormBundle\Tests\Behat\Context\WysiwygContext
+                - Oro\Bundle\DigitalAssetBundle\Tests\Behat\Context\DigitalAssetWysiwygContext
                 - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
                 - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
                 - Oro\Bundle\CMSBundle\Tests\Behat\Context\ImportExportFeatureContext

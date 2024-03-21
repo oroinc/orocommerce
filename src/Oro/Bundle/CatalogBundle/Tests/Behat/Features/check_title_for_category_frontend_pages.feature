@@ -33,11 +33,11 @@ Feature: Check title for category frontend pages
     Given I go to Products/Master Catalog
     And I click "Lighting Products"
     And I fill "Category Form" with:
-      | Long Description | Long description: <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/> |
+      | Long Description | Long description: <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(4, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/> |
     And press "Zulu" in "Long Description" section
     And I fill "Category Form" with:
       | Long Description Localization 2 fallback selector | Custom                                                                                                                      |
-      | Long Description Localization 2                   | Zulu description: <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, '4da44a71-1ffb-4bf4-bf4a-6d0d6c1781a7') }}\"/> |
+      | Long Description Localization 2                   | Zulu description: <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(4, '4da44a71-1ffb-4bf4-bf4a-6d0d6c1781a7') }}\"/> |
     When I click "Save"
     Then I should see "Category has been saved" flash message
 
@@ -55,7 +55,7 @@ Feature: Check title for category frontend pages
     And I go to Products/Master Catalog
     And I click "Lighting Products"
     And I fill "Category Form" with:
-      | Long Description | Long description: <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(13, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><img alt=\"cat2_wysiwyg_image\" src=\"{{ wysiwyg_image(14, 'c840eec3-4b10-4682-b5cd-4d51fe008b6f') }}\"/> |
+      | Long Description | Long description: <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(4, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><img alt=\"cat2_wysiwyg_image\" src=\"{{ wysiwyg_image(4, 'c840eec3-4b10-4682-b5cd-4d51fe008b6f') }}\"/> |
     When I click "Save"
     Then I should see "Category has been saved" flash message
 

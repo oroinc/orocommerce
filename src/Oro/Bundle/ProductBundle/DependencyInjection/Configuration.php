@@ -50,10 +50,12 @@ class Configuration implements ConfigurationInterface
     const DEFAULT_CRON_SCHEDULE = '0 * * * *';
     const PRODUCT_PROMOTION_SHOW_ON_VIEW = 'product_promotion_show_on_product_view';
     const PRODUCT_COLLECTION_MASS_ACTION_LIMITATION = 'product_collections_mass_action_limitation';
+
     const NEW_ARRIVALS_PRODUCT_SEGMENT_ID = 'new_arrivals_products_segment_id';
     const NEW_ARRIVALS_MAX_ITEMS = 'new_arrivals_max_items';
     const NEW_ARRIVALS_MIN_ITEMS = 'new_arrivals_min_items';
     const NEW_ARRIVALS_USE_SLIDER_ON_MOBILE = 'new_arrivals_use_slider_on_mobile';
+
     const IMAGE_PREVIEW_ON_PRODUCT_LISTING_ENABLED = 'image_preview_on_product_listing_enabled';
     const MATRIX_FORM_ON_PRODUCT_VIEW = 'matrix_form_on_product_view';
     const MATRIX_FORM_ON_PRODUCT_LISTING = 'matrix_form_on_product_listing';

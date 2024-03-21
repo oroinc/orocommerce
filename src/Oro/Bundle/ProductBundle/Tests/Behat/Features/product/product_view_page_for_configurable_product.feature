@@ -13,10 +13,14 @@ Feature: Product view page for configurable product
   As an Admin
   I need to be able to add configurable products to shopping list from their view page
 
-  Scenario: Create sessions
+  Scenario: Feature background
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
+
+    And I add Featured Products widget after content for "Homepage" page
+    And I update settings for "featured-products" content widget:
+      | minimum_items | 1 |
 
   Scenario: Prepare first product attribute
     Given I proceed as the Admin

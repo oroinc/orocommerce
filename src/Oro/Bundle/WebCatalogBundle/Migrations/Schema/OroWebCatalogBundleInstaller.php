@@ -33,7 +33,7 @@ class OroWebCatalogBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -93,6 +93,7 @@ class OroWebCatalogBundleInstaller implements
         $table->addColumn('type', 'string', ['length' => 255]);
         $table->addColumn('system_page_route', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('override_variant_configuration', 'boolean', ['default' => false]);
+        $table->addColumn('do_not_render_title', 'boolean', ['default' => false]);
         $table->addColumn('is_default', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['node_id']);

@@ -1168,22 +1168,8 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Product Segment Default: 'product_promotions[oro_product___new_arrivals_products_segment_id][use_parent_scope_value]'
-          Product Segment: 'product_promotions[oro_product___new_arrivals_products_segment_id][value]'
-          Maximum Items Default: 'product_promotions[oro_product___new_arrivals_max_items][use_parent_scope_value]'
-          Maximum Items: 'product_promotions[oro_product___new_arrivals_max_items][value]'
-          Minimum Items Default: 'product_promotions[oro_product___new_arrivals_min_items][use_parent_scope_value]'
-          Minimum Items: 'product_promotions[oro_product___new_arrivals_min_items][value]'
           Show On Product View Default: 'product_promotions[oro_product___product_promotion_show_on_product_view][use_parent_scope_value]'
           Show On Product View: 'product_promotions[oro_product___product_promotion_show_on_product_view][value]'
-
-    Featured Products Form:
-      selector: 'form[name="featured_products"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-      options:
-        mapping:
-          Product Segment Default: 'featured_products[oro_product___featured_products_segment_id][use_parent_scope_value]'
-          Product Segment: 'featured_products[oro_product___featured_products_segment_id][value]'
 
     Product Images Form:
       selector: 'form[name="product_images"]'

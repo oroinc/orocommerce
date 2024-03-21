@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
@@ -13,6 +12,7 @@ use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -59,14 +59,12 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $this->client->useHashNavigation(true);
         self::getContainer()->get('oro_config.global')
             ->set('oro_pricing.price_strategy', MergePricesCombiningStrategy::NAME);
-        $this->loadFixtures(
-            [
-                LoadWebsiteData::class,
-                LoadCustomers::class,
-                LoadGroups::class,
-                LoadPriceLists::class
-            ]
-        );
+        $this->loadFixtures([
+            LoadWebsite::class,
+            LoadCustomers::class,
+            LoadGroups::class,
+            LoadPriceLists::class
+        ]);
         $this->formExtensionPath = sprintf('%s[priceListsByWebsites]', $this->getMainFormName());
     }
 
@@ -132,7 +130,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         return [
             [
                 'submittedData' => [
-                    LoadWebsiteData::DEFAULT_WEBSITE => [
+                    LoadWebsite::WEBSITE => [
                         'fallback' => PriceListCustomerFallback::ACCOUNT_GROUP,
                         'priceLists' => [
                             ['priceList' => 'price_list_1', '_position' => 3, 'mergeAllowed' => false],
@@ -143,7 +141,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                 ],
 
                 'expectedData' => [
-                    LoadWebsiteData::DEFAULT_WEBSITE => [
+                    LoadWebsite::WEBSITE => [
                         'fallback' => PriceListCustomerFallback::ACCOUNT_GROUP,
                         'priceLists' => [
                             ['priceList' => 'price_list_1', '_position' => 3, 'mergeAllowed' => false],
@@ -219,7 +217,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         //Test remove one price list
         $path = sprintf(
             '[%s][priceListCollection][1]',
-            $this->getWebsite(LoadWebsiteData::DEFAULT_WEBSITE)->getId()
+            $this->getWebsite(LoadWebsite::WEBSITE)->getId()
         );
         $form->remove($this->formExtensionPath . $path);
         $this->client->submit($form);
@@ -235,7 +233,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
      */
     protected function checkPriceListRelationExist(array $priceListsRelations, $priceListReference)
     {
-        $website = $this->getWebsite(LoadWebsiteData::DEFAULT_WEBSITE);
+        $website = $this->getWebsite(LoadWebsite::WEBSITE);
 
         $priceList = $this->getReference($priceListReference);
         foreach ($priceListsRelations as $priceListRelation) {
@@ -254,7 +252,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $form = $this->getUpdateForm();
         $formValues = $form->getValues();
         /** @var Website $website */
-        $website = $this->getWebsite(LoadWebsiteData::DEFAULT_WEBSITE);
+        $website = $this->getWebsite(LoadWebsite::WEBSITE);
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
         $collectionElementPath1 = sprintf(

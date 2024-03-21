@@ -1,24 +1,40 @@
 layout:
     actions:
+        - '@setOption':
+              id: title
+              optionName: value
+              optionValue: '=data["web_catalog_title"].getTitle(defaultValue, data["page"])'
         - '@add':
-            id: meta_title
-            parentId: head
-            blockType: meta
-            options:
-                name: 'title'
-                # quotes to cover bug BAP-22015, please do not change
-                content: "=data['seo'].getMetaInformationFromContentNode('metaTitles')"
+              id: meta_title
+              parentId: head
+              blockType: meta
+              options:
+                  name: 'title'
+                  content: '=data["seo"].getMetaInformation(data["page"], "metaTitles")'
         - '@add':
-            id: meta_description
-            parentId: head
-            blockType: meta
-            options:
-                name: 'description'
-                content: '=data["seo"].getMetaInformationFromContentNode("metaDescriptions")'
+              id: meta_description
+              parentId: head
+              blockType: meta
+              options:
+                  name: 'description'
+                  content: '=data["seo"].getMetaInformation(data["page"], "metaDescriptions")'
         - '@add':
-            id: meta_keywords
-            parentId: head
-            blockType: meta
-            options:
-                name: 'keywords'
-                content: '=data["seo"].getMetaInformationFromContentNode("metaKeywords")'
+              id: meta_keywords
+              parentId: head
+              blockType: meta
+              options:
+                  name: 'keywords'
+                  content: '=data["seo"].getMetaInformation(data["page"], "metaKeywords")'
+        - '@add':
+              id: canonical
+              parentId: head
+              blockType: external_resource
+              options:
+                  rel: 'canonical'
+                  href: '=data["canonical"].getHomePageUrl()'
+        - '@add':
+              id: entity_localized_urls
+              parentId: head
+              blockType: seo_localized_links_container
+              options:
+                  linkItems: '=data["seo_localized_links"].getAlternates(data["web_catalog_content_variant"].getFromRequest() ? data["web_catalog_content_variant"].getFromRequest() : data["page"])'

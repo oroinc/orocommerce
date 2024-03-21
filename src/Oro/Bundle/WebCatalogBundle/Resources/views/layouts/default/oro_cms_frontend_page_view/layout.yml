@@ -4,3 +4,8 @@ layout:
             id: page_title
             optionName: value
             optionValue: '=data["web_catalog_title"].getNodeTitle(defaultValue)'
+
+        - '@setOption':
+            id: page_title
+            optionName: visible
+            optionValue: '=data["web_catalog_title"].isRenderTitle()'

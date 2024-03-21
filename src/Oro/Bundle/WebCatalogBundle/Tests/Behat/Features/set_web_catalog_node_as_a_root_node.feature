@@ -25,9 +25,9 @@ Feature: Set web catalog node as a root node
       | Title      | Test |
       | Slug       | test |
     And I click on "Show Variants Dropdown"
-    And I click "Add System Page"
+    And I click "Add Landing Page"
     And I fill "Content Node Form" with:
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
+      | Landing Page | Homepage  |
     When I save form
     Then I should see "Content Node has been saved" flash message
 
@@ -79,9 +79,9 @@ Feature: Set web catalog node as a root node
       | Title | Headlamps |
       | Slug  | headlamps |
     And I click on "Show Variants Dropdown"
-    And I click "Add System Page"
+    And I click "Add Landing Page"
     And I fill "Content Node Form" with:
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
+      | Landing Page | Homepage  |
     When I save form
     Then I should see "Content Node has been saved" flash message
     When I drag and drop "Headlamps" before "By Brand"

@@ -72,6 +72,17 @@
         </div>
     {% endset %}
 
+    {% set slugPrototypesWithRedirect %}
+        <div class="control-group"
+             data-page-component-module="orosale/js/app/components/dependent-field-component"
+             data-depend-on="oro_cms_page_create_url_slug"
+             data-disable-element="input"
+             data-show-if="checked"
+        >
+            {{ form_row(form.slugPrototypesWithRedirect) }}
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'oro.cms.sections.general'|trans,
@@ -80,7 +91,8 @@
                 'title': '',
                 'data': [
                     form_row(form.titles),
-                    form_row(form.slugPrototypesWithRedirect)
+                    form_row(form.createUrlSlug),
+                    slugPrototypesWithRedirect
                 ]
             }]
         },

@@ -11,6 +11,8 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     string: 'New Content Node'
   page_label:
     string: 'New Page Label'
+  content_block_title:
+    string: 'Content Block Title'
 
 Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
   web_catalog_entity:
@@ -240,3 +242,20 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
     methodConfigs: ['@shipping_method_config_entity']
     currency: 'USD'
     organization: '@organization'
+
+Oro\Bundle\CMSBundle\Entity\TextContentVariant:
+  text_content_variant:
+    contentBlock: '@content_block'
+    content: >
+      <div data-title="content-block" data-type="content_block" class="content-widget content-placeholder"></div>
+
+Oro\Bundle\CMSBundle\Entity\ContentBlock:
+  content_block:
+    organization: '@organization'
+    owner: '@business_unit'
+    alias: 'content-block'
+    titles: ['@content_block_title']
+    __calls:
+      - addScope: ['@default_scope']
+      - addContentVariant: ['@text_content_variant']
+    enabled: true

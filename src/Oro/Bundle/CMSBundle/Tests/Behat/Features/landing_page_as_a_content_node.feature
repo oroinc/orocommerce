@@ -44,12 +44,11 @@ Feature: Landing Page as a Content Node
     When I click "Test page"
     Then Page title equals to "Test page"
 
-  Scenario: Delete Landing Page
+  Scenario: Forbid delete action for the Landing Page that is used as a content node
     Given I proceed as the Admin
     And I go to Marketing/ Landing Pages
-    When I click delete Test page in grid
-    And I confirm deletion
-    Then I should see "Landing Page deleted" flash message
+    And I should not see following actions for Test page in grid:
+      | Delete |
 
   Scenario: Check main menu
     Given I proceed as the Buyer

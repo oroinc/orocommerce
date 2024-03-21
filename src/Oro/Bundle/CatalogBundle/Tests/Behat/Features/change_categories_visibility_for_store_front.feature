@@ -95,5 +95,6 @@ Feature: Change categories visibility for store front
     When I am on the homepage
     Then I should see "Accessories" in main menu
     And I should see "Accessories/ Accessories Subcategory" in main menu
+    When I click on "Main Menu Button"
     And I should see "Cabinets"
     And I should see "Carts"

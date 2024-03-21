@@ -535,3 +535,36 @@ services:
             - '@oro_organization.organization_restriction_provider'
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\CMSBundle\Entity\ContentBlock, frontend: true }
+
+    oro_cms.event_listener.system_config.home_page:
+        class: Oro\Bundle\ConfigBundle\EventListener\EntitySystemConfigListener
+        arguments:
+            - '@doctrine'
+            - 'Oro\Bundle\CMSBundle\Entity\Page'
+            - 'oro_cms.home_page'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+
+    oro_cms.event_listener.home_page_config_form_options:
+        class: Oro\Bundle\CMSBundle\EventListener\HomePageSystemConfigFormOptionsListener
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_options_set, method: onFormOptions }
+
+    oro_cms.acl.voter.landing_page_delete:
+        class: Oro\Bundle\CMSBundle\Acl\Voter\LandingPageDeleteVoter
+        calls:
+            - [ setClassName, [ 'Oro\Bundle\CMSBundle\Entity\Page' ] ]
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: security.voter }
+
+    Oro\Bundle\CMSBundle\Provider\HomeLandingPageProvider:
+        alias: oro_cms.provider.home_landing_page
+
+    oro_cms.provider.home_landing_page:
+        class: Oro\Bundle\CMSBundle\Provider\HomeLandingPageProvider
+        arguments:
+            - '@oro_config.manager'
+            - '@doctrine'

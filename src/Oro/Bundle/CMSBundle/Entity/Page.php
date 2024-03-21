@@ -212,6 +212,18 @@ class Page implements
         return $this;
     }
 
+    public function clearSlugs(): void
+    {
+        $this->resetSlugs();
+        $this->resetSlugPrototypes();
+        $this->setSlugPrototypesWithRedirect(
+            new SlugPrototypesWithRedirect(
+                $this->slugPrototypes,
+                $this->getSlugPrototypesWithRedirect()?->getCreateRedirect()
+            )
+        );
+    }
+
     /**
      * @return string
      */

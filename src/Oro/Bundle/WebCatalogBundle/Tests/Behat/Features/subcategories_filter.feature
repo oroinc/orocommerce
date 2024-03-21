@@ -27,10 +27,10 @@ Feature: Sub-Categories filter
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
 
     And I click on "Show Variants Dropdown"
-    And I click "Add System Page"
+    And I click "Add Landing Page"
     And I fill "Content Node Form" with:
-      | Titles            | Root Node                               |
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
+      | Titles       | Root Node |
+      | Landing Page | Homepage  |
     And I save form
 
     And I click "Create Content Node"

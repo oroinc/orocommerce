@@ -3,11 +3,13 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
+use Oro\Bundle\CMSBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CMSBundle\DependencyInjection\OroCMSExtension;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroCMSExtensionTest extends \PHPUnit\Framework\TestCase
+class OroCMSExtensionTest extends TestCase
 {
     public function testLoad(): void
     {
@@ -23,7 +25,11 @@ class OroCMSExtensionTest extends \PHPUnit\Framework\TestCase
                 [
                     'settings' => [
                         'resolved' => true,
-                        'landing_page_direct_url_prefix' => ['value' => '', 'scope' => 'app']
+                        Configuration::DIRECT_URL_PREFIX => ['value' => '', 'scope' => 'app'],
+                        Configuration::HOME_PAGE => [
+                            'value' => null,
+                            'scope' => 'app'
+                        ]
                     ]
                 ]
             ],

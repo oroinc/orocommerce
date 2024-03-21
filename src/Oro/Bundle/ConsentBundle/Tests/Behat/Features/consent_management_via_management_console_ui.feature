@@ -201,27 +201,17 @@ Feature: Consent management via Management Console UI
     When I click "Agree"
     Then the "Without Landing Page" checkbox should be checked
 
-  Scenario: Delete Landing Page
+  Scenario: Try to delete Landing Page
     Given I proceed as the Admin
-    And I go to Marketing/ Landing Pages
-    When I click delete Page to remove in grid
-    And I confirm deletion
-    Then I should see "Landing Page deleted" flash message
-
-  Scenario: Check consents on registration page
-    Given I proceed as the User
-    When I click "Create An Account"
-    Then I should see "Some consents were changed. Please reload the page."
-    When I reload the page
-    Then the "Without Landing Page" checkbox should not be checked
-    And I should not see "Consent Link" in the "Optional Consent" element
+    When I go to Marketing/ Landing Pages
+    Then I should not see following actions for Page to remove in grid:
+      | Delete |
 
   Scenario: Disable unnecessary consent
-    Given I proceed as the Admin
-    And go to System/ Configuration
+    When go to System/ Configuration
     And follow "Commerce/Customer/Consents" on configuration sidebar
     And I remove "Without Landing Page" from Consent
-    When click "Save settings"
+    And click "Save settings"
     Then I should see "Configuration saved" flash message
 
   Scenario: Create an account on registration page
@@ -533,23 +523,17 @@ Feature: Consent management via Management Console UI
     And I click "Test Consent 2"
     And click "Agree"
     # Proceeding to management console
-    And I proceed as the Admin
+    When I proceed as the Admin
     And go to Marketing/ Landing Pages
-    When click delete "Test CMS Page" in grid
-    Then I should see "Are you sure you want to delete this Landing Page?"
-    When I click "Yes, Delete"
-    Then should see "Landing Page deleted" flash message
-    And I proceed as the User
-    When click "Create An Account"
-    Then I should see "Some consents were changed. Please reload the page."
+    Then I should not see following actions for Page to remove in grid:
+      | Delete |
 
   Scenario: Disable Test Consent 2 for Default Website
-    Given I proceed as the Admin
-    And I go to System/ Websites
+    When I go to System/ Websites
     And I click "Configuration" on row "Default" in grid
     And I follow "Commerce/Customer/Consents" on configuration sidebar
     And I remove "Test Consent 2" from Consent
-    When I click "Save settings"
+    And I click "Save settings"
     Then I should see "Configuration saved" flash message
 
   Scenario: Create customer group

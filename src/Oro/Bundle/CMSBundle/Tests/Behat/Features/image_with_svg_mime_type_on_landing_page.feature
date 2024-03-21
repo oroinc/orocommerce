@@ -1,10 +1,6 @@
 @behat-test-env
 @ticket-BB-21219
 
-#  IMPORTANT: the one of possible reasons for failure of this feature may be in identifiers of digital assets
-#  at the moment uploaded image tiger.svg has following identifier 57
-#  please make sure that they are still same
-
 Feature: Image with svg mime type on Landing page
   In order to see landing page info
   As a buyer
@@ -31,7 +27,7 @@ Feature: Image with svg mime type on Landing page
     And click "Create Landing Page"
     And I fill in Landing Page Titles field with "Other page"
     Then I should see URL Slug field filled with "other-page"
-    When I fill in WYSIWYG "CMS Page Content" with "<picture><source srcset=\"{{ wysiwyg_image('57','86a7fe19-9de6-48f5-aa87-32f9eac7c62a','wysiwyg_original','webp') }}\" type=\"image/webp\"><img src=\"{{ wysiwyg_image('57','ba1e8f90-3300-4d11-996b-334851663661','wysiwyg_original','') }}\" alt=\"example1_svg_wysiwyg_image\"></picture>"
+    When I fill in WYSIWYG "CMS Page Content" with "tiger.svg" image in "<picture><source srcset=\"{{ wysiwyg_image('tiger.svg','86a7fe19-9de6-48f5-aa87-32f9eac7c62a','wysiwyg_original','webp') }}\" type=\"image/webp\"><img src=\"{{ wysiwyg_image('57','ba1e8f90-3300-4d11-996b-334851663661','wysiwyg_original','') }}\" alt=\"example1_svg_wysiwyg_image\"></picture>"
     And I save and close form
     Then I should see "Page has been saved" flash message
     And image "Example1 svg wysiwyg image" is loaded

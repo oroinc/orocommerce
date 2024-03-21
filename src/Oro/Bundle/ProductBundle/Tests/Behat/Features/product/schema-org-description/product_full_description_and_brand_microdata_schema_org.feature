@@ -16,6 +16,11 @@ Feature: Product full description and brand microdata schema org
     And I disable configuration options:
       | oro_product.microdata_without_prices_disabled |
     And I set configuration property "oro_product.schema_org_description_field" to "oro_product_full_description"
+
+    And I add Featured Products widget after content for "Homepage" page
+    And I update settings for "featured-products" content widget:
+      | minimum_items | 1 |
+
     And I proceed as the Admin
     And I login as administrator
 

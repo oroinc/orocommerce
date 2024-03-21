@@ -13,6 +13,8 @@ Feature: Category Image Placeholder in system configuration
       | Admin | first_session  |
       | Buyer | second_session |
 
+  @skip
+  # Unskip and apply after adding Featured Categories for the new theme
   Scenario: Check no image on the home page
     Given I proceed as the Buyer
     When I signed in as AmandaRCole@example.org on the store frontend
@@ -36,6 +38,8 @@ Feature: Category Image Placeholder in system configuration
     And save form
     Then should see "Configuration saved" flash message
 
+  @skip
+  # Unskip and apply after adding Featured Categories for the new theme
   Scenario: Check the product image placeholder on the product grid
     Given I proceed as the Buyer
     When reload the page

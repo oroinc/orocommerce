@@ -24,12 +24,33 @@ The current file describes significant changes in the code that may affect the u
 * Added new tax calculation logic for product kits. Now the total tax for the product kit is the sum of the taxes for the kit and its items.
 * Added `\Oro\Bundle\TaxBundle\Resolver\KitAdjustResolver` resolver to adjust tax amount for product kits.
 
+#### CMSBundle
+* Added the `Oro\Bundle\CMSBundle\Acl\Voter\LandingPageDeleteVoter` voter that prevents deletion of a landing page used as a homepage or a content variant in any content node of any web catalog.
+* Added the `oro_cms.home_page` option to the system configuration.
+* Added a new `doNotRenderTitle` field to `Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType`.
+* Added a new `createUrlSlug` field to `Oro\Bundle\CMSBundle\Form\Type\PageType`.
+* Added a landing page "Homepage".
+
+### SEOBundle
+* Added `Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByUrlSlugsListener` that excludes cms pages without URL slugs from the sitemap.
+
+### WebCatalogBundle
+* Added a new field `doNotRenderTitle` to `Oro\Bundle\WebCatalogBundle\Entity\ContentVariant`.
+
 ### Changed
 
 #### PromotionBundle
 * `\Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderLineItemAfterDiscountsMapper` now takes into account product kits and proportionally distributes its discounts subtotal among the product kit subtotal when the Calculate Taxes After Promotions option is enabled.
 
+#### SaleBundle
+* `orosale/js/app/components/dependent-field-component` js module supports `data-disable-element` element that disables form elements in dependee element.
+
+### FrontendBundle
+* The action `oro_frontend_root` renders home page landing page from the System Configuration.
+
 ### Removed
+
+* Removed layout templates related to the old homepage functionality.
 
 #### ProductBundle
 * "list", "short", "two-columns" product templates were removed.
@@ -63,14 +84,16 @@ The current file describes significant changes in the code that may affect the u
 
 #### CheckoutBundle
 * Added the ability to start and finish checkout with product kit line items:
-  * Added `\Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem` entity class, added `\Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem::$kitItemLineItems` association and `\Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem::$checksum`.
+  * Added `\Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem` entity class;
+  * added `\Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem::$kitItemLineItems` association and `\Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem::$checksum`.
 * Added `\Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener`, `\Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener`, `\Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutBeforeOrderCreateEventListener` checkout event listeners as the main points to control whether it is valid to start or finish a checkout instead of the old listeners (see the details in section "Removed").
 * Added thorough validation constraints for `\Oro\Bundle\CheckoutBundle\Entity\Checkout`, `\Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem`, `\Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem` that are checked in the listeners mentioned above.
 * Added constraint validator decorator `\Oro\Bundle\CheckoutBundle\Validator\Constraints\CheckoutAwareValidatorDecorator` providing the ability to restrict the decorated validator of a checkout or checkout line item by certain checkout steps.
 
 #### OrderBundle
 * Added the ability to contain product kit line items for `\Oro\Bundle\OrderBundle\Entity\Order` entity class:
-  * Added `\Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem` entity class, added `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$kitItemLineItems` association and `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$checksum`.
+  * Added `\Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem` entity class;
+  * added `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$kitItemLineItems` association and `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$checksum`.
 * Added `\Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem` to backoffice and storefront API.
 
 #### PricingBundle

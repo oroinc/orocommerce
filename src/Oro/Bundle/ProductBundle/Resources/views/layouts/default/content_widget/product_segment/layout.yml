@@ -15,7 +15,7 @@ layout:
         - '@setOption':
             id: products
             optionName: items_data.stickers
-            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["segment_products"].getProducts(data["product_segment"],data["minimum_items"],data["maximum_items"]))'
+            optionValue: '=data["contentWidgetName"] !== "new-arrivals" ? data["oro_product_stickers"].getStickersForProducts(data["segment_products"].getProducts(data["product_segment"],data["minimum_items"],data["maximum_items"])) : []'
         - '@appendOption':
             id: product
             optionName: attr.class

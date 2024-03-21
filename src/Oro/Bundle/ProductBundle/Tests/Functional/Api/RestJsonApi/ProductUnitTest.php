@@ -15,9 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductUnitTest extends RestJsonApiTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
