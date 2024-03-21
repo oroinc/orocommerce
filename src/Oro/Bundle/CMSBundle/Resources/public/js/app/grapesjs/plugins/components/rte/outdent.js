@@ -23,6 +23,14 @@ const decreaseOffset = rte => {
         block.style[offsetProp] = offset + 'px';
     } else {
         block.style.removeProperty(offsetProp);
+
+        if (block.id) {
+            // Avoid editor component cache effect
+            // Editor store all components and try to apply old attributes after changes
+            // Need also update component model
+            const blockModel = rte.editor.em.get('DomComponents').getById(block.id);
+            blockModel.setAttributes({style: block.getAttribute('style')});
+        }
     }
 };
 

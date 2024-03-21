@@ -140,7 +140,7 @@ export default (BaseTypeView, {editor} = {}) => {
             const index = model.index();
             const parent = model.parent();
             const child = model.getChildAt(0);
-            this.pathChildModel(child);
+            this.pathChildModel(child, model.get('toolbar'));
             child.move(parent, {
                 at: index
             });
@@ -153,7 +153,7 @@ export default (BaseTypeView, {editor} = {}) => {
             });
         },
 
-        pathChildModel(child) {
+        pathChildModel(child, toolbar) {
             const {model} = this;
 
             child.set({
@@ -165,6 +165,10 @@ export default (BaseTypeView, {editor} = {}) => {
                 droppable: true,
                 highlightable: true
             });
+
+            if (toolbar) {
+                child.set('toolbar', toolbar);
+            }
 
             if (model.get('stateModel')) {
                 child.set('stateModel', model.get('stateModel'));

@@ -5,7 +5,7 @@ import BaseType from 'orocms/js/app/grapesjs/types/base-type';
 import CreateLinkDialog from 'orocms/js/app/grapesjs/dialogs/create-link-dialog';
 
 const linkColor = window.getComputedStyle(document.documentElement).getPropertyValue('--secondary');
-const TEMP_ATTR = _.uniqueId('data-temp-');
+const TEMP_ATTR = 'data-temp';
 
 const LinkType = BaseType.extend({
     commands: {
@@ -29,6 +29,7 @@ const LinkType = BaseType.extend({
             },
 
             openDialog(editor, link, dialogOptions = {}) {
+                const uId = _.uniqueId();
                 dialogOptions = _.defaults(dialogOptions, {
                     unlink: true
                 });
@@ -36,10 +37,10 @@ const LinkType = BaseType.extend({
                 let unlink = dialogOptions.unlink;
                 const dialog = new CreateLinkDialog(dialogOptions);
 
-                link.setAttribute(TEMP_ATTR, '');
+                link.setAttribute(TEMP_ATTR, uId);
                 dialog.open();
                 dialog.on('create-link-dialog:valid', data => {
-                    const $link = $(editor.Canvas.getBody()).find(`[${TEMP_ATTR}]`);
+                    const $link = $(editor.Canvas.getBody()).find(`[${TEMP_ATTR}="${uId}"]`);
                     const newAttrs = Object.assign({title: ''}, data);
 
                     for (const [attr, value] of Object.entries(newAttrs)) {
@@ -59,8 +60,10 @@ const LinkType = BaseType.extend({
                         component.addAttributes(newAttrs);
                     }
                     unlink = false;
+
+                    $link.removeAttr(TEMP_ATTR);
                 }).on('close hidden', () => {
-                    const $link = $(editor.Canvas.getBody()).find(`[${TEMP_ATTR}]`);
+                    const $link = $(editor.Canvas.getBody()).find(`[${TEMP_ATTR}="${uId}"]`);
 
                     $link.removeAttr(TEMP_ATTR);
 

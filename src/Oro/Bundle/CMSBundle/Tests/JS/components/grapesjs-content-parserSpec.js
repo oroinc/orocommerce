@@ -861,5 +861,44 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
 
             expect(htmlParser(str).html).toEqual(result);
         });
+
+        it('parse with "temporary-container"', () => {
+            const str = `<div data-type="temporary-container"><h1>Insert title here</h1><p>Lorem ipsum dolor 1</p><p>Lorem ipsum dolor 2</p></div>`;
+
+            const result = [
+                {
+                    tagName: 'h1',
+                    type: 'text',
+                    ...textBlockOptions,
+                    components: [{
+                        tagName: '',
+                        type: 'textnode',
+                        content: 'Insert title here'
+                    }]
+                },
+                {
+                    tagName: 'p',
+                    type: 'text',
+                    ...textBlockOptions,
+                    components: [{
+                        tagName: '',
+                        type: 'textnode',
+                        content: 'Lorem ipsum dolor 1'
+                    }]
+                },
+                {
+                    tagName: 'p',
+                    type: 'text',
+                    ...textBlockOptions,
+                    components: [{
+                        tagName: '',
+                        type: 'textnode',
+                        content: 'Lorem ipsum dolor 2'
+                    }]
+                }
+            ];
+
+            expect(htmlParser(str).html).toEqual(result);
+        });
     });
 });
