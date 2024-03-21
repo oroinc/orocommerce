@@ -46,7 +46,7 @@
 
     &.in-sticky {
         background: $catalog-filter-controls-toolbar-sticky-container-background;
-        z-index: $sticky-panel-z-index + 1;
+        z-index: $sticky-panel-z-index;
         box-shadow: $sticky-panel-box-shadow;
 
         &.scrolled-up {

@@ -20,6 +20,7 @@ dynamic-imports:
         - orocommercemenu/js/app/views/header-row-view
         - orofrontend/default/js/app/views/proxy-focus-view
         - orofrontend/default/js/app/views/scroll-top-view
+        - orofrontend/default/js/app/views/frontend-messages-view
         - orofrontend/js/app/views/dom-relocation-view
         - oronavigation/js/app/views/navigation-menu-view
         - oroproduct/js/app/views/search-autocomplete-view
@@ -35,7 +36,6 @@ dynamic-imports:
         - oroui/js/app/components/widget-component
         - oroui/js/app/views/layout-subtree-view
         - oroui/js/app/views/page/content-view
-        - oroui/js/app/views/page/messages-view
         - oroui/js/mediator
         - orowindows/js/dialog/state/model
         - routing
