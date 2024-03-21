@@ -11,9 +11,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductTaxCodeControllerTest extends WebTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());

@@ -18,9 +18,6 @@ class ValidateCustomerUserRelatedOrderTest extends RestJsonApiTestCase
 {
     use RolePermissionExtension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();
