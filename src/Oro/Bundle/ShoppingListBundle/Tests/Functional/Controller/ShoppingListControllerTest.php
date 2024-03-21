@@ -12,11 +12,7 @@ class ShoppingListControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists'
-            ]
-        );
+        $this->loadFixtures([LoadShoppingLists::class]);
     }
 
     public function testIndex()
