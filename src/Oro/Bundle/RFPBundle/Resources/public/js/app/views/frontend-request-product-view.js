@@ -230,7 +230,7 @@ const FrontendRequestProductView = BaseView.extend(_.extend({}, ElementsHelper, 
     },
 
     toggleAddRequestProductItemButton: function() {
-        this.$addRequestProductItemButton.toggle(Boolean(this.model.get('productId')));
+        this.$addRequestProductItemButton.toggleClass('hidden', Boolean(this.model.get('productId')) === false);
     },
 
     onFieldCommentCheckboxChange(event) {

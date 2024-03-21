@@ -41,6 +41,7 @@ define(function(require) {
          */
         render: function() {
             const $select = this.$el.find('[data-grid-pagesize-selector]');
+            const toHide = this.collection.state.totalRecords === 0;
             const currentSizeLabel = _.filter(this.items, item => {
                 return item.size === undefined
                     ? this.collection.state.pageSize === item : this.collection.state.pageSize === item.size;
@@ -54,8 +55,10 @@ define(function(require) {
 
             $select.inputWidget('val', currentSizeLabel[0]);
 
-            if (this.hidden) {
+            if (this.hidden || toHide) {
                 this.$el.hide();
+            } else {
+                this.$el.show();
             }
 
             return this;

@@ -212,6 +212,15 @@
     }
 }
 
+@include breakpoint('mobile-big') {
+    .responsive-shopping-list-grid {
+        .page-size,
+        .oro-pagination {
+            display: block;
+        }
+    }
+}
+
 @include breakpoint('mobile-landscape') {
     .responsive-shopping-list-grid {
         .show-in-mobile {

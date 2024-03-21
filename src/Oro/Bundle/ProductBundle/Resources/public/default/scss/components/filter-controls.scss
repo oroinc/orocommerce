@@ -59,6 +59,15 @@
     }
 }
 
+@include breakpoint('mobile-big') {
+    .toolbar-top {
+        .page-size,
+        .oro-pagination {
+            display: none;
+        }
+    }
+}
+
 @include breakpoint('tablet') {
     .catalog__filter-controls {
         .pagination-container {
