@@ -46,7 +46,7 @@
 
     &.in-sticky {
         background: $catalog-filter-controls-toolbar-sticky-container-background;
-        z-index: $sticky-panel-z-index + 1;
+        z-index: $sticky-panel-z-index;
         box-shadow: $sticky-panel-box-shadow;
 
         &.scrolled-up {
@@ -55,6 +55,15 @@
 
         &.scroll-down {
             transform: translateY(calc(var(--group-offset-y, 0) * -1));
+        }
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .toolbar-top {
+        .page-size,
+        .oro-pagination {
+            display: none;
         }
     }
 }

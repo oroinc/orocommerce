@@ -49,12 +49,12 @@ class ContentNodeEntityReferencesCheckerTest extends \PHPUnit\Framework\TestCase
 
         $this->contentNode
             ->expects($this->once())
-            ->method('getReferencesInMenu')
+            ->method('getReferencedMenuItems')
             ->willReturn(new ArrayCollection([$menuUpdate]));
 
         $this->contentNode
             ->expects($this->never())
-            ->method('getReferencesInConsents');
+            ->method('getReferencedConsents');
 
         $result = $this->checker->check($this->contentNode);
 
@@ -92,12 +92,12 @@ class ContentNodeEntityReferencesCheckerTest extends \PHPUnit\Framework\TestCase
 
         $this->contentNode
             ->expects($this->once())
-            ->method('getReferencesInMenu')
+            ->method('getReferencedMenuItems')
             ->willReturn(new ArrayCollection([$menuUpdate]));
 
         $this->contentNode
             ->expects($this->never())
-            ->method('getReferencesInConsents');
+            ->method('getReferencedConsents');
 
         $result = $this->checker->check($this->contentNode);
 
@@ -112,13 +112,13 @@ class ContentNodeEntityReferencesCheckerTest extends \PHPUnit\Framework\TestCase
 
         $this->contentNode
             ->expects($this->once())
-            ->method('getReferencesInMenu')
+            ->method('getReferencedMenuItems')
             ->willReturn(new ArrayCollection([]));
 
 
         $this->contentNode
             ->expects($this->exactly(2))
-            ->method('getReferencesInConsents')
+            ->method('getReferencedConsents')
             ->willReturn(new ArrayCollection([$consent]));
 
         $consent
@@ -140,13 +140,13 @@ class ContentNodeEntityReferencesCheckerTest extends \PHPUnit\Framework\TestCase
     {
         $this->contentNode
             ->expects($this->once())
-            ->method('getReferencesInMenu')
+            ->method('getReferencedMenuItems')
             ->willReturn(new ArrayCollection([]));
 
 
         $this->contentNode
             ->expects($this->once())
-            ->method('getReferencesInConsents')
+            ->method('getReferencedConsents')
             ->willReturn(new ArrayCollection([]));
 
         $result = $this->checker->check($this->contentNode);

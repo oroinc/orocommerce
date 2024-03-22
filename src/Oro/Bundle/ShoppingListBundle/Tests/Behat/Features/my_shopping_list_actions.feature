@@ -67,6 +67,7 @@ Feature: My Shopping List Actions
     When I open shopping list widget
     And I click on "Shopping List Widget Set Current Radio 2"
     And I click on empty space
+    And I click on "Flash Message Close Button"
     And I click "Shopping List Actions"
     Then I should see "Set as Default"
 

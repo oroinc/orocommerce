@@ -23,7 +23,7 @@ class ContentNodeEntityReferencesChecker implements ContentNodeDeletionCheckerIn
     {
         $result = new NotDeletableContentNodeResult();
 
-        if ($menuReferences = $contentNode->getReferencesInMenu()) {
+        if ($menuReferences = $contentNode->getReferencedMenuItems()) {
             foreach ($menuReferences as $menuReference) {
                 if ($menuReference->isCustom() || $this->isRootMenuUpdate($menuReference)) {
                     $result->setWarningMessageParams([
@@ -36,8 +36,8 @@ class ContentNodeEntityReferencesChecker implements ContentNodeDeletionCheckerIn
             }
         }
 
-        if (!$contentNode->getReferencesInConsents()->isEmpty()) {
-            $usedConsent = $contentNode->getReferencesInConsents()->first();
+        if (!$contentNode->getReferencedConsents()->isEmpty()) {
+            $usedConsent = $contentNode->getReferencedConsents()->first();
 
             $result->setWarningMessageParams([
                 '%key%' => $usedConsent->getName(),

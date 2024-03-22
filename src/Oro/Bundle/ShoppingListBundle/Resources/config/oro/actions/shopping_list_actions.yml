@@ -9,7 +9,7 @@ operations:
         routes:
             - oro_shopping_list_frontend_view
         button_options:
-            icon: fa-pencil-square-o
+            icon: pencil
         actions:
             - '@redirect':
                 route: oro_shopping_list_frontend_update
@@ -135,7 +135,7 @@ operations:
         label: oro.shoppinglist.set_as_default.action.label
         acl_resource: ['oro_shopping_list_frontend_set_as_default', $.data]
         button_options:
-            icon: fa-check
+            icon: check
         frontend_options:
             show_dialog: true
             confirmation:

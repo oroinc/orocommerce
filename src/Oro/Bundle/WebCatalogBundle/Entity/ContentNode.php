@@ -543,20 +543,30 @@ class ContentNode implements
         return $this->localizedUrls->contains($url);
     }
 
-    /**
-     * @return Collection|MenuUpdate[]
-     */
-    public function getReferencesInMenu(): Collection
+    public function getReferencedMenuItems(): Collection
     {
         return $this->referencedMenuItems;
     }
 
     /**
-     * @return Collection|Consent[]
+     * @param Collection<int, MenuUpdate> $referencedMenuItems
      */
-    public function getReferencesInConsents(): Collection
+    public function setReferencedMenuItems(Collection $referencedMenuItems): void
+    {
+        $this->referencedMenuItems = $referencedMenuItems;
+    }
+
+    public function getReferencedConsents(): Collection
     {
         return $this->referencedConsents;
+    }
+
+    /**
+     * @param Collection<int, Consent> $referencedConsents
+     */
+    public function setReferencedConsents(Collection $referencedConsents): void
+    {
+        $this->referencedConsents = $referencedConsents;
     }
 
     public function __clone()
