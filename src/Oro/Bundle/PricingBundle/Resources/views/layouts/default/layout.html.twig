@@ -36,7 +36,7 @@
 
     {% if currencies|length == 2 %}
         <div class="oro-toolbar__content currency-switcher">
-            {{ renderIcon.icon({name: 'credit-card', extraClass: 'theme-icon--medium oro-toolbar__icon'}) }}
+            {{ renderIcon.icon({name: 'credit-card', extraClass: 'theme-icon--medium'}) }}
             {% for currency in currencies %}
                 {% if selected_currency == currency %}
                     <span class="oro-toolbar__link oro-toolbar__link--active text-nowrap">{{ oro_currency_symbol(currency) }}</span>
@@ -50,10 +50,10 @@
         </div>
     {% elseif currencies|length > 2 %}
         <button
-            class="btn btn--outlined-inverse btn--text btn--no-padding currency-switcher currency-switcher--{{ selected_currency|lower }}"
+            class="btn btn--colored-inverse btn--text btn--no-padding currency-switcher currency-switcher--{{ selected_currency|lower }}"
             type="button"
         >
-            {{ renderIcon.icon({name: 'credit-card', extraClass: 'oro-toolbar__icon'}) }}
+            {{ renderIcon.icon({name: 'credit-card'}) }}
             {{- oro_currency_symbol(selected_currency) -}}
             {{ renderIcon.icon({name: 'chevron-down', extraClass: 'dropdown-menu-chevron'}) }}
         </button>
