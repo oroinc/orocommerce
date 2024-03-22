@@ -17,38 +17,31 @@ data:
                         - main
                         - additional
                 -
-                    maxWidth: 610
-                    maxHeight: 610
+                    maxWidth: 836
+                    maxHeight: 620
                     dimension: product_gallery_popup
                     types:
                         - main
                 -
-                    maxWidth: 378
-                    maxHeight: auto
+                    maxWidth: 700
+                    maxHeight: 520
                     dimension: product_gallery_main
                     types:
                         - main
                 -
-                    maxWidth: 360
-                    maxHeight: auto
+                    maxWidth: 480
+                    maxHeight: 356
                     dimension: product_large
                     types:
                         - main
                 -
-                    maxWidth: 378
-                    maxHeight: 378
-                    dimension: product_extra_large
-                    types:
-                        - main
-                        - additional
-                -
-                    maxWidth: 309
-                    maxHeight: auto
+                    maxWidth: 350
+                    maxHeight: 260
                     dimension: product_medium
                     types:
                         - main
                 -
-                    maxWidth: 80
+                    maxWidth: auto
                     maxHeight: 80
                     dimension: product_small
                     types:
@@ -76,22 +69,15 @@ data:
                     types:
                         - additional
                 -
-                    maxWidth: 378
-                    maxHeight: 378
-                    dimension: product_extra_large
-                    types:
-                        - additional
-                        - listing
-                -
-                    maxWidth: 80
+                    maxWidth: auto
                     maxHeight: 80
                     dimension: product_small
                     types:
                         - additional
                         - listing
                 -
-                    maxWidth: 360
-                    maxHeight: auto
+                    maxWidth: 480
+                    maxHeight: 356
                     dimension: product_large
                     types:
                         - listing
@@ -117,39 +103,32 @@ data:
                     types:
                         - main
                 -
-                    maxWidth: 610
-                    maxHeight: 610
+                    maxWidth: 836
+                    maxHeight: 620
                     dimension: product_gallery_popup
                     types:
                         - main
                 -
-                    maxWidth: 378
-                    maxHeight: auto
+                    maxWidth: 700
+                    maxHeight: 520
                     dimension: product_gallery_main
                     types:
                         - main
                 -
-                    maxWidth: 360
-                    maxHeight: auto
+                    maxWidth: 480
+                    maxHeight: 356
                     dimension: product_large
                     types:
                         - main
                         - listing
                 -
-                    maxWidth: 378
-                    maxHeight: 378
-                    dimension: product_extra_large
-                    types:
-                        - main
-                        - listing
-                -
-                    maxWidth: 309
-                    maxHeight: auto
+                    maxWidth: 350
+                    maxHeight: 260
                     dimension: product_medium
                     types:
                         - main
                 -
-                    maxWidth: 80
+                    maxWidth: auto
                     maxHeight: 80
                     dimension: product_small
                     types:
@@ -176,13 +155,7 @@ data:
                     types:
                         - additional
                 -
-                    maxWidth: 378
-                    maxHeight: 378
-                    dimension: product_extra_large
-                    types:
-                        - additional
-                -
-                    maxWidth: 80
+                    maxWidth: auto
                     maxHeight: 80
                     dimension: product_small
                     types:

@@ -6,7 +6,7 @@ $product-list-gallery-view-grid-count: 1 !default;
 $product-list-gallery-view-grid-template-columns: repeat(
     var(--product-list-count, #{$product-list-gallery-view-grid-count}), 1fr
 ) !default;
-$product-list-gallery-view-offset: 30px 0 0 !default;
+$product-list-gallery-view-offset: spacing('lg') 0 0 !default;
 
 $product-list-gallery-view-grid-count-map: (
     (

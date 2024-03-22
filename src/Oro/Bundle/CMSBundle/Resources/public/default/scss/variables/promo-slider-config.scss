@@ -4,6 +4,7 @@ $promo-slider-min-height: 100px !default;
 $promo-slider-margin: 0 !default;
 $promo-slider-content-gap: spacing('lg') !default;
 $promo-slider-content-width: 55% !default;
+$promo-slider-content-width-center: 38% !default;
 $promo-slider-content-side-position: var(--promo-slider-info-side-position, #{spacing('huge')}) !default;
 $promo-slider-info-text-font-size: 20px !default;
 $promo-slider-info-text-line-height: 1.4 !default;
@@ -31,11 +32,9 @@ $promo-slider-arrow-border-radius: 100px !default;
 $promo-slider-content-side-position-tablet: spacing('xxxl') !default;
 $promo-slider-header-font-size-tablet: 48px !default;
 
-// Mobile big
-
-$promo-slider-content-gap-mobile-big: spacing('md') !default;
-
 // Mobile
+
+$promo-slider-content-gap-mobile: spacing('md') !default;
 
 $promo-slider-info-width-mobile: 100% !default;
 $promo-slider-info-text-line-height-mobile: $base-line-height !default;

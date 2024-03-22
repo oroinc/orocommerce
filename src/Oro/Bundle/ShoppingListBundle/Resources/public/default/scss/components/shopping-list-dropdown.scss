@@ -106,8 +106,7 @@
     }
 
     &__link:hover &__info {
-        text-decoration: underline;
-        color: $shopping-list-dropdown-info-color-hover;
+        text-decoration: none;
     }
 
     &__ellipsis {

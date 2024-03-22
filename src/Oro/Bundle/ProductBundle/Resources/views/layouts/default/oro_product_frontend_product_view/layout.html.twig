@@ -176,14 +176,14 @@
 {% block _product_view_attribute_group_general_attribute_boolean_featured_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% if value == true %}
-        <div class="product-view__featured">{{ renderIcon.icon({name: 'star'}) }}{{ label|trans }}</div>
+        <div class="product-view__featured">{{ renderIcon.icon({name: 'trending-up'}) }}{{ label|trans }}</div>
     {% endif %}
 {% endblock %}
 
 {% block _product_view_attribute_group_general_attribute_boolean_newArrival_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% if value == true %}
-        <div class="product-view__newarrival">{{ renderIcon.icon({name: 'award'}) }}{{ label|trans }}</div>
+        <div class="product-view__newarrival">{{ renderIcon.icon({name: 'package'}) }}{{ label|trans }}</div>
     {% endif %}
 {% endblock %}
 
@@ -356,7 +356,7 @@
                 {% include '@OroAttachment/Twig/picture.html.twig' with {
                     sources: product_filtered_picture_sources(item.file, 'product_small'),
                     img_attrs: {
-                        class: 'product-view__attribute-image',
+                        class: 'product-view__attribute-image cover-img'
                     }
                 } %}
             </div>
@@ -395,7 +395,7 @@
             {% include '@OroAttachment/Twig/picture.html.twig' with {
                 sources: product_filtered_picture_sources(value, 'product_small'),
                 img_attrs: {
-                    class: 'product-view__attribute-image',
+                    class: 'product-view__attribute-image cover-img',
                 }
             } %}
         </span>

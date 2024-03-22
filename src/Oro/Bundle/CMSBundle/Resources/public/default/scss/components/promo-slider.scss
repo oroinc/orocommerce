@@ -53,6 +53,7 @@
         &--center {
             margin-right: auto;
             margin-left: auto;
+            width: $promo-slider-content-width-center;
 
             justify-content: center;
             align-items: center;
@@ -227,6 +228,10 @@
     .promo-slider {
         &__content {
             --promo-slider-info-side-position: #{$promo-slider-content-side-position-tablet};
+
+            &--center {
+                width: $promo-slider-content-width;
+            }
         }
 
         &__header {
@@ -236,14 +241,6 @@
 }
 
 @include breakpoint('mobile-big') {
-    .promo-slider {
-        &__content {
-            gap: $promo-slider-content-gap-mobile-big;
-        }
-    }
-}
-
-@include breakpoint('mobile') {
     .promo-slider {
         &__info {
             position: static;
@@ -268,7 +265,10 @@
             margin-left: initial;
             margin-right: initial;
             width: initial;
+            gap: $promo-slider-content-gap-mobile;
+
             text-align: initial;
+            align-items: initial;
         }
 
         &__navigation-holder {
@@ -277,7 +277,7 @@
 
         .btn {
             min-height: var(--btn-min-height);
-            padding: var(--btn-padding, #{$input-btn-padding-y-sm});
+            padding: var(--btn-padding, #{$input-btn-padding-y});
         }
     }
 }
