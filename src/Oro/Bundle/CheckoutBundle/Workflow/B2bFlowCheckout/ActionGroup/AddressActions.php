@@ -9,6 +9,9 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Duplicator\DuplicatorFactory;
 
+/**
+ * Checkout workflow Address-related actions.
+ */
 class AddressActions
 {
     private array $addressDuplicatorConfig = [

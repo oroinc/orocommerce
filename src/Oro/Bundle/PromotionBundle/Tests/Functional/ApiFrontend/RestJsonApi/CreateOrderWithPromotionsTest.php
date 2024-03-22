@@ -5,7 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTermData;
-use Oro\Bundle\OrderBundle\Tests\Functional\Api\Frontend\RestJsonApi\OrderResponseTrait;
+use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi\OrderResponseTrait;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionData;
 
 /**

@@ -13,6 +13,9 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
 
+/**
+ * Checkout workflow actions to be executed to create split orders.
+ */
 class SplitOrderActions
 {
     public function __construct(

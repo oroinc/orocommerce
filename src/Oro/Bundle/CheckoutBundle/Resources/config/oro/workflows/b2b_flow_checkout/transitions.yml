@@ -72,7 +72,6 @@ workflows:
 
             continue_to_shipping_address:
                 step_to: enter_shipping_address
-#                transition_definition: continue_to_shipping_address_definition
                 transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_address'
                 display_type: page
                 frontend_options:

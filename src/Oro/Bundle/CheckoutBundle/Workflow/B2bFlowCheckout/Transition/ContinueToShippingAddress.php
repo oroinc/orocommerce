@@ -12,6 +12,9 @@ use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CustomerUserA
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 
+/**
+ * Implementation of continue_to_shipping_address transition logic of the checkout workflow.
+ */
 class ContinueToShippingAddress implements TransitionServiceInterface
 {
     public function __construct(

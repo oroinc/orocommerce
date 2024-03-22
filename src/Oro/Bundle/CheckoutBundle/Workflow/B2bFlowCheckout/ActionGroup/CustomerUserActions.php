@@ -16,6 +16,9 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListMigrationManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+/**
+ * Checkout workflow Customer User-related actions.
+ */
 class CustomerUserActions
 {
     public function __construct(

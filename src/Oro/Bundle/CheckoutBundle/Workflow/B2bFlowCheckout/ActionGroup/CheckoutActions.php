@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
@@ -12,16 +11,16 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Checkout workflow Checkout-related actions.
+ */
 class CheckoutActions
 {
     public function __construct(
-        private TokenAccessorInterface $tokenAccessor,
-        private AuthorizationCheckerInterface $authorizationChecker,
         private ManagerRegistry $registry,
         private EntityAliasResolver $entityAliasResolver,
         private EntityNameResolver $entityNameResolver,
@@ -106,57 +105,45 @@ class CheckoutActions
 
     public function actualizeAddresses(Checkout $checkout, Order $order): void
     {
-        /** @var EntityManagerInterface $em */
         $em = $this->registry->getManagerForClass(CustomerUserAddress::class);
-        $needFlush = false;
+
         $customerUserBillingAddress = null;
-        if ($checkout->isSaveBillingAddress()
-            && !$order->getBillingAddress()->getCustomerAddress()
-            && !$order->getBillingAddress()->getCustomerUserAddress()
-            && $this->isGranted('oro_order_address_billing_allow_manual')
-        ) {
-            $billingType = $em->getReference(AddressType::class, AddressType::TYPE_BILLING);
-            $customerUserBillingAddress = new CustomerUserAddress();
-            $this->fillAddressFieldsByAddress(
+        if ($checkout->isSaveBillingAddress()) {
+            $customerUserBillingAddress = $this->actualizeAddress(
                 $order->getBillingAddress(),
-                $customerUserBillingAddress,
-                $checkout
+                $checkout,
+                AddressType::TYPE_BILLING,
+                'oro_order_address_billing_allow_manual'
             );
-            $customerUserBillingAddress->addType($billingType);
-
-            $em->persist($customerUserBillingAddress);
-            $needFlush = true;
-
-            $order->getBillingAddress()->setCustomerUserAddress($customerUserBillingAddress);
-            $checkout->getBillingAddress()->setCustomerUserAddress($customerUserBillingAddress);
         }
 
-        if ($checkout->isSaveShippingAddress()
-            && !$order->getShippingAddress()->getCustomerAddress()
-            && !$order->getShippingAddress()->getCustomerUserAddress()
-            && $this->isGranted('oro_order_address_shipping_allow_manual')
-        ) {
-            $shippingType = $em->getReference(AddressType::class, AddressType::TYPE_SHIPPING);
+        $customerUserShippingAddress = null;
+        if ($checkout->isSaveShippingAddress()) {
             if ($customerUserBillingAddress
                 && $checkout->isShipToBillingAddress()
                 && $checkout->isSaveBillingAddress()
             ) {
+                /** @var AddressType $shippingType */
+                $shippingType = $em->getReference(AddressType::class, AddressType::TYPE_SHIPPING);
                 $customerUserBillingAddress->addType($shippingType);
             } else {
-                $customerUserShippingAddress = new CustomerUserAddress();
-                $this->fillAddressFieldsByAddress(
+                $customerUserShippingAddress = $this->actualizeAddress(
                     $order->getShippingAddress(),
-                    $customerUserShippingAddress,
-                    $checkout
+                    $checkout,
+                    AddressType::TYPE_SHIPPING,
+                    'oro_order_address_shipping_allow_manual'
                 );
-                $customerUserShippingAddress->addType($shippingType);
-
-                $em->persist($customerUserShippingAddress);
-                $needFlush = true;
-
-                $order->getShippingAddress()->setCustomerUserAddress($customerUserShippingAddress);
-                $checkout->getShippingAddress()->setCustomerUserAddress($customerUserShippingAddress);
             }
+        }
+
+        $needFlush = false;
+        if ($customerUserBillingAddress) {
+            $checkout->getBillingAddress()->setCustomerUserAddress($customerUserBillingAddress);
+            $needFlush = true;
+        }
+        if ($customerUserShippingAddress) {
+            $checkout->getShippingAddress()->setCustomerUserAddress($customerUserShippingAddress);
+            $needFlush = true;
         }
 
         if ($needFlush) {
@@ -189,6 +176,37 @@ class CheckoutActions
         if ($autoRemoveSource || ($allowManualSourceRemove && $removeSource)) {
             $this->actionExecutor->executeAction('remove_checkout_source_entity', [$checkout]);
         }
+    }
+
+    private function actualizeAddress(
+        OrderAddress $orderAddress,
+        Checkout $checkout,
+        string $addressTypeName,
+        string $aclResource
+    ): ?CustomerUserAddress {
+        if ($orderAddress->getCustomerAddress()
+            || $orderAddress->getCustomerUserAddress()
+            || !$this->isGranted($aclResource)
+        ) {
+            return null;
+        }
+
+        $em = $this->registry->getManagerForClass(CustomerUserAddress::class);
+        /** @var AddressType $addressType */
+        $addressType = $em->getReference(AddressType::class, $addressTypeName);
+        $customerUserAddress = new CustomerUserAddress();
+        $this->fillAddressFieldsByAddress(
+            $orderAddress,
+            $customerUserAddress,
+            $checkout
+        );
+        $customerUserAddress->addType($addressType);
+
+        $em->persist($customerUserAddress);
+
+        $orderAddress->setCustomerUserAddress($customerUserAddress);
+
+        return $customerUserAddress;
     }
 
     private function fillCheckoutCompletedData(Checkout $checkout, Order $order): void
@@ -254,13 +272,8 @@ class CheckoutActions
             ->setPhone($sourceAddress->getPhone());
     }
 
-    // TODO: Call this as a separate service
     private function isGranted(string $attribute): bool
     {
-        if (!$this->tokenAccessor->getToken()) {
-            return false;
-        }
-
-        return $this->authorizationChecker->isGranted($attribute);
+        return $this->actionExecutor->evaluateExpression('acl_granted', [$attribute]);
     }
 }
