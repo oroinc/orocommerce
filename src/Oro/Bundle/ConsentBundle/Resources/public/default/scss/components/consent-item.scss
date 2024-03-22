@@ -1,7 +1,7 @@
 /* @theme: default; */
 
 .consent-item {
-    margin-bottom: $consent-item-offset-bottom;
+    padding: $consent-item-padding;
 
     .validation-failed {
         margin-top: $consent-item-validation-failed-offset-top;

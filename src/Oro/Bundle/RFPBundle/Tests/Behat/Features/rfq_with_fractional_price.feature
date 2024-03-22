@@ -38,7 +38,7 @@ Feature: RFQ with fractional price
     Then I should see RFQ with data:
       | First Name    | Amanda                  |
       | Last Name     | Cole                    |
-      | Email Address | AmandaRCole@example.org |
+      | Email         | AmandaRCole@example.org |
       | Company       | first customer          |
 
   Scenario: Create order from RFQ in back-office

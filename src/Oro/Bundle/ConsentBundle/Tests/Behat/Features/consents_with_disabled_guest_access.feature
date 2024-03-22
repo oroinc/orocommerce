@@ -99,7 +99,7 @@ Feature: Consents with disabled Guest Access
       | Company Name                   | OroCommerce               |
       | First Name                     | Amanda                    |
       | Last Name                      | Cole                      |
-      | Email Address                  | AmandaRCole1@example.org  |
+      | Email                          | AmandaRCole1@example.org  |
       | Password                       | AmandaRCole1@example.org  |
       | Confirm Password               | AmandaRCole1@example.org  |
       | I Agree with Email Newsletters | true                      |
@@ -117,5 +117,5 @@ Feature: Consents with disabled Guest Access
       | cancelButton      | Cancel                               |
     And I scroll modal window to bottom
     And click "Agree"
-    When click "Create An Account"
+    When click "Create Account"
     Then I should see "Please check your email to complete registration" flash message

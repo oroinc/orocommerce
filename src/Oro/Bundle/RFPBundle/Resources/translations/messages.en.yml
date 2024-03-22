@@ -349,7 +349,7 @@ oro:
                 id.label: 'RFQ #'
                 first_name.label: 'First Name'
                 last_name.label: 'Last Name'
-                email.label: 'Email Address'
+                email.label: 'Email'
                 phone.label: 'Phone Number'
                 company.label: 'Company'
                 role.label: 'Role'
