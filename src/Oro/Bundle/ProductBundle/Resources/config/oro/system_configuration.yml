@@ -525,6 +525,14 @@ system_configuration:
                     oro.product.system_configuration.fields.matrix_form_on_product_view.inline.label: inline
                     oro.product.system_configuration.fields.matrix_form_on_product_view.popup.label: popup
 
+        oro_product.popup_gallery_on_product_view:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.popup_gallery_on_product_view.label
+                tooltip: oro.product.system_configuration.fields.popup_gallery_on_product_view.tooltip
+
         oro_product.matrix_form_on_product_listing:
             data_type: string
             type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
@@ -758,6 +766,7 @@ system_configuration:
                                     image_gallery:
                                         children:
                                             - oro_product.image_preview_on_product_listing_enabled
+                                            - oro_product.popup_gallery_on_product_view
                             product_search:
                                 priority: 150
                                 children:

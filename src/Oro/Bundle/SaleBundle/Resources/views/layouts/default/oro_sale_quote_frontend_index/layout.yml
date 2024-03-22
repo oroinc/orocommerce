@@ -17,4 +17,4 @@ layout:
             id: quotes_datagrid
             optionName: grid_render_parameters.toolbarOptions.itemsCounter
             optionValue:
-                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.quotes'
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.quotesPlural'

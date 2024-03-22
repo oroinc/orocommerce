@@ -64,7 +64,9 @@
         'btnCss': 'btn btn--block btn-main add-to-shopping-list-button ' ~ options.btnCss,
         'moreButtonExtraClass': '',
         'dataId': shoppingListId,
-        'label': options.actionLabel,
+        'label' : options.actionLabel|replace({
+            '{{ shoppingList }}': shoppingListLabel
+        }),
         'entityName': shoppingListLabel
     } %}
 

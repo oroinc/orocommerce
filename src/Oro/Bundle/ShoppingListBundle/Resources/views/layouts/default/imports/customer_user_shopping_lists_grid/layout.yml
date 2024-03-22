@@ -19,4 +19,4 @@ layout:
             id: __datagrid
             optionName: grid_render_parameters.toolbarOptions.itemsCounter
             optionValue:
-                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shopping_lists'
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shoppingListsPlural'

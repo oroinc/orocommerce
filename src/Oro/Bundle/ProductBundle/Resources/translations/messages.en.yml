@@ -697,6 +697,9 @@ oro:
                 image_preview_on_product_listing_enabled:
                     label: 'Enable Image Preview on Product Listing'
                     tooltip: 'Select the option to enable a customer to see a pop up image gallery, rather than the product page, when they click on the product image on the product listing page in the storefront.'
+                popup_gallery_on_product_view:
+                    label: 'Popup Gallery on Product View (up to 5.1LTS)'
+                    tooltip: 'Select whether to use popup or inline view for the image gallery in the storefront. Inline gallery view may work better for some product templates.'
                 matrix_form_on_product_view:
                     tooltip: 'Select the way to display a matrix form for configurable products with up to 2 attributes on a product view page.'
                     label: 'Product Views'

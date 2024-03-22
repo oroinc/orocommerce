@@ -115,7 +115,7 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\WebsiteSearchReindexProductKitListener` that schedule index operation for the product kit for the storefront.
 * Added `\Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductPreloadingIndexerListener` that preload products with required data at the start of website reindex operation.
 * Disabled the ability to add a product kit to Quick Order Form via `\Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler::setNotAllowedProductTypes`.
-* Removed the `oro_product.popup_gallery_on_product_view` option from the system configuration.
+* The `oro_product.popup_gallery_on_product_view` option from the system configuration is not used anymore.
 * Added new options fields to `product_segment` content widget in `\Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType`.
 * Restored the is_optimized field in quick add forms (for compatibility to older layout themes), but the optimized version is forced. Consider refactoring your templates which rely on this field.
 * Added `\Oro\Bundle\ProductBundle\Form\Type\ProductUnitChoiceType` form type for selecting a product unit from the available product units of a specified product.

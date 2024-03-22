@@ -68,6 +68,7 @@ class OroProductExtensionTest extends \PHPUnit\Framework\TestCase
                         'new_arrivals_min_items' => ['value' => 3, 'scope' => 'app'],
                         'new_arrivals_use_slider_on_mobile' => ['value' => false, 'scope' => 'app'],
                         'image_preview_on_product_listing_enabled' => ['value' => true, 'scope' => 'app'],
+                        'popup_gallery_on_product_view' => ['value' => true, 'scope' => 'app'],
                         'guest_quick_order_form' => ['value' => false, 'scope' => 'app'],
                         'matrix_form_on_product_view' => ['value' => 'inline', 'scope' => 'app'],
                         'matrix_form_on_product_listing' => ['value' => 'inline', 'scope' => 'app'],

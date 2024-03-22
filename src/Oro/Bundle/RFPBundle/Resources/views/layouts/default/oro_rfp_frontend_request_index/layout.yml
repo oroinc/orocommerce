@@ -20,7 +20,7 @@ layout:
             id: requests_datagrid
             optionName: grid_render_parameters.toolbarOptions.itemsCounter
             optionValue:
-                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.rfq'
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.rfqPlural'
 
         - '@setOption':
             id: datagrid_toolbar_button_container
