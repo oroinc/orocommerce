@@ -12,7 +12,7 @@ use Oro\Component\Duplicator\DuplicatorFactory;
 /**
  * Checkout workflow Address-related actions.
  */
-class AddressActions
+class AddressActions implements AddressActionsInterface
 {
     private array $addressDuplicatorConfig = [
         [['setNull'], ['propertyName', ['id']]],

@@ -16,7 +16,7 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
 /**
  * Checkout workflow Order-related actions.
  */
-class OrderActions
+class OrderActions implements OrderActionsInterface
 {
     private const ORDER_CONFIRMATION_EMAIL_TEMPLATE = 'order_confirmation_email';
 

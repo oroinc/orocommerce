@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Checkout workflow Checkout-related actions.
  */
-class CheckoutActions
+class CheckoutActions implements CheckoutActionsInterface
 {
     public function __construct(
         private ManagerRegistry $registry,

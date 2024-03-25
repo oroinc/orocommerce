@@ -16,7 +16,7 @@ use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
 /**
  * Checkout workflow actions to be executed to create split orders.
  */
-class SplitOrderActions
+class SplitOrderActions implements SplitOrderActionsInterface
 {
     public function __construct(
         private OrderActions $orderActions,

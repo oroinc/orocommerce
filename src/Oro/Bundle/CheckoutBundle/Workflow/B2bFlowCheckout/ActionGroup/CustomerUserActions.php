@@ -19,7 +19,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 /**
  * Checkout workflow Customer User-related actions.
  */
-class CustomerUserActions
+class CustomerUserActions implements CustomerUserActionsInterface
 {
     public function __construct(
         private ManagerRegistry $registry,

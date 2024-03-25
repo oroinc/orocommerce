@@ -11,7 +11,7 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 /**
  * Actualizes user currency by checkout.
  */
-class ActualizeCurrency
+class ActualizeCurrency implements ActualizeCurrencyInterface
 {
     public function __construct(
         private ActionExecutor $actionExecutor,

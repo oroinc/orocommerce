@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Oro\Bundle\CheckoutBundle\Event\CheckoutRequestEvent;
-use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ActualizeCurrency;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ActualizeCurrencyInterface;
 
 /**
  * Actualize checkout currency on checkout page load.
@@ -11,7 +11,7 @@ use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ActualizeCurrency;
 class CheckoutRequestActualizeCurrencyListener
 {
     public function __construct(
-        private ActualizeCurrency $actualizeCurrency
+        private ActualizeCurrencyInterface $actualizeCurrency
     ) {
     }
 

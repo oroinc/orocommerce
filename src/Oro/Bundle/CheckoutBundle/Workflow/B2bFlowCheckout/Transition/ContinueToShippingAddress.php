@@ -7,8 +7,8 @@ use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActions;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CustomerUserActions;
+use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CustomerUserActionsInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 
@@ -21,8 +21,8 @@ class ContinueToShippingAddress implements TransitionServiceInterface
         private ActionExecutor $actionExecutor,
         private ConfigProvider $multiShippingConfigProvider,
         private GroupedCheckoutLineItemsProvider $checkoutLineItemsProvider,
-        private CustomerUserActions $customerUserActions,
-        private AddressActions $addressActions
+        private CustomerUserActionsInterface $customerUserActions,
+        private AddressActionsInterface $addressActions
     ) {
     }
 
