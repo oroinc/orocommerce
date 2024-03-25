@@ -203,7 +203,7 @@
     {% set inventoryStatus = oro_inventory_status_code(product) %}
     {% set statusesMap = {
         'in_stock': 'success',
-        'out_of_stock': 'warning',
+        'out_of_stock': 'destructive',
         'discontinued': 'destructive'
     } %}
     {% set status = attribute(statusesMap, inventoryStatus) is defined ? ' status-label--' ~ statusesMap[inventoryStatus] : '' %}

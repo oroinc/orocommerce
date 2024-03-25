@@ -114,9 +114,9 @@ Feature: Multiple content widget rendering
     Then Page title equals to "Multiple Content Widgets Page"
     And I should see "Additional test data"
     And I should see "Product1"
-    And I should see "Your Price: $10.00 / item" for "SKU1" product
+    And I should see "$10.00" for "SKU1" product
     And I should see "Add to Shopping List"
-    And I should not see "Price for requested quantity is not available"
+    And I should not see "Price unavailable for this quantity"
 
   Scenario: Ensure sliders are functional
     Given I should see "Slide text 1"

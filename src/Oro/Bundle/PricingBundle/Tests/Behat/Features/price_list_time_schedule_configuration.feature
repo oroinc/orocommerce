@@ -60,8 +60,8 @@ Feature: Price List time schedule configuration
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
     When I click "NewCategory" in hamburger menu
-    Then should not see "Your Price: $3.00 / item" for "PSKU1" product
-    And should see "Your Price: $5.00 / item" for "PSKU1" product
+    Then should not see "$3.00" for "PSKU1" product
+    And should see "$5.00" for "PSKU1" product
 
   Scenario: Create price list with schedule in the current time period
     Given I proceed as the Admin
@@ -82,8 +82,8 @@ Feature: Price List time schedule configuration
   Scenario: Check that price list with schedule in the furure date is not available at frontstore
     Given I proceed as the Buyer
     When I reload the page
-    Then should see "Your Price: $3.00 / item" for "PSKU1" product
-    And should not see "Your Price: $5.00 / item" for "PSKU1" product
+    Then should see "$3.00" for "PSKU1" product
+    And should not see "$5.00" for "PSKU1" product
 
   Scenario: Create price list with schedule in the future
     Given I proceed as the Admin
@@ -104,5 +104,5 @@ Feature: Price List time schedule configuration
   Scenario: Check that price list with schedule in the current date is available at frontstore
     Given I proceed as the Buyer
     When I reload the page
-    Then should see "Your Price: $5.00 / item" for "PSKU1" product
-    And should not see "Your Price: $3.00 / item" for "PSKU1" product
+    Then should see "$5.00" for "PSKU1" product
+    And should not see "$3.00" for "PSKU1" product

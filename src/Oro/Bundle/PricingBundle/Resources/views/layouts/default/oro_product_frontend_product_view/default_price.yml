@@ -20,11 +20,6 @@ layout:
                 optionName: vars.showListedPrice
                 optionValue: false
 
-        -   '@setOption':
-                id: product_price_component
-                optionName: vars.showUnit
-                optionValue: false
-
         # Hiding price popover
         -    '@setOption':
                  id: product_price_hint_trigger

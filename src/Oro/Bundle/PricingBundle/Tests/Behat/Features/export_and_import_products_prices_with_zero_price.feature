@@ -49,5 +49,5 @@ Feature: Export and Import Products Prices with zero price
   Scenario: Check imported Products Prices on fronstore
     Given I am on the homepage
     When click "NewCategory" in hamburger menu
-    Then should see "Listed Price: $0.00 / item" for "PSKU3" product
-    And should see "Listed Price: $6.00 / item" for "PSKU1" product
+    Then should see "$0.00" for "PSKU3" product
+    And should see "$6.00" for "PSKU1" product

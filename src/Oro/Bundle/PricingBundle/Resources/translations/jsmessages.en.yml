@@ -17,7 +17,7 @@ oro:
             applicable_from: 'Price is applicable starting from {{ amount }}'
             your_price: 'Your Price:'
             listed_price: 'Listed Price:'
-            price_not_found: 'Price for requested quantity is not available'
+            price_not_found: 'Price unavailable for this quantity'
             price_not_found.short_label: N/A
             empty_prices: 'Price not available'
             product_kit:

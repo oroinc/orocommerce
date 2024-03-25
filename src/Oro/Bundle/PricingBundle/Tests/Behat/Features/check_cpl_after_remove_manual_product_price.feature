@@ -74,7 +74,7 @@ Feature: Check CPL after remove manual product price
     And I signed in as AmandaRCole@example.org on the store frontend
     And type "PSKU" in "search"
     And I click "Search Button"
-    Then should see "Listed Price: $10.00 / item" for "PSKU4" product
+    Then should see "$10.00" for "PSKU4" product
 
   Scenario: Remove Price for fourth product
     Given I proceed as the Admin
@@ -100,4 +100,4 @@ Feature: Check CPL after remove manual product price
       | PSKU3       | Product 3    | 1        | item | 15.60 | USD      | Generated |
     When I proceed as the Customer
     And I reload the page
-    Then should see "Listed Price: $19.00 / item" for "PSKU4" product
+    Then should see "$19.00" for "PSKU4" product
