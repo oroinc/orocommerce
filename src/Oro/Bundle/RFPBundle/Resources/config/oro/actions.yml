@@ -94,7 +94,10 @@ operations:
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
         button_options:
             class: btn--outlined
-            icon: fa-plus fa--small
+            icon: fa-plus
+        frontend_options:
+            options:
+                icon: plus
         order: 10
         actions:
             - '@redirect':
@@ -109,7 +112,7 @@ operations:
         acl_resource: [EDIT, $.data]
         order: 10
         button_options:
-            icon: fa-pencil
+            icon: pencil
         actions:
             - '@redirect':
                 parameters:
