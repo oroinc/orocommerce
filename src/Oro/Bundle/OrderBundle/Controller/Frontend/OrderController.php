@@ -51,10 +51,29 @@ class OrderController extends AbstractController
         return [
             'data' => [
                 'order' => $order,
+                'grid_name' => 'order-line-items-grid-frontend',
                 'totals' => (object)$this->container->get(TotalProcessorProvider::class)
                     ->getTotalWithSubtotalsAsArray($order),
             ],
         ];
+    }
+
+    /**
+     * This page is identical to the 'oro_order_frontend_view' page, except that it displays all products in the
+     * order grid (up to 500).
+     * This is necessary for printing products on the storefront.
+     *
+     * Since the print page uses all components that are located on the view page, we reuse it without changes.
+     */
+    #[Route(path: '/print/{id}', name: 'oro_order_frontend_print', requirements: ['id' => '\d+'])]
+    #[Layout(action: 'oro_order_frontend_view')]
+    #[AclAncestor('oro_order_frontend_view')]
+    public function printAction(Order $order): array
+    {
+        $data = $this->viewAction($order);
+        $data['data']['grid_name'] = 'order-line-items-grid-frontend-print';
+
+        return $data;
     }
 
     /**
