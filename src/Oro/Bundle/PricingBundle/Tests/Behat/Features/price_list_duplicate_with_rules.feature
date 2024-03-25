@@ -17,15 +17,16 @@ Feature: Price list duplicate with rules
       | Active     | true            |
       | Rule       | product.id > 0  |
     And I click "Add Price Calculation Rules"
-    And I click "Enter expression unit"
-    And I click "Enter expression currency"
+    And I click "Price Calculation Unit Expression Button"
+    And I click on empty space
+    And I click "Price Calculation Currency Expression Button"
     And I fill "Price Calculation Rules Form" with:
       | Price for quantity | 1                               |
-      | Price Unit         | pricelist[1].prices.unit        |
-      | Price Currency     | pricelist[1].prices.currency    |
       | Calculate As       | pricelist[1].prices.value * 1.2 |
       | Condition          | product.featured == true        |
       | Priority           | 1                               |
+    And I type "pricelist[1].prices.currency" in "Price Calculation Currency Expression Editor Content"
+    And I type "pricelist[1].prices.unit" in "Price Calculation Unit Expression Editor Content"
     And I save and close form
     Then I should see "Price List has been saved" flash message
     And number of records in "Price list Product prices Grid" should be 0

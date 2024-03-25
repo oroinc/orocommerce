@@ -125,14 +125,15 @@ Feature: Product search and filter using flat prices and bayer
     And fill form with:
       | Rule | product.id > 0 |
     And click "Add Price Calculation Rules"
-    And click "Enter expression unit"
-    And click "Enter expression currency"
     And fill "Price Calculation Rules Form" with:
       | Price for quantity | 1                             |
-      | Price Unit         | pricelist[3].prices.unit      |
-      | Price Currency     | pricelist[3].prices.currency  |
       | Calculate As       | pricelist[3].prices.value * 2 |
       | Priority           | 10                            |
+    And I click "Price Calculation Unit Expression Button"
+    And I click on empty space
+    And I click "Price Calculation Currency Expression Button"
+    And I type "pricelist[3].prices.currency" in "Price Calculation Currency Expression Editor Content"
+    And I type "pricelist[3].prices.unit" in "Price Calculation Unit Expression Editor Content"
     And save and close form
     Then I should see "Price List has been saved" flash message
 

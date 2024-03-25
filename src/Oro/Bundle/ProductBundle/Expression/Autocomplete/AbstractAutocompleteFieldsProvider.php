@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\FieldsProviderInterface;
-use Oro\Component\PhpUtils\ArrayUtil;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -15,7 +14,7 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
     /**
      * @var array
      */
-    protected static $typesMap = [
+    protected static $scalarTypesMap = [
         'string' => self::TYPE_STRING,
         'text' => self::TYPE_STRING,
         'boolean' => self::TYPE_BOOLEAN,
@@ -23,14 +22,20 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
         'integer' => self::TYPE_INTEGER,
         'float' => self::TYPE_FLOAT,
         'money' => self::TYPE_FLOAT,
-        'double' => self::TYPE_FLOAT,
+        'decimal' => self::TYPE_FLOAT,
         'datetime' => self::TYPE_DATETIME,
         'date' => self::TYPE_DATE,
+    ];
+
+    /**
+     * @var array
+     */
+    protected static $relationTypesMap = [
         'manyToMany' => self::TYPE_RELATION,
         'oneToMany' => self::TYPE_RELATION,
         'manyToOne' => self::TYPE_RELATION,
         'ref-many' => self::TYPE_RELATION,
-        'ref-one' => self::TYPE_RELATION
+        'ref-one' => self::TYPE_RELATION,
     ];
 
     /**
@@ -81,25 +86,54 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
     /**
      * {@inheritdoc}
      */
-    public function getAutocompleteData($numericalOnly = false, $withRelations = true)
+    public function getDataProviderConfig($numericalOnly = false, $withRelations = true)
     {
-        $data = [
-            self::ROOT_ENTITIES_KEY => $this->getRootEntities(),
-            self::FIELDS_DATA_KEY => $this->translateLabels(
-                ArrayUtil::arrayMergeRecursiveDistinct(
-                    $this->getFieldsData($numericalOnly, $withRelations),
-                    ($numericalOnly ? [] : $this->specialFieldsInformation)
-                )
-            )
+        $optionsFilter = [
+            'unidirectional' => false,
+            'exclude' => false,
         ];
 
-        return $data;
+        if ($numericalOnly) {
+            // identifier fields should not be available for math operations
+            $optionsFilter['identifier'] = false;
+            $includeTypes = $this->fieldsProvider->getSupportedNumericTypes();
+        } else {
+            $includeTypes = array_keys(self::$scalarTypesMap);
+        }
+
+        if ($withRelations) {
+            $includeTypes = array_merge($includeTypes, $this->fieldsProvider->getSupportedRelationTypes());
+        } else {
+            $optionsFilter['relation'] = false;
+        }
+
+        $dataProviderConfig = [
+            'optionsFilter' => $optionsFilter,
+        ];
+
+        if (!empty($includeTypes)) {
+            $dataProviderConfig['include'] = array_map(function ($type) {
+                return ['type' => $type];
+            }, $includeTypes);
+        }
+
+        $fieldsFilterWhitelist = $this->fieldsProvider->getFieldsWhiteList();
+        if (!empty($fieldsFilterWhitelist)) {
+            $dataProviderConfig['fieldsFilterWhitelist'] = $fieldsFilterWhitelist;
+        }
+
+        $fieldsFilterBlacklist = $this->fieldsProvider->getFieldsBlackList();
+        if (!empty($fieldsFilterBlacklist)) {
+            $dataProviderConfig['fieldsFilterBlacklist'] = $fieldsFilterBlacklist;
+        }
+
+        return $dataProviderConfig;
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    protected function getRootEntities()
+    public function getRootEntities()
     {
         return $this->expressionParser->getReverseNameMapping();
     }
@@ -110,8 +144,10 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
      */
     protected function getMappedType($type)
     {
-        if (array_key_exists($type, self::$typesMap)) {
-            return self::$typesMap[$type];
+        if (array_key_exists($type, self::$scalarTypesMap)) {
+            return self::$scalarTypesMap[$type];
+        } elseif (array_key_exists($type, self::$relationTypesMap)) {
+            return self::$relationTypesMap[$type];
         }
 
         return null;
@@ -126,7 +162,9 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
         foreach ($data as &$fields) {
             $fields = array_map(
                 function (array $item) {
-                    $item['label'] = isset($item['label']) ? $this->translator->trans((string) $item['label']) : '';
+                    if (isset($item['label'])) {
+                        $item['label'] = $this->translator->trans((string) $item['label']);
+                    }
 
                     return $item;
                 },

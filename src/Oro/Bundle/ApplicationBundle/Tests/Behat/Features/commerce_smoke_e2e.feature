@@ -349,16 +349,16 @@ Feature: Commerce smoke e2e
       | Active     | true           |
       | Rule       | product.id > 0 |
     And click "Add Price Calculation Rules"
-    And click "Enter expression unit"
     And fill "Price Calculation Rules Form" with:
-      |Price Unit        |pricelist[1].prices.unit|
-    And click "Enter expression currency"
-    And fill "Price Calculation Rules Form" with:
-      |Price Currency    |pricelist[1].prices.currency   |
       |Price for quantity|1                              |
       |Calculate As      |pricelist[1].prices.value * 0.8|
       |Condition         |pricelist[1].prices.value > 1  |
       |Priority          |1                              |
+    And I click "Price Calculation Unit Expression Button"
+    And I click on empty space
+    And I click "Price Calculation Currency Expression Button"
+    And I type "pricelist[1].prices.currency" in "Price Calculation Currency Expression Editor Content"
+    And I type "pricelist[1].prices.unit" in "Price Calculation Unit Expression Editor Content"
     And save and close form
     Then should see "Price List has been saved" flash message
     When go to Sales/ Price Lists

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Form\OptionsConfigurator;
 
+use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProviderInterface;
@@ -31,55 +32,71 @@ class PriceRuleEditorOptionsConfigurator
      */
     private $twig;
 
+    /**
+     * @var EntityAliasResolver
+     */
+    private $entityAliasResolver;
+
     public function __construct(
         AutocompleteFieldsProviderInterface $autocompleteFieldsProvider,
         FormFactoryInterface $formFactory,
-        Environment $environment
+        Environment $environment,
+        EntityAliasResolver $entityAliasResolver
     ) {
         $this->autocompleteFieldsProvider = $autocompleteFieldsProvider;
         $this->formFactory = $formFactory;
         $this->twig = $environment;
+        $this->entityAliasResolver = $entityAliasResolver;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('numericOnly', false);
-        $resolver->setDefault('entities', []);
+        $resolver->setDefault('dataProviderConfig', []);
+        $resolver->setDefault('supportedNames', []);
         $resolver->setDefault('dataSource', []);
         $resolver->setAllowedTypes('numericOnly', 'bool');
 
-        $resolver->setNormalizer('entities', function (Options $options, $entities) {
-            if (empty($entities)) {
-                return $this->autocompleteFieldsProvider->getAutocompleteData($options['numericOnly']);
+        $resolver->setNormalizer('dataProviderConfig', function (Options $options, $dataProviderConfig) {
+            if (empty($dataProviderConfig)) {
+                return $this->autocompleteFieldsProvider->getDataProviderConfig($options['numericOnly']);
+            }
+            return $dataProviderConfig;
+        });
+
+        $resolver->setNormalizer('supportedNames', function (Options $options, $rootEntities) {
+            if (empty($rootEntities)) {
+                $entities = $this->autocompleteFieldsProvider->getRootEntities();
+                return !empty($entities) ? array_values($entities) : [];
             }
 
-            return $entities;
+            return $rootEntities;
         });
 
         $resolver->setNormalizer('dataSource', function (Options $options, $dataSource) {
-            if (!empty($options['entities'])) {
-                $rootKey = AutocompleteFieldsProviderInterface::ROOT_ENTITIES_KEY;
-                if (!empty($options['entities'][$rootKey][PriceList::class])) {
-                    $key = $options['entities'][$rootKey][PriceList::class];
-                    $priceListSelectView = $this->formFactory
-                        ->createNamed(
-                            uniqid('price_list_select___name___', false),
-                            PriceListSelectType::class,
-                            null,
-                            ['create_enabled' => false]
-                        )
-                        ->createView();
+            if (empty($options['supportedNames'])) {
+                return $dataSource;
+            }
+            $entityAlias = $this->entityAliasResolver->getAlias(PriceList::class);
+            if (in_array($entityAlias, $options['supportedNames'], true)) {
+                $priceListSelectView = $this->formFactory
+                    ->createNamed(
+                        uniqid('price_list_select___name___', false),
+                        PriceListSelectType::class,
+                        null,
+                        ['create_enabled' => false]
+                    )
+                    ->createView();
 
-                    try {
-                        return [
-                            $key => $this->twig->render(
-                                '@OroPricing/Form/form_widget.html.twig',
-                                ['form' => $priceListSelectView]
-                            )
-                        ];
-                    } catch (\Exception $e) {
-                        return $dataSource;
-                    }
+                try {
+                    return [
+                        $entityAlias => $this->twig->render(
+                            '@OroPricing/Form/form_widget.html.twig',
+                            ['form' => $priceListSelectView]
+                        )
+                    ];
+                } catch (\Exception $e) {
+                    return $dataSource;
                 }
             }
 

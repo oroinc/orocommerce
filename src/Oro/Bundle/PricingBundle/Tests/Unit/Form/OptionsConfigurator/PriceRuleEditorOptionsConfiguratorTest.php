@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\OptionsConfigurator;
 
+use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\OptionsConfigurator\PriceRuleEditorOptionsConfigurator;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProviderInterface;
@@ -22,6 +23,9 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
     /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     private $twig;
 
+    /** @var EntityAliasResolver */
+    private $entityAliasResolver;
+
     /** @var PriceRuleEditorOptionsConfigurator */
     private $configurator;
 
@@ -30,11 +34,13 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
         $this->autocompleteFieldsProvider = $this->createMock(AutocompleteFieldsProviderInterface::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
         $this->twig = $this->createMock(Environment::class);
+        $this->entityAliasResolver = $this->createMock(EntityAliasResolver::class);
 
         $this->configurator = new PriceRuleEditorOptionsConfigurator(
             $this->autocompleteFieldsProvider,
             $this->formFactory,
-            $this->twig
+            $this->twig,
+            $this->entityAliasResolver
         );
     }
 
@@ -50,11 +56,14 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
             ->method('render')
             ->with('@OroPricing/Form/form_widget.html.twig');
 
+        $this->entityAliasResolver->expects($this->never())
+            ->method('getAlias');
+
         $expected = [
             'numericOnly' => false,
-            'entities' => null,
+            'supportedNames' => [],
+            'dataProviderConfig' => null,
             'dataSource' => [],
-
         ];
         $this->assertEquals($expected, $optionsResolver->resolve([]));
     }
@@ -71,26 +80,35 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
             ->with('@OroPricing/Form/form_widget.html.twig')
             ->willReturn($selectHtml);
 
+        $this->entityAliasResolver->expects($this->once())
+            ->method('getAlias')
+            ->with($this->stringContains('PriceList'))
+            ->willReturn('price_list');
+
         $this->autocompleteFieldsProvider->expects($this->never())
-            ->method('getAutocompleteData');
+            ->method('getRootEntities');
+
+        $this->autocompleteFieldsProvider->expects($this->never())
+            ->method('getDataProviderConfig');
 
         $options = [
             'numericOnly' => false,
-            'entities' => [
-                AutocompleteFieldsProviderInterface::ROOT_ENTITIES_KEY => [PriceList::class => 'price_list']
+            'supportedNames' => ['price_list'],
+            'dataProviderConfig' => [
+                'include' => [['type' => 'integer']],
             ],
             'dataSource' => [],
         ];
 
         $expected = [
             'numericOnly' => false,
-            'entities' => [
-                AutocompleteFieldsProviderInterface::ROOT_ENTITIES_KEY => [PriceList::class => 'price_list']
+            'supportedNames' => ['price_list'],
+            'dataProviderConfig' => [
+                'include' => [['type' => 'integer']]
             ],
             'dataSource' => [
                 'price_list' => $selectHtml
             ],
-
         ];
         $this->assertEquals($expected, $optionsResolver->resolve($options));
     }
@@ -107,28 +125,38 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
             ->with('@OroPricing/Form/form_widget.html.twig')
             ->willReturn($selectHtml);
 
+        $this->entityAliasResolver->expects($this->once())
+            ->method('getAlias')
+            ->with($this->stringContains('PriceList'))
+            ->willReturn('price_list');
+
         $this->autocompleteFieldsProvider->expects($this->once())
-            ->method('getAutocompleteData')
+            ->method('getRootEntities')
+            ->willReturn([PriceList::class => 'price_list']);
+
+        $this->autocompleteFieldsProvider->expects($this->once())
+            ->method('getDataProviderConfig')
             ->with(false)
             ->willReturn(
-                [AutocompleteFieldsProviderInterface::ROOT_ENTITIES_KEY => [PriceList::class => 'price_list']]
+                ['include' => [['type' => 'integer']]]
             );
 
         $options = [
             'numericOnly' => false,
-            'entities' => [],
+            'supportedNames' => [],
+            'dataProviderConfig' => [],
             'dataSource' => [],
         ];
 
         $expected = [
             'numericOnly' => false,
-            'entities' => [
-                AutocompleteFieldsProviderInterface::ROOT_ENTITIES_KEY => [PriceList::class => 'price_list']
+            'supportedNames' => ['price_list'],
+            'dataProviderConfig' => [
+                'include' => [['type' => 'integer']]
             ],
             'dataSource' => [
                 'price_list' => $selectHtml
             ],
-
         ];
         $this->assertEquals($expected, $optionsResolver->resolve($options));
     }
@@ -144,18 +172,25 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
             ->with('@OroPricing/Form/form_widget.html.twig')
             ->willThrowException(new \Exception('test'));
 
+        $this->entityAliasResolver->expects($this->once())
+            ->method('getAlias')
+            ->with($this->stringContains('PriceList'))
+            ->willReturn('price_list');
+
         $options = [
             'numericOnly' => false,
-            'entities' => [
-                AutocompleteFieldsProviderInterface::ROOT_ENTITIES_KEY => [PriceList::class => 'price_list']
+            'supportedNames' => ['price_list'],
+            'dataProviderConfig' => [
+                'include' => [['type' => 'integer']],
             ],
             'dataSource' => [],
         ];
 
         $expected = [
             'numericOnly' => false,
-            'entities' => [
-                AutocompleteFieldsProviderInterface::ROOT_ENTITIES_KEY => [PriceList::class => 'price_list']
+            'supportedNames' => ['price_list'],
+            'dataProviderConfig' => [
+                'include' => [['type' => 'integer']],
             ],
             'dataSource' => [],
 

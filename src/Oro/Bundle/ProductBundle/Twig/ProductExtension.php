@@ -14,7 +14,6 @@ use Twig\TwigFunction;
 
 /**
  * Provides Twig functions related to products:
- *   - oro_product_expression_autocomplete_data
  *   - is_configurable_product_type
  *   - is_kit_product_type
  *   - get_upsell_products_ids
@@ -36,7 +35,6 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
     public function getFunctions()
     {
         return [
-            new TwigFunction('oro_product_expression_autocomplete_data', [$this, 'getAutocompleteData']),
             new TwigFunction('is_configurable_product_type', [$this, 'isConfigurableType']),
             new TwigFunction('is_kit_product_type', [$this, 'isKitType']),
             new TwigFunction('get_upsell_products_ids', [$this, 'getUpsellProductsIds']),
@@ -68,17 +66,6 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
     public function isKitType(?string $productType): bool
     {
         return $productType === Product::TYPE_KIT;
-    }
-
-    /**
-     * @param bool $numericalOnly
-     * @param bool $withRelations
-     *
-     * @return array
-     */
-    public function getAutocompleteData($numericalOnly = false, $withRelations = true)
-    {
-        return $this->getAutocompleteFieldsProvider()->getAutocompleteData($numericalOnly, $withRelations);
     }
 
     /**

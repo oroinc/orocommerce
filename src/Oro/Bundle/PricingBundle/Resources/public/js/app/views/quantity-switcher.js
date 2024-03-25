@@ -3,6 +3,7 @@ define(function(require) {
 
     const quantityVisibleLength = 6;
     const $ = require('jquery');
+    const {throttle} = require('underscore');
     const AbstractSwitcher = require('oropricing/js/app/views/abstract-switcher');
 
     /**
@@ -25,6 +26,7 @@ define(function(require) {
          * @inheritdoc
          */
         constructor: function QuantitySwitcher(options) {
+            this.changeQuantityField = throttle(this.changeQuantityField, 100);
             QuantitySwitcher.__super__.constructor.call(this, options);
         },
 
@@ -85,11 +87,12 @@ define(function(require) {
             const $input1 = $field1.find('input');
             const $input2 = $field2.find('input');
             if (!!$input1.val()) {
-                $input2.val($input1.val());
+                $input2.val($input1.val()).trigger('change');
             }
             $field2.addClass(this.visibleClass).show();
             $input1.val('');
             $field1.removeClass(this.visibleClass).hide();
+            $input2.focus();
         },
 
         isValid: function() {
@@ -103,6 +106,8 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
+
+            this.changeQuantityField.cancel();
 
             delete this.options;
             delete this.visibleClass;

@@ -195,6 +195,22 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
+     * Example: I select "Product" option in selection results
+     *
+     * @When /^(?:|I )select "(?P<name>[^"]+)" option in selection results$/
+     */
+    public function iSelectOptionInSelectionResults(string $name): void
+    {
+        $detachedSelect2Result = $this->elementFactory->createElement('DetachedSelect2Result');
+        $detachedSelect2Result
+            ->find('xpath', sprintf(
+                '//div[contains(@class, "select2-result-label") and contains(., "%s")]',
+                $name
+            ))
+            ->click();
+    }
+
+    /**
      * @param array|PriceListSequenceMember[] $priceLists
      * @return string
      */
