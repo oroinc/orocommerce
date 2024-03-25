@@ -25,10 +25,10 @@ Feature: Existing RFQ with Product Kits view - with Missing Product
     And I click "Requests For Quote"
     And I click view PO013 in grid
     Then I should see RFQ with data:
-      | First Name    | Amanda                  |
-      | Last Name     | Cole                    |
-      | Email Address | AmandaRCole@example.org |
-      | PO Number	  | PO013                   |
+      | First Name | Amanda                  |
+      | Last Name  | Cole                    |
+      | Email      | AmandaRCole@example.org |
+      | PO Number  | PO013                   |
     And I should see next rows in "Storefront Request Line Items Table" table
       | Item                                                                                                                                | Requested Quantity | Target Price |
       | Simple Product 01 Item #: simple-product-01                                                                                         | 1 pc               | $2.00        |

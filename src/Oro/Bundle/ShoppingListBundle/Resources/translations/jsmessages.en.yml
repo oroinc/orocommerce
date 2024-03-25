@@ -19,7 +19,9 @@ oro:
             add_to_shopping_list: Add to {{ shoppingList }}
             add_to_shopping_list_short: Add to
             line_items_in_shopping_list: '{{ lineItems }} in {{ shoppingList }}'
-            in_shopping_lists: 'In {{ shoppingListsCount }} Shopping Lists'
+            in_shopping_list_plural: 'In {{ shoppingListsCount }} Shopping Lists'
+            # used in 5.1 LTS
+            in_shopping_lists: In Shopping Lists
             in_shopping_list: In Shopping List
             update_shopping_list: Update {{ shoppingList }}
             update_shopping_list_short: Update

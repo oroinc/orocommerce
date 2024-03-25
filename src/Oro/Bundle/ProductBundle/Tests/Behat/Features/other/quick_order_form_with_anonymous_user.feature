@@ -11,9 +11,9 @@ Feature: Quick order form with anonymous user
     And should see "Log In"
 
   Scenario: Check redirect to Quick Order Form page after login
-    Given I fill form with:
-      | Email Address | AmandaRCole@example.org |
-      | Password      | AmandaRCole@example.org |
+    Given I fill "Customer Login Form" with:
+      | Email    | AmandaRCole@example.org |
+      | Password | AmandaRCole@example.org |
     And click "Log In"
     Then I should see "Amanda Cole"
     And should see "Quick Order"

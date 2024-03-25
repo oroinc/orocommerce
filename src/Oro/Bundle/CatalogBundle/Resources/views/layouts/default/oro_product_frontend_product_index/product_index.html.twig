@@ -1,3 +1,23 @@
+{% block _breadcrumbs_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-module': ' oroproduct/js/app/components/breadcrumbs-navigation-block'
+    }) %}
+    {{ block_widget(block) }}
+{% endblock %}
+
+{% block _breadcrumbs_filters_widget %}
+    <span class="filters-info"></span>
+{% endblock %}
+
+{% block _category_wrapper_widget %}
+    {% if block.children|length %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' category-content'
+        }) %}
+        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    {% endif %}
+{% endblock %}
+
 {% block _category_picture_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' category-picture__image',
@@ -16,17 +36,6 @@
             </div>
         </div>
     {% endif %}
-{% endblock %}
-
-{% block _breadcrumbs_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~data-page-component-module': ' oroproduct/js/app/components/breadcrumbs-navigation-block'
-    }) %}
-    {{ block_widget(block) }}
-{% endblock %}
-
-{% block _breadcrumbs_filters_widget %}
-    <span class="filters-info"></span>
 {% endblock %}
 
 {% block _category_title_widget %}

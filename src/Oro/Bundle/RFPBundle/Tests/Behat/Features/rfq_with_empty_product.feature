@@ -14,7 +14,7 @@ Feature: RFQ with empty product
     And I fill form with:
       | First Name    | Amanda                                                                |
       | Last Name     | Cole                                                                  |
-      | Email Address | AmandaRCole@example.org                                               |
+      | Email         | AmandaRCole@example.org                                               |
       | Phone Number  | 72 669 62 82                                                          |
       | Company       | Red Fox Tavern                                                        |
       | Role          | Sauce cook                                                            |
@@ -26,7 +26,7 @@ Feature: RFQ with empty product
     Then I should see RFQ with data:
       | First Name    | Amanda                                                                |
       | Last Name     | Cole                                                                  |
-      | Email Address | AmandaRCole@example.org                                               |
+      | Email         | AmandaRCole@example.org                                               |
       | Phone Number  | 72 669 62 82                                                          |
       | Company       | Red Fox Tavern                                                        |
       | Role          | Sauce cook                                                            |

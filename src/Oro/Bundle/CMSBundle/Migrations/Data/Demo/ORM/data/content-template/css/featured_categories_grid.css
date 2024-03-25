@@ -18,6 +18,9 @@
 .featured-categories-offset-start {
     padding-inline-start: var(--featured-categories-content-offset);
 }
+.featured-categories-offset-bottom {
+    padding-block-end: var(--featured-categories-content-offset);
+}
 /* stylelint-disable scale-unlimited/declaration-strict-value */
 .featured-categories-grid__cell {
     position: relative;

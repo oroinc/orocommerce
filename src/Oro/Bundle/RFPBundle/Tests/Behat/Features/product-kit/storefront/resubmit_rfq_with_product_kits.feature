@@ -23,10 +23,10 @@ Feature: Resubmit RFQ with Product Kits
 
   Scenario: Check original Request
     Given I should see RFQ with data:
-      | First Name    | Amanda                  |
-      | Last Name     | Cole                    |
-      | Email Address | AmandaRCole@example.org |
-      | PO Number	  | PO013                   |
+      | First Name | Amanda                  |
+      | Last Name  | Cole                    |
+      | Email      | AmandaRCole@example.org |
+      | PO Number  | PO013                   |
     And I should see RFQ status is "Cancelled"
     And I should see next rows in "Storefront Request Line Items Table" table
       | Item                                                                                                                     | Requested Quantity | Target Price |
@@ -43,10 +43,10 @@ Feature: Resubmit RFQ with Product Kits
   Scenario: Check resubmitted Request
     When I click view Submitted in grid
     Then I should see RFQ with data:
-      | First Name    | Amanda                  |
-      | Last Name     | Cole                    |
-      | Email Address | AmandaRCole@example.org |
-      | PO Number	  | PO013                   |
+      | First Name | Amanda                  |
+      | Last Name  | Cole                    |
+      | Email      | AmandaRCole@example.org |
+      | PO Number  | PO013                   |
     And I should see RFQ status is "Submitted"
     And I should see next rows in "Storefront Request Line Items Table" table
       | Item                                                                                                                     | Requested Quantity | Target Price |

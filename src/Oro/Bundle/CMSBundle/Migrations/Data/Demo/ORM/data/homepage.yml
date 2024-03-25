@@ -22,6 +22,9 @@ homepage:
         .featured-categories-offset-start {
             padding-inline-start: var(--featured-categories-content-offset);
         }
+        .featured-categories-offset-bottom {
+            padding-block-end: var(--featured-categories-content-offset);
+        }
         .featured-categories-grid__cell {
             position: relative;
             column-gap: 8px;
@@ -402,11 +405,11 @@ homepage:
                     </a>
                     <a href="/medical/medical-apparel" class="featured-categories-grid__cell featured-categories-grid__2-rows featured-categories-grid__content grid-col grid">
                         <h2 class="grid-col-12 grid-col-mobile-landscape-12 featured-categories-offset-top-end-start featured-categories-offset-top-end-start-mobile featured-categories-content-over no-offset">Medical Apparel</h2>
-                        <div class="grid-col-6 featured-categories-offset-start featured-categories__sub-cell hide-on-mobile-landscape">
+                        <div class="grid-col-4 featured-categories-offset-start featured-categories-offset-bottom featured-categories__sub-cell hide-on-mobile-landscape">
                             <p class="no-offset">Complete the look of your medical team with our high-quality medical apparel</p>
                             <span class="featured-categories-grid__link">Shop Now</span>
                         </div>
-                        <div class="featured-categories-grid__picture featured-categories-grid__picture--align-end grid-col-6 grid-col-mobile-landscape-12">
+                        <div class="featured-categories-grid__picture featured-categories-grid__picture--align-end grid-col-8 grid-col-mobile-landscape-12">
                             <picture>
                                 <source media="(max-width: 640px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-7-640.png">
                                 <source media="(max-width: 992px)" srcset="/bundles/orocms/images/home-page/featured-categories-grid-img-7-992.png">
@@ -495,7 +498,7 @@ homepage:
                             <p class="illustration-carts__text no-offset">Keep track of all current and submitted orders under your account menu.</p>
                             <a class="illustration-carts__btn btn btn--outlined" href="/customer/order">View Order History</a>
                         </div>
-                        <div class="illustration-carts__img grid-col hide-on-mobile-big">
+                        <div class="illustration-carts__img grid-col hide-on-tablet-small">
                             <picture>
                                 <source media="(max-width: 1280px)" srcset="/bundles/orocms/images/home-page/illustration-carts-order-history-1280.png" type="image/png">
                                 <img src="/bundles/orocms/images/home-page/illustration-carts-order-history.png" alt="Order history">
@@ -508,7 +511,7 @@ homepage:
                             <p class="illustration-carts__text no-offset">Need assistance with a product, checkout, or your order?</p>
                             <a class="illustration-carts__btn btn btn--outlined" href="/contact-us">Contact Us</a>
                         </div>
-                        <div class="illustration-carts__img grid-col hide-on-mobile-big">
+                        <div class="illustration-carts__img grid-col hide-on-tablet-small">
                             <picture>
                                 <source media="(max-width: 1280px)" srcset="/bundles/orocms/images/home-page/illustration-carts-contact-us-1280.png" type="image/png">
                                 <img src="/bundles/orocms/images/home-page/illustration-carts-contact-us.png" alt="Contact us">

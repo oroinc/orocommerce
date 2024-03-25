@@ -91,7 +91,8 @@
         }
 
         &--gallery-view {
-            height: 263px;
+            // product_medium image's height + border
+            height: 261px;
             display: block;
             border-bottom: $product-item-image-holder-gallery-view-border-bottom;
         }

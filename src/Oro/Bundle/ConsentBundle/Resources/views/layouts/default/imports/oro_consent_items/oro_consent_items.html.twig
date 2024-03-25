@@ -94,8 +94,8 @@
     <span {{ block('block_attributes') }}>
         {{ 'oro.consent.frontend.form.agree.label'|trans }}
         {{ parent_block_widget(block) }}
-        {% if consent.required %}
-            <em class="consent-item__asterisk" aria-hidden="true">*</em>
-        {% endif %}
+        {%- if consent.required %}
+            <span class="required-symbol" aria-hidden="true">*</span>
+        {% endif -%}
     </span>
 {% endblock %}

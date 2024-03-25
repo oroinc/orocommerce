@@ -1,14 +1,12 @@
 /* @theme: default; */
 
-$product-view-media-gallery-border-width: 1px !default;
-$product-view-media-gallery-border: $product-view-media-gallery-border-width
-    solid get-color('neutral', 'grey1') !default;
-$product-view-media-gallery-max-height: 380px !default;
-$product-view-media-gallery-image-max-height: $product-view-media-gallery-max-height -
-    ($product-view-media-gallery-border-width * 2) !default;
+$product-view-media-gallery-border: inset 0 0 0 1px get-color('neutral', 'grey2') !default;
+$product-view-media-gallery-border-radius: $base-ui-element-border-radius !default;
+$product-view-media-gallery-max-height: 520px !default;
+$product-view-media-gallery-image-max-height: $product-view-media-gallery-max-height !default;
 $product-view-media-gallery-z-index: z('base') !default;
 
-$product-view-media-gallery-tab-content-max-width: 380px !default;
+$product-view-media-gallery-tab-content-max-width: 520px !default;
 $product-view-media-gallery-container-tab-content-max-width: $product-view-media-gallery-tab-content-max-width !default;
 $product-view-media-gallery-container-position: relative !default;
 
@@ -18,7 +16,7 @@ $product-view-media-gallery-nav-offset-top: 20px !default;
 $product-view-media-gallery-nav-offset: 24px 0 0 !default;
 $product-view-media-gallery-nav-arrow-width: 0 !default;
 $product-view-media-gallery-nav-item-offset-h: spacing('xs') !default;
-$product-view-media-gallery-nav-item-offset-inner: 0 $product-view-media-gallery-nav-item-offset-h !default;
+$product-view-media-gallery-nav-item-offset-inner: 2px $product-view-media-gallery-nav-item-offset-h !default;
 $product-view-media-gallery-nav-arrow-border: 0 !default;
 $product-view-media-gallery-nav-arrow-bg: get-color('neutral', 'grey1') !default;
 $product-view-media-gallery-nav-arrow-bg-hover: get-color('primary', 'light') !default;
@@ -26,8 +24,8 @@ $product-view-media-gallery-nav-arrow-bg-focus: get-color('neutral', 'grey1') !d
 $product-view-media-gallery-nav-arrow-side-position: 0 !default;
 $product-view-media-gallery-nav-arrow-border-radius: 100% !default;
 
-$product-view-media-gallery-slick-slide-item-border: 1px solid get-var-color('neutral', 'grey2') !default;
-$product-view-media-gallery-slick-slide-current-item-border: 2px solid get-var-color('primary', 'main') !default;
+$product-view-media-gallery-slick-slide-item-box-shadow: 0 0 0 1px get-var-color('neutral', 'grey2') !default;
+$product-view-media-gallery-slick-slide-current-item-box-shadow: 0 0 0 2px get-var-color('primary', 'main') !default;
 
 $product-view-media-gallery-nav-loading-url: get-color('neutral', 'white-100')
     url('#{$global-url}/orofrontend/default/images/loader.svg') no-repeat center center !default;

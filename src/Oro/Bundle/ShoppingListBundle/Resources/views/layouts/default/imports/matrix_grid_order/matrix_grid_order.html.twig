@@ -53,7 +53,7 @@
                 <picture class="product-item__preview-picture">
                     {% set productImage = product.imagesByType('listing').first.image|default(null) %}
                     {% set productImageUrl = product_filtered_image(productImage, 'product_small') %}
-                    <img src="{{ productImageUrl }}" alt="{{ product.names|localized_value|e }}" class="product-item__preview-image">
+                    <img src="{{ productImageUrl }}" alt="{{ product.names|localized_value|e }}" class="product-item__preview-image cover-img">
                 </picture>
             </div>
         </div>

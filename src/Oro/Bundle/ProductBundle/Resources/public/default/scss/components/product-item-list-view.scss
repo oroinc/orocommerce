@@ -153,7 +153,8 @@
     .product-item {
         &__content {
             &--list-view {
-                grid-template-columns: 480px 1fr;
+                // product_large image + border
+                grid-template-columns: 482px 1fr;
                 gap: 0 56px;
 
                 .product-item-shopping-lists {
@@ -164,7 +165,8 @@
 
         &__image-holder {
             &--list-view {
-                height: 300px;
+                // product_large image + border
+                height: 358px;
             }
         }
 

@@ -150,6 +150,8 @@
                             class: 'product-view-media-gallery__image',
                             alt: product.names|localized_value,
                             'data-zoom-image': product_filtered_image(productImage.image, 'product_original'),
+                            width: 700,
+                            height: 520
                         } %}
 
                         {% if loop.first %}
@@ -175,15 +177,15 @@
             <div id="zoom-container"></div>
         </div>
     {% else %}
-        <div class="product-view-media-gallery" itemprop="productID" content="{{ product.id}}">
+        <div class="product-view-media-gallery product-view-media-gallery--no-image" itemprop="productID" content="{{ product.id}}">
             <div class="product-view-media-gallery__image-item">
                 {% include '@OroAttachment/Twig/picture.html.twig' with {
                     sources: product_filtered_picture_sources(null, 'product_gallery_main'),
                     img_attrs: {
                         class: 'product-view-media-gallery__image',
                         alt: product.names|localized_value,
-                        width: 378,
-                        height: 378,
+                        width: 700,
+                        height: 520,
                         itemprop: 'image'
                     },
                     picture_attrs: {
@@ -201,7 +203,7 @@
                     {% include '@OroAttachment/Twig/picture.html.twig' with {
                         sources: product_filtered_picture_sources(productImage.image, 'product_small'),
                         img_attrs: {
-                            class: 'product-view-media-gallery__nav__image',
+                            class: 'product-view-media-gallery__nav__image cover-img',
                             alt: product.names|localized_value,
                             width: 378,
                             height: 378,

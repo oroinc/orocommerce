@@ -34,6 +34,11 @@ layout:
             id: order_view_page_toolbar_print_button
             optionName: text
             optionValue: 'oro.frontend.order.toolbar-actions.btn.print'
+        - '@setOption':
+            id: order_view_page_toolbar_print_button
+            optionName: value
+            optionValue: '=data["order"].getId()'
+
         - '@add':
             id: button_container
             blockType: line_buttons

@@ -10,6 +10,6 @@
 >
     {% include '@OroAttachment/Twig/picture.html.twig' with {
         sources: product_filtered_picture_sources(productImageListing, 'product_small'),
-        img_attrs: { class: 'thumbnail', alt: record.getValue('productName'), width: 82, height: 82 }
+        img_attrs: { class: 'thumbnail cover-img', alt: record.getValue('productName'), width: 80, height: 80 }
     } %}
 </a>

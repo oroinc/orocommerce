@@ -184,7 +184,7 @@ Feature: Consent management via Management Console UI
       | Company Name     | OroCommerce               |
       | First Name       | Amanda                    |
       | Last Name        | Cole                      |
-      | Email Address    | AmandaRCole1@example.org  |
+      | Email            | AmandaRCole1@example.org  |
       | Password         | AmandaRCole1@example.org  |
       | Confirm Password | AmandaRCole1@example.org  |
     And I click "Presenting Personal Data"
@@ -221,10 +221,10 @@ Feature: Consent management via Management Console UI
       | Company Name                         | OroCommerce               |
       | First Name                           | Amanda                    |
       | Last Name                            | Cole                      |
-      | Email Address                        | AmandaRCole1@example.org  |
+      | Email                                | AmandaRCole1@example.org  |
       | Password                             | AmandaRCole1@example.org  |
       | Confirm Password                     | AmandaRCole1@example.org  |
-    When click "Create An Account"
+    When click "Create Account"
     Then I should see that "Required Consent" contains "This agreement is required"
     And I click "Presenting Personal Data"
     Then I should see "UiDialog" with elements:
@@ -244,7 +244,7 @@ Feature: Consent management via Management Console UI
     And the "Presenting Personal Data" checkbox should be checked
     And the "Email Newsletters" checkbox should not be checked
     And the "Collecting and storing personal data" checkbox should be checked
-    When click "Create An Account"
+    When click "Create Account"
     Then I should see "Please check your email to complete registration" flash message
 
   Scenario: Confirmation of registration a new user who has accepted consents
@@ -462,7 +462,7 @@ Feature: Consent management via Management Console UI
       | Company Name                         | OroCommerce                 |
       | First Name                           | Branda                      |
       | Last Name                            | Sanborn                     |
-      | Email Address                        | BrandaJSanborn1@example.org |
+      | Email                                | BrandaJSanborn1@example.org |
       | Password                             | BrandaJSanborn1@example.org |
       | Confirm Password                     | BrandaJSanborn1@example.org |
     And I click "Presenting Personal Data"
@@ -482,7 +482,7 @@ Feature: Consent management via Management Console UI
     And I click "Yes, Delete"
     And should see "Consent deleted" flash message
     And I proceed as the User
-    When click "Create An Account"
+    When click "Create Account"
     Then I should see "Some consents were changed. Please reload the page."
     And I should not see "Test Consent"
     And I should see 2 elements "Required Consent"
@@ -511,7 +511,7 @@ Feature: Consent management via Management Console UI
       | Company Name                         | OroCommerce                 |
       | First Name                           | Branda                      |
       | Last Name                            | Sanborn                     |
-      | Email Address                        | BrandaJSanborn2@example.org |
+      | Email                                | BrandaJSanborn2@example.org |
       | Password                             | BrandaJSanborn2@example.org |
       | Confirm Password                     | BrandaJSanborn2@example.org |
     And I click "Presenting Personal Data"
@@ -737,12 +737,12 @@ Feature: Consent management via Management Console UI
     And I open shopping list widget
     And I click "Open List"
     And click on "Create Order"
-    And I click "Create An Account"
+    And I click "Create Account"
     And I fill "Registration Form" with:
       | Company          | Company            |
       | First Name       | Sue                |
       | Last Name        | Jackson            |
-      | Email Address    | Sue001@example.com |
+      | Email            | Sue001@example.com |
       | Password         | Sue001@example.com |
       | Confirm Password | Sue001@example.com |
       | Test Consent 3 | true |
@@ -755,6 +755,7 @@ Feature: Consent management via Management Console UI
     When I click "Create an Account and Continue"
     Then Page title equals to "Agreements - Checkout"
     And I should not see "Back"
+    And I scroll to top
     When click "Continue"
     Then I should see "Please confirm your email before continue checkout" flash message
 

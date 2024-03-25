@@ -8,7 +8,6 @@ use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
 use Oro\Bundle\CMSBundle\Migrations\Schema\v1_14_1\Query\UpdateFieldsConfigsMigrationQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigMigrationQuery;
-use Oro\Bundle\EntityExtendBundle\Migration\RefreshExtendCacheMigrationQuery;
 use Oro\Bundle\EntityExtendBundle\Migration\RefreshExtendConfigMigrationQuery;
 use Oro\Bundle\EntityExtendBundle\Migration\UpdateExtendConfigMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DataStorageExtension;
@@ -61,19 +60,6 @@ class RenameImageSlideColumns implements
              * So, here manually executed all required migration queries to fill all config tables with required data
              */
             $commandExecutor = $this->container->get('oro_entity_config.tools.command_executor');
-            /** @see \Oro\Bundle\EntityExtendBundle\Migration\RefreshExtendCacheMigration */
-            $queries->addPreQuery(
-                new RefreshExtendConfigMigrationQuery(
-                    $commandExecutor,
-                    $this->dataStorageExtension->get('initial_entity_config_state', []),
-                    $this->container->getParameter('oro_entity_extend.migration.initial_entity_config_state.path'),
-                )
-            );
-            $queries->addPreQuery(
-                new RefreshExtendCacheMigrationQuery(
-                    $commandExecutor,
-                )
-            );
 
             /** @see \Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigMigration */
             $queries->addPreQuery(new UpdateEntityConfigMigrationQuery($commandExecutor));
@@ -89,11 +75,6 @@ class RenameImageSlideColumns implements
                     $commandExecutor,
                     $this->dataStorageExtension->get('initial_entity_config_state', []),
                     $this->container->getParameter('oro_entity_extend.migration.initial_entity_config_state.path'),
-                )
-            );
-            $queries->addPreQuery(
-                new RefreshExtendCacheMigrationQuery(
-                    $commandExecutor
                 )
             );
         }

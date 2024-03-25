@@ -1,0 +1,8 @@
+/* @theme: default; */
+
+.category-content {
+    display: flex;
+    flex-direction: column;
+    gap: $category-content-gap;
+    margin-top: $category-content-offset;
+}

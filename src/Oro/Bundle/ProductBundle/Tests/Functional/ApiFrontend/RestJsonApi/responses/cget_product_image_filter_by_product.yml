@@ -19,55 +19,46 @@ data:
                         - additional
                     url_webp: '/media/cache/attachment/filter/product_original/4dbc178c2ebed276168fb5a715adf9ec/{file1Id}/testFile1-originalFilenameTestFile1.jpg.webp'
                 -
-                    url: '/media/cache/attachment/filter/product_gallery_popup/098f408deb471e628613685fa97b1968/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
-                    maxWidth: 610
-                    maxHeight: 610
+                    url: '/media/cache/attachment/filter/product_gallery_popup/f44d7b152144e8c5ebf8b52270925e6f/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
+                    maxWidth: 836
+                    maxHeight: 620
                     dimension: product_gallery_popup
                     types:
                         - main
-                    url_webp: '/media/cache/attachment/filter/product_gallery_popup/5e23e551f9c58b3ed2cbcdcaf72c28fc/{file1Id}/testFile1-originalFilenameTestFile1.jpg.webp'
+                    url_webp: '/media/cache/attachment/filter/product_gallery_popup/fb85dcdbb882996026a5eb1977eb928b/{file1Id}/testFile1-originalFilenameTestFile1.jpg.webp'
                 -
-                    url: '/media/cache/attachment/filter/product_gallery_main/cfd646b508e8eaf0ad3fa52d426f48a6/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
-                    maxWidth: 378
-                    maxHeight: auto
+                    url: '/media/cache/attachment/filter/product_gallery_main/c9cf26b98d2586462d9a39592ddc9c45/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
+                    maxWidth: 700
+                    maxHeight: 520
                     dimension: product_gallery_main
                     types:
                         - main
-                    url_webp: '/media/cache/attachment/filter/product_gallery_main/9e256c59daf1c360fa2a692e1a4d8eeb/{file1Id}/testFile1-originalFilenameTestFile1.jpg.webp'
+                    url_webp: '/media/cache/attachment/filter/product_gallery_main/0a26ac139b13349391fc32c7b9937b1c/{file1Id}/testFile1-originalFilenameTestFile1.jpg.webp'
                 -
-                    url: '/media/cache/attachment/filter/product_large/eeaae484c55679ca82697fa666caa067/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
-                    maxWidth: 360
-                    maxHeight: auto
+                    url: '/media/cache/attachment/filter/product_large/b5613427c4ba81a6fd544d4393d1f7db/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
+                    maxWidth: 480
+                    maxHeight: 356
                     dimension: product_large
                     types:
                         - main
-                    url_webp: '/media/cache/attachment/filter/product_large/bd4e514c8f359caca373ba00312b4fe3/{file1Id}/testFile1-originalFilenameTestFile1.jpg.webp'
+                    url_webp: '/media/cache/attachment/filter/product_large/1c5abede3a04ffa36277b441c71097a0/{file1Id}/testFile1-originalFilenameTestFile1.jpg.webp'
                 -
-                    url: '/media/cache/attachment/filter/product_extra_large/611b34cf36199f7491b40a557dad14a9/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
-                    maxWidth: 378
-                    maxHeight: 378
-                    dimension: product_extra_large
-                    types:
-                        - main
-                        - additional
-                    url_webp: '/media/cache/attachment/filter/product_extra_large/de49a9f899e6dc68356803fcbffb2688/{file1Id}/testFile1-originalFilenameTestFile1.jpg.webp'
-                -
-                    url: '/media/cache/attachment/filter/product_medium/7a536977631646a144ec5265d77d2590/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
-                    maxWidth: 309
-                    maxHeight: auto
+                    url: '/media/cache/attachment/filter/product_medium/c55318e9335b97600d7d5f0588152cb5/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
+                    maxWidth: 350
+                    maxHeight: 260
                     dimension: product_medium
                     types:
                         - main
-                    url_webp: '/media/cache/attachment/filter/product_medium/db3a664f4da1aaac33e236e7d723ad6e/{file1Id}/testFile1-originalFilenameTestFile1.jpg.webp'
+                    url_webp: '/media/cache/attachment/filter/product_medium/68a5b11cec39d4b71bae527f6f5be075/{file1Id}/testFile1-originalFilenameTestFile1.jpg.webp'
                 -
-                    url: '/media/cache/attachment/filter/product_small/84078bda0c3b7f564f768f22b373dbf9/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
-                    maxWidth: 80
+                    url: '/media/cache/attachment/filter/product_small/3faadf60cfe6ce0010891d17ee8df70d/{file1Id}/testFile1-originalFilenameTestFile1.jpg'
+                    maxWidth: auto
                     maxHeight: 80
                     dimension: product_small
                     types:
                         - main
                         - additional
-                    url_webp: '/media/cache/attachment/filter/product_small/d4ce196ae0a4403e33929ca2abe9ca4c/{file1Id}/testFile1-originalFilenameTestFile1.jpg.webp'
+                    url_webp: '/media/cache/attachment/filter/product_small/369d28f00dcc88bd06862ac5ab07d0ec/{file1Id}/testFile1-originalFilenameTestFile1.jpg.webp'
         relationships:
             product:
                 data:
@@ -92,31 +83,22 @@ data:
                         - additional
                     url_webp: '/media/cache/attachment/filter/product_original/4dbc178c2ebed276168fb5a715adf9ec/{file2Id}/testFile2.jpg.webp'
                 -
-                    url: '/media/cache/attachment/filter/product_extra_large/611b34cf36199f7491b40a557dad14a9/{file2Id}/testFile2.jpg'
-                    maxWidth: 378
-                    maxHeight: 378
-                    dimension: product_extra_large
-                    types:
-                        - additional
-                        - listing
-                    url_webp: '/media/cache/attachment/filter/product_extra_large/de49a9f899e6dc68356803fcbffb2688/{file2Id}/testFile2.jpg.webp'
-                -
-                    url: '/media/cache/attachment/filter/product_small/84078bda0c3b7f564f768f22b373dbf9/{file2Id}/testFile2.jpg'
-                    maxWidth: 80
+                    url: '/media/cache/attachment/filter/product_small/3faadf60cfe6ce0010891d17ee8df70d/{file2Id}/testFile2.jpg'
+                    maxWidth: auto
                     maxHeight: 80
                     dimension: product_small
                     types:
                         - additional
                         - listing
-                    url_webp: '/media/cache/attachment/filter/product_small/d4ce196ae0a4403e33929ca2abe9ca4c/{file2Id}/testFile2.jpg.webp'
+                    url_webp: '/media/cache/attachment/filter/product_small/369d28f00dcc88bd06862ac5ab07d0ec/{file2Id}/testFile2.jpg.webp'
                 -
-                    url: '/media/cache/attachment/filter/product_large/eeaae484c55679ca82697fa666caa067/{file2Id}/testFile2.jpg'
-                    maxWidth: 360
-                    maxHeight: auto
+                    url: '/media/cache/attachment/filter/product_large/b5613427c4ba81a6fd544d4393d1f7db/{file2Id}/testFile2.jpg'
+                    maxWidth: 480
+                    maxHeight: 356
                     dimension: product_large
                     types:
                         - listing
-                    url_webp: '/media/cache/attachment/filter/product_large/bd4e514c8f359caca373ba00312b4fe3/{file2Id}/testFile2.jpg.webp'
+                    url_webp: '/media/cache/attachment/filter/product_large/1c5abede3a04ffa36277b441c71097a0/{file2Id}/testFile2.jpg.webp'
         relationships:
             product:
                 data:
