@@ -1,6 +1,6 @@
 @ticket-BB-18497
 @fixture-OroProductBundle:product_search/products.yml
-
+@regression
 Feature: Administrator should have a possibility to remove website without affecting of the products indexed in the
   scope of the default website
 
