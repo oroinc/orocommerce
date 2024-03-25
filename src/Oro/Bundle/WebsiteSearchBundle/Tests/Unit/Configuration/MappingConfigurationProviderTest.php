@@ -97,7 +97,8 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'store' => true,
                         'group' => 'main'
                     ]
-                ]
+                ],
+                'stop_words_enabled' => false,
             ],
             'Oro\Bundle\TestBundle3\Entity\Product' => [
                 'alias' => 'product_WEBSITE_ID',
@@ -119,7 +120,8 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
                         'store' => true,
                         'group' => 'main'
                     ],
-                ]
+                ],
+                'stop_words_enabled' => false,
             ]
         ];
 
