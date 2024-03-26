@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\FrontendBundle\Form\OptionsConfigurator\RuleEditorOptionsConfigurator;
 use Oro\Bundle\FrontendBundle\Form\Type\RuleEditorTextareaType;
 use Oro\Bundle\FrontendBundle\Form\Type\RuleEditorTextType;
@@ -33,10 +34,15 @@ trait PriceRuleEditorAwareTestTrait
             ->method('createNamed')
             ->willReturn($priceListSelectForm);
         $twig = $this->createMock(Environment::class);
+        /** @var EntityAliasResolver|\PHPUnit_Framework_MockObject_MockObject $entityAliasResolver */
+        $entityAliasResolver = $this->getMockBuilder(EntityAliasResolver::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $priceRuleOptionsConfigurator = new PriceRuleEditorOptionsConfigurator(
             $autocompleteFieldsProvider,
             $formFactory,
-            $twig
+            $twig,
+            $entityAliasResolver
         );
         $formatter = $this->createMock(UnitLabelFormatter::class);
         $priceRuleEditor = new PriceRuleEditorType($priceRuleOptionsConfigurator);

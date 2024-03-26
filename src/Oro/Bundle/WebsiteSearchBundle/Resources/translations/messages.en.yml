@@ -3,6 +3,7 @@ oro:
         search_field_placeholder: Search products
         search_label: Search
         search_submit_btn: Start Searching
+        search_submit_btn_reset: Reset search input
 
         entity_config:
             search_boost:
@@ -23,17 +24,17 @@ oro:
             website_search_history:
                 label: 'Enable Search History Reporting'
                 description: >
-                    Enables the Search History feature globally to track your customers’ search activity in the storefront. 
+                    Enables the Search History feature globally to track your customers’ search activity in the storefront.
                     When disabled, the Search Terms feature is removed from the main menu, along with the Search Terms report.
                     Exercise care when enabling this option as on popular websites it may result in large number of
                     records saved to the database.
             website_search_history_tracking:
                 label: 'Enable Search History Collection'
                 description: >
-                    When enabled, all search queries that led users to the search results page, along with the type of 
+                    When enabled, all search queries that led users to the search results page, along with the type of
                     the search result that they were shown on the search results page, will be recorded to the database.
                     Depends on the Enable Search History Reporting option.
-                    Exercise care when enabling this option on popular websites as it may result in a large number 
+                    Exercise care when enabling this option on popular websites as it may result in a large number
                     of records saved to the database.
         searchresult:
             entity:

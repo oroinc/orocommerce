@@ -4,7 +4,7 @@ $product-list-gallery-view-display: grid !default;
 $product-list-gallery-view-gap: spacing('lg') !default;
 $product-list-gallery-view-grid-count: 1 !default;
 $product-list-gallery-view-grid-template-columns: repeat(
-    var(--product-list-count, #{$product-list-gallery-view-grid-count}), 1fr
+    var(--product-list-count, #{$product-list-gallery-view-grid-count}), minmax(0, 1fr)
 ) !default;
 $product-list-gallery-view-offset: spacing('lg') 0 0 !default;
 

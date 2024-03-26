@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 
+/**
+ * Data provider for fields autocomplete, used in ExpressionEditors
+ */
 class AutocompleteFieldsProvider extends AbstractAutocompleteFieldsProvider
 {
     /**
@@ -50,5 +53,19 @@ class AutocompleteFieldsProvider extends AbstractAutocompleteFieldsProvider
                 }
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDataProviderConfig($numericalOnly = false, $withRelations = true)
+    {
+        $dataProviderConfig = parent::getDataProviderConfig($numericalOnly, $withRelations);
+
+        if (!$numericalOnly) {
+            $dataProviderConfig['fieldsDataUpdate'] = $this->translateLabels($this->specialFieldsInformation);
+        }
+
+        return $dataProviderConfig;
     }
 }

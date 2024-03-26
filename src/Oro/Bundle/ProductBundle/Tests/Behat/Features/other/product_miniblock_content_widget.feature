@@ -60,7 +60,7 @@ Feature: Product mini-block content widget
     When I click "Product Mini-Block Page" in hamburger menu
     Then Page title equals to "Product Mini-Block Page"
     And I should see "Product1"
-    And I should see "Your Price: $10.00 / item" for "PSKU1" product
+    And I should see "$10.00" for "PSKU1" product
     And I should see "Add to Shopping List"
 
   Scenario: Check add button
@@ -86,7 +86,7 @@ Feature: Product mini-block content widget
     When I click "Product Mini-Block Page"
     Then Page title equals to "Product Mini-Block Page"
     And I should see "Product1"
-    And I should not see "Your Price: $10.00 / item" for "PSKU1" product
+    And I should not see "$10.00" for "PSKU1" product
     And I should see "Price not available"
 
   Scenario: Disable rendering prices via widget option
@@ -104,7 +104,7 @@ Feature: Product mini-block content widget
     When I click "Product Mini-Block Page"
     Then Page title equals to "Product Mini-Block Page"
     And I should see "Product1"
-    And I should not see "Your Price: $10.00 / item" for "PSKU1" product
+    And I should not see "$10.00" for "PSKU1" product
     And I should not see "Price not available"
     And I should see "In Shopping List"
     And I should see "Update Shopping List"

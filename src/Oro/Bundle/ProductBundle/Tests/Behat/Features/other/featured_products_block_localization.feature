@@ -56,6 +56,7 @@ Feature: Featured Products Block Localization
     And I should see "SKU1" in the "Search Autocomplete Highlight" element
     And I should see an "Search Autocomplete Product Image" element
     And I should see picture "Search Autocomplete Product Picture" element
+    And I click on empty space
 
   @skip
 # Unskip when BB-20324 will be fixed

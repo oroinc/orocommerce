@@ -21,24 +21,38 @@
     }
 
     &__value {
+        display: block;
         color: $product-price-value-color;
-    }
-
-    &__your,
-    &__listed {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 0 spacing('sm');
-    }
-
-    &__value,
-    &__listed-value {
+        font-size: $product-price-value-font-size;
+        line-height: $product-price-value-line-height;
         font-weight: $product-price-value-font-weight;
     }
 
+    &__listed {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 4px;
+    }
+
+    &__your {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        font-size: $product-price-listed-value-font-size;
+        line-height: $product-price-listed-value-line-height;
+        gap: 0 spacing('sm');
+    }
+
     &__not_found {
-        font-size: $base-font-size--s;
+        font-size: $product-price-not-found-font-size;
+        color: $product-price-not-found-color;
+    }
+
+    &__listed-value {
+        display: block;
+        text-decoration: line-through;
+        color: $product-price-listed-value-color;
     }
 
     // Modifier for simple view(only main price)
@@ -60,6 +74,7 @@
         }
 
         #{$product-price-selector}__listed-value {
+            margin-top: $product-price-listed-value-margin-offset-top;
             color: $product-price-simple-listed-value-color;
         }
 
@@ -69,6 +84,10 @@
 
         #{$product-price-selector} {
             width: initial;
+        }
+
+        #{$product-price-selector}-hint__prices {
+            align-items: center;
         }
     }
 }

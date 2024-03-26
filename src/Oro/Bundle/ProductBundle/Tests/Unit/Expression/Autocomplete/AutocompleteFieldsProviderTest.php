@@ -20,39 +20,37 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
         );
     }
 
+    public function testGetRootEntities()
+    {
+        $this->configureDependencies([], true, true);
+
+        $expected = [
+            'ProductClass' => 'product',
+        ];
+        $this->assertEquals($expected, $this->provider->getRootEntities());
+    }
+
     /**
      * @dataProvider getFieldsDataProvider
      */
-    public function testGetAutocompleteDataNumericOnly(array $fieldsData)
+    public function testGetDataProviderConfigNumericOnly(array $fieldsData)
     {
         $numericalOnly = true;
         $withRelations = true;
 
         $this->configureDependencies($fieldsData, $numericalOnly, $withRelations);
 
-        $expectedData = [
-            AutocompleteFieldsProvider::ROOT_ENTITIES_KEY => [
-                'ProductClass' => 'product'
+        $expected = [
+            'optionsFilter' => [
+                'unidirectional' => false,
+                'exclude' => false,
+                'identifier' => false,
             ],
-            AutocompleteFieldsProvider::FIELDS_DATA_KEY => [
-                'ProductClass' => [
-                    'numeric' => [
-                        'label' => 'min_quantity.label TRANS',
-                        'type' => 'float'
-                    ],
-                    'stock' => [
-                        'label' => 'stock.label TRANS',
-                        'type' => 'relation',
-                        'relation_alias' => 'StockClass'
-                    ]
-                ],
-                'StockClass' => [
-                    'qty' => [
-                        'label' => 'quantity.label TRANS',
-                        'type' => 'integer'
-                    ]
-                ]
-            ]
+            'include' => [
+                ['type' => 'integer'],
+                ['type' => 'float'],
+                ['type' => 'ref-one'],
+            ],
         ];
 
         $this->provider->addSpecialFieldInformation(
@@ -61,13 +59,13 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
             ['label' => 'special', 'type' => 'collection']
         );
         $this->provider->addSpecialFieldInformation('UnitClass', 'code', ['type' => 'standalone']);
-        $this->assertEquals($expectedData, $this->provider->getAutocompleteData($numericalOnly, $withRelations));
+        $this->assertEquals($expected, $this->provider->getDataProviderConfig($numericalOnly, $withRelations));
     }
 
     /**
      * @dataProvider getFieldsDataProvider
      */
-    public function testGetAutocompleteData(array $fieldsData)
+    public function testGetDataProviderConfig(array $fieldsData)
     {
         $numericalOnly = false;
         $withRelations = true;
@@ -75,68 +73,36 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
         $this->configureDependencies($fieldsData, $numericalOnly, $withRelations);
 
         $expectedData = [
-            AutocompleteFieldsProvider::ROOT_ENTITIES_KEY => [
-                'ProductClass' => 'product'
+            'optionsFilter' => [
+                'unidirectional' => false,
+                'exclude' => false,
             ],
-            AutocompleteFieldsProvider::FIELDS_DATA_KEY => [
-                'ProductClass' => [
-                    'id' => [
-                        'label' => 'id.label TRANS',
-                        'type' => AutocompleteFieldsProvider::TYPE_INTEGER
-                    ],
-                    'unit' => [
-                        'label' => 'unit.label TRANS',
-                        'type' => AutocompleteFieldsProvider::TYPE_RELATION,
-                        'relation_alias' => 'UnitClass'
-                    ],
-                    'stock' => [
-                        'label' => 'stock.label TRANS',
-                        'type' => 'relation',
-                        'relation_alias' => 'StockClass'
-                    ],
-                    'numeric' => [
-                        'label' => 'min_quantity.label TRANS',
-                        'type' => 'standalone'
-                    ]
-                ],
+            'include' => [
+                ['type' => 'string'],
+                ['type' => 'text'],
+                ['type' => 'boolean'],
+                ['type' => 'enum'],
+                ['type' => 'integer'],
+                ['type' => 'float'],
+                ['type' => 'money'],
+                ['type' => 'decimal'],
+                ['type' => 'datetime'],
+                ['type' => 'date'],
+                ['type' => 'ref-one'],
+            ],
+            'fieldsDataUpdate' => [
                 'UnitClass' => [
                     'special' => [
                         'label' => 'special TRANS',
-                        'type' => 'collection'
+                        'type' => 'collection',
                     ],
-                    'owner' => [
-                        'label' => 'owner.label TRANS',
-                        'type' => 'relation',
-                        'relation_alias' => 'UserClass',
-                    ]
                 ],
-                'UserClass' => [
-                    'id' => [
-                        'label' => 'id.label TRANS',
-                        'type' => AutocompleteFieldsProvider::TYPE_INTEGER
+                'ProductClass' => [
+                    'numeric' => [
+                        'type' => 'standalone'
                     ],
-                    'owner' => [
-                        'label' => 'owner.label TRANS',
-                        'type' => 'relation',
-                        'relation_alias' => 'UserClass',
-                    ]
                 ],
-                'StockClass' => [
-                    'id' => [
-                        'label' => 'id.label TRANS',
-                        'type' => AutocompleteFieldsProvider::TYPE_INTEGER
-                    ],
-                    'qty' => [
-                        'label' => 'quantity.label TRANS',
-                        'type' => 'integer'
-                    ],
-                    'owner' => [
-                        'label' => 'owner.label TRANS',
-                        'type' => 'relation',
-                        'relation_alias' => 'UserClass',
-                    ]
-                ]
-            ]
+            ],
         ];
 
         $this->provider->addSpecialFieldInformation(
@@ -145,7 +111,7 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
             ['label' => 'special', 'type' => 'collection']
         );
         $this->provider->addSpecialFieldInformation('ProductClass', 'numeric', ['type' => 'standalone']);
-        $this->assertEquals($expectedData, $this->provider->getAutocompleteData($numericalOnly, $withRelations));
+        $this->assertEquals($expectedData, $this->provider->getDataProviderConfig($numericalOnly, $withRelations));
     }
 
     /**

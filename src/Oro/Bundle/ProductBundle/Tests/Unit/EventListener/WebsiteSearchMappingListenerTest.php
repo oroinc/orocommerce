@@ -300,7 +300,8 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'organization_id' => null,
                             'group' => 'main'
                         ]
-                    ]
+                    ],
+                    'stop_words_enabled' => false,
                 ],
                 \stdClass::class => [
                     'alias'  => 'std',
@@ -314,7 +315,8 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'organization_id' => null,
                             'group' => 'main'
                         ]
-                    ]
+                    ],
+                    'stop_words_enabled' => false,
                 ]
             ],
             $event->getMappingConfig()
@@ -473,7 +475,8 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'organization_id' => null,
                             'group' => 'main'
                         ],
-                    ]
+                    ],
+                    'stop_words_enabled' => false,
                 ],
                 \stdClass::class => [
                     'alias'  => 'std',
@@ -487,7 +490,8 @@ class WebsiteSearchMappingListenerTest extends \PHPUnit\Framework\TestCase
                             'organization_id' => null,
                             'group' => 'main'
                         ]
-                    ]
+                    ],
+                    'stop_words_enabled' => false,
                 ]
             ],
             $event->getMappingConfig()

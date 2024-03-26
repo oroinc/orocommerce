@@ -27,15 +27,16 @@ Feature: Check CPL after remove manual product price
       | Active     | true                                                                       |
       | Rule       | product.sku == 'PSKU1' or product.sku == 'PSKU2' or product.sku == 'PSKU3' |
     And I click "Add Price Calculation Rules"
-    And I click "Enter expression unit"
-    And I click "Enter expression currency"
+    And I click "Price Calculation Unit Expression Button"
+    And I click on empty space
+    And I click "Price Calculation Currency Expression Button"
     And I fill "Price Calculation Rules Form" with:
       | Price for quantity | 1                               |
-      | Price Unit         | pricelist[1].prices.unit        |
-      | Price Currency     | pricelist[1].prices.currency    |
       | Calculate As       | pricelist[1].prices.value * 1.2 |
       | Condition          | pricelist[1].prices.value > 1   |
       | Priority           | 1                               |
+    And I type "pricelist[1].prices.currency" in "Price Calculation Currency Expression Editor Content"
+    And I type "pricelist[1].prices.unit" in "Price Calculation Unit Expression Editor Content"
     And I save and close form
     Then I should see "Price List has been saved" flash message
     And I reload the page
@@ -73,7 +74,7 @@ Feature: Check CPL after remove manual product price
     And I signed in as AmandaRCole@example.org on the store frontend
     And type "PSKU" in "search"
     And I click "Search Button"
-    Then should see "Listed Price: $10.00 / item" for "PSKU4" product
+    Then should see "$10.00" for "PSKU4" product
 
   Scenario: Remove Price for fourth product
     Given I proceed as the Admin
@@ -99,4 +100,4 @@ Feature: Check CPL after remove manual product price
       | PSKU3       | Product 3    | 1        | item | 15.60 | USD      | Generated |
     When I proceed as the Customer
     And I reload the page
-    Then should see "Listed Price: $19.00 / item" for "PSKU4" product
+    Then should see "$19.00" for "PSKU4" product

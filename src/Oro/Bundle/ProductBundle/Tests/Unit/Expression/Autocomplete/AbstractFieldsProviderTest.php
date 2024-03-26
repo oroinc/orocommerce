@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Expression\Autocomplete;
 
+use Oro\Bundle\ProductBundle\Expression\FieldsProvider;
 use Oro\Component\Expression\ExpressionParser;
-use Oro\Component\Expression\FieldsProviderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractFieldsProviderTest extends \PHPUnit\Framework\TestCase
@@ -11,11 +11,13 @@ abstract class AbstractFieldsProviderTest extends \PHPUnit\Framework\TestCase
     protected const CLASS_NAME = 'className';
     protected const IS_RELATION = 'isRelation';
     protected const FIELDS = 'fields';
+    const NUMERIC_TYPES = ['integer', 'float'];
+    const RELATION_TYPES = ['ref-one'];
 
     /** @var ExpressionParser|\PHPUnit\Framework\MockObject\MockObject */
     protected $expressionParser;
 
-    /** @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var FieldsProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $fieldsProvider;
 
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -24,7 +26,7 @@ abstract class AbstractFieldsProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->expressionParser = $this->createMock(ExpressionParser::class);
-        $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
+        $this->fieldsProvider = $this->createMock(FieldsProvider::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
     }
 
@@ -59,5 +61,11 @@ abstract class AbstractFieldsProviderTest extends \PHPUnit\Framework\TestCase
         $this->fieldsProvider->expects($this->any())
             ->method('getDetailedFieldsInformation')
             ->willReturnMap($this->getMap($fieldsData, $numericalOnly, $withRelations));
+        $this->fieldsProvider->expects($this->any())
+            ->method('getSupportedNumericTypes')
+            ->willReturn(self::NUMERIC_TYPES);
+        $this->fieldsProvider->expects($this->any())
+            ->method('getSupportedRelationTypes')
+            ->willReturn(self::RELATION_TYPES);
     }
 }

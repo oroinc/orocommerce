@@ -117,7 +117,8 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
                         'store' => true,
                         'group' => 'main'
                     ]
-                ]
+                ],
+                'stop_words_enabled' => false,
             ],
             'Oro\Product' => [
                 'alias' => 'ProductThirdAlias',
@@ -147,7 +148,8 @@ class MappingConfigurationTest extends \PHPUnit\Framework\TestCase
                         'organization_id' => null,
                         'group' => 'main'
                     ]
-                ]
+                ],
+                'stop_words_enabled' => false,
             ]
         ];
 

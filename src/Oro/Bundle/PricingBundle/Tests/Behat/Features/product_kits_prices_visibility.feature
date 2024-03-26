@@ -42,20 +42,20 @@ Feature: Product kits prices visibility
       | productkit2 |
     And I should not see "Product Price Container" for "productkit2" product
     And should see the following products in the "Featured Products Block":
-      | SKU             | Product Price Your | Product Price Listed |
-      | secondproduct01 | $32.00 / item      | $32.00 / item        |
-      | secondproduct02 | $32.00 / item      | $32.00 / item        |
-      | secondproduct03 | $32.00 / item      | $32.00 / item        |
+      | SKU             | Product Price Your |
+      | secondproduct01 | $32.00             |
+      | secondproduct02 | $32.00             |
+      | secondproduct03 | $32.00             |
 
     And I should see the following products in the "New Arrivals Block":
       | SKU         |
       | productkit1 |
     And I should not see "Product Price Container" for "productkit1" product
     And I should see the following products in the "New Arrivals Block":
-      | SKU             | Product Price Your | Product Price Listed |
-      | simpleproduct01 | $31.00 / piece     | $31.00 / piece       |
-      | simpleproduct02 | $31.00 / piece     | $31.00 / piece       |
-      | simpleproduct03 | $31.00 / piece     | $31.00 / piece       |
+      | SKU             | Product Price Your |
+      | simpleproduct01 | $31.00             |
+      | simpleproduct02 | $31.00             |
+      | simpleproduct03 | $31.00             |
 
   Scenario: Check product prices in category page
     When I click "NewCategory" in hamburger menu
@@ -97,10 +97,10 @@ Feature: Product kits prices visibility
       | productkit2 |
     And I should not see "Product Price Container" for "productkit2" product
     And I should see the following products in the "Related Products Block":
-      | SKU             | Product Price Your | Product Price Listed |
-      | secondproduct01 | $32.00 / item      | $32.00 / item        |
-      | secondproduct02 | $32.00 / item      | $32.00 / item        |
-      | secondproduct03 | $32.00 / item      | $32.00 / item        |
+      | SKU             | Product Price Your |
+      | secondproduct01 | $32.00             |
+      | secondproduct02 | $32.00             |
+      | secondproduct03 | $32.00             |
 
   Scenario: Enable Flat pricing
     Given I proceed as the Admin

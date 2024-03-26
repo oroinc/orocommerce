@@ -349,16 +349,16 @@ Feature: Commerce smoke e2e
       | Active     | true           |
       | Rule       | product.id > 0 |
     And click "Add Price Calculation Rules"
-    And click "Enter expression unit"
     And fill "Price Calculation Rules Form" with:
-      |Price Unit        |pricelist[1].prices.unit|
-    And click "Enter expression currency"
-    And fill "Price Calculation Rules Form" with:
-      |Price Currency    |pricelist[1].prices.currency   |
       |Price for quantity|1                              |
       |Calculate As      |pricelist[1].prices.value * 0.8|
       |Condition         |pricelist[1].prices.value > 1  |
       |Priority          |1                              |
+    And I click "Price Calculation Unit Expression Button"
+    And I click on empty space
+    And I click "Price Calculation Currency Expression Button"
+    And I type "pricelist[1].prices.currency" in "Price Calculation Currency Expression Editor Content"
+    And I type "pricelist[1].prices.unit" in "Price Calculation Unit Expression Editor Content"
     And save and close form
     Then should see "Price List has been saved" flash message
     When go to Sales/ Price Lists
@@ -545,8 +545,7 @@ Feature: Commerce smoke e2e
     And should see "View Details" for "Lenovo_Vibe_sku" product
     And should see "Product Image" for "Lenovo_Vibe_sku" product
     And should see "Product Name" for "Lenovo_Vibe_sku" product
-    And should see "Your Price: $100.00 / item" for "Lenovo_Vibe_sku" product
-    And should see "Listed Price: $100.00 / item" for "Lenovo_Vibe_sku" product
+    And should see "$100.00" for "Lenovo_Vibe_sku" product
     And click "Add to Shopping List" for "Lenovo_Vibe_sku" product
     And should see "Product has been added to "
     And should see "Green Box" for "Lenovo_Vibe_sku" product
@@ -555,21 +554,18 @@ Feature: Commerce smoke e2e
     And should see "Product Image" for "Xiaomi_Redmi_3S_sku" product
     And should see "Product Name" for "Xiaomi_Redmi_3S_sku" product
     And should not see "Green Box" for "Xiaomi_Redmi_3S_sku" product
-    And should see "Your Price: $150.00 / item" for "Xiaomi_Redmi_3S_sku" product
-    And should see "Listed Price: $150.00 / item" for "Xiaomi_Redmi_3S_sku" product
+    And should see "$150.00" for "Xiaomi_Redmi_3S_sku" product
     When click "Gallery View"
     Then should not see "View Details" for "Lenovo_Vibe_sku" product
     And should see "Product Image" for "Lenovo_Vibe_sku" product
     And should see "Product Name" for "Lenovo_Vibe_sku" product
-    And should see "Your Price: $100.00 / item" for "Lenovo_Vibe_sku" product
-    And should see "Listed Price: $100.00 / item" for "Lenovo_Vibe_sku" product
+    And should see "$100.00" for "Lenovo_Vibe_sku" product
     And should see "Green Box" for "Lenovo_Vibe_sku" product
     And should see "Update Shopping list" for "Lenovo_Vibe_sku" product
     When click "Compact View"
     And should see "Product Image" for "Lenovo_Vibe_sku" product
     And should see "Product Name" for "Lenovo_Vibe_sku" product
-    And should see "Your Price: $100.00 / item" for "Lenovo_Vibe_sku" product
-    And should see "Listed Price: $100.00 / item" for "Lenovo_Vibe_sku" product
+    And should see "$100.00" for "Lenovo_Vibe_sku" product
     And should see "Green Box" for "Lenovo_Vibe_sku" product
     And should see "Update Shopping list" for "Lenovo_Vibe_sku" product
     And click "List View"
@@ -583,8 +579,7 @@ Feature: Commerce smoke e2e
     And should see "View Details" for "Lenovo_Vibe_sku" product
     And should see "Product Image" for "Lenovo_Vibe_sku" product
     And should see "Product Name" for "Lenovo_Vibe_sku" product
-    And should see "Your Price: $80.00 / item" for "Lenovo_Vibe_sku" product
-    And should see "Listed Price: $80.00 / item" for "Lenovo_Vibe_sku" product
+    And should see "$80.00" for "Lenovo_Vibe_sku" product
     And click "Add to Shopping List" for "Lenovo_Vibe_sku" product
     And should see "Product has been added to "
     And should see "Green Box" for "Lenovo_Vibe_sku" product
@@ -593,15 +588,12 @@ Feature: Commerce smoke e2e
     And should see "Product Image" for "Xiaomi_Redmi_3S_sku" product
     And should see "Product Name" for "Xiaomi_Redmi_3S_sku" product
     And should not see "Green Box" for "Xiaomi_Redmi_3S_sku" product
-    And should see "Your Price: $120.00 / item" for "Xiaomi_Redmi_3S_sku" product
-    And should see "Listed Price: $120.00 / item" for "Xiaomi_Redmi_3S_sku" product
+    And should see "$120.00" for "Xiaomi_Redmi_3S_sku" product
     When I click "Shirts" in hamburger menu
     Then should see "Add to Shopping List button" for "Shirt_Sku" product
     And should see "View Details" for "Shirt_Sku" product
     And should see "Product Image" for "Shirt_Sku" product
     And should see "Product Name" for "Shirt_Sku" product
-    And should not see "Your Price:" for "Shirt_Sku" product
-    And should not see "Listed Price:" for "Shirt_Sku" product
     And click "View Details" for "Shirt_Sku" product
     And should not see "View Details"
     And should see an "Product Image (view page)" element
@@ -624,8 +616,7 @@ Feature: Commerce smoke e2e
     And click "Phones" in hamburger menu
     When fill line item with "Lenovo_Vibe_sku" in frontend product grid:
       |Quantity|10  |
-    Then should see "Your Price: $90.00 / item" for "Lenovo_Vibe_sku" product
-    And should see "Listed Price: $80.00 / item" for "Lenovo_Vibe_sku" product
+    Then should see "$90.00 $80.00" for "Lenovo_Vibe_sku" product
     When click "Add to Shopping List" for "Lenovo_Vibe_sku" product
     Then should see "Product has been added to "
     And I scroll to top

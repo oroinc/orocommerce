@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 
+/**
+ * Defines the interface for AutocompleteFieldsProvider functionality
+ */
 interface AutocompleteFieldsProviderInterface
 {
-    const ROOT_ENTITIES_KEY = 'root_entities';
-    const FIELDS_DATA_KEY = 'fields_data';
-
     const TYPE_RELATION = 'relation';
     const TYPE_INTEGER = 'integer';
     const TYPE_STRING = 'string';
@@ -28,5 +28,10 @@ interface AutocompleteFieldsProviderInterface
      * @param bool $withRelations
      * @return array
      */
-    public function getAutocompleteData($numericalOnly = false, $withRelations = true);
+    public function getDataProviderConfig($numericalOnly = false, $withRelations = true);
+
+    /**
+     * @return array
+     */
+    public function getRootEntities();
 }

@@ -37,9 +37,9 @@ Feature: Shopping list include a product without a price
     And I click on "Shopping Lists"
     And I click View "Shopping List" in grid
     And I click on "Open Price Dropdown Button" element in grid row contains "Product1"
-    Then I should see "Price for requested quantity is not available"
+    Then I should see "Price unavailable for this quantity"
     And I click "Account Dropdown"
     And I click on "Shopping Lists"
     And I click Edit "Shopping List" in grid
     And I click on "Open Price Dropdown Button" element in grid row contains "Product1"
-    Then I should see "Price for requested quantity is not available"
+    Then I should see "Price unavailable for this quantity"

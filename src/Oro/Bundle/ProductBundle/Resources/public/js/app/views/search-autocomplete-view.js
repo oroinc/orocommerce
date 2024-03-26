@@ -6,6 +6,7 @@ import routing from 'routing';
 import template from 'tpl-loader!oroproduct/templates/search-autocomplete.html';
 import 'jquery-ui/tabbable';
 import tools from 'oroui/js/tools';
+import BackdropView from 'oroui/js/app/views/backdrop-view';
 
 const SearchAutocompleteView = BaseView.extend({
     optionNames: BaseView.prototype.optionNames.concat([
@@ -53,11 +54,16 @@ const SearchAutocompleteView = BaseView.extend({
 
     autocompleteItems: '[role="option"]',
 
+    listen: {
+        'layout:reposition mediator': '_calculateHeight'
+    },
+
     /**
      * @inheritdoc
      */
     constructor: function SearchAutocompleteView(options) {
         this.renderSuggestions = _.debounce(this.renderSuggestions.bind(this), this.delay);
+        this._calculateHeight = _.debounce(this._calculateHeight.bind(this), 100);
         SearchAutocompleteView.__super__.constructor.call(this, options);
     },
 
@@ -172,7 +178,7 @@ const SearchAutocompleteView = BaseView.extend({
     },
 
     getAutocompleteItems() {
-        return this.$el.next().find(this.autocompleteItems);
+        return this.$el.parent().next().find(this.autocompleteItems);
     },
 
     gerSelectedOption() {
@@ -215,7 +221,7 @@ const SearchAutocompleteView = BaseView.extend({
         const $activeOption = direction === 'down'
             ? this.getNextOption()
             : this.getPreviousOption()
-        ;
+            ;
 
         this.showCombobox();
         $options.attr('aria-selected', false);
@@ -249,8 +255,18 @@ const SearchAutocompleteView = BaseView.extend({
 
         if (this.getInputString().length) {
             this.$popup = $(this.template(this.getTemplateData(suggestions)));
-            this.$el.after(this.$popup);
+            this.$el.parent().after(this.$popup);
             this.$el.attr('aria-expanded', true);
+
+            this.subview('backdrop', new BackdropView({
+                container: this.$popup.parent(),
+                onClickCallback: () => {
+                    this.subview('backdrop').hide();
+                }
+            }));
+
+            this.subview('backdrop').show();
+            this._calculateHeight();
 
             this.getAutocompleteItems().each((i, el) => {
                 $(el).attr({
@@ -280,8 +296,7 @@ const SearchAutocompleteView = BaseView.extend({
             .then(this.render.bind(this))
             .always(() => {
                 delete this.searchXHR;
-            })
-        ;
+            });
     },
 
     _onKeyDown(event) {
@@ -313,7 +328,7 @@ const SearchAutocompleteView = BaseView.extend({
         this.$el.toggleClass('undo-focus', this.hasSelectedOption());
     },
 
-    _onInputChange(event) {
+    _onInputChange() {
         const inputString = this.getInputString();
         if (inputString === this.previousValue) {
             return;
@@ -333,6 +348,10 @@ const SearchAutocompleteView = BaseView.extend({
     _onInputRefresh(event) {
         const inputString = this.getInputString();
 
+        if (event.target.value === inputString) {
+            return;
+        }
+
         if (!inputString.length && this.searchXHR) {
             this.searchXHR.abort();
         }
@@ -340,6 +359,18 @@ const SearchAutocompleteView = BaseView.extend({
         this._shouldShowPopup(inputString)
             ? this.renderSuggestions(inputString)
             : this.closeCombobox();
+    },
+
+    _calculateHeight() {
+        if (!_.isMobile() || !this.subview('backdrop')) {
+            return;
+        }
+
+        this.subview('backdrop').isOpen()
+            ? document.body.classList.add('no-scroll')
+            : document.body.classList.remove('no-scroll');
+
+        this.$popup.css('--autocomplete-search-viewport-height', visualViewport.height + 'px');
     },
 
     _onOutsideAction(event) {

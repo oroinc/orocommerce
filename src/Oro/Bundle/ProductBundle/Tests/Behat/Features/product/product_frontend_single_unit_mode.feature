@@ -43,9 +43,9 @@ Feature: Product frontend single unit mode
     When I type "PSKU1" in "search"
     And I click "Search Button"
     And I click "View Details" for "PSKU1" product
-    Then I should see "Your Price: $20.00 / each" for "PSKU2" product
-    And I should see "Your Price: $30.00 / set" for "PSKU3" product
-    And I should see "Your Price: $40.00 / item" for "PSKU4" product
+    Then I should see "$20.00" for "PSKU2" product
+    And I should see "$30.00" for "PSKU3" product
+    And I should see "$40.00" for "PSKU4" product
 
   Scenario: Check if price is displayed correctly on product view page if product unit is not as default
     Given I type "PSKU2" in "search"
@@ -69,9 +69,9 @@ Feature: Product frontend single unit mode
     When I type "PSKU1" in "search"
     And click "Search Button"
     And I click "View Details" for "PSKU1" product
-    Then I should see "Your Price: $20.00 / each" for "PSKU2" product
-    And I should see "Your Price: $30.00 / set" for "PSKU3" product
-    And I should see "Your Price: $40.00 / item" for "PSKU4" product
+    Then I should see "$20.00" for "PSKU2" product
+    And I should see "$30.00" for "PSKU3" product
+    And I should see "$40.00" for "PSKU4" product
 
   Scenario: Enable "List page" view mode for product units
     Given I proceed as the Admin
@@ -86,9 +86,9 @@ Feature: Product frontend single unit mode
   Scenario: Verify that prices in "Related Products Block" are correctly displayed in "Tabs Template" layout view
     Given I proceed as the Buyer
     When I reload the page
-    Then I should see "Your Price: $20.00 / each" for "PSKU2" product
-    And I should see "Your Price: $30.00 / set" for "PSKU3" product
-    And I should see "Your Price: $40.00 / item" for "PSKU4" product
+    Then I should see "$20.00" for "PSKU2" product
+    And I should see "$30.00" for "PSKU3" product
+    And I should see "$40.00" for "PSKU4" product
 
   Scenario: Check if price is displayed correctly for existing product kit on view page
     Given I type "PSKU_KIT1" in "search"
@@ -148,4 +148,4 @@ Feature: Product frontend single unit mode
     And I type "PSKU2" in "search"
     And click "Search Button"
     And I click "View Details" for "PSKU2" product
-    And I should not see "Price for requested quantity is not available"
+    And I should not see "Price unavailable for this quantity"

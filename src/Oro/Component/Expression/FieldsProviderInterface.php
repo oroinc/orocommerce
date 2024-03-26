@@ -43,4 +43,24 @@ interface FieldsProviderInterface
      * @return null|string
      */
     public function getIdentityFieldName($className);
+
+    /**
+     * @return array
+     */
+    public function getSupportedNumericTypes();
+
+    /**
+     * @return array
+     */
+    public function getSupportedRelationTypes();
+
+    /**
+     * @return array
+     */
+    public function getFieldsWhiteList();
+
+    /**
+     * @return array
+     */
+    public function getFieldsBlackList();
 }

@@ -74,10 +74,8 @@ Feature: Pricing rounding
     And I proceed as the customer
     And I signed in as AmandaRCole@example.org on the store frontend
     When click "NewCategory" in hamburger menu
-    Then should see "Your Price: $7.45 / item" for "Phone" product
-    And should see "Listed Price: $7.45 / item" for "Phone" product
-    And should see "Your Price: $4.54 / item" for "Light" product
-    And should see "Listed Price: $4.54 / item" for "Light" product
+    Then should see "$7.45" for "Phone" product
+    And should see "$4.54" for "Light" product
     And click "Add to Shopping List" for "Phone" product
     And click on "Flash Message Close Button"
     When I hover on "Shopping Cart"
@@ -246,10 +244,8 @@ Feature: Pricing rounding
     And should see "Total $4.5"
 
     When click "NewCategory" in hamburger menu
-    Then should see "Your Price: $7.45 / item" for "Phone" product
-    And should see "Listed Price: $7.45 / item" for "Phone" product
-    And should see "Your Price: $4.54 / item" for "Light" product
-    And should see "Listed Price: $4.54 / item" for "Light" product
+    Then should see "$7.45" for "Phone" product
+    And should see "$4.54" for "Light" product
     And click "Add to Shopping List" for "Phone" product
     And click on "Flash Message Close Button"
     When I hover on "Shopping Cart"

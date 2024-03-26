@@ -5,6 +5,7 @@ const SearchWidgetView = BaseView.extend({
 
     events: {
         'click [type="reset"]': 'onCancel',
+        'click .search-widget__reset': 'onClearValue',
         'focusout': 'onFocusout',
         'focusin': 'onFocusin'
     },
@@ -34,6 +35,10 @@ const SearchWidgetView = BaseView.extend({
 
     onCancel() {
         this.toggleMode(false);
+        this.$('[name="search"]').val('');
+    },
+
+    onClearValue() {
         this.$('[name="search"]').val('');
     },
 
