@@ -1,8 +1,13 @@
 /* @theme: default; */
 
+$checkout-navigation-title-color: get-color('text', 'disabled') !default;
 $checkout-navigation-icon-size: 26px !default;
+$checkout-navigation-current-color: get-color('text', 'primary') !default;
 $checkout-navigation-icon-current-background-color: get-color('secondary', 'c1') !default;
 $checkout-navigation-icon-font-size: 14px !default;
+
+$checkout-navigation-edit-color: get-color('text', 'secondary') !default;
+$checkout-navigation-current-color: get-color('text', 'primary') !default;
 
 $checkout-navigation-border-left: 2px solid get-color('neutral', 'grey2') !default;
 

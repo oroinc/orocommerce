@@ -24,6 +24,5 @@ Feature: Promotions with incorrect lineItems expression
     And I click "Continue"
     And I should see "Product 1"
     And I should see "Product 2"
-    When I scroll to bottom
     And I click "Submit Order"
     Then I should see "Thank You For Your Purchase!"

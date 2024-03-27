@@ -18,6 +18,8 @@ define(function(require) {
                 checkoutFlashNotifications: '[data-role="checkout-flash-notifications"]',
                 checkoutSidebar: '[data-role="checkout-sidebar"]',
                 checkoutContent: '[data-role="checkout-content"]',
+                checkoutSummary: '[data-role="checkout-summary"]',
+                checkoutTotals: '[data-role="checkout-totals"]',
                 transitionTriggerContainer: '[data-role="transition-trigger-container"]',
                 transitionTrigger: '[data-role="transition-trigger"]',
                 stateToken: '[name$="[state_token]"]'
@@ -188,6 +190,8 @@ define(function(require) {
                 const flashNotificationsSelector = this.options.selectors.checkoutFlashNotifications;
                 const sidebarSelector = this.options.selectors.checkoutSidebar;
                 const contentSelector = this.options.selectors.checkoutContent;
+                const summarySelector = this.options.selectors.checkoutSummary;
+                const totalsSelector = this.options.selectors.checkoutTotals;
 
                 mediator.trigger('checkout-content:before-update');
 
@@ -196,6 +200,12 @@ define(function(require) {
 
                 const $content = $(contentSelector);
                 $content.html($response.find(contentSelector).html());
+
+                const $summary = $(summarySelector);
+                $summary.html($response.find(summarySelector).html());
+
+                const $totals = $(totalsSelector);
+                $totals.html($response.find(totalsSelector).html());
 
                 const $flashNotifications = $response.find(flashNotificationsSelector);
 

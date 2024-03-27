@@ -18,6 +18,7 @@ $checkout-form-payment-container-margin: spacing('sm') 0 spacing('base') !defaul
 $checkout-form-payment-methods-padding: 12px !default;
 $checkout-form-payment-methods-background-color: get-color('neutral', 'white-100') !default;
 $checkout-form-payment-methods-border-radius: 5px !default;
+$checkout-form-payment-methods-max-width: 400px !default;
 
 $checkout-form-payment-methods-authorized-card-margin: 0 0 spacing('sm') !default;
 
