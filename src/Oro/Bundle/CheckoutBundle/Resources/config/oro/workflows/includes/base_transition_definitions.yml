@@ -113,11 +113,12 @@ workflows:
                             attribute: $.result.shoppingListHasEmptyMatrix
 
                 preconditions:
-                   '@and':
-                       - '@equal': [$isAllowed, true]
-                       - '@not_empty': $.result.shoppingList
-                       - '@has_elements': $.result.shoppingList.lineItems
-                       - '@equal': [$.result.extendableConditionShoppingListStart, true]
+                    '@and':
+                        - '@equal': [$isAllowed, true]
+                        - '@not_empty': $.result.shoppingList
+                        - '@has_elements': $.result.shoppingList.lineItems
+                        - '@equal': [$.result.extendableConditionShoppingListStart, true]
+                        - '@acl_granted': [CHECKOUT_CREATE, $.result.shoppingList]
 
                 actions:
                     - '@run_action_group':

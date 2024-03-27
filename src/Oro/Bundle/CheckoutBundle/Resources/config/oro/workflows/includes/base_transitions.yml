@@ -33,7 +33,6 @@ workflows:
                     - oro_shopping_list_frontend_update
                 init_entities:
                     - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
-                acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]
 
             start_from_quickorderform:
                 is_start: true
