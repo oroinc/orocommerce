@@ -4,10 +4,18 @@
     grid-area: $quick-order-copy-paste-grid-area;
 
     &__title {
+        display: flex;
+        align-items: center;
+        gap: spacing('sm');
         margin: $quick-order-copy-paste-title-margin;
         font-size: $quick-order-copy-paste-textarea-font-size;
         font-weight: $quick-order-copy-paste-textarea-font-weight;
-        text-transform: $quick-order-copy-paste-textarea-text-transform;
+    }
+
+    &__description {
+        display: block;
+        color: $quick-order-copy-paste-description-color;
+        padding-bottom: spacing('base');
     }
 
     &__textarea {

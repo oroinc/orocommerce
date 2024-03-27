@@ -23,7 +23,7 @@ Feature: Create Order from Quick order form with Product Kits
     And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
       | title | Some of the products cannot be added to the order. Please add these products to the shopping list or create a quote. |
     When I click on "Disabled Create Order Button Wrapper"
-    Then Page title equals to "Quick Order Form"
+    Then Page title equals to "Quick Order"
 
   Scenario: Add simple product
     When I fill "Quick Add Copy Paste Form" with:
@@ -42,7 +42,7 @@ Feature: Create Order from Quick order form with Product Kits
     And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
       | title | Some of the products cannot be added to the order. Please add these products to the shopping list or create a quote. |
     When I click on "Disabled Create Order Button Wrapper"
-    Then Page title equals to "Quick Order Form"
+    Then Page title equals to "Quick Order"
 
   Scenario: Remove Product Kit
     When I click on "Quick Order Form > DeleteRow1"
@@ -72,7 +72,7 @@ Feature: Create Order from Quick order form with Product Kits
     And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
       | title | Some of the products cannot be added to the order. Please add these products to the shopping list or create a quote. |
     When I click on "Disabled Create Order Button Wrapper"
-    Then Page title equals to "Quick Order Form"
+    Then Page title equals to "Quick Order"
 
   Scenario: Select Simple Product instead of Product Kit
     When I fill "Quick Order Form" with:
@@ -110,7 +110,7 @@ Feature: Create Order from Quick order form with Product Kits
     And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
       | title | Some of the products cannot be added to the order. Please add these products to the shopping list or create a quote. |
     When I click on "Disabled Create Order Button Wrapper"
-    Then Page title equals to "Quick Order Form"
+    Then Page title equals to "Quick Order"
 
   Scenario: Remove Product Kit
     When I click on "Quick Order Form > DeleteRow2"
@@ -124,7 +124,7 @@ Feature: Create Order from Quick order form with Product Kits
       | title | ~ |
 
   Scenario: Add Product Kit (import)
-    When I click "Get Directions"
+    When I click "What File Structure Is Accepted"
     Then I should see that "UiDialog Title" contains "Import Excel .CSV File"
     When I download "the CSV template"
     And I close ui dialog
@@ -145,7 +145,7 @@ Feature: Create Order from Quick order form with Product Kits
     And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
       | title | Some of the products cannot be added to the order. Please add these products to the shopping list or create a quote. |
     When I click on "Disabled Create Order Button Wrapper"
-    Then Page title equals to "Quick Order Form"
+    Then Page title equals to "Quick Order"
 
   Scenario: Remove all products
     When I click on "Quick Order Form > DeleteRow3"

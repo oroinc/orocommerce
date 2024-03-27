@@ -27,7 +27,7 @@ Feature: Guest quick order form
     Given I proceed as the Admin
     And I login as administrator
     And go to System/ Configuration
-    And I follow "Commerce/Sales/Quick Order Form" on configuration sidebar
+    And I follow "Commerce/Sales/Quick Order" on configuration sidebar
     And fill "Quick Order Configuration Form" with:
       | Enable Guest Quick Order Form Default | false |
       | Enable Guest Quick Order Form         | true  |

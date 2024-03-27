@@ -15,6 +15,17 @@
     </div>
 {% endblock %}
 
+{% block _quick_add_form_title_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' quick-order-add-form__title'
+    }) %}
+    <h2 {{ block('block_attributes') }}>
+        {{ renderIcon.icon({name: 'file-text'}) }}
+        {{ block_widget(block) }}
+    </h2>
+{% endblock %}
+
 {% block _quick_add_form_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' quick-order-add',
@@ -44,15 +55,6 @@
     {% endif %}
 {% endblock %}
 
-{% block _quick_add_form_grid_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid'
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _quick_add_form_fields_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' grid-col-12 grid quick-order-add__fields row-oro'
@@ -80,7 +82,7 @@
 
 {% block _quick_add_form_clear_button_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' btn btn--outlined quick-order-add__clear-button hidden',
+        '~class': ' btn btn--text btn--outlined btn--no-padding quick-order-add__clear-button hidden',
         'data-role': 'quick-order-add-clear'
     }) %}
     {{ block_widget(block, {attr: attr}) }}

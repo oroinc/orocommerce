@@ -48,10 +48,10 @@ layout:
                         quick_add_import_form_container:
                             quick_add_import_form_start: ~
                             quick_add_import_description: ~
-                            quick_add_import_link: ~
                             quick_add_import_form_fields: ~
                             quick_add_import_form_submit: ~
                             quick_add_import_form_end: ~
+                            quick_add_import_link: ~
         - '@move':
             id: quick_add_import_form
             parentId: quick_add_container

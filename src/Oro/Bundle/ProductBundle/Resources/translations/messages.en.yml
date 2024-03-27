@@ -547,7 +547,7 @@ oro:
                 product_image_watermark.title: 'Product Image Watermark'
                 featured_products.title: 'Featured Products'
                 featured_products_segment.title: 'Featured Products Segment'
-                quick_order.title: Quick Order Form
+                quick_order.title: Quick Order
                 quick_order_form.title: Quick Order Form
                 guest_quick_order_form.title: Guest Quick Order Form
                 new_product_icons.title: New Product Icons
@@ -812,21 +812,22 @@ oro:
                 view_details_aria_label: 'View Details of the Current Product'
                 view_details_prefix: 'View Details of the'
             quick_add:
-                title: Quick Order Form
+                title: Quick Order
                 description: Quick add products to order, RFQ or shopping cart
                 clear: Clear All
+                form_title: 'Products List'
                 copy_paste:
-                    title: 'Paste your order'
+                    title: 'Paste Your Order'
                     description: 'Copy and paste your order with the item number, quantity (and optionally units), separated by spaces, semicolons or commas.'
                     placeholder: 'Copy and paste your order.'
                     continue:
                         label: Continue
                 import_from_file:
-                    title: 'Upload your order'
+                    title: 'Upload Your Order'
                     title_dialog: 'Import Excel .CSV File'
-                    description: 'Drag and drop a .CSV, .XLS or .ODF file here, or select them from your computer.'
+                    description: 'Drag &amp; drop a <strong>.CSV, .XLS or .ODF</strong> file or'
                     label_directions:
-                        label: 'Get Directions'
+                        label: 'What File Structure Is Accepted'
                         aria_label: 'Get Directions of how to import multiple products using an CSV, XLSX or ODS file. Opens a popup'
                     continue.label: Submit
                     choose_file:

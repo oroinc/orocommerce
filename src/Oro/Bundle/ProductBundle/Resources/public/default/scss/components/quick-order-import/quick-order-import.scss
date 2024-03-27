@@ -4,37 +4,39 @@
     grid-area: import;
 
     &__title {
+        display: flex;
+        align-items: center;
+        gap: spacing('sm');
         margin: $quick-order-import-title-margin;
-
-        font-size: $base-font-size;
-        font-weight: font-weight('bold');
-        text-transform: uppercase;
+        font-size: $quick-order-import-title-font-size;
+        line-height: $quick-order-import-title-line-height;
+        font-weight: font-weight('semi-bold');
     }
 
     &__container {
         position: relative;
         padding: $quick-order-import-container-padding;
-
         text-align: center;
-
+        border: $quick-order-import-container-border;
+        border-radius: $quick-order-import-container-border-radius;
         background: $quick-order-import-container-background;
     }
 
-    &__link {
-        position: relative;
-        z-index: 2;
-
-        display: inline-block;
-        margin: $quick-order-import-link-margin;
-    }
-
-    &__content {
-        margin-bottom: spacing('sm');
+    &__form {
+        padding-bottom: spacing('md');
     }
 
     &__btn {
         width: $quick-order-import-button-width;
         max-width: 100%;
+    }
+
+    &__description {
+        margin: $quick-order-import-description-margin;
+
+        strong {
+            font-weight: font-weight('semi-bold');
+        }
     }
 
     .filename {

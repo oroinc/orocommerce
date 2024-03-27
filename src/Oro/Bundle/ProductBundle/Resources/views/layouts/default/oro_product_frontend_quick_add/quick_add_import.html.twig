@@ -8,9 +8,10 @@
 {% endblock %}
 
 {% block _quick_add_import_form_start_widget %}
-    {% set attr = {
-        'data-page-component-view': 'oroproduct/js/app/views/quick-add-import-form-view'
-    }|merge(attr) %}
+    {% set attr = attr|merge({
+        'data-page-component-view': 'oroproduct/js/app/views/quick-add-import-form-view',
+        class: attr.class|default('') ~ ' quick-order-import__form'
+    }) %}
     {{ block('form_start_widget') }}
 {% endblock %}
 
@@ -24,11 +25,12 @@
 {% endblock %}
 
 {% block _quick_add_import_title_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ ' quick-order-import__title'
     }) %}
     <h2 {{ block('block_attributes') }}>
-        <span class="fa-paperclip" aria-hidden="true"></span>
+        {{ renderIcon.icon({name: 'link'}) }}
         {{ block_widget(block) }}
     </h2>
 {% endblock %}
@@ -37,14 +39,14 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ ' quick-order-import__description'
     }) %}
-    <p {{ block('block_attributes') }}>{{ block_widget(block) }}</p>
+    <p {{ block('block_attributes') }}>{{ text|trans|oro_html_sanitize }}</p>
 {% endblock %}
 
 {% block _quick_add_import_link_widget %}
     {% import '@OroUI/macros.html.twig' as UI %}
     {{ UI.clientLink({
         'dataUrl': path(route_name),
-        'aCss': 'no-hash quick-order-import__link',
+        'aCss': 'no-hash btn btn--text btn--no-padding btn--outlined',
         'iCss': 'fa-info-circle',
         'label': text|trans,
         'ariaLabel': 'oro.product.frontend.quick_add.import_from_file.label_directions.aria_label'|trans,

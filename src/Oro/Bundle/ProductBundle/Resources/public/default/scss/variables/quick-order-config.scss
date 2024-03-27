@@ -1,15 +1,23 @@
 /* @theme: default; */
 
-$quick-order-padding: 30px 30px 40px !default;
+$quick-order-padding: 0 !default;
 $quick-order-border-radius: 5px !default;
-$quick-order-background: get-color('neutral', 'grey1') !default;
+$quick-order-background: transparent !default;
 $quick-order-display: grid !default;
 $quick-order-grid-template-areas:
-    'add import'
-    'add copy-paste' !default;
-$quick-order-grid-template-columns: 2fr 1fr !default;
+    'import add'
+    'copy-paste add' !default;
+$quick-order-grid-template-columns: 1fr 2fr !default;
 $quick-order-grid-template-rows: auto 1fr !default;
 $quick-order-gap: 30px 60px !default;
+
+$quick-order-page-title-font-size: 24px !default;
+$quick-order-page-title-line-height: 32px !default;
+
+$quick-order-page-separator-font-size: 14px !default;
+$quick-order-page-separator-line-height: 25px !default;
+$quick-order-page-separator-background-color: get-var-color('neutral', 'grey2') !default;
+$quick-order-page-separator-color: get-var-color('text', 'secondary') !default;
 
 // Tablet Small
 $quick-order-tablet-small-grid-template-areas:
