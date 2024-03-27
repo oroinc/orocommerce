@@ -399,3 +399,6 @@ oro:
                             quantity.label: 'QTY #'
                     button:
                         close.label: 'Close'
+
+# Fallback for the old themes support
+oro.frontend.shoppinglist.view.add_item_note.label: 'Add a Note to This Item'
