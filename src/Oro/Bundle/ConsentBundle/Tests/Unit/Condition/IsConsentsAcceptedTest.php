@@ -47,6 +47,7 @@ class IsConsentsAcceptedTest extends \PHPUnit\Framework\TestCase
 
         $this->contextAccessor = $this->createMock(ContextAccessorInterface::class);
         $this->condition->setContextAccessor($this->contextAccessor);
+        $this->condition->addFeature('consents');
     }
 
     public function testGetName(): void

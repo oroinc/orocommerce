@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\EventListener;
+namespace Oro\Bundle\CheckoutBundle\Workflow\EventListener;
 
 use Oro\Bundle\CheckoutBundle\Event\CheckoutRequestEvent;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ActualizeCurrencyInterface;

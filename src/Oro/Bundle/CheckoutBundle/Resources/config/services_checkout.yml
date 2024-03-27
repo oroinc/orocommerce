@@ -85,8 +85,27 @@ services:
         tags:
             - { name: 'oro_action_group_service' }
 
+    oro_checkout.event_listener.process_workflow_request:
+        class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\ProcessWorkflowRequestEventListener
+        arguments:
+            - '@oro_checkout.helper.checkout_workflow_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest, priority: -255 }
+
+    oro_checkout.event_listener.verify_customer_consents:
+        class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\VerifyCustomerConsentsListener
+        arguments:
+            - '@oro_action.action_executor'
+            - '@oro_checkout.helper.checkout_workflow_helper'
+            - '@oro_workflow.manager'
+            - '@security.token_storage'
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.request, method: checkConsents }
+            - { name: kernel.event_listener, event: oro_workflow.entered, method: onStepEntered }
+            - { name: oro_featuretogle.feature, feature: consents }
+
     oro_checkout.event_listener.checkout_request_actualize_currency:
-        class: Oro\Bundle\CheckoutBundle\EventListener\CheckoutRequestActualizeCurrencyListener
+        class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\CheckoutRequestActualizeCurrencyListener
         arguments:
             - '@oro_checkout.action_group.actualize_currency'
         tags:

@@ -69,10 +69,6 @@ class CheckoutWorkflowHelper
     public function processWorkflowAndGetCurrentStep(Request $request, Checkout $checkout): WorkflowStep
     {
         $workflowItem = $this->getWorkflowItem($checkout);
-        $stopPropagation = $this->stopPropagation($workflowItem);
-        if ($stopPropagation) {
-            return $workflowItem->getCurrentStep();
-        }
 
         if ($this->checkoutLineItemGroupingInvalidationHelper->shouldInvalidateLineItemGrouping($workflowItem)) {
             $this->checkoutLineItemGroupingInvalidationHelper->invalidateLineItemGrouping($checkout, $workflowItem);
@@ -250,24 +246,6 @@ class CheckoutWorkflowHelper
                 $this->handleGetTransition($workflowItem, $request);
             }
         }
-    }
-
-    private function stopPropagation(WorkflowItem $workflowItem): bool
-    {
-        $stopPropagation = false;
-        $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem);
-        foreach ($transitions as $transition) {
-            $frontendOptions = $transition->getFrontendOptions();
-            if (!empty($frontendOptions['stop_propagation'])) {
-                $transitionAllowed = $this->workflowManager->transitIfAllowed($workflowItem, $transition);
-                if ($transitionAllowed) {
-                    $stopPropagation = true;
-                    break;
-                }
-            }
-        }
-
-        return $stopPropagation;
     }
 
     private function addTransitionErrors(TransitionData $continueTransition, Request $request): void

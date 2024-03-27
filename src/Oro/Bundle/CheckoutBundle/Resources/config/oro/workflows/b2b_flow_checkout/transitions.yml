@@ -256,8 +256,6 @@ workflows:
                 step_to: customer_consents
                 transition_definition: verify_customer_consents_definition
                 is_hidden: true
-                frontend_options:
-                    stop_propagation: true
 
             verify_payment:
                 step_to: enter_payment

@@ -41,8 +41,10 @@ class CheckoutController extends AbstractController
         $event = new CheckoutRequestEvent($request, $checkout);
         $this->container->get(EventDispatcherInterface::class)->dispatch($event, 'oro_checkout.request');
 
-        $currentStep = $this->container->get(CheckoutWorkflowHelper::class)
-            ->processWorkflowAndGetCurrentStep($request, $checkout);
+        $currentStep = $event->getWorkflowStep();
+        if (!$currentStep) {
+            throw $this->createNotFoundException('Current Workflow Step Not Found');
+        }
 
         $workflowItem = $this->getWorkflowItem($checkout);
 

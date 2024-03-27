@@ -36,9 +36,6 @@ workflows:
             continue_to_billing_address_as_guest_definition: ~
 
             continue_to_billing_address_definition:
-                preactions:
-                    - '@assign_value': [$consents_available, true]
-
                 actions:
                     - '@save_accepted_consents':
                         acceptedConsents: $customerConsents
@@ -49,28 +46,7 @@ workflows:
                                 - '@equal': [$checkout.customerUser.isGuest, false]
                         parameters: [$customerConsents, null]
 
-            verify_customer_consents_definition:
-                preactions:
-                    - '@tree':
-                        conditions:
-                            '@blank': $.result.isConsentsAccepted
-                        actions:
-                            - '@assign_value': [$.result.isConsentsAccepted, false]
-                            - '@assign_value':
-                                conditions:
-                                    '@is_consents_accepted':
-                                        acceptedConsents: $customerConsents
-                                parameters: [$.result.isConsentsAccepted, true]
-                    - '@flash_message':
-                        conditions:
-                            '@and':
-                                - '@equal': [$.result.isConsentsAccepted, false]
-                                - '@equal': [$consents_available, true]
-                        message: oro.checkout.workflow.condition.required_consents_should_be_checked.message
-                        type: 'warning'
-
-                preconditions:
-                    '@equal': [$.result.isConsentsAccepted, false]
+            verify_customer_consents_definition: ~
 
             continue_to_shipping_method_definition:
                 preactions:
