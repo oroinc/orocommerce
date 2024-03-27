@@ -1,7 +1,7 @@
-@name = quote_under_review
-@entityName = Oro\Bundle\SaleBundle\Entity\Quote
-@subject = Quote #{{ entity.id }} is being reviewed
-@isSystem = 1
-@isEditable = 1
+{# @name = quote_under_review #}
+{# @entityName = Oro\Bundle\SaleBundle\Entity\Quote #}
+{# @subject = Quote #{{ entity.id }} is being reviewed #}
+{# @isSystem = 1 #}
+{# @isEditable = 1 #}
 
 Quote #{{ entity.id }} is being reviewed {% if transitionUser is defined and transitionUser is not empty %}by {{ transitionUser.firstName }} {{ transitionUser.lastName }}{% endif %} on {{ transitionRecord.transitionDate|oro_format_date_by_entity(entity) }} at {{ transitionRecord.transitionDate|oro_format_time_by_entity(entity) }} (<a href="{{ entity.url.view }}">view quote online</a>).

@@ -40,7 +40,7 @@ Feature: Products grid frontend export localized
     Then I should see "The product data export has started. You will receive download instructions by email once the export is finished." flash message
     And email with Subject "Zulu Products export result is ready" containing the following was sent:
       | Body | Your products data export has been finished. Download Results |
-    When take the link from email and download the file from this link
+    When take the "Download Results" link from email and download the file from this link
     Then the downloaded file from email contains at least the following data:
       | Name           | SKU      | Inventory Status.Id |
       | ProductInZulu1 | SKUZULU1 | in_stock            |

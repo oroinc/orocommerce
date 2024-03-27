@@ -1,10 +1,14 @@
-@name = quote_email_link_guest
-@entityName = Oro\Bundle\SaleBundle\Entity\Quote
-@subject = Your quote #{{ entity.id }} is ready
-@isSystem = 0
-@isEditable = 1
+{# @name = quote_email_link_guest #}
+{# @entityName = Oro\Bundle\SaleBundle\Entity\Quote #}
+{# @subject = Your quote #{{ entity.id }} is ready #}
+{# @type = html #}
+{# @isSystem = 0 #}
+{# @isEditable = 1 #}
 
-Your quote #{{ entity.id }} is ready and can be viewed at <a
-href="{{ quote_guest_access_link(entity) }}">
-    {{ quote_guest_access_link(entity) }}
-</a>
+{% extends oro_get_email_template('base_storefront') %}
+
+{% block content %}
+    <p style="{{ styleP }}">Your quote #{{ entity.id }} is ready and can be viewed at <a class="link" style="{{ styleLink }}"
+    href="{{ quote_guest_access_link(entity) }}">{{ quote_guest_access_link(entity) }}</a>
+    </p>
+{% endblock %}

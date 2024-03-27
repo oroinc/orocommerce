@@ -1,0 +1,21 @@
+dependencies:
+    - Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite
+
+Oro\Bundle\EmailBundle\Entity\EmailTemplate:
+    quote_email_link_with_website:
+        organization: '@organization'
+        name: 'quote_email_link'
+        entity_name: 'Oro\\Bundle\\SaleBundle\\Entity\\Quote'
+        website: '@website'
+        type: 'html'
+        is_system: 0
+        subject: 'Your quote #{{ entity.id }} is ready'
+        content: 'Your quote #{{ entity.id }} is ready on the default website'
+
+    another_email_template:
+        organization: '@organization'
+        name: 'another_email_template'
+        type: 'html'
+        is_system: 0
+        subject: 'Another email template'
+        content: 'Another email template content'

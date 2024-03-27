@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Extension;
 
+use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Entity\Repository\EmailTemplateRepository;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Form\Type\EmailType;
@@ -49,6 +50,14 @@ class QuoteEmailTemplateExtension extends AbstractTypeExtension
                     'template',
                     [
                         'selectedEntity' => Quote::class,
+                        'choice_label' => function (EmailTemplate $emailTemplate) {
+                            $website = $emailTemplate->getWebsite();
+                            if ($website !== null) {
+                                return sprintf('%s (%s)', $emailTemplate->getName(), $website->getName());
+                            }
+
+                            return $emailTemplate->getName();
+                        },
                         'query_builder' => function (EmailTemplateRepository $templateRepository) {
                             $excludeNames = [];
                             if (!$this->featureChecker->isFeatureEnabled('guest_quote')) {

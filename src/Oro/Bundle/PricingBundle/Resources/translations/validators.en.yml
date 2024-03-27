@@ -17,6 +17,8 @@ oro:
                   quantity.blank: 'Quantity should not be blank.'
                   currency.blank: 'Currency should not be blank.'
                   expression_is_invalid.message: 'Invalid rule'
+              price_attribute_product_price:
+                  unique_entity.message: 'This value is used. Unique constraint: {{ unique_key }}'
               default_currency.message: 'Currency "%invalidCurrency%" is not valid default currency. Selected currency must be in enabled list'
               price_for_product_unit_exists.message: "Units: '%units%', are used in price attribute prices and can't be removed"
               field_is_not_allowed_as.message: 'Field "%fieldName%" is not allowed to be used as "%inputName%"'

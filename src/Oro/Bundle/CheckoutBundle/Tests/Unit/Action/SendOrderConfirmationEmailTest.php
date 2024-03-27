@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\CheckoutBundle\Action\SendOrderConfirmationEmail;
 use Oro\Bundle\EmailBundle\Exception\EmailTemplateCompilationException;
 use Oro\Bundle\EmailBundle\Model\EmailTemplateCriteria;
-use Oro\Bundle\EmailBundle\Tools\AggregatedEmailTemplatesSender;
+use Oro\Bundle\EmailBundle\Sender\EmailTemplateSender;
 use Oro\Bundle\EmailBundle\Tools\EmailAddressHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
@@ -19,7 +19,7 @@ class SendOrderConfirmationEmailTest extends \PHPUnit\Framework\TestCase
 {
     use LoggerAwareTraitTestTrait;
 
-    private AggregatedEmailTemplatesSender|\PHPUnit\Framework\MockObject\MockObject $aggregatedEmailTemplatesSender;
+    private EmailTemplateSender|\PHPUnit\Framework\MockObject\MockObject $emailTemplateSender;
 
     private SendOrderConfirmationEmail $action;
 
@@ -32,7 +32,7 @@ class SendOrderConfirmationEmailTest extends \PHPUnit\Framework\TestCase
 
         $entityNameResolver = $this->createMock(EntityNameResolver::class);
         $validator = $this->createMock(ValidatorInterface::class);
-        $this->aggregatedEmailTemplatesSender = $this->createMock(AggregatedEmailTemplatesSender::class);
+        $this->emailTemplateSender = $this->createMock(EmailTemplateSender::class);
 
         $dispatcher = $this->createMock(EventDispatcher::class);
 
@@ -41,7 +41,7 @@ class SendOrderConfirmationEmailTest extends \PHPUnit\Framework\TestCase
             $validator,
             new EmailAddressHelper(),
             $entityNameResolver,
-            $this->aggregatedEmailTemplatesSender
+            $this->emailTemplateSender
         );
 
         $this->action->setDispatcher($dispatcher);
@@ -54,8 +54,8 @@ class SendOrderConfirmationEmailTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecuteIgnoresExceptions(\Throwable $exception, string $logMessage): void
     {
-        $this->aggregatedEmailTemplatesSender->expects(self::once())
-            ->method('send')
+        $this->emailTemplateSender->expects(self::once())
+            ->method('sendEmailTemplate')
             ->willThrowException($exception);
 
         $this->loggerMock->expects(self::once())

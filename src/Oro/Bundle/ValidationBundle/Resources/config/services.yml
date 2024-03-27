@@ -14,13 +14,6 @@ services:
         tags:
             - { name: validator.constraint_validator }
 
-    oro_validation.validator_constraints.unique_entity:
-        class: Oro\Bundle\ValidationBundle\Validator\Constraints\UniqueEntityValidator
-        arguments:
-            - '@doctrine'
-        tags:
-            - { name: validator.constraint_validator, alias: oro_validation.validator_constraints.unique_entity }
-
     oro_validation.validator_constraints.dates_chain:
         class: Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChainValidator
         arguments:

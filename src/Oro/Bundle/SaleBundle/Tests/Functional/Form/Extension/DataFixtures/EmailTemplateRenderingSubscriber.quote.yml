@@ -1,0 +1,28 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUser
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quote_product_item_1:
+        quantity: 23
+        productUnit: '@each'
+        value: 345.6789
+        currency: 'USD'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quote_product_1:
+        product: '@product_simple1'
+        __calls:
+            - addQuoteProductOffer: ['@quote_product_item_1']
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote_1:
+        customerUser: '@customer_user'
+        owner: '@user'
+        organization: '@organization'
+        customer: '@customer1'
+        website: '@website'
+        __calls:
+            - addQuoteProduct: ['@quote_product_1']
