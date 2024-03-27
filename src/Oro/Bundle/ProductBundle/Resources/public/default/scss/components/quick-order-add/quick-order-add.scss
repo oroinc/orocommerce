@@ -9,15 +9,6 @@
         }
     }
 
-    &__col {
-        &::before {
-            display: none;
-            margin: $quick-order-add-label-margin;
-
-            content: attr(data-label);
-        }
-    }
-
     &__row {
         &:first-child {
             .quick-order-add__col::before {
@@ -28,6 +19,13 @@
         &.stale {
             display: none;
         }
+    }
+
+    &__remove-row {
+        grid-area: subtotal;
+        justify-self: end;
+        padding-left: $quick-order-add-row-button-horizontal-padding;
+        padding-right: $quick-order-add-row-button-horizontal-padding;
     }
 
     &__row-content {
@@ -65,34 +63,29 @@
         }
     }
 
-    &__remove-row {
-        position: absolute;
-        right: -44px;
-    }
-
     &__fields {
+        padding-bottom: spacing('base');
+
         .validation-failed {
             grid-column-end: $quick-order-add-fields-validation-failed-grid-column-end;
         }
     }
 
-    &__clear-button {
-        float: $quick-order-add-clear-button-float;
+    &__actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     &__buttons-wrapper {
-        @include clearfix();
-
-        &:first-child {
-            padding-bottom: spacing('base');
-
-            border-bottom: $quick-order-add-buttons-first-child-border-bottom;
-        }
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: spacing('base');
     }
 
     &__buttons {
-        float: $quick-order-add-buttons-float;
-
         .widget-content {
             // override platform styles
             .action-button {
@@ -102,19 +95,24 @@
             }
         }
 
-        .btn-group {
-            // override platform styles
-            margin-left: spacing('sm');
+        .widget-content:not(.btn-group) > div {
+            display: flex;
+            align-items: center;
+            gap: spacing('xl');
+        }
 
-            .btn-group {
-                margin: 0;
-            }
+        .pull-left {
+            float: $quick-order-add-buttons-float;
         }
 
         .add-to-shopping-list-button:not(.dropdown-item) {
             .fa {
                 display: none;
             }
+        }
+
+        .btn {
+            white-space: nowrap;
         }
     }
 
@@ -132,9 +130,8 @@
 
 @include breakpoint('tablet-small') {
     .quick-order-add {
-        &__clear-button {
-            width: 100%;
-            margin: $quick-order-add-mobile-bottom-margin;
+        .operation-button {
+            margin-left: auto;
         }
 
         &__buttons {
@@ -142,7 +139,6 @@
 
             .pull-left {
                 width: 100%;
-                margin: $quick-order-add-mobile-bottom-margin;
             }
 
             .btn-group {
@@ -171,6 +167,28 @@
     }
 }
 
+@include breakpoint('mobile-big') {
+    .quick-order-add {
+        .operation-button {
+            margin-left: 0;
+            margin-right: auto;
+        }
+
+        .widget-content:not(.btn-group) > div {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: spacing('base');
+
+            > div {
+                &:last-child {
+                    order: -1;
+                    grid-column: 1 / 3;
+                }
+            }
+        }
+    }
+}
+
 @include breakpoint('mobile-landscape') {
     .quick-order-add {
         &__row-content {
@@ -185,10 +203,6 @@
 
         &__row {
             border-bottom: $quick-order-add-mobile-row-border;
-
-            .quick-order-add__col::before {
-                display: block;
-            }
         }
 
         &__error,
@@ -198,10 +212,6 @@
                 // override platform styles
                 margin: $quick-order-add-mobile-error-margins;
             }
-        }
-
-        .product-tier-prices {
-            bottom: $quick-order-add-mobile-price-dropdown-bottom;
         }
     }
 }

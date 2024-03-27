@@ -215,7 +215,7 @@ Feature: Quick order form
 
   Scenario: Create an order from quick order page (import) with non exists quantity
     Given I click "Quick Order"
-    And I click "Get Directions"
+    And I click "What File Structure Is Accepted"
     And I should see that "UiDialog Title" contains "Import Excel .CSV File"
     And I download "the CSV template"
     And I close ui dialog
@@ -379,7 +379,7 @@ Feature: Quick order form
 
   Scenario: Check upload import validation with empty file
     Given I click "Quick Order"
-    And I click "Get Directions"
+    And I click "What File Structure Is Accepted"
     And I should see that "UiDialog Title" contains "Import Excel .CSV File"
     And I download "the CSV template"
     And I close ui dialog
@@ -390,7 +390,7 @@ Feature: Quick order form
 
   Scenario: Check upload import validation in case when all rows are in wrong format
     Given I click "Quick Order"
-    And I click "Get Directions"
+    And I click "What File Structure Is Accepted"
     And I should see that "UiDialog Title" contains "Import Excel .CSV File"
     And I download "the CSV template"
     And I close ui dialog
@@ -414,7 +414,7 @@ Feature: Quick order form
 
   Scenario: Check upload import validation in case when just some rows are in wrong format
     Given I click "Quick Order"
-    And I click "Get Directions"
+    And I click "What File Structure Is Accepted"
     And I should see that "UiDialog Title" contains "Import Excel .CSV File"
     And I download "the CSV template"
     And I close ui dialog
@@ -456,7 +456,7 @@ Feature: Quick order form
   Scenario: Check CSV import with a unit that is not marked as sell unit
     Given I proceed as the Buyer
     And I click "Quick Order"
-    And I click "Get Directions"
+    And I click "What File Structure Is Accepted"
     And I should see that "UiDialog Title" contains "Import Excel .CSV File"
     And I download "the CSV template"
     And I close ui dialog
@@ -477,7 +477,7 @@ Feature: Quick order form
   Scenario: Check product and unit names are localized
     Given I select "Localization 1" localization
     And I click "Quick Order"
-    And I click "Get Directions"
+    And I click "What File Structure Is Accepted"
     And I should see that "UiDialog Title" contains "Import Excel .CSV File"
     And I download "the CSV template"
     And I close ui dialog

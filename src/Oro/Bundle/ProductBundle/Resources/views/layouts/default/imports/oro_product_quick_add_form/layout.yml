@@ -26,7 +26,7 @@ layout:
                     options:
                         type: button
                         text: oro.product.frontend.quick_add.clear
-                        icon: times
+                        icon: close
                 __form_buttons:
                     blockType: container
             tree:

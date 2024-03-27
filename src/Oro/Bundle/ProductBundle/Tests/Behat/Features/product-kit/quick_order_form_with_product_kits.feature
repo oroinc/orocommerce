@@ -20,7 +20,7 @@ Feature: Quick order form with Product Kits
     And I click on empty space
 
   Scenario: Product Kit can be added to Quick Order Form (import)
-    When I click "Get Directions"
+    When I click "What File Structure Is Accepted"
     Then I should see that "UiDialog Title" contains "Import Excel .CSV File"
     When I download "the CSV template"
     And I close ui dialog

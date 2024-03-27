@@ -1,9 +1,12 @@
 .product-tier-prices {
     position: relative;
-    padding-top: 0;
-    padding-bottom: 0;
+    min-height: auto;
+    padding: 0;
 
-    border-radius: 0 $btn-border-radius $btn-border-radius 0;
+    &--hidden {
+        opacity: 0;
+        visibility: hidden;
+    }
 
     &.disabled {
         .popover-trigger {

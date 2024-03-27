@@ -4,10 +4,15 @@
 
 $quick-order-import-button-width: 200px !default;
 
-$quick-order-import-title-margin: 0 0 10px !default;
-$quick-order-import-link-margin: 8px 0 12px !default;
-$quick-order-import-container-padding: 20px 20px 10px !default;
-$quick-order-import-container-background: get-color('neutral', 'grey1') !default;
+$quick-order-import-title-margin: 0 0 spacing('base') !default;
+$quick-order-import-link-color: get-var-color('primary', 'main') !default;
+$quick-order-import-container-padding: spacing('base') spacing('xl') !default;
+$quick-order-import-container-background: transparent !default;
+$quick-order-import-container-border: 2px dashed get-var-color('neutral', 'grey3') !default;
+$quick-order-import-container-border-radius: spacing('xs') !default;
+$quick-order-import-title-font-size: 16px !default;
+$quick-order-import-title-line-height: 22px !default;
+$quick-order-import-description-margin: 21px 0 spacing('md') !default;
 
 $quick-order-import-uploader-action-background: color.adjust(
     get-color('neutral', 'grey2'), $lightness: -44%

@@ -10,16 +10,20 @@
         '~class': ' quick-order-copy-paste'
     }) %}
     <div {{ block('block_attributes') }}>
+        <div class="quick-order-separator">
+            <span class="quick-order-separator-text">or</span>
+        </div>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _quick_add_copy_paste_title_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' quick-order-copy-paste__title'
     }) %}
     <h2 {{ block('block_attributes') }}>
-        <span class="fa-paste" aria-hidden="true"></span>
+        {{ renderIcon.icon({name: 'copy'}) }}
         {{ block_widget(block) }}
     </h2>
 {% endblock %}
@@ -44,7 +48,7 @@
 
 {% block _quick_add_copy_paste_description_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' label label--full',
+        '~class': ' quick-order-copy-paste__description',
         for: 'oro_product_quick_add_copy_paste_copyPaste'
     }) %}
     <label {{ block('block_attributes') }}>{{ block_widget(block) }}</label>
