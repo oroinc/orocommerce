@@ -16,7 +16,7 @@ const FilterApplierView = BaseView.extend({
 
     buttonOptions: {
         label: __('oro.filter.updateButton.text'),
-        classes: 'btn btn--outlined btn--size-small'
+        classes: 'btn btn--size-small'
     },
 
     /**
