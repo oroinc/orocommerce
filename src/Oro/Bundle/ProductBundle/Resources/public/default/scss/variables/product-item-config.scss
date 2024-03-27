@@ -33,9 +33,17 @@ $product-item-image-holder-gallery-view-border-bottom: 1px solid get-color('neut
 $product-item-no-image-bc-color: get-var-color('neutral', 'grey1') !default;
 $product-item-preview-image-border-radius: $base-ui-element-border-radius !default;
 
-$product-item-image-holder-tiny-width: 40px !default;
+$product-item-image-holder-tiny-width: 44px !default;
 $product-item-image-holder-tiny-height: $product-item-image-holder-tiny-width !default;
 $product-item-image-holder-tiny-border: 1px solid get-color('neutral', 'grey2') !default;
+$product-item-image-holder-tiny-border-radius: 50% !default;
+$product-item-image-holder-tiny-overflow: hidden !default;
+
+$product-item-image-holder-tiny-small-width: 32px !default;
+$product-item-image-holder-tiny-small-height: $product-item-image-holder-tiny-small-width !default;
+$product-item-image-holder-tiny-small-border: 1px solid get-color('neutral', 'grey2') !default;
+$product-item-image-holder-tiny-small-border-radius: 50% !default;
+$product-item-image-holder-tiny-small-overflow: hidden !default;
 
 $product-item-sku-value-font-size: $caption-2-font-size !default;
 $product-item-sku-value-line-height: $caption-2-line-height !default;
@@ -47,4 +55,7 @@ $product-item-placeholder-label-height: 44px !default;
 $product-item-placeholder-label-display: flex !default;
 $product-item-placeholder-label-align-items: center !default;
 
+// Mobile Landscape
+$product-item-image-holder-tiny-small-mobile-landscape-width: 44px !default;
+$product-item-image-holder-tiny-small-mobile-landscape-height: 44px !default;
 $product-item-view-product-color-disabled: get-var-color('text', 'disabled') !default;

@@ -646,7 +646,7 @@ datagrids:
             update_product_kit_line_item:
                 type: update-product-kit-line-item
                 label: oro.shoppinglist.actions.update_product_kit_line_item.label
-                icon: pencil
+                icon: settings
             delete:
                 type: delete-product
                 label: oro.shoppinglist.actions.delete_product_kit_line_item.label

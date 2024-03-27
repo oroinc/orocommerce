@@ -37,7 +37,7 @@ layout:
         - '@setOption':
             id: matrix_grid_order_form_actions_submit
             optionName: attr.class
-            optionValue: 'btn--outlined btn--size-small'
+            optionValue: 'btn--size-small'
         - '@appendOption':
             id: matrix_grid_order_matrix_form_clear_button
             optionName: attr.class

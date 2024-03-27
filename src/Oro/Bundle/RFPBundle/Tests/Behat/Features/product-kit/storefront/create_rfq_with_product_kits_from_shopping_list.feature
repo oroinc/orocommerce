@@ -38,7 +38,7 @@ Feature: Create RFQ with Product Kits from Shopping List
       | Kit Item Line Item 1 Quantity | 2 |
       | Kit Item Line Item 2 Quantity | 2 |
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $135.8067 |
+      | Price | Total: $135.8067 |
     When I click "Save"
     And click "Update Line Item"
     Then I should see "product-kit-01 - Product Kit 01 Optional Item 2 piece simple-product-03 - Simple Product 03 Mandatory Item 2 piece simple-product-02 - Simple Product 02 QTY: 1 piece Target Price $0.00 Listed Price: $135.8067" in the "RFQ Products List Line Item 2" element

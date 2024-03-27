@@ -34,7 +34,7 @@
                     sources: product_filtered_picture_sources(productImageData, 'product_small'),
                     picture_attrs: attr,
                     picture_attrs: {
-                        class: 'product-item__preview-picture'
+                        class: 'product-item__preview-picture product-item__preview-picture--tiny'
                     },
                     img_attrs: {
                         class: 'product-item__preview-image cover-img'
@@ -57,7 +57,7 @@
 
 {% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__header_product_name_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-popup__header-title h1 h-normal',
+        '~class': ' product-popup__header-title h3',
     }) %}
 
     <p {{ block('block_attributes') }}>{{ block_widget(block) }}</p>
@@ -68,10 +68,13 @@
 {% endblock %}
 
 {% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__header_product_sku_widget %}
-    <span {{ block('block_attributes') }}>
-        {{ 'oro.product.frontend.index.item'|trans }}
-        <span>{{ product.sku|default('N/A'|trans) }}</span>
-    </span>
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-popup__header-sku',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{- product.sku|default('N/A'|trans) -}}
+    </div>
 {% endblock %}
 
 {% block __oro_rfp_frontend_request_product_kit_configuration_form_edit__form_actions_submit_widget %}

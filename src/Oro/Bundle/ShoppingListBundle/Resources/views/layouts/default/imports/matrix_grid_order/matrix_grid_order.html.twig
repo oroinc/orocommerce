@@ -50,7 +50,7 @@
     <div {{ block('block_attributes') }}>
         <div class="product-item__image-holder--aspect-ratio product-item__image-holder--tiny">
             <div class="product-item__preview">
-                <picture class="product-item__preview-picture">
+                <picture class="product-item__preview-picture product-item__preview-picture--tiny">
                     {% set productImage = product.imagesByType('listing').first.image|default(null) %}
                     {% set productImageUrl = product_filtered_image(productImage, 'product_small') %}
                     <img src="{{ productImageUrl }}" alt="{{ product.names|localized_value|e }}" class="product-item__preview-image cover-img">
@@ -72,7 +72,7 @@
 
 {% block __matrix_grid_order__header_product_name_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-popup__header-title h1 h-normal',
+        '~class': ' product-popup__header-title h3',
     }) %}
 
     <p {{ block('block_attributes') }}>
@@ -81,9 +81,12 @@
 {% endblock %}
 
 {% block __matrix_grid_order__header_product_sku_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-popup__header-sku',
+    }) %}
+
     <div {{ block('block_attributes') }}>
-        {{ 'oro.product.frontend.index.item'|trans }}
-        <span>{{ product.sku|e }}</span>
+        {{- product.sku|e -}}
     </div>
 {% endblock %}
 
@@ -126,8 +129,14 @@
 {% endblock %}
 
 {% block __matrix_grid_order__matrix_form_clear_button_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' btn--no-padding btn--outlined btn--text'
+    }) %}
+
     {% if totals.quantity|default(0) == 0 %}
-        {% set style = style ~ ' disabled' %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' disabled'
+        }) %}
     {% endif %}
 
     {{ parent_block_widget(block) }}

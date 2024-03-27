@@ -36,7 +36,7 @@ Feature: Create RFQ with Product Kits Validation - with Different Unit Precision
       | Kit Item Line Item 1 Quantity | 2.22 |
       | Kit Item Line Item 2 Quantity | 1.11 |
     And I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $133.0467 |
+      | Price | Total: $133.0467 |
 
   Scenario: Add Product Kit Line Item to the RFQ
     When click "Save"

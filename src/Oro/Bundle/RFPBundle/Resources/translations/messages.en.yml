@@ -397,7 +397,7 @@ oro:
                     aria_label: 'Edit product kit configuration'
             request_product_kit_configuration_dialog:
                 price:
-                    label: 'Price as configured:'
+                    label: 'Total:'
                 actions:
                     submit: 'Save'
             data_storage:

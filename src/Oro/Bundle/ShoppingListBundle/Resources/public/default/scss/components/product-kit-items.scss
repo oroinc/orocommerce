@@ -3,16 +3,34 @@
 .product-kit-items {
     margin-bottom: spacing('base');
 
+    &__notes {
+        padding-top: spacing('xl');
+        padding-inline-start: spacing('md');
+    }
+
     &__label {
         width: auto;
         display: flex;
         align-items: center;
         // rest base styles for `.label`
         margin-bottom: 0;
+        padding-block: spacing('md');
+
+        &-notes {
+            margin-bottom: spacing('sm');
+        }
     }
 }
 
 .product-kit-line-item-widget {
     display: flex;
     flex-direction: column;
+}
+
+@include breakpoint('mobile-big') {
+    .product-kit-items {
+        &__label {
+            padding-block: 0;
+        }
+    }
 }

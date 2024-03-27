@@ -74,11 +74,11 @@
     }
 }
 
-@include breakpoint('mobile') {
+@include breakpoint('mobile-landscape') {
     .product-item-quantity {
         &__input {
-            width: $product-item-quantity-input-width-mobile;
-            min-width: $product-item-quantity-input-width-mobile;
+            width: $product-item-quantity-input-width-mobile-landscape;
+            min-width: $product-item-quantity-input-width-mobile-landscape;
         }
     }
 }

@@ -655,27 +655,27 @@ oro_behat_extension:
       selector: 'div.product-kit-dialog'
       class: Oro\Bundle\UIBundle\Tests\Behat\Element\UiDialog
     Product Kit Dialog Title:
-      selector: '.h1'
+      selector: '.h3'
     Product Kit Dialog Kit Item 1 Name:
-      selector: '.product-kit-items-table__row-entry:nth-child(1) .product-kit-items__label'
+      selector: '.product-kit-items-grid__group:nth-child(2) .product-kit-items__label'
     Product Kit Dialog Kit Item 2 Name:
-      selector: 'tr ~ tr.product-kit-items-table__row-entry .product-kit-items__label'
+      selector: '.product-kit-items-grid__group:nth-child(3) .product-kit-items__label'
     Product Kit Dialog Price:
       selector: '.product-totals .product-totals__total-price'
 
     Product Kit Dialog Kit Item 1 Product 1:
-      selector: '.product-kit-items-table__row-product:nth-child(2)'
+      selector: '.product-kit-items-grid__group:nth-child(2) .product-kit-items-grid__product:nth-child(1)'
     Product Kit Dialog Kit Item 1 Product 2:
-      selector: '.product-kit-items-table__row-product:nth-child(3)'
+      selector: '.product-kit-items-grid__group:nth-child(2) .product-kit-items-grid__product:nth-child(2)'
     Product Kit Dialog Kit Item 1 Product 3:
-      selector: '.product-kit-items-table__row-product:nth-child(4)'
+      selector: '.product-kit-items-grid__group:nth-child(2) .product-kit-items-grid__product:nth-child(3)'
     Product Kit Dialog Kit Item 2 Product 1:
-      selector: '.product-kit-items-table__row-product:nth-child(5)'
+      selector: '.product-kit-items-grid__group:nth-child(3) .product-kit-items-grid__product:nth-child(1)'
     Product Kit Dialog Kit Item 2 Product 2:
-      selector: '.product-kit-items-table__row-product:nth-child(6)'
+      selector: '.product-kit-items-grid__group:nth-child(3) .product-kit-items-grid__product:nth-child(2)'
     Product Kit Dialog Error 1:
       selector:
-        locator: '//tr[contains(@class, "product-kit-items-table__row-error")][1]'
+        locator: '//div[contains(@class, "product-kit-items-grid__error-cell")][1]'
         type: xpath
     Product Kit Dialog okButton:
       selector: 'div.ui-dialog-buttonpane button[type=submit]'
@@ -684,7 +684,7 @@ oro_behat_extension:
       selector: 'div.product-kit-in-shopping-lists-dialog'
       class: Oro\Bundle\UIBundle\Tests\Behat\Element\UiDialog
     Product Kit In Shopping List Dialog Title:
-      selector: '.h1'
+      selector: '.h3'
     Product Kit In Shopping List Dialog No Data:
       selector: 'div.no-data'
     Product Kit In Shopping List Dialog Shopping List 1 Label:

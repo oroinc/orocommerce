@@ -9,17 +9,29 @@
 
     width: 100%;
 
+    &__th {
+        background-color: $product-kit-items-table-head-background-color;
+        font-weight: $product-kit-items-table-head-font-weight;
+        text-align: $product-kit-items-table-head-text-align;
+        color: $product-kit-items-table-head-color;
+        padding: $product-kit-items-table-head-padding;
+
+        &--qty {
+            text-align: $product-kit-items-table-head-qty-text-align;
+        }
+    }
+
     &__cell {
-        vertical-align: top;
+        padding-left: spacing('sm');
+        padding-right: spacing('sm');
 
-        padding-left: spacing('xs');
-        padding-right: spacing('xs');
-
-        &:first-child {
-            padding-left: 0;
+        &.label-cell:first-child {
+            padding-left: spacing('md');
+            padding-right: spacing('base');
         }
 
-        &:last-child {
+        &.quantity-cell:last-child {
+            padding-left: spacing('base');
             padding-right: 0;
         }
     }
@@ -27,8 +39,19 @@
     &__row {
         &-product {
             .product-kit-items-table__cell {
-                padding-top: spacing('xs');
                 padding-bottom: spacing('xs');
+            }
+
+            &:first-child {
+                .product-kit-items-table__cell {
+                    padding-top: spacing('xl');
+                }
+            }
+
+            &:last-child {
+                .product-kit-items-table__cell {
+                    padding-bottom: spacing('xl');
+                }
             }
         }
 
@@ -43,7 +66,13 @@
             border-bottom: $product-kit-items-table-border;
 
             .product-kit-items-table__cell {
-                padding-bottom: spacing('base');
+                padding-bottom: spacing('xl');
+            }
+        }
+
+        &.product-last-in-group + & {
+            .product-kit-items-table__cell {
+                padding-top: spacing('xl');
             }
         }
     }
@@ -51,6 +80,12 @@
     .sku-cell {
         width: 80px;
         min-width: 80px;
+
+        label {
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
     }
 
     .price-cell {
@@ -63,17 +98,15 @@
         text-align: center;
     }
 
-    .price-cell,
-    .radio-cell,
-    .sku-cell {
-        &:not(.no-product-cell) {
-            padding-top: spacing('base');
+    .item-cell {
+        .grid-line-items {
+            padding-block: 6px 4px;
         }
     }
 
     .label-cell,
     .quantity-cell {
-        vertical-align: middle;
+        vertical-align: top;
     }
 }
 
@@ -135,6 +168,10 @@
             box-sizing: content-box;
             padding-left: 8px;
         }
+    }
+
+    .product-kit-items-table__head {
+        display: none;
     }
 
     .product-kit-items-table,

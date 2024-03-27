@@ -2,5 +2,13 @@
 
 $product-kit-items-table-border: 1px solid get-color('neutral', 'grey1') !default;
 
+$product-kit-items-table-head-background-color: get-color('neutral', 'grey1') !default;
+$product-kit-items-table-head-font-weight: font-weight('semi-bold') !default;
+$product-kit-items-table-head-text-align: left !default;
+$product-kit-items-table-head-color: get-color('text', 'secondary') !default;
+$product-kit-items-table-head-padding: spacing('md') !default;
+
+$product-kit-items-table-head-qty-text-align: right !default;
+
 // Mobile
 $product-kit-items-mobile-table-border: 1px dashed get-color('neutral', 'grey1') !default;

@@ -3,6 +3,8 @@ styles:
         - 'bundles/oroshoppinglist/default/scss/settings/global-settings.scss'
 
         - 'bundles/oroshoppinglist/default/scss/variables/matrix-order-widget-config.scss'
+        - 'bundles/oroshoppinglist/default/scss/variables/product-kit-dialog-config.scss'
+        - 'bundles/oroshoppinglist/default/scss/variables/product-kit-items-grid-config.scss'
         - 'bundles/oroshoppinglist/default/scss/variables/product-kit-items-table-config.scss'
         - 'bundles/oroshoppinglist/default/scss/variables/product-item-quantity-config.scss'
         - 'bundles/oroshoppinglist/default/scss/variables/shopping-lists-config.scss'
@@ -47,6 +49,7 @@ styles:
 
         - 'bundles/oroshoppinglist/default/scss/components/product-kit-dialog.scss'
         - 'bundles/oroshoppinglist/default/scss/components/product-kit-items.scss'
+        - 'bundles/oroshoppinglist/default/scss/components/product-kit-items-grid.scss'
         - 'bundles/oroshoppinglist/default/scss/components/product-kit-items-table.scss'
         - 'bundles/oroshoppinglist/default/scss/components/product-item-quantity.scss'
         - 'bundles/oroshoppinglist/default/scss/components/product-kit-add-to-shopping-list.scss'

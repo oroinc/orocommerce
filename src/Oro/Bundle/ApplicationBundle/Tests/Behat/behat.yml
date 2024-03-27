@@ -286,6 +286,9 @@ oro_behat_extension:
     Matrix Grid Form Totals:
       selector: '.product-totals'
 
+    Matrix Grid Form Summary:
+      selector: '[data-role="totals"]'
+
     Matrix Grid Total Price:
       selector: 'div[data-role="total-price"]'
 
