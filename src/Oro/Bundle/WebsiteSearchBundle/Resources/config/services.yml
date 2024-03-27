@@ -94,7 +94,7 @@ services:
             - 'oro_website_search.event.website_search_mapping.configuration'
 
     oro_website_search.cache.website_search_mapping.warmer:
-        class: Oro\Component\Config\Cache\ConfigCacheWarmer
+        class: Oro\Bundle\WebsiteSearchBundle\Cache\WebsiteSearchProviderCacheWarmer
         arguments:
             - '@oro_website_search.provider.search_mapping'
         tags:
