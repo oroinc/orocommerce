@@ -13,7 +13,12 @@ navigation:
                     oro_customer_menu_customer_user_index:
                         children:
                             oro_checkout_frontend_open_orders: ~
+            # Start Requirement for "Default Theme 50/51"
             oro_customer_menu:
+                children:
+                    oro_checkout_frontend_open_orders: ~
+            # End Requirement for "Default Theme 50/51"
+            oro_customer_menu_refreshing_teal:
                 children:
                     oro_order_frontend_orders:
                         children:

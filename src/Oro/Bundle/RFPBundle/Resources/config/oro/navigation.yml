@@ -57,7 +57,16 @@ navigation:
                                     oro_rfp_frontend_request_create: ~
                                     oro_rfp_frontend_request_view: ~
 
+            # Start Requirement for "Default Theme 50/51"
             oro_customer_menu:
+                children:
+                    oro_rfp_frontend_request_index:
+                        children:
+                            oro_rfp_frontend_request_create: ~
+                            oro_rfp_frontend_request_view: ~
+            # End Requirement for "Default Theme 50/51"
+
+            oro_customer_menu_refreshing_teal:
                 children:
                     oro_order_frontend_orders:
                         children:

@@ -51,7 +51,17 @@ navigation:
                                     oro_sale_quote_frontend_view: ~
                                     oro_sale_quote_frontend_choice: ~
 
+            # Start Requirement for "Default Theme 50/51"
             oro_customer_menu:
+                children:
+                    oro_sale_quote_frontend_index:
+                        children:
+                            oro_sale_quote_frontend_view: ~
+                            oro_sale_quote_frontend_view_guest: ~
+                            oro_sale_quote_frontend_choice: ~
+            # End Requirement for "Default Theme 50/51"
+
+            oro_customer_menu_refreshing_teal:
                 children:
                     oro_order_frontend_orders:
                         children:
