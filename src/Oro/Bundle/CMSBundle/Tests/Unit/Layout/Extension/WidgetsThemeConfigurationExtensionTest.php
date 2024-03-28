@@ -6,20 +6,29 @@ use Oro\Bundle\CMSBundle\Layout\Extension\WidgetsThemeConfigurationExtension;
 use Oro\Bundle\CMSBundle\Tests\Unit\Fixtures\Bundle\TestBundle1\TestBundle1;
 use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration;
 use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfigurationProvider;
+use Oro\Bundle\ThemeBundle\Form\Provider\ConfigurationBuildersProvider;
 use Oro\Component\Config\CumulativeResourceManager;
 use Oro\Component\Testing\TempDirExtension;
+use PHPUnit\Framework\TestCase;
 
-class WidgetsThemeConfigurationExtensionTest extends \PHPUnit\Framework\TestCase
+final class WidgetsThemeConfigurationExtensionTest extends TestCase
 {
     use TempDirExtension;
 
     private ThemeConfigurationProvider $themeConfigurationProvider;
 
+    private ConfigurationBuildersProvider $configurationBuildersProvider;
+
     protected function setUp(): void
     {
+        $this->configurationBuildersProvider = $this->createStub(ConfigurationBuildersProvider::class);
+        $this->configurationBuildersProvider
+            ->method('getConfigurationTypes')
+            ->willReturn(['type']);
+
         $cacheFile = $this->getTempFile('WidgetsThemeConfigurationExtension');
 
-        $themeConfiguration = new ThemeConfiguration();
+        $themeConfiguration = new ThemeConfiguration($this->configurationBuildersProvider);
         $themeConfiguration->addExtension(new WidgetsThemeConfigurationExtension());
 
         $this->themeConfigurationProvider = new ThemeConfigurationProvider(

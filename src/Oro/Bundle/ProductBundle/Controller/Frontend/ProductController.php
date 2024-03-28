@@ -7,6 +7,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Layout\AttributeRenderRegistry;
 use Oro\Bundle\LayoutBundle\Attribute\Layout;
+use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration;
 use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
@@ -17,6 +18,7 @@ use Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\ThemeBundle\Provider\ThemeConfigurationProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,6 +75,14 @@ class ProductController extends AbstractController
 
     private function getFiltersPosition(): string
     {
+        /** @var ThemeConfigurationProvider $themeConfigurationProvider */
+        $themeConfigurationProvider = $this->container->get(ThemeConfigurationProvider::class);
+
+        $themeConfigurationOptionKey = ThemeConfiguration::buildOptionKey('product_listing', 'filters_position');
+        if ($themeConfigurationProvider->hasThemeConfigurationOption($themeConfigurationOptionKey)) {
+            return $themeConfigurationProvider->getThemeConfigurationOption($themeConfigurationOptionKey);
+        }
+
         return $this->container->get(ConfigManager::class)->get(Configuration::getConfigKeyByName('filters_position'));
     }
 
@@ -167,6 +177,7 @@ class ProductController extends AbstractController
             ProductViewFormAvailabilityProvider::class,
             ConfigManager::class,
             'doctrine' => ManagerRegistry::class,
+            ThemeConfigurationProvider::class,
         ]);
     }
 

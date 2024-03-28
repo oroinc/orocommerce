@@ -86,6 +86,7 @@ oro.cms:
         sections:
             general.label: General
             use_for.label: Restrictions
+        choose_content_block.label: Choose Content Block
 
     contentwidget:
         entity_label: Content Widget
