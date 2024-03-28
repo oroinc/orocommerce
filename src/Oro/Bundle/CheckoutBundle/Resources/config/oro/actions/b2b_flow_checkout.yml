@@ -620,7 +620,9 @@ action_groups:
                 conditions:
                     '@lte': [$.orderLineItemsCount, 10]
                 parameters:
-                    from: $.order.owner.email
+                    from:
+                        email: $.order.owner.email
+                        name: $.order.owner
                     to: [$.order.customerUser, $.checkout.registeredCustomerUser]
                     template: 'order_confirmation_email'
                     entity: $.order
