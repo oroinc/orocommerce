@@ -37,7 +37,7 @@ Feature: Create RFQ with Product Kits
       | Kit Item 1 Product 2 | None                                 |
       | Kit Item 2 Product 1 | simple-product-01 Product 01 $1.2345 |
       | Kit Item 2 Product 2 | simple-product-02 Product 02 $2.469  |
-      | Price                | Price as configured: $124.6867       |
+      | Price                | Total: $124.6867       |
       | okButton             | Save                                 |
     And "RFQ Product Kit Line Item Form" must contain values:
       | Readonly Kit Item Line Item 1 Quantity |   |
@@ -65,7 +65,7 @@ Feature: Create RFQ with Product Kits
       | Kit Item 1 Product 2 | None                                 |
       | Kit Item 2 Product 1 | simple-product-01 Product 01 $1.2345 |
       | Kit Item 2 Product 2 | simple-product-02 Product 02 $2.469  |
-      | Price                | Price as configured: $124.6867       |
+      | Price                | Total: $124.6867       |
       | okButton             | Save                                 |
     And "RFQ Product Kit Line Item Form" must contain values:
       | Readonly Kit Item Line Item 1 Quantity |   |
@@ -78,10 +78,10 @@ Feature: Create RFQ with Product Kits
     Then "RFQ Product Kit Line Item Form" must contain values:
       | Kit Item Line Item 1 Quantity | 1 |
     And I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $128.3867 |
+      | Price | Total: $128.3867 |
     When I click "RFQ Kit Item Line Item 2 Product 2"
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $129.6267 |
+      | Price | Total: $129.6267 |
 
     When I click "Save"
     And fill "Frontstore RFQ Line Item Form2" with:
@@ -96,7 +96,7 @@ Feature: Create RFQ with Product Kits
         | Kit Item Line Item 1 Quantity | 2 |
         | Kit Item Line Item 2 Quantity | 2 |
       Then I should see "Product Kit Dialog" with elements:
-        | Price | Price as configured: $135.8067 |
+        | Price | Total: $135.8067 |
       When I click "Save"
       And click "Update Line Item"
       Then I should see "product-kit-01 - Product Kit 01 Optional Item 2 piece simple-product-03 - Simple Product 03 Mandatory Item 2 piece simple-product-02 - Simple Product 02 QTY: 1 piece Target Price $130.00 Listed Price: $135.8067" in the "RFQ Products List Line Item 2" element

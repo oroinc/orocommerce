@@ -25,6 +25,6 @@ $grid-line-row-entry-offset-y-tablet: 2px !default;
 // Mobile
 
 $grid-line-items-container-offset-x-mobile: spacing('sm') !default;
-$grid-line-items-row-offset-x-mobile: 10px !default;
+$grid-line-items-row-offset-x-mobile: spacing('sm') !default;
 $grid-line-items-field-val-offset-mobile: 4px !default;
 $grid-line-row-entry-offset-y-mobile: 0 !default;

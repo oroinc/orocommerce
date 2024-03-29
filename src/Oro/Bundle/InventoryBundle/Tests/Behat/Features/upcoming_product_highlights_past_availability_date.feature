@@ -105,11 +105,13 @@ Feature: Upcoming product highlights past availability date
     Then I should see "12/1/2040"
     When I fill "Checkout Order Review Form" with:
       | Do not ship later than | 7/1/2018 |
+    And I click on empty space
     And I click "Submit Order"
     Then I should see "There was an error while processing the order"
     When I fill "Checkout Order Review Form" with:
       | PO Number              | PONumber 121 |
       | Do not ship later than | 12/1/2040 |
+    And I click on empty space
     And I click "Submit Order"
     Then I should see "Thank You For Your Purchase"
     And should see "Your order number is 1"
@@ -137,6 +139,7 @@ Feature: Upcoming product highlights past availability date
     When I click on "Do not ship later than Datepicker"
     And I fill "Checkout Order Review Form" with:
       | Do not ship later than | today |
+    And I click on empty space
     And I click "Submit Order"
     Then I should see "Thank You For Your Purchase"
 

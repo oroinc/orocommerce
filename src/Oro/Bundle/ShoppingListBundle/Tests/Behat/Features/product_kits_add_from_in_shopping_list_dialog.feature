@@ -43,7 +43,7 @@ Feature: Product kits add from in shopping list dialog
       | Title                | Product Kit 1                      |
       | Kit Item 1 Name      | Barcode Scanner                    |
       | Kit Item 2 Name      | Base Unit                          |
-      | Price                | Price as configured: $41.00        |
+      | Price                | Total: $41.00        |
       | Kit Item 1 Product 1 | simple-product-03 Product 3 $31.00 |
       | Kit Item 1 Product 2 | None                               |
       | Kit Item 2 Product 1 | simple-product-01 Product 1 $31.00 |

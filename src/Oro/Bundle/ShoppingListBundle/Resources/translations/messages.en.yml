@@ -383,11 +383,14 @@ oro:
                         product:
                             choices:
                                 none: None
+                    datagrid_titles:
+                        kit_item: Kit Item
+                        qty: QTY
                     submit:
                         label: Submit
                     notes: Notes
                     subtotal:
-                        label: 'Price as configured:'
+                        label: 'Total:'
                 dialog_widget_update:
                     title: 'Editing "%product%" in "%shoppinglist%"'
 
@@ -399,3 +402,6 @@ oro:
                             quantity.label: 'QTY #'
                     button:
                         close.label: 'Close'
+
+# Fallback for the old themes support
+oro.frontend.shoppinglist.view.add_item_note.label: 'Add a Note to This Item'

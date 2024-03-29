@@ -96,7 +96,7 @@ Feature: Product frontend single unit mode
     And I click "View Details" for "PSKU_KIT1" product
     When I click "Configure and Add to Shopping List"
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $30.00 |
+      | Price | Total: $30.00 |
     And I should see "set" for "Product Kit Line Item Totals Form Unit" select
     And I should see "each" for "Product Kit Line Item Totals Form Unit" select
     And I should not see "item" for "Product Kit Line Item Totals Form Unit" select
@@ -136,7 +136,7 @@ Feature: Product frontend single unit mode
     And I click "View Details" for "PSKU_KIT2" product
     And I click "Configure and Add to Shopping List"
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $90.00 |
+      | Price | Total: $90.00 |
     And I should see "item" for "Product Kit Line Item Totals Form Unit" select
     And I should not see "set" for "Product Kit Line Item Totals Form Unit" select
     And I should not see "each" for "Product Kit Line Item Totals Form Unit" select

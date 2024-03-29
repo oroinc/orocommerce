@@ -61,8 +61,10 @@ Feature: Quote creation with empty prices (Default Quote Management Flow)
     Then I should see "Quote #1 successfully updated" flash message
     And I should see "Send to Customer"
     And "Send to Customer" button is not disabled
-    And click "Send to Customer"
-    And click "Send"
+    When click "Send to Customer"
+    Then "Send to Customer Form" must contains values:
+      | Apply template | quote_email_link |
+    And I click "Send" in modal window
     Then I should see Quote with:
       | Quote #         | 1                |
       | PO Number       | PO1              |

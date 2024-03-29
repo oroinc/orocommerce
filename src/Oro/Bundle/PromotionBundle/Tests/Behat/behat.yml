@@ -115,7 +115,7 @@ oro_behat_extension:
 
     PromotionCheckoutStep:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionCheckoutStep
-      selector: 'div[data-role="checkout-content"]'
+      selector: 'div.checkout__content-main'
 
     PromotionCheckoutStepLineItem:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionCheckoutStepLineItem

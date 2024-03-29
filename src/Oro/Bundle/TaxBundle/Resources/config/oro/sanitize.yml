@@ -1,0 +1,5 @@
+oro_sanitize:
+    entity:
+        oro_tax_value:
+            fields:
+                address: md5

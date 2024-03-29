@@ -1297,11 +1297,6 @@ oro_behat_extension:
         type: xpath
         locator: '//div[contains(@class,"filter-item")]/*[contains(@class,"filter-select")]/span[contains(text(),"Filter By Brand")]/..'
 
-    Brand Filter Toggle Icon:
-      selector:
-        type: xpath
-        locator: '//div[contains(@class,"filter-item")]/*[contains(@class,"filter-select")]/span[contains(text(),"Filter By Brand")]/../*[contains(@class,"filter-criteria-selector-icon-wrap")]'
-
     Product Collection Grid Form:
       selector: 'form[name="oro_web_catalog_content_node"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

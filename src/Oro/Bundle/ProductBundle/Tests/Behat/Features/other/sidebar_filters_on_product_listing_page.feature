@@ -10,8 +10,18 @@ Feature: Sidebar filters on product listing page
     Given sessions active:
       | admin    |first_session |
       | customer |second_session|
-    And I set configuration property "oro_product.filters_position" to "sidebar"
+
+  Scenario: Prepare system and theme configuration
+    Given I proceed as the admin
+    And I login as administrator
     And I set configuration property "oro_catalog.all_products_page_enabled" to "1"
+    And I go to System / Theme Configurations
+    When I click Edit "Refreshing Teal [Website: Default]" in grid
+    And fill "Theme Configuration Form" with:
+      | Filter Panel Position     | Sidebar |
+      | Quick Access Button Label | Product |
+    And I save and close form
+    Then I should see "Theme Configuration has been saved" flash message
 
   Scenario: Ensure that filters are collapsed at catalog page
     Given I proceed as the customer
@@ -24,7 +34,6 @@ Feature: Sidebar filters on product listing page
 
   Scenario: Ensure that filters are expanded at catalog page
     Given I proceed as the admin
-    And I login as administrator
     And I go to System / Configuration
     And I follow "Commerce/Catalog/Filters and Sorters" on configuration sidebar
     And uncheck "Use default" for "Default Filter Panel State" field

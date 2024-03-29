@@ -1,0 +1,106 @@
+/* @theme: default; */
+
+$product-kit-items-grid-display: grid !default;
+$product-kit-items-grid-grid-template-areas: 'title choose sku item price qty' !default;
+$product-kit-items-grid-grid-template-columns: 132px auto 88px minmax(0, 1fr) auto 90px !default;
+$product-kit-items-grid-gap: 0 spacing('lg') !default;
+
+$product-kit-items-grid-header-background-color: get-color('neutral', 'grey1') !default;
+$product-kit-items-grid-header-display: grid !default;
+$product-kit-items-grid-header-grid-template-columns: subgrid !default;
+$product-kit-items-grid-header-grid-column: title / qty !default;
+$product-kit-items-grid-header-padding: spacing('md') !default;
+
+$product-kit-items-grid-head-font-weight: font-weight('semi-bold') !default;
+$product-kit-items-grid-head-text-align: left !default;
+$product-kit-items-grid-head-color: get-color('text', 'secondary') !default;
+$product-kit-items-grid-head-text-transform: uppercase !default;
+
+$product-kit-items-grid-head-item-grid-column: title / price !default;
+
+$product-kit-items-grid-head-qty-text-align: right !default;
+
+$product-kit-items-grid-group-display: grid !default;
+$product-kit-items-grid-group-grid-template-columns: subgrid !default;
+$product-kit-items-grid-group-grid-column: title / qty !default;
+$product-kit-items-grid-group-padding-block: spacing('xl') !default;
+$product-kit-items-grid-group-padding-inline: spacing('md') 0 !default;
+$product-kit-items-grid-group-border-bottom: 1px solid get-color('neutral', 'grey2') !default;
+
+$product-kit-items-grid-items-display: grid !default;
+$product-kit-items-grid-items-grid-template-columns: subgrid !default;
+$product-kit-items-grid-items-grid-column: choose / price !default;
+$product-kit-items-grid-items-gap: spacing('xs') spacing('base') !default;
+$product-kit-items-grid-items-padding-inline-end: 40px !default;
+
+$product-kit-items-grid-product-min-height: 44px !default;
+$product-kit-items-grid-product-display: grid !default;
+$product-kit-items-grid-product-grid-template-columns: subgrid !default;
+$product-kit-items-grid-product-grid-column: choose / price !default;
+$product-kit-items-grid-product-align-items: center !default;
+
+$product-kit-items-grid-error-cell-padding-bottom: spacing('sm') !default;
+$product-kit-items-grid-error-cell-grid-column: title / qty !default;
+
+$product-kit-items-grid-radio-sku-display: grid !default;
+$product-kit-items-grid-radio-sku-grid-template-columns: subgrid !default;
+$product-kit-items-grid-radio-sku-grid-column: choose / sku !default;
+$product-kit-items-grid-radio-sku-align-items: center !default;
+$product-kit-items-grid-radio-sku-gap: 0 spacing('sm') !default;
+
+$product-kit-items-grid-sku-cell-word-break: break-all !default;
+
+$product-kit-items-grid-item-cell-padding-block: 6px 4px !default;
+
+$product-kit-items-grid-price-cell-text-align: end !default;
+
+// Mobile Big
+$product-kit-items-grid-mobile-big-grid-template-areas: 'choose sku item price qty' !default;
+$product-kit-items-grid-mobile-big-grid-template-columns: auto 88px minmax(0, 1fr) auto 90px !default;
+
+$product-kit-items-grid-header-mobile-big-grid-column: choose / qty !default;
+
+$product-kit-items-grid-head-item-mobile-big-grid-column: choose / price !default;
+
+$product-kit-items-grid-group-mobile-big-grid-column: choose / qty !default;
+$product-kit-items-grid-group-mobile-big-row-gap: spacing('sm') !default;
+
+$product-kit-items-grid-error-cell-mobile-big-grid-column: choose / qty !default;
+
+$product-kit-items-grid-label-cell-mobile-big-grid-column: choose / qty !default;
+
+// Mobile Landscape
+$product-kit-items-grid-mobile-landscape-grid-template-areas: 'item price choose' !default;
+$product-kit-items-grid-mobile-landscape-grid-template-columns: minmax(0, 1fr) auto auto !default;
+
+$product-kit-items-grid-header-mobile-landscape-display: none !default;
+
+$product-kit-items-grid-group-mobile-landscape-padding-block: spacing('lg') !default;
+$product-kit-items-grid-group-mobile-landscape-padding-inline: 0 !default;
+$product-kit-items-grid-group-mobile-landscape-grid-column: item / choose !default;
+$product-kit-items-grid-group-mobile-landscape-row-gap: spacing('md') !default;
+
+$product-kit-items-grid-error-cell-mobile-landscape-grid-column: item / choose !default;
+
+$product-kit-items-grid-items-mobile-landscape-grid-column: item / choose !default;
+$product-kit-items-grid-items-mobile-landscape-gap: spacing('lg') spacing('base') !default;
+$product-kit-items-grid-items-mobile-landscape-padding-inline-end: 0 !default;
+
+$product-kit-items-grid-product-mobile-landscape-grid-column: item / choose !default;
+$product-kit-items-grid-product-mobile-landscape-align-items: start !default;
+
+$product-kit-items-grid-radio-sku-mobile-landscape-grid-column: choose / choose !default;
+$product-kit-items-grid-radio-sku-mobile-landscape-order: 1 !default;
+
+$product-kit-items-grid-sku-cell-mobile-landscape-display: none !default;
+
+$product-kit-items-grid-label-cell-mobile-landscape-grid-column: item / choose !default;
+
+$product-kit-items-grid-item-cell-mobile-landscape-padding-block: 0 !default;
+$product-kit-items-grid-item-cell-mobile-landscape-padding-inline: 52px 0 !default;
+
+$product-kit-items-grid-quantity-cell-mobile-landscape-grid-column: item / choose !default;
+
+$product-kit-items-grid-line-item-mobile-landscape-line-height: 1.5 !default;
+$product-kit-items-grid-line-item-mobile-landscape-display: block !default;
+$product-kit-items-grid-line-item-mobile-landscape-margin-bottom: spacing('xs') !default;

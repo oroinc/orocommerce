@@ -27,7 +27,7 @@ Feature: Create RFQ with Product Kits Validation - with Different Min Max Quanti
       | Kit Item 1 Product 2 | None                                 |
       | Kit Item 2 Product 1 | simple-product-01 Product 01 $1.2345 |
       | Kit Item 2 Product 2 | simple-product-02 Product 02 $2.469  |
-      | Price                | Price as configured: $127.1567       |
+      | Price                | Total: $127.1567       |
       | okButton             | Save                                 |
     When I click "RFQ Kit Item Line Item 1 Product 1"
     Then "RFQ Product Kit Line Item Form" must contain values:

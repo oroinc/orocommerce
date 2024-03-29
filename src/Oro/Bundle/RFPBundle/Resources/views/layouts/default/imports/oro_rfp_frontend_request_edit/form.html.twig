@@ -1,4 +1,4 @@
-{% block oro_rfp_frontend_request_product_collection_widget %}
+{% block _oro_rfp_frontend_request_requestProducts_widget %}
     {% import _self as fields %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
 
@@ -138,7 +138,7 @@
     </div>
 {% endmacro %}
 
-{% block oro_rfp_frontend_request_product_widget %}
+{% block _oro_rfp_frontend_request_requestProducts_entry_widget %}
     <div data-role="request-product-container" class="request-form-editline__product">
         {{ form_widget(form.product) }}
         {{ form_errors(form.product) }}

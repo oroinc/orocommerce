@@ -139,6 +139,20 @@
             height: $product-item-image-holder-tiny-height;
 
             border: $product-item-image-holder-tiny-border;
+            border-radius: $product-item-image-holder-tiny-border-radius;
+            overflow: $product-item-image-holder-tiny-overflow;
+        }
+
+        &--tiny-small {
+            position: relative;
+            min-width: $product-item-image-holder-tiny-small-width;
+            width: $product-item-image-holder-tiny-small-width;
+            min-height: $product-item-image-holder-tiny-small-height;
+            height: $product-item-image-holder-tiny-small-height;
+
+            border: $product-item-image-holder-tiny-small-border;
+            border-radius: $product-item-image-holder-tiny-small-border-radius;
+            overflow: $product-item-image-holder-tiny-small-overflow;
         }
     }
 
@@ -164,6 +178,10 @@
 
         &--no-image {
             background-color: $product-item-no-image-bc-color;
+        }
+
+        &--tiny {
+            border-radius: 50%;
         }
     }
 
@@ -466,6 +484,13 @@
 @include breakpoint('mobile-landscape') {
     .product-item {
         &__image-holder {
+            &--tiny-small {
+                min-width: $product-item-image-holder-tiny-small-mobile-landscape-width;
+                width: $product-item-image-holder-tiny-small-mobile-landscape-width;
+                min-height: $product-item-image-holder-tiny-small-mobile-landscape-height;
+                height: $product-item-image-holder-tiny-small-mobile-landscape-height;
+            }
+
             &--no-image-view {
                 grid-area: image;
             }

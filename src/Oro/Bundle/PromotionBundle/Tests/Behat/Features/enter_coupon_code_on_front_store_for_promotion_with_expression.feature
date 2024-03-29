@@ -58,7 +58,6 @@ Feature: Enter coupon code on Front Store for promotion with expression
     And I check "Flat Rate 2" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I should see "Order Review" in the "Checkout Step Title" element
-    And I scroll to "Submit Order"
     When I click "Submit Order"
     And I follow "click here to review"
     Then I should not see "Discount -$1.00" in the "Subtotals" element

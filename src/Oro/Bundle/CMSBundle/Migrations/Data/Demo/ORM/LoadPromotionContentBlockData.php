@@ -10,10 +10,12 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\FrontendBundle\DependencyInjection\Configuration;
+use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\LoadGlobalThemeConfiguration;
+use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration as LayoutThemeConfiguration;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
+use Oro\Bundle\ThemeBundle\Entity\ThemeConfiguration;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -33,6 +35,7 @@ class LoadPromotionContentBlockData extends AbstractFixture implements
     {
         return [
             LoadOrganizationAndBusinessUnitData::class,
+            LoadGlobalThemeConfiguration::class
         ];
     }
 
@@ -41,7 +44,7 @@ class LoadPromotionContentBlockData extends AbstractFixture implements
         $data = Yaml::parseFile($this->getFilePathsFromLocator($this->getDataSource()));
 
         $organization = $manager->getRepository(Organization::class)->getFirst();
-        $systemConfigBlock = null;
+        $themeConfigBlock = null;
         foreach ($data as $blockAlias => $properties) {
             $block = $this->findContentBlock($blockAlias, $manager);
 
@@ -64,8 +67,8 @@ class LoadPromotionContentBlockData extends AbstractFixture implements
                 $manager->persist($block);
             }
 
-            if ($properties['useForSystemConfig'] ?? false) {
-                $systemConfigBlock = $block;
+            if ($properties['useForThemeConfig'] ?? false) {
+                $themeConfigBlock = $block;
             }
 
             if (!$this->hasReference($blockAlias)) {
@@ -75,15 +78,12 @@ class LoadPromotionContentBlockData extends AbstractFixture implements
 
         $manager->flush();
 
-        if ($systemConfigBlock) {
-            /** @var ConfigManager $configManager */
-            $configManager = $this->container->get('oro_config.global');
-
-            $configKey = Configuration::getConfigKeyByName(Configuration::PROMOTIONAL_CONTENT);
-            $value = $configManager->get($configKey);
-            if (!$value) {
-                $configManager->set($configKey, $systemConfigBlock->getId());
-                $configManager->flush();
+        if ($themeConfigBlock) {
+            $themeConfiguration = $this->getThemeConfiguration($manager);
+            $key = LayoutThemeConfiguration::buildOptionKey('header', 'promotional_content');
+            if ($themeConfiguration && !$themeConfiguration->getConfigurationOption($key)) {
+                $themeConfiguration->addConfigurationOption($key, $themeConfigBlock->getId());
+                $manager->flush();
             }
         }
     }
@@ -101,5 +101,17 @@ class LoadPromotionContentBlockData extends AbstractFixture implements
     protected function findContentBlock(string $alias, ObjectManager $manager): ?ContentBlock
     {
         return $manager->getRepository(ContentBlock::class)->findOneBy(['alias' => $alias]);
+    }
+
+    protected function getThemeConfiguration(ObjectManager $manager): ?ThemeConfiguration
+    {
+        /** @var ConfigManager $configManager */
+        $configManager = $this->container->get('oro_config.global');
+        $value = $configManager->get('oro_theme.theme_configuration');
+        if (!$value) {
+            return null;
+        }
+
+        return $manager->getRepository(ThemeConfiguration::class)->find($value);
     }
 }

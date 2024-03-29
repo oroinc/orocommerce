@@ -15,7 +15,7 @@
                 uniqueTriggerToOpenGallery: '[data-role="' + galleryOpener + '"]'
          }) %>"
     >
-        <picture class="product-item__preview-picture" data-object-fit="">
+        <picture class="product-item__preview-picture product-item__preview-picture--tiny" data-object-fit="">
             <% if (obj.srcWebp && obj.srcWebp !== obj.src) { %>
                 <source srcset="<%- srcWebp %>" type="image/webp">
             <% } %>

@@ -62,7 +62,8 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'unique entity constraint',
-                'detail' => 'This value is used. Unique constraint: product,priceList,unit,currency,quantity'
+                'detail' => 'This value is used. '
+                    . 'Unique constraint: "product", "priceList", "unit", "currency", "quantity"',
             ],
             $response
         );
@@ -238,7 +239,8 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'unique entity constraint',
-                'detail' => 'This value is used. Unique constraint: product,priceList,unit,currency,quantity'
+                'detail' => 'This value is used. '
+                    . 'Unique constraint: "product", "priceList", "unit", "currency", "quantity"',
             ],
             $response
         );

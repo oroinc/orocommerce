@@ -1,0 +1,7 @@
+oro_sanitize:
+    entity:
+        oro_rfp_request:
+            fields:
+                last_name: md5
+                email: email
+                phone: generic_phone

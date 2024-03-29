@@ -39,7 +39,7 @@ Feature: Get Order from Quick order form with Product Kits
       | Kit Item 1 Name  | Optional Item            |
       | Kit Item 2 Name  | Mandatory Item           |
       | Error 1          | Selection required       |
-      | Price            | Price as configured: N/A |
+      | Price            | Total: N/A               |
       | okButton         | Save                     |
     When I click "RFQ Kit Item Line Item 2 Product 1"
     And click "Save"

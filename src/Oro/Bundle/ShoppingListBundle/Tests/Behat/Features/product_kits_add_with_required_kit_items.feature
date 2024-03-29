@@ -30,7 +30,7 @@ Feature: Product kits add with required kit items
       | Title                | Product Kit 1                    |
       | Kit Item 1 Name      | Barcode Scanner                  |
       | Kit Item 2 Name      | Base Unit                        |
-      | Price                | Price as configured: $41.00      |
+      | Price                | Total: $41.00      |
       | Kit Item 1 Product 1 | simpleproduct03 Product 3 $31.00 |
       | Kit Item 1 Product 2 | None                             |
       | Kit Item 2 Product 1 | simpleproduct01 Product 1 $31.00 |
@@ -43,7 +43,7 @@ Feature: Product kits add with required kit items
       | Quantity | 1     |
       | Unit     | piece |
     And I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $41.00 |
+      | Price | Total: $41.00 |
     And I should see an "Product Kit Dialog Shopping List Dropdown" element
     When I click "Product Kit Dialog Shopping List Dropdown"
     Then I should see "Create New Shopping List" in the "Shopping List Button Group Menu" element

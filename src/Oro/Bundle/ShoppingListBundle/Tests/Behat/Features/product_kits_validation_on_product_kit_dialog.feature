@@ -24,7 +24,7 @@ Feature: Product kits validation on product kit dialog
       | Title                | Product Kit 1               |
       | Kit Item 1 Name      | Barcode Scanner             |
       | Kit Item 2 Name      | Base Unit                   |
-      | Price                | Price as configured: $41.00 |
+      | Price                | Total: $41.00 |
       | Kit Item 1 Product 1 | CC23 Product 23 $31.00      |
       | Kit Item 1 Product 2 | None                        |
       | Kit Item 2 Product 1 | CC21 Product 21 $31.00      |

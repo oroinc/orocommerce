@@ -41,6 +41,7 @@ layout:
                           text:
                               label: 'oro.frontend.shoppinglist.product_kit_line_item.in_shopping_lists_widget.button.close.label'
                           attr:
+                              class: 'btn btn--outlined'
                               data-role: 'cancel'
               tree:
                   __root:

@@ -306,8 +306,9 @@ Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
     constraints:
         - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits: ~
         - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency: ~
-        - Oro\Bundle\ValidationBundle\Validator\Constraints\UniqueEntity:
-            fields:  [ product, priceList, unit, currency, quantity ]
+        - Oro\Bundle\FormBundle\Validator\Constraints\UniqueEntity:
+            fields: [ product, priceList, unit, currency, quantity ]
+            message: oro.pricing.validators.price_attribute_product_price.unique_entity.message
     properties:
         product:
             - NotBlank: ~

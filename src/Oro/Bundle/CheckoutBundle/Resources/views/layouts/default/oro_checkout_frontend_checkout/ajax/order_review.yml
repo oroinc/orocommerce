@@ -20,35 +20,6 @@ layout:
                     views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
                     payment_method: '=data["checkout"].getPaymentMethod()'
 
-        - '@add':
-            id: checkout_button_back_right
-            blockType: checkout_transition_back
-            parentId: checkout_order_footer_col_first
-            options:
-                transitionData: '=data["oro_checkout_transition"].getBackTransition(data["workflowItem"])'
-                checkout: '=data["checkout"]'
-                attr:
-                    class: 'checkout-form__back--no-offset'
-
-        - '@add':
-            id: checkout_button_continue_right
-            blockType: checkout_transition_continue
-            parentId: checkout_order_summary_totals_main
-            prepend: false
-            options:
-                transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
-                checkout: '=data["checkout"]'
-
-        - '@move':
-            id: checkout_order_summary_edit_link
-            parentId: checkout_information_head
-            siblingId: checkout_information_title
-
-        - '@move':
-            id: checkout_order_summary_content
-            parentId: checkout_information_body
-            prepend: true
-
         - '@move':
             id: checkout_form_errors
             parentId: checkout_information_body
@@ -59,11 +30,14 @@ layout:
             parentId: checkout_form
             prepend: false
 
-        - '@remove':
-            id: checkout_order_summary_container
-        - '@remove':
+        - '@setOption':
             id: checkout_button_continue
-        - '@remove':
-            id: checkout_button_back
+            optionName: vars.showRequiredLabel
+            optionValue: false
+
+        - '@setOption':
+            id: checkout_button_continue
+            optionName: vars.showIcon
+            optionValue: false
 
     conditions: 'context["workflowStepName"]=="order_review"'

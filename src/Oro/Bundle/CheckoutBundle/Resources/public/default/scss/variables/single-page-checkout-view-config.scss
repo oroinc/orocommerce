@@ -1,24 +1,17 @@
 /* @theme: default; */
 
 $checkout-view-position: relative !default;
-$checkout-view-display: flex !default;
-$checkout-view-margin: 20px 0 0 !default;
-$checkout-view-flex-direction: row !default;
-$checkout-view-flex-wrap: wrap !default;
-$checkout-view-justify-content: space-between !default;
-$checkout-view-align-items: stretch !default;
+$checkout-view-display: grid !default;
+$checkout-view-margin: 0 !default;
 
-$checkout-view-column-gap: 28px !default;
+$checkout-view-column-gap: spacing('xl') !default;
 
-$checkout-view-column-width: 25% !default;
-$checkout-view-column-extra-width: 50% !default;
-$checkout-view-column-first-width: calc(#{$checkout-view-column-width} - #{$checkout-view-column-gap}) !default;
-$checkout-view-column-extended-width: calc(
-    #{$checkout-view-column-extra-width} + #{$checkout-view-column-gap}
-) !default;
-$checkout-view-column-margin: 0 0 spacing('base') !default;
-$checkout-view-column-offset: 0 $checkout-view-column-gap !default;
+$checkout-view-column-margin: 0 !default;
+$checkout-view-column-offset: 0 $checkout-view-column-gap  spacing('base') !default;
 $checkout-view-column-min-width: 0 !default;
+
+$checkout-view-column-border: 1px solid get-color('neutral', 'grey2') !default;
+$checkout-view-column-background-color: get-color('neutral', 'grey1') !default;
 
 $checkout-view-column-inner-offset: 0 !default;
 
@@ -52,9 +45,6 @@ $checkout-view-sticky-totals-summary-float: none !default;
 $checkout-view-badge-size: 26px !default;
 $checkout-view-badge-font-size: $base-font-size !default;
 $checkout-view-badge-margin: 0 spacing('xs') 0 0 !default;
-
-$checkout-view-column-pseudo-width: 1px !default;
-$checkout-view-column-pseudo-background: get-color('neutral', 'grey1') !default;
 
 $checkout-view-shipping-methods-margin: spacing('base') 0 0 !default;
 $checkout-view-shipping-methods-datepicker-box-max-width: none !default;

@@ -26,7 +26,7 @@ Feature: Create Order from Checkout with product kits and taxes
     Then I should see an "Configure and Add to Shopping List" element
     When I click "Configure and Add to Shopping List"
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $124.69 |
+      | Price | Total: $124.69 |
     When I click "Add to Shopping List" in modal window
     Then I should see 'Product kit has been added to \"Shopping List\"' flash message
     When I follow "Shopping List" link within flash message "Product kit has been added to \"Shopping list\""
@@ -71,7 +71,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I click "Shopping List 1 Kit Line Item Edit Button"
     And I click "Kit Item Line Item 2 Product 1"
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $256.77 |
+      | Price | Total: $256.77 |
     When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $256.77"
     And I should see "Discount -$25.68"
@@ -94,7 +94,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I click "Shopping List 1 Kit Line Item Edit Button"
     And I click "Kit Item Line Item 2 Product 2"
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $259.25 |
+      | Price | Total: $259.25 |
     When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $259.25"
     And I should see "Discount -$25.93"
@@ -119,7 +119,7 @@ Feature: Create Order from Checkout with product kits and taxes
       | Kit Item Line Item 1 Quantity | 2 |
       | Kit Item Line Item 2 Quantity | 3 |
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $276.55 |
+      | Price | Total: $276.55 |
     When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $276.55"
     And I should see "Discount -$27.66"
@@ -143,7 +143,7 @@ Feature: Create Order from Checkout with product kits and taxes
     When I fill "Product Kit Line Item Totals Form" with:
       | Quantity | 3 |
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $414.83 |
+      | Price | Total: $414.83 |
     When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $414.83"
     And I should see "Discount -$41.48"

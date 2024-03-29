@@ -105,10 +105,12 @@ Feature: Upcoming product highlights
     Then I should see "12/1/2040"
     When I fill "Checkout Order Review Form" with:
       | Do not ship later than | 7/1/2018 |
+    And I click on empty space
     And I click "Submit Order"
     Then I should see "There was an error while processing the order"
     When I fill "Checkout Order Review Form" with:
       | Do not ship later than | 12/1/2040 |
+    And I click on empty space
     And I click "Submit Order"
     Then I should see "Thank You For Your Purchase"
 

@@ -29,7 +29,7 @@ Feature: Product kits add without kit items
     Then I should see "Product Kit Dialog" with elements:
       | Title                | Product Kit 2                      |
       | Kit Item 1 Name      | Base Unit                          |
-      | Price                | Price as configured: $10.00        |
+      | Price                | Total: $10.00                      |
       | Kit Item 1 Product 1 | simple-product-01 Product 1 $31.00 |
       | Kit Item 1 Product 2 | simple-product-02 Product 2 $31.00 |
       | Kit Item 1 Product 3 | None                               |

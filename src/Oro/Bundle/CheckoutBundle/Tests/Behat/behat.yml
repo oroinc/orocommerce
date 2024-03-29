@@ -78,7 +78,7 @@ oro_behat_extension:
 
     CheckoutStep:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
-      selector: 'div[data-role="checkout-content"]'
+      selector: 'div.checkout__container--steps-page'
 
     CheckoutProductTableRow:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\ProductTableRow
@@ -92,7 +92,7 @@ oro_behat_extension:
       selector: 'div.checkout-order-summary__totals'
 
     CheckoutStepTitle:
-      selector: 'h2.checkout__title'
+      selector: 'h5.checkout-navigation__title--current'
 
     CheckoutSuccessStep:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutSuccessStep
@@ -211,7 +211,7 @@ oro_behat_extension:
       selector: 'div.shopping-list-notes'
 
     CheckoutGoBackButton:
-        selector: 'div.checkout-sidebar ol.checkout-navigation > li > h3.checkout-navigation__title > a'
+        selector: 'div.checkout__steps ol.checkout-navigation > li > h5.checkout-navigation__title > a'
 
     ShippingMethodFlatRate2:
       selector: 'div[data-content="shipping_method_form"] div.checkout-form__radio label.checkbox-label:contains("Flat Rate 2: $2.00")'
@@ -264,11 +264,15 @@ oro_behat_extension:
       selector: '.checkout-order-summary__edit-link'
 
     Submit Order:
-      selector: '.order-checkout-widget button:contains("Submit Order")'
+      selector:
+        type: xpath
+        locator: './/button[contains(normalize-space(),"Submit Order")]'
 
     # Disabled Submit order button is actually other element (div)
     Disabled Submit Order Button:
-      selector: '.order-checkout-widget .btn--disabled.checkout__submit-btn:contains("Submit Order")'
+      selector:
+        type: xpath
+        locator: './/button[contains(concat(" ",normalize-space(@class)," ")," btn--disabled ")][contains(normalize-space(),"Submit Order")]'
 
     Customer Users List button:
       selector:

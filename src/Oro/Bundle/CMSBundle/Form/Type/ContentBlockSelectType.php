@@ -18,6 +18,7 @@ class ContentBlockSelectType extends AbstractType
     {
         $resolver->setDefaults([
             'class' => ContentBlock::class,
+            'placeholder' => 'oro.cms.contentblock.choose_content_block.label',
             'expanded' => false,
             'multiple' => false,
             'choice_translation_domain' => false,

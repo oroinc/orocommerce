@@ -393,3 +393,11 @@ services:
 
     oro_sale.quote.pricing.comparator:
         class: Oro\Bundle\SaleBundle\Quote\Pricing\QuotePricesComparator
+
+    oro_sale.emailtemplate.variable_provider.system:
+        class: Oro\Bundle\SaleBundle\Provider\EmailTemplateSystemVariablesProvider
+        arguments:
+            - '@oro_sale.provider.contact_info_user_provider'
+            - '@translator'
+        tags:
+            - { name: oro_email.emailtemplate.variable_provider, scope: system }

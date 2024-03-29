@@ -1,21 +1,15 @@
 /* @theme: default; */
 
 .order-checkout-widget {
-    margin-top: spacing('base');
-
     padding-top: 0;
 
     @include clearfix();
-
-    --sticky-position-top-offset: calc(var(--sticky-page-header-element-offset-top, 0) + #{spacing('base')});
 
     &--offset-none {
         margin-top: 0;
     }
 
     &__container-wrapper {
-        margin-bottom: spacing('sm');
-
         .dropdown-item {
             align-items: center;
         }
@@ -24,15 +18,24 @@
     }
 
     &__container {
-        float: right;
+        --sticky-position-top-offset: calc(var(--sticky-page-header-element-offset-top, 0) + #{spacing('base')});
 
         padding: spacing('base');
 
         border-radius: $base-ui-element-border-radius;
         background: $order-checkout-widget-container-background;
+    }
 
-        &--fixed-width {
-            width: 280px;
+    &__container-collapse {
+        display: grid;
+        gap: spacing('base');
+
+        &:not(.show) {
+            display: grid;
+        }
+
+        &.collapsing {
+            transition: none;
         }
     }
 
@@ -46,6 +49,7 @@
 
         th {
             text-align: left;
+            font-weight: font-weight('normal');
         }
 
         td {
@@ -61,22 +65,57 @@
         background-color: $order-checkout-widget-divider-background-color;
     }
 
-    &__total {
+    &__table &__total,
+    &__table &__summary {
         font-size: $base-font-size + 4px;
-        font-weight: font-weight('bold');
+        font-weight: font-weight('semi-bold');
     }
 
     &__quote {
         float: right;
     }
 
-    &__summary {
-        font-size: $base-font-size--m;
-        font-weight: font-weight('bold');
-    }
-
     [data-toggle='tooltip'] {
         display: inline-block;
+    }
+}
+
+@include breakpoint('desktop-small') {
+    .order-checkout-widget {
+        &__toggle {
+            display: none;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .order-checkout-widget {
+        &__toggle {
+            --btn-background: #{get-color('neutral', 'white-100')};
+            --btn-color: #{get-color('text', 'primary')};
+
+            position: absolute;
+            top: -#{spacing('base')};
+            left: spacing('base');
+
+            box-shadow: $toggler-switcher-box-shadow;
+
+            &:not(.collapsed) {
+                transform: rotate(180deg);
+            }
+        }
+
+        &__container-collapse:not(.show) {
+            .coupon-container {
+                display: none;
+            }
+
+            .order-checkout-widget__table {
+                tr:not(.order-checkout-widget__total-row) {
+                    display: none;
+                }
+            }
+        }
     }
 }
 

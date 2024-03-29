@@ -12,7 +12,12 @@
 
     &-title {
         width: 100%;
-        line-height: $base-line-height;
+    }
+
+    &-sku {
+        @extend %caption-2;
+
+        color: $product-popup-header-sku;
     }
 
     &-attributes {
@@ -26,11 +31,5 @@
 .fullscreen-popup {
     .product-popup__header {
         padding: $fullscreen-product-popup-header-offset;
-    }
-}
-
-@include breakpoint('mobile-landscape') {
-    .product-popup__header-img {
-        display: none;
     }
 }

@@ -13,4 +13,30 @@
         // Sketching an action panel
         float: initial;
     }
+
+    .ui-dialog-title {
+        display: none;
+    }
+
+    &.fullscreen .ui-dialog-extra-header-content {
+        padding: 0;
+    }
+
+    .ui-dialog-buttonpane {
+        position: relative;
+
+        &::before {
+            background: $product-kit-dialog-buttonpane-before-background;
+            content: $product-kit-dialog-buttonpane-before-content;
+            height: $product-kit-dialog-buttonpane-before-height;
+            position: $product-kit-dialog-buttonpane-before-position;
+            inset: $product-kit-dialog-buttonpane-before-inset;
+            pointer-events: $product-kit-dialog-buttonpane-before-pointer-events;
+            z-index: $product-kit-dialog-buttonpane-before-z-index;
+        }
+
+        .floating-error-message {
+            z-index: $product-kit-dialog-buttonpane-floating-error-message-z-index;
+        }
+    }
 }

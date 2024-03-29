@@ -1,0 +1,5 @@
+oro_sanitize:
+    entity:
+        oro_payment_method_config:
+            fields:
+                options: set_null

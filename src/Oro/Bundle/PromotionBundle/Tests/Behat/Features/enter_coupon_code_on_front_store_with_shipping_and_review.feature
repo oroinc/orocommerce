@@ -45,7 +45,6 @@ Feature: Enter coupon code on Front Store with shipping and review
   Scenario: Created order after passing checkout should have discounts by coupons that was added on checkout page
     When on the "Payment" checkout step I press Continue
     Then I should see "Order Review" in the "Checkout Step Title" element
-    When I scroll to "Submit Order"
     And I click "Submit Order"
     And I follow "click here to review"
     And I should see "Shipping Discount -$2.00" in the "Subtotals" element

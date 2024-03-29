@@ -105,10 +105,11 @@ class OrderActions implements OrderActionsInterface
             $action = 'schedule_send_email_template';
         }
 
+        $orderOwner = $order->getOwner();
         $this->actionExecutor->executeAction(
             $action,
             [
-                'from' => $order->getOwner()->getEmail(),
+                'from' => ['email' => $orderOwner->getEmail(), 'name' => $orderOwner],
                 'to' => [$order->getCustomerUser(), $checkout->getRegisteredCustomerUser()],
                 'template' => self::ORDER_CONFIRMATION_EMAIL_TEMPLATE,
                 'entity' => $order

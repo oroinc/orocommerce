@@ -164,6 +164,7 @@ services:
             - "@oro_frontend.request.frontend_helper"
         tags:
             - { name: kernel.event_listener, event: oro_menu.configure.oro_customer_menu, method: onNavigationConfigure }
+            - { name: kernel.event_listener, event: oro_menu.configure.oro_customer_menu_refreshing_teal, method: onNavigationConfigure }
 
     oro_rfp.voter.guest_rfp:
         parent: oro_customer.voter.anonymous_customer_user

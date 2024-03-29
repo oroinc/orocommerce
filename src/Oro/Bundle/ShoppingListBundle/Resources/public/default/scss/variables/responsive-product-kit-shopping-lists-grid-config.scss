@@ -10,3 +10,7 @@ $responsive-product-kit-shopping-lists-grid-cell-offset-mobile: $responsive-shop
 $responsive-product-kit-shopping-lists-action-cell-width-mobile: (
     $responsive-shopping-list-edit-action-cell-width-mobile
 ) !default;
+
+$responsive-product-kit-shopping-lists-label-font-weight: font-weight('semi-bold') !default;
+$responsive-product-kit-shopping-lists-label-color: get-color('text', 'primary') !default;
+$responsive-product-kit-shopping-lists-label-text-decoration: none !default;
