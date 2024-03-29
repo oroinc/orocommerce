@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_10;
+namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_12_1;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;

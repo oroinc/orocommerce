@@ -30,7 +30,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
      */
     public function getMigrationVersion()
     {
-        return 'v1_12';
+        return 'v1_12_1';
     }
 
     /**
