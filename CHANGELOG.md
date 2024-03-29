@@ -29,11 +29,20 @@ The current file describes significant changes in the code that may affect the u
 * Class `AbstractAutocompleteFieldsProvider` [[?]](https://github.com/oroinc/orocommerce/tree/master/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AbstractAutocompleteFieldsProvider.php)
     - Method `getRootEntities` became public
 
+#### RFPBundle
+* Updated `request_create_confirmation` email template to extend it from `base_storefront` email template.
+
+#### SaleBundle
+* Updated `quote_email_link`, `quote_email_link_guest` email templates to extend them from `base_storefront` email template.
+
 ### Removed
 
 #### ProductBundle
 * Removed method `getAutocompleteData` from `AbstractAutocompleteFieldsProvider` [[?]](https://github.com/oroinc/orocommerce/tree/master/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AbstractAutocompleteFieldsProvider.php)
 * Removed twig extensions `oro_product_expression_autocomplete_data` in `ProductExtension` [[?]](https://github.com/oroinc/orocommerce/tree/master/src/Oro/Bundle/ProductBundle/Twig/ProductExtension.php)
+
+#### ValidationBundle
+* Removed `\Oro\Bundle\ValidationBundle\Validator\Constraints\UniqueEntity` validation constraint and validator. Use instead `\Oro\Bundle\FormBundle\Validator\Constraints\UniqueEntity`.
 
 ### Added
 
