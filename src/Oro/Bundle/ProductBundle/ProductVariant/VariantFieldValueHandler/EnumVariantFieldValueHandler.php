@@ -68,7 +68,8 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
                 $extendConfig = $config->toArray('extend');
                 return $this->enumValueProvider->getEnumChoicesWithNonUniqueTranslation($extendConfig['target_entity']);
             }
-            return null;
+
+            return [];
         });
     }
 
