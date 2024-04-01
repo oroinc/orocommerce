@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_11;
+namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_13;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
