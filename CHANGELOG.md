@@ -32,6 +32,7 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener`, `\Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener`, `\Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutBeforeOrderCreateEventListener` checkout event listeners as the main points to control whether it is valid to start or finish a checkout instead of the old listeners (see the details in section "Removed").
 * Added thorough validation constraints for `\Oro\Bundle\CheckoutBundle\Entity\Checkout`, `\Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem`, `\Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem` that are checked in the listeners mentioned above.
 * Added constraint validator decorator `\Oro\Bundle\CheckoutBundle\Validator\Constraints\CheckoutAwareValidatorDecorator` providing the ability to restrict the decorated validator of a checkout or checkout line item by certain checkout steps.
+* The `Oro\Bundle\CheckoutBundle\Entity\Checkout::$lineItemGroupShippingData` was added to provide the ability to configure one shipping charge for all the items by the seller.
 
 #### OrderBundle
 * Added the ability to contain product kit line items for `\Oro\Bundle\OrderBundle\Entity\Order` entity class:
@@ -88,6 +89,8 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid` (`is_quote_valid`) workflow condition to check a quote could be sent to a customer.
 * Updated `quote_email_link`, `quote_email_link_guest` email templates to extend them from `base_storefront` email template.
 * Added the `readonly` attribute for the price field of the product kit line item in the quote form.
+* Added `Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem::$checksum` property as a part of allowing to add the same product with the same unit code multiple times.
+* Added `Oro\Bundle\SaleBundle\Entity\QuoteProductDemand::$checksum` property as a part of allowing to add the same product with the same unit code multiple times.
 
 #### SEOBundle
 * Added the ability to manage robots.txt template via system configuration.
@@ -99,6 +102,9 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem` entity to the back-office API.
 * Added `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead of the deprecated `\Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataViolationsListener`.
 * Added `\Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPrice` validation constraint for checking if product kit item product has price.
+* Added `Oro\Bundle\ShoppingListBundle\Entity\LineItem::$checksum` property as a part of allowing to add the same product with the same unit code multiple times.
+* Added `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList::$currency` property.
+* Added `Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal::$customerUser` relation property
 
 #### TaxBundle
 * Added new tax calculation logic for product kits. Now the total tax for the product kit is the sum of the taxes for the kit and its items.
