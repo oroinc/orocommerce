@@ -120,6 +120,7 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener`, `\Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener`, `\Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutBeforeOrderCreateEventListener` checkout event listeners as the main points to control whether it is valid to start or finish a checkout instead of the old listeners (see the details in section "Removed").
 * Added thorough validation constraints for `\Oro\Bundle\CheckoutBundle\Entity\Checkout`, `\Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem`, `\Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem` that are checked in the listeners mentioned above.
 * Added constraint validator decorator `\Oro\Bundle\CheckoutBundle\Validator\Constraints\CheckoutAwareValidatorDecorator` providing the ability to restrict the decorated validator of a checkout or checkout line item by certain checkout steps.
+* The `Oro\Bundle\CheckoutBundle\Entity\Checkout::$lineItemGroupShippingData` was added to provide the ability to configure one shipping charge for all the items by the seller.
 
 #### OrderBundle
 * Added the ability to contain product kit line items for `\Oro\Bundle\OrderBundle\Entity\Order` entity class:
@@ -169,6 +170,8 @@ The current file describes significant changes in the code that may affect the u
 * Added the ability to start on a storefront a checkout from a quote with product kits.
 * Added `\Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem` to represent product kit item line item in `\Oro\Bundle\SaleBundle\Entity\QuoteProduct`.
 * Added `\Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid` (`is_quote_valid`) workflow condition to check a quote could be sent to a customer.
+* Added `Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem::$checksum` property as a part of allowing to add the same product with the same unit code multiple times.
+* Added `Oro\Bundle\SaleBundle\Entity\QuoteProductDemand::$checksum` property as a part of allowing to add the same product with the same unit code multiple times.
 
 #### ShoppingListBundle
 * Added the ability to display product kit line items on the shopping list line items storefront datagrid. See more in [documentation](https://doc.oroinc.com/bundles/commerce/ShoppingListBundle/shopping-list-on-storefront.html).
@@ -176,6 +179,9 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem` entity to the back-office API.
 * Added `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead of the deprecated `\Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataViolationsListener`.
 * Added `\Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPrice` validation constraint for checking if product kit item product has price.
+* Added `Oro\Bundle\ShoppingListBundle\Entity\LineItem::$checksum` property as a part of allowing to add the same product with the same unit code multiple times.
+* Added `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList::$currency` property.
+* Added `Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal::$customerUser` relation property
 
 #### VisibilityBundle
 * Added `\Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityListener` and `\Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityPrefetchListener` for adding visibility data to the product line items storefront datagrids.
