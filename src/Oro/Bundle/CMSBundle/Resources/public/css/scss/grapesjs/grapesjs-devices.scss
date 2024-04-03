@@ -94,6 +94,10 @@
         .gjs-pn-btn {
             font-family: $fa-font-family;
 
+            &::before {
+                content: $fa-var-mobile;
+            }
+
             &.desktop {
                 &::before {
                     content: $fa-var-desktop;

@@ -953,6 +953,8 @@ const GrapesjsEditorView = BaseView.extend({
      * @private
      */
     _updateTheme(selected) {
+        const prevHref = this.activeTheme.stylesheet;
+
         if (!_.isUndefined(this.activeTheme) && this.activeTheme.name === selected) {
             this.setActiveTheme(selected);
             return false;
@@ -967,8 +969,9 @@ const GrapesjsEditorView = BaseView.extend({
 
         const activeTheme = this.activeTheme;
         const head = this.builder.Canvas.getFrameEl().contentDocument.head;
-        const style = head.querySelector('link');
+        const style = head.querySelector(`link[href="${prevHref}"]`);
         const styleClone = style.cloneNode();
+        style.removeAttribute('href');
 
         styleClone.setAttribute('href', this.activeTheme.stylesheet);
         styleClone.onload = function() {
