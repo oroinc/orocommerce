@@ -9,7 +9,9 @@ operations:
         button_options:
             icon: fa-file-text
             class: icons-holder-text no-hash btn
-
+        preconditions:
+            '@and':
+                - '@feature_enabled': 'rfp'
         actions:
             - '@call_service_method':
                 service: oro_rfp.service.request_to_quote_data_storage
@@ -19,6 +21,29 @@ operations:
                 parameters:
                     route: oro_sale_quote_create
                     route_parameters: {'storage': true}
+
+    oro_rfp_create_order:
+        label: oro.rfp.btn.create_order
+        applications: [default]
+        routes:
+            - oro_rfp_request_view
+        acl_resource: oro_order_create
+        order: 30
+        button_options:
+            icon: fa-briefcase
+            class: icons-holder-text no-hash btn
+        preconditions:
+            '@and':
+                - '@feature_enabled': 'rfp'
+        actions:
+            - '@call_service_method':
+                  service: oro_rfp.service.request_to_order_data_storage
+                  method: saveToStorage
+                  method_parameters: [$.data]
+            - '@redirect':
+                  parameters:
+                      route: oro_order_create
+                      route_parameters: {'storage': true}
 
     oro_rfp_frontend_request_a_quote:
         label: oro.rfp.btn.add_to_rfp

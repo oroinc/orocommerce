@@ -5,13 +5,13 @@ namespace Oro\Bundle\RFPBundle\Controller;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
-use Oro\Bundle\RFPBundle\Storage\OffersDataStorage;
+use Oro\Bundle\RFPBundle\Storage\RequestToOrderDataStorage;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Controller actions to create Order entity using RFQ entity as source.
+ * Controller actions to create Order entity using RFQ entity as a source.
  */
 class OrderController extends AbstractController
 {
@@ -25,30 +25,16 @@ class OrderController extends AbstractController
      */
     public function createAction(RFPRequest $request)
     {
-        $data = [ProductDataStorage::ENTITY_DATA_KEY => $this->getEntityData($request)];
-
-        $offers = [];
-        foreach ($request->getRequestProducts() as $lineItem) {
-            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
-                ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProductSku(),
-                ProductDataStorage::PRODUCT_ID_KEY => $lineItem->getProduct()->getId(),
-                'comment' => $lineItem->getComment(),
-            ];
-
-            $itemOffers = [];
-            foreach ($lineItem->getRequestProductItems() as $productItem) {
-                $itemOffers[] = $this->getOfferData($productItem);
-            }
-            $offers[] = $itemOffers;
-        }
-
-        $this->get(ProductDataStorage::class)->set($data);
-        $this->get(OffersDataStorage::class)->set($offers);
+        /** @var RequestToOrderDataStorage $storage */
+        $storage = $this->container->get(RequestToOrderDataStorage::class);
+        $storage->saveToStorage($request);
 
         return $this->redirectToRoute('oro_order_create', [ProductDataStorage::STORAGE_KEY => true]);
     }
 
     /**
+     * @deprecated, use {@see RequestToOrderDataStorage} instead.
+     *
      * @param RFPRequest $request
      * @return array
      */
@@ -75,6 +61,8 @@ class OrderController extends AbstractController
     }
 
     /**
+     * @deprecated, use {@see RequestToOrderDataStorage} instead.
+     *
      * @param RequestProductItem $productItem
      * @return array
      */
@@ -94,17 +82,8 @@ class OrderController extends AbstractController
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
-        return array_merge(
-            parent::getSubscribedServices(),
-            [
-                ProductDataStorage::class,
-                OffersDataStorage::class,
-            ]
-        );
+        return array_merge(parent::getSubscribedServices(), [RequestToOrderDataStorage::class]);
     }
 }

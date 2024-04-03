@@ -14,27 +14,6 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
-{% block navButtonContainer %}
-    {% placeholder view_navButtons_before with {entity: entity} %}
-    {% block navButtons %}
-        {% import '@OroUI/macros.html.twig' as UI %}
-
-        {{ parent() }}
-
-        {% if is_granted('oro_order_create') %}
-            <div class="btn-group">
-                {{ UI.link({
-                    path: path('oro_rfp_request_create_order', {id: entity.id}),
-                    label: 'oro.ui.create_entity'|trans({'%entityName%': 'oro.order.entity_label'|trans}),
-                    class: 'btn',
-                    iCss: 'fa-briefcase',
-                }) }}
-            </div>
-        {% endif %}
-    {% endblock navButtons %}
-    {% placeholder rfp_view_navButtons_after with {entity: entity} %}
-{% endblock navButtonContainer%}
-
 {% block content_data %}
     {% set requestInfo %}
         {{ oro_widget_render({
