@@ -56,6 +56,13 @@ services:
         arguments:
             - "@oro_product.storage.product_data_storage"
 
+    oro_rfp.service.request_to_order_data_storage:
+        class: 'Oro\Bundle\RFPBundle\Storage\RequestToOrderDataStorage'
+        public: true
+        arguments:
+            - '@oro_product.storage.product_data_storage'
+            - '@oro_rfp.storage.offers_data_storage'
+
     oro_rfp.service.request_update_handler:
         class: 'Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler'
         public: true
