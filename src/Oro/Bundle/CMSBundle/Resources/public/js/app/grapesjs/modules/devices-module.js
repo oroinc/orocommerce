@@ -7,6 +7,7 @@ define(function(require) {
     const _ = require('underscore');
     const viewportManager = require('oroui/js/viewport-manager').default;
     const __ = require('orotranslation/js/translator');
+    const {getLegacyBreakpoints} = require('../utils/legacy');
 
     /**
      * Create panel manager instance
@@ -21,6 +22,8 @@ define(function(require) {
          * @property {Object}
          */
         breakpoints: {},
+
+        MAX_STYLE_REQUEST_TRIES: 100,
 
         allowBreakpoints: [
             'desktop',
@@ -196,7 +199,13 @@ define(function(require) {
                 return;
             }
 
-            const breakpoints = viewportManager.getBreakpoints(contentDocument.documentElement);
+            const breakpoints = viewportManager.getBreakpoints(contentDocument.documentElement, breakpoints => {
+                if (Object.values(breakpoints).length === 1 && Object.values(breakpoints)[0] === 'all') {
+                    return {...breakpoints, ...getLegacyBreakpoints(contentDocument.head)};
+                }
+
+                return breakpoints;
+            });
 
             this.breakpoints = this._collectCSSBreakpoints(breakpoints)
                 .filter(({name}) => !allowBreakpoints.length || allowBreakpoints.includes(name))
@@ -268,6 +277,7 @@ define(function(require) {
         },
 
         getBreakpoints() {
+            let times = 0;
             const defer = $.Deferred();
             this._intervalId = setInterval(() => {
                 this._getCSSBreakpoint();
@@ -276,6 +286,13 @@ define(function(require) {
                     clearInterval(this._intervalId);
                     defer.resolve();
                 }
+
+                if (times === this.MAX_STYLE_REQUEST_TRIES) {
+                    clearInterval(this._intervalId);
+                    defer.reject(`'getBreakpoints' timeout has expired, without any results`);
+                }
+
+                times++;
             }, 50);
 
             return defer.promise();
@@ -314,11 +331,17 @@ define(function(require) {
                 }
             });
 
-            const panel = Panels.addPanel({
-                id: 'devices-c',
-                visible: true,
-                buttons
-            });
+            let panel = Panels.getPanel('devices-c');
+
+            if (!panel) {
+                panel = Panels.addPanel({
+                    id: 'devices-c',
+                    visible: true,
+                    buttons
+                });
+            } else {
+                panel.buttons.reset(buttons);
+            }
 
             $(panel.view.$el.find('[data-toggle="tooltip"]')).tooltip();
 
