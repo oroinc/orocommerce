@@ -67,6 +67,54 @@ class LocalizationSwitcherContext extends OroFeatureContext implements OroPageOb
     }
 
     /**
+     * @param string $type
+     *
+     * @Then /^(?:|I )should see that the LocalizationCurrencySwitcher element has a type "(?P<type>[^"]*)"$/
+     * I should see that the LocalizationCurrencySwitcher element has a type "toggle"
+     */
+    public function iShouldSeeMainSwitcherElementHasType(string $type)
+    {
+        $this->commerceMainContext->openMainMenu();
+
+        /** @var LocalizationCurrencySwitcherElement $switcher */
+        $switcher = $this->createElement('LocalizationCurrencySwitcher');
+
+        self::assertEquals($type, $switcher->getMainElementSelectorType());
+        $this->commerceMainContext->closeMainMenu();
+    }
+
+    /**
+     * @param string $type
+     *
+     * @Then /^(?:|I )should see that the Localization Switcher has a type "(?P<type>[^"]*)"$/
+     */
+    public function iShouldSeeInternalSwitcherElementHasType(string $type)
+    {
+        $this->commerceMainContext->openMainMenu();
+
+        /** @var LocalizationCurrencySwitcherElement $switcher */
+        $switcher = $this->createElement('LocalizationCurrencySwitcher');
+
+        $switcherElement = $this->elementFactory->createElement($switcher::LOCALIZATION_SWITCHER_ELEMENT);
+        self::assertEquals($type, $switcher->getInternalElementSelectorType($switcherElement));
+        $this->commerceMainContext->closeMainMenu();
+    }
+
+    /**
+     * @param string $locationElement
+     *
+     * @Then /^(?:|I )should see the location of the Language and Currency Switchers "(?P<locationElement>[^"]*)"$/
+     * Example: I should see the location of the Language and Currency Switchers "in the hamburger menu"
+     */
+    public function iShouldSeeLocationSwitcherElement(string $locationElement)
+    {
+        /** @var LocalizationCurrencySwitcherElement $switcher */
+        $switcher = $this->createElement('LocalizationCurrencySwitcher');
+
+        self::assertEquals($locationElement, $switcher->getLocationElement());
+    }
+
+    /**
      * @param string $localizationName
      *
      * @Given /^(?:|I )select "(?P<localizationName>[^"]*)" localization$/
