@@ -8,14 +8,6 @@ services:
         tags:
             - { name: container.service_subscriber }
 
-    Oro\Bundle\RFPBundle\Controller\OrderController:
-        calls:
-            - ['setContainer', ['@Psr\Container\ContainerInterface']]
-        tags:
-            - { name: container.service_subscriber }
-            - { name: container.service_subscriber, id: oro_rfp.storage.offers_data_storage, key: Oro\Bundle\RFPBundle\Storage\OffersDataStorage }
-            - { name: container.service_subscriber, id: oro_product.storage.product_data_storage, key: Oro\Bundle\ProductBundle\Storage\ProductDataStorage }
-
     Oro\Bundle\RFPBundle\Controller\Frontend\RequestController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]

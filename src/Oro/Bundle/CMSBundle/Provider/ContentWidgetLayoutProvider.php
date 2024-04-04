@@ -47,6 +47,6 @@ class ContentWidgetLayoutProvider
             $widgets[] = $themeConfig['widgets'] ?? [];
         }
 
-        return array_merge_recursive(...$widgets);
+        return array_replace_recursive(...$widgets);
     }
 }
