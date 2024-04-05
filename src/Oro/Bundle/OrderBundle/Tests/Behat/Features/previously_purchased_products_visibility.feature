@@ -2,6 +2,8 @@
 @feature-BB-9570
 @random-failed
 @fixture-OroOrderBundle:previously-purchased-visibility.yml
+@skip
+# Unskip when BB-24002 will be fixed
 Feature: Previously purchased products visibility
   As a store owner
   I want Customer Users to see only products that they are allowed to see in the Previously Purchased page
