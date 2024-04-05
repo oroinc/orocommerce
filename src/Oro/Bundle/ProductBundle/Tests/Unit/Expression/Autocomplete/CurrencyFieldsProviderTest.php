@@ -21,51 +21,37 @@ class CurrencyFieldsProviderTest extends AbstractFieldsProviderTest
         );
     }
 
-    public function testGetAutocompleteDataNumericOnly()
+    public function testGetDataProviderConfigNumericOnly()
     {
         $this->configureDependencies([], true, true);
 
         $expected = [
-            CurrencyFieldsProvider::ROOT_ENTITIES_KEY => [
-                'ProductClass' => 'product'
-            ],
-            CurrencyFieldsProvider::FIELDS_DATA_KEY => [],
+            'fieldsFilterWhitelist' => [],
+            'isRestrictiveWhitelist' => true,
         ];
-        $this->assertEquals($expected, $this->provider->getAutocompleteData(true));
+        $this->assertEquals($expected, $this->provider->getDataProviderConfig(true));
     }
 
     /**
      * @dataProvider getFieldsDataProvider
      */
-    public function testGetAutocompleteData(array $fieldsData)
+    public function testGetDataProviderConfig(array $fieldsData)
     {
         $this->configureDependencies($fieldsData, false, true);
 
         $expected = [
-            CurrencyFieldsProvider::ROOT_ENTITIES_KEY => [
-                'ProductClass' => 'product'
-            ],
-            CurrencyFieldsProvider::FIELDS_DATA_KEY => [
+            'fieldsFilterWhitelist' => [
                 'ProductClass' => [
-                    'currency' => [
-                        'label' => 'currency.label TRANS',
-                        'type' => 'string'
-                    ],
-                    'stock' => [
-                        'label' => 'stock.label TRANS',
-                        'relation_alias' => 'StockClass',
-                        'type' => 'relation'
-                    ]
+                    'currency' => true,
+                    'stock' => true,
                 ],
                 'StockClass' => [
-                    'original_currency' => [
-                        'label' => 'original_currency.label TRANS',
-                        'type' => 'string'
-                    ],
-                ]
+                    'original_currency' => true,
+                ],
             ],
+            'isRestrictiveWhitelist' => true,
         ];
-        $this->assertEquals($expected, $this->provider->getAutocompleteData());
+        $this->assertEquals($expected, $this->provider->getDataProviderConfig());
     }
 
     public function getFieldsDataProvider(): array

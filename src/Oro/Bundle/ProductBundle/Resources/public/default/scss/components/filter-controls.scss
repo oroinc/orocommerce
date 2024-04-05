@@ -46,8 +46,16 @@
 
     &.in-sticky {
         background: $catalog-filter-controls-toolbar-sticky-container-background;
-        z-index: $sticky-panel-z-index + 1;
+        z-index: $sticky-panel-z-index;
         box-shadow: $sticky-panel-box-shadow;
+
+        padding: 0 spacing('lg') + 4px;
+        margin: 0 -#{spacing('lg') + 4px};
+
+        .page-content--has-sidebar & {
+            padding-left: $page-sidebar-width + 84px;
+            margin-left: -#{$page-sidebar-width + 84px};
+        }
 
         &.scrolled-up {
             transform: translateY(0);
@@ -55,6 +63,15 @@
 
         &.scroll-down {
             transform: translateY(calc(var(--group-offset-y, 0) * -1));
+        }
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .toolbar-top {
+        .page-size,
+        .oro-pagination {
+            display: none;
         }
     }
 }
@@ -78,6 +95,13 @@
             &.page-size {
                 order: 2;
             }
+        }
+    }
+
+    .toolbar {
+        &.in-sticky {
+            padding: 0 spacing('base');
+            margin: 0 -#{spacing('base')};
         }
     }
 }

@@ -44,7 +44,7 @@ Feature: Products grid frontend export with prices
     Then I should see "The product data export has started. You will receive download instructions by email once the export is finished." flash message
     And email with Subject "Products export result is ready" containing the following was sent:
       | Body | Your products data export has been finished. Download Results |
-    And take the link from email and download the file from this link
+    And take the "Download Results" link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
       | Name      | SKU   | Inventory Status.Id | price        | priceAttribute |
       | Product 5 | PSKU5 | in_stock            | $5.00 / each | $5.00 / each   |
@@ -69,7 +69,7 @@ Feature: Products grid frontend export with prices
     Then I should see "The product data export has started. You will receive download instructions by email once the export is finished." flash message
     And email with Subject "Products export result is ready" containing the following was sent:
       | Body | Your products data export has been finished. Download Results |
-    And take the link from email and download the file from this link
+    And take the "Download Results" link from email and download the file from this link
     And the downloaded file from email contains at least the following data:
       | Name      | SKU   | Inventory Status.Id | price        | priceAttribute | tier_prices     |
       | Product 5 | PSKU5 | in_stock            | $5.00 / each | $5.00 / each   | $5.00 \| 1 each |

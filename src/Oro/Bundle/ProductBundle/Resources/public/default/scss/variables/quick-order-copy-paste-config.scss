@@ -3,8 +3,7 @@
 $quick-order-copy-paste-grid-area: copy-paste !default;
 
 $quick-order-copy-paste-textarea-height: 200px !default;
-$quick-order-copy-paste-textarea-font-size: $base-font-size !default;
-$quick-order-copy-paste-textarea-font-weight: font-weight('bold') !default;
-$quick-order-copy-paste-textarea-text-transform: uppercase !default;
-
-$quick-order-copy-paste-title-margin: 0 0 10px !default;
+$quick-order-copy-paste-textarea-font-size: 16px !default;
+$quick-order-copy-paste-textarea-font-weight: font-weight('semi-bold') !default;
+$quick-order-copy-paste-title-margin: 0 0 spacing('base') !default;
+$quick-order-copy-paste-description-color: get-color('text', 'secondary') !default;

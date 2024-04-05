@@ -11,6 +11,21 @@ system_configuration:
                 constraints:
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~
 
+        oro_cms.home_page:
+            data_type: integer
+            type: Oro\Bundle\CMSBundle\Form\Type\PageSelectType
+            options:
+                label: oro.cms.system_configuration.fields.home_page.label
+                tooltip: oro.cms.system_configuration.fields.home_page.tooltip
+                required: true
+                create_enabled: false
+                constraints:
+                    - NotBlank: ~
+                configs:
+                    allowClear: false
+                attr:
+                    class: control-subgroup
+
     tree:
         system_configuration:
             platform:
@@ -22,3 +37,6 @@ system_configuration:
                                     oro_redirect_direct_urls:
                                         children:
                                             - oro_cms.landing_page_direct_url_prefix
+                                    websites_routing_general:
+                                        children:
+                                            - oro_cms.home_page

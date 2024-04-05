@@ -37,7 +37,7 @@ class MultipleChoice extends BaseMultipleChoice
         if ($dropDownMask = $this->getPage()->find('css', '.oro-dropdown-mask')) {
             $dropDownMask->click();
         } elseif ($this->isOpen()) {
-            $this->find('css', '.filter-criteria-selector span.filter-criteria-selector-icon')->click();
+            $this->find('css', '.filter-criteria-selector')->click();
         }
     }
 

@@ -26,6 +26,27 @@
         font-style: italic;
     }
 
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: spacing('sm');
+
+        color: $checkout-navigation-title-color;
+        min-height: $checkout-navigation-icon-size;
+
+        .transition-step-edit-button {
+            height: 20px;
+            width: 20px;
+            color: $checkout-navigation-edit-color;
+            margin-left: auto;
+        }
+    }
+
+    &__step--past &__title,
+    &__step--current &__title {
+        color: $checkout-navigation-current-color;
+    }
+
     &__icon {
         position: absolute;
         top: 0;
@@ -36,16 +57,46 @@
         @include badge(
             $checkout-navigation-icon-size,
             $checkout-navigation-icon-font-size,
-            get-color('neutral', 'grey2')
+            $badge-bg: get-color('neutral', 'grey2'),
+            $badge-color: get-color('text', 'disabled'),
+            $badge-icon-offset: 5px
         );
 
         &--current {
+            color: $checkout-navigation-current-color;
             background-color: $checkout-navigation-icon-current-background-color;
         }
 
         &--complete {
             color: $checkout-navigation-complete-color;
             background-color: $checkout-navigation-complete-background-color;
+        }
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .checkout-navigation {
+        display: flex;
+        justify-content: space-between;
+        margin: 13px 13px -13px;
+
+        border-top: $checkout-navigation-border-left;
+        border-left: none;
+
+        &__icon {
+            top: -13px;
+        }
+
+        &__step {
+            padding: 13px 0;
+        }
+
+        &__title {
+            display: none;
+        }
+
+        &__content {
+            display: none;
         }
     }
 }

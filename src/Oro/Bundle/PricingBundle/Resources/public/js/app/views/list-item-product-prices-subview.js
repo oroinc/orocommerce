@@ -31,7 +31,6 @@ define(function(require) {
             this.showListedPrice = options.showListedPrice;
             this.showValuePrice = options.showValuePrice;
             this.changeUnitLabel = options.changeUnitLabel;
-            this.showUnit = options.showUnit;
 
             _.each(this.modelAttr, function(attrValue, attrCode) {
                 this.model.set(attrCode, attrValue);
@@ -59,12 +58,12 @@ define(function(require) {
         getTemplateData: function() {
             return {
                 listedPrice: this.findListedPrice(),
+                unit: this.model.get('unit'),
                 price: this.findPrice(),
                 localeSettings: localeSettings,
                 numeral: numeral,
                 showValuePrice: this.showValuePrice,
-                showListedPrice: this.showListedPrice,
-                showUnit: this.showUnit
+                showListedPrice: this.showListedPrice
             };
         },
 
@@ -113,10 +112,6 @@ define(function(require) {
         },
 
         findListedPrice: function() {
-            if (!this.showListedPrice) {
-                return null;
-            }
-
             const prices = this.model.get('pricesByUnit');
             let listedPrice = this.model.get('listedPrice');
             if (null === listedPrice) {

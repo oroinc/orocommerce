@@ -17,6 +17,8 @@ layout:
                     blockType: block
                     options:
                         visible: false
+                category_wrapper:
+                    blockType: container
                 category_picture:
                     blockType: category
                     options:
@@ -33,8 +35,9 @@ layout:
                             visible: '=data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getLongDescriptions()) != null'
             tree:
                 page_main_header:
-                    category_picture: ~
                     breadcrumbs:
                         breadcrumbs_filters: ~
-                    category_title: ~
-                    category_long_descriptions: ~
+                    category_wrapper:
+                        category_picture: ~
+                        category_title: ~
+                        category_long_descriptions: ~

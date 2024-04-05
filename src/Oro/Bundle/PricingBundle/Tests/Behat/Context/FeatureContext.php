@@ -180,6 +180,23 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
+     * @param string $type
+     *
+     * @Then /^(?:|I )should see that the Currency Switcher has a type "(?P<type>[^"]*)"$/
+     */
+    public function iShouldSeeInternalSwitcherElementHasType(string $type)
+    {
+        $this->commerceMainContext->openMainMenu();
+
+        /** @var LocalizationCurrencySwitcherElement $switcher */
+        $switcher = $this->createElement('LocalizationCurrencySwitcher');
+
+        $switcherElement = $this->elementFactory->createElement($switcher::CURRENCY_SWITCHER_ELEMENT);
+        self::assertEquals($type, $switcher->getInternalElementSelectorType($switcherElement));
+        $this->commerceMainContext->closeMainMenu();
+    }
+
+    /**
      * @Then /^(?:|I )recalculate combined prices$/
      */
     public function recalculateCombinedPrices()
@@ -192,6 +209,22 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $qb->getQuery()->execute();
 
         $this->getAppContainer()->get('oro_pricing.price_list_relation_trigger_handler')->handleFullRebuild();
+    }
+
+    /**
+     * Example: I select "Product" option in selection results
+     *
+     * @When /^(?:|I )select "(?P<name>[^"]+)" option in selection results$/
+     */
+    public function iSelectOptionInSelectionResults(string $name): void
+    {
+        $detachedSelect2Result = $this->elementFactory->createElement('DetachedSelect2Result');
+        $detachedSelect2Result
+            ->find('xpath', sprintf(
+                '//div[contains(@class, "select2-result-label") and contains(., "%s")]',
+                $name
+            ))
+            ->click();
     }
 
     /**

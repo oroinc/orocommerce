@@ -14,7 +14,7 @@ define(function(require) {
             minZoomWindowWidth: 376,
             maxZoomWindowWidth: 700,
             zoomWindowWidth: 376,
-            zoomWindowHeight: 376,
+            zoomWindowHeight: 520,
             zoomWindowFadeIn: 400,
             zoomLevel: 0.4,
             maxZoomLevel: 0.8,

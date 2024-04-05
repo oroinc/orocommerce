@@ -259,7 +259,7 @@ const QuickAddRowView = BaseView.extend({
     updateRemoveRowButton() {
         const {index, ...restAttrs} = this.model.toBackendJSON();
         const enabled = Object.values(restAttrs).some(value => Boolean(value));
-        this.$(this.elem.remove).toggleClass('hidden', !enabled);
+        this.$(this.elem.remove).toggleClass('disabled', !enabled);
     },
 
     showErrors() {

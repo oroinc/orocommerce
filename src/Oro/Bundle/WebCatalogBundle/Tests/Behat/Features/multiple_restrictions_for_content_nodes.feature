@@ -11,7 +11,7 @@ Feature: Multiple restrictions for content nodes
       | Admin | first_session  |
       | User  | second_session |
 
-  Scenario: Add customer restrictions and test it on frontstore
+  Scenario: Add customer restrictions and test it on storefront
     Given I proceed as the Admin
     And login as administrator
     And I set "Default Web Catalog" as default web catalog
@@ -22,11 +22,6 @@ Feature: Multiple restrictions for content nodes
     When I fill "Content Node" with:
       | Restriction1 Customer | Customer 1 |
       | Restriction2 Customer | Customer 2 |
-    And I click on "Show Variants Dropdown"
-    And I click "First Content Variant Expand Button"
-    And I fill "Content Node Form" with:
-      | Titles            | Root Node                               |
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
     And I save form
     Then I should see "Content Node has been saved" flash message
 

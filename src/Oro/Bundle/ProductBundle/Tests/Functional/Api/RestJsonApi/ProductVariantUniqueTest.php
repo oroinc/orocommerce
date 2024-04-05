@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
-use Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
@@ -20,9 +19,8 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
     {
         parent::setUp();
         $this->loadFixtures([
-            LoadAdminCustomerUserData::class,
             LoadProductUnits::class,
-            '@OroProductBundle/Tests/Functional/Api/DataFixtures/product.yml',
+            '@OroProductBundle/Tests/Functional/Api/DataFixtures/product.yml'
         ]);
     }
 

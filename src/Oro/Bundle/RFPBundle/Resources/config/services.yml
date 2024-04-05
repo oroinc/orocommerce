@@ -56,6 +56,13 @@ services:
         arguments:
             - "@oro_product.storage.product_data_storage"
 
+    oro_rfp.service.request_to_order_data_storage:
+        class: 'Oro\Bundle\RFPBundle\Storage\RequestToOrderDataStorage'
+        public: true
+        arguments:
+            - '@oro_product.storage.product_data_storage'
+            - '@oro_rfp.storage.offers_data_storage'
+
     oro_rfp.service.request_update_handler:
         class: 'Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler'
         public: true
@@ -164,6 +171,7 @@ services:
             - "@oro_frontend.request.frontend_helper"
         tags:
             - { name: kernel.event_listener, event: oro_menu.configure.oro_customer_menu, method: onNavigationConfigure }
+            - { name: kernel.event_listener, event: oro_menu.configure.oro_customer_menu_refreshing_teal, method: onNavigationConfigure }
 
     oro_rfp.voter.guest_rfp:
         parent: oro_customer.voter.anonymous_customer_user

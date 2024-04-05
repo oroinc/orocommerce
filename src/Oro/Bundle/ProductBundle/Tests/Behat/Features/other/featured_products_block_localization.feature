@@ -16,6 +16,9 @@ Feature: Featured Products Block Localization
     # Load image to product
     And I proceed as the Admin
     And I login as administrator
+    And I add Featured Products widget after content for "Homepage" page
+    And I update settings for "featured-products" content widget:
+      | minimum_items | 1 |
     And I go to Products / Products
     And I click Edit SKU1 in grid
     And I set Images with:
@@ -53,6 +56,7 @@ Feature: Featured Products Block Localization
     And I should see "SKU1" in the "Search Autocomplete Highlight" element
     And I should see an "Search Autocomplete Product Image" element
     And I should see picture "Search Autocomplete Product Picture" element
+    And I click on empty space
 
   @skip
 # Unskip when BB-20324 will be fixed

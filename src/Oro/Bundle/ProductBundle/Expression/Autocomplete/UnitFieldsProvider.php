@@ -4,6 +4,9 @@ namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
+/**
+ * Data provider for unit fields autocomplete, used in ExpressionEditors
+ */
 class UnitFieldsProvider extends AbstractAutocompleteFieldsProvider
 {
     /**
@@ -60,5 +63,37 @@ class UnitFieldsProvider extends AbstractAutocompleteFieldsProvider
                 }
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDataProviderConfig($numericalOnly = false, $withRelations = true)
+    {
+        $whitelist = [];
+        $fieldsDataUpdate = $this->translateLabels($this->specialFieldsInformation);
+
+        $entitiesData = $this->getFieldsData($numericalOnly, $withRelations);
+        foreach ($entitiesData as $className => $fieldsData) {
+            foreach ($fieldsData as $fieldName => $fieldInfo) {
+                if ($fieldInfo['type'] === self::TYPE_STRING) {
+                    $fieldsDataUpdate[$className][$fieldName]['type'] = self::TYPE_STRING;
+                    $fieldsDataUpdate[$className][$fieldName]['relationType'] = null;
+                    $fieldsDataUpdate[$className][$fieldName]['relatedEntityName'] = '';
+                }
+                $whitelist[$className][$fieldName] = true;
+            }
+        }
+
+        $dataProviderConfig = [
+            'fieldsFilterWhitelist' => $whitelist,
+            'isRestrictiveWhitelist' => true,
+        ];
+
+        if (!empty($fieldsDataUpdate)) {
+            $dataProviderConfig['fieldsDataUpdate'] = $fieldsDataUpdate;
+        }
+
+        return $dataProviderConfig;
     }
 }

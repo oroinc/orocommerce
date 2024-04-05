@@ -1,0 +1,59 @@
+data:
+    type: productimages
+    id: '<toString(@product1_image1->id)>'
+    attributes:
+        updatedAt: '@product1_image1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        mimeType: image/jpeg
+        types:
+            - additional
+            - main
+        files:
+            -
+                url: '/media/cache/attachment/filter/product_original/4dbc178c2ebed276168fb5a715adf9ec/{fileId}/testFile1-originalFilenameTestFile1.jpg.webp'
+                maxWidth: null
+                maxHeight: null
+                dimension: product_original
+                types:
+                    - additional
+                    - main
+            -
+                url: '/media/cache/attachment/filter/product_gallery_popup/fb85dcdbb882996026a5eb1977eb928b/{fileId}/testFile1-originalFilenameTestFile1.jpg.webp'
+                maxWidth: 836
+                maxHeight: 620
+                dimension: product_gallery_popup
+                types:
+                    - main
+            -
+                url: '/media/cache/attachment/filter/product_gallery_main/0a26ac139b13349391fc32c7b9937b1c/{fileId}/testFile1-originalFilenameTestFile1.jpg.webp'
+                maxWidth: 700
+                maxHeight: 520
+                dimension: product_gallery_main
+                types:
+                    - main
+            -
+                url: '/media/cache/attachment/filter/product_large/1c5abede3a04ffa36277b441c71097a0/{fileId}/testFile1-originalFilenameTestFile1.jpg.webp'
+                maxWidth: 480
+                maxHeight: 356
+                dimension: product_large
+                types:
+                    - main
+            -
+                url: '/media/cache/attachment/filter/product_medium/68a5b11cec39d4b71bae527f6f5be075/{fileId}/testFile1-originalFilenameTestFile1.jpg.webp'
+                maxWidth: 350
+                maxHeight: 260
+                dimension: product_medium
+                types:
+                    - main
+            -
+                url: '/media/cache/attachment/filter/product_small/369d28f00dcc88bd06862ac5ab07d0ec/{fileId}/testFile1-originalFilenameTestFile1.jpg.webp'
+                maxWidth: auto
+                maxHeight: 80
+                dimension: product_small
+                types:
+                    - additional
+                    - main
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product1->id)>'

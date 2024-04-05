@@ -2,7 +2,7 @@ dependencies:
     - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
     - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
     - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
-    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\Frontend\DataFixtures\LoadWebsiteData
+    - Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
     - Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData

@@ -33,7 +33,7 @@
                     >
                         <span class="input-group-text"><%- currency.symbol %></span>
                     </div>
-                    <input class="input input--size-s input--full" type="number"
+                    <input class="input input--full" type="number"
                        placeholder="<%- _.__('oro.pricing.filter.product_price.min') %>"
                        value="<%- value.value %>"
                        name="value"
@@ -47,7 +47,7 @@
                     >
                         <span class="input-group-text"><%- currency.symbol %></span>
                     </div>
-                    <input class="input input--size-s input--full"
+                    <input class="input input--full"
                        type="number"
                        placeholder="<%- _.__('oro.pricing.filter.product_price.max') %>"
                        value="<%- value.value_end %>"
@@ -60,7 +60,7 @@
         <% if (renderMode !== 'toggle-mode') { %>
             <div class="filter-action-row">
                 <button type="button"
-                    class="btn btn--outlined btn--size-small filter-update"
+                    class="btn filter-update"
                     aria-label="<%- updateButtonAriaLabel %>"
                 ><%- _.__("oro.filter.updateButton.text") %></button>
             </div>

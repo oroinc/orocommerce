@@ -570,7 +570,7 @@ services:
     oro_promotion.form.type.shipping_method_types_choice:
         class: 'Oro\Bundle\PromotionBundle\Form\Type\ShippingMethodTypesChoiceType'
         arguments:
-            - '@oro_shipping.shipping_method_provider'
+            - '@oro_shipping.provider.shipping_methods_choices'
             - '@oro_shipping.provider.shipping_method_icon'
             - '@assets.packages'
         tags:

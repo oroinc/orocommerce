@@ -1,6 +1,10 @@
 /* @theme: default; */
 
 .checkout-form {
+    display: flex;
+    flex-direction: column;
+    gap: spacing('base');
+
     &__select-container {
         display: $checkout-form-select-container-display;
         flex-direction: $checkout-form-select-container-flex-direction;
@@ -31,10 +35,6 @@
         margin: 0 0 spacing('sm');
     }
 
-    &__submit {
-        min-width: $checkout-form-submit-min-width;
-    }
-
     &__payment-label {
         display: block;
         margin: $checkout-form-payment-label-margin;
@@ -52,6 +52,8 @@
         background: $checkout-form-payment-methods-background-color;
 
         border-radius: $checkout-form-payment-methods-border-radius;
+
+        max-width: $checkout-form-payment-methods-max-width;
     }
 
     &__payment-methods-authorized-card {
@@ -88,9 +90,12 @@
         color: $checkout-form-asterix-color;
     }
 
-    &__back {
-        margin: $checkout-form-back-offset;
+    &__buttons {
+        display: flex;
+        gap: spacing('xl');
+    }
 
+    &__back {
         &--no-offset {
             margin: 0;
         }
@@ -127,6 +132,18 @@
         &__submit {
             min-width: $checkout-form-submit-tablet-min-width;
             width: $checkout-form-submit-tablet-width;
+        }
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .checkout-form {
+        &__buttons {
+            justify-content: space-between;
+        }
+
+        &__payment-methods {
+            max-width: 100%;
         }
     }
 }

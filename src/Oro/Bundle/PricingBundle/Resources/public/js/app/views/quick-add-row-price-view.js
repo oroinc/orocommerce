@@ -95,11 +95,13 @@ const QuickAddRowPricesView = BaseView.extend({
     },
 
     updateUI() {
-        this.$(this.elem.subtotal).val(this.model.get('subtotal'));
+        const $input = this.$(this.elem.subtotal);
+        $input.val(this.model.get('subtotal'));
 
         this.renderHint();
 
-        this.$pricesHint.toggleClass('hidden', !this.model.get('subtotal'));
+        this.$pricesHint.toggleClass('product-tier-prices--hidden', !this.model.get('subtotal'));
+        $input.toggleClass('hidden', !this.model.get('subtotal'));
     },
 
     renderHint() {

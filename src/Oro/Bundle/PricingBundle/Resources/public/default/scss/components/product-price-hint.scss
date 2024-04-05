@@ -6,6 +6,7 @@
 
     &__prices {
         display: $product-price-hint-prices-display;
+        align-items: $product-price-hint-prices-align-items;
         gap: $product-price-hint-prices-gap;
     }
 }

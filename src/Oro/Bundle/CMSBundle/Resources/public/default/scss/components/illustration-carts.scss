@@ -32,6 +32,10 @@
 @include breakpoint('tablet') {
     .illustration-carts {
         --grid-gap: #{spacing('lg')};
+
+        &__img {
+            padding-inline-end: spacing('lg');
+        }
     }
 }
 

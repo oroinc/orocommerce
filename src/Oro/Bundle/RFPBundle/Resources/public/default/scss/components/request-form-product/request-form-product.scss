@@ -51,8 +51,8 @@
         }
 
         &--listed {
-            width: 205px;
-            padding-right: 65px;
+            width: 250px;
+            padding-right: 100px;
         }
 
         &--comment {
@@ -63,10 +63,10 @@
 
         &--actions {
             position: absolute;
-            top: 10px;
+            top: 6px;
             right: 0;
 
-            width: 60px;
+            width: 86px;
             padding: 0;
 
             font-size: $base-font-size--large;

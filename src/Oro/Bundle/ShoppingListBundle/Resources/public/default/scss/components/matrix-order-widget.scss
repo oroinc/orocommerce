@@ -154,8 +154,7 @@
 
             border-bottom: $matrix-order-widget-grid-multi-rows-grid-footer-border-bottom;
 
-            &::before,
-            &::after {
+            &::before {
                 position: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-position;
 
                 box-sizing: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-box-sizing;
@@ -167,12 +166,6 @@
                 left: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-left;
 
                 z-index: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-z-index;
-            }
-
-            &::after {
-                left: $matrix-order-widget-grid-multi-rows-grid-area-items-label-after-left;
-                right: $matrix-order-widget-grid-multi-rows-grid-area-items-label-after-right;
-                background: $matrix-order-widget-grid-multi-rows-grid-area-items-label-after-bg;
             }
         }
 
@@ -322,8 +315,7 @@
             overflow: $matrix-order-widget-grid-side-wrapper-overflow;
         }
 
-        &::before,
-        &::after {
+        &::before {
             position: $matrix-order-widget-grid-side-pseudo-classes-position;
 
             background: $matrix-order-widget-grid-side-pseudo-classes-background;
@@ -333,12 +325,6 @@
             left: $matrix-order-widget-grid-side-pseudo-classes-left;
 
             z-index: $matrix-order-widget-grid-side-pseudo-classes-z-index;
-        }
-
-        &::after {
-            left: $matrix-order-widget-grid-side-pseudo-class-after-left;
-            right: $matrix-order-widget-grid-side-pseudo-class-after-right;
-            background: $matrix-order-widget-grid-side-pseudo-class-after-background;
         }
     }
 
@@ -529,6 +515,12 @@
         width: $matrix-order-widget-pinned-dropdown-width;
     }
 
+    &--dialog {
+        .ui-dialog-title {
+            display: none;
+        }
+    }
+
     &--dialog & {
         max-width: $matrix-order-widget-dialog-max-width;
 
@@ -555,6 +547,13 @@
         &__form__col {
             flex-grow: $matrix-order-widget-dialog-form-col-flex-grow;
         }
+    }
+
+    &__totals {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: spacing('lg') spacing('base');
     }
 
     .clear-button {

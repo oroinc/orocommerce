@@ -3,9 +3,10 @@
     defaultSlugPrototype: ""
     contentVariants:
         -
-            type: system_page
+            type: cms_page
             params:
-                route: "oro_frontend_root"
+                title: "Homepage"
+                doNotRenderTitle: true
             isDefault: true
     parentScopeUsed: false
     scopes:
@@ -23,10 +24,12 @@
             isNavigationRoot: true
             contentVariants:
                 -
-                    type: system_page
+                    type: cms_page
                     params:
-                        route: "oro_frontend_root"
+                        title: "Homepage"
+                        doNotRenderTitle: true
                     isDefault: true
+                    doNotRenderTitle: true
             children:
                 Products:
                     setReference: "navigation_root__products"

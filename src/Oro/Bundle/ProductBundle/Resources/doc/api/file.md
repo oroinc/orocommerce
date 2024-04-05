@@ -15,7 +15,7 @@ Each element of the array is an object with the following properties:
 **url_webp** is a relative URL to the resized image in WebP format if configuration "oro_attachment.webp_strategy" is "if_supported".
 
 Possible image types: **product_original**, **product_gallery_popup**, **product_gallery_main**,
-**product_large**, **product_extra_large**, **product_medium**, **product_small**.
+**product_large**, **product_medium**, **product_small**.
 
 Example of data:
 

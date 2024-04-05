@@ -7,14 +7,17 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 use WebDriver\Exception\ElementNotVisible;
 use WebDriver\Exception\NoSuchElement;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class LocalizationCurrencySwitcherElement extends Element
 {
     public const TYPE_TOGGLE = 'toggle';
     public const TYPE_SELECT = 'select';
     public const TYPE_SINGLE = 'single';
     public const TYPE_TOGGLE_VERTICAL = 'toggle_vertical';
-    protected const LOCALIZATION_SWITCHER_ELEMENT = 'Localization Switcher';
-    protected const CURRENCY_SWITCHER_ELEMENT = 'Currency Switcher';
+    public const LOCALIZATION_SWITCHER_ELEMENT = 'Localization Switcher';
+    public const CURRENCY_SWITCHER_ELEMENT = 'Currency Switcher';
 
     public function getActiveLocalizationOption(): ?string
     {
@@ -57,6 +60,27 @@ class LocalizationCurrencySwitcherElement extends Element
         }
 
         return self::TYPE_SINGLE;
+    }
+
+    public function getLocationElement(): ?string
+    {
+        if ($this->hasElementByMappedSelector('LocationAboveTheHeaderLocalizationSwitcher')
+            || $this->hasElementByMappedSelector('LocationAboveTheHeaderCurrencySwitcher')
+        ) {
+            return 'above the header, separate switchers';
+        }
+
+        if ($this->hasElementByMappedSelector('LocationAboveTheHeaderSingleSwitcherButton')) {
+            return 'above the header, as single switcher';
+        }
+
+        if ($this->hasElementByMappedSelector('SelectMainElementContainer')
+            || $this->hasElementByMappedSelector('ToggleMainElementContainer')
+        ) {
+            return 'in the hamburger menu';
+        }
+
+        return null;
     }
 
     public function getInternalElementSelectorType($switcherElement): string
@@ -151,7 +175,7 @@ class LocalizationCurrencySwitcherElement extends Element
         $this->spin(function () use ($footerExpand) {
             try {
                 $footerExpand->click();
-            } catch (NoSuchElement | ElementNotVisible $e) {
+            } catch (NoSuchElement|ElementNotVisible $e) {
                 return false;
             } finally {
                 return $footerExpand->isVisible();

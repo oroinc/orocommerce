@@ -213,6 +213,14 @@ class FieldsProvider implements FieldsProviderInterface
     }
 
     /**
+     * @return array
+     */
+    public function getSupportedNumericTypes()
+    {
+        return array_keys(self::$supportedNumericTypes);
+    }
+
+    /**
      * @param array $field
      * @return bool
      */
@@ -220,6 +228,14 @@ class FieldsProvider implements FieldsProviderInterface
     {
         return array_key_exists('relation_type', $field)
             && empty(self::$supportedRelationTypes[$field['relation_type']]);
+    }
+
+    /**
+     * @return array
+     */
+    public function getSupportedRelationTypes()
+    {
+        return array_keys(self::$supportedRelationTypes);
     }
 
     /**
@@ -233,6 +249,14 @@ class FieldsProvider implements FieldsProviderInterface
     }
 
     /**
+     * @return array
+     */
+    public function getFieldsWhiteList()
+    {
+        return $this->fieldsWhiteList;
+    }
+
+    /**
      * @param string $className
      * @param string $fieldName
      * @return bool
@@ -240,5 +264,13 @@ class FieldsProvider implements FieldsProviderInterface
     protected function isBlacklistedField($className, $fieldName)
     {
         return !empty($this->fieldsBlackList[$className][$fieldName]);
+    }
+
+    /**
+     * @return array
+     */
+    public function getFieldsBlackList()
+    {
+        return $this->fieldsBlackList;
     }
 }

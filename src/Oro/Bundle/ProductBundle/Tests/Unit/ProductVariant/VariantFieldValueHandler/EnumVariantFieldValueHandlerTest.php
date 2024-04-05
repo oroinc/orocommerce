@@ -15,6 +15,9 @@ use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariant
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
 {
     private const FIELD_NAME = 'fieldName';
@@ -213,6 +216,30 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
         $expected = $this->handler->getPossibleValues('fieldName');
         // Cache fetch
         $actual = $this->handler->getPossibleValues('fieldName');
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testGetEmptyPossibleValues(): void
+    {
+        $this->configManager
+            ->expects($this->once())
+            ->method('getConfigFieldModel')
+            ->with(Product::class, self::FIELD_NAME)
+            ->willReturn(null);
+
+        $this->enumValueProvider
+            ->expects($this->never())
+            ->method('getEnumChoicesWithNonUniqueTranslation');
+
+        $this->localeSettings
+            ->expects($this->exactly(2))
+            ->method('getLocale')
+            ->willReturn('en_US');
+
+        $expected = $this->handler->getPossibleValues('fieldName');
+        // Cache fetch
+        $actual = $this->handler->getPossibleValues('fieldName');
+        $this->assertEmpty($actual);
         $this->assertEquals($expected, $actual);
     }
 

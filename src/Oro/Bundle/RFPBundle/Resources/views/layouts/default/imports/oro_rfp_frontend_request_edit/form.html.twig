@@ -1,5 +1,6 @@
-{% block oro_rfp_frontend_request_product_collection_widget %}
+{% block _oro_rfp_frontend_request_requestProducts_widget %}
     {% import _self as fields %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
 
     {% set widgetContainerAttributes %}
         {% with {'id': '', 'attr': []} %}{{ block('widget_container_attributes') }}{% endwith %}
@@ -27,10 +28,13 @@
                     {% endif %}
                 </div>
 
+                {% apply spaceless %}
                 <div class="request-form-footer">
-                    <a data-role="request-product-add" class="add-list-item" data-container="[data-role='request-products-container']" href="#"><i
-                                class="fa-plus-circle"></i>{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}</a>
+                    <a data-role="request-product-add" class="add-list-item inline-flex" data-container="[data-role='request-products-container']" href="#">
+                        {{ renderIcon.icon({name: 'plus', extraClass: 'theme-icon--small'}) }}{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}
+                    </a>
                 </div>
+                {% endapply %}
             </div>
         </div>
     </div>
@@ -38,6 +42,7 @@
 
 {% macro oro_rfp_frontend_request_product_prototype(widget, key, attributes) %}
     {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
 
     {% if key is null %}
         {% set form = widget.vars.prototype %}
@@ -73,15 +78,15 @@
             <div class="request-form-product__item request-form-product__item--actions">
                 <ul class="actions-row">
                     <li class="actions-row__item actions-row__item--separate-light">
-                        <button class="actions-row__button"
+                        <button class="actions-row__button btn btn--size-small btn--plain"
                                 title="{{ 'oro.frontend.rfp.requestproduct.action.edit'|trans }}" data-role="edit">
-                            <span class="actions-row__icon fa-pencil" aria-hidden="true"></span>
+                            {{ renderIcon.icon({name: 'pencil', extraClass: 'theme-icon--small'}) }}
                         </button>
                     </li>
                     <li class="actions-row__item actions-row__item--separate-light">
-                        <button class="actions-row__button removeRow"
+                        <button class="actions-row__button removeRow btn btn--size-small btn--plain"
                                 title="{{ 'oro.frontend.rfp.requestproduct.action.delete'|trans }}" data-role="remove">
-                            <span class="actions-row__icon fa-trash" aria-hidden="true"></span>
+                            {{ renderIcon.icon({name: 'trash', extraClass: 'theme-icon--small'}) }}
                         </button>
                     </li>
                 </ul>
@@ -133,7 +138,7 @@
     </div>
 {% endmacro %}
 
-{% block oro_rfp_frontend_request_product_widget %}
+{% block _oro_rfp_frontend_request_requestProducts_entry_widget %}
     <div data-role="request-product-container" class="request-form-editline__product">
         {{ form_widget(form.product) }}
         {{ form_errors(form.product) }}
@@ -150,6 +155,7 @@
 
 {% block _oro_rfp_frontend_request_requestProducts_entry_requestProductItems_widget %}
     {% import _self as fields %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
 
     {% set widgetContainerAttributes %}
         {% with {id: '', attr: []} %}{{ block('widget_container_attributes') }}{% endwith %}
@@ -176,13 +182,18 @@
             </div>
         </div>
     </div>
-    <a class="request-form-lineitems__add add-list-item" data-role="request-product-item-add"
-       data-container="[data-role='request-product-items-container']" href="#"><i
-                class="fa-plus-circle"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
+    {% apply spaceless %}
+        <a class="request-form-lineitems__add add-list-item inline-flex" data-role="request-product-item-add"
+           data-container="[data-role='request-product-items-container']" href="#"
+        >
+            {{ renderIcon.icon({name: 'plus', extraClass: 'theme-icon--small'}) }}{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}
+        </a>
+    {% endapply %}
 {% endblock %}
 
 {% macro oro_rfp_frontend_request_product_item_prototype(widget, key, attributes) %}
     {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
 
     {% if key is null %}
         {% set form = widget.vars.prototype %}
@@ -209,8 +220,8 @@
         <div>
             {{ form_widget(form) }}
             <div class="request-form-lineitem-unit--remove">
-                <button type="button" class="removeRow btn--plain" data-role="request-product-item-remove">
-                    <span class="fa-trash fa--large fa--no-offset" aria-hidden="true"></span>
+                <button type="button" class="removeRow btn btn--size-small btn--plain" data-role="request-product-item-remove">
+                    {{ renderIcon.icon({name: 'trash', extraClass: 'theme-icon--small'}) }}
                 </button>
             </div>
         </div>

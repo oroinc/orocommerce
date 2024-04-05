@@ -58,9 +58,9 @@
                 _collection_unique_prefix: form.parent.vars.unique_block_prefix
             } %}
             {% if allow_delete %}
-                <button class="btn btn btn--plain btn--text quick-order-add__remove-row hidden removeRow" data-role="row-remove" type="button"
+                <button class="btn btn btn--plain btn--text quick-order-add__remove-row removeRow" data-role="row-remove" type="button"
                         aria-label="{{ 'oro.product.remove_row.aria_label'|trans }}">
-                    {{ renderIcon.icon({name: 'close', extraClass: 'theme-icon--small'}) }}
+                    {{ renderIcon.icon({name: 'minus-circle'}) }}
                 </button>
             {% endif %}
         </div>
@@ -69,6 +69,7 @@
 {% endblock %}
 
 {% block oro_product_quick_add_row_collection_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% apply spaceless %}
         {% if prototype is defined %}
             {% set prototype_html = form_widget(form.vars.prototype) %}
@@ -108,14 +109,17 @@
         </div>
 
         {% if allow_add %}
-            <div class="grid-col-12">
-                <button class="btn btn--block add-list-item"
-                    data-container=".js-item-collection" type="button"
+            <div class="grid-col-12 quick-order-add__actions">
+                <button
+                    class="btn btn--no-padding btn--outlined btn--text add-list-item"
+                    data-container=".js-item-collection"
+                    type="button"
                     data-validate-collection="false"
-            >
-                <span class="fa-plus-circle" aria-hidden="true"></span>
-                <span>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</span>
-            </button></div>
+                >
+                    {{ renderIcon.icon({name: 'plus'}) }}
+                    <span>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</span>
+                </button>
+            </div>
         {% endif %}
         {% placeholder oro_product_quick_add_collection_after with {
             _collection_unique_prefix: form.vars.unique_block_prefix
@@ -124,13 +128,17 @@
 {% endblock %}
 
 {% block oro_product_quick_add_import_from_file_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% apply spaceless %}
         <div class="quick-order-import__content">
             <label tabindex="0" class="btn quick-order-import__btn" for="{{ form.file.vars.id }}"
                    aria-label="{{ 'oro.product.frontend.quick_add.import_from_file.choose_file.aria_label'|trans }}"
                    aria-haspopup="true"
                    data-emulate-btn-press
-                >{{ 'oro.product.frontend.quick_add.import_from_file.choose_file.label'|trans }}</label>
+            >
+                {{ renderIcon.icon({name: 'upload'}) }}
+                {{ 'oro.product.frontend.quick_add.import_from_file.choose_file.label'|trans }}
+            </label>
             {{ form_widget(form.file, {attr: {class:'hidden'}}) }}
         </div>
     {% endapply %}

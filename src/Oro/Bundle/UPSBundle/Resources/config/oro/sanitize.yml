@@ -1,0 +1,9 @@
+oro_sanitize:
+    entity:
+        oro_integration_transport:
+            fields:
+                ups_api_user: md5
+                ups_api_password: md5
+                ups_api_key: md5
+                ups_shipping_account_number: md5
+                ups_shipping_account_name: md5

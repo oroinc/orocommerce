@@ -361,6 +361,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.cms_page, method: restrictQueryBuilder }
 
+    oro_seo.event_listener.restrict_sitemap_cms_page_by_url_slugs:
+        class: 'Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByUrlSlugsListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.cms_page, method: restrictQueryBuilder }
+
     oro_seo.sitemap.provider.restrict_cms_page_by_web_catalog_provider:
         class: Oro\Bundle\SEOBundle\Sitemap\Provider\CmsPageSitemapRestrictionProvider
         public: false
@@ -442,7 +447,7 @@ services:
         class: Oro\Bundle\SEOBundle\EventListener\CopyRobotsTxtTemplateListener
         arguments:
             - '@oro_seo.manager.robots_txt_file_manager'
-            - '%kernel.project_dir%/config/'
+            - '@oro_seo.manager.robots_txt_template_manager'
         tags:
             - { name: kernel.event_listener, event: oro_seo.sitemap.event.on_sitemap_dump_finish.index, method: onSitemapDumpStorage, priority: 255 }
 
@@ -480,3 +485,30 @@ services:
             - '@oro_website.provider.website_localization'
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
+
+    oro_seo.event_listener.robots_txt_template_system_config_form_options:
+        class: Oro\Bundle\SEOBundle\EventListener\RobotsTxtTemplateSystemConfigFormOptionsListener
+        arguments:
+            - '@doctrine'
+            - '@oro_seo.manager.robots_txt_dist_template_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+
+    oro_seo.manager.robots_txt_dist_template_manager:
+        class: Oro\Bundle\SEOBundle\Manager\RobotsTxtDistTemplateManager
+        arguments:
+            - '@oro_seo.manager.robots_txt_file_manager'
+            - '%kernel.project_dir%/config/'
+
+    oro_seo.event_listener.schedule_sitemap_generation_on_robots_txt_template_change:
+        class: Oro\Bundle\SEOBundle\EventListener\ScheduleSitemapGenerationOnRobotsTxtTemplateChangeListener
+        arguments:
+            - '@oro_seo.provider.sitemap_generation_scheduler'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigUpdate }
+
+    oro_seo.manager.robots_txt_template_manager:
+        class: Oro\Bundle\SEOBundle\Manager\RobotsTxtTemplateManager
+        arguments:
+            - '@oro_seo.manager.robots_txt_dist_template_manager'
+            - '@oro_config.manager'

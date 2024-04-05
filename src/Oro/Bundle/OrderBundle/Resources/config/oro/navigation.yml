@@ -90,7 +90,17 @@ navigation:
                                 children:
                                     oro_order_frontend_view: ~
                             oro_order_products_frontend_previously_purchased: ~
+
+            # Start Requirement for "Default Theme 50/51"
             oro_customer_menu:
+                children:
+                    oro_order_frontend_index:
+                        children:
+                            oro_order_frontend_view: ~
+                    oro_order_products_frontend_previously_purchased: ~
+            # End Requirement for "Default Theme 50/51"
+
+            oro_customer_menu_refreshing_teal:
                 children:
                     oro_order_frontend_orders:
                         children:

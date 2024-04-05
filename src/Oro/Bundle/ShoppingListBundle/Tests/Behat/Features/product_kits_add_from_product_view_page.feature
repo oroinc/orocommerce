@@ -30,7 +30,7 @@ Feature: Product kits add from product view page
       | Title                | Product Kit 1                      |
       | Kit Item 1 Name      | Barcode Scanner                    |
       | Kit Item 2 Name      | Base Unit                          |
-      | Price                | Price as configured: $41.00        |
+      | Price                | Total: $41.00        |
       | Kit Item 1 Product 1 | simple-product-03 Product 3 $31.00 |
       | Kit Item 1 Product 2 | None                               |
       | Kit Item 2 Product 1 | simple-product-01 Product 1 $31.00 |
@@ -50,7 +50,7 @@ Feature: Product kits add from product view page
     Then "Product Kit Line Item Form" must contain values:
       | Kit Item Line Item 1 Quantity | 1 |
     And I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $72.00 |
+      | Price | Total: $72.00 |
     When I click "Kit Item Line Item 2 Product 2"
     And I fill "Product Kit Line Item Form" with:
       | Kit Item Line Item 1 Quantity | 2                               |
@@ -59,7 +59,7 @@ Feature: Product kits add from product view page
     And I fill "Product Kit Line Item Totals Form" with:
       | Quantity | 2 |
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $268.00 |
+      | Price | Total: $268.00 |
     When I click "Product Kit Dialog Shopping List Dropdown"
     Then I should see "Create New Shopping List" in the "Shopping List Button Group Menu" element
     And I should not see "Remove From Shopping List 1" in the "Shopping List Button Group Menu" element

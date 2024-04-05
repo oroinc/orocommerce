@@ -22,13 +22,13 @@ class Configuration implements ConfigurationInterface
     const MAX_NUMBER_OF_UPSELL_PRODUCTS = 'max_number_of_upsell_products';
     const MAX_NUMBER_OF_UPSELL_PRODUCTS_COUNT = 25;
     const RELATED_PRODUCTS_MAX_ITEMS = 'related_products_max_items';
-    const RELATED_PRODUCTS_MAX_ITEMS_COUNT = 4;
+    const RELATED_PRODUCTS_MAX_ITEMS_COUNT = 5;
     const RELATED_PRODUCTS_MIN_ITEMS = 'related_products_min_items';
     const RELATED_PRODUCTS_MIN_ITEMS_COUNT = 3;
     const RELATED_PRODUCTS_SHOW_ADD_BUTTON = 'related_products_show_add_button';
     const RELATED_PRODUCTS_USE_SLIDER_ON_MOBILE = 'related_products_use_slider_on_mobile';
     const UPSELL_PRODUCTS_MAX_ITEMS = 'upsell_products_max_items';
-    const UPSELL_PRODUCTS_MAX_ITEMS_COUNT = 4;
+    const UPSELL_PRODUCTS_MAX_ITEMS_COUNT = 5;
     const UPSELL_PRODUCTS_MIN_ITEMS = 'upsell_products_min_items';
     const UPSELL_PRODUCTS_MIN_ITEMS_COUNT = 3;
     const UPSELL_PRODUCTS_SHOW_ADD_BUTTON = 'upsell_products_show_add_button';
@@ -50,11 +50,14 @@ class Configuration implements ConfigurationInterface
     const DEFAULT_CRON_SCHEDULE = '0 * * * *';
     const PRODUCT_PROMOTION_SHOW_ON_VIEW = 'product_promotion_show_on_product_view';
     const PRODUCT_COLLECTION_MASS_ACTION_LIMITATION = 'product_collections_mass_action_limitation';
+
     const NEW_ARRIVALS_PRODUCT_SEGMENT_ID = 'new_arrivals_products_segment_id';
     const NEW_ARRIVALS_MAX_ITEMS = 'new_arrivals_max_items';
     const NEW_ARRIVALS_MIN_ITEMS = 'new_arrivals_min_items';
     const NEW_ARRIVALS_USE_SLIDER_ON_MOBILE = 'new_arrivals_use_slider_on_mobile';
+
     const IMAGE_PREVIEW_ON_PRODUCT_LISTING_ENABLED = 'image_preview_on_product_listing_enabled';
+    const POPUP_GALLERY_ON_PRODUCT_VIEW = 'popup_gallery_on_product_view';
     const MATRIX_FORM_ON_PRODUCT_VIEW = 'matrix_form_on_product_view';
     const MATRIX_FORM_ON_PRODUCT_LISTING = 'matrix_form_on_product_listing';
     const MATRIX_FORM_NONE = 'none';
@@ -156,6 +159,7 @@ class Configuration implements ConfigurationInterface
                 static::NEW_ARRIVALS_MIN_ITEMS => ['type' => 'integer', 'value' => 3],
                 static::NEW_ARRIVALS_USE_SLIDER_ON_MOBILE => ['type' => 'boolean', 'value' => false],
                 static::IMAGE_PREVIEW_ON_PRODUCT_LISTING_ENABLED => ['type' => 'boolean', 'value' => true],
+                static::POPUP_GALLERY_ON_PRODUCT_VIEW => ['type' => 'boolean', 'value' => true],
                 static::GUEST_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => false],
                 static::MATRIX_FORM_ON_PRODUCT_VIEW => [
                     'type' => 'string',

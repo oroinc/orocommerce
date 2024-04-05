@@ -9,13 +9,14 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\TestCase;
 
-class ContentVariantTest extends \PHPUnit\Framework\TestCase
+class ContentVariantTest extends TestCase
 {
     use EntityTrait;
     use EntityTestCaseTrait;
 
-    public function testAccessors()
+    public function testAccessors(): void
     {
         $this->assertPropertyAccessors(new ContentVariant(), [
             ['type', 'productPage'],
@@ -23,6 +24,7 @@ class ContentVariantTest extends \PHPUnit\Framework\TestCase
             ['node', new ContentNode()],
             ['default', true],
             ['overrideVariantConfiguration', true],
+            ['doNotRenderTitle', true],
             ['expanded', true],
         ]);
 
@@ -32,7 +34,7 @@ class ContentVariantTest extends \PHPUnit\Framework\TestCase
         ]);
     }
 
-    public function testGetLocalizedSlug()
+    public function testGetLocalizedSlug(): void
     {
         $variant = new ContentVariant();
         $defaultSlug = new Slug();

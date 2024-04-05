@@ -1,41 +1,49 @@
 /* @theme: default; */
 
 .checkout {
-    padding: $checkout-padding;
+    &__container {
+        display: grid;
 
-    border-radius: $checkout-border-radius;
+        &--steps-page {
+            margin-top: spacing('lg');
+            gap: spacing('lg');
+            grid-template-columns: 1fr 280px;
+        }
+    }
 
-    background: $checkout-background-color;
+    &__content {
+        flex-grow: 1;
+    }
+
+    &__content-main {
+        display: flex;
+        flex-direction: column;
+        gap: spacing('lg');
+        flex-grow: 1;
+    }
+
+    &__content-main-top {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: spacing('lg');
+    }
+
+    &__steps {
+        padding: spacing('base');
+        border-radius: $border-radius;
+
+        background-color: $checkout-steps-background-color;
+    }
 
     &--no-background {
         background: none;
         padding: 0;
     }
 
-    &__head {
-        position: $checkout-head-position;
+    &__container--steps-page &__body {
         display: flex;
-        width: 100%;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        margin: $checkout-head-margin;
-    }
-
-    &__title {
-        &-icon {
-            margin-right: $checkout-title-badge-offset;
-
-            @include badge($checkout-title-badge-size, $checkout-title-badge-font-size);
-        }
-
-        &-text {
-            vertical-align: middle;
-
-            + * {
-                margin: 0 0 0 spacing('sm');
-            }
-        }
+        flex-direction: column;
+        gap: spacing('base');
     }
 
     &-form {
@@ -49,20 +57,7 @@
     }
 
     &__footer {
-        display: flex;
-        flex-direction: row;
-
         &-col {
-            &:first-child {
-                flex-grow: 1;
-                padding-right: spacing('sm');
-            }
-
-            &:last-child {
-                padding-left: spacing('sm');
-                margin-left: auto;
-            }
-
             &:empty {
                 display: none;
             }
@@ -70,18 +65,45 @@
     }
 
     &__botton-container {
-        margin-top: spacing('base');
         display: flex;
         align-items: center;
         flex-wrap: wrap;
-        gap: 0 16px;
+        gap: spacing('xl');
+    }
+
+    .required-label {
+        margin: 0;
+    }
+}
+
+.responsive-checkout-layout {
+    .page-title-wrapper {
+        display: flex;
+        align-items: center;
+
+        .checkout__require-label {
+            margin-inline-start: auto;
+        }
+    }
+}
+
+@include breakpoint('desktop-small') {
+    .checkout {
+        &__sidebar {
+            position: sticky;
+            top: calc(var(--sticky-page-header-element-offset-top, 0) + #{spacing('xl')});
+            height: max-content;
+        }
     }
 }
 
 @include breakpoint('tablet') {
     .checkout {
-        padding: $checkout-tablet-padding;
-        border-radius: $checkout-tablet-border-radius;
+        &__container {
+            &--steps-page {
+                grid-template-columns: 1fr;
+            }
+        }
 
         &--no-background {
             background: none;
@@ -94,6 +116,14 @@
                 left: $checkout-submit-tooltip-left;
                 right: $checkout-submit-tooltip-right;
             }
+        }
+
+        &__container--steps-page &__sidebar {
+            position: sticky;
+            bottom: 0;
+
+            margin: 0 -#{spacing('base')};
+            border-top: $checkout-tablet-sidebar-border-top;
         }
 
         &__footer {
@@ -119,6 +149,35 @@
     .checkout {
         &__submit-btn {
             width: $checkout-submit-btn-tablet-small-width;
+        }
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .checkout {
+        display: grid;
+        gap: spacing('md');
+
+        &__container--steps-page {
+            position: relative;
+
+            .checkout__require-label {
+                position: absolute;
+                top: -#{spacing('huge')};
+                right: 0;
+
+                text-align: right;
+            }
+        }
+
+        &__content-main-top {
+            grid-template-columns: 1fr;
+            gap: spacing('md');
+        }
+
+        &__steps {
+            padding: spacing('xs') 0 spacing('sm');
+            background-color: transparent;
         }
     }
 }

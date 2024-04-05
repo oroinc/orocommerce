@@ -19,9 +19,6 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
 {
     use MessageQueueExtension;
 
-    /**
-     * {@inheritDoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();

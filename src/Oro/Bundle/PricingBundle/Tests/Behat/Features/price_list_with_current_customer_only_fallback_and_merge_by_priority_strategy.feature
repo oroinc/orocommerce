@@ -21,7 +21,7 @@ Feature: Price List With Current Customer Only fallback And Merge By Priority St
     When I type "SKU123" in "search"
     And I click "Search Button"
     Then I should see "400-Watt Bulb Work Light" for "SKU123" product
-    And I should see "Your Price: $2.00 / item" for "SKU123" product
+    And I should see "$2.00" for "SKU123" product
 
   Scenario: Switch Pricing Strategy to Merge by priority
     Given I proceed as the Admin

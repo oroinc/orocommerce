@@ -3,33 +3,36 @@
 .quick-order-add {
     &__subtotal {
         grid-area: subtotal;
-        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: spacing('sm');
+        padding-right: $quick-order-add-subtotal-offset;
     }
 
     &__subtotal-input {
-        text-align: center;
-    }
+        width: 100%;
+        text-align: right;
+        background-color: transparent;
+        border-color: transparent;
+        font-size: 13px;
 
-    &__subtotal,
-    &__subtotal-input {
-        &.input {
-            opacity: 1;
-            padding-right: $quick-order-add-input-offset;
+        + .theme-icon {
+            display: none;
+        }
+
+        &.hidden + .theme-icon {
+            display: block;
         }
     }
 
-    .product-tier-prices {
-        position: absolute;
-        top: 1px;
-        bottom: 1px;
-        right: 1px;
-    }
-}
-
-@include breakpoint('mobile-big') {
-    .quick-order-add {
-        &__subtotal-input {
-            text-align: left;
-        }
+    &-form__title {
+        display: flex;
+        align-items: center;
+        gap: spacing('sm');
+        margin-bottom: spacing('base');
+        font-size: $quick-order-add-title-font-size;
+        line-height: $quick-order-add-title-line-height;
+        font-weight: font-weight('semi-bold');
     }
 }

@@ -82,7 +82,7 @@ layout:
             id: __datagrid
             optionName: grid_render_parameters.toolbarOptions.itemsCounter
             optionValue:
-                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shopping_list_line_items'
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shoppingListLineItemsPlural'
 
         - '@setOption':
             id: __datagrid

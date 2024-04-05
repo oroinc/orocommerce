@@ -9,7 +9,9 @@ operations:
         button_options:
             icon: fa-file-text
             class: icons-holder-text no-hash btn
-
+        preconditions:
+            '@and':
+                - '@feature_enabled': 'rfp'
         actions:
             - '@call_service_method':
                 service: oro_rfp.service.request_to_quote_data_storage
@@ -20,6 +22,29 @@ operations:
                     route: oro_sale_quote_create
                     route_parameters: {'storage': true}
 
+    oro_rfp_create_order:
+        label: oro.rfp.btn.create_order
+        applications: [default]
+        routes:
+            - oro_rfp_request_view
+        acl_resource: oro_order_create
+        order: 30
+        button_options:
+            icon: fa-briefcase
+            class: icons-holder-text no-hash btn
+        preconditions:
+            '@and':
+                - '@feature_enabled': 'rfp'
+        actions:
+            - '@call_service_method':
+                  service: oro_rfp.service.request_to_order_data_storage
+                  method: saveToStorage
+                  method_parameters: [$.data]
+            - '@redirect':
+                  parameters:
+                      route: oro_order_create
+                      route_parameters: {'storage': true}
+
     oro_rfp_frontend_request_a_quote:
         label: oro.rfp.btn.add_to_rfp
         applications: [commerce]
@@ -28,8 +53,9 @@ operations:
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
         order: 10
         button_options:
-            icon: fa-tag
             template: '@OroAction/Operation/ajax-button.html.twig'
+            class: 'btn--text btn--outlined btn--no-padding'
+            icon: fa-tag
             data:
                 component_name: oro_rfp_quick_add_processor
             page_component_module: oroproduct/js/app/components/quick-add-form-button-component
@@ -94,7 +120,10 @@ operations:
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
         button_options:
             class: btn--outlined
-            icon: fa-plus fa--small
+            icon: fa-plus
+        frontend_options:
+            options:
+                icon: plus
         order: 10
         actions:
             - '@redirect':
@@ -109,7 +138,7 @@ operations:
         acl_resource: [EDIT, $.data]
         order: 10
         button_options:
-            icon: fa-pencil
+            icon: pencil
         actions:
             - '@redirect':
                 parameters:

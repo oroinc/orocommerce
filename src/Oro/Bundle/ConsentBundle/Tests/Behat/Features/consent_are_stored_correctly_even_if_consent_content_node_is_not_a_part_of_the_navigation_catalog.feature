@@ -27,10 +27,11 @@ Feature: Consent are stored correctly even if consent content node is not a part
     When I click "Save and Close"
     Then I should see "Web Catalog has been saved" flash message
     And I click "Edit Content Tree"
-    And I click "Add System Page"
+    And I click on "Show Variants Dropdown"
+    And I click "Add Landing Page"
     And I fill "Content Node Form" with:
-      | Titles            | Home page                               |
-      | System Page Route | Oro Frontend Root (Welcome - Home page) |
+      | Titles       | Home page |
+      | Landing Page | Homepage  |
     When I save form
     Then I click "Create Content Node"
     And I click on "Show Variants Dropdown"
@@ -85,7 +86,6 @@ Feature: Consent are stored correctly even if consent content node is not a part
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list ShoppingList1
-    And I wait line items are initialized
     And I click "More Actions"
     And I click "Request Quote"
     And I click on "Consent Link" with title "Collecting and storing personal data"
@@ -117,7 +117,6 @@ Feature: Consent are stored correctly even if consent content node is not a part
     Given I proceed as the User
     And I signed in as MarleneSBradley@example.com on the store frontend
     When I open page with shopping list ShoppingList2
-    And I wait line items are initialized
     And I click "More Actions"
     And I click "Request Quote"
     And I click on "Consent Link" with title "Collecting and storing personal data"

@@ -1,7 +1,8 @@
 /* @theme: default; */
 
 $product-price-hint-display: flex !default;
-$product-price-hint-align-items: start !default;
+$product-price-hint-align-items: center !default;
 
-$product-price-hint-prices-display: grid !default;
-$product-price-hint-prices-gap: spacing('xs') !default;
+$product-price-hint-prices-display: flex !default;
+$product-price-hint-prices-align-items: flex-end !default;
+$product-price-hint-prices-gap: spacing('sm') !default;

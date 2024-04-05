@@ -4,6 +4,8 @@
 @fixture-OroProductBundle:top_selling_items_block_localization.yml
 @regression
 
+# Unskip and apply after adding Top Selling Items content block
+@skip
 Feature: Top Selling Items Block Localization
   In order to have localized product names in "Top Selling Items" Block
   As a User

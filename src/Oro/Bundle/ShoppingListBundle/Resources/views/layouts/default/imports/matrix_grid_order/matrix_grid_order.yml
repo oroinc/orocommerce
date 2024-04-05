@@ -11,7 +11,7 @@ layout:
         - '@add':
             id: __matrix_form_clear_button
             blockType: button
-            parentId: __totals
+            parentId: __form_summary
             prepend: true
             options:
                 icon: times

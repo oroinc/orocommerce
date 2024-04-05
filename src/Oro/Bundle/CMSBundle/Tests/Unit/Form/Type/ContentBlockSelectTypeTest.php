@@ -30,6 +30,7 @@ class ContentBlockSelectTypeTest extends TestCase
                     'class' => ContentBlock::class,
                     'expanded' => false,
                     'multiple' => false,
+                    'placeholder' => 'oro.cms.contentblock.choose_content_block.label',
                     'choice_translation_domain' => false,
                     'choice_value' => 'id',
                     'choice_label' => fn () => '',

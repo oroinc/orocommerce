@@ -26,7 +26,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
     use EnabledPaymentMethodIdentifierTrait;
     use ConfigManagerAwareTestTrait;
 
-    private const CHECKOUT_STEP_LABEL = "//h2[contains(@class, 'checkout__title')]";
+    private const CHECKOUT_STEP_LABEL = "//h5[contains(@class, 'checkout-navigation__title--current')]";
     private const PRODUCT_ERROR_TEXT = 'There is not enough quantity for this product';
 
     private EntityManagerInterface $emFallback;

@@ -37,7 +37,7 @@ Feature: Product kits merge same configurations
       | Title                | Editing "Product Kit 1" in "Product Kit Shopping List" |
       | Kit Item 1 Name      | Barcode Scanner                                        |
       | Kit Item 2 Name      | Base Unit                                              |
-      | Price                | Price as configured: $268.00                           |
+      | Price                | Total: $268.00                           |
       | Kit Item 1 Product 1 | simple-product-03 Product 3 $31.00                     |
       | Kit Item 1 Product 2 | None                                                   |
       | Kit Item 2 Product 1 | simple-product-01 Product 1 $31.00                     |
@@ -52,7 +52,7 @@ Feature: Product kits merge same configurations
     And I fill "Product Kit Line Item Form" with:
       | Notes | Product Kit 1 Line Item 1 Notes Updated |
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $268.00 |
+      | Price | Total: $268.00 |
     When I click "Product Kit Dialog Shopping List Dropdown"
     Then I should not see "Create New Shopping List" in the "Shopping List Button Group Menu" element
     And I should see "Update Product Kit Shopping List" in the "Shopping List Button Group Menu" element
@@ -66,7 +66,7 @@ Feature: Product kits merge same configurations
       | Title                | Editing "Product Kit 1" in "Product Kit Shopping List" |
       | Kit Item 1 Name      | Barcode Scanner                                        |
       | Kit Item 2 Name      | Base Unit                                              |
-      | Price                | Price as configured: $41.00                            |
+      | Price                | Total: $41.00                            |
       | Kit Item 1 Product 1 | simple-product-03 Product 3 $31.00                     |
       | Kit Item 1 Product 2 | None                                                   |
       | Kit Item 2 Product 1 | simple-product-01 Product 1 $31.00                     |
@@ -85,7 +85,7 @@ Feature: Product kits merge same configurations
       | Kit Item Line Item 2 Quantity | 2                                       |
       | Notes                         | Product Kit 1 Line Item 2 Notes Updated |
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $134.00 |
+      | Price | Total: $134.00 |
     When I click "Product Kit Dialog Shopping List Dropdown"
     Then I should not see "Create New Shopping List" in the "Shopping List Button Group Menu" element
     And I should see "Update Product Kit Shopping List" in the "Shopping List Button Group Menu" element

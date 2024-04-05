@@ -243,4 +243,20 @@ class ImageSlide implements OrganizationAwareInterface, ExtendEntityInterface
 
         return $this;
     }
+
+    /**
+     * Fallback for the old themes support
+     */
+    public function getMainImage(): ?File
+    {
+        return $this->getLargeImage();
+    }
+
+    /**
+     * Fallback for the old themes support
+     */
+    public function getTitle(): ?string
+    {
+        return $this->getAltImageText();
+    }
 }

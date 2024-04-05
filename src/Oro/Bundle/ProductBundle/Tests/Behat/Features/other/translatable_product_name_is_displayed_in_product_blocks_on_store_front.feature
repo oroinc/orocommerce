@@ -8,6 +8,8 @@ Feature: Translatable product name is displayed in product blocks on store front
 
   Scenario: Feature Background
     Given I enable the existing localizations
+    And I add New Arrivals widget before content for "Homepage" page
+    And I add Featured Products widget after content for "Homepage" page
     And I login as administrator
     And I go to Products / Products
     And I click Edit SKU1 in grid
@@ -22,7 +24,7 @@ Feature: Translatable product name is displayed in product blocks on store front
     And click on cat1.jpg in grid
     And I save and close form
 
-  Scenario: Check the product names for Zulu localization
+  Scenario: Check the product names for Zulu localization in the New Arrivals Block
     Given I am on the homepage
     When I select "Zulu" localization
     Then should see the following products in the "New Arrivals Block":
@@ -30,22 +32,29 @@ Feature: Translatable product name is displayed in product blocks on store front
       | SKU1 | Product1_ZU                    |
       | SKU2 | Product2_ZU                    |
       | SKU3 | Product3_ZU                    |
+
+  Scenario: Check the product names for Zulu localization in the Featured Products Block
     And should see the following products in the "Featured Products Block":
       | SKU  | Product Name in Embedded Block |
       | SKU1 | Product1_ZU                    |
       | SKU2 | Product2_ZU                    |
       | SKU3 | Product3_ZU                    |
-    And should see the following products in the "Top Selling Items Block":
-      | SKU  | Product Name in Embedded Block |
-      | SKU1 | Product1_ZU                    |
-    When I open product with sku "SKU1" on the store frontend
-    Then should see the following products in the "Related Products Block":
-      | SKU  | Product Name in Embedded Block |
-      | SKU1 | Product1_ZU                    |
-      | SKU2 | Product2_ZU                    |
-      | SKU3 | Product3_ZU                    |
-    And should see the following products in the "Upsell Products Block":
-      | SKU  | Product Name in Embedded Block |
-      | SKU1 | Product1_ZU                    |
-      | SKU2 | Product2_ZU                    |
-      | SKU3 | Product3_ZU                    |
+
+  # Todo: Unskip and apply after adding Top Selling Items content block
+#  Scenario: Check the product names for Zulu localization in the Top Selling Items Block
+#    And should see the following products in the "Top Selling Items Block":
+#      | SKU  | Product Name in Embedded Block |
+#      | SKU1 | Product1_ZU                    |
+#
+#  Scenario: Check the product names for Zulu localization in the Related and Upsell Products Blocks
+#    When I open product with sku "SKU1" on the store frontend
+#    Then should see the following products in the "Related Products Block":
+#      | SKU  | Product Name in Embedded Block |
+#      | SKU1 | Product1_ZU                    |
+#      | SKU2 | Product2_ZU                    |
+#      | SKU3 | Product3_ZU                    |
+#    And should see the following products in the "Upsell Products Block":
+#      | SKU  | Product Name in Embedded Block |
+#      | SKU1 | Product1_ZU                    |
+#      | SKU2 | Product2_ZU                    |
+#      | SKU3 | Product3_ZU                    |

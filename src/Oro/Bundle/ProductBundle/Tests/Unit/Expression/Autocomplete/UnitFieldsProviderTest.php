@@ -21,51 +21,53 @@ class UnitFieldsProviderTest extends AbstractFieldsProviderTest
         );
     }
 
-    public function testGetAutocompleteDataNumericOnly()
+    public function testGetDataProviderConfigNumericOnly()
     {
         $this->configureDependencies([], true, true);
 
         $expected = [
-            UnitFieldsProvider::ROOT_ENTITIES_KEY => [
-                'ProductClass' => 'product'
-            ],
-            UnitFieldsProvider::FIELDS_DATA_KEY => [],
+            'fieldsFilterWhitelist' => [],
+            'isRestrictiveWhitelist' => true,
         ];
-        $this->assertEquals($expected, $this->provider->getAutocompleteData(true));
+        $this->assertEquals($expected, $this->provider->getDataProviderConfig(true));
     }
 
     /**
      * @dataProvider getFieldsDataProvider
      */
-    public function testGetAutocompleteData(array $fieldsData)
+    public function testGetDataProviderConfig(array $fieldsData)
     {
         $this->configureDependencies($fieldsData, false, true);
 
         $expected = [
-            UnitFieldsProvider::ROOT_ENTITIES_KEY => [
-                'ProductClass' => 'product'
+            'fieldsFilterWhitelist' => [
+                'ProductClass' => [
+                    'unit' => true,
+                    'stock' => true,
+                ],
+                'StockClass' => [
+                    'unit' => true,
+                ],
             ],
-            UnitFieldsProvider::FIELDS_DATA_KEY => [
+            'isRestrictiveWhitelist' => true,
+            'fieldsDataUpdate' => [
                 'ProductClass' => [
                     'unit' => [
-                        'label' => 'unit.label TRANS',
-                        'type' => 'string'
+                        'type' => 'string',
+                        'relationType' => null,
+                        'relatedEntityName' => ''
                     ],
-                    'stock' => [
-                        'label' => 'stock.label TRANS',
-                        'relation_alias' => 'StockClass',
-                        'type' => 'relation'
-                    ]
                 ],
                 'StockClass' => [
                     'unit' => [
-                        'label' => 'unit.label TRANS',
-                        'type' => 'string'
-                    ]
-                ]
+                        'type' => 'string',
+                        'relationType' => null,
+                        'relatedEntityName' => ''
+                    ],
+                ],
             ],
         ];
-        $this->assertEquals($expected, $this->provider->getAutocompleteData());
+        $this->assertEquals($expected, $this->provider->getDataProviderConfig());
     }
 
     /**

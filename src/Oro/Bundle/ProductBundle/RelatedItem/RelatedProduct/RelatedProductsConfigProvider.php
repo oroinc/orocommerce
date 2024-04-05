@@ -4,80 +4,71 @@ namespace Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
+use Oro\Bundle\ProductBundle\Provider\ProductListBlockConfigInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 
 /**
  * The configuration provider for related products.
  */
-class RelatedProductsConfigProvider implements RelatedItemConfigProviderInterface
+class RelatedProductsConfigProvider implements
+    RelatedItemConfigProviderInterface,
+    ProductListBlockConfigInterface
 {
-    private ConfigManager $configManager;
-
-    public function __construct(ConfigManager $configManager)
+    public function __construct(private ConfigManager $configManager)
     {
-        $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_ENABLED));
+        return $this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::RELATED_PRODUCTS_ENABLED)
+        );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getLimit()
+    public function getLimit(): int
     {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MAX_NUMBER_OF_RELATED_PRODUCTS));
+        return (int)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::MAX_NUMBER_OF_RELATED_PRODUCTS)
+        );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isBidirectional()
+    public function isBidirectional(): bool
     {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_BIDIRECTIONAL));
+        return (bool)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::RELATED_PRODUCTS_BIDIRECTIONAL),
+        );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMinimumItems()
+    public function getMinimumItems(): int
     {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_MIN_ITEMS));
+        return (int)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::RELATED_PRODUCTS_MIN_ITEMS)
+        );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMaximumItems()
+    public function getMaximumItems(): int
     {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_MAX_ITEMS));
+        return (int)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::RELATED_PRODUCTS_MAX_ITEMS)
+        );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isSliderEnabledOnMobile()
+    public function isSliderEnabledOnMobile(): bool
     {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_USE_SLIDER_ON_MOBILE));
+        return (bool)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::RELATED_PRODUCTS_USE_SLIDER_ON_MOBILE)
+        );
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isAddButtonVisible()
+    public function isAddButtonVisible(): bool
     {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_SHOW_ADD_BUTTON));
+        return (bool)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::RELATED_PRODUCTS_SHOW_ADD_BUTTON)
+        );
+    }
+
+    public function getProductListType(): string
+    {
+        return 'related_products';
     }
 }

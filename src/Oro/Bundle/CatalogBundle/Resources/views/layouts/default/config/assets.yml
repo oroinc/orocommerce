@@ -2,14 +2,11 @@ styles:
     inputs:
         - 'bundles/orocatalog/default/scss/variables/category-title-config.scss'
         - 'bundles/orocatalog/default/scss/variables/category-picture-config.scss'
-        - 'bundles/orocatalog/default/scss/variables/featured-categories-config.scss'
-        - 'bundles/orocatalog/default/scss/variables/featured-category-config.scss'
-        - 'bundles/orocatalog/default/scss/variables/category-long-description-config.scss'
+        - 'bundles/orocatalog/default/scss/variables/category-content-config.scss'
+
         - 'bundles/orocatalog/default/scss/variables/categories-config.scss'
 
         - 'bundles/orocatalog/default/scss/components/category-picture.scss'
         - 'bundles/orocatalog/default/scss/components/category-title.scss'
-        - 'bundles/orocatalog/default/scss/components/featured-categories.scss'
-        - 'bundles/orocatalog/default/scss/components/featured-category.scss'
-        - 'bundles/orocatalog/default/scss/components/category-long-description.scss'
+        - 'bundles/orocatalog/default/scss/components/category-content.scss'
         - 'bundles/orocatalog/default/scss/components/categories.scss'

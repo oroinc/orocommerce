@@ -1,6 +1,7 @@
 {% block __oro_checkout_sidebar__checkout_sidebar_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% if currentStep.name not in excludedSteps %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-sidebar"}) %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout__steps"}) %}
     <div {{ block('block_attributes') }}
         data-layout="separate"
         data-role="checkout-sidebar"
@@ -39,7 +40,7 @@
                     {% if isCurrent %}
                         {% set isComplete = false %}
                     {% endif %}
-                        <li class="checkout-navigation__step {{ isComplete ? 'checkout-navigation__step--past' : '' }}"
+                        <li class="checkout-navigation__step {{ isComplete ? 'checkout-navigation__step--past' : '' }} {{ isCurrent ? 'checkout-navigation__step--current' : '' }}"
                             data-role="transition-trigger-container" {{ isCurrent ? 'aria-current="step"' : '' }}
                             aria-label="{{ 'oro.checkout.navigation_sidebar.item.aria_label'|trans({
                                 '%step_name%': step.label|trans({},'workflows'),
@@ -56,12 +57,12 @@
                         {% endif %}
                         <span class="checkout-navigation__icon {{ badgeClass }}" data-role="transition-trigger" aria-hidden="true">
                             {% if isComplete %}
-                                <span class="fa-check"></span>
+                                {{ renderIcon.icon({name: 'check', extraClass: 'theme-icon--small'}) }}
                             {% else %}
                                 {{ stepNum }}
                             {% endif %}
                         </span>
-                        <h3 class="checkout-navigation__title">
+                        <h5 class="checkout-navigation__title {{ isCurrent ? 'checkout-navigation__title--current' : '' }}">
                             <span data-role="transition-trigger">{{ step.label|trans({},'workflows') }}</span>
                             {% if isComplete and editTransitions[step.name] is defined and block.step_edit_button is defined %}
                                 {% set editTransitionData = editTransitions[step.name] %}
@@ -72,7 +73,7 @@
                                     }
                                 ) }}
                             {% endif %}
-                        </h3>
+                        </h5>
                         {% set informationBlockId = step.name ~ '_information' %}
                         {% if isComplete and block[informationBlockId] is defined %}
                             <div class="checkout-navigation__content" aria-hidden="true">

@@ -3,13 +3,20 @@
 {% endblock %}
 
 {% block _checkout_form_fields_widget %}
-    {{ block_widget(block) }}
-    {% if form.state_token is defined %}
-        {{ form_row(form.state_token) }}
-    {% endif %}
-    {% if form.customerConsents is defined %}
-        {{ form_row(form.customerConsents) }}
-    {% endif %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " single-page-checkout-view__columns"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+
+        {% if form.state_token is defined %}
+            {{ form_row(form.state_token) }}
+        {% endif %}
+        {% if form.customerConsents is defined %}
+            {{ form_row(form.customerConsents) }}
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block _checkout_view_widget %}
@@ -32,76 +39,16 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
-{% block _single_page_checkout_sticky_panel_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        id: 'single-page-checkout-sticky',
-        '~class': 'single-page-checkout-sticky'
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _single_page_checkout_sticky_titles_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' single-page-checkout-view__sticky-titles'
-    }) %}
-    {% apply spaceless %}
-    <div {{ block('block_attributes') }}>
-        <div class="single-page-checkout-view__sticky-titles-inner">
-            {{ block_widget(block) }}
-        </div>
-    </div>
-    {% endapply %}
-{% endblock %}
-
-{% block _single_page_checkout_sticky_billing_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        'id': 'single-page-checkout-sticky-billing',
-        '~class': ' single-page-checkout-view__sticky-column'
-    }) %}
-    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
-{% endblock %}
-
-{% block _single_page_checkout_sticky_shipping_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        'id': 'single-page-checkout-sticky-shipping',
-        '~class': ' single-page-checkout-view__sticky-column'
-    }) %}
-    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
-{% endblock %}
-
-{% block _single_page_checkout_sticky_summary_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        'id': 'single-page-checkout-sticky-summary',
-        '~class': ' single-page-checkout-view__sticky-column'
-    }) %}
-    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
-{% endblock %}
-
-{% block _single_page_checkout_sticky_totals_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        id: 'single-page-checkout-sticky-totals',
-        '~class': ' single-page-checkout-view__sticky-totals'
-    }) %}
-    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
-{% endblock %}
-
 {% block _checkout_billing_information_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " single-page-checkout-view__column single-page-checkout-view__column--first"
     }) %}
-    <fieldset {{ block('block_attributes') }}>
-        <legend class="single-page-checkout-view__column-header has-offset sticky sticky--top" data-sticky>
-            <span class="single-page-checkout-view__title">
-                <span class="single-page-checkout-view__badge" aria-hidden="true">1</span>
-                <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.billing_information'|trans }}</span>
-            </span>
-        </legend>
+    <div {{ block('block_attributes') }}>
+        <h3>{{ 'oro.checkout.billing_information'|trans }}</h3>
         <div class="single-page-checkout-view__column-inner">
             {{ block_widget(block) }}
         </div>
-    </fieldset>
+    </div>
 {% endblock %}
 
 {% block _shipping_address_wrapper_widget %}
@@ -127,17 +74,12 @@
 
 {% block _checkout_shipping_information_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view__column"}) %}
-    <fieldset {{ block('block_attributes') }}>
-        <legend class="single-page-checkout-view__column-header has-offset sticky sticky--top" data-sticky>
-            <span class="single-page-checkout-view__title">
-                <span class="single-page-checkout-view__badge" aria-hidden="true">2</span>
-                <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.shipping_information'|trans }}</span>
-            </span>
-        </legend>
+    <div {{ block('block_attributes') }}>
+        <h3>{{ 'oro.checkout.shipping_information'|trans }}</h3>
         <div class="single-page-checkout-view__column-inner">
             {{ block_widget(block) }}
         </div>
-    </fieldset>
+    </div>
 {% endblock %}
 
 {% block _checkout_order_summary_header_widget %}
@@ -149,40 +91,35 @@
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view__column single-page-checkout-view__column--extended"}) %}
-    <fieldset {{ block('block_attributes') }}>
+    {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view--summary"}) %}
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </fieldset>
+    </div>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_header_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " single-page-checkout-view__column-header sticky sticky--top",
-        'data-sticky': ''
+        '~class': " single-page-checkout-view__column-header"
     }) %}
 
-    <legend {{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </legend>
+    </div>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': "single-page-checkout-view__title"
     }) %}
-    <span {{ block('block_attributes') }}>
+    <h3 {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-         <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.order_summary.label'|trans }}</span>
-    </span>
+        {{ 'oro.checkout.order_summary.label'|trans }}
+    </h3>
 
 {% endblock %}
 
 {% block _checkout_summary_widget %}
      {{ block_widget(block) }}
-{% endblock %}
-
-{% block _checkout_summary_badge_widget %}
-    <span class="single-page-checkout-view__badge" aria-hidden="true">3</span>
 {% endblock %}
 
 {% block _shipping_address_widget -%}
@@ -274,9 +211,9 @@
 
 {% block _checkout_summary_additional_options_widget -%}
     <div class="order-review-options__wrapper">
-        <h4 class="heading-bottom-offset">{{ "oro.checkout.workflow.order_options.label"|trans }}</h4>
+        <h3 class="heading-bottom-offset">{{ "oro.checkout.workflow.order_options.label"|trans }}</h3>
         <div class="order-review-options grid">
-            <div class="grid-col-6 grid-col-mobile-landscape-12">
+            <div class="grid-col-12">
                 {% set poNumberId = 'oro_workflow_transition_po_number-uid-'|uniqid %}
                 <label class=" label label--full" for="{{ poNumberId }}">{{ "oro.checkout.order_review.po_number"|trans }}</label>
                 {{ form_widget(form.po_number, { 'id': poNumberId, 'attr': {
@@ -354,12 +291,12 @@
         {% import '@OroCheckout/layouts/default/layout.html.twig' as _layout %}
         <div class="order-checkout-widget">
             {% if transitionData.isAllowed %}
-                <button type="submit" class="btn btn--size-small btn--outlined btn--block checkout__submit-btn">
+                <button type="submit" class="btn btn--full checkout__submit-btn">
                     {{- transitionData.transition.label|trans({},'workflows') -}}
                 </button>
             {% else %}
                 <div {{- _layout.conditionMessages(transitionData) -}}>
-                    <button class="btn btn--size-small btn--outlined btn--block btn--disabled checkout__submit-btn" disabled="disabled">
+                    <button class="btn btn--full btn--disabled checkout__submit-btn" disabled="disabled">
                         {{- transitionData.transition.label|trans({},'workflows') -}}
                     </button>
                 </div>
@@ -419,4 +356,60 @@
             </ul>
         </div>
     {% endif %}
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_totals_main_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " order-checkout-widget__container"
+    }) %}
+
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_footer_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% set collapseId = 'checkout-collapse-'|uniqid %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout__footer",
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    viewport: 'tablet',
+                    moveTo: '.single-page-checkout-view'
+                }
+            ]
+        }
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <button class="btn btn--icon btn--circle btn--size-small checkout__footer-toggle {{ isMobileVersion() ? 'collapsed' : '' }}" type="button" data-toggle="collapse" data-target="#{{ collapseId }}" aria-expanded="{{ isMobileVersion() ? 'false' : 'true' }}" aria-controls="{{ collapseId }}">
+            {{ renderIcon.icon({name: 'chevron-up'}) }}
+        </button>
+        <div id="{{ collapseId }}" class="checkout__footer-collapse {{ isMobileVersion() ? '' : 'show' }}">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_content_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout__content"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' checkout__container',
+        'data-layout': 'separate',
+        'data-role': 'checkout-content',
+        'data-page-component-view': 'orocheckout/js/app/views/checkout-inner-content-view',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}

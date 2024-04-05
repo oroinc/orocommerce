@@ -20,6 +20,7 @@ oro_behat_extension:
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
+        - Oro\Bundle\WebsiteBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroConsentBundle/Tests/Behat/Features'
 

@@ -9,19 +9,26 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
+use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\Page as PageStub;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
+use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\DataCollector\Proxy\ResolvedTypeDataCollectorProxy;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
+use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Forms;
@@ -42,11 +49,9 @@ class PageTypeTest extends FormIntegrationTestCase
 
     private const PAGE_ID = 7;
 
-    /** @var UrlGeneratorInterface|MockObject */
-    private $urlGenerator;
+    private UrlGeneratorInterface|MockObject $urlGenerator;
 
-    /** @var PageType */
-    private $type;
+    private PageType $type;
 
     protected function setUp(): void
     {
@@ -65,9 +70,6 @@ class PageTypeTest extends FormIntegrationTestCase
             ->getFormFactory();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getExtensions(): array
     {
         $metaData = $this->createMock(ClassMetadata::class);
@@ -103,20 +105,23 @@ class PageTypeTest extends FormIntegrationTestCase
                         $confirmSlugChangeFormHelper
                     ),
                 ],
-                []
+                [
+                    FormType::class => [new TooltipFormExtensionStub($this)]
+                ]
             )
         ];
     }
 
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
         $form = $this->factory->create(PageType::class);
         $this->assertTrue($form->has('titles'));
+        $this->assertTrue($form->has('createUrlSlug'));
         $this->assertTrue($form->has('content'));
         $this->assertTrue($form->has('slugPrototypesWithRedirect'));
     }
 
-    public function testConfigureOptions()
+    public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
@@ -126,7 +131,7 @@ class PageTypeTest extends FormIntegrationTestCase
         $this->type->configureOptions($resolver);
     }
 
-    public function testGetBlockPrefix()
+    public function testGetBlockPrefix(): void
     {
         $this->assertEquals(PageType::NAME, $this->type->getBlockPrefix());
     }
@@ -134,7 +139,7 @@ class PageTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider submitDataProviderNew
      */
-    public function testSubmitNew(mixed $submittedData, mixed $expectedData)
+    public function testSubmitNew(mixed $submittedData, mixed $expectedData): void
     {
         $defaultData = new Page();
 
@@ -161,10 +166,18 @@ class PageTypeTest extends FormIntegrationTestCase
         $pageWithoutRedirect->setSlugPrototypesWithRedirect(clone $page->getSlugPrototypesWithRedirect());
         $pageWithoutRedirect->getSlugPrototypesWithRedirect()->setCreateRedirect(false);
 
+        $pageWithoutUrlSlug = new Page();
+        $pageWithoutUrlSlug->addTitle((new LocalizedFallbackValue())->setString('Page without url slug'));
+        $pageWithoutUrlSlug->setContent('Page without url slug content');
+        $pageWithoutUrlSlug->setSlugPrototypesWithRedirect(
+            new SlugPrototypesWithRedirect(new ArrayCollection([]), false)
+        );
+
         return [
             'new page with create redirect' => [
                 'submittedData' => [
                     'titles' => [['string' => 'First test page']],
+                    'createUrlSlug' => true,
                     'content' => 'Page content',
                     'slugPrototypesWithRedirect' => [
                         'slugPrototypes' => [['string' => 'slug']],
@@ -176,6 +189,7 @@ class PageTypeTest extends FormIntegrationTestCase
             'new page without create redirect' => [
                 'submittedData' => [
                     'titles' => [['string' => 'First test page']],
+                    'createUrlSlug' => true,
                     'content' => 'Page content',
                     'slugPrototypesWithRedirect' => [
                         'slugPrototypes' => [['string' => 'slug']],
@@ -184,13 +198,21 @@ class PageTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => $pageWithoutRedirect,
             ],
+            'new page without url slug' => [
+                'submittedData' => [
+                    'titles' => [['string' => 'Page without url slug']],
+                    'createUrlSlug' => false,
+                    'content' => 'Page without url slug content',
+                ],
+                'expectedData' => $pageWithoutUrlSlug,
+            ],
         ];
     }
 
     /**
      * @dataProvider submitDataProviderUpdate
      */
-    public function testSubmitUpdate(mixed $defaultData, mixed $submittedData, mixed $expectedData)
+    public function testSubmitUpdate(mixed $defaultData, mixed $submittedData, mixed $expectedData): void
     {
         $existingPage = new Page();
         $existingPage->addTitle((new LocalizedFallbackValue())->setString($defaultData['titles'][0]['string']));
@@ -222,15 +244,24 @@ class PageTypeTest extends FormIntegrationTestCase
         $pageWithoutRedirect->setSlugPrototypesWithRedirect(clone $page->getSlugPrototypesWithRedirect());
         $pageWithoutRedirect->getSlugPrototypesWithRedirect()->setCreateRedirect(false);
 
+        $pageWithoutUrlSlug = new Page();
+        $pageWithoutUrlSlug->addTitle((new LocalizedFallbackValue())->setString('Updated page without url slug'));
+        $pageWithoutUrlSlug->setContent('Updated page without content');
+        $pageWithoutUrlSlug->setSlugPrototypesWithRedirect(
+            new SlugPrototypesWithRedirect(new ArrayCollection([]), false)
+        );
+
         return [
             'update page' => [
                 'defaultData' => [
                     'titles' => [['string' => 'First test page']],
+                    'createUrlSlug' => true,
                     'content' => 'Page content',
                     'slugs'  => [['string' => 'slug']],
                 ],
                 'submittedData' => [
                     'titles' => [['string' => 'Updated first test page']],
+                    'createUrlSlug' => true,
                     'content' => 'Updated page content',
                     'slugPrototypesWithRedirect' => [
                         'slugPrototypes' => [['string' => 'slug-updated']],
@@ -242,11 +273,13 @@ class PageTypeTest extends FormIntegrationTestCase
             'update page without redirect' => [
                 'defaultData' => [
                     'titles' => [['string' => 'First test page']],
+                    'createUrlSlug' => true,
                     'content' => 'Page content',
                     'slugs'  => [['string' => 'slug']],
                 ],
                 'submittedData' => [
                     'titles' => [['string' => 'Updated first test page']],
+                    'createUrlSlug' => true,
                     'content' => 'Updated page content',
                     'slugPrototypesWithRedirect' => [
                         'slugPrototypes' => [['string' => 'slug-updated']],
@@ -255,10 +288,41 @@ class PageTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => $pageWithoutRedirect,
             ],
+            'update page without url slug' => [
+                'defaultData' => [
+                    'titles' => [['string' => 'First test page']],
+                    'createUrlSlug' => false,
+                    'content' => 'Page content',
+                ],
+                'submittedData' => [
+                    'titles' => [['string' => 'Updated first test page']],
+                    'createUrlSlug' => true,
+                    'content' => 'Updated page content',
+                    'slugPrototypesWithRedirect' => [
+                        'slugPrototypes' => [['string' => 'slug-updated']],
+                        'createRedirect' => false,
+                    ],
+                ],
+                'expectedData' => $pageWithoutRedirect,
+            ],
+            'update page from page with url slug to page without url slug' => [
+                'defaultData' => [
+                    'titles' => [['string' => 'Updated page without url slug']],
+                    'createUrlSlug' => true,
+                    'content' => 'Updated page without content',
+                    'slugs'  => [['string' => 'slug']],
+                ],
+                'submittedData' => [
+                    'titles' => [['string' => 'Updated page without url slug']],
+                    'createUrlSlug' => false,
+                    'content' => 'Updated page without content',
+                ],
+                'expectedData' => $pageWithoutUrlSlug,
+            ],
         ];
     }
 
-    public function testSubmitUpdateWithDraft()
+    public function testSubmitUpdateWithDraft(): void
     {
         $existingPage = new Page();
         $existingPage->setDraftUuid('some_uuid');
@@ -270,6 +334,7 @@ class PageTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(PageType::class, $existingPage, []);
         $form->submit([
             'titles' => [['string' => 'Third test page']],
+            'createUrlSlug' => true,
             'content' => 'Page content',
             'slugPrototypesWithRedirect' => [
                 'slugPrototypes' => [['string' => 'slug']],
@@ -282,7 +347,7 @@ class PageTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedPage, $form->getData());
     }
 
-    public function testGenerateChangedSlugsUrlOnPresetData()
+    public function testGenerateChangedSlugsUrlOnPresetData(): void
     {
         $generatedUrl = '/some/url';
         $this->urlGenerator->expects($this->once())
@@ -298,6 +363,7 @@ class PageTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(PageType::class, $existingData);
         $formView = $form->createView();
 
+        $this->assertTrue($form->get('createUrlSlug')->getData());
         $this->assertArrayHasKey('slugPrototypesWithRedirect', $formView->children);
         $this->assertEquals(
             $generatedUrl,
@@ -306,43 +372,51 @@ class PageTypeTest extends FormIntegrationTestCase
         );
     }
 
-    public function testPreSetDataListener(): void
+    public function testPreSetData(): void
     {
-        $event = $this->createMock(FormEvent::class);
-        $event->expects($this->once())
-            ->method('getData')
-            ->willReturn($page = $this->createMock(Page::class));
+        $form = $this->createMock(FormInterface::class);
 
-        $page->expects($this->atLeastOnce())
-            ->method('getId')
-            ->willReturn($pageId = 1);
+        $event = new FormEvent($form, new PageStub(1));
 
         $this->urlGenerator->expects($this->once())
             ->method('generate')
-            ->with('oro_cms_page_get_changed_urls', ['id' => $pageId])
+            ->with('oro_cms_page_get_changed_urls', ['id' => 1])
             ->willReturn($url = '/sample/url');
 
-        $event->expects($this->once())
-            ->method('getForm')
-            ->willReturn($form = $this->createMock(FormInterface::class));
-
-        $form->expects($this->once())
-            ->method('add')
-            ->with(
-                'slugPrototypesWithRedirect',
-                LocalizedSlugWithRedirectType::class,
-                [
-                    'label' => 'oro.cms.page.slug_prototypes.label',
-                    'required' => false,
-                    'source_field' => 'titles',
-                    'get_changed_slugs_url' => $url
-                ]
+        $type = $this->createMock(ResolvedTypeDataCollectorProxy::class);
+        $type->expects($this->exactly(2))
+            ->method('getInnerType')
+            ->willReturn(
+                new CheckboxType(),
+                new LocalizedSlugWithRedirectType($this->createMock(ConfirmSlugChangeFormHelper::class))
             );
 
-        $this->type->preSetDataListener($event);
+        $config = $this->createMock(FormBuilder::class);
+        $config->expects($this->exactly(2))
+            ->method('getType')
+            ->willReturn($type);
+
+        $childForm = $this->createMock(FormInterface::class);
+        $childForm->expects($this->exactly(2))
+            ->method('getConfig')
+            ->willReturn($config);
+
+        $form->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(['createUrlSlug'], ['slugPrototypesWithRedirect'])
+            ->willReturn($childForm);
+
+        $form->expects($this->exactly(2))
+            ->method('add')
+            ->withConsecutive(
+                ['createUrlSlug', CheckboxType::class, ['data' => false]],
+                ['slugPrototypesWithRedirect', LocalizedSlugWithRedirectType::class, ['get_changed_slugs_url' => $url]]
+            );
+
+        $this->type->preSetData($event);
     }
 
-    public function testPreSetDataListenerWhenNoData(): void
+    public function testPreSetDataWhenNoData(): void
     {
         $event = $this->createMock(FormEvent::class);
         $event->expects($this->once())
@@ -351,10 +425,10 @@ class PageTypeTest extends FormIntegrationTestCase
         $event->expects($this->never())
             ->method('getForm');
 
-        $this->type->preSetDataListener($event);
+        $this->type->preSetData($event);
     }
 
-    public function testPreSetDataListenerWhenNoPageId(): void
+    public function testPreSetDataWhenNoPageId(): void
     {
         $event = $this->createMock(FormEvent::class);
         $event->expects($this->once())
@@ -368,6 +442,6 @@ class PageTypeTest extends FormIntegrationTestCase
         $event->expects($this->never())
             ->method('getForm');
 
-        $this->type->preSetDataListener($event);
+        $this->type->preSetData($event);
     }
 }

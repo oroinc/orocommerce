@@ -97,7 +97,7 @@ Feature: Product kits in shopping list dialog
       | Title                | Editing "Product Kit 1" in "Product Kit Shopping List" |
       | Kit Item 1 Name      | Barcode Scanner                                        |
       | Kit Item 2 Name      | Base Unit                                              |
-      | Price                | Price as configured: $41.00                            |
+      | Price                | Total: $41.00                            |
       | Kit Item 1 Product 1 | simple-product-03 Product 3 $31.00                     |
       | Kit Item 1 Product 2 | None                                                   |
       | Kit Item 2 Product 1 | simple-product-01 Product 1 $31.00                     |
@@ -115,7 +115,7 @@ Feature: Product kits in shopping list dialog
     When I fill "Product Kit Line Item Totals Form" with:
       | Quantity | 2 |
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $82.00 |
+      | Price | Total: $82.00 |
     When I click "Product Kit Dialog Shopping List Dropdown"
     Then I should not see "Create New Shopping List" in the "Shopping List Button Group Menu" element
     And I should see "Update Product Kit Shopping List" in the "Shopping List Button Group Menu" element
@@ -129,7 +129,7 @@ Feature: Product kits in shopping list dialog
       | Title                | Editing "Product Kit 1" in "Product Kit Shopping List" |
       | Kit Item 1 Name      | Barcode Scanner                                        |
       | Kit Item 2 Name      | Base Unit                                              |
-      | Price                | Price as configured: $72.00                            |
+      | Price                | Total: $72.00                            |
       | Kit Item 1 Product 1 | simple-product-03 Product 3 $31.00                     |
       | Kit Item 1 Product 2 | None                                                   |
       | Kit Item 2 Product 1 | simple-product-01 Product 1 $31.00                     |
@@ -149,7 +149,7 @@ Feature: Product kits in shopping list dialog
     And I fill "Product Kit Line Item Form" with:
       | Notes | Product Kit 1 Line Item 3 Notes Updated |
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $41.00 |
+      | Price | Total: $41.00 |
     When I click "Product Kit Dialog Shopping List Dropdown"
     Then I should not see "Create New Shopping List" in the "Shopping List Button Group Menu" element
     And I should see "Update Product Kit Shopping List" in the "Shopping List Button Group Menu" element
@@ -177,7 +177,7 @@ Feature: Product kits in shopping list dialog
       | Title                | Editing "Product Kit 1" in "Product Kit Shopping List" |
       | Kit Item 1 Name      | Barcode Scanner                                        |
       | Kit Item 2 Name      | Base Unit                                              |
-      | Price                | Price as configured: $123.00                           |
+      | Price                | Total: $123.00                           |
       | Kit Item 1 Product 1 | simple-product-03 Product 3 $31.00                     |
       | Kit Item 1 Product 2 | None                                                   |
       | Kit Item 2 Product 1 | simple-product-01 Product 1 $31.00                     |

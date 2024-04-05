@@ -1,0 +1,16 @@
+/* @theme: default; */
+
+$product-kit-dialog-buttonpane-before-background:
+    linear-gradient(
+        0deg,
+        get-color('neutral', 'white-100') -5.13%,
+        rgba(255, 255, 255, 0) 75.64%
+    ) !default;
+$product-kit-dialog-buttonpane-before-content: '' !default;
+$product-kit-dialog-buttonpane-before-height: 39px !default;
+$product-kit-dialog-buttonpane-before-position: absolute !default;
+$product-kit-dialog-buttonpane-before-inset: auto 0 100% !default;
+$product-kit-dialog-buttonpane-before-pointer-events: none !default;
+$product-kit-dialog-buttonpane-before-z-index: z('base') + 2 !default;
+
+$product-kit-dialog-buttonpane-floating-error-message-z-index: z('base') + 2 !default;

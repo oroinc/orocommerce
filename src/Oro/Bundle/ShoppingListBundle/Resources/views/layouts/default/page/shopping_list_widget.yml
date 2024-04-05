@@ -16,7 +16,7 @@ layout:
                     options:
                         shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingListsForWidget()'
                         vars:
-                            showLabel: '=data["system_config_provider"].getValue("oro_frontend.standalone_main_menu")'
+                            showLabel: '=data["theme_configuration"].getThemeConfigurationOption("header-standalone_main_menu")'
                 main_menu_shopping_dropdown:
                     blockType: shopping_lists_awere_container
                     options:

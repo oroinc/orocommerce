@@ -33,7 +33,6 @@ Feature: Guest shopping list merging functionality
   Scenario: Create shopping list as a guest
     Given I am on homepage
     And I should see "0" in the "Shopping List Widget" element
-    And I should see "Shopping List"
     And type "PSKU1" in "search"
     And I click "Search Button"
     And I should see "Product1"
@@ -49,7 +48,7 @@ Feature: Guest shopping list merging functionality
 
   Scenario: Check guest shopping list was added to customer
     Given I signed in as AmandaRCole@example.org on the store frontend in old session
-    And I should see "Shopping List"
+    And I should see "0" in the "Shopping List Widget" element
     And I open shopping list widget
     And I click "Open List"
     And I should see "PSKU1"
@@ -58,7 +57,7 @@ Feature: Guest shopping list merging functionality
 
   Scenario: Create other shopping List as a guest
     Given I am on homepage
-    And I should see "Shopping List"
+    And I should see "0" in the "Shopping List Widget" element
     And type "CONTROL1" in "search"
     And I click "Search Button"
     And I should see "Control Product"
@@ -73,7 +72,7 @@ Feature: Guest shopping list merging functionality
 
   Scenario: Check guest shopping list was merged to existing customer shopping list
     Given I signed in as AmandaRCole@example.org on the store frontend in old session
-    And I should see "Shopping List"
+    And I should see "0" in the "Shopping List Widget" element
     And I open shopping list widget
     And I click "Open List"
     And I should see following grid:

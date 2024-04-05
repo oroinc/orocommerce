@@ -20,9 +20,6 @@ class CustomerGroupProductVisibilityTest extends RestJsonApiTestCase
 {
     use MessageQueueExtension;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         parent::setUp();

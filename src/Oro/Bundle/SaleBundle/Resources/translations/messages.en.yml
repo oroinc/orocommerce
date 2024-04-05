@@ -137,6 +137,9 @@ oro:
                 customer.label: 'Quotes'
                 customer_user.label: 'Quotes'
 
+        emailtemplate:
+            contact_info: 'Sales representative contact info'
+
         system_configuration:
             groups:
                 sale_contact_info.title: 'Contacts'

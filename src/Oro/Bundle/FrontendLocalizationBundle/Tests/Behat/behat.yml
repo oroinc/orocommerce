@@ -31,6 +31,9 @@ oro_behat_extension:
               ToggleMainElementContainer: '.side-panel-currency-localization-info'
               ToggleInternalElementContainer: '[data-control-type="toggle"]'
               ToggleVerticalInternalElementContainer: '[data-control-type="toggle-vertical"]'
+              LocationAboveTheHeaderLocalizationSwitcher: '.localization-switcher'
+              LocationAboveTheHeaderCurrencySwitcher: '.currency-switcher'
+              LocationAboveTheHeaderSingleSwitcherButton: '.currency-localization-control-dropdown'
               SaveButton:
                 locator: '//button[contains(text(), "Save")]'
                 type: 'xpath'

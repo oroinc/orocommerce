@@ -24,8 +24,7 @@ define(function(require) {
             showListedPrice: true,
             showHint: true,
             doUpdateQtyForUnit: true,
-            changeUnitLabel: false,
-            showUnit: true
+            changeUnitLabel: false
         },
 
         modelAttr: {
@@ -63,7 +62,6 @@ define(function(require) {
             this.showValuePrice = options.showValuePrice;
             this.doUpdateQtyForUnit = options.doUpdateQtyForUnit;
             this.changeUnitLabel = options.changeUnitLabel;
-            this.showUnit = options.showUnit;
 
             this.initializeElements(options);
             this.render();
@@ -170,8 +168,7 @@ define(function(require) {
                     model: this.model,
                     showListedPrice: this.showListedPrice,
                     showValuePrice: this.showValuePrice,
-                    changeUnitLabel: this.changeUnitLabel,
-                    showUnit: this.showUnit
+                    changeUnitLabel: this.changeUnitLabel
                 }));
             } else {
                 this.getElement('prices').html(

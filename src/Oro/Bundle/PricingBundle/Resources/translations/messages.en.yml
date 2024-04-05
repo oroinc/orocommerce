@@ -438,7 +438,7 @@ oro.pricing:
                 msrp: 'MSRP:'
         product_prices:
             empty_prices: Price not available
-            price_not_found: Price for requested quantity is not available
+            price_not_found: Price unavailable for this quantity
             price_not_found.short_label: N/A
         product:
             quantity:

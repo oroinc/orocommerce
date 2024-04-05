@@ -36,7 +36,7 @@
 
     {% if currencies|length == 2 %}
         <div class="oro-toolbar__content currency-switcher">
-            {{ renderIcon.icon({name: 'credit-card', extraClass: 'theme-icon--medium oro-toolbar__icon'}) }}
+            {{ renderIcon.icon({name: 'credit-card', extraClass: 'theme-icon--medium'}) }}
             {% for currency in currencies %}
                 {% if selected_currency == currency %}
                     <span class="oro-toolbar__link oro-toolbar__link--active text-nowrap">{{ oro_currency_symbol(currency) }}</span>
@@ -50,10 +50,10 @@
         </div>
     {% elseif currencies|length > 2 %}
         <button
-            class="btn btn--outlined-inverse btn--text btn--no-padding currency-switcher currency-switcher--{{ selected_currency|lower }}"
+            class="btn btn--colored-inverse btn--text btn--no-padding currency-switcher currency-switcher--{{ selected_currency|lower }}"
             type="button"
         >
-            {{ renderIcon.icon({name: 'credit-card', extraClass: 'oro-toolbar__icon'}) }}
+            {{ renderIcon.icon({name: 'credit-card'}) }}
             {{- oro_currency_symbol(selected_currency) -}}
             {{ renderIcon.icon({name: 'chevron-down', extraClass: 'dropdown-menu-chevron'}) }}
         </button>
@@ -154,9 +154,11 @@
 {% endblock %}
 
 {% block product_price_hint_trigger_js_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set productTierClass = productTierClass|default('btn btn--outlined btn--text btn--size-small product-tier-prices') %}
     {% set productTierIcon = productTierIcon|default('fa-caret-down fa--no-offset') %}
     {% set productAriaLabel = productAriaLabel|default('oro.pricing.view_all_prices'|trans) %}
+    {% set icon = icon|default(false) %}
     {% if toggleAttrValue is not defined %}
         {% set toggleAttrValue = 'popover' %}
     {% endif %}
@@ -170,11 +172,17 @@
           title="{{ 'oro.pricing.view_all_prices'|trans }}"
           aria-label="{{ productAriaLabel }}"
           type="button"
-    ><span class="popover-trigger {{ productTierIcon }}" aria-hidden="true"></span></button>
+    >   {% if icon %}
+            {{ renderIcon.icon({name: icon, extraClass: productTierIcon}) }}
+        {% else %}
+            <span class="popover-trigger {{ productTierIcon }}" aria-hidden="true"></span>
+        {% endif %}
+    </button>
 {% endblock %}
 
 {% block product_price_hint_trigger_info_js_widget %}
-    {% set productTierIcon = 'link link--none-decoration fa-info-circle fa--no-offset' %}
+    {% set productTierIcon = 'link link--none-decoration' %}
+    {% set icon = 'info' %}
 
     {{ block('product_price_hint_trigger_js_widget') }}
 {% endblock %}

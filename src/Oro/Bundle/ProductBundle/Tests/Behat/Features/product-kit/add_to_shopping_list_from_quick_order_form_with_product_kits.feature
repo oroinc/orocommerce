@@ -46,7 +46,7 @@ Feature: Add to Shopping List from Quick order form with Product Kits
       | Kit Item 1 Product 2 | None                                 |
       | Kit Item 2 Product 1 | simple-product-01 Product 01 $1.2345 |
       | Kit Item 2 Product 2 | simple-product-02 Product 02 $2.469  |
-      | Price                | Price as configured: $374.06         |
+      | Price                | Total: $374.06         |
     And "Product Kit Line Item Form" must contain values:
       | Readonly Kit Item Line Item 1 Quantity |   |
       | Kit Item Line Item 2 Quantity          | 1 |

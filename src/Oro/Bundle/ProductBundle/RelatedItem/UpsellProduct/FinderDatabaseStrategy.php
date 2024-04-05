@@ -14,26 +14,25 @@ use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
  */
 class FinderDatabaseStrategy implements FinderStrategyInterface
 {
-    private ManagerRegistry $doctrine;
-    private RelatedItemConfigProviderInterface $configProvider;
-
-    public function __construct(ManagerRegistry $doctrine, RelatedItemConfigProviderInterface $configProvider)
-    {
-        $this->doctrine = $doctrine;
-        $this->configProvider = $configProvider;
+    public function __construct(
+        private ManagerRegistry $doctrine,
+        private RelatedItemConfigProviderInterface $configProvider
+    ) {
     }
 
     /**
      * {@inheritDoc}
      */
-    public function findIds(Product $product, bool $bidirectional = false, int $limit = null): array
+    public function findIds(Product $product): array
     {
         if (!$this->configProvider->isEnabled()) {
             return [];
         }
 
-        return $this->getUpsellProductRepository()
-            ->findUpsellIds($product->getId(), $limit);
+        return $this->getUpsellProductRepository()->findUpsellIds(
+            $product->getId(),
+            $this->configProvider->getLimit()
+        );
     }
 
     private function getUpsellProductRepository(): UpsellProductRepository

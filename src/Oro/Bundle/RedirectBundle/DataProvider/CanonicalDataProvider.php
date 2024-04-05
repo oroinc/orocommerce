@@ -5,24 +5,23 @@ namespace Oro\Bundle\RedirectBundle\DataProvider;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 
+/**
+ * Provides canonical URLs based on the given website and website configuration.
+ */
 class CanonicalDataProvider
 {
-    /**
-     * @var CanonicalUrlGenerator
-     */
-    protected $canonicalUrlGenerator;
-
-    public function __construct(CanonicalUrlGenerator $canonicalUrlGenerator)
-    {
-        $this->canonicalUrlGenerator = $canonicalUrlGenerator;
+    public function __construct(
+        private CanonicalUrlGenerator $canonicalUrlGenerator
+    ) {
     }
 
-    /**
-     * @param SluggableInterface $data
-     * @return string
-     */
-    public function getUrl(SluggableInterface $data)
+    public function getUrl(SluggableInterface $data): string
     {
         return $this->canonicalUrlGenerator->getUrl($data);
+    }
+
+    public function getHomePageUrl(): string
+    {
+        return $this->canonicalUrlGenerator->getAbsoluteUrl('/');
     }
 }

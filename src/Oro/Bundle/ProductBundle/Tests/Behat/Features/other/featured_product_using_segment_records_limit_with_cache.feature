@@ -7,6 +7,9 @@ Feature: Featured product using segment records limit with cache
     Given sessions active:
       | Admin | first_session  |
       | Guest | second_session |
+    And I add Featured Products widget after content for "Homepage" page
+    And I update settings for "featured-products" content widget:
+      | minimum_items | 1 |
 
   Scenario: Check that featured products exist
     Given I proceed as the Guest

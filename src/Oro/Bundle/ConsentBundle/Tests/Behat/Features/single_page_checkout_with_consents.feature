@@ -108,7 +108,6 @@ Feature: Single page checkout with consents
     When I open shopping list widget
     And I click "Open List"
     And I scroll to top
-    And I wait line items are initialized
     And I click "Create Order"
     And I uncheck "Save my data and create an account" on the checkout page
     And I click on "Billing Address Select"
@@ -151,7 +150,6 @@ Feature: Single page checkout with consents
     Given I signed in as AmandaRCole@example.org on the store frontend
     And I open page with shopping list List 1
     And I scroll to top
-    And I wait line items are initialized
     And I click "Create Order"
 
   Scenario: Logged User see validation errors if consents not accepted on order submit
@@ -200,7 +198,6 @@ Feature: Single page checkout with consents
   Scenario: Logged User should have consents accepted for new order already
     Given I open page with shopping list List 2
     And I scroll to top
-    And I wait line items are initialized
     When I click "Create Order"
     Then I should not see "All mandatory consents were accepted."
     And I should not see "Email Newsletters"

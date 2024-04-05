@@ -40,14 +40,16 @@ Feature: New Arrivals Block
 #  Configure maximum and minimum number of products to be displayed to 3 and show that the block is displayed when there are only 3 products and show that the block disappears completely when there are less than 3 products
 #  Show that slider is present and works when there are more products than it is possible to fit on the page
 
-  Scenario: Create different window session
+  Scenario: Feature background
     Given sessions active:
-      | Admin          |first_session |
-      | User           |second_session|
+      | Admin | first_session  |
+      | User  | second_session |
+
+  Scenario: Prepare content blocks for showing on the homepage
     # Load image to product
-    And I proceed as the Admin
-    And login as administrator
-    And go to Products/ Products
+    Given I proceed as the Admin
+    When I login as administrator
+    And I go to Products/ Products
     And I click Edit "SKU6" in grid
     And I set Images with:
       | Main  | Listing | Additional |
@@ -57,218 +59,218 @@ Feature: New Arrivals Block
       | File  | cat1.jpg |
       | Title | cat1.jpg |
     And I click "Upload"
-    And click on cat1.jpg in grid
-    When I save and close form
+    And I click on cat1.jpg in grid
+    And I save and close form
     Then I should see "Product has been saved" flash message
     # Enable localizations
     And I enable the existing localizations
+    And I add New Arrivals widget before content for "Homepage" page
+    And I add Featured Products widget after content for "Homepage" page
 
   Scenario: Default state - "New Arrival" on and New Arrival segment selected
     Given I proceed as the User
     When I am on the homepage
-    Then should see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU6|
-      |SKU7|
-    And should not see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU1|
-      |SKU2|
-      |SKU3|
+    Then I should see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU2 |
+      | SKU3 |
+      | SKU4 |
+      | SKU5 |
+      | SKU6 |
+      | SKU7 |
+    And I should not see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU1 |
     When I signed in as AmandaRCole@example.org on the store frontend
-    Then should see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU6|
-      |SKU7|
-    And should not see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU1|
-      |SKU2|
-      |SKU3|
-
-  Scenario: New Arrival is off
-    Given I proceed as the Admin
-    And go to System/ Configuration
-    And I follow "Commerce/Product/Promotions" on configuration sidebar
-    And fill "Promotions Form" with:
-      |Product Segment Default|false         |
-      |Product Segment        |Choose segment|
-    And submit form
-    When I proceed as the User
-    And reload the page
-    Then I should not see "New Arrivals"
-    And I click "Account Dropdown"
-    When click "Sign Out"
-    Then I should not see "New Arrivals"
+    Then I should see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU2 |
+      | SKU3 |
+      | SKU4 |
+      | SKU5 |
+      | SKU6 |
+      | SKU7 |
+    And I should not see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU1 |
 
   Scenario: "New Arrival" on and Featured segment selected
     Given I proceed as the Admin
-    And fill "Promotions Form" with:
-      |Product Segment Default|false            |
-      |Product Segment        |Featured Products|
-      |Maximum Items Default  |false            |
-      |Maximum Items          |5                |
-      |Minimum Items Default  |false            |
-      |Minimum Items          |3                |
-    And submit form
-    And I proceed as the User
-    When reload the page
-    Then should not see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU1|
-      |SKU2|
-      |SKU3|
-    And should see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU5|
-      |SKU6|
-      |SKU7|
-    And should see "New Arrival Sticker" for the following products in the "Featured Products Block":
-      |SKU |
-      |SKU5|
-      |SKU6|
-      |SKU7|
-    And should not see "New Arrival Sticker" for the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU5|
-      |SKU6|
-      |SKU7|
+    When I go to Marketing/Content Widgets
+    And I click "edit" on row "new-arrivals" in grid
+    And I fill "Content Widget Form" with:
+      | Segment       | Featured Products |
+      | Maximum Items | 5                 |
+      | Minimum Items | 3                 |
+    And I save and close form
+    Then I should see "Content widget has been saved" flash message
+
+    When I proceed as the User
+    And I reload the page
+    Then I should not see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU1 |
+      | SKU2 |
+      | SKU3 |
+    And I should see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU5 |
+      | SKU6 |
+      | SKU7 |
+    And I should see "New Arrival Sticker" for the following products in the "Featured Products Block":
+      | SKU  |
+      | SKU5 |
+      | SKU6 |
+      | SKU7 |
+    And I should not see "New Arrival Sticker" for the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU5 |
+      | SKU6 |
+      | SKU7 |
     When I signed in as AmandaRCole@example.org on the store frontend
-    Then should not see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU1|
-      |SKU2|
-      |SKU3|
-      |SKU4|
-    And should see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU5|
-      |SKU6|
-      |SKU7|
+    Then I should not see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU1 |
+      | SKU2 |
+      | SKU3 |
+    And I should see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU5 |
+      | SKU6 |
+      | SKU7 |
 
   Scenario: Minimum Items is set low then the actual
     Given I proceed as the Admin
-    And fill "Promotions Form" with:
-      |Product Segment Default|true|
-      |Maximum Items          |3   |
-      |Minimum Items          |4   |
-    And submit form
-    And I proceed as the User
-    When reload the page
-    And should not see "New Arrivals"
+    When I go to Marketing/Content Widgets
+    And I click "edit" on row "new-arrivals" in grid
+    And I fill "Content Widget Form" with:
+      | Maximum Items | 3 |
+      | Minimum Items | 4 |
+    And I save and close form
+    Then I should see "Content widget has been saved" flash message
+
+    When I proceed as the User
+    And I reload the page
+    Then I should not see "New Arrivals"
 
   Scenario: Maximum Items is set low then the actual
     Given I proceed as the Admin
-    And fill "Promotions Form" with:
-      |Maximum Items|2|
-      |Minimum Items|2|
-    And submit form
-    And I proceed as the User
-    When reload the page
-    And should see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU6|
-      |SKU7|
+    When I go to Marketing/Content Widgets
+    And I click "edit" on row "new-arrivals" in grid
+    And I fill "Content Widget Form" with:
+      | Maximum Items | 2 |
+      | Minimum Items | 2 |
+    And I save and close form
+    Then I should see "Content widget has been saved" flash message
+
+    When I proceed as the User
+    And I reload the page
+    Then I should see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU5 |
+      | SKU6 |
 
   Scenario: New Site creation and configuration (Site level)
     Given I proceed as the Admin
-    And go to System/ Websites
-    And click "Create Website"
-    And fill form with:
-      |Name                           |NewSite                   |
-      |Guest Role                     |Non-Authenticated Visitors|
-      |Default Self-Registration Role |Buyer                     |
-    And save and close form
-    And should see "Website has been saved" flash message
-    And go to System/ Websites
-    And click "Set default" on row "NewSite" in grid
-    And click "Configuration" on row "Default" in grid
+    And I go to System/ Websites
+    When I click "Create Website"
+    And I fill form with:
+      | Name                           | NewSite                    |
+      | Guest Role                     | Non-Authenticated Visitors |
+      | Default Self-Registration Role | Buyer                      |
+    And I save and close form
+    Then I should see "Website has been saved" flash message
+    And I go to System/ Websites
+    And I click "Set default" on row "NewSite" in grid
+    And I click "Configuration" on row "Default" in grid
     And I follow "System Configuration/Websites/Routing" on configuration sidebar
-    And I fill "Routing General form" with:
-    |URL Use System       |false                            |
-    |URL                  |http://non-existing-url.local    |
-    |Secure URL Use System|false                            |
-    |Secure URL           |http://non-existing-url.local    |
-    And submit form
-    And I should see "Configuration saved" flash message
-    And go to System/ Websites
-    And click "Configuration" on row "NewSite" in grid
+    When I fill "Routing General form" with:
+      | URL Use System        | false                         |
+      | URL                   | http://non-existing-url.local |
+      | Secure URL Use System | false                         |
+      | Secure URL            | http://non-existing-url.local |
+    And I submit form
+    Then I should see "Configuration saved" flash message
+    And I go to System/ Websites
+    And I click "Configuration" on row "NewSite" in grid
 
   Scenario: "New Arrival" on and "New Arrivals" segment selected (Site level)
     Given I proceed as the Admin
-    And I follow "Commerce/Product/Promotions" on configuration sidebar
-    And fill "Promotions Form" with:
-      |Product Segment Default|false            |
-      |Product Segment        |New Arrivals     |
-      |Maximum Items Default  |false            |
-      |Maximum Items          |4                |
-      |Minimum Items Default  |false            |
-      |Minimum Items          |3                |
-    And submit form
-    And I proceed as the User
-    When reload the page
-    Then should see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU4|
-      |SKU5|
-      |SKU6|
-      |SKU7|
-    And should not see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU1|
-      |SKU2|
-      |SKU3|
-    And should see "New Arrival Sticker" for the following products in the "Featured Products Block":
-      |SKU |
-      |SKU5|
-      |SKU6|
-      |SKU7|
-    And should not see "New Arrival Sticker" for the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU4|
-      |SKU5|
-      |SKU6|
-      |SKU7|
+    When I go to Marketing/Content Widgets
+    And I click "edit" on row "new-arrivals" in grid
+    And I fill "Content Widget Form" with:
+      | Segment       | New Arrivals |
+      | Maximum Items | 4            |
+      | Minimum Items | 3            |
+    And I save and close form
+    Then I should see "Content widget has been saved" flash message
+
+    When I proceed as the User
+    And I reload the page
+    Then I should see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU4 |
+      | SKU5 |
+      | SKU6 |
+      | SKU7 |
+    And I should not see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU1 |
+      | SKU2 |
+      | SKU3 |
+    And I should see "New Arrival Sticker" for the following products in the "Featured Products Block":
+      | SKU  |
+      | SKU5 |
+      | SKU6 |
+      | SKU7 |
+    And I should not see "New Arrival Sticker" for the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU4 |
+      | SKU5 |
+      | SKU6 |
+      | SKU7 |
+
     When I signed in as AmandaRCole@example.org on the store frontend
-    Then should see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU4|
-      |SKU5|
-      |SKU6|
-      |SKU7|
-    And should not see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU1|
-      |SKU2|
-      |SKU3|
+    Then I should see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU4 |
+      | SKU5 |
+      | SKU6 |
+      | SKU7 |
+    And I should not see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU1 |
+      | SKU2 |
+      | SKU3 |
 
   Scenario: Check that nothing is changed on default website (Site level)
-    When I proceed as the Admin
-    And go to System/ Websites
-    And click "Set default" on row "Default" in grid
-    And click "Configuration" on row "Default" in grid
+    Given I proceed as the Admin
+    When I go to System/ Websites
+    And I click "Set default" on row "Default" in grid
+    And I click "Configuration" on row "Default" in grid
     And I follow "System Configuration/Websites/Routing" on configuration sidebar
     And I fill "Routing General form" with:
-      |URL Use System       |true|
-      |Secure URL Use System|true|
-    And submit form
-    And I should see "Configuration saved" flash message
-    And go to System/ Websites
-    And click "Configuration" on row "NewSite" in grid
+      | URL Use System        | true |
+      | Secure URL Use System | true |
+    And I submit form
+    Then I should see "Configuration saved" flash message
+    When I go to System/ Websites
+    And I click "Configuration" on row "NewSite" in grid
     And I follow "System Configuration/Websites/Routing" on configuration sidebar
     And I fill "Routing General form" with:
-      |URL Use System       |false                            |
-      |URL                  |http://non-existing-url.local    |
-      |Secure URL Use System|false                            |
-      |Secure URL           |http://non-existing-url.local    |
-    And submit form
-    And I should see "Configuration saved" flash message
-    And I proceed as the User
-    When reload the page
-    And should see the following products in the "New Arrivals Block":
-      |SKU |
-      |SKU6|
-      |SKU7|
+      | URL Use System        | false                         |
+      | URL                   | http://non-existing-url.local |
+      | Secure URL Use System | false                         |
+      | Secure URL            | http://non-existing-url.local |
+    And I submit form
+    Then I should see "Configuration saved" flash message
+
+    When I proceed as the User
+    And I reload the page
+    Then I should see the following products in the "New Arrivals Block":
+      | SKU  |
+      | SKU6 |
+      | SKU7 |
 
   Scenario: Check that product name is displayed properly
     Given I proceed as the User
@@ -295,7 +297,7 @@ Feature: New Arrivals Block
 
   Scenario: Check that product name is localized
     When I select "Localization 1" localization
-    Then should see the following products in the "New Arrivals Block":
+    Then I should see the following products in the "New Arrivals Block":
       | Title                     |
       | Product6 (Localization 1) |
 

@@ -3,6 +3,12 @@
 .shopping-lists {
     .btn {
         --btn-outlined-background: #{$shopping-lists-btn-background-color};
+        --btn-outlined-focus-background: #{$shopping-lists-btn-background-color};
+        --btn-outlined-active-background: #{$shopping-lists-btn-background-color};
+
+        &:focus:hover {
+            --btn-outlined-focus-background: #{$shopping-lists-btn-focus-hover-background-color};
+        }
     }
 
     &__text {

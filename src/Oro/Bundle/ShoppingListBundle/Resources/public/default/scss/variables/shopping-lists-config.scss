@@ -1,6 +1,7 @@
 /* @theme: default; */
 
 $shopping-lists-btn-background-color: get-var-color('neutral', 'white-100') !default;
+$shopping-lists-btn-focus-hover-background-color: get-var-color('primary', 'light') !default;
 
 $shopping-lists-text-background-color: get-color('neutral', 'white-100') !default;
 $shopping-lists-text-min-height: 32px !default;

@@ -39,7 +39,7 @@ Feature: Guest create RFQ with Product Kits from Shopping List
       | Kit Item 1 Product 2 | None                                 |
       | Kit Item 2 Product 1 | simple-product-01 Product 01 $1.2345 |
       | Kit Item 2 Product 2 | simple-product-02 Product 02 $2.469  |
-      | Price                | Price as configured: $124.69         |
+      | Price                | Total: $124.69         |
     And "Product Kit Line Item Form" must contain values:
       | Readonly Kit Item Line Item 1 Quantity |   |
       | Kit Item Line Item 2 Quantity          | 1 |
@@ -51,7 +51,7 @@ Feature: Guest create RFQ with Product Kits from Shopping List
     And I click "Kit Item Line Item 1 Product 1"
     And I click "Kit Item Line Item 2 Product 2"
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $129.63 |
+      | Price | Total: $129.63 |
     When I click "Add to Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see 'Product kit has been added to \"Shopping List\"' flash message
 
@@ -68,7 +68,7 @@ Feature: Guest create RFQ with Product Kits from Shopping List
       | Kit Item Line Item 1 Quantity | 2 |
       | Kit Item Line Item 2 Quantity | 2 |
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $135.8067 |
+      | Price | Total: $135.8067 |
     When I click "Save"
     And click "Update Line Item"
     Then I should see "product-kit-01 - Product Kit 01 Optional Item 2 piece simple-product-03 - Simple Product 03 Mandatory Item 2 piece simple-product-02 - Simple Product 02 QTY: 1 piece Target Price $0.00 Listed Price: $135.8067" in the "RFQ Products List Line Item 2" element

@@ -24,6 +24,14 @@
 
     .grid-body-cell {
         vertical-align: top;
+
+        &-shoppingListLabel {
+            a {
+                font-weight: $responsive-product-kit-shopping-lists-label-font-weight;
+                color: $responsive-product-kit-shopping-lists-label-color;
+                text-decoration: $responsive-product-kit-shopping-lists-label-text-decoration;
+            }
+        }
     }
 
     .grid-row:last-child {
@@ -53,7 +61,6 @@
     }
 
     .action-cell {
-        padding-top: $responsive-shopping-cell-desktop-offset;
         // Using a default padding as in every cell
         padding-right: $datagrid-body-cell-offset;
     }

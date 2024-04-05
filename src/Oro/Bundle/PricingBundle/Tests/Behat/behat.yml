@@ -26,6 +26,7 @@ oro_behat_extension:
         - Oro\Bundle\CatalogBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ConsoleContext
         - Oro\Bundle\PricingBundle\Tests\Behat\Context\PriceCalculationDetailsContext
+        - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
 
@@ -62,22 +63,40 @@ oro_behat_extension:
       selector: '.prices-hint-content.popover'
     Product Assignment Rule:
       selector: 'textarea[name="oro_pricing_price_list[productAssignmentRule]"]'
+    Product Assignment Rule Editor:
+      selector: '.cm-editor[data-name="oro_pricing_price_list[productAssignmentRule]"] [contenteditable="true"]'
     Price Calculation Add:
       selector: '.price_rules__add_btn .add-list-item'
     Price Calculation Quantity:
       selector: 'input[name="oro_pricing_price_list[priceRules][0][quantity]"]'
+    Price Calculation Quantity Expression Editor Content:
+      selector: '.expression-editor[data-name="oro_pricing_price_list[priceRules][0][quantityExpression]"] [contenteditable="true"]'
     Price Calculation Unit Expression:
       selector: 'input[name="oro_pricing_price_list[priceRules][0][productUnitExpression]"]'
+    Price Calculation Unit Expression Editor:
+      selector: '.expression-editor[data-name="oro_pricing_price_list[priceRules][0][productUnitExpression]"]'
+    Price Calculation Unit Expression Editor Content:
+      selector: '.expression-editor[data-name="oro_pricing_price_list[priceRules][0][productUnitExpression]"] [contenteditable="true"]'
     Price Calculation Unit Expression Button:
       selector: 'a.price-rule-item-product-unit-type-expression'
     Price Calculation Currency Expression:
       selector: 'input[name="oro_pricing_price_list[priceRules][0][currencyExpression]"]'
+    Price Calculation Currency Expression Editor:
+      selector: '.expression-editor[data-name="oro_pricing_price_list[priceRules][0][currencyExpression]"]'
+    Price Calculation Currency Expression Editor Content:
+      selector: '.expression-editor[data-name="oro_pricing_price_list[priceRules][0][currencyExpression]"] [contenteditable="true"]'
     Price Calculation Currency Expression Button:
       selector: 'a.price-rule-item-currency-type-expression'
     Price Calculation Calculate As:
       selector: 'textarea[name="oro_pricing_price_list[priceRules][0][rule]"]'
+    Price Calculation Calculate As Editor:
+      selector: '.expression-editor[data-name="oro_pricing_price_list[priceRules][0][rule]"]'
+    Price Calculation Calculate As Editor Content:
+      selector: '.expression-editor[data-name="oro_pricing_price_list[priceRules][0][rule]"] [contenteditable="true"]'
     Price Calculation Condition:
       selector: 'textarea[name="oro_pricing_price_list[priceRules][0][ruleCondition]"]'
+    Price Calculation Condition Editor Content:
+      selector: '.expression-editor[data-name="oro_pricing_price_list[priceRules][0][ruleCondition]"] [contenteditable="true"]'
     Price List Select Grid Button:
       selector: '.active.expression-editor-data-source .entity-select-btn'
     Price List Select Clear Button:
@@ -263,6 +282,9 @@ oro_behat_extension:
 
     ConfirmButton:
       selector: '.modal-footer .btn-primary'
+
+    CodeMirrorField:
+      class: Oro\Bundle\PricingBundle\Tests\Behat\Element\CodeMirrorField
 
     Merge Allowed In Row 1:
       selector:

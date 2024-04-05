@@ -8,7 +8,6 @@ features:
             - 'oro_rfp_request_info'
             - 'oro_rfp_request_index'
             - 'oro_rfp_request_update'
-            - 'oro_rfp_request_create_order'
             - 'oro_rfp_request_product_kit_item_line_item_entry_point'
         operations:
             - 'oro_rfp_create_quote'

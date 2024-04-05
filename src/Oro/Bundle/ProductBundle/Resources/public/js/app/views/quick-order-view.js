@@ -67,6 +67,7 @@ const QuickOrderFromView = BaseView.extend({
         this.initLayout({productsCollection: this.collection});
 
         this.updateTopButtons();
+        this._moveClearButton();
         this.rowsCountInitial = this.getRowsCount();
     },
 
@@ -116,9 +117,9 @@ const QuickOrderFromView = BaseView.extend({
     updateTopButtons() {
         const rowsCount = this.getRowsCount();
         if (rowsCount > this.options.rowsCountThreshold) {
-            this.showTopButtons();
+            this.$(this.elem.clear).removeClass('hidden');
         } else if (rowsCount <= this.rowsCountInitial) {
-            this.hideTopButtons();
+            this.$(this.elem.clear).addClass('hidden');
         }
     },
 
@@ -134,34 +135,6 @@ const QuickOrderFromView = BaseView.extend({
             // such as `href="#..."`, `aria-labelledby="..."` and etc.
             this.topButtons.replace(new RegExp(id, 'g'), `${id}-${suffix}`);
         }
-    },
-
-    showTopButtons() {
-        let contentShouldUpdate = false;
-        if (typeof this.topButtons === 'string') {
-            this.topButtons = $(this.topButtons);
-            contentShouldUpdate = true;
-        }
-
-        this.$(this.elem.form).prepend(this.topButtons);
-        this.$(this.elem.clear).removeClass('hidden');
-
-        if (contentShouldUpdate) {
-            this.topButtons.trigger('content:changed');
-        }
-    },
-
-    hideTopButtons() {
-        this.$(this.elem.clear).addClass('hidden');
-
-        if (
-            !this.topButtons ||
-            !(this.topButtons instanceof $) ||
-            typeof this.topButtons === 'string'
-        ) {
-            return;
-        }
-        this.topButtons.detach();
     },
 
     async clearRows() {
@@ -264,6 +237,10 @@ const QuickOrderFromView = BaseView.extend({
             $createOrderButton.removeClass('disabled');
             $createOrderButton.parent().removeAttr('title');
         }
+    },
+
+    _moveClearButton() {
+        this.$(this.elem.clear).appendTo(this.$('.add-list-item').parent());
     },
 
     isCollectionHasProductKit() {

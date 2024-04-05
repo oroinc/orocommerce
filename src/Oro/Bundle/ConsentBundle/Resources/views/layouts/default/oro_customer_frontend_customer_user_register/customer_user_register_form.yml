@@ -7,12 +7,14 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'customer_user_register_form.html.twig'
+
         - '@setOption':
             id: registration_consent_wrapper
             optionName: consents
             optionValue: '=data["oro_frontend_consent_provider"].getAllConsentData()'
+
         - '@move':
             id: registration_consent_wrapper
             parentId: registration_form
-            siblingId: registration_footer
+            siblingId: registration_form_submit_wrapper
             prepend: true

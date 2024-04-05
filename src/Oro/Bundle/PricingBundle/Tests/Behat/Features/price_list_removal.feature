@@ -22,7 +22,7 @@ Feature: Price list removal
     And type "PSKU1" in "search"
     And I click "Search Button"
     Then I should see "PSKU1"
-    And I should see "Your Price: $7.00 / item" for "PSKU1" product
+    And I should see "$7.00" for "PSKU1" product
 
   Scenario: Create Price List
     Given I proceed as the Admin
@@ -58,7 +58,7 @@ Feature: Price list removal
   Scenario: Check product price
     Given I proceed as the Buyer
     And I reload the page
-    And I should see "Your Price: $2.00 / item" for "PSKU1" product
+    And I should see "$2.00" for "PSKU1" product
 
   Scenario: Remove Price List
     Given I proceed as the Admin
@@ -70,4 +70,4 @@ Feature: Price list removal
   Scenario: Check product price
     Given I proceed as the Buyer
     And I reload the page
-    And I should see "Your Price: $7.00 / item" for "PSKU1" product
+    And I should see "$7.00" for "PSKU1" product

@@ -91,7 +91,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | 1        | N/A      | 1        |
       |          |          | N/A      |
       | N/A      | N/A      | 1        |
-    And I should see "Clear All Button" element inside "Matrix Grid Form Totals" element
+    And I should see "Clear All Button" element inside "Matrix Grid Form Summary" element
     And I should see "Total QTY: 5 | Total: $60.00" in the "Matrix Grid Form Totals" element
     And I click "Clear All Product Variants"
     Then I should see next rows in "Matrix Grid Form" table
@@ -151,7 +151,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | 1        | N/A      | 1        |
       |          |          | N/A      |
       | N/A      | N/A      | 1        |
-    And I should see "Clear All Button" element inside "Matrix Grid Form Totals" element
+    And I should see "Clear All Button" element inside "Matrix Grid Form Summary" element
     And I should see "Total QTY: 5 | Total: $60.00" in the "Matrix Grid Form Totals" element
     And I click "Clear All Product Variants"
     Then I should see next rows in "Matrix Grid Form" table
@@ -588,7 +588,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Add to Shopping List" for "CNFB" product
     Then I should see an "Matrix Grid Form" element
     # Check popup close button and product name in popup title
-    And I should see "ConfigurableProductB Item #: CNFB" in the "Matrix Grid Popup" element
+    And I should see "ConfigurableProductB CNFB" in the "Matrix Grid Popup" element
     And I click "Close" in modal window
     Then I should not see an "Matrix Grid Popup" element
     # Check opening popup matrix form doesn't create empty shopping list
@@ -679,7 +679,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Add to Shopping List" in "Product General Information" element
     Then I should see an "Matrix Grid Form" element
     # Check popup close button and product name in popup title
-    And I should see "ConfigurableProductB Item #: CNFB" in the "Matrix Grid Popup" element
+    And I should see "ConfigurableProductB CNFB" in the "Matrix Grid Popup" element
     And I click "Close" in modal window
     Then I should not see an "Matrix Grid Popup" element
     # Check opening popup matrix form doesn't create empty shopping list

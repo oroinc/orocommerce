@@ -11,7 +11,17 @@ function highlightWords(inputString, value) {
 }
 %>
 
-<div class="search-autocomplete">
+<%
+function inventoryStatusToLabelClass(inventoryStatus) {
+    switch(inventoryStatus) {
+        case 'out_of_stock': return 'status-label--destructive'; break;
+        case 'in_stock': return 'status-label--success'; break;
+        default: return '';
+    }
+}
+%>
+
+<div class="search-autocomplete" data-search-autocomplete>
     <div class="search-autocomplete__content dropdown-menu">
         <% if (total_count > 0) { %>
             <ul class="search-autocomplete__list" id="<%- comboboxId %>" role="listbox">
@@ -19,7 +29,11 @@ function highlightWords(inputString, value) {
                 <li class="search-autocomplete__item" role="option">
                     <a href="<%- category.url %>" class="search-autocomplete-category" title="<%- _.__('oro.product.search.search_in_category.tooltip', { text: inputString, category: category.tree[category.tree.length - 1] }, category.count) %>">
                         <div class="search-autocomplete-category__image">
-                            <span class="fa-search fa--no-offset"></span>
+                            <% let oroui = _.macros('oroui') %>
+                            <%= oroui.renderIcon({
+                                name: 'search',
+                                extraClass: 'theme-icon--lg'
+                            }) %>
                         </div>
                         <div class="search-autocomplete-category__info">
                             <div class="search-autocomplete-category__head">
@@ -49,21 +63,21 @@ function highlightWords(inputString, value) {
                         </div>
                         <div class="search-autocomplete-product__info">
                             <div class="search-autocomplete-product__head">
-                                <div class="search-autocomplete-product__title"><%= highlightWords(inputString, product.name) %></div>
+                                <p class="search-autocomplete-product__title"><%= highlightWords(inputString, product.name) %></p>
                                 <% if (product.formatted_price) { %>
                                     <div class="search-autocomplete-product__price"><%- product.formatted_price %></div>
                                 <% } %>
                             </div>
                             <div class="search-autocomplete-product__body">
                                 <div class="search-autocomplete-product__sku"><%= highlightWords(inputString, product.sku) %></div>
-                                <div class="search-autocomplete-product__status <%- product.inventory_status %>"><%- product.inventory_status_label %></div>
+                                <div class="search-autocomplete-product__status status-label <%- inventoryStatusToLabelClass(product.inventory_status) %>"><%- product.inventory_status_label %></div>
                             </div>
                         </div>
                     </a>
                 </li>
                 <% }) %>
                 <li class="search-autocomplete__item" role="option">
-                    <button class="btn btn--outlined btn--text btn--size-small search-autocomplete__submit"
+                    <button class="btn btn--outlined btn--no-padding btn--text search-autocomplete__submit"
                             type="submit"
                     ><%- _.__('oro.product.autocomplete.popup.button.all.label', { productCount: total_count }, total_count) %> <span class="fa-angle-right" aria-hidden="true"></span>
                     </button>

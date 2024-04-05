@@ -56,16 +56,16 @@
                 {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
             </div>
         {% else %}
-            <div class="grid-col-6 grid-col-mobile-landscape-12">
+            <div class="grid-col-3 grid-col-tablet-6 grid-col-mobile-landscape-12">
                 {{ form_row(address_form.city, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}}) }}
             </div>
-            <div class="grid-col-2 grid-col-tablet-6 grid-col-mobile-landscape-12">
+            <div class="grid-col-3 grid-col-tablet-6 grid-col-mobile-landscape-12">
                 {{ form_row(address_form.country, {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.country'|trans}) }}
             </div>
-            <div class="grid-col-2 grid-col-tablet-6 grid-col-mobile-landscape-12">
+            <div class="grid-col-3 grid-col-tablet-6 grid-col-mobile-landscape-12">
                 {{ form_row(address_form.region, {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.region'|trans}) }}
             </div>
-            <div class="grid-col-2 grid-col-tablet-6 grid-col-mobile-landscape-12 col-zip-error">
+            <div class="grid-col-3 grid-col-tablet-6 grid-col-mobile-landscape-12 col-zip-error">
                 {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
             </div>
         {% endif %}

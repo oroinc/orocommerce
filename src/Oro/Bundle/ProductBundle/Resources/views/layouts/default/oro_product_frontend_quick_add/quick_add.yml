@@ -10,6 +10,10 @@ layout:
             themes: '@OroProduct/layouts/default/oro_product_frontend_quick_add/quick_add.html.twig'
         - '@setFormTheme':
             themes: '@OroProduct/layouts/default/oro_product_frontend_quick_add/form.html.twig'
+        - '@appendOption':
+            id: page_title_container
+            optionName: class_prefix
+            optionValue: 'quick-order'
         - '@setOption':
             id: page_title
             optionName: defaultValue
@@ -18,3 +22,10 @@ layout:
             id: quick_add_container
             parentId: page_content
             blockType: container
+        - '@add':
+            id: quick_add_form_title
+            parentId: quick_add_form
+            blockType: text
+            prepend: true
+            options:
+                text: 'oro.product.frontend.quick_add.form_title'

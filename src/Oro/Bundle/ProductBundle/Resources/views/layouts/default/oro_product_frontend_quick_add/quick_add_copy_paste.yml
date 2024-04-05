@@ -8,6 +8,7 @@ layout:
             items:
                 quick_add_copy_paste_form:
                     blockType: container
+                    prepend: true
                 quick_add_copy_paste_form_start:
                     blockType: form_start
                     options:

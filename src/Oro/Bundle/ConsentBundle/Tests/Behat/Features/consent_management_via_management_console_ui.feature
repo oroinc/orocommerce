@@ -184,7 +184,7 @@ Feature: Consent management via Management Console UI
       | Company Name     | OroCommerce               |
       | First Name       | Amanda                    |
       | Last Name        | Cole                      |
-      | Email Address    | AmandaRCole1@example.org  |
+      | Email            | AmandaRCole1@example.org  |
       | Password         | AmandaRCole1@example.org  |
       | Confirm Password | AmandaRCole1@example.org  |
     And I click "Presenting Personal Data"
@@ -201,27 +201,17 @@ Feature: Consent management via Management Console UI
     When I click "Agree"
     Then the "Without Landing Page" checkbox should be checked
 
-  Scenario: Delete Landing Page
+  Scenario: Try to delete Landing Page
     Given I proceed as the Admin
-    And I go to Marketing/ Landing Pages
-    When I click delete Page to remove in grid
-    And I confirm deletion
-    Then I should see "Landing Page deleted" flash message
-
-  Scenario: Check consents on registration page
-    Given I proceed as the User
-    When I click "Create An Account"
-    Then I should see "Some consents were changed. Please reload the page."
-    When I reload the page
-    Then the "Without Landing Page" checkbox should not be checked
-    And I should not see "Consent Link" in the "Optional Consent" element
+    When I go to Marketing/ Landing Pages
+    Then I should not see following actions for Page to remove in grid:
+      | Delete |
 
   Scenario: Disable unnecessary consent
-    Given I proceed as the Admin
-    And go to System/ Configuration
+    When go to System/ Configuration
     And follow "Commerce/Customer/Consents" on configuration sidebar
     And I remove "Without Landing Page" from Consent
-    When click "Save settings"
+    And click "Save settings"
     Then I should see "Configuration saved" flash message
 
   Scenario: Create an account on registration page
@@ -231,10 +221,10 @@ Feature: Consent management via Management Console UI
       | Company Name                         | OroCommerce               |
       | First Name                           | Amanda                    |
       | Last Name                            | Cole                      |
-      | Email Address                        | AmandaRCole1@example.org  |
+      | Email                                | AmandaRCole1@example.org  |
       | Password                             | AmandaRCole1@example.org  |
       | Confirm Password                     | AmandaRCole1@example.org  |
-    When click "Create An Account"
+    When click "Create Account"
     Then I should see that "Required Consent" contains "This agreement is required"
     And I click "Presenting Personal Data"
     Then I should see "UiDialog" with elements:
@@ -254,7 +244,7 @@ Feature: Consent management via Management Console UI
     And the "Presenting Personal Data" checkbox should be checked
     And the "Email Newsletters" checkbox should not be checked
     And the "Collecting and storing personal data" checkbox should be checked
-    When click "Create An Account"
+    When click "Create Account"
     Then I should see "Please check your email to complete registration" flash message
 
   Scenario: Confirmation of registration a new user who has accepted consents
@@ -472,7 +462,7 @@ Feature: Consent management via Management Console UI
       | Company Name                         | OroCommerce                 |
       | First Name                           | Branda                      |
       | Last Name                            | Sanborn                     |
-      | Email Address                        | BrandaJSanborn1@example.org |
+      | Email                                | BrandaJSanborn1@example.org |
       | Password                             | BrandaJSanborn1@example.org |
       | Confirm Password                     | BrandaJSanborn1@example.org |
     And I click "Presenting Personal Data"
@@ -492,7 +482,7 @@ Feature: Consent management via Management Console UI
     And I click "Yes, Delete"
     And should see "Consent deleted" flash message
     And I proceed as the User
-    When click "Create An Account"
+    When click "Create Account"
     Then I should see "Some consents were changed. Please reload the page."
     And I should not see "Test Consent"
     And I should see 2 elements "Required Consent"
@@ -521,7 +511,7 @@ Feature: Consent management via Management Console UI
       | Company Name                         | OroCommerce                 |
       | First Name                           | Branda                      |
       | Last Name                            | Sanborn                     |
-      | Email Address                        | BrandaJSanborn2@example.org |
+      | Email                                | BrandaJSanborn2@example.org |
       | Password                             | BrandaJSanborn2@example.org |
       | Confirm Password                     | BrandaJSanborn2@example.org |
     And I click "Presenting Personal Data"
@@ -533,23 +523,17 @@ Feature: Consent management via Management Console UI
     And I click "Test Consent 2"
     And click "Agree"
     # Proceeding to management console
-    And I proceed as the Admin
+    When I proceed as the Admin
     And go to Marketing/ Landing Pages
-    When click delete "Test CMS Page" in grid
-    Then I should see "Are you sure you want to delete this Landing Page?"
-    When I click "Yes, Delete"
-    Then should see "Landing Page deleted" flash message
-    And I proceed as the User
-    When click "Create An Account"
-    Then I should see "Some consents were changed. Please reload the page."
+    Then I should not see following actions for Page to remove in grid:
+      | Delete |
 
   Scenario: Disable Test Consent 2 for Default Website
-    Given I proceed as the Admin
-    And I go to System/ Websites
+    When I go to System/ Websites
     And I click "Configuration" on row "Default" in grid
     And I follow "Commerce/Customer/Consents" on configuration sidebar
     And I remove "Test Consent 2" from Consent
-    When I click "Save settings"
+    And I click "Save settings"
     Then I should see "Configuration saved" flash message
 
   Scenario: Create customer group
@@ -753,12 +737,12 @@ Feature: Consent management via Management Console UI
     And I open shopping list widget
     And I click "Open List"
     And click on "Create Order"
-    And I click "Create An Account"
+    And I click "Create Account"
     And I fill "Registration Form" with:
       | Company          | Company            |
       | First Name       | Sue                |
       | Last Name        | Jackson            |
-      | Email Address    | Sue001@example.com |
+      | Email            | Sue001@example.com |
       | Password         | Sue001@example.com |
       | Confirm Password | Sue001@example.com |
       | Test Consent 3 | true |
@@ -771,6 +755,7 @@ Feature: Consent management via Management Console UI
     When I click "Create an Account and Continue"
     Then Page title equals to "Agreements - Checkout"
     And I should not see "Back"
+    And I scroll to top
     When click "Continue"
     Then I should see "Please confirm your email before continue checkout" flash message
 
@@ -873,13 +858,7 @@ Feature: Consent management via Management Console UI
 
   Scenario: Set Secure URL and usual URL
     Given I proceed as the Admin
-    And go to System/ Configuration
-    And follow "System Configuration/Websites/Routing" on configuration sidebar
-    And I fill "Routing Settings Form" with:
-      | URL        | http://localhost  |
-      | Secure URL | https://localhost |
-    When I click "Save settings"
-    Then I should see "Configuration saved" flash message
+    And I set global website url from application url
 
   Scenario: Consent dialog should open after changing an URL
     Given I proceed as the User

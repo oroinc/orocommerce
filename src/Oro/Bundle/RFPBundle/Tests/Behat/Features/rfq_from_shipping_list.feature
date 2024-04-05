@@ -50,7 +50,7 @@ Feature: RFQ from Shipping List
     Then I should see RFQ with data:
       | First Name             | Marlene                                                               |
       | Last Name              | Bradley                                                               |
-      | Email Address          | MarleneSBradley@example.com                                           |
+      | Email                  | MarleneSBradley@example.com                                           |
       | Phone Number           | 72 669 62 82                                                          |
       | Company                | Red Fox Tavern                                                        |
       | Role                   | Sauce cook                                                            |
@@ -170,7 +170,7 @@ Feature: RFQ from Shipping List
     Then I should see RFQ with data:
       | First Name             | Marlene                     |
       | Last Name              | Bradley                     |
-      | Email Address          | MarleneSBradley@example.com |
+      | Email                  | MarleneSBradley@example.com |
       | Phone Number           | 72 669 62 82                |
       | Company                | Red Fox Tavern              |
       | Role                   | Sauce cook                  |

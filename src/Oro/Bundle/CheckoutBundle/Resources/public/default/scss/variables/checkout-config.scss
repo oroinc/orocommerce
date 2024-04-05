@@ -18,9 +18,13 @@ $checkout-summary-grid-container-shadow-background: linear-gradient(
     to bottom, rgba(245 245 245 / 0%) 0%, rgba(245 245 245 / 100%) 100%
 ) !default;
 
+$checkout-steps-background-color: get-color('neutral', 'grey1') !default;
+
 // Tablet
 $checkout-tablet-padding: spacing('base') !default;
 $checkout-tablet-border-radius: 0 !default;
+
+$checkout-tablet-sidebar-border-top: 1px solid get-color('neutral', 'grey2') !default;
 
 $checkout-submit-tooltip-left: auto !default;
 $checkout-submit-tooltip-right: 65px !default;

@@ -37,7 +37,7 @@ Feature: Create RFQ with Product Kits Validation - with Hidden Product
       | Kit Item 1 Product 2 | None                                 |
       | Kit Item 2 Product 1 | simple-product-01 Product 01 $1.2345 |
       | Kit Item 2 Product 2 | simple-product-02 Product 02 $2.469  |
-      | Price                | Price as configured: $124.6867       |
+      | Price                | Total: $124.6867       |
       | okButton             | Save                                 |
     And I should not see an "Simple Product 01 Link" element
     And I should see "Simple Product 01"

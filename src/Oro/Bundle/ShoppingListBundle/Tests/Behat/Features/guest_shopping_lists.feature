@@ -173,9 +173,10 @@ Feature: Guest Shopping Lists
 
   Scenario: Check added products available in Guest Shopping List
     Given I click "Shopping List"
-    Then  I should see "Control Product"
+    Then I should see "Control Product"
     And I click on "Flash Message Close Button"
-    And  I should see "Product3"
+    And I hover on "Shopping Cart"
+    And I should see "Product3"
     And I should not see following buttons:
       | Delete        |
       | Create Order  |

@@ -7,38 +7,9 @@ namespace Oro\Bundle\ProductBundle\RelatedItem;
  */
 interface RelatedItemConfigProviderInterface
 {
-    /**
-     * @return bool
-     */
-    public function isEnabled();
+    public function isEnabled(): bool;
 
-    /**
-     * @return int
-     */
-    public function getLimit();
+    public function getLimit(): int;
 
-    /**
-     * @return bool
-     */
-    public function isBidirectional();
-
-    /**
-     * @return int
-     */
-    public function getMinimumItems();
-
-    /**
-     * @return int
-     */
-    public function getMaximumItems();
-
-    /**
-     * @return bool
-     */
-    public function isSliderEnabledOnMobile();
-
-    /**
-     * @return bool
-     */
-    public function isAddButtonVisible();
+    public function isBidirectional(): bool;
 }

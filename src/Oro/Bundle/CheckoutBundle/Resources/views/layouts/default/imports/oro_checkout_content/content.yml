@@ -14,9 +14,25 @@ layout:
             parentId: head
             siblingId: ~
             prepend: false
+        - '@add':
+            id: __checkout_order_summary_edit_link
+            blockType: checkout_order_summary_edit_link
+            prepend: true
+            parentId: checkout_order_summary_line_items_datagrid_toolbar_rightside_container
+            options:
+                workflowItem: '=data["workflowItem"]'
         - '@addTree':
             items:
+                __checkout_container:
+                    blockType: container
+                    options:
+                        attr:
+                            class: ' checkout__container--steps-page'
                 __checkout_content:
+                    blockType: container
+                __checkout_content_main:
+                    blockType: container
+                __checkout_content_main_top:
                     blockType: container
                 __checkout_information:
                     blockType: container
@@ -59,10 +75,7 @@ layout:
                 __checkout_order_summary:
                     blockType: checkout_order_summary
                     options:
-                        visible: '=context["workflowStepName"]!="order_review"'
                         checkout: '=data["checkout"]'
-                __checkout_order_summary_header:
-                    blockType: container
                 __checkout_order_summary_title:
                     blockType: container
                 __checkout_order_summary_edit_link:
@@ -101,6 +114,9 @@ layout:
                 __checkout_order_footer_col_second:
                     blockType: container
 
+                __checkout_order_sidebar:
+                    blockType: container
+
                 __checkout_order_summary_totals_main:
                     blockType: container
 
@@ -135,6 +151,7 @@ layout:
                         checkout: '=data["checkout"]'
                         vars:
                             showRequiredLabel: true
+                            showIcon: true
                 __checkout_button_back:
                     blockType: checkout_transition_back
                     options:
@@ -142,31 +159,33 @@ layout:
                         checkout: '=data["checkout"]'
             tree:
                 __root:
-                    __checkout_content:
-                        __checkout_information:
-                            __checkout_information_head:
-                                __checkout_information_title: ~
-                            __checkout_information_body:
-                                __checkout_form:
-                                    __checkout_form_errors: ~
-                                    __checkout_form_fields:
-                                        __checkout_additional_options: ~
-                                    __checkout_form_buttons:
-                                        __checkout_button_continue: ~
-                                        __checkout_button_back: ~
-                        __checkout_order_summary_container:
-                            __checkout_order_summary:
-                                __checkout_order_summary_header:
-                                    __checkout_order_summary_title:
-                                    __checkout_order_summary_edit_link: ~
-                                __checkout_order_summary_content:
-                                    __checkout_order_summary_line_items_container: ~
-                        __checkout_order_footer:
-                            __checkout_order_footer_col_first:
-                                __checkout_order_summary_notes_container:
-                                    __checkout_order_summary_notes_title: ~
-                                    __checkout_order_summary_notes: ~
-                            __checkout_order_footer_col_second:
-                                __checkout_order_summary_totals_main:
-                                    __checkout_order_summary_totals_container:
-                                        __checkout_order_summary_totals: ~
+                    __checkout_container:
+                        __checkout_content_main:
+                            __checkout_content_main_top:
+                                __checkout_content:
+                                    __checkout_information:
+                                        __checkout_information_head:
+                                            __checkout_information_title: ~
+                                        __checkout_information_body:
+                                            __checkout_form:
+                                                __checkout_form_errors: ~
+                                                __checkout_form_fields:
+                                                    __checkout_additional_options: ~
+                                                __checkout_form_buttons:
+                                                    __checkout_button_back: ~
+                                                    __checkout_button_continue: ~
+                            __checkout_order_summary_container:
+                                __checkout_order_summary:
+                                    __checkout_order_summary_content:
+                                        __checkout_order_summary_line_items_container: ~
+                            __checkout_order_footer:
+                                __checkout_order_footer_col_first:
+                                    __checkout_order_summary_notes_container:
+                                        __checkout_order_summary_notes_title: ~
+                                        __checkout_order_summary_notes: ~
+                                __checkout_order_footer_col_second: ~
+                        __checkout_order_sidebar:
+                            __checkout_order_summary_totals_main:
+                                __checkout_order_summary_totals_container:
+                                    __checkout_order_summary_totals: ~
+

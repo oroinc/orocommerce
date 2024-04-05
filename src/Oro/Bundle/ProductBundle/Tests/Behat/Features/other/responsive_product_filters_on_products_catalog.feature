@@ -65,7 +65,7 @@ Feature: Responsive Product Filters On Products Catalog
     Then I proceed as the customer
     And I reload the page
     And I set filter Any Text as contains "product"
-    Then I click "Apply Filters Button"
+    Then I click "Apply"
     Then I should see filter hints in frontend grid:
       | Any Text: contains "product" |
 

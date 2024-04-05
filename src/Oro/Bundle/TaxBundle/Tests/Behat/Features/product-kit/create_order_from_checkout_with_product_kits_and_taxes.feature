@@ -26,7 +26,7 @@ Feature: Create Order from Checkout with product kits and taxes
     Then I should see an "Configure and Add to Shopping List" element
     When I click "Configure and Add to Shopping List"
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $124.69 |
+      | Price | Total: $124.69 |
     When I click "Add to Shopping List" in modal window
     Then I should see 'Product kit has been added to \"Shopping List\"' flash message
     When I follow "Shopping List" link within flash message "Product kit has been added to \"Shopping list\""
@@ -48,7 +48,6 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Change product kit line item quantity
     When I click "Edit items"
-    And I wait line items are initialized
     And I click on "Shopping List Line Item 1 Quantity"
     And I type "2" in "Shopping List Line Item 1 Quantity Input"
     And I click "Shopping List Line Item 1 Save Changes Button"
@@ -69,12 +68,11 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Add product kit item line item product
     When I click "Edit items"
-    And I wait line items are initialized
     And I click "Shopping List 1 Kit Line Item Edit Button"
     And I click "Kit Item Line Item 2 Product 1"
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $256.77 |
-    When I click "Update Shopping List" in "ShoppingListButtonGroup" element
+      | Price | Total: $256.77 |
+    When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $256.77"
     And I should see "Discount -$25.68"
     And I should see "Total $231.09"
@@ -93,12 +91,11 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Change product kit item line item product
     When I click "Edit items"
-    And I wait line items are initialized
     And I click "Shopping List 1 Kit Line Item Edit Button"
     And I click "Kit Item Line Item 2 Product 2"
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $259.25 |
-    When I click "Update Shopping List" in "ShoppingListButtonGroup" element
+      | Price | Total: $259.25 |
+    When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $259.25"
     And I should see "Discount -$25.93"
     And I should see "Total $233.32"
@@ -117,14 +114,13 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Change product kit item line item quantity
     When I click "Edit items"
-    And I wait line items are initialized
     And I click "Shopping List 1 Kit Line Item Edit Button"
     When I fill "Product Kit Line Item Form" with:
       | Kit Item Line Item 1 Quantity | 2 |
       | Kit Item Line Item 2 Quantity | 3 |
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $276.55 |
-    When I click "Update Shopping List" in "ShoppingListButtonGroup" element
+      | Price | Total: $276.55 |
+    When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $276.55"
     And I should see "Discount -$27.66"
     And I should see "Total $248.89"
@@ -143,13 +139,12 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Add one more product kit line item
     When I click "Edit items"
-    And I wait line items are initialized
     And I click "Shopping List 1 Kit Line Item Edit Button"
     When I fill "Product Kit Line Item Totals Form" with:
       | Quantity | 3 |
     Then I should see "Product Kit Dialog" with elements:
-      | Price | Price as configured: $414.83 |
-    When I click "Update Shopping List" in "ShoppingListButtonGroup" element
+      | Price | Total: $414.83 |
+    When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $414.83"
     And I should see "Discount -$41.48"
     And I should see "Total $373.35"

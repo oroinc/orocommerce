@@ -50,6 +50,13 @@ class TitleDataProvider implements TitleDataProviderInterface
         return $this->getNodeTitle($default);
     }
 
+    public function isRenderTitle(): bool
+    {
+        $contentVariant = $this->requestWebContentVariantProvider->getContentVariant();
+
+        return !$contentVariant?->isDoNotRenderTitle();
+    }
+
     /**
      * @return ContentNodeInterface|null
      */

@@ -2,75 +2,42 @@
 
 namespace Oro\Bundle\CheckoutBundle\Migrations\Data\ORM;
 
-use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
-use Oro\Bundle\EmailBundle\Migrations\Data\ORM\AbstractEmailFixture;
+use Oro\Bundle\EmailBundle\Migrations\Data\ORM\AbstractHashEmailMigration;
 use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
 
 /**
- * Load new templates if not present, update existing as configured by emailsUpdateConfig.
+ * Load new templates if not present, update existing as configured by {@see self::getEmailHashesToUpdate}.
  */
-class LoadEmailTemplates extends AbstractEmailFixture implements VersionedFixtureInterface
+class LoadEmailTemplates extends AbstractHashEmailMigration implements VersionedFixtureInterface
 {
-    /**
-     * To update template without overriding customized content add it's name as key and add expected previous
-     * content MD5 to array of hashes.
-     * To force update replace content hashes array with true.
-     *
-     * [
-     *     <template_name> => [<MD5_of_previous_version_allowed_to_update>],
-     *     <template_name_2> => true
-     * ]
-     */
-    private array $emailsUpdateConfig = [
-        'checkout_registration_confirmation' => ['61d0aa78a03cff496e373d85f3f3bfce'],
-        'checkout_customer_user_reset_password' => ['d5eac9230ad16940519a2cd1e0bfa88e'],
-    ];
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getVersion(): string
-    {
-        return '1.0';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function findExistingTemplate(ObjectManager $manager, array $template): ?EmailTemplate
-    {
-        if (empty($template['params']['name'])) {
-            return null;
-        }
-
-        return $manager->getRepository(EmailTemplate::class)->findOneBy([
-            'name' => $template['params']['name'],
-            'entityName' => $template['params']['entityName']
-        ]);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function updateExistingTemplate(EmailTemplate $emailTemplate, array $template): void
-    {
-        foreach ($this->emailsUpdateConfig as $templateName => $contentHashes) {
-            if ($emailTemplate->getName() === $templateName
-                && ($contentHashes === true || \in_array(md5($emailTemplate->getContent()), $contentHashes, true))
-            ) {
-                parent::updateExistingTemplate($emailTemplate, $template);
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getEmailsDir(): string
     {
         return $this->container
             ->get('kernel')
             ->locateResource('@OroCheckoutBundle/Migrations/Data/ORM/data/emails/order');
+    }
+
+    public function getVersion(): string
+    {
+        return '1.3';
+    }
+
+    protected function getEmailHashesToUpdate(): array
+    {
+        return [
+            'checkout_registration_confirmation' => [
+                '61d0aa78a03cff496e373d85f3f3bfce', // 1.0
+                '86c875b20d9f63dbb998be38b92a4b15', // 1.1
+            ],
+            'order_confirmation_email' => [
+                'ca60fc6a8ddd1b6c8d880ff0487c9b6e', // 1.0
+                '3c6be02cf2a212034ee53f5ec1e2558a', // 1.1
+                '36b16614d479d6f41bf7a62720267d60', // 1.2
+            ],
+            'checkout_customer_user_reset_password' => [
+                'd5eac9230ad16940519a2cd1e0bfa88e', // 1.0
+                'f8037a44b89505241b3907df7f7e1e61', // 1.1
+            ],
+        ];
     }
 }

@@ -11,12 +11,13 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use PHPUnit\Framework\TestCase;
 
-class PageTest extends \PHPUnit\Framework\TestCase
+class PageTest extends TestCase
 {
     use EntityTestCaseTrait;
 
-    public function testAccessors()
+    public function testAccessors(): void
     {
         $this->assertPropertyAccessors(new Page(), [
             ['id', 1],
@@ -36,7 +37,7 @@ class PageTest extends \PHPUnit\Framework\TestCase
         ]);
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $value = 'test';
 
@@ -44,5 +45,21 @@ class PageTest extends \PHPUnit\Framework\TestCase
         $page->addTitle((new LocalizedFallbackValue())->setString($value));
 
         $this->assertEquals($value, (string)$page);
+    }
+
+    public function testClearSlugs(): void
+    {
+        $page = new Page();
+        $localizeValue = (new LocalizedFallbackValue())->setString('Test');
+
+        $page->setSlugPrototypesWithRedirect(new SlugPrototypesWithRedirect(new ArrayCollection([$localizeValue])));
+        $page->addSlug(new Slug());
+        $page->addSlugPrototype($localizeValue);
+
+        $page->clearSlugs();
+
+        self::assertTrue($page->getSlugPrototypes()->isEmpty());
+        self::assertTrue($page->getSlugs()->isEmpty());
+        self::assertTrue($page->getSlugPrototypesWithRedirect()->getSlugPrototypes()->isEmpty());
     }
 }

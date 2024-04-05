@@ -15,10 +15,8 @@ interface FinderStrategyInterface
      * Consider this while implementing.
      *
      * @param Product  $product
-     * @param bool     $bidirectional
-     * @param int|null $limit
      *
      * @return int[]
      */
-    public function findIds(Product $product, bool $bidirectional = false, int $limit = null): array;
+    public function findIds(Product $product): array;
 }

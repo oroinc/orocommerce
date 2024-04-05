@@ -1,18 +1,9 @@
 /* @theme: default; */
 
 .coupon-container {
-    width: $coupon-container-width;
-    float: $coupon-container-float;
-    clear: $coupon-container-clear;
-    padding: $coupon-container-padding;
-
-    &__content {
-        padding: $coupon-container-content-inner-offset;
-    }
-
-    &__input-wrap {
-        padding: $coupon-container-input-wrap-inner-offset;
-        width: $coupon-container-input-wrap-width;
+    &__form {
+        display: grid;
+        gap: spacing('sm');
     }
 
     &__errors {
@@ -20,15 +11,17 @@
             display: none;
         }
     }
-}
 
-@include breakpoint('mobile') {
-    .coupon-container {
-        width: $coupon-container-mobile-width;
-        float: $coupon-container-mobile-float;
+    .coupon-trigger {
+        width: 100%;
+        padding-inline: 0;
+        justify-content: space-between;
+        background: none;
 
-        &__input-wrap {
-            width: $coupon-container-input-wrap-mobile-width;
+        &:not(.collapsed) {
+            .theme-icon {
+                transform: rotate(180deg);
+            }
         }
     }
 }

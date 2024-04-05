@@ -14,13 +14,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class SystemPageVariantType extends AbstractType
 {
-    const NAME = 'oro_web_catalog_system_page_variant';
-    const MENU_NAME = 'frontend_menu';
+    public const MENU_NAME = 'frontend_menu';
 
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add(
@@ -32,7 +31,8 @@ class SystemPageVariantType extends AbstractType
                     'options_filter' => [
                         'frontend' => true
                     ],
-                    'menu_name' => self::MENU_NAME
+                    'menu_name' => self::MENU_NAME,
+                    'name_filter' => '/^oro_\w+(?<!frontend_root)$/',
                 ]
             );
     }
@@ -40,7 +40,7 @@ class SystemPageVariantType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
             [
@@ -60,16 +60,8 @@ class SystemPageVariantType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix(): string
     {
-        return self::NAME;
+        return 'oro_web_catalog_system_page_variant';
     }
 }

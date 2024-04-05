@@ -13,6 +13,57 @@
     &__progress {
         position: relative;
     }
+
+    &-page-title-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 0;
+        padding-bottom: spacing('base');
+    }
+
+    &-page-title {
+        display: flex;
+        align-items: center;
+        gap: spacing('sm');
+        font-size: $quick-order-page-title-font-size;
+        line-height: $quick-order-page-title-line-height;
+        font-weight: font-weight('semi-bold');
+    }
+
+    &-separator {
+        color: $quick-order-page-separator-color;
+        overflow: hidden;
+        text-align: center;
+        padding-bottom: spacing('lg');
+
+        &-text {
+            position: relative;
+            display: inline-block;
+            font-size: $quick-order-page-separator-font-size;
+            line-height: $quick-order-page-separator-line-height;
+            padding-left: spacing('base');
+            padding-right: spacing('base');
+
+            &:before,
+            &:after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                width: 999px;
+                height: 1px;
+                background-color: $quick-order-page-separator-background-color;
+            }
+
+            &:before {
+                right: 100%;
+            }
+
+            &:after {
+                left: 100%;
+            }
+        }
+    }
 }
 
 @include breakpoint('tablet-small') {

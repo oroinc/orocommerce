@@ -6,6 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
@@ -13,7 +14,6 @@ use Twig\TwigFunction;
 
 /**
  * Provides Twig functions related to products:
- *   - oro_product_expression_autocomplete_data
  *   - is_configurable_product_type
  *   - is_kit_product_type
  *   - get_upsell_products_ids
@@ -35,7 +35,6 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
     public function getFunctions()
     {
         return [
-            new TwigFunction('oro_product_expression_autocomplete_data', [$this, 'getAutocompleteData']),
             new TwigFunction('is_configurable_product_type', [$this, 'isConfigurableType']),
             new TwigFunction('is_kit_product_type', [$this, 'isKitType']),
             new TwigFunction('get_upsell_products_ids', [$this, 'getUpsellProductsIds']),
@@ -70,17 +69,6 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
     }
 
     /**
-     * @param bool $numericalOnly
-     * @param bool $withRelations
-     *
-     * @return array
-     */
-    public function getAutocompleteData($numericalOnly = false, $withRelations = true)
-    {
-        return $this->getAutocompleteFieldsProvider()->getAutocompleteData($numericalOnly, $withRelations);
-    }
-
-    /**
      * @param Product $product
      *
      * @return int[]
@@ -98,7 +86,11 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
      */
     private function getRelatedItemsIds(Product $product, FinderStrategyInterface $finderStrategy)
     {
-        return $finderStrategy->findIds($product, false);
+        if ($finderStrategy instanceof FinderDatabaseStrategy) {
+            return $finderStrategy->findNotBidirectionalIds($product);
+        }
+
+        return $finderStrategy->findIds($product);
     }
 
     /**

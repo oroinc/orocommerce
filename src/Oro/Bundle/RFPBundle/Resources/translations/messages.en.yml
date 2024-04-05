@@ -296,6 +296,7 @@ oro:
             delete: 'Delete'
             restore: 'Restore'
             create_quote: 'Create Quote'
+            create_order: 'Create Order'
             add_to_rfp: 'Get Quote'
             create_rfp: 'Submit'
             edit: 'Edit'
@@ -349,7 +350,7 @@ oro:
                 id.label: 'RFQ #'
                 first_name.label: 'First Name'
                 last_name.label: 'Last Name'
-                email.label: 'Email Address'
+                email.label: 'Email'
                 phone.label: 'Phone Number'
                 company.label: 'Company'
                 role.label: 'Role'
@@ -397,7 +398,7 @@ oro:
                     aria_label: 'Edit product kit configuration'
             request_product_kit_configuration_dialog:
                 price:
-                    label: 'Price as configured:'
+                    label: 'Total:'
                 actions:
                     submit: 'Save'
             data_storage:

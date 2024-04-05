@@ -6,14 +6,12 @@ types:
             - product_gallery_popup
             - product_gallery_main
             - product_large
-            - product_extra_large
             - product_medium
             - product_small
         max_number: 1
     listing:
         label: oro.product.productimage.type.listing.label
         dimensions:
-            - product_extra_large
             - product_small
             - product_large
         max_number: 1
@@ -21,7 +19,6 @@ types:
         label: oro.product.productimage.type.additional.label
         dimensions:
             - product_original
-            - product_extra_large
             - product_small
         max_number: ~
 dimensions:
@@ -31,37 +28,38 @@ dimensions:
         options:
             applyProductImageWatermark: true
     product_gallery_popup:
-        width: 610
-        height: 610
+        width: 836
+        height: 620
         options:
             applyProductImageWatermark: true
     product_gallery_main:
-        width: 378
-        height: auto
+        width: 700
+        height: 520
         options:
             applyProductImageWatermark: true
-    product_extra_large:
-        width: 378
-        height: 378
-        options:
-            applyProductImageWatermark: true
+            background:
+                transparency: 0
     product_large:
-        width: 360
-        height: auto
+        width: 480
+        height: 356
         options:
             applyProductImageWatermark: true
+            background:
+                transparency: 0
     product_medium:
-        width: 309
-        height: auto
+        width: 350
+        height: 260
         options:
             applyProductImageWatermark: true
+            background:
+                transparency: 0
     product_small:
-        width: 80
+        width: auto
         height: 80
         options:
             applyProductImageWatermark: true
     product_extra_small:
-        width: 42
+        width: auto
         height: 42
         options:
             applyProductImageWatermark: true

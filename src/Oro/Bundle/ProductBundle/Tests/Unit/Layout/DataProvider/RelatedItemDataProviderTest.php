@@ -10,9 +10,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItemDataProvider;
 use Oro\Bundle\ProductBundle\Model\ProductView;
+use Oro\Bundle\ProductBundle\Provider\ProductListBlockConfigInterface;
 use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
-use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UIBundle\Provider\UserAgentInterface;
 use Oro\Bundle\UIBundle\Provider\UserAgentProviderInterface;
@@ -28,7 +28,7 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var FinderStrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $finder;
 
-    /** @var RelatedItemConfigProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ProductListBlockConfigInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $configProvider;
 
     /** @var UserAgentProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
@@ -52,16 +52,12 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->finder = $this->createMock(FinderStrategyInterface::class);
-        $this->configProvider = $this->createMock(RelatedItemConfigProviderInterface::class);
+        $this->configProvider = $this->createMock(ProductListBlockConfigInterface::class);
         $this->userAgentProvider = $this->createMock(UserAgentProviderInterface::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->productManager = $this->createMock(ProductManager::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
         $this->productListBuilder = $this->createMock(ProductListBuilder::class);
-
-        $this->configProvider->expects(self::any())
-            ->method('isBidirectional')
-            ->willReturn(false);
 
         $this->dataProvider = new RelatedItemDataProvider(
             $this->finder,
@@ -71,7 +67,6 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
             $this->productManager,
             $this->aclHelper,
             $this->productListBuilder,
-            self::PRODUCT_LIST_TYPE
         );
     }
 
@@ -109,6 +104,10 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with(self::PRODUCT_LIST_TYPE, $productIds)
             ->willReturn($productViews);
 
+        $this->configProvider->expects(self::once())
+            ->method('getProductListType')
+            ->willReturn(self::PRODUCT_LIST_TYPE);
+
         self::assertSame([$product2->getId(), $product3->getId()], $productIds);
         self::assertEquals($productViews, $this->dataProvider->getRelatedItems($this->getProduct(100)));
         // test memory cache
@@ -145,6 +144,10 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with(self::PRODUCT_LIST_TYPE, $productIds)
             ->willReturn($productViews);
 
+        $this->configProvider->expects(self::once())
+            ->method('getProductListType')
+            ->willReturn(self::PRODUCT_LIST_TYPE);
+
         self::assertSame([$product2->getId(), $product3->getId()], $productIds);
         self::assertEquals($productViews, $this->dataProvider->getRelatedItems($this->getProduct(100)));
         // test memory cache
@@ -167,6 +170,10 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getProductsByIds')
             ->with(self::PRODUCT_LIST_TYPE, $productIds)
             ->willReturn($productViews);
+
+        $this->configProvider->expects(self::once())
+            ->method('getProductListType')
+            ->willReturn(self::PRODUCT_LIST_TYPE);
 
         self::assertSame([$product2->getId()], $productIds);
         self::assertEquals($productViews, $this->dataProvider->getRelatedItems($this->getProduct(100)));

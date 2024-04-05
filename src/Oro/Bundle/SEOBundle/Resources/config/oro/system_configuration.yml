@@ -11,6 +11,8 @@ system_configuration:
             title: oro.seo.system_configuration.groups.sitemap_category.title
         sitemap_page:
             title: oro.seo.system_configuration.groups.sitemap_page.title
+        sitemap_robots_txt:
+            title: oro.seo.system_configuration.groups.sitemap_robots_txt.title
     fields:
         oro_seo.sitemap_changefreq_product:
             data_type: string
@@ -97,7 +99,13 @@ system_configuration:
                 required: false
                 tooltip: oro.seo.system_configuration.fields.sitemap_include_landing_pages_not_in_web_catalog.tooltip
                 label:   oro.seo.system_configuration.fields.sitemap_include_landing_pages_not_in_web_catalog.label
-
+        oro_seo.sitemap_robots_txt_template:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\TextareaType
+            options:
+                required: false
+                tooltip: oro.seo.system_configuration.fields.sitemap_robots_txt_template.tooltip
+                label: oro.seo.system_configuration.fields.sitemap_robots_txt_template.label
 
     tree:
         system_configuration:
@@ -124,3 +132,6 @@ system_configuration:
                                             - oro_seo.sitemap_priority_cms_page
                                             - oro_seo.sitemap_exclude_landing_pages
                                             - oro_seo.sitemap_include_landing_pages_not_in_web_catalog
+                                    sitemap_robots_txt:
+                                        children:
+                                            - oro_seo.sitemap_robots_txt_template

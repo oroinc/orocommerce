@@ -30,7 +30,6 @@ Feature: UPS shipping cost calculation
     And I signed in as AmandaRCole@example.org on the store frontend
     And I open page with shopping list List 1
     And I scroll to top
-    And I wait line items are initialized
     When I click "Create Order"
     Then Buyer is on enter billing information checkout step
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
@@ -63,7 +62,6 @@ Feature: UPS shipping cost calculation
     Given I proceed as the Buyer
     And I open page with shopping list List 2
     And I scroll to top
-    And I wait line items are initialized
     When I click "Create Order"
     Then Buyer is on enter billing information checkout step
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
@@ -87,7 +85,6 @@ Feature: UPS shipping cost calculation
     Given I proceed as the Buyer
     And I open page with shopping list List 2
     And I scroll to top
-    And I wait line items are initialized
     When I click "Create Order"
     Then Buyer is on enter billing information checkout step
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
@@ -106,6 +103,5 @@ Feature: UPS shipping cost calculation
     Given I proceed as the Buyer
     And I open page with shopping list List 2
     And I scroll to top
-    And I wait line items are initialized
     When I click "Create Order"
     Then I should not see "UPS 2nd Day Air"

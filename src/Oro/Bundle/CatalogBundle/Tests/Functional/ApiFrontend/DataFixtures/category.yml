@@ -1,0 +1,442 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\CatalogBundle\Tests\Functional\Api\DataFixtures\LoadRootCategory
+    - Oro\Bundle\ProductBundle\Tests\Functional\Api\DataFixtures\LoadProductUnits
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
+    - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
+    - Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData
+    - Oro\Bundle\CatalogBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadCategoryVisibilityScopes
+    - Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite
+
+Oro\Bundle\OrganizationBundle\Entity\Organization:
+    another_organization:
+        name: 'Another Organization'
+        enabled: true
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    category1_meta_title:
+        string: 'Category 1 Meta Title'
+    category1_meta_description:
+        string: 'Category 1 Meta Description'
+    category1_meta_keywords:
+        string: 'Category 1 Meta Keywords'
+    category1_1_meta_title:
+        string: 'Category 1_1 Meta Title'
+    category1_1_meta_description:
+        string: 'Category 1_1 Meta Description'
+    category1_1_meta_keywords:
+        string: 'Category 1_1 Meta Keywords'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    category1_title:
+        string: 'Category 1'
+    category1_1_title:
+        string: 'Category 1_1'
+    category1_1_1_title:
+        string: 'Category 1_1_1'
+    category2_title:
+        string: 'Category 2'
+    category3_title:
+        string: 'Category 3'
+    category3_1_title:
+        string: 'Category 3_1'
+    category3_1_1_title:
+        string: 'Category 3_1_1'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryShortDescription:
+    category1_short_description:
+        text: 'Category 1 Short Description'
+    category1_1_short_description:
+        text: 'Category 1_1 Short Description'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryLongDescription:
+    category1_description:
+        wysiwyg: 'Category 1 Description. Twig Expr: "{{ " test "|trim }}".'
+    category1_1_description:
+        wysiwyg: 'Category 1_1 Description'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product1_name:
+        string: 'Product 1'
+    product2_name:
+        string: 'Product 2'
+    product3_name:
+        string: 'Product 3'
+    product4_name:
+        string: 'Product 4'
+    product5_name:
+        string: 'Product 5'
+    configurable_product1_name:
+        string: 'Configurable Product 1'
+    configurable_product2_name:
+        string: 'Configurable Product 2'
+    configurable_product1_variant1_name:
+        string: 'Variant 1 for Configurable Product 1'
+    configurable_product1_variant2_name:
+        string: 'Variant 2 for Configurable Product 1'
+    configurable_product2_variant1_name:
+        string: 'Variant 1 for Configurable Product 2'
+    configurable_product2_variant2_name:
+        string: 'Variant 2 for Configurable Product 2'
+
+Oro\Bundle\RedirectBundle\Entity\Slug:
+    category1_slug_default:
+        routeName: "oro_category_frontend_product_index"
+        parametersHash: "93540a68aeff18ecd864cb808c4e1711"
+        url: '/category1_slug_default'
+    category1_slug_en_CA:
+        routeName: "oro_category_frontend_product_index"
+        parametersHash: "93540a68aeff18ecd864cb808c4e1713"
+        url: '/category1_slug_en_CA'
+        localization: '@en_CA'
+    category1_slug_es:
+        routeName: "oro_category_frontend_product_index"
+        parametersHash: "93540a68aeff18ecd864cb808c4e1714"
+        url: '/category1_slug_es'
+        localization: '@es'
+    category1_1_slug_default:
+        routeName: "oro_category_frontend_product_index"
+        parametersHash: "93540a68aeff18ecd864cb808c4e1715"
+        url: '/category1_1_slug_default'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    category1:
+        __calls:
+            - addTitle: ['@category1_title']
+            - addShortDescription: ['@category1_short_description']
+            - addLongDescription: ['@category1_description']
+            - addMetaTitl: ['@category1_meta_title']
+            - addMetaDescription: ['@category1_meta_description']
+            - addMetaKeyword: ['@category1_meta_keywords']
+        organization: '@organization'
+        parentCategory: '@root_category'
+        slugs: ['@category1_slug_default', '@category1_slug_en_CA', '@category1_slug_es']
+        smallImage: '@file_category1_small_image'
+        largeImage: '@file_category1_large_image'
+    category1_1:
+        __calls:
+            - addTitle: ['@category1_1_title']
+            - addShortDescription: ['@category1_1_short_description']
+            - addLongDescription: ['@category1_1_description']
+            - addMetaTitl: ['@category1_1_meta_title']
+            - addMetaDescription: ['@category1_1_meta_description']
+            - addMetaKeyword: ['@category1_1_meta_keywords']
+        organization: '@organization'
+        parentCategory: '@category1'
+        slugs: ['@category1_1_slug_default']
+    category1_1_1:
+        __calls:
+            - addTitle: ['@category1_1_1_title']
+        organization: '@organization'
+        parentCategory: '@category1_1'
+    category2:
+        __calls:
+            - addTitle: ['@category2_title']
+        organization: '@organization'
+        parentCategory: '@root_category'
+        smallImage: '@file_category2_small_image'
+        largeImage: '@file_category2_large_image'
+    category3:
+        __calls:
+            - addTitle: ['@category3_title']
+        organization: '@organization'
+        parentCategory: '@root_category'
+    category3_1:
+        __calls:
+            - addTitle: ['@category3_1_title']
+        organization: '@organization'
+        parentCategory: '@category3'
+    category3_1_1:
+        __calls:
+            - addTitle: ['@category3_1_1_title']
+        organization: '@organization'
+        parentCategory: '@category3_1'
+
+Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved:
+    category3_visibility_resolved:
+        __construct: ['@category3']
+        scope: '@category_visibility_scope'
+        visibility: -1 # VISIBILITY_HIDDEN
+    category3_1_visibility_resolved:
+        __construct: ['@category3_1']
+        scope: '@category_visibility_scope'
+        visibility: -1 # VISIBILITY_HIDDEN
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product1_precision:
+        unit: '@item'
+        precision: 0
+    product2_precision:
+        unit: '@set'
+        precision: 1
+    product3_precision:
+        unit: '@item'
+        precision: 0
+    product4_precision:
+        unit: '@item'
+        precision: 0
+    product5_precision:
+        unit: '@item'
+        precision: 0
+    configurable_product1_precision:
+        unit: '@item'
+        precision: 0
+    configurable_product2_precision:
+        unit: '@item'
+        precision: 0
+    configurable_product1_variant1_precision:
+        unit: '@item'
+        precision: 0
+    configurable_product1_variant2_precision:
+        unit: '@item'
+        precision: 0
+    configurable_product2_variant1_precision:
+        unit: '@item'
+        precision: 0
+    configurable_product2_variant2_precision:
+        unit: '@item'
+        precision: 0
+
+Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue:
+    product1_is_upcoming_fallback:
+        scalar_value: 1
+    product1_highlight_low_inventory:
+        scalar_value: 1
+    product1_low_inventory_threshold:
+        scalar_value: 100
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceList:
+    default_combined_price_list:
+        name: 'combined_price_list'
+        enabled: true
+        __calls:
+            -   setCurrencies: [ ['USD'] ]
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    first_combined_price:
+        priceList: '@default_combined_price_list'
+        website: '@website'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        primaryUnitPrecision: '@product1_precision'
+        unitPrecisions: ['@product1_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@product1_name']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        isUpcoming: '@product1_is_upcoming_fallback'
+        availability_date: '<(new DateTime("2119-01-20T10:30:00 -10:00"))>'
+        highlightLowInventory: '@product1_highlight_low_inventory'
+        lowInventoryThreshold: '@product1_low_inventory_threshold'
+        testAttrString: 'string attribute'
+        testAttrMoney: 1.23
+        category: '@category1'
+    product2:
+        sku: 'PSKU2'
+        primaryUnitPrecision: '@product2_precision'
+        unitPrecisions: ['@product2_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@product2_name']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        category: '@category1'
+    product3:
+        sku: 'PSKU3'
+        primaryUnitPrecision: '@product3_precision'
+        unitPrecisions: ['@product3_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@product3_name']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        category: '@category1_1'
+    product4:
+        sku: 'PSKU4'
+        primaryUnitPrecision: '@product4_precision'
+        unitPrecisions: ['@product4_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@product4_name']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        category: '@category2'
+    product5:
+        sku: 'PSKU5'
+        primaryUnitPrecision: '@product5_precision'
+        unitPrecisions: ['@product5_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@product5_name']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        category: '@category3'
+    configurable_product1:
+        sku: 'CPSKU1'
+        primaryUnitPrecision: '@configurable_product1_precision'
+        unitPrecisions: ['@configurable_product1_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@configurable_product1_name']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        type: 'configurable'
+        testAttrBoolean: false
+        variantFields: ['testAttrEnum']
+        variantLinks:
+            - '@configurable_product1_variant1_link'
+            - '@configurable_product1_variant2_link'
+        category: '@category1'
+    configurable_product2:
+        sku: 'CPSKU2'
+        primaryUnitPrecision: '@configurable_product2_precision'
+        unitPrecisions: ['@configurable_product2_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@configurable_product2_name']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        type: 'configurable'
+        testAttrBoolean: false
+        variantFields: ['testAttrBoolean']
+        variantLinks:
+            - '@configurable_product2_variant1_link'
+            - '@configurable_product2_variant2_link'
+        category: '@category3'
+    configurable_product1_variant1:
+        sku: 'CVPSKU1'
+        primaryUnitPrecision: '@configurable_product1_variant1_precision'
+        unitPrecisions: ['@configurable_product1_variant1_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@configurable_product1_variant1_name']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        testAttrString: 'Variant 1 for CPSKU1'
+        testAttrBoolean: false
+        testAttrEnum: '@productAttrEnum_option1'
+        parentVariantLinks: ['@configurable_product1_variant1_link']
+        category: '@category1'
+    configurable_product1_variant2:
+        sku: 'CVPSKU2'
+        primaryUnitPrecision: '@configurable_product1_variant2_precision'
+        unitPrecisions: ['@configurable_product1_variant2_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@configurable_product1_variant2_name']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        testAttrString: 'Variant 2 for CPSKU1'
+        testAttrBoolean: false
+        testAttrEnum: '@productAttrEnum_option2'
+        parentVariantLinks: ['@configurable_product1_variant2_link']
+        category: '@category1'
+    configurable_product2_variant1:
+        sku: 'CVPSKU3'
+        primaryUnitPrecision: '@configurable_product2_variant1_precision'
+        unitPrecisions: ['@configurable_product2_variant1_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@configurable_product2_variant1_name']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        testAttrString: 'Variant 1 for CPSKU2'
+        testAttrBoolean: false
+        parentVariantLinks: ['@configurable_product2_variant1_link']
+        category: '@category3'
+    configurable_product2_variant2:
+        sku: 'CVPSKU4'
+        primaryUnitPrecision: '@configurable_product2_variant2_precision'
+        unitPrecisions: ['@configurable_product2_variant2_precision']
+        attributeFamily: '@default_product_family'
+        __calls:
+            - addName: ['@configurable_product2_variant2_name']
+        status: 'enabled'
+        inventoryStatus: '@in_stock'
+        featured: false
+        newArrival: false
+        organization: '@organization'
+        owner: '@business_unit'
+        testAttrString: 'Variant 2 for CPSKU2'
+        testAttrBoolean: true
+        parentVariantLinks: ['@configurable_product2_variant2_link']
+        category: '@category3'
+
+Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
+    configurable_product1_variant1_link:
+        parentProduct: '@configurable_product1'
+        product: '@configurable_product1_variant1'
+    configurable_product1_variant2_link:
+        parentProduct: '@configurable_product1'
+        product: '@configurable_product1_variant2'
+    configurable_product2_variant1_link:
+        parentProduct: '@configurable_product2'
+        product: '@configurable_product2_variant1'
+    configurable_product2_variant2_link:
+        parentProduct: '@configurable_product2'
+        product: '@configurable_product2_variant2'
+
+Extend\Entity\EV_Test_Prod_Attr_Enum:
+    productAttrEnum_option1:
+        __construct: ['option1', 'Option 1', 1, false]
+    productAttrEnum_option2:
+        __construct: ['option2', 'Option 2', 2, true]
+
+Oro\Bundle\AttachmentBundle\Entity\File:
+    file_category1_small_image:
+        mimeType: 'image/jpeg'
+        fileName: 'testFile1.jpg'
+    file_category1_large_image:
+        mimeType: 'image/jpeg'
+        fileName: 'testFile2.jpg'
+    file_category2_small_image:
+        mimeType: 'image/jpeg'
+        fileName: 'testFile3.jpg'
+    file_category2_large_image:
+        mimeType: 'image/jpeg'
+        fileName: 'testFile4.jpg'

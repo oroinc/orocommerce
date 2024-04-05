@@ -2,40 +2,9 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
-# UNRELEASED
-
-### Added
-
-#### ProductBundle
-* "wide", "tabs" product templates were added.
-
-#### OrderBundle
-* Added `\Oro\Bundle\OrderBundle\Entity\OrderHolderInterface` to represent order holder classes.
-* Added the `readonly` attribute for the price field of the product kit line item in the order form.
-* Added new price calculation logic for product kit line item for the `orderlineitems` and `orderproductkititemlineitems` API backend resources.
-
-#### SaleBundle
-* Added the `readonly` attribute for the price field of the product kit line item in the quote form.
-
-#### TaxBundle
-* Added new tax calculation logic for product kits. Now the total tax for the product kit is the sum of the taxes for the kit and its items.
-* Added `\Oro\Bundle\TaxBundle\Resolver\KitAdjustResolver` resolver to adjust tax amount for product kits.
-
-### Changed
-
-#### PromotionBundle
-* `\Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderLineItemAfterDiscountsMapper` now takes into account product kits and proportionally distributes its discounts subtotal among the product kit subtotal when the Calculate Taxes After Promotions option is enabled.
-
-### Removed
-
-#### ProductBundle
-* "list", "short", "two-columns" product templates were removed.
-  Use "tabs" and "wide" templates instead. In case you have registered old templates in your theme - a default template will be applied.
-
-
 ## Changes in the Сommerce package versions
 
-- [6.0.0-RC](#600-rc-2024-02-29)
+- [6.0.0](#600-2024-03-30)
 - [5.1.0](#510-2023-03-31)
 - [5.0.0](#500-2022-01-26)
 - [4.2.3](#423)
@@ -53,22 +22,26 @@ The current file describes significant changes in the code that may affect the u
 - [1.2.0](#120-2017-06-01)
 - [1.1.0](#110-2017-03-31)
 
-## 6.0.0-RC (2024-02-29)
-[Show detailed list of changes](incompatibilities-6-0-rc.md)
-
-### Added
+## 6.0.0 (2024-03-30)
+[Show detailed list of changes](incompatibilities-6-0.md)
 
 #### CheckoutBundle
 * Added the ability to start and finish checkout with product kit line items:
-  * Added `\Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem` entity class, added `\Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem::$kitItemLineItems` association and `\Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem::$checksum`.
+  * Added `\Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem` entity class;
+  * added `\Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem::$kitItemLineItems` association and `\Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem::$checksum`.
 * Added `\Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener`, `\Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener`, `\Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutBeforeOrderCreateEventListener` checkout event listeners as the main points to control whether it is valid to start or finish a checkout instead of the old listeners (see the details in section "Removed").
 * Added thorough validation constraints for `\Oro\Bundle\CheckoutBundle\Entity\Checkout`, `\Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem`, `\Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem` that are checked in the listeners mentioned above.
 * Added constraint validator decorator `\Oro\Bundle\CheckoutBundle\Validator\Constraints\CheckoutAwareValidatorDecorator` providing the ability to restrict the decorated validator of a checkout or checkout line item by certain checkout steps.
+* The `Oro\Bundle\CheckoutBundle\Entity\Checkout::$lineItemGroupShippingData` was added to provide the ability to configure one shipping charge for all the items by the seller.
 
 #### OrderBundle
 * Added the ability to contain product kit line items for `\Oro\Bundle\OrderBundle\Entity\Order` entity class:
-  * Added `\Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem` entity class, added `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$kitItemLineItems` association and `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$checksum`.
+  * Added `\Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem` entity class;
+  * added `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$kitItemLineItems` association and `\Oro\Bundle\OrderBundle\Entity\OrderLineItem::$checksum`.
 * Added `\Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem` to backoffice and storefront API.
+* Added `\Oro\Bundle\OrderBundle\Entity\OrderHolderInterface` to represent order holder classes.
+* Added the `readonly` attribute for the price field of the product kit line item in the order form.
+* Added new price calculation logic for product kit line item for the `orderlineitems` and `orderproductkititemlineitems` API backend resources.
 
 #### PricingBundle
 * Improved the mechanism of getting product prices. See more in [documentation](https://doc.oroinc.com/bundles/commerce/PricingBundle/getting-product-price.html).
@@ -89,10 +62,11 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\WebsiteSearchReindexProductKitListener` that schedule index operation for the product kit for the storefront.
 * Added `\Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductPreloadingIndexerListener` that preload products with required data at the start of website reindex operation.
 * Disabled the ability to add a product kit to Quick Order Form via `\Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler::setNotAllowedProductTypes`.
-* Removed the `oro_product.popup_gallery_on_product_view` option from the system configuration.
+* The `oro_product.popup_gallery_on_product_view` option from the system configuration is not used anymore.
 * Added new options fields to `product_segment` content widget in `\Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType`.
 * Restored the is_optimized field in quick add forms (for compatibility to older layout themes), but the optimized version is forced. Consider refactoring your templates which rely on this field.
 * Added `\Oro\Bundle\ProductBundle\Form\Type\ProductUnitChoiceType` form type for selecting a product unit from the available product units of a specified product.
+* "wide", "tabs" product templates were added.
 
 #### PaymentBundle
 * Added the new and only way to create a payment line items `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` - see `\Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactoryInterface`.
@@ -106,12 +80,21 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem` to represent product kit item line item in `\Oro\Bundle\RFPBundle\Entity\RequestProduct`.
 * Added `\Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemType` form type to decouple it from the form type used in back-office.
 * Added `\Oro\Bundle\RFPBundle\Provider\RequestProductLineItemTierPricesProvider` that provides tier product prices for the request product items of the specified request entity.
+* Updated `request_create_confirmation` email template to extend it from `base_storefront` email template.
 
 #### SaleBundle
 * Added the ability to manage in a back-office a quote with product kits.
 * Added the ability to start on a storefront a checkout from a quote with product kits.
 * Added `\Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem` to represent product kit item line item in `\Oro\Bundle\SaleBundle\Entity\QuoteProduct`.
 * Added `\Oro\Bundle\SaleBundle\WorkflowState\Condition\IsQuoteValid` (`is_quote_valid`) workflow condition to check a quote could be sent to a customer.
+* Added `Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem::$checksum` property as a part of allowing to add the same product with the same unit code multiple times.
+* Added `Oro\Bundle\SaleBundle\Entity\QuoteProductDemand::$checksum` property as a part of allowing to add the same product with the same unit code multiple times.
+* Updated `quote_email_link`, `quote_email_link_guest` email templates to extend them from `base_storefront` email template.
+* Added the `readonly` attribute for the price field of the product kit line item in the quote form.
+
+#### SEOBundle
+* Added the ability to manage robots.txt template via system configuration.
+* Added `Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByUrlSlugsListener` that excludes cms pages without URL slugs from the sitemap.
 
 #### ShoppingListBundle
 * Added the ability to display product kit line items on the shopping list line items storefront datagrid. See more in [documentation](https://doc.oroinc.com/bundles/commerce/ShoppingListBundle/shopping-list-on-storefront.html).
@@ -119,6 +102,13 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem` entity to the back-office API.
 * Added `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead of the deprecated `\Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataViolationsListener`.
 * Added `\Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPrice` validation constraint for checking if product kit item product has price.
+* Added `Oro\Bundle\ShoppingListBundle\Entity\LineItem::$checksum` property as a part of allowing to add the same product with the same unit code multiple times.
+* Added `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList::$currency` property.
+* Added `Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal::$customerUser` relation property
+
+#### TaxBundle
+* Added new tax calculation logic for product kits. Now the total tax for the product kit is the sum of the taxes for the kit and its items.
+* Added `\Oro\Bundle\TaxBundle\Resolver\KitAdjustResolver` resolver to adjust tax amount for product kits.
 
 #### VisibilityBundle
 * Added `\Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityListener` and `\Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityPrefetchListener` for adding visibility data to the product line items storefront datagrids.
@@ -130,6 +120,11 @@ The current file describes significant changes in the code that may affect the u
 * Added a new `header` field to `\Oro\Bundle\CMSBundle\Entity\ImageSlide`.
 * Added a new twig function `oro_cms_image_slide_image` that returns the URL to the slider image using a predefined fallback strategy.
 * Added the `Oro\Bundle\CMSBundle\Validator\Constraints\HasAtLeastOneSizeImage` constraint and `\Oro\Bundle\CMSBundle\Validator\Constraints\HasAtLeastOneSizeImageValidator` validator to ensure at least one size of image is selected in a group.
+* Added the `Oro\Bundle\CMSBundle\Acl\Voter\LandingPageDeleteVoter` voter that prevents deletion of a landing page used as a homepage or a content variant in any content node of any web catalog.
+* Added the `oro_cms.home_page` option to the system configuration.
+* Added a new `doNotRenderTitle` field to `Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType`.
+* Added a new `createUrlSlug` field to `Oro\Bundle\CMSBundle\Form\Type\PageType`.
+* Added a landing page "Homepage".
 
 ### Changed
 
@@ -142,6 +137,9 @@ The current file describes significant changes in the code that may affect the u
 * Changed `b2b_flow_checkout` workflow: enabled the check for `order_line_items_not_empty` action group in `place_order_definition` transition definition.
 * Changed `frontend-checkout-line-items-grid` checkout line items datagrid to make it show checkout product kit line items, update related frontend templates.
 * Updated `order_confirmation_email` email notification template to include kit item line items data.
+
+#### Frontendbundle
+* The action `oro_frontend_root` renders home page landing page from the System Configuration.
 
 #### FedexShippingBundle
 * Changed `\Oro\Bundle\FedexShippingBundle\Builder\ShippingPackagesByLineItemBuilderInterface::addLineItem` so it expects `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem` argument instead of the removed `\Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface`.
@@ -194,6 +192,9 @@ The current file describes significant changes in the code that may affect the u
 * Added `getProduct` to `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`.
 * Added the ability to specify product unit precision property path in validation constraint `\Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision` and its validator
 
+#### PromotionBundle
+* `\Oro\Bundle\PromotionBundle\OrderTax\Mapper\OrderLineItemAfterDiscountsMapper` now takes into account product kits and proportionally distributes its discounts subtotal among the product kit subtotal when the Calculate Taxes After Promotions option is enabled.
+
 #### RFPBundle
 * Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface` in `\Oro\Bundle\RFPBundle\Entity\RequestProduct` so it has the field `$kitItemLineItems` with a collection of kit item line items.
 * Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`, `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface` in `\Oro\Bundle\RFPBundle\Entity\RequestProductItem` so it has the property `$kitItemLineItems` with a collection of kit item line items and a checksum.
@@ -212,6 +213,7 @@ The current file describes significant changes in the code that may affect the u
 * Implemented `\Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface`, `\Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface` in `\Oro\Bundle\SaleBundle\Entity\QuoteProductDemand` so it has the property `$kitItemLineItems` with a collection of kit item line items and a checksum.
 * `\Oro\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension` now takes into account kit item line items when creating a quote from the product data storage.
 * Added `verify_transition` to the `b2b_quote_backoffice_default` to check a quote could be sent to a customer.
+* `orosale/js/app/components/dependent-field-component` js module supports `data-disable-element` element that disables form elements in dependee element.
 
 #### ShippingBundle
 * Reworked and simplified the mechanism of creating shipping line items `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem`, see section "Removed" for details.
@@ -225,12 +227,16 @@ The current file describes significant changes in the code that may affect the u
 * Made use of nested validation groups transforming into `\Symfony\Component\Validator\Constraints\GroupSequence` for `shoppinglistitem` and `shoppinglistkititem` storefront API resources.
 * `\Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage` now additionally puts kit item line items data into the product data storage.
 
-
 #### CMSBundle
 * Renamed field `title` to `altImageText`.
 * Renamed field `mainImage` to `extraLargeImage`.
 
+### WebCatalogBundle
+* Added a new field `doNotRenderTitle` to `Oro\Bundle\WebCatalogBundle\Entity\ContentVariant`.
+
 ### Removed
+
+* Removed layout templates related to the old homepage functionality.
 
 #### CustomThemeBundle
 * Custom theme is removed
@@ -272,6 +278,11 @@ The current file describes significant changes in the code that may affect the u
 #### PricingBundle
 * Removed `products-prices-component.js`, decoupled its dependent components.
 
+#### ProductBundle
+* "list", "short", "two-columns" product templates were removed.
+  Use "tabs" and "wide" templates instead. In case you have registered old templates in your theme - a default template will be applied.
+* Removed `\Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener`, added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\StatusListener` instead.
+
 #### SaleBundle
 * Removed unused `tierPrices`, `matchedPrices`, `isShippingAddressGranted` from `\Oro\Bundle\SaleBundle\Form\QuoteFormTemplateDataProvider`.
 * Removed `\Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider` (`oro_sale.provider.quote_product_price`), use `\Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider` (`oro_sale.provider.quote_product_prices`) instead.
@@ -296,9 +307,8 @@ The current file describes significant changes in the code that may affect the u
 * Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Provider\ProductKitItemsProvider`, use `\Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemsProvider` instead.
 * Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Provider\ProductKitItemProductsProvider`, use `\Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider` instead.
 
-#### ProductBundle
-* Removed `\Oro\Bundle\ProductBundle\ProductKit\EventListener\ProductStatusListener`, added `\Oro\Bundle\ProductBundle\ProductKit\EventListener\StatusListener` instead.
-
+#### ValidationBundle
+* Removed `\Oro\Bundle\ValidationBundle\Validator\Constraints\UniqueEntity` validation constraint and validator. Use instead `\Oro\Bundle\FormBundle\Validator\Constraints\UniqueEntity`.
 
 ## 5.1.0 (2023-03-31)
 [Show detailed list of changes](incompatibilities-5-1.md)
