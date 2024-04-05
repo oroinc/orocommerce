@@ -61,10 +61,20 @@
         flex-shrink: $search-autocomplete-product-image-flex-shrink;
         border-radius: $border-radius-pill;
         overflow: $search-autocomplete-product-image-overflow;
+    }
 
-        img {
-            max-width: $search-autocomplete-product-image-img-max-width;
-        }
+    &__picture {
+        width: $search-autocomplete-product-picture-width;
+        height: $search-autocomplete-product-picture-height;
+        display: $search-autocomplete-product-picture-display;
+        justify-content: $search-autocomplete-product-picture-justify-content;
+        border-radius: $border-radius-pill;
+    }
+
+    &__img {
+        width: $search-autocomplete-product-image-img-width;
+        height: $search-autocomplete-product-image-img-height;
+        object-fit: $search-autocomplete-product-image-img-object-fit;
     }
 
     &__info {

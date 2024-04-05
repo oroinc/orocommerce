@@ -1,6 +1,6 @@
 /* @theme: default; */
 
-$border-radius-pill: 50rem !default;
+$border-radius-pill: 50% !default;
 
 $search-autocomplete-position: absolute !default;
 $search-autocomplete-z-index: $backdrop-z-index + 1;
@@ -43,7 +43,14 @@ $search-autocomplete-product-image-flex-grow: 0 !default;
 $search-autocomplete-product-image-flex-shrink: 0 !default;
 $search-autocomplete-product-image-overflow: hidden !default;
 
-$search-autocomplete-product-image-img-max-width: 100% !default;
+$search-autocomplete-product-picture-width: 100% !default;
+$search-autocomplete-product-picture-height: 100% !default;
+$search-autocomplete-product-picture-display: flex !default;
+$search-autocomplete-product-picture-justify-content: center !default;
+
+$search-autocomplete-product-image-img-width: 100% !default;
+$search-autocomplete-product-image-img-height: 100% !default;
+$search-autocomplete-product-image-img-object-fit: cover !default;
 
 $search-autocomplete-product-info-width: calc(
     100% - #{$search-autocomplete-product-image-width + $search-autocomplete-product-image-offset-right}
