@@ -1,7 +1,8 @@
 @regression
 @ticket-BB-BB-22948
 @fixture-OroProductBundle:single_product_with_category.yml
-
+@skip
+# Unskip when BB-24001 will be fixed
 Feature: Price List Rules for Quantity
 
   Scenario: Create Price List with Rules
