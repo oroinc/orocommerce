@@ -6,7 +6,8 @@ Feature: Product Unit On Products Catalog
     Scenario: Create session
         Given I signed in as AmandaRCole@example.org on the store frontend
         And I click "NewCategory"
-    
+        And I should see "SKU1" and continue checking the condition is met for maximum 10 seconds
+
     Scenario: Unit label when product have only one unit
         Given I should see "SKU1"
         When I should see "ProductUnitLabel" for "SKU1" product
