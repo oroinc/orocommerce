@@ -260,7 +260,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ],
             'product_units' => [
                 [
-                    'value' => serialize(['item' => 3, 'set' => 0]),
+                    'value' => json_encode(['item' => 3, 'set' => 0]),
                     'all_text' => false
                 ]
             ],
@@ -451,7 +451,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
             ],
             'product_units' => [
                 [
-                    'value' => serialize(['item' => 3, 'set' => 0]),
+                    'value' => json_encode(['item' => 3, 'set' => 0]),
                     'all_text' => false
                 ]
             ],

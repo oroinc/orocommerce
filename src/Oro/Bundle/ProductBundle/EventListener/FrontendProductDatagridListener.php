@@ -157,7 +157,7 @@ class FrontendProductDatagridListener
             $productUnits = $record->getValue('product_units');
             $record->addData([
                 self::COLUMN_PRODUCT_UNITS => $productUnits
-                    ? unserialize($productUnits, ['allowed_classes' => false])
+                    ? json_decode($productUnits, true)
                     : []
             ]);
         }

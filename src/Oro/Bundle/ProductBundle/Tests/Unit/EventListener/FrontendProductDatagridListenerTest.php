@@ -190,9 +190,9 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                         'id'                   => 1,
                         'image_product_medium' => '/image/1/medium',
                         'image_product_large'  => '/image/1/large',
-                        'product_units'        => serialize(['each' => 3, 'set' => 0])
+                        'product_units'        => json_encode(['each' => 3, 'set' => 0])
                     ],
-                    ['id' => 2, 'product_units' => serialize(['bottle' => 0])],
+                    ['id' => 2, 'product_units' => json_encode(['bottle' => 0])],
                     [
                         'id'                   => 3,
                         'image_product_medium' => '/image/3/medium',
