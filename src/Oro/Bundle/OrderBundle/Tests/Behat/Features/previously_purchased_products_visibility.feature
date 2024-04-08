@@ -1,6 +1,6 @@
 @regression
 @feature-BB-9570
-@random-failed
+#@random-failed
 @fixture-OroOrderBundle:previously-purchased-visibility.yml
 @skip
 # Unskip when BB-24002 will be fixed
