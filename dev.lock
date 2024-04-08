@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "327469d02c21bb7371a591f33b7b2a3d",
+    "content-hash": "b2c32dec748b86d34ae5fd14bf557bc8",
     "packages": [
         {
             "name": "ass/xmlsecurity",
@@ -5095,10 +5095,10 @@
             "dist": {
                 "type": "path",
                 "url": "../calendar",
-                "reference": "678754ea8401cbca5d637b9f4d02101709d83d15"
+                "reference": "33114576bf8227e729e9ac7ede281742f5af9bf8"
             },
             "require": {
-                "oro/platform": "6.0.*"
+                "oro/platform": "6.1.*"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -5106,7 +5106,7 @@
                     "fullcalendar": "3.4.0"
                 },
                 "branch-alias": {
-                    "dev-master": "6.0-dev"
+                    "dev-master": "6.1-dev"
                 }
             },
             "autoload": {
@@ -5144,14 +5144,14 @@
             "dist": {
                 "type": "path",
                 "url": "../customer-portal",
-                "reference": "0f06f79c056711f17c469df289b29a0af2f5084e"
+                "reference": "defb03982589be222a0300d8c0f574fd4f2efff5"
             },
             "require": {
-                "oro/calendar-bundle": "6.0.*",
-                "oro/commerce": "6.0.*",
-                "oro/marketing": "6.0.*",
-                "oro/platform": "6.0.*",
-                "oro/platform-serialised-fields": "6.0.*"
+                "oro/calendar-bundle": "6.1.*",
+                "oro/commerce": "6.1.*",
+                "oro/marketing": "6.1.*",
+                "oro/platform": "6.1.*",
+                "oro/platform-serialised-fields": "6.1.*"
             },
             "type": "library",
             "extra": {
@@ -5159,7 +5159,7 @@
                     "prismjs": "^1.23.0"
                 },
                 "branch-alias": {
-                    "dev-master": "6.0-dev"
+                    "dev-master": "6.1-dev"
                 }
             },
             "autoload": {
@@ -5259,16 +5259,16 @@
             "dist": {
                 "type": "path",
                 "url": "../marketing",
-                "reference": "dd478e6680964fbae33338f8909ab10995e4ec02"
+                "reference": "cfaf323b12dcde0920970415b1e30ba384a17e26"
             },
             "require": {
                 "ext-curl": "*",
-                "oro/platform": "6.0.*"
+                "oro/platform": "6.1.*"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "6.0-dev"
+                    "dev-master": "6.1-dev"
                 }
             },
             "autoload": {
@@ -5309,7 +5309,7 @@
             "dist": {
                 "type": "path",
                 "url": "../platform",
-                "reference": "4195f59e99d78659576db502cb4f42893e3dc32d"
+                "reference": "433cd08b4e9b5b9fc80eb4ecf0d1b8d8704fb873"
             },
             "require": {
                 "ass/xmlsecurity": "1.1.1",
@@ -5363,7 +5363,7 @@
                 "ocramius/proxy-manager": "~2.11.1",
                 "oro/api-doc-bundle": "dev-ticket/BAP-22238",
                 "oro/doctrine-extensions": "~2.0.2",
-                "oro/platform-serialised-fields": "6.0.*",
+                "oro/platform-serialised-fields": "6.1.*",
                 "php": "~8.3.0",
                 "php-http/httplug-bundle": "~1.27.0",
                 "phpdocumentor/reflection-docblock": "5.3.*",
@@ -5518,7 +5518,7 @@
                     "@lezer/lezer": "^1.1.2"
                 },
                 "branch-alias": {
-                    "dev-master": "6.0-dev"
+                    "dev-master": "6.1-dev"
                 }
             },
             "autoload": {
@@ -5642,15 +5642,15 @@
             "dist": {
                 "type": "path",
                 "url": "../serialized-fields",
-                "reference": "26995f4e406e22c5a026bac13550ffe15b284389"
+                "reference": "4c918dbc2cf00e9e5e3a5a9bc4e485cd6fbbe9d0"
             },
             "require": {
-                "oro/platform": "6.0.*"
+                "oro/platform": "6.1.*"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "6.0-dev"
+                    "dev-master": "6.1-dev"
                 }
             },
             "autoload": {
@@ -17345,13 +17345,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "oro/platform": 20,
-        "oro/platform-serialised-fields": 20,
-        "oro/calendar-bundle": 20,
-        "oro/marketing": 20,
-        "oro/customer-portal": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
