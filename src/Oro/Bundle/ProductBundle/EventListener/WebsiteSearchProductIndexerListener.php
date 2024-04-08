@@ -113,7 +113,7 @@ class WebsiteSearchProductIndexerListener implements WebsiteSearchProductIndexer
                 $event->addField(
                     $product->getId(),
                     'product_units',
-                    serialize($productUnits[$product->getId()])
+                    json_encode($productUnits[$product->getId()])
                 );
             }
 

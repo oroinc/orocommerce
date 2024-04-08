@@ -66,7 +66,7 @@ class ProductListEventListener
             $productView->set('unit', $data['unit']);
             $productView->set(
                 'product_units',
-                $data['product_units'] ? unserialize($data['product_units'], ['allowed_classes' => false]) : []
+                $data['product_units'] ? json_decode($data['product_units'], true) : []
             );
             $productView->set('newArrival', (bool)$data['newArrival']);
             $productView->set(

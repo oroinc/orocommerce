@@ -180,6 +180,23 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
+     * @param string $type
+     *
+     * @Then /^(?:|I )should see that the Currency Switcher has a type "(?P<type>[^"]*)"$/
+     */
+    public function iShouldSeeInternalSwitcherElementHasType(string $type)
+    {
+        $this->commerceMainContext->openMainMenu();
+
+        /** @var LocalizationCurrencySwitcherElement $switcher */
+        $switcher = $this->createElement('LocalizationCurrencySwitcher');
+
+        $switcherElement = $this->elementFactory->createElement($switcher::CURRENCY_SWITCHER_ELEMENT);
+        self::assertEquals($type, $switcher->getInternalElementSelectorType($switcherElement));
+        $this->commerceMainContext->closeMainMenu();
+    }
+
+    /**
      * @Then /^(?:|I )recalculate combined prices$/
      */
     public function recalculateCombinedPrices()

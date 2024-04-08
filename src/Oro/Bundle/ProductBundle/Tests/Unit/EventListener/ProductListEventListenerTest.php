@@ -96,7 +96,7 @@ class ProductListEventListenerTest extends \PHPUnit\Framework\TestCase
                 'name'                 => 'product 1',
                 'image'                => '/image/1/medium',
                 'unit'                 => 'items',
-                'product_units'        => serialize(['items' => 0, 'set' => 2]),
+                'product_units'        => json_encode(['items' => 0, 'set' => 2]),
                 'newArrival'           => 1,
                 'variant_fields_count' => 3
             ],
@@ -162,7 +162,7 @@ class ProductListEventListenerTest extends \PHPUnit\Framework\TestCase
                 'image'                => '/image/1/medium',
                 'imageWebp'            => '/image/1/medium/webp',
                 'unit'                 => 'items',
-                'product_units'        => serialize(['items' => 0, 'set' => 2]),
+                'product_units'        => json_encode(['items' => 0, 'set' => 2]),
                 'newArrival'           => 1,
                 'variant_fields_count' => 3
             ],
