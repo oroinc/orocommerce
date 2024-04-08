@@ -128,7 +128,7 @@ class LoadProductSearchData implements ProcessorInterface
             if (\array_key_exists($unitsFieldName, $selectedData)) {
                 $serializedUnits = $selectedData[$unitsFieldName];
                 $selectedData[$unitsFieldName] = $serializedUnits
-                    ? unserialize($serializedUnits, ['allowed_classes' => false])
+                    ? json_decode($serializedUnits, true)
                     : [];
             }
             foreach ($selectedData as $fieldName => $value) {
