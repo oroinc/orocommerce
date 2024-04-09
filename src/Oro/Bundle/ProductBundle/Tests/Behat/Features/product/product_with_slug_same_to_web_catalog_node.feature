@@ -1,6 +1,8 @@
 @regression
 @ticket-BB-20500
-
+@skip
+# Unskip when BB-24018 will be fixed
+# Unskip when BB-24016 will be fixed
 Feature: Product with slug same to web catalog node
   In order to have the ability to display a "friendly URL" address for customers
   As an administrator
