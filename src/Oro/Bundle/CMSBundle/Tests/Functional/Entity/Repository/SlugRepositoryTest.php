@@ -34,7 +34,7 @@ class SlugRepositoryTest extends WebTestCase
         $this->repository = $this->registry->getRepository(Slug::class);
     }
 
-    public function testDeleteSlugAttachedToEntityByClass()
+    public function testDeleteSlugAttachedToEntityByClass(): void
     {
         /** @var Page $page */
         $page = $this->getReference(LoadPageData::PAGE_1);
@@ -46,5 +46,22 @@ class SlugRepositoryTest extends WebTestCase
         $em->refresh($page);
 
         $this->assertEmpty($page->getSlugs());
+    }
+
+    public function testResetSlugScopesHash(): void
+    {
+        /** @var Page $page */
+        $page = $this->getReference(LoadPageData::PAGE_1);
+        $slugs = $page->getSlugs();
+        $slugIds = array_map(static fn (Slug $slug) => $slug->getId(), $slugs->toArray());
+
+        $this->assertNotEmpty($slugIds);
+
+        $this->repository->resetSlugScopesHash($slugIds);
+
+        foreach ($slugs as $slug) {
+            $this->registry->getManager()->refresh($slug);
+            self::assertEquals($slug->getId(), $slug->getScopesHash());
+        }
     }
 }

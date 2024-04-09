@@ -5,6 +5,8 @@ namespace Oro\Bundle\WebCatalogBundle\Async;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogCalculateCacheTopic;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
 use Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCache;
@@ -98,6 +100,22 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
             /** @var EntityManagerInterface $em */
             $em = $this->registry->getManagerForClass(ContentNode::class);
             $em->beginTransaction();
+
+            $slugs = [];
+            foreach ($contentNode->getContentVariants() as $contentVariant) {
+                foreach ($contentVariant->getSlugs() as $slug) {
+                    $slugs[] = $slug->getId();
+                }
+            }
+
+            /** @var SlugRepository $slugRepository */
+            $slugRepository = $em->getRepository(Slug::class);
+            /**
+             * We need to reset the scope hashes in order to bypass the constraint violation when updating slug scopes
+             * within this transaction, then the scope hashes are replaced with the correct ones.
+             * This fix is necessary because mysql does not support deferrable constraints
+             */
+            $slugRepository->resetSlugScopesHash($slugs);
 
             $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageBody);
 

@@ -144,6 +144,9 @@ oro_behat_extension:
         Override Product Variant Configuration:
             selector: '[name="oro_web_catalog_content_node[contentVariants][0][overrideVariantConfiguration]"]'
 
+        Content Node Default Second Content Variant:
+            selector: '[data-ftid="oro_web_catalog_content_node_contentVariants_1_default"]'
+
         Headlamps category:
             selector:
                 type: xpath
