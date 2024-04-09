@@ -638,7 +638,7 @@ Feature: Commerce smoke e2e
     And type "New Front Shopping List" in "Shopping List Name"
     And click "Create"
     And should see "New Front Shopping List"
-    And click "Phones" hamburger menu
+    And click "Phones" in hamburger menu
     When fill line item with "Lenovo_Vibe_sku" in frontend product grid:
       |Quantity|112 |
     And click "Add to New Front Shopping List" for "Lenovo_Vibe_sku" product
@@ -761,7 +761,7 @@ Feature: Commerce smoke e2e
 
   Scenario: Create RFQ, convert it to quote with edit and complete checkout by customer user
     Given I proceed as the User
-    And click "Phones" hamburger menu
+    And click "Phones" in hamburger menu
     And fill "FrontendLineItemForm" with:
       |Quantity|10  |
     And I scroll to top
