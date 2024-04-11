@@ -19,15 +19,22 @@ class RequestHelperTest extends WebTestCase
      */
     public function testGetRequestsWoQuote(int $days, array $expected)
     {
-        $expectedRequests = [];
-        foreach ($expected as $item) {
-            $expectedRequests[] = $this->getReference($item);
-        }
+        $actualRequests = $this->getContainer()->get('oro_sale.service.request_helper')->getRequestsWoQuote($days);
+        $this->assertCount(count($expected), $actualRequests);
 
-        $this->assertEquals(
-            $expectedRequests,
-            $this->getContainer()->get('oro_sale.service.request_helper')->getRequestsWoQuote($days)
-        );
+        foreach ($expected as $item) {
+            $expectedRequest = $this->getReference($item);
+            $actualRequest = null;
+            foreach ($actualRequests as $j => $actualRequest) {
+                if ($item === $actualRequest->getNote()) {
+                    unset($actualRequests[$j]);
+                    break;
+                }
+            }
+            $this->assertNotNull($actualRequest);
+            $this->assertEquals($expectedRequest, $actualRequest);
+        }
+        $this->assertEmpty($actualRequests);
     }
 
     public function getRequestsWoQuoteDataProvider(): array
