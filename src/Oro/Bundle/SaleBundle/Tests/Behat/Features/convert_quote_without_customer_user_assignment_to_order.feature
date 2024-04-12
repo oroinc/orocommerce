@@ -1,4 +1,8 @@
 @ticket-BB-10457
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
+@fixture-OroCheckoutBundle:Payment.yml
+@fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroSaleBundle:QuoteToOrderFixture.yml
 

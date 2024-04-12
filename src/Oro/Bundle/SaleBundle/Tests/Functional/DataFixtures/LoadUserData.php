@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
@@ -116,6 +117,10 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface, D
             [
                 'oid'  => 'workflow:(root)',
                 'acls' => ['VIEW_WORKFLOW_SYSTEM', 'PERFORM_TRANSITIONS_SYSTEM'],
+            ],
+            [
+                'class' => CustomerAddress::class,
+                'acls'  => ['VIEW_DEEP'],
             ],
         ],
     ];
@@ -276,14 +281,13 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface, D
 
     private function loadCustomerUsers(): void
     {
-        /* @var CustomerUserManager $userManager */
-        $userManager = $this->container->get('oro_customer_user.manager');
+        /* @var CustomerUserManager $customerUserManager */
+        $customerUserManager = $this->container->get('oro_customer_user.manager');
         /** @var User $defaultUser */
         $defaultUser = $this->getReference(LoadUser::USER);
         foreach ($this->customerUsers as $item) {
             /* @var CustomerUser $customerUser */
-            $customerUser = $userManager->createUser();
-            $customerUser->setOwner($defaultUser);
+            $customerUser = $customerUserManager->createUser();
             $customerUser->setEmail($item['email']);
             $customerUser->setCustomer($this->getReference($item['customer']));
             $customerUser->setFirstName($item['firstname']);
@@ -297,7 +301,7 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface, D
             foreach ($item['userRoles'] as $role) {
                 $customerUser->addUserRole($this->getReference($role));
             }
-            $userManager->updateUser($customerUser);
+            $customerUserManager->updateUser($customerUser);
             $this->setReference($item['email'], $customerUser);
         }
     }

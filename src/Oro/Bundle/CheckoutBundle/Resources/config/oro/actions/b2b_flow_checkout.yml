@@ -1,5 +1,4 @@
 action_groups:
-    # TODO: ??? Do we need context in service, or let's keep it not connected to action bundle at all to be able to reuse??
     b2b_flow_checkout_duplicate_address:
         service: oro_checkout.action_group.b2b_flow_checkout.address_actions
         method: duplicateOrderAddress
@@ -12,16 +11,8 @@ action_groups:
         service: oro_checkout.action_group.b2b_flow_checkout.address_actions
         method: updateShippingAddress
 
-    # TODO: May be removed as it is a proxy for proxy...
     b2b_flow_checkout_update_shipping_method:
-        parameters:
-            checkout:
-                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
-        actions:
-            - '@run_action_group':
-                action_group: oro_update_shipping_price
-                parameters_mapping:
-                    checkout: $.checkout
+        service: oro_checkout.action_group.update_shipping_price
 
     b2b_flow_checkout_place_order:
         service: oro_checkout.action_group.b2b_flow_checkout.order_actions

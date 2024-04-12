@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPrice;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActions;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CheckoutActions;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\OrderActions;
@@ -102,7 +103,7 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
         $this->assertTrue($result['billing_address_has_shipping']);
 
-        // shipping address doesn't duplicated
+        // shipping address doesn't duplicate
         $this->assertNotNull($this->findEntity(OrderAddress::class, $shippingAddressId));
         $this->assertNotEquals(
             $this->entityToArray($checkout->getBillingAddress(), ['id', 'created', 'updated']),
@@ -159,10 +160,10 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
     public function testUpdateShippingMethodWithoutRequiredParameters()
     {
         $this->expectException(InvalidParameterException::class);
-        $this->expectExceptionMessage(
-            'Trying to execute ActionGroup "b2b_flow_checkout_update_shipping_method" '
-            . 'with invalid or missing parameter(s): "checkout"'
-        );
+        $this->expectExceptionMessage(sprintf(
+            'Trying to execute ActionGroup "service:%s::execute" with invalid or missing parameter(s): "checkout"',
+            UpdateShippingPrice::class
+        ));
 
         $this->executeActionGroup('b2b_flow_checkout_update_shipping_method');
     }

@@ -6,6 +6,11 @@ workflows:
         transitions:
             __start__:
                 step_to: enter_billing_address
+                conditional_steps_to:
+                    enter_credentials_step:
+                        '@or':
+                            - '@empty': $checkout.customerUser
+                            - '@equal': [$checkout.customerUser.isGuest, true]
 
             start_from_quote:
                 step_to: enter_billing_address
@@ -14,10 +19,10 @@ workflows:
                 step_to: enter_credentials_step
 
             start_from_shoppinglist:
-                step_to: enter_credentials_step
+                step_to: enter_billing_address
 
             start_from_quickorderform:
-                step_to: enter_credentials_step
+                step_to: enter_billing_address
 
             finish_checkout:
                 step_to: order_created

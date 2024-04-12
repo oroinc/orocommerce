@@ -885,7 +885,6 @@ services:
             - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
             - '@oro_checkout.workflow_state.mapper.shopping_list_line_item'
             - '@oro_workflow.manager'
-            - '@oro_action.action_group_registry'
 
     Oro\Bundle\CheckoutBundle\Helper\CheckoutCompareHelper:
         alias: oro_checkout.helper.check_compare

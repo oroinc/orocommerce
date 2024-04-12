@@ -8,6 +8,9 @@ services:
         tags:
             - { name: 'oro_action_group_service' }
 
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActions:
+        alias: oro_checkout.action_group.b2b_flow_checkout.address_actions
+
     oro_checkout.action_group.b2b_flow_checkout.order_actions:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\OrderActions
         public: true
@@ -21,6 +24,9 @@ services:
             - '@oro_action.action_executor'
         tags:
             - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\OrderActions:
+        alias: oro_checkout.action_group.b2b_flow_checkout.order_actions
 
     oro_checkout.action_group.b2b_flow_checkout.split_order_actions:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\SplitOrderActions
@@ -38,6 +44,9 @@ services:
         tags:
             - { name: 'oro_action_group_service' }
 
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\SplitOrderActions:
+        alias: oro_checkout.action_group.b2b_flow_checkout.split_order_actions
+
     oro_checkout.action_group.b2b_flow_checkout.checkout_actions:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CheckoutActions
         public: true
@@ -49,6 +58,9 @@ services:
             - '@oro_action.action_executor'
         tags:
             - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CheckoutActions:
+        alias: oro_checkout.action_group.b2b_flow_checkout.checkout_actions
 
     oro_checkout.action_group.b2b_flow_checkout.customer_user_actions:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CustomerUserActions
@@ -64,17 +76,69 @@ services:
         tags:
             - { name: 'oro_action_group_service' }
 
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CustomerUserActions:
+        alias: oro_checkout.action_group.b2b_flow_checkout.customer_user_actions
+
+    oro_checkout.workflow.transition.start:
+        class: Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\StartTransition
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\StartTransition:
+        alias: oro_checkout.workflow.transition.start
+
+    oro_checkout.workflow.base_transition.start_from_quick_order_form:
+        class: Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\StartFromQuickOrderFormTransition
+        arguments:
+            - '@oro_shopping_list.processor.quick_add_to_checkout'
+            - '@oro_shopping_list.manager.shopping_list_limit'
+            - '@oro_checkout.condition.is_workflow_start_from_shopping_list_allowed'
+            - '@oro_shopping_list.manager.current_shopping_list'
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\StartFromQuickOrderFormTransition:
+        alias: oro_checkout.workflow.base_transition.start_from_quick_order_form
+
+    oro_checkout.workflow.base_transition.start_from_shopping_list:
+        class: Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\StartFromShoppingListTransition
+        arguments:
+            - '@oro_action.action_executor'
+            - '@doctrine'
+            - '@oro_checkout.condition.is_workflow_start_from_shopping_list_allowed'
+            - '@oro_checkout.action_group.start_from_shopping_list'
+            - '@oro_action.expression.context_accessor'
+            - '@oro_shopping_list.manager.empty_matrix_grid'
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\StartFromShoppingListTransition:
+        alias: oro_checkout.workflow.base_transition.start_from_shopping_list
+
     oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_address:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToShippingAddress
-        public: true
         arguments:
             - '@oro_action.action_executor'
             - '@oro_checkout.provider.multi_shipping_config'
             - '@oro_checkout.provider.grouped_line_items'
             - '@oro_checkout.action_group.b2b_flow_checkout.customer_user_actions'
             - '@oro_checkout.action_group.b2b_flow_checkout.address_actions'
+            - '@oro_checkout.action_group.order_line_items_not_empty'
         tags:
             - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToShippingAddress:
+        alias: oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_address
+
+    oro_checkout.action_group.update_shipping_price:
+        class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPrice
+        arguments:
+            - '@oro_checkout.shipping_method.provider_main'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPrice:
+        alias: oro_checkout.action_group.update_shipping_price
 
     oro_checkout.action_group.actualize_currency:
         class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ActualizeCurrency
@@ -84,6 +148,128 @@ services:
             - '@oro_currency.helper.currency_name'
         tags:
             - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ActualizeCurrency:
+        alias: oro_checkout.action_group.actualize_currency
+
+    oro_checkout.action_group.order_line_items_not_empty:
+        class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderLineItemsNotEmpty
+        arguments:
+            - '@oro_action.action_executor'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderLineItemsNotEmpty:
+        alias: oro_checkout.action_group.order_line_items_not_empty
+
+    oro_checkout.action_group.update_checkout_state:
+        class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateCheckoutState
+        arguments:
+            - '@oro_action.action_executor'
+            - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
+            - '@oro_checkout.workflow_state.manager.checkout_state_diff'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateCheckoutState:
+        alias: oro_checkout.action_group.update_checkout_state
+
+    oro_checkout.action_group.actualize_checkout:
+        class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ActualizeCheckout
+        arguments:
+            - '@oro_action.action_executor'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_checkout.line_items.factory'
+            - '@oro_checkout.shipping_method.provider_main'
+            - '@oro_checkout.model.checkout_subtotal_updater'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ActualizeCheckout:
+        alias: oro_checkout.action_group.actualize_checkout
+
+    oro_checkout.action_group.find_or_create_checkout:
+        class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\FindOrCreateCheckout
+        arguments:
+            - '@oro_action.action_executor'
+            - '@oro_workflow.manager'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_checkout.repository.checkout'
+            - '@oro_website.manager'
+            - '@oro_checkout.action_group.actualize_checkout'
+            - '@oro_checkout.line_items.factory'
+            - '@oro_checkout.helper.check_compare'
+            - '@security.token_storage'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\FindOrCreateCheckout:
+        alias: oro_checkout.action_group.find_or_create_checkout
+
+    oro_checkout.action_group.start_checkout:
+        class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartCheckout
+        arguments:
+            - '@oro_checkout.action_group.prepare_checkout_settings'
+            - '@oro_checkout.action_group.find_or_create_checkout'
+            - '@oro_checkout.provider.prepare_checkout_settings_provider'
+            - '@oro_checkout.action_group.update_workflow_item'
+            - '@security.token_storage'
+            - '@router'
+            - '@oro_action.action_executor'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartCheckout:
+        alias: oro_checkout.action_group.start_checkout
+
+    oro_checkout.action_group.start_from_shopping_list:
+        class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartShoppingListCheckout
+        arguments:
+            - '@oro_shopping_list.provider.shopping_list_url'
+            - '@oro_shopping_list.manager.shopping_list_limit'
+            - '@oro_checkout.action_group.start_checkout'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartShoppingListCheckout:
+        alias: oro_checkout.action_group.start_from_shopping_list
+
+    oro_checkout.action_group.start_quick_order_checkout:
+        class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartQuickOrderCheckout
+        arguments:
+            - '@oro_action.action_executor'
+            - '@oro_pricing.user_currency_manager'
+            - '@Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository'
+            - '@doctrine'
+            - '@oro_checkout.action_group.start_from_shopping_list'
+            - '@oro_workflow.manager'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartQuickOrderCheckout:
+        alias: oro_checkout.action_group.start_quick_order_checkout
+
+    oro_checkout.action_group.prepare_checkout_settings:
+        class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\PrepareCheckoutSettings
+        arguments:
+            - '@oro_checkout.action_group.b2b_flow_checkout.address_actions'
+            - '@oro_payment.provider.payment_transaction'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\PrepareCheckoutSettings:
+        alias: oro_checkout.action_group.prepare_checkout_settings
+
+    oro_checkout.action_group.update_workflow_item:
+        class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateWorkflowItem
+        arguments:
+            - '@oro_workflow.manager'
+            - '@oro_action.action_executor'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateWorkflowItem:
+        alias: oro_checkout.action_group.update_workflow_item
 
     oro_checkout.event_listener.process_workflow_request:
         class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\ProcessWorkflowRequestEventListener
@@ -103,6 +289,23 @@ services:
             - { name: kernel.event_listener, event: oro_checkout.request, method: checkConsents }
             - { name: kernel.event_listener, event: oro_workflow.entered, method: onStepEntered }
             - { name: oro_featuretogle.feature, feature: consents }
+
+    oro_checkout.event_listener.actualize_workflow_item:
+        class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\ActualizeWorkflowItem
+        arguments:
+            - '@oro_workflow.manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_workflow.transition, method: onTransition, priority: 255 }
+            - { name: kernel.event_listener, event: oro_workflow.completed, method: onComplete, priority: 255 }
+
+    oro_checkout.event_listener.return_guest_to_enter_credentials_step:
+        class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\ReturnGuestToEnterCredentialsStep
+        arguments:
+            - '@oro_workflow.manager'
+            - 'enter_credentials_step'
+            - 'back_to_enter_credentials'
+        tags:
+            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout.completed, method: onComplete }
 
     oro_checkout.event_listener.checkout_request_actualize_currency:
         class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\CheckoutRequestActualizeCurrencyListener

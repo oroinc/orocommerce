@@ -62,12 +62,12 @@ class GetOrderLineItems extends AbstractAction
 
         $disablePriceFilter = $this->getOption($this->options, 'disable_price_filter', null);
         if ($disablePriceFilter !== null) {
-            $arguments[] = $disablePriceFilter;
+            $arguments[] =  $this->contextAccessor->getValue($context, $disablePriceFilter);
         }
 
         $configVisibilityPath = $this->getOption($this->options, 'config_visibility_path', null);
         if ($configVisibilityPath !== null) {
-            $arguments[] = $configVisibilityPath;
+            $arguments[] =  $this->contextAccessor->getValue($context, $configVisibilityPath);
         }
 
         $lineItems = $this->checkoutLineItemsManager->getData(...$arguments);

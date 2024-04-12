@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\ActionBundle\Model\ActionGroup;
+use Oro\Bundle\ActionBundle\Model\ActionGroupInterface;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
@@ -37,7 +37,7 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     private TranslatorInterface $translator;
     private DateTimeFormatterInterface $dateFormatter;
     private string $actionGroupName;
-    private ActionGroup|null|bool $actionGroup = false;
+    private ActionGroupInterface|null|bool $actionGroup = false;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -150,7 +150,7 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         );
     }
 
-    private function getActionGroup(): ?ActionGroup
+    private function getActionGroup(): ?ActionGroupInterface
     {
         if (false === $this->actionGroup) {
             $this->actionGroup = $this->actionGroupRegistry->findByName($this->actionGroupName);

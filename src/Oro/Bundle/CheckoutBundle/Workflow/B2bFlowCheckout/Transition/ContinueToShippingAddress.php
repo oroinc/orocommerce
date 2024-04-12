@@ -7,6 +7,7 @@ use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderLineItemsNotEmptyInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CustomerUserActionsInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -22,7 +23,8 @@ class ContinueToShippingAddress implements TransitionServiceInterface
         private ConfigProvider $multiShippingConfigProvider,
         private GroupedCheckoutLineItemsProvider $checkoutLineItemsProvider,
         private CustomerUserActionsInterface $customerUserActions,
-        private AddressActionsInterface $addressActions
+        private AddressActionsInterface $addressActions,
+        private OrderLineItemsNotEmptyInterface $orderLineItemsNotEmpty
     ) {
     }
 
@@ -34,24 +36,7 @@ class ContinueToShippingAddress implements TransitionServiceInterface
         }
         $this->initializeGroupedLineItems($workflowItem, $checkout);
 
-        $data = $this->actionExecutor->executeActionGroup(
-            'order_line_items_not_empty',
-            ['checkout' => $checkout]
-        );
-
-        if (!$data['orderLineItemsNotEmptyForRfp']) {
-            $errors?->add(
-                ['message' => 'oro.checkout.workflow.condition.order_line_items_not_empty.not_allow_rfp.message']
-            );
-
-            return false;
-        }
-
-        if (!$data['orderLineItemsNotEmpty']) {
-            $errors?->add(
-                ['message' => 'oro.checkout.workflow.condition.order_line_items_not_empty.allow_rfp.message']
-            );
-
+        if (!$this->checkOrderLineItems($checkout, $errors)) {
             return false;
         }
 
@@ -123,6 +108,28 @@ class ContinueToShippingAddress implements TransitionServiceInterface
             'grouped_line_items',
             $this->checkoutLineItemsProvider->getGroupedLineItemsIds($checkout)
         );
+    }
+
+    private function checkOrderLineItems(Checkout $checkout, ?Collection $errors = null): bool
+    {
+        $orderLineItemsNotEmptyResult = $this->orderLineItemsNotEmpty->execute($checkout);
+        if (!$orderLineItemsNotEmptyResult['orderLineItemsNotEmptyForRfp']) {
+            $errors?->add(
+                ['message' => 'oro.checkout.workflow.condition.order_line_items_not_empty.not_allow_rfp.message']
+            );
+
+            return false;
+        }
+
+        if (!$orderLineItemsNotEmptyResult['orderLineItemsNotEmpty']) {
+            $errors?->add(
+                ['message' => 'oro.checkout.workflow.condition.order_line_items_not_empty.allow_rfp.message']
+            );
+
+            return false;
+        }
+
+        return true;
     }
 
     private function getCheckout(WorkflowItem $workflowItem): Checkout

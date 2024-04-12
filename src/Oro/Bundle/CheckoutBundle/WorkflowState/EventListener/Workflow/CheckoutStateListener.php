@@ -3,7 +3,9 @@
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\EventListener\Workflow;
 
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateCheckoutStateInterface;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;
+use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorageInterface;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\WorkflowBundle\Event\Transition\GuardEvent;
 use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionEvent;
@@ -18,7 +20,9 @@ class CheckoutStateListener
 
     public function __construct(
         private ActionExecutor $actionExecutor,
-        private CheckoutStateDiffManager $checkoutStateDiffManager
+        private CheckoutStateDiffManager $checkoutStateDiffManager,
+        private UpdateCheckoutStateInterface $updateCheckoutStateAction,
+        private CheckoutDiffStorageInterface $diffStorage
     ) {
     }
 
@@ -93,11 +97,23 @@ class CheckoutStateListener
 
     public function deleteCheckoutState(WorkflowItemAwareEvent $event): void
     {
-        $this->actionExecutor->executeAction(
-            'delete_checkout_state',
-            [
-                'entity' => $event->getWorkflowItem()->getEntity()
-            ]
+        $this->diffStorage->deleteStates($event->getWorkflowItem()->getEntity());
+    }
+
+    public function deleteCheckoutStateOnStart(TransitionEvent $event): void
+    {
+        if (!$event->getTransition()->isStart()) {
+            return;
+        }
+
+        $stateToken = $event->getWorkflowItem()->getData()->offsetGet('state_token');
+        if (!$stateToken) {
+            return;
+        }
+
+        $this->diffStorage->deleteStates(
+            $event->getWorkflowItem()->getEntity(),
+            $stateToken
         );
     }
 
@@ -107,16 +123,12 @@ class CheckoutStateListener
         $checkout = $workflowItem->getEntity();
         $workflowData = $workflowItem->getData();
 
-        $updateData = $this->actionExecutor->executeActionGroup(
-            'update_checkout_state',
-            [
-                'checkout' => $checkout,
-                'state_token' => $workflowData['state_token'],
-                'update_checkout_state' => $workflowItem->getResult()->offsetGet('updateCheckoutState'),
-                'force_update' => $forceUpdate
-            ]
+        $updateData = $this->updateCheckoutStateAction->execute(
+            $checkout,
+            $workflowData['state_token'],
+            (bool)$workflowItem->getResult()->offsetGet('updateCheckoutState'),
+            $forceUpdate
         );
-
-        $workflowItem->getResult()->offsetSet('updateCheckoutState', $updateData['update_checkout_state']);
+        $workflowItem->getResult()->offsetSet('updateCheckoutState', !empty($updateData['update_checkout_state']));
     }
 }

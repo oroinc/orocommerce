@@ -456,6 +456,11 @@ oro_behat_extension:
         locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:1"]//table//tr[@aria-rowindex="2"]//ul//label[contains(., "Flat Rate:")]//input[@type="radio"]'
         type: 'xpath'
 
+    First Checkout Shipping Grid First Line Item Flat Rate 2 Shipping Method:
+      selector:
+        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:1"]//table//tr[@aria-rowindex="2"]//ul//label[contains(., "Flat Rate 2:")]//input[@type="radio"]'
+        type: 'xpath'
+
     Second Line Item Flat Rate Shipping Method:
       selector:
         locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:2"]//table//tr[@aria-rowindex="2"]//ul//label[contains(., "Flat Rate:")]//input[@type="radio"]'

@@ -4,35 +4,6 @@ imports:
 workflows:
     b2b_flow_checkout:
         transition_definitions:
-            start_from_quickorderform_definition:
-                actions:
-                    - '@transit_workflow':
-                        conditions:
-                            '@and':
-                                - '@current_step_name_is_equal':
-                                    main_entity: $checkout
-                                    step_name: 'enter_credentials_step'
-                                    workflow: $.definition.name
-                                - '@not_empty': $checkout.customerUser
-                                - '@not_equal': [$checkout.customerUser.isGuest, true]
-                        parameters:
-                            entity: $checkout
-                            transition: 'back_to_billing_address'
-                            workflow: $.definition.name
-
-            start_from_shoppinglist_definition:
-                actions:
-                    # Next action are appended to start_from_shoppinglist_definition from includes/base_transition_definitions.yml
-                    - '@transit_workflow':
-                        conditions:
-                            '@or':
-                                - '@empty': $.result.shoppingList.customerUser
-                                - '@equal': [$.result.shoppingList.customerUser.isGuest, true]
-                        parameters:
-                            entity: $checkout
-                            transition: 'back_to_enter_credentials'
-                            workflow: $.definition.name
-
             continue_to_billing_address_as_guest_definition: ~
 
             continue_to_billing_address_definition:

@@ -1,4 +1,8 @@
 @ticket-BB-14734
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
+@fixture-OroCheckoutBundle:Payment.yml
+@fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroSaleBundle:QuoteProductFixture.yml
 Feature: Quote creation with empty prices (Default Quote Management Flow)

@@ -3,14 +3,13 @@
 namespace Oro\Bundle\SaleBundle\Controller\Frontend;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType;
 use Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProviderInterface;
 use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\QuoteDemandSubtotalsCalculatorInterface;
+use Oro\Bundle\SaleBundle\Workflow\ActionGroup\AcceptQuoteAndSubmitToOrder;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\UIBundle\Tools\FlashMessageHelper;
@@ -143,21 +142,16 @@ class QuoteController extends AbstractController
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
-                $actionGroup = $this->container->get(ActionGroupRegistry::class)
-                    ->findByName('oro_sale_frontend_quote_accept_and_submit_to_order');
-                if ($actionGroup) {
-                    $actionData = $actionGroup->execute(new ActionData(['data' => $quoteDemand]));
+                $actionResult = $this->container->get(AcceptQuoteAndSubmitToOrder::class)->execute($quoteDemand);
+                $this->container->get('doctrine')->getManagerForClass(QuoteDemand::class)->flush();
 
-                    $this->container->get('doctrine')->getManagerForClass(QuoteDemand::class)->flush();
-
-                    $redirectUrl = $actionData->getRedirectUrl();
-                    if ($redirectUrl) {
-                        if ($request->isXmlHttpRequest()) {
-                            return new JsonResponse(['redirectUrl' => $redirectUrl]);
-                        }
-
-                        return $this->redirect($redirectUrl);
+                $redirectUrl = $actionResult['redirectUrl'] ?? null;
+                if ($redirectUrl) {
+                    if ($request->isXmlHttpRequest()) {
+                        return new JsonResponse(['redirectUrl' => $redirectUrl]);
                     }
+
+                    return $this->redirect($redirectUrl);
                 }
             }
         }
@@ -213,11 +207,11 @@ class QuoteController extends AbstractController
             parent::getSubscribedServices(),
             [
                 TranslatorInterface::class,
-                ActionGroupRegistry::class,
                 GuestQuoteAccessProviderInterface::class,
                 FlashMessageHelper::class,
                 QuoteDemandSubtotalsCalculatorInterface::class,
-                'doctrine' => ManagerRegistry::class
+                'doctrine' => ManagerRegistry::class,
+                AcceptQuoteAndSubmitToOrder::class
             ]
         );
     }
