@@ -11,7 +11,7 @@ const EXPANDED = 'expanded';
 
 const config = {
     animationDuration: 150,
-    className: 'toggle-sidebar-btn toggle-filters-action btn btn--outlined btn--no-padding btn--text',
+    className: 'toggle-sidebar-btn toggle-filters-action btn btn--flat',
     text: 'oro.product.sidebar_filters.button.text',
     [`${EXPANDED}Title`]: 'oro.product.sidebar_filters.button.title.collapse',
     [`${EXPANDED}Icon`]: 'sliders',
