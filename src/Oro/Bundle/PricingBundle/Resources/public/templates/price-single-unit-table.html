@@ -1,15 +1,17 @@
 <% if (obj.prices.length) { %>
     <table class="product-prices-table stretch">
         <thead class="product-prices-table__thead">
-            <th class="product-prices-table__th text-left" scope="col">
-                <%- _.__('oro.pricing.frontend.product.quantity.short_label') %>
-            </th>
-            <th class="product-prices-table__th text-right" scope="col">
-                <% if (obj.showCurrencySymbol) { %>
-                    <%- localeSettings.getCurrencySymbol(prices[0]['currency']) + ',' %>
-                <% } %>
-                <%- prices[0]['unit'] %>
-            </th>
+            <tr>
+                <th class="product-prices-table__th text-left" scope="col">
+                    <%- _.__('oro.pricing.frontend.product.quantity.short_label') %>
+                </th>
+                <th class="product-prices-table__th text-right" scope="col">
+                    <% if (obj.showCurrencySymbol) { %>
+                        <%- localeSettings.getCurrencySymbol(prices[0]['currency']) + ',' %>
+                    <% } %>
+                    <%- prices[0]['unit'] %>
+                </th>
+            </tr>
         </thead>
         <tbody class="product-prices-table__tbody"
                itemprop="offers"
