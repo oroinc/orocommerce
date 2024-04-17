@@ -59,7 +59,9 @@ oro_behat_extension:
             selector: 'textarea[name="oro_rfp_frontend_request[note]"]'
 
         RFQ Create Order:
-            selector: '.navigation a:contains("Create Order")'
+            selector:
+                locator: '//a[contains(@class, "action-button")][contains(text(),"Create Order")]'
+                type: xpath
 
         Request Form:
             selector: 'form[name^="oro_rfp_request"]'

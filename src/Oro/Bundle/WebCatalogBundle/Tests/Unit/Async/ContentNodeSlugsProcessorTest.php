@@ -5,6 +5,8 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Async;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor;
 use Oro\Bundle\WebCatalogBundle\Async\Topic\WebCatalogResolveContentNodeSlugsTopic;
@@ -28,6 +30,8 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
 
     private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry;
 
+    private SlugRepository|\PHPUnit\Framework\MockObject\MockObject $slugRepository;
+
     private DefaultVariantScopesResolver|\PHPUnit\Framework\MockObject\MockObject $defaultVariantScopesResolver;
 
     private SlugGenerator|\PHPUnit\Framework\MockObject\MockObject $slugGenerator;
@@ -46,6 +50,7 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
         $this->defaultVariantScopesResolver = $this->createMock(DefaultVariantScopesResolver::class);
         $this->slugGenerator = $this->createMock(SlugGenerator::class);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
+        $this->slugRepository = $this->createMock(SlugRepository::class);
         $this->messageFactory = $this->createMock(ResolveNodeSlugsMessageFactory::class);
         $this->contentNodeTreeCache = $this->createMock(ContentNodeTreeCache::class);
         $this->processor = new ContentNodeSlugsProcessor(
@@ -64,6 +69,10 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
     public function testProcess(): void
     {
         $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects(self::once())
+            ->method('getRepository')
+            ->with(Slug::class)
+            ->willReturn($this->slugRepository);
 
         $em->expects(self::once())
             ->method('beginTransaction');
@@ -188,6 +197,10 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
             ->willThrowException($this->createMock(UniqueConstraintViolationException::class));
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects(self::once())
+            ->method('getRepository')
+            ->with(Slug::class)
+            ->willReturn($this->slugRepository);
+        $em->expects(self::once())
             ->method('beginTransaction');
         $em->expects(self::once())
             ->method('rollback');
@@ -247,6 +260,10 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
     protected function assertRollback(): void
     {
         $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects(self::once())
+            ->method('getRepository')
+            ->with(Slug::class)
+            ->willReturn($this->slugRepository);
 
         $em->expects(self::once())
             ->method('beginTransaction');

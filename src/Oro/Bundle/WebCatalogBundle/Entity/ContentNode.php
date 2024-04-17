@@ -235,14 +235,13 @@ class ContentNode extends ExtendContentNode implements
     public $sibling;
 
     /**
-     * @var Collection|MenuUpdate[]
+     * @var Collection<int, MenuUpdate>
      * @ORM\OneToMany(targetEntity="Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate", mappedBy="contentNode")
      */
     private $referencedMenuItems;
 
     /**
-     * @var
-     * @var Collection|Consent[]
+     * @var Collection<int, Consent>
      * @ORM\OneToMany(targetEntity="Oro\Bundle\ConsentBundle\Entity\Consent", mappedBy="contentNode")
      */
     private $referencedConsents;
@@ -613,19 +612,51 @@ class ContentNode extends ExtendContentNode implements
     }
 
     /**
-     * @return Collection|MenuUpdate[]
+     * @deprecated use getReferencedMenuItems instead
      */
     public function getReferencesInMenu(): Collection
+    {
+        return $this->getReferencedMenuItems();
+    }
+
+    /**
+     * @return Collection<int, MenuUpdate>
+     */
+    public function getReferencedMenuItems(): Collection
     {
         return $this->referencedMenuItems;
     }
 
     /**
-     * @return Collection|Consent[]
+     * @param Collection<int, MenuUpdate> $referencedMenuItems
+     */
+    public function setReferencedMenuItems(Collection $referencedMenuItems): void
+    {
+        $this->referencedMenuItems = $referencedMenuItems;
+    }
+
+    /**
+     * @deprecated use getReferencedConsents instead
      */
     public function getReferencesInConsents(): Collection
     {
+        return $this->getReferencedConsents();
+    }
+
+    /**
+     * @return Collection<int, Consent>
+     */
+    public function getReferencedConsents(): Collection
+    {
         return $this->referencedConsents;
+    }
+
+    /**
+     * @param Collection<int, Consent> $referencedConsents
+     */
+    public function setReferencedConsents(Collection $referencedConsents): void
+    {
+        $this->referencedConsents = $referencedConsents;
     }
 
     public function __clone()

@@ -473,4 +473,17 @@ class SlugRepository extends EntityRepository
             $scopeCriteria->applyToJoin($qb, 'scopes');
         }
     }
+
+    public function resetSlugScopesHash(array $slugsIds = []): void
+    {
+        $qb = $this->createQueryBuilder('slug');
+
+        $qb
+            ->update()
+            ->set('slug.scopesHash', 'slug.id')
+            ->where($qb->expr()->in('slug.id', ':slugs'))
+            ->setParameter('slugs', $slugsIds);
+
+        $qb->getQuery()->execute();
+    }
 }
