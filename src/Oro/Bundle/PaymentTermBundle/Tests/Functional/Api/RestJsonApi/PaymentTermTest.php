@@ -5,32 +5,96 @@ namespace Oro\Bundle\PaymentTermBundle\Tests\Functional\Api\RestJsonApi;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 
+/**
+ * @dbIsolationPerTest
+ */
 class PaymentTermTest extends RestJsonApiTestCase
 {
+    use SearchExtensionTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([LoadPaymentTermData::class]);
+
+        self::reindex(PaymentTerm::class);
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(['entity' => 'paymentterms']);
 
-        $this->assertResponseContains('cget_payment_term.yml', $response);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'       => 'paymentterms',
+                        'id'         => '<toString(@payment_term_test_data_net 10->id)>',
+                        'attributes' => ['label' => 'net 10']
+                    ],
+                    [
+                        'type'       => 'paymentterms',
+                        'id'         => '<toString(@payment_term_test_data_net 20->id)>',
+                        'attributes' => ['label' => 'net 20']
+                    ],
+                    [
+                        'type'       => 'paymentterms',
+                        'id'         => '<toString(@payment_term_test_data_net 30->id)>',
+                        'attributes' => ['label' => 'net 30']
+                    ],
+                    [
+                        'type'       => 'paymentterms',
+                        'id'         => '<toString(@payment_term_test_data_net 40->id)>',
+                        'attributes' => ['label' => 'net 40']
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
-    public function testGet()
+    public function testGetListWithSearchTextFilter(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'paymentterms'],
+            ['filter' => ['searchText' => '30']]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'       => 'paymentterms',
+                        'id'         => '<toString(@payment_term_test_data_net 30->id)>',
+                        'attributes' => ['label' => 'net 30']
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'paymentterms', 'id' => '<toString(@payment_term_test_data_net 10->id)>']
         );
 
-        $this->assertResponseContains('get_payment_term.yml', $response);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'       => 'paymentterms',
+                    'id'         => '<toString(@payment_term_test_data_net 10->id)>',
+                    'attributes' => ['label' => 'net 10']
+                ]
+            ],
+            $response
+        );
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $data = [
             'data' => [
@@ -52,20 +116,15 @@ class PaymentTermTest extends RestJsonApiTestCase
 
         /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $this->getEntityManager()->find(PaymentTerm::class, $paymentTermId);
-        $this->assertNotNull($paymentTerm);
-        $this->assertEquals('net 999', $paymentTerm->getLabel());
+        self::assertNotNull($paymentTerm);
+        self::assertEquals('net 999', $paymentTerm->getLabel());
     }
 
-    public function testTryToCreateWithoutLabel()
+    public function testTryToCreateWithoutLabel(): void
     {
-        $data = [
-            'data' => [
-                'type' => 'paymentterms'
-            ]
-        ];
         $response = $this->post(
             ['entity' => 'paymentterms'],
-            $data,
+            ['data' => ['type' => 'paymentterms']],
             [],
             false
         );
@@ -80,7 +139,7 @@ class PaymentTermTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $paymentTermId = $this->getReference('payment_term_test_data_net 10')->getId();
 
@@ -102,34 +161,48 @@ class PaymentTermTest extends RestJsonApiTestCase
 
         /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $this->getEntityManager()->find(PaymentTerm::class, $paymentTermId);
-        $this->assertNotNull($paymentTerm);
-        $this->assertEquals('net 11', $paymentTerm->getLabel());
+        self::assertNotNull($paymentTerm);
+        self::assertEquals('net 11', $paymentTerm->getLabel());
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
-        $paymentTermId = $this->getReference('payment_term_test_data_net 10')->getId();
+        $toDeletePaymentTermId = $this->getReference('payment_term_test_data_net 10')->getId();
+        $anotherPaymentTermId = $this->getReference('payment_term_test_data_net 20')->getId();
 
         $this->delete(
-            ['entity' => 'paymentterms', 'id' => (string)$paymentTermId]
+            ['entity' => 'paymentterms', 'id' => (string)$toDeletePaymentTermId]
         );
 
-        /** @var PaymentTerm $paymentTerm */
-        $paymentTerm = $this->getEntityManager()->find(PaymentTerm::class, $paymentTermId);
-        $this->assertNull($paymentTerm);
+        self::assertNull($this->getEntityManager()->find(PaymentTerm::class, $toDeletePaymentTermId));
+        self::assertNotNull($this->getEntityManager()->find(PaymentTerm::class, $anotherPaymentTermId));
     }
 
-    public function testDeleteList()
+    public function testDeleteList(): void
     {
-        $paymentTermId = $this->getReference('payment_term_test_data_net 20')->getId();
+        $toDeletePaymentTermId = $this->getReference('payment_term_test_data_net 20')->getId();
+        $anotherPaymentTermId = $this->getReference('payment_term_test_data_net 30')->getId();
 
         $this->cdelete(
             ['entity' => 'paymentterms'],
-            ['filter' => ['id' => (string)$paymentTermId]]
+            ['filter' => ['id' => (string)$toDeletePaymentTermId]]
         );
 
-        /** @var PaymentTerm $paymentTerm */
-        $paymentTerm = $this->getEntityManager()->find(PaymentTerm::class, $paymentTermId);
-        $this->assertNull($paymentTerm);
+        self::assertNull($this->getEntityManager()->find(PaymentTerm::class, $toDeletePaymentTermId));
+        self::assertNotNull($this->getEntityManager()->find(PaymentTerm::class, $anotherPaymentTermId));
+    }
+
+    public function testDeleteListWithSearchTextFilter(): void
+    {
+        $toDeletePaymentTermId = $this->getReference('payment_term_test_data_net 30')->getId();
+        $anotherPaymentTermId = $this->getReference('payment_term_test_data_net 40')->getId();
+
+        $this->cdelete(
+            ['entity' => 'paymentterms'],
+            ['filter' => ['searchText' => '30']]
+        );
+
+        self::assertNull($this->getEntityManager()->find(PaymentTerm::class, $toDeletePaymentTermId));
+        self::assertNotNull($this->getEntityManager()->find(PaymentTerm::class, $anotherPaymentTermId));
     }
 }
