@@ -126,6 +126,7 @@ oro.cms:
     content_widget_type:
         image_slider.label: Image Slider
         tabbed_content.label: Tabbed Content
+        slider_link: 'Browse'
 
         slider_options:
             slides_to_show.label: 'Number of Slides to Show'
