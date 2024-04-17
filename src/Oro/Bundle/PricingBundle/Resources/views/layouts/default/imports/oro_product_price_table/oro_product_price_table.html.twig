@@ -62,13 +62,15 @@
 {% block __oro_product_price_table__product_price_multi_unit_table_widget %}
     <table class="product-prices-table stick-first-row">
         <thead class="product-prices-table__thead">
-            <th class="product-prices-table__th text-left" scope="col">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>
+            <tr>
+                <th class="product-prices-table__th text-left" scope="col">{{ 'oro.pricing.frontend.product.quantity.short_label'|trans }}</th>
                 {% for unit in uniqueUnits %}
                     <th class="product-prices-table__th text-right" scope="col">
                         {% set showCurrencySymbol = currencies is defined and currencies|length > 1 %}
                         {{- (showCurrencySymbol ? oro_currency_symbol(unit.currency) ~ ', ' : '') ~ unit.formatted_unit -}}
                     </th>
-            {% endfor %}
+                {% endfor %}
+            </tr>
         </thead>
         {{ block_widget(block) }}
     </table>

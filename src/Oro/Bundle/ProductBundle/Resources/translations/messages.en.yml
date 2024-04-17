@@ -811,6 +811,8 @@ oro:
                 view_details: 'View Details'
                 view_details_aria_label: 'View Details of the Current Product'
                 view_details_prefix: 'View Details of the'
+            catalog_switch:
+                aria_label: 'Manage Product Views'
             quick_add:
                 title: Quick Order
                 description: Quick add products to order, RFQ or shopping cart

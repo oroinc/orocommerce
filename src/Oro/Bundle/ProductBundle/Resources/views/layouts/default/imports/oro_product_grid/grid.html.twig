@@ -148,6 +148,7 @@
                         data-trigger="hover"
                         data-template="{{ tooltipTemplate }}"
                     >
+                        <span class="sr-only">{{ view_item.title|trans }}</span>
                         {{ renderIcon.icon({name: view_item.icon}) }}
                     </a>
                 {% endfor %}
@@ -163,6 +164,7 @@
                     class="dropdown-toggle toggle-container--dropdown-btn"
                     aria-haspopup="true"
                     aria-expanded="false"
+                    aria-label="{{ 'oro.product.frontend.catalog_switch.aria_label'|trans }}"
                 >
                     {{ renderIcon.icon({name: currentItem.icon, extraClass: 'theme-icon--medium'}) }}
                 </button>
@@ -174,6 +176,7 @@
                                 data-catalog-view-trigger="{{ {'row-view': view_item.row_view}|json_encode }}"
                                 title="{{ view_item.title|trans }}"
                             >
+                                <span class="sr-only">{{ view_item.title|trans }}</span>
                                 {{ renderIcon.icon({name: view_item.icon, extraClass: 'theme-icon--medium'}) }}
                             </a>
                         {% endfor %}

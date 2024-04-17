@@ -100,7 +100,10 @@
                                 {% if imageSlide.header %}
                                     <h2 class="promo-slider__header">
                                         {{ imageSlide.header }}
-                                        <a href="{{ imageSlide.url|strip_dangerous_protocols }}" class="btn btn--size-large btn--rounded">
+                                        <a href="{{ imageSlide.url|strip_dangerous_protocols }}"
+                                           class="btn btn--size-large btn--rounded"
+                                            aria-label="{{ 'oro.cms.content_widget_type.slider_link'|trans }}"
+                                        >
                                             {{ renderIcon.icon({name: oro_is_rtl_mode() ? 'arrow-left' : 'arrow-right'}) }}
                                         </a>
                                     </h2>
