@@ -1949,4 +1949,38 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         return $queryBuilder->getQuery()->toIterable();
     }
+
+    /**
+     * Assert tabs exist in a tab set.
+     * Example: Then I should see the following tabs on product page:
+     *              | First Tab  |
+     *              | Second Tab |
+     *
+     * @Then /^(?:|I )should see the following tabs on product page:$/
+     */
+    public function iShouldSeeFollowingTabs(TableNode $table)
+    {
+        $values = $table->getColumn(0);
+        foreach ($values as $value) {
+            $linkElement = $this->elementFactory->findElementContainsByXPath('Product Tab Link', $value, false);
+            self::assertTrue($linkElement->isValid(), "Tab with '$value' text not found in product form page");
+        }
+    }
+
+    /**
+     * Assert tabs is not exists in a tab set.
+     * Example: Then I should not see the following tabs on product page:
+     *              | First Tab  |
+     *              | Second Tab |
+     *
+     * @Then /^(?:|I )should not see the following tabs on product page:$/
+     */
+    public function iShouldNotSeeFollowingTabs(TableNode $table)
+    {
+        $values = $table->getColumn(0);
+        foreach ($values as $value) {
+            $linkElement = $this->elementFactory->findElementContainsByXPath('Product Tab Link', $value, false);
+            self::assertFalse($linkElement->isValid(), "Tab with '$value' text is present in product form page");
+        }
+    }
 }
