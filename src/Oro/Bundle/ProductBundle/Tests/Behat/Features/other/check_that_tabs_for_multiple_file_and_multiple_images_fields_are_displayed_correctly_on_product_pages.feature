@@ -1,17 +1,18 @@
 @regression
 @ticket-BB-22832
+@ticket-BB-23763
 
 Feature: Check that tabs for multiple file and multiple images fields are displayed correctly on product pages
   As an administrator, I want to make sure that:
   - entity fields are not displayed on the first step of product creation page and not on the product
-    visibility page.
+  visibility page.
   - entity entity fields are displayed on product second step creation page, product edit page, product view page.
   - product attributes fields are not displayed on the first step of product creation page, second step of product
-    creation page, product edit page, product view page, product visibility page if attributes not added to family.
+  creation page, product edit page, product view page, product visibility page if attributes not added to family.
   - product attributes fields are not displayed on the first step of product creation page, product visibility
-    page if attributes added to family.
+  page if attributes added to family.
   - product attributes are displayed on product second step creation page, product edit page, product view page
-    if attributes added to family.
+  if attributes added to family.
 
   Scenario: Authenticate
     Given I login as administrator
@@ -24,7 +25,7 @@ Feature: Check that tabs for multiple file and multiple images fields are displa
       | Type       | Multiple Files |
     And click "Continue"
     And fill form with:
-      | Label             | <Name>    |
+      | Label             | <Label>   |
       | Stored Externally | No        |
       | File Size (MB)    | 10        |
       | Use DAM           | <Use DAM> |
@@ -32,9 +33,9 @@ Feature: Check that tabs for multiple file and multiple images fields are displa
     And save and close form
     Then I should see "Attribute was successfully saved" flash message
     Examples:
-      | Name                         | Use DAM |
-      | multiple_files_attribute     | No      |
-      | multiple_files_dam_attribute | Yes     |
+      | Name                         | Label                        | Use DAM |
+      | multiple_files_attribute     | Multiple files attribute     | No      |
+      | multiple_files_dam_attribute | Multiple files dam attribute | Yes     |
 
   Scenario Outline: Create Multiple Images attribute
     Given I click "Create Attribute"
@@ -43,7 +44,7 @@ Feature: Check that tabs for multiple file and multiple images fields are displa
       | Type       | Multiple Images |
     And click "Continue"
     And fill form with:
-      | Label             | <Name>    |
+      | Label             | <Label>   |
       | Stored Externally | No        |
       | File Size (MB)    | 10        |
       | Thumbnail Width   | 1024      |
@@ -53,9 +54,9 @@ Feature: Check that tabs for multiple file and multiple images fields are displa
     And save and close form
     Then I should see "Attribute was successfully saved" flash message
     Examples:
-      | Name                          | Use DAM |
-      | multiple_images_attribute     | No      |
-      | multiple_images_dam_attribute | Yes     |
+      | Name                          | Label                         | Use DAM |
+      | multiple_images_attribute     | Multiple images attribute     | No      |
+      | multiple_images_dam_attribute | Multiple images dam attribute | Yes     |
 
   Scenario: Create fields
     Given I go to System/ Entities/ Entity Management
@@ -70,7 +71,7 @@ Feature: Check that tabs for multiple file and multiple images fields are displa
       | Type         | Multiple Files |
     And click "Continue"
     And fill form with:
-      | Label             | <Name>    |
+      | Label             | <Label>   |
       | Stored Externally | No        |
       | File Size (MB)    | 10        |
       | Use DAM           | <Use DAM> |
@@ -78,9 +79,9 @@ Feature: Check that tabs for multiple file and multiple images fields are displa
     And save and close form
     Then I should see "Field saved" flash message
     Examples:
-      | Name                     | Use DAM |
-      | multiple_files_field     | No      |
-      | multiple_files_dam_field | Yes     |
+      | Name                     | Label                    | Use DAM |
+      | multiple_files_field     | Multiple files field     | No      |
+      | multiple_files_dam_field | Multiple files dam field | Yes     |
 
   Scenario Outline: Create Multiple Images fields
     Given I click "Create field"
@@ -89,7 +90,7 @@ Feature: Check that tabs for multiple file and multiple images fields are displa
       | Type       | Multiple Images |
     And click "Continue"
     And fill form with:
-      | Label             | <Name>    |
+      | Label             | <Label>   |
       | Stored Externally | No        |
       | File Size (MB)    | 10        |
       | Thumbnail Width   | 1024      |
@@ -99,9 +100,9 @@ Feature: Check that tabs for multiple file and multiple images fields are displa
     And save and close form
     Then I should see "Field saved" flash message
     Examples:
-      | Name                      | Use DAM |
-      | multiple_images_field     | No      |
-      | multiple_images_dam_field | Yes     |
+      | Name                      | Label                     | Use DAM |
+      | multiple_images_field     | Multiple images field     | No      |
+      | multiple_images_dam_field | Multiple images dam field | Yes     |
 
   Scenario: Update schema
     Given I click update schema
@@ -110,33 +111,39 @@ Feature: Check that tabs for multiple file and multiple images fields are displa
   Scenario: Check for fields and missing attributes on product creation pages
     Given I go to Products/ Products
     When I click "Create Product"
-    Then I should see "General"
+    Then I should see the following tabs on product page:
+      | General        |
+      | Product Family |
+      | Master Catalog |
     # At the first step of creating a product, we should not see additional fields and attributes.
-    # Check product attribute on first product create page.
-    And should not see "multiple_files_attribute"
-    And should not see "multiple_files_dam_attribute"
-    And should not see "multiple_images_attribute"
-    And should not see "multiple_images_dam_attribute"
-    # Check extend field on first product create page.
-    And should not see "multiple_files_field"
-    And should not see "multiple_files_dam_field"
-    And should not see "multiple_images_field"
-    And should not see "multiple_images_dam_field"
+   # Check product attribute and extend fields on first product create page.
+    And should not see the following tabs on product page:
+      | Multiple files attribute      |
+      | Multiple files dam attribute  |
+      | Multiple images attribute     |
+      | Multiple images dam attribute |
+      | Multiple files field          |
+      | Multiple files dam field      |
+      | Multiple images field         |
+      | Multiple images dam field     |
+      | Multiple images dam field     |
     When I fill "ProductForm Step One" with:
       | Type           | Simple  |
       | Product Family | Default |
     And click "Continue"
     # Attributes is not displayed because they are not added to the product family.
     # Check product attribute on second product create page.
-    Then I should not see "multiple_files_attribute"
-    And should not see "multiple_files_dam_attribute"
-    And should not see "multiple_images_attribute"
-    And should not see "multiple_images_dam_attribute"
+    Then I should not see the following tabs on product page:
+      | Multiple files attribute      |
+      | Multiple files dam attribute  |
+      | Multiple images attribute     |
+      | Multiple images dam attribute |
     # Check extend field on second product create page
-    And should see "multiple_files_field"
-    And should see "multiple_files_dam_field"
-    And should see "multiple_images_field"
-    And should see "multiple_images_dam_field"
+    And should see the following tabs on product page:
+      | Multiple files field      |
+      | Multiple files dam field  |
+      | Multiple images field     |
+      | Multiple images dam field |
     When I fill "ProductForm" with:
       | Sku  | ORO_PRODUCT_1 |
       | Name | ORO_PRODUCT_1 |
@@ -146,43 +153,73 @@ Feature: Check that tabs for multiple file and multiple images fields are displa
   Scenario: Check for fields and missing attributes on product edit page
     Given I click "Edit"
     # Check product attribute on product edit page
-    Then I should not see "multiple_files_attribute"
-    And should not see "multiple_files_dam_attribute"
-    And should not see "multiple_images_attribute"
-    And should not see "multiple_images_dam_attribute"
+    Then I should not see the following tabs on product page:
+      | Multiple files attribute      |
+      | Multiple files dam attribute  |
+      | Multiple images attribute     |
+      | Multiple images dam attribute |
+    And should not see "Multiple Files Attribute"
+    And should not see "Multiple Files DAM Attribute"
+    And should not see "Multiple Images Attribute"
+    And should not see "Multiple Images DAM Attribute"
     # Check extend field on product edit page
-    And should see "multiple_files_field"
-    And should see "multiple_files_dam_field"
-    And should see "multiple_images_field"
-    And should see "multiple_images_dam_field"
+    And should see the following tabs on product page:
+      | Multiple files field      |
+      | Multiple files dam field  |
+      | Multiple images field     |
+      | Multiple images dam field |
+    And should see "Multiple Files Field"
+    And should see "Multiple Files DAM Field"
+    And should see "Multiple Images Field"
+    And should see "Multiple Images DAM Field"
     When I save and close form
     Then I should see "Product has been saved" flash message
 
   Scenario: Check for fields and missing attributes on product view page
     # Check product attribute on product view page
-    Given I should not see "multiple_files_attribute"
-    And should not see "multiple_files_dam_attribute"
-    And should not see "multiple_images_attribute"
-    And should not see "multiple_images_dam_attribute"
+    Given I should not see the following tabs on product page:
+      | Multiple files attribute      |
+      | Multiple files dam attribute  |
+      | Multiple images attribute     |
+      | Multiple images dam attribute |
+    And should not see an "Multiple Files Attribute Label" element
+    And should not see an "Multiple Files DAM Attribute Label" element
+    And should not see an "Multiple Images Attribute Label" element
+    And should not see an "Multiple Images DAM Attribute Label" element
     # Check extend field on product view page
-    And should see "multiple_files_field"
-    And should see "multiple_files_dam_field"
-    And should see "multiple_images_field"
-    And should see "multiple_images_dam_field"
+    And should see the following tabs on product page:
+      | Multiple files field      |
+      | Multiple files dam field  |
+      | Multiple images field     |
+      | Multiple images dam field |
+    And should see a "Multiple Files Field Label" element
+    And should see a "Multiple Files DAM Field Label" element
+    And should see a "Multiple Images Field Label" element
+    And should see a "Multiple Images DAM Field Label" element
 
   Scenario: Check for fields and missing attributes on product visibility page
     Given I click "More actions"
     When I click "Manage Visibility"
     # Check product attribute on product visibility page
-    Then I should not see "multiple_files_attribute"
-    And should not see "multiple_files_dam_attribute"
-    And should not see "multiple_images_attribute"
-    And should not see "multiple_images_dam_attribute"
+    Then I should not see the following tabs on product page:
+      | Multiple files attribute      |
+      | Multiple files dam attribute  |
+      | Multiple images attribute     |
+      | Multiple images dam attribute |
     # Check extend field on product visibility page
-    And should not see "multiple_files_field"
-    And should not see "multiple_files_dam_field"
-    And should not see "multiple_images_field"
-    And should not see "multiple_images_dam_field"
+    And should not see the following tabs on product page:
+      | Multiple files field      |
+      | Multiple files dam field  |
+      | Multiple images field     |
+      | Multiple images dam field |
+    And should not see "Multiple Files Attribute"
+    And should not see "Multiple Files DAM Attribute"
+    And should not see "Multiple Images Attribute"
+    And should not see "Multiple Images DAM Attribute"
+    And should not see "Multiple Files Field"
+    And should not see "Multiple Files DAM Field"
+    And should not see "Multiple Images Field"
+    And should not see "Multiple Images DAM Field"
 
   Scenario: Update product family with new attributes
     When I go to Products/ Product Families
@@ -191,7 +228,7 @@ Feature: Check that tabs for multiple file and multiple images fields are displa
     And fill "Attributes Group Form" with:
       | Attribute Groups Label0      | Multiple Fields Attributes                                                                                         |
       | Attribute Groups Visible0    | true                                                                                                               |
-      | Attribute Groups Attributes0 | [multiple_files_attribute, multiple_files_dam_attribute, multiple_images_attribute, multiple_images_dam_attribute] |
+      | Attribute Groups Attributes0 | [Multiple files attribute, Multiple files dam attribute, Multiple images attribute, Multiple images dam attribute] |
     And save and close form
     Then I should see "Successfully updated" flash message
 
@@ -199,32 +236,46 @@ Feature: Check that tabs for multiple file and multiple images fields are displa
     Given I go to Products/ Products
     When I click "Create Product"
     # Check product attribute on first product create page
-    Then I should not see "Multiple Fields Attributes"
-    And should not see "multiple_files_attribute"
-    And should not see "multiple_files_dam_attribute"
-    And should not see "multiple_images_attribute"
-    And should not see "multiple_images_dam_attribute"
+    Then I should not see the following tabs on product page:
+      | Multiple Fields Attributes |
+    And should not see the following tabs on product page:
+      | Multiple files attribute      |
+      | Multiple files dam attribute  |
+      | Multiple images attribute     |
+      | Multiple images dam attribute |
     # Check extend field on first product create page
-    And should not see "multiple_files_field"
-    And should not see "multiple_files_dam_field"
-    And should not see "multiple_images_field"
-    And should not see "multiple_images_dam_field"
-    And fill "ProductForm Step One" with:
+    And should not see the following tabs on product page:
+      | Multiple files field      |
+      | Multiple files dam field  |
+      | Multiple images field     |
+      | Multiple images dam field |
+    When I fill "ProductForm Step One" with:
       | Type           | Simple  |
       | Product Family | Default |
-    When I click "Continue"
+    And I click "Continue"
     # Check product attribute on second product create page
-    Then I should see "Multiple Fields Attributes"
+    Then I should see the following tabs on product page:
+      | Multiple Fields Attributes |
     # Check if the attributes are displayed (attributes fields do not have names except for family tab)
-    And should not see "multiple_files_attribute"
-    And should not see "multiple_files_dam_attribute"
-    And should not see "multiple_images_attribute"
-    And should not see "multiple_images_dam_attribute"
+    And should not see the following tabs on product page:
+      | Multiple files attribute      |
+      | Multiple files dam attribute  |
+      | Multiple images attribute     |
+      | Multiple images dam attribute |
     # Check extend field on second product create page
-    And should see "multiple_files_field"
-    And should see "multiple_files_dam_field"
-    And should see "multiple_images_field"
-    And should see "multiple_images_dam_field"
+    And should see the following tabs on product page:
+      | Multiple files field      |
+      | Multiple files dam field  |
+      | Multiple images field     |
+      | Multiple images dam field |
+    And should see "Multiple files attribute"
+    And should see "Multiple files dam attribute"
+    And should see "Multiple images attribute"
+    And should see "Multiple images dam attribute"
+    And should see "Multiple files field"
+    And should see "Multiple files dam field"
+    And should see "Multiple images field"
+    And should see "Multiple images dam field"
     When I fill "ProductForm" with:
       | Sku  | ORO_PRODUCT_2 |
       | Name | ORO_PRODUCT_2 |
@@ -234,48 +285,81 @@ Feature: Check that tabs for multiple file and multiple images fields are displa
   Scenario: Check for fields and attributes on product edit page
     Given I click "Edit"
     # Check product attribute on product edit page
-    Then I should see "Multiple Fields Attributes"
+    Then I should see the following tabs on product page:
+      | Multiple Fields Attributes |
     # Check if the attributes are displayed (attributes fields do not have names except for family tab)
-    And should not see "multiple_files_attribute"
-    And should not see "multiple_files_dam_attribute"
-    And should not see "multiple_images_attribute"
-    And should not see "multiple_images_dam_attribute"
+    And should not see the following tabs on product page:
+      | Multiple files attribute      |
+      | Multiple files dam attribute  |
+      | Multiple images attribute     |
+      | Multiple images dam attribute |
     # Check extend field on product edit page
-    And should see "multiple_files_field"
-    And should see "multiple_files_dam_field"
-    And should see "multiple_images_field"
-    And should see "multiple_images_dam_field"
+    And should see the following tabs on product page:
+      | Multiple files field      |
+      | Multiple files dam field  |
+      | Multiple images field     |
+      | Multiple images dam field |
+    And should see "Multiple files attribute"
+    And should see "Multiple files dam attribute"
+    And should see "Multiple images attribute"
+    And should see "Multiple images dam attribute"
+    And should see "Multiple files field"
+    And should see "Multiple files dam field"
+    And should see "Multiple images field"
+    And should see "Multiple images dam field"
     When I save and close form
     Then I should see "Product has been saved" flash message
 
   Scenario: Check for fields and attributes on product view page
     # Check product attribute on product view page
-    Given I should see "Multiple Fields Attributes"
+    Given I should see the following tabs on product page:
+      | Multiple Fields Attributes |
     # Check if the attributes are displayed (attributes fields do not have names except for family tab)
-    And should not see "multiple_files_attribute"
-    And should not see "multiple_files_dam_attribute"
-    And should not see "multiple_images_attribute"
-    And should not see "multiple_images_dam_attribute"
+    And should not see the following tabs on product page:
+      | Multiple files attribute      |
+      | Multiple files dam attribute  |
+      | Multiple images attribute     |
+      | Multiple images dam attribute |
     # Check extend field on product view page
-    And should see "multiple_files_field"
-    And should see "multiple_files_dam_field"
-    And should see "multiple_images_field"
-    And should see "multiple_images_dam_field"
+    And should see the following tabs on product page:
+      | Multiple files field      |
+      | Multiple files dam field  |
+      | Multiple images field     |
+      | Multiple images dam field |
+    And should see a "Multiple Files Attribute Label" element
+    And should see a "Multiple Files DAM Attribute Label" element
+    And should see a "Multiple Images Attribute Label" element
+    And should see a "Multiple Images DAM Attribute Label" element
+    And should see a "Multiple Files Field Label" element
+    And should see a "Multiple Files DAM Field Label" element
+    And should see a "Multiple Images Field Label" element
+    And should see a "Multiple Images DAM Field Label" element
 
   Scenario: Check for fields and attributes on product visibility page
     Given I click "More actions"
     When I click "Manage Visibility"
     # Check product attribute on product visibility page
-    Then I should not see "Multiple Fields Attributes"
-    And should not see "multiple_files_attribute"
-    And should not see "multiple_files_dam_attribute"
-    And should not see "multiple_images_attribute"
-    And should not see "multiple_images_dam_attribute"
+    Then I should not see the following tabs on product page:
+      | Multiple Fields Attributes |
+    And should not see the following tabs on product page:
+      | Multiple files attribute      |
+      | Multiple files dam attribute  |
+      | Multiple images attribute     |
+      | Multiple images dam attribute |
     # Check extend field on product visibility page
-    And should not see "multiple_files_field"
-    And should not see "multiple_files_dam_field"
-    And should not see "multiple_images_field"
-    And should not see "multiple_images_dam_field"
+    And should not see the following tabs on product page:
+      | Multiple files field      |
+      | Multiple files dam field  |
+      | Multiple images field     |
+      | Multiple images dam field |
+    And should not see "Multiple Files Attribute"
+    And should not see "Multiple Files DAM Attribute"
+    And should not see "Multiple Images Attribute"
+    And should not see "Multiple Images DAM Attribute"
+    And should not see "Multiple Files Field"
+    And should not see "Multiple Files DAM Field"
+    And should not see "Multiple Images Field"
+    And should not see "Multiple Images DAM Field"
 
   Scenario: Create product and check fields and attributes
     Given I go to Products/ Products
