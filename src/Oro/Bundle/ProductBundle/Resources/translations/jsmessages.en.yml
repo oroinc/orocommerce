@@ -181,7 +181,7 @@ oro:
                 form:
                     unit:
                         default: '--'
-                    has_non_configured_product_kit: Some of the products cannot be added to the order. Please add these products to the shopping list or create a quote.
+                    has_non_configured_product_kit: Some products require additional configuration before creating an order. Please add all products to a shopping list to complete configuration, or request a quote instead.
                 copy_paste:
                     error: 'Some of the product SKUs, units or quantities are not valid. Please make corrections and try again.'
             choose_action: 'Choose Action'
