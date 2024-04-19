@@ -2,7 +2,7 @@
 function highlightWords(inputString, value) {
     if (!!inputString && _.isString(inputString)) {
         const highlightPattern = '<u class="search-autocomplete__highlight">$&</u>';
-        const inputWords = _.escape(inputString).split(' ');
+        const inputWords = _.escape(inputString.trim()).split(' ');
         const reg = new RegExp(inputWords.join('|'), 'gi');
         return _.escape(value).replace(reg, highlightPattern);
     } else {

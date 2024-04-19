@@ -2,6 +2,7 @@
 @ticket-BB-22542
 @fixture-OroCMSBundle:web_catalog.yml
 @fixture-OroCMSBundle:CustomerUserFixture.yml
+@elasticsearch
 Feature: Landing Page Drafts
   In order to save drafts of landing pages and publish selected draft
   As an Administrator

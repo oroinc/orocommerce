@@ -32,17 +32,17 @@
     {% set hasErrors = transitionData.errors|length > 0 %}
     {% if hasErrors %}
         data-toggle="tooltip"
-        data-title="{{ layout.transitionConditionMessages(transitionData) }}"
+        data-title="{{ layout.transitionConditionMessages(transitionData)|escape }}"
         data-html="true"
         data-container="body"
-        data-placement="{% if isMobileVersion() %}bottom{% else %}left{% endif %}"
+        data-placement="top"
     {% endif %}
 {% endmacro %}
 
 {% macro transitionConditionMessages(transitionData) %}
     {%- apply spaceless -%}
         <div>{{ 'oro.checkout.workflow.unavailable_transition.message'|trans }}</div>
-        <ul>
+        <ul class="list-style-position-inside">
             {% for error in transitionData.errors %}
                 <li>{{ error.message|trans(error.parameters|default({}))|nl2br }}</li>
             {% endfor %}

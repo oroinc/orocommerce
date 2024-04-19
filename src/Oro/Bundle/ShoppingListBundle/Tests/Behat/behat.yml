@@ -290,7 +290,7 @@ oro_behat_extension:
       selector: '.shopping-lists button.btn'
 
     Add to Shopping List:
-      selector: '.add-to-shopping-list-button:contains("Add to Shopping List")'
+      selector: '.add-to-shopping-list-button.btn-main:contains("Add to Shopping List")'
 
     Configure and Add to Shopping List:
       selector: '.add-to-shopping-list-button:contains("Configure and Add to Shopping List")'

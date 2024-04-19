@@ -1,7 +1,7 @@
 @regression
 @ticket-BB-13239
 @fixture-OroShoppingListBundle:check_the_shopping_list_using_different_customer_users.yml
-
+@pricing-storage-combined
 Feature: Check shopping list subtotal using different customer users
   All subtotals should be cached and recalculated depending on the current user.
 

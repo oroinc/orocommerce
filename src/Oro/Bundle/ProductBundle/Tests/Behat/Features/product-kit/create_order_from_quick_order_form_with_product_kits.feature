@@ -21,7 +21,7 @@ Feature: Create Order from Quick order form with Product Kits
       | SUBTOTAL1 | N/A                             |
     And I should see a "Disabled Create Order Button" element
     And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
-      | title | Some of the products cannot be added to the order. Please add these products to the shopping list or create a quote. |
+      | title | Some products require additional configuration before creating an order. Please add all products to a shopping list to complete configuration, or request a quote instead. |
     When I click on "Disabled Create Order Button Wrapper"
     Then Page title equals to "Quick Order"
 
@@ -40,7 +40,7 @@ Feature: Create Order from Quick order form with Product Kits
       | SUBTOTAL2 | $2.469                                |
     And I should see a "Disabled Create Order Button" element
     And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
-      | title | Some of the products cannot be added to the order. Please add these products to the shopping list or create a quote. |
+      | title | Some products require additional configuration before creating an order. Please add all products to a shopping list to complete configuration, or request a quote instead. |
     When I click on "Disabled Create Order Button Wrapper"
     Then Page title equals to "Quick Order"
 
@@ -70,7 +70,7 @@ Feature: Create Order from Quick order form with Product Kits
       | SUBTOTAL3 | N/A                                   |
     And I should see a "Disabled Create Order Button" element
     And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
-      | title | Some of the products cannot be added to the order. Please add these products to the shopping list or create a quote. |
+      | title | Some products require additional configuration before creating an order. Please add all products to a shopping list to complete configuration, or request a quote instead.|
     When I click on "Disabled Create Order Button Wrapper"
     Then Page title equals to "Quick Order"
 
@@ -108,7 +108,7 @@ Feature: Create Order from Quick order form with Product Kits
       | SUBTOTAL3 | $2.469                                |
     And I should see a "Disabled Create Order Button" element
     And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
-      | title | Some of the products cannot be added to the order. Please add these products to the shopping list or create a quote. |
+      | title | Some products require additional configuration before creating an order. Please add all products to a shopping list to complete configuration, or request a quote instead. |
     When I click on "Disabled Create Order Button Wrapper"
     Then Page title equals to "Quick Order"
 
@@ -143,7 +143,7 @@ Feature: Create Order from Quick order form with Product Kits
       | SUBTOTAL4 | N/A                                   |
     And I should see a "Disabled Create Order Button" element
     And "Quick Order Form Buttons" should contains "Disabled Create Order Button Wrapper" with attributes:
-      | title | Some of the products cannot be added to the order. Please add these products to the shopping list or create a quote. |
+      | title | Some products require additional configuration before creating an order. Please add all products to a shopping list to complete configuration, or request a quote instead. |
     When I click on "Disabled Create Order Button Wrapper"
     Then Page title equals to "Quick Order"
 
