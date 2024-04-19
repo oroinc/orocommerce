@@ -1055,7 +1055,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     public function clickElementForSelectedProduct($elementName, $SKU)
     {
         $productItem = $this->findProductItem($SKU);
-        $element = $this->createElement($elementName, $productItem);
+        $element = $productItem->getElement($elementName);
+        self::assertTrue($element->isVisible(), sprintf("Can't find element '%s' for SKU '%s'", $elementName, $SKU));
+        $this->oroMainContext->scrollToXpath($element->getXpath());
+        $element->focus();
         $element->click();
     }
 
@@ -1905,15 +1908,25 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @param string $SKU
+     * @param string $skuOrName
      * @param Element|null $context
      *
      * @return Element
      */
-    private function findProductItem($SKU, Element $context = null): Element
+    private function findProductItem(string $skuOrName): Element
     {
-        $productItem = $this->findElementContains('ProductItem', $SKU, $context);
-        self::assertNotNull($productItem, sprintf('Product with SKU "%s" not found', $SKU));
+        $skuOrName = strtolower($skuOrName);
+        $itemBySkuEl = $this->createElement('ProductItemBySku');
+        $xpath = str_replace(':sku:', $skuOrName, $itemBySkuEl->getXpath());
+        $nodeElement = $this->getPage()->find('xpath', $xpath);
+        if (!$nodeElement) {
+            $itemBySkuEl = $this->createElement('ProductItemByName');
+            $xpath = str_replace(':name:', $skuOrName, $itemBySkuEl->getXpath());
+            $nodeElement = $this->getPage()->find('xpath', $xpath);
+        }
+        self::assertNotNull($nodeElement, sprintf('Product with SKU/Name "%s" not found', $skuOrName));
+        $productItem = $this->elementFactory->wrapElement('ProductItem', $nodeElement);
+        self::assertNotNull($productItem, sprintf('Product with SKU "%s" not found', $skuOrName));
 
         return $productItem;
     }

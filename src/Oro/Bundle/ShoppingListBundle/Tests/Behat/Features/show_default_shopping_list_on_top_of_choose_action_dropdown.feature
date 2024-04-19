@@ -10,6 +10,7 @@ Feature: Show default Shopping List on top of Choose Action drop-down
   Scenario: Product mass actions search is hidden (desktop)
     Given I signed in as AmandaRCole@example.org on the store frontend
     When open page number test of frontend product grid
+    And I should see "PSKU1" and continue checking the condition is met for maximum 20 seconds
     And I sort frontend grid "Product Frontend Grid" by "Price (Low to High)"
     And I should see "PSKU1"
     And I check PSKU1 record in "Product Frontend Grid" grid

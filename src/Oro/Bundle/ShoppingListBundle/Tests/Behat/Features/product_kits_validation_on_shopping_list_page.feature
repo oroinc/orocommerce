@@ -1,7 +1,7 @@
 @regression
 @feature-BB-21126
 @fixture-OroShoppingListBundle:product_kits_validation_on_shopping_list_page.yml
-
+@pricing-storage-combined
 Feature: Product kits validation on shopping list page
 
   Scenario: Feature Background
