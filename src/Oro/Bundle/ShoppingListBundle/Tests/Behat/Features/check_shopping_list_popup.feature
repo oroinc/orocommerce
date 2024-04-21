@@ -4,6 +4,7 @@ Feature: Check shopping list popup
   Scenario: Change shipping list units in popup
     Given I signed in as AmandaRCole@example.org on the store frontend
     And I am on "/product"
+    And I should see "product1" and continue checking the condition is met for maximum 10 seconds
     When I click "Shopping List Add"
     And I click "Shopping List Edit"
     And I should see "Choose list"

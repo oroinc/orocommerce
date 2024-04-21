@@ -1,3 +1,5 @@
 dynamic-imports:
     oroproduct:
         - oroorder/js/app/components/totals-component
+    orodatagrid:
+        - oroorder/js/app/components/frontend-order-print

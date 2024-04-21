@@ -1055,7 +1055,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     public function clickElementForSelectedProduct($elementName, $SKU)
     {
         $productItem = $this->findProductItem($SKU);
-        $element = $this->createElement($elementName, $productItem);
+        $element = $productItem->getElement($elementName);
+        self::assertTrue($element->isVisible(), sprintf("Can't find element '%s' for SKU '%s'", $elementName, $SKU));
+        $this->oroMainContext->scrollToXpath($element->getXpath());
+        $element->focus();
         $element->click();
     }
 
@@ -1905,15 +1908,25 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * @param string $SKU
+     * @param string $skuOrName
      * @param Element|null $context
      *
      * @return Element
      */
-    private function findProductItem($SKU, Element $context = null): Element
+    private function findProductItem(string $skuOrName): Element
     {
-        $productItem = $this->findElementContains('ProductItem', $SKU, $context);
-        self::assertNotNull($productItem, sprintf('Product with SKU "%s" not found', $SKU));
+        $skuOrName = strtolower($skuOrName);
+        $itemBySkuEl = $this->createElement('ProductItemBySku');
+        $xpath = str_replace(':sku:', $skuOrName, $itemBySkuEl->getXpath());
+        $nodeElement = $this->getPage()->find('xpath', $xpath);
+        if (!$nodeElement) {
+            $itemBySkuEl = $this->createElement('ProductItemByName');
+            $xpath = str_replace(':name:', $skuOrName, $itemBySkuEl->getXpath());
+            $nodeElement = $this->getPage()->find('xpath', $xpath);
+        }
+        self::assertNotNull($nodeElement, sprintf('Product with SKU/Name "%s" not found', $skuOrName));
+        $productItem = $this->elementFactory->wrapElement('ProductItem', $nodeElement);
+        self::assertNotNull($productItem, sprintf('Product with SKU "%s" not found', $skuOrName));
 
         return $productItem;
     }
@@ -1948,5 +1961,39 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             ->innerJoin('pup.unit', 'pu');
 
         return $queryBuilder->getQuery()->toIterable();
+    }
+
+    /**
+     * Assert tabs exist in a tab set.
+     * Example: Then I should see the following tabs on product page:
+     *              | First Tab  |
+     *              | Second Tab |
+     *
+     * @Then /^(?:|I )should see the following tabs on product page:$/
+     */
+    public function iShouldSeeFollowingTabs(TableNode $table)
+    {
+        $values = $table->getColumn(0);
+        foreach ($values as $value) {
+            $linkElement = $this->elementFactory->findElementContainsByXPath('Product Tab Link', $value, false);
+            self::assertTrue($linkElement->isValid(), "Tab with '$value' text not found in product form page");
+        }
+    }
+
+    /**
+     * Assert tabs is not exists in a tab set.
+     * Example: Then I should not see the following tabs on product page:
+     *              | First Tab  |
+     *              | Second Tab |
+     *
+     * @Then /^(?:|I )should not see the following tabs on product page:$/
+     */
+    public function iShouldNotSeeFollowingTabs(TableNode $table)
+    {
+        $values = $table->getColumn(0);
+        foreach ($values as $value) {
+            $linkElement = $this->elementFactory->findElementContainsByXPath('Product Tab Link', $value, false);
+            self::assertFalse($linkElement->isValid(), "Tab with '$value' text is present in product form page");
+        }
     }
 }

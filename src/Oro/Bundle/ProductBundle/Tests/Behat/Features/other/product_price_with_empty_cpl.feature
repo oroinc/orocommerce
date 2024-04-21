@@ -1,6 +1,6 @@
 @ticket-BB-21251
 @fixture-OroProductBundle:product_with_price.yml
-
+@pricing-storage-combined
 Feature: Product price with empty cpl
 
   Scenario: Feature background
