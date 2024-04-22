@@ -97,15 +97,16 @@ class DigitalAssetTwigTagsConverter
             [
                 '/(?P<schema>https?:\/\/|\/\/)?(?:[a-z0-9_~:\.\/-]+?)?'
                 . '\/media\/cache\/attachment\/(?:resize|filter)\/(?P<filterName>[a-z0-9_-]+)\/[0-9a-f]{32}'
-                . '\/(?P<fileId>\d+?)\/[\w|-]+?\.(?P<extension>[a-z0-9-]+)'
+                . '\/(?P<fileId>\d+?)\/[\w%|-]+?\.(?P<extension>[a-z0-9-]+)'
                 . '(?:\.(?P<extraExtension>[a-z0-9-]+))?/isu' => function (array $matches) use ($context, &$buffer) {
                     return $this->replaceImageUrlToTwigTag($matches, $context, $buffer);
                 },
                 '/(?P<schema>https?:\/\/|\/\/)?(?:[a-z0-9_~:\.\/-]+?)?'
                 . '\/attachment\/(?P<actionName>get|download)'
-                . '\/(?P<fileId>\d+?)\/[\w|-]+?\.[a-z0-9-]+/isu' => function (array $matches) use ($context, &$buffer) {
-                    return $this->replaceFileUrlToTwigTag($matches, $context, $buffer);
-                },
+                . '\/(?P<fileId>\d+?)\/[\w%|-]+?\.[a-z0-9-]+/isu' =>
+                    function (array $matches) use ($context, &$buffer) {
+                        return $this->replaceFileUrlToTwigTag($matches, $context, $buffer);
+                    },
             ],
             $data
         );
