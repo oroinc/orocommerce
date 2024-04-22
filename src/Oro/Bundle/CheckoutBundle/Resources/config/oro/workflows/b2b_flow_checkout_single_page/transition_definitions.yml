@@ -1,11 +1,7 @@
-imports:
-    - { resource: '../includes/base_transition_definitions.yml', workflow: b2b_flow_checkout, as: b2b_flow_checkout_single_page, replace: []}
-
 workflows:
     b2b_flow_checkout_single_page:
         transition_definitions:
             __start___definition:
-                # Will be merged with __start___definition from base_transition_definitions.yml.
                 actions:
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_create_guest_customer_user

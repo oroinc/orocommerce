@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManager;
+use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManagerInterface;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\LineItem\LineItemShippingMethodsProviderInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -25,12 +25,12 @@ class FrontendCheckoutLineItemsDatagridEventListener
 
     private ManagerRegistry $managerRegistry;
     private LineItemShippingMethodsProviderInterface $shippingMethodProvider;
-    private CheckoutLineItemsShippingManager $lineItemsShippingManager;
+    private CheckoutLineItemsShippingManagerInterface $lineItemsShippingManager;
 
     public function __construct(
         ManagerRegistry $managerRegistry,
         LineItemShippingMethodsProviderInterface $shippingMethodProvider,
-        CheckoutLineItemsShippingManager $lineItemsShippingManager
+        CheckoutLineItemsShippingManagerInterface $lineItemsShippingManager
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->shippingMethodProvider = $shippingMethodProvider;

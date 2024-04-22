@@ -5,25 +5,36 @@ workflows:
     b2b_flow_checkout_single_page:
         transitions:
             __start__:
+                # Overrides base_transitions.__start__
                 step_to: checkout
+                transition_definition: __start___definition
 
             start_from_quote:
+                # Overrides base_transitions.start_from_quote
                 step_to: checkout
+                transition_definition: __start___definition
 
             start_from_quote_as_guest:
+                # Overrides base_transitions.start_from_quote_as_guest
                 step_to: checkout
+                transition_definition: __start___definition
 
             start_from_shoppinglist:
+                # Overrides base_transitions.start_from_shoppinglist
                 step_to: checkout
 
             start_from_quickorderform:
+                # Overrides base_transitions.start_from_quickorderform
                 step_to: checkout
 
             payment_error:
+                # Overrides base_transitions.payment_error
                 step_to: checkout
 
             finish_checkout:
+                # Overrides base_transitions.finish_checkout
                 step_to: order_created
+                transition_definition: finish_checkout_definition
 
             save_state:
                 step_to: checkout

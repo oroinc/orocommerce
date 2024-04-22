@@ -24,5 +24,5 @@ interface CustomerUserActionsInterface
         AbstractAddress $billingAddress = null
     ): void;
 
-    public function handleLateRegistration(Checkout $checkout, Order $order, array $lateRegistrationData = []): array;
+    public function handleLateRegistration(Checkout $checkout, Order $order, ?array $lateRegistrationData = []): array;
 }

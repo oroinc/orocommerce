@@ -76,6 +76,8 @@ Feature: Import and validate product prices using different strategies
       | product_1   | Product 1    | 1        | item | 100.00 | USD      |
       | product_2   | Product 2    | 1        | item | 200.00 | USD      |
       | product_3   | Product 3    | 1        | item | 300.00 | USD      |
+    And I close all flash messages
+
     When I click "Export Button"
     Then I should see "Export started successfully. You will receive email notification upon completion." flash message
     And Email should contains the following "Export performed successfully. 5 product prices were exported. Download" text
@@ -95,11 +97,15 @@ Feature: Import and validate product prices using different strategies
       | product_2   | 1        | item      | 200   | USD      |
     And I import product prices file with strategy "Reset and Add"
     Then Email should contains the following "Errors: 0 processed: 2, read: 2, added: 2, updated: 0, replaced: 0" text
+    And I close all flash messages
+
     When I click "Recalculate"
     Then I should see following grid:
       | Product SKU | Product name | Quantity | Unit | Value  | Currency |
       | product_1   | Product 1    | 1        | item | 100.00 | USD      |
       | product_2   | Product 2    | 1        | item | 200.00 | USD      |
+    And I close all flash messages
+
     When I click "Export Button"
     Then I should see "Export started successfully. You will receive email notification upon completion." flash message
     And Email should contains the following "Export performed successfully. 4 product prices were exported. Download" text
@@ -136,14 +142,17 @@ Feature: Import and validate product prices using different strategies
       | product_3   | 1        | item      | 300   | USD      |
     And I import product prices file with strategy "Reset and Add"
     Then Email should contains the following "Errors: 0 processed: 3, read: 3, added: 3, updated: 0, replaced: 0" text
-    When I reload the page
-    And click "Recalculate"
+    And I close all flash messages
+
+    When click "Recalculate"
     Then I should see following grid:
       | Product SKU | Product name | Quantity | Unit | Value  | Currency |
       | product_1   | Product 1    | 1        | item | 100.00 | USD      |
       | product_2   | Product 2    | 1        | item | 200.00 | USD      |
       | product_3   | Product 3    | 1        | item | 300.00 | USD      |
       | product_4   | Product 4    | 1        | item | 400.00 | USD      |
+    And I close all flash messages
+
     When I click "Export Button"
     Then I should see "Export started successfully. You will receive email notification upon completion." flash message
     And Email should contains the following "Export performed successfully. 4 product prices were exported. Download" text

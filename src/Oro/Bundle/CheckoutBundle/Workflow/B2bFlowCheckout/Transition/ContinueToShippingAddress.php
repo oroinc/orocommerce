@@ -5,9 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider;
-use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderLineItemsNotEmptyInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CustomerUserActionsInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -20,32 +17,15 @@ class ContinueToShippingAddress implements TransitionServiceInterface
 {
     public function __construct(
         private ActionExecutor $actionExecutor,
-        private ConfigProvider $multiShippingConfigProvider,
-        private GroupedCheckoutLineItemsProvider $checkoutLineItemsProvider,
         private CustomerUserActionsInterface $customerUserActions,
         private AddressActionsInterface $addressActions,
-        private OrderLineItemsNotEmptyInterface $orderLineItemsNotEmpty
+        private TransitionServiceInterface $baseContinueTransition
     ) {
     }
 
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
-        $checkout = $this->getCheckout($workflowItem);
-        if ($checkout->isCompleted()) {
-            return false;
-        }
-        $this->initializeGroupedLineItems($workflowItem, $checkout);
-
-        if (!$this->checkOrderLineItems($checkout, $errors)) {
-            return false;
-        }
-
-        $quoteAcceptable = $this->actionExecutor->evaluateExpression(
-            'quote_acceptable',
-            [$checkout->getSourceEntity(), true],
-            $errors
-        );
-        if (!$quoteAcceptable) {
+        if (!$this->baseContinueTransition->isPreConditionAllowed($workflowItem, $errors)) {
             return false;
         }
 
@@ -95,41 +75,6 @@ class ContinueToShippingAddress implements TransitionServiceInterface
                 ]
             );
         }
-    }
-
-    // TODO: Move me to start transition or event reacting on workflow start, this MUST BE NOT executed in preaction
-    private function initializeGroupedLineItems(WorkflowItem $workflowItem, Checkout $checkout): void
-    {
-        if (!$this->multiShippingConfigProvider->isLineItemsGroupingEnabled()) {
-            return;
-        }
-
-        $workflowItem->getData()->set(
-            'grouped_line_items',
-            $this->checkoutLineItemsProvider->getGroupedLineItemsIds($checkout)
-        );
-    }
-
-    private function checkOrderLineItems(Checkout $checkout, ?Collection $errors = null): bool
-    {
-        $orderLineItemsNotEmptyResult = $this->orderLineItemsNotEmpty->execute($checkout);
-        if (!$orderLineItemsNotEmptyResult['orderLineItemsNotEmptyForRfp']) {
-            $errors?->add(
-                ['message' => 'oro.checkout.workflow.condition.order_line_items_not_empty.not_allow_rfp.message']
-            );
-
-            return false;
-        }
-
-        if (!$orderLineItemsNotEmptyResult['orderLineItemsNotEmpty']) {
-            $errors?->add(
-                ['message' => 'oro.checkout.workflow.condition.order_line_items_not_empty.allow_rfp.message']
-            );
-
-            return false;
-        }
-
-        return true;
     }
 
     private function getCheckout(WorkflowItem $workflowItem): Checkout

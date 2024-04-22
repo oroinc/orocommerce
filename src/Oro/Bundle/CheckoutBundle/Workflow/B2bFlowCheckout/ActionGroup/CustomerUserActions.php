@@ -85,7 +85,7 @@ class CustomerUserActions implements CustomerUserActionsInterface
         $em->flush();
     }
 
-    public function handleLateRegistration(Checkout $checkout, Order $order, array $lateRegistrationData = []): array
+    public function handleLateRegistration(Checkout $checkout, Order $order, ?array $lateRegistrationData = []): array
     {
         $result = [];
         if (!empty($lateRegistrationData['is_late_registration_enabled']) && !$checkout->getRegisteredCustomerUser()) {

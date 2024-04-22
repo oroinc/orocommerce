@@ -5,6 +5,7 @@ workflows:
     b2b_flow_checkout:
         transitions:
             __start__:
+                # Overrides base_transitions.__start__
                 step_to: enter_billing_address
                 conditional_steps_to:
                     enter_credentials_step:
@@ -13,26 +14,34 @@ workflows:
                             - '@equal': [$checkout.customerUser.isGuest, true]
 
             start_from_quote:
+                # Overrides base_transitions.start_from_quote
                 step_to: enter_billing_address
 
             start_from_quote_as_guest:
+                # Overrides base_transitions.start_from_quote_as_guest
                 step_to: enter_credentials_step
 
             start_from_shoppinglist:
+                # Overrides base_transitions.start_from_shoppinglist
                 step_to: enter_billing_address
 
             start_from_quickorderform:
+                # Overrides base_transitions.start_from_quickorderform
                 step_to: enter_billing_address
 
             finish_checkout:
+                # Overrides base_transitions.finish_checkout
                 step_to: order_created
+                transition_definition: ~
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.finish_checkout'
 
             payment_error:
+                # Overrides base_transitions.payment_error
                 step_to: enter_payment
 
             paid_partially:
                 step_to: enter_payment
-                transition_definition: paid_partially_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.paid_partially'
                 is_hidden: true
 
             continue_to_billing_address_as_guest:
@@ -42,14 +51,13 @@ workflows:
                         '@not':
                             - '@is_consents_accepted':
                                 acceptedConsents: $customerConsents
-                transition_definition: continue_to_billing_address_as_guest_definition
                 frontend_options:
                     icon: fa-briefcase
                     is_checkout_continue: true
 
             continue_to_billing_address:
                 step_to: enter_billing_address
-                transition_definition: continue_to_billing_address_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_billing_address'
                 display_type: page
                 frontend_options:
                     is_checkout_continue: true
@@ -107,7 +115,7 @@ workflows:
 
             continue_to_shipping_method:
                 step_to: enter_shipping_method
-                transition_definition: continue_to_shipping_method_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_method'
                 display_type: page
                 frontend_options:
                     is_checkout_continue: true
@@ -135,7 +143,7 @@ workflows:
 
             continue_to_payment:
                 step_to: enter_payment
-                transition_definition: continue_to_payment_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_payment'
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
@@ -174,7 +182,7 @@ workflows:
 
             continue_to_order_review:
                 step_to: order_review
-                transition_definition: continue_to_order_review_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_order_review'
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
@@ -220,58 +228,57 @@ workflows:
 
             back_to_enter_credentials:
                 step_to: enter_credentials_step
-                transition_definition: clear_payment_method_and_recalculate_state_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.clear_payment_method_and_recalculate_state'
 
             back_to_customer_consents:
                 step_to: customer_consents
-                transition_definition: clear_payment_method_and_recalculate_state_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.clear_payment_method_and_recalculate_state'
                 frontend_options:
                     is_checkout_back: true
 
             back_to_billing_address:
                 step_to: enter_billing_address
-                transition_definition: clear_payment_method_and_recalculate_state_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.clear_payment_method_and_recalculate_state'
                 frontend_options:
                     is_checkout_back: true
 
             back_to_shipping_address:
                 step_to: enter_shipping_address
-                transition_definition: clear_payment_method_and_recalculate_state_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.clear_payment_method_and_recalculate_state'
                 frontend_options:
                     is_checkout_back: true
 
             back_to_shipping_address_on_fail_address:
                 step_to: enter_shipping_address
-                transition_definition: unblock_and_recalculate_definition
+                transition_service: 'oro_checkout.workflow.transition.unblock_and_recalculate'
                 is_hidden: true
 
             back_to_shipping_method:
                 step_to: enter_shipping_method
-                transition_definition: back_to_shipping_method_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.back_to_shipping_method'
                 frontend_options:
                     is_checkout_back: true
 
             back_to_payment:
                 step_to: enter_payment
-                transition_definition: recalculate_state_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.recalculate_state'
                 frontend_options:
                     is_checkout_back: true
 
             verify_customer_consents:
                 step_to: customer_consents
-                transition_definition: verify_customer_consents_definition
                 is_hidden: true
 
             verify_payment:
                 step_to: enter_payment
-                transition_definition: verify_payment_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.verify_payment'
                 is_hidden: true
                 frontend_options:
                     is_checkout_verify: true
 
             place_order:
                 step_to: order_review
-                transition_definition: place_order_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.place_order'
                 display_type: page
                 frontend_options:
                     is_checkout_continue: true

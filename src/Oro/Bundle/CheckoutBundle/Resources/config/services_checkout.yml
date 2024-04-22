@@ -1,7 +1,6 @@
 services:
     oro_checkout.action_group.b2b_flow_checkout.address_actions:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActions
-        public: true
         arguments:
             - '@doctrine'
             - '@oro_action.factory.duplicator_factory'
@@ -13,7 +12,6 @@ services:
 
     oro_checkout.action_group.b2b_flow_checkout.order_actions:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\OrderActions
-        public: true
         arguments:
             - '@oro_checkout.action_group.b2b_flow_checkout.address_actions'
             - '@oro_payment_term.provider.payment_term'
@@ -28,9 +26,25 @@ services:
     Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\OrderActions:
         alias: oro_checkout.action_group.b2b_flow_checkout.order_actions
 
+    oro_checkout.action_group.b2b_flow_checkout.shipping_method_actions:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\ShippingMethodActions
+        arguments:
+            - '@oro_action.action_executor'
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_checkout.action.default_shipping_method_setter'
+            - '@oro_checkout.action.multi_shipping.default_shipping_method_setter'
+            - '@oro_checkout.action.multi_shipping.groups_default_shipping_method_setter'
+            - '@oro_checkout.manager.multi_shipping.checkout_line_items_shipping'
+            - '@oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping'
+            - '@oro_checkout.shipping_method.provider_main'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\ShippingMethodActions:
+        alias: oro_checkout.action_group.b2b_flow_checkout.shipping_method_actions
+
     oro_checkout.action_group.b2b_flow_checkout.split_order_actions:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\SplitOrderActions
-        public: true
         arguments:
             - '@oro_checkout.action_group.b2b_flow_checkout.order_actions'
             - '@oro_order.order.total.total_helper'
@@ -49,7 +63,6 @@ services:
 
     oro_checkout.action_group.b2b_flow_checkout.checkout_actions:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CheckoutActions
-        public: true
         arguments:
             - '@doctrine'
             - '@oro_entity.entity_alias_resolver'
@@ -64,7 +77,6 @@ services:
 
     oro_checkout.action_group.b2b_flow_checkout.customer_user_actions:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CustomerUserActions
-        public: true
         arguments:
             - '@doctrine'
             - '@security.token_storage'
@@ -115,20 +127,177 @@ services:
     Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\StartFromShoppingListTransition:
         alias: oro_checkout.workflow.base_transition.start_from_shopping_list
 
+    oro_checkout.workflow.transition.unblock_and_recalculate:
+        class: Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\UnlockAndRecalculate
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\UnlockAndRecalculate:
+        alias: oro_checkout.workflow.transition.unblock_and_recalculate
+
+    oro_checkout.workflow.transition.payment_error:
+        class: Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\PaymentError
+        arguments:
+            - '@doctrine'
+            - '@oro_checkout.workflow.transition.unblock_and_recalculate'
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\PaymentError:
+        alias: oro_checkout.workflow.transition.payment_error
+
+    oro_checkout.workflow.b2b_flow_checkout.transition.base_continue_transition:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\BaseContinueTransition
+        arguments:
+            - '@oro_action.action_executor'
+            - '@oro_checkout.action_group.order_line_items_not_empty'
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_billing_address:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToBillingAddress
+        arguments:
+            - '@oro_action.action_executor'
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToBillingAddress:
+        alias: oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_billing_address
+
     oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_address:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToShippingAddress
         arguments:
             - '@oro_action.action_executor'
-            - '@oro_checkout.provider.multi_shipping_config'
-            - '@oro_checkout.provider.grouped_line_items'
             - '@oro_checkout.action_group.b2b_flow_checkout.customer_user_actions'
             - '@oro_checkout.action_group.b2b_flow_checkout.address_actions'
-            - '@oro_checkout.action_group.order_line_items_not_empty'
+            - '@oro_checkout.workflow.b2b_flow_checkout.transition.base_continue_transition'
         tags:
             - { name: 'oro_workflow.transition_service' }
 
     Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToShippingAddress:
         alias: oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_address
+
+    oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_method:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToShippingMethod
+        arguments:
+            - '@oro_checkout.action_group.b2b_flow_checkout.address_actions'
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_checkout.action.default_shipping_method_setter'
+            - '@oro_checkout.action.multi_shipping.default_shipping_method_setter'
+            - '@oro_checkout.action.multi_shipping.groups_default_shipping_method_setter'
+            - '@oro_checkout.workflow.b2b_flow_checkout.transition.base_continue_transition'
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToShippingMethod:
+        alias: oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_method
+
+    oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_payment:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToPayment
+        arguments:
+            - '@oro_checkout.action_group.b2b_flow_checkout.shipping_method_actions'
+            - '@oro_checkout.available_shipping_method_checker'
+            - '@oro_checkout.action.default_payment_method_setter'
+            - '@oro_checkout.workflow.b2b_flow_checkout.transition.base_continue_transition'
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToPayment:
+        alias: oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_payment
+
+    oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_order_review:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToOrderReview
+        arguments:
+            - '@oro_action.action_executor'
+            - '@oro_checkout.action_group.b2b_flow_checkout.shipping_method_actions'
+            - '@oro_checkout.provider.payment_context'
+            - '@router'
+            - '@oro_checkout.workflow.b2b_flow_checkout.transition.base_continue_transition'
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToOrderReview:
+        alias: oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_order_review
+
+    oro_checkout.workflow.b2b_flow_checkout.transition.place_order:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\PlaceOrder
+        arguments:
+            - '@oro_action.action_executor'
+            - '@oro_checkout.action_group.b2b_flow_checkout.shipping_method_actions'
+            - '@oro_checkout.provider.payment_context'
+            - '@router'
+            - '@oro_checkout.action_group.b2b_flow_checkout.order_actions'
+            - '@oro_checkout.action_group.b2b_flow_checkout.split_order_actions'
+            - '@oro_checkout.action_group.b2b_flow_checkout.checkout_actions'
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_checkout.workflow.b2b_flow_checkout.transition.base_continue_transition'
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\PlaceOrder:
+        alias: oro_checkout.workflow.b2b_flow_checkout.transition.place_order
+
+    oro_checkout.workflow.b2b_flow_checkout.transition.verify_payment:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\VerifyPayment
+        parent: oro_checkout.workflow.b2b_flow_checkout.transition.base_continue_transition
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\VerifyPayment:
+        alias: oro_checkout.workflow.b2b_flow_checkout.transition.verify_payment
+
+    oro_checkout.workflow.b2b_flow_checkout.transition.recalculate_state:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\RecalculateState
+        arguments:
+            - '@oro_checkout.action_group.update_shipping_price'
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\RecalculateState:
+        alias: oro_checkout.workflow.b2b_flow_checkout.transition.recalculate_state
+
+    oro_checkout.workflow.b2b_flow_checkout.transition.clear_payment_method_and_recalculate_state:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ClearPaymentMethodAndRecalculateState
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ClearPaymentMethodAndRecalculateState:
+        alias: oro_checkout.workflow.b2b_flow_checkout.transition.clear_payment_method_and_recalculate_state
+
+    oro_checkout.workflow.b2b_flow_checkout.transition.back_to_shipping_method:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\BackToShippingMethod
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_checkout.action.default_shipping_method_setter'
+            - '@oro_checkout.workflow.b2b_flow_checkout.transition.clear_payment_method_and_recalculate_state'
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\BackToShippingMethod:
+        alias: oro_checkout.workflow.b2b_flow_checkout.transition.back_to_shipping_method
+
+    oro_checkout.workflow.b2b_flow_checkout.transition.finish_checkout:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\FinishCheckout
+        arguments:
+            - '@oro_checkout.action_group.b2b_flow_checkout.customer_user_actions'
+            - '@oro_checkout.action_group.b2b_flow_checkout.checkout_actions'
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\FinishCheckout:
+        alias: oro_checkout.workflow.b2b_flow_checkout.transition.finish_checkout
+
+    oro_checkout.workflow.b2b_flow_checkout.transition.paid_partially:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\PaidPartially
+        arguments:
+            - '@oro_action.action_executor'
+            - '@router'
+            - '@oro_checkout.provider.grouped_line_items'
+        tags:
+            - { name: 'oro_workflow.transition_service' }
+
+    Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\PaidPartially:
+        alias: oro_checkout.workflow.b2b_flow_checkout.transition.paid_partially
 
     oro_checkout.action_group.update_shipping_price:
         class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPrice
@@ -313,6 +482,14 @@ services:
             - '@oro_checkout.action_group.actualize_currency'
         tags:
             - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest }
+
+    oro_checkout.event_listener.initialize_grouped_line_items:
+        class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\InitializeGroupedLineItems
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_checkout.provider.grouped_line_items'
+        tags:
+            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout.completed, method: onComplete }
 
     oro_checkout.event_listener.checkout_request_preload_entities:
         class: Oro\Bundle\CheckoutBundle\EventListener\CheckoutRequestPreloadEntitiesListener

@@ -8,7 +8,7 @@ use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInt
 /**
  * Sets a default shipping method and a shipping cost for a checkout.
  */
-class DefaultShippingMethodSetter
+class DefaultShippingMethodSetter implements DefaultShippingMethodSetterInterface
 {
     private CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider;
 

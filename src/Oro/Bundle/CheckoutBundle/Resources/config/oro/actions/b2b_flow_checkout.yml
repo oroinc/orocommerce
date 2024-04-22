@@ -45,3 +45,19 @@ action_groups:
     handle_late_registration:
         service: oro_checkout.action_group.b2b_flow_checkout.customer_user_actions
         method: handleLateRegistration
+
+    b2b_flow_checkout_has_applicable_shipping_rules:
+        service: oro_checkout.action_group.b2b_flow_checkout.shipping_method_actions
+        method: hasApplicableShippingRules
+
+    b2b_flow_checkout_update_default_shipping_methods:
+        service: oro_checkout.action_group.b2b_flow_checkout.shipping_method_actions
+        method: updateDefaultShippingMethods
+
+    b2b_flow_checkout_actualize_shipping_methods:
+        service: oro_checkout.action_group.b2b_flow_checkout.shipping_method_actions
+        method: actualizeShippingMethods
+
+    b2b_flow_checkout_update_checkout_shipping_prices:
+        service: oro_checkout.action_group.b2b_flow_checkout.shipping_method_actions
+        method: updateCheckoutShippingPrices

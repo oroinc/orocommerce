@@ -62,8 +62,7 @@ class CheckoutActions implements CheckoutActionsInterface
                 'failureUrl' => $failureUrl,
                 'partiallyPaidUrl' => $partiallyPaidUrl,
                 'failedShippingAddressUrl' => $failureUrl,
-                'checkoutId' => $checkout->getId(),
-                // email from outer context???
+                'checkoutId' => $checkout->getId()
             ],
             $transactionOptions
         );
