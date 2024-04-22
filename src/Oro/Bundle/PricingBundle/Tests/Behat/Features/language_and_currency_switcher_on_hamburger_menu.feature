@@ -260,8 +260,7 @@ Feature: Language and currency switcher on hamburger menu
     When I reload the page
     Then I should see that the LocalizationCurrencySwitcher element has a type "select"
     And I should see that the Localization Switcher has a type "select"
-#    after fix bag BB-23852, change type "select"
-    And I should see that the Currency Switcher has a type "toggle"
+    And I should see that the Currency Switcher has a type "select"
 
   Scenario: Check with 5 localizations and >4 currencies: the select2 for language and for currencies (tablet view)
     Given I proceed as the tablet_view
@@ -269,13 +268,11 @@ Feature: Language and currency switcher on hamburger menu
     And I set window size to 640x1100
     Then I should see that the LocalizationCurrencySwitcher element has a type "select"
     And I should see that the Localization Switcher has a type "select"
-#    after fix bag BB-23852, change type "select"
-    And I should see that the Currency Switcher has a type "toggle"
+    And I should see that the Currency Switcher has a type "select"
 
   Scenario: Check with 5 localizations and >4 currencies: the select2 for language and for currencies (mobile)
     Given I proceed as the user_mobile
     When I reload the page
     Then I should see that the LocalizationCurrencySwitcher element has a type "select"
     And I should see that the Localization Switcher has a type "select"
-#    after fix bag BB-23852, change type "select"
-    And I should see that the Currency Switcher has a type "toggle"
+    And I should see that the Currency Switcher has a type "select"
