@@ -287,6 +287,16 @@ convertToTwigTags:
       /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/501/file501.jpg
       <img alt="existing image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/502/file502.jpg"/>
 
+  wysiwyg image with encoded name:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2010/file2010%C3%BC.jpg
+      <img alt="new image" src="/media/cache/attachment/resize/wysiwyg_original/9ad9d5157683cc82171c7e5cb5f8b1e1/2020/file2020%C3%BC.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_image('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','') }}
+      <img alt="new image" src="{{ wysiwyg_image('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d','wysiwyg_original','') }}"/>
+
   wysiwyg file with a file not related to digital asset:
     contentWithUrls: |
       <h3>Sample content</h3>
@@ -342,6 +352,16 @@ convertToTwigTags:
       <h3>Sample content</h3>
       /attachment/download/2010/file2010.jpg
       <a title="new file" src="/attachment/download/2020/file2020.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
+      <a title="new file" src="{{ wysiwyg_file('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>
+
+  wysiwyg file with encoded name:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /attachment/download/2010/file2010%C3%BC.jpg
+      <a title="new file" src="/attachment/download/2020/file2020%C3%BC.jpg"/>
     expected: |
       <h3>Sample content</h3>
       {{ wysiwyg_file('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
