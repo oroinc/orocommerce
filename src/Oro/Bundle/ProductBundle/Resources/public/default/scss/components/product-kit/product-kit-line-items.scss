@@ -3,7 +3,7 @@
 .product-kit-line-items {
     display: flex;
     flex-direction: column;
-    row-gap: spacing('xs');
+    row-gap: spacing('sm');
 
     &:empty {
         display: none;

@@ -18,8 +18,10 @@
 
     .grid-header-cell {
         background-color: $responsive-product-kit-shopping-lists-grid-border-color;
-        font-weight: normal;
+        font-weight: font-weight('semi-bold');
+        text-transform: uppercase;
         border-width: 0;
+        color: $responsive-product-kit-shopping-lists-grid-header-cell-color;
     }
 
     .grid-body-cell {

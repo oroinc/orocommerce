@@ -246,7 +246,7 @@ define(function(require, exports, module) {
                 $dropdownToggle.prependTo(panel.$el);
 
                 $mainLuncher
-                    .addClass('btn btn-main btn--inverse')
+                    .addClass('btn btn-main btn--inverse add-to-shopping-list-button')
                     .removeClass('disabled')
                     .prependTo(panel.$el);
             } else {
@@ -254,7 +254,7 @@ define(function(require, exports, module) {
                     panel.renderMainLauncher().$el
                 );
                 panel.launchers.forEach(launcher => {
-                    launcher.$el.addClass('btn btn--full btn--outlined');
+                    launcher.$el.addClass('btn btn--full btn--inverse');
                 });
 
                 panel.$el.addClass(extraClasses);
@@ -283,7 +283,7 @@ define(function(require, exports, module) {
                 panel.renderMainLauncher().$el
             );
             panel.launchers.forEach(launcher => {
-                launcher.$el.addClass('btn btn--inverse btn--full');
+                launcher.$el.addClass('btn btn--inverse btn--full add-to-shopping-list-button');
             });
             panel.$el.addClass(extraClasses);
             if (panel.actions.length > 1) {

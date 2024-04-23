@@ -3,15 +3,13 @@
 .product-price {
     width: $product-price-width;
 
-    &__main {
-        padding-bottom: $product-price-main-offset-bottom;
-    }
-
     &__main-box {
         font-size: $product-price-main-box-font-size;
     }
 
     &__container {
+        padding-bottom: $product-price-main-offset-bottom;
+
         &:empty {
             display: none;
         }

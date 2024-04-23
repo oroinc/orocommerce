@@ -1,6 +1,8 @@
 /* @theme: default; */
 
 .responsive-order-layout {
+    --sticky-position-top-offset: var(--sticky-page-header-element-offset-top, 0);
+
     .totals-container {
         margin-bottom: 10px;
     }

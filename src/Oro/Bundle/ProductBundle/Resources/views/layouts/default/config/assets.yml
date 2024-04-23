@@ -24,6 +24,7 @@ styles:
         - 'bundles/oroproduct/default/scss/variables/product-list-config.scss'
         - 'bundles/oroproduct/default/scss/variables/product-popup-header.scss'
         - 'bundles/oroproduct/default/scss/variables/product-filters-root-config.scss'
+        - 'bundles/oroproduct/default/scss/variables/price-hint-content-config.scss'
         - 'bundles/oroproduct/default/scss/variables/search-autocomplete-config.scss'
         - 'bundles/oroproduct/default/scss/variables/elevatezoom-config.scss'
         - 'bundles/oroproduct/default/scss/variables/filter-controls-config.scss'

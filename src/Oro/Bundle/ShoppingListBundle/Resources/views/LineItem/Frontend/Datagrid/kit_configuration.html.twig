@@ -11,7 +11,7 @@
                 <div><span class="product-kit-line-items__item-name">{{ kitItemLineItem.kitItem.labels|localized_value|e }}</span><span class="product-kit-line-items__item-quantity">[x {{ kitItemLineItem.quantity }}]</span></div>
                 {% set productId = kitItemLineItem.product.id|default(0) %}
                 {% if productId and is_visible_product(productId) %}
-                    <a href="{{ path('oro_product_frontend_product_view', {id: kitItemLineItem.product.id}) }}">{{ kitItemLineItem.product.names|localized_value|e }}</a>
+                    <a class="no-decoration" href="{{ path('oro_product_frontend_product_view', {id: kitItemLineItem.product.id}) }}">{{ kitItemLineItem.product.names|localized_value|e }}</a>
                 {% else %}
                     {{ kitItemLineItem.product.names|localized_value|e }}
                 {% endif %}

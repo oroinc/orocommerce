@@ -49,6 +49,7 @@
     &__label {
         display: $product-totals-label-display;
         padding: $product-totals-label-offset-inner;
+        white-space: nowrap;
     }
 
     &__total-quantity,
