@@ -149,6 +149,7 @@ const SearchAutocompleteView = BaseView.extend({
             'aria-activedescendant': null
         });
         this.undoFocusStyle();
+        this.subview('backdrop').hide();
     },
 
     hideCombobox() {
@@ -163,6 +164,7 @@ const SearchAutocompleteView = BaseView.extend({
         this.$popup.hide();
         this.gerSelectedOption().removeAttr('aria-selected');
         this.undoFocusStyle();
+        this.subview('backdrop').hide();
     },
 
     showCombobox() {

@@ -41,6 +41,10 @@
 
         flex-wrap: wrap;
         flex-direction: column;
+
+        .product-view-line-item {
+            flex-wrap: nowrap;
+        }
     }
 
     &__details {
