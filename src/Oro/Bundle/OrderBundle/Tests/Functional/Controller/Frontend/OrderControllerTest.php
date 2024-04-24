@@ -147,6 +147,25 @@ class OrderControllerTest extends WebTestCase
         }
     }
 
+    /**
+     * @dataProvider viewDataProvider
+     */
+    public function testPrint(string $resource, string $user, int $status)
+    {
+        $this->loginUser($user);
+
+        /** @var Order $order */
+        $order = $this->getReference($resource);
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_print', ['id' => $order->getId()]));
+
+        $response = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($response, $status);
+
+        if (200 === $status) {
+            $this->assertViewPage($crawler, ['Notes']);
+        }
+    }
+
     public function viewDataProvider(): array
     {
         return [

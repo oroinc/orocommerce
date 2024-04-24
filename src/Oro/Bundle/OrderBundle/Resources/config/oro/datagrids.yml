@@ -838,6 +838,18 @@ datagrids:
                     bottom: true
             frontend: true
 
+    # This grid is used only for printed products on the order page of the storefront.
+    order-line-items-grid-frontend-print:
+        extends: order-line-items-grid-frontend
+        options:
+            jsmodules:
+                - oroorder/js/app/components/frontend-order-print
+            mode: client
+            toolbarOptions:
+                pagination:
+                    onePage: true
+        frontend: true
+
     order-shipping-trackings-grid:
         extended_entity_name: 'Oro\Bundle\OrderBundle\Entity\OrderShippingTracking'
         options:
