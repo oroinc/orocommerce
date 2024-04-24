@@ -7,6 +7,7 @@ define(function(require) {
     const _ = require('underscore');
     const tools = require('oroui/js/tools');
     const mediator = require('oroui/js/mediator');
+    const Popper = require('popper').default;
 
     const CatalogSwitchComponent = BaseComponent.extend(_.extend({}, UrlHelper, {
         parameterName: null,
@@ -25,9 +26,19 @@ define(function(require) {
             CatalogSwitchComponent.__super__.initialize.call(this, options);
 
             this.parameterName = options.parameterName;
+            this.$el = options._sourceElement;
 
-            options._sourceElement
-                .on('click', '[data-catalog-view-trigger]', this._onSwitch.bind(this));
+            this.$el.on('click', '[data-catalog-view-trigger]', this._onSwitch.bind(this));
+        },
+
+        /**
+         * @inheritdoc
+         */
+        delegateListeners() {
+            CatalogSwitchComponent.__super__.delegateListeners.call(this);
+
+            this.$el.on('show.bs.dropdown', this._onShowDropdown.bind(this));
+            this.$el.on('hide.bs.dropdown', this._onHideDropdown.bind(this));
         },
 
         _onSwitch: function(e) {
@@ -37,6 +48,41 @@ define(function(require) {
                 const value = $(e.currentTarget).data('catalog-view-trigger');
                 const url = this.updateUrlParameter(location.href, this.parameterName, value);
                 mediator.execute('redirectTo', {url: url}, {redirect: true});
+            }
+        },
+
+        _onShowDropdown: function(e) {
+            this.destroyPopper();
+
+            this.popper = new Popper(
+                this.$el.find('[data-toggle="dropdown"]').get(0),
+                this.$el.find('.dropdown-menu').get(0),
+                {
+                    placement: 'top-end',
+                    modifiers: {
+                        flip: {
+                            fn(data, options) {
+                                // Try to avoid page header
+                                const pageHeader = document.querySelector('.page-header');
+                                const pageHeaderBottom = pageHeader?.getBoundingClientRect()?.bottom;
+                                options.padding = Math.max(pageHeaderBottom, 5);
+
+                                return Popper.Defaults.modifiers.flip.fn(data, options);
+                            }
+                        }
+                    }
+                }
+            );
+        },
+
+        _onHideDropdown: function() {
+            this.destroyPopper();
+        },
+
+        destroyPopper: function() {
+            if (this.popper) {
+                this.popper.destroy();
+                this.popper = null;
             }
         },
 
@@ -56,6 +102,18 @@ define(function(require) {
             urlSplited[1] = tools.packToQueryString(urlObject);
 
             return urlSplited.join('?');
+        },
+
+        /**
+         * @inheritdoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.destroyPopper();
+            CatalogSwitchComponent.__super__.dispose.call(this);
         }
     }));
 
