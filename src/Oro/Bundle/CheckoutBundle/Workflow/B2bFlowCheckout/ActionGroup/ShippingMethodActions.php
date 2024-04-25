@@ -11,7 +11,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemGroupsShippingManagerInterface;
 use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManagerInterface;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
-use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPriceInterface;
 
 class ShippingMethodActions implements ShippingMethodActionsInterface
 {
@@ -23,7 +23,7 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
         private DefaultMultiShippingGroupMethodSetterInterface $defaultMultiShippingGroupMethodSetter,
         private CheckoutLineItemsShippingManagerInterface $checkoutLineItemsShipping,
         private CheckoutLineItemGroupsShippingManagerInterface $checkoutLineItemGroupsShipping,
-        private CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
+        private UpdateShippingPriceInterface $updateShippingPrice
     ) {
     }
 
@@ -96,7 +96,7 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
             $this->checkoutLineItemGroupsShipping->updateLineItemGroupsShippingPrices($checkout);
         }
 
-        $checkout->setShippingCost($this->checkoutShippingMethodsProvider->getPrice($checkout));
+        $this->updateShippingPrice->execute($checkout);
     }
 
     private function hasEnabledShippingRules(Checkout $checkout, ?Collection $errors): bool

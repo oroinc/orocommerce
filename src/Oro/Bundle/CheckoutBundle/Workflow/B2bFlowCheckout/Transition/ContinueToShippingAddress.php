@@ -66,6 +66,7 @@ class ContinueToShippingAddress implements TransitionServiceInterface
         }
 
         if ($data['ship_to_billing_address']) {
+            // TODO: Check if we can use TransitionManager here
             $this->actionExecutor->executeAction(
                 'transit_workflow',
                 [

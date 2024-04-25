@@ -11,24 +11,30 @@ use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CheckoutActio
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\OrderActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\ShippingMethodActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\SplitOrderActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\PlaceOrder as BasePlaceOrder;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class PlaceOrder implements TransitionServiceInterface
+class PlaceOrder extends BasePlaceOrder
 {
     public function __construct(
-        private ActionExecutor $actionExecutor,
-        private ShippingMethodActionsInterface $shippingMethodActions,
-        private CheckoutPaymentContextProvider $paymentContextProvider,
-        private UrlGeneratorInterface $urlGenerator,
-        private OrderActionsInterface $orderActions,
-        private SplitOrderActionsInterface $splitOrderActions,
-        private CheckoutActionsInterface $checkoutActions,
+        ActionExecutor $actionExecutor,
+        CheckoutPaymentContextProvider $paymentContextProvider,
+        OrderActionsInterface $orderActions,
+        CheckoutActionsInterface $checkoutActions,
+        TransitionServiceInterface $baseContinueTransition,
         private ConfigProvider $configProvider,
-        private TransitionServiceInterface $baseContinueTransition
+        private SplitOrderActionsInterface $splitOrderActions,
+        private ShippingMethodActionsInterface $shippingMethodActions,
     ) {
+        parent::__construct(
+            $actionExecutor,
+            $paymentContextProvider,
+            $orderActions,
+            $checkoutActions,
+            $baseContinueTransition
+        );
     }
 
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
@@ -45,15 +51,7 @@ class PlaceOrder implements TransitionServiceInterface
             $data->offsetGet('line_item_groups_shipping_methods')
         );
 
-        if (!$this->baseContinueTransition->isPreConditionAllowed($workflowItem, $errors)) {
-            return false;
-        }
-
         if (!$this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors)['hasRules']) {
-            return false;
-        }
-
-        if (!$workflowItem->getId()) {
             return false;
         }
 
@@ -63,22 +61,7 @@ class PlaceOrder implements TransitionServiceInterface
             return false;
         }
 
-        if (!$this->isPreOrderCreateAllowedByEventListeners($workflowItem, $errors)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
-    {
-        return $this->actionExecutor->evaluateExpression(
-            expressionName: 'extendable',
-            data: ['events' => ['extendable_condition.before_order_create']],
-            errors: $errors,
-            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message',
-            context: $workflowItem
-        );
+        return parent::isPreConditionAllowed($workflowItem, $errors);
     }
 
     public function execute(WorkflowItem $workflowItem): void
@@ -115,54 +98,6 @@ class PlaceOrder implements TransitionServiceInterface
         $workflowItem->getResult()->offsetSet('redirectUrl', $url);
     }
 
-    private function showPaymentInProgressNotification(Checkout $checkout, bool $paymentInProgress): void
-    {
-        if ($paymentInProgress && !$checkout->isCompleted()) {
-            $this->actionExecutor->executeAction(
-                'flash_message',
-                [
-                    'message' => 'oro.checkout.workflow.condition.payment_has_not_been_processed.message',
-                    'type' => 'warning'
-                ]
-            );
-        }
-    }
-
-    private function isPaymentMethodApplicable(Checkout $checkout): bool
-    {
-        $paymentContext = $this->paymentContextProvider->getContext($checkout);
-        if (!$paymentContext) {
-            return false;
-        }
-
-        return $this->actionExecutor->evaluateExpression(
-            'payment_method_applicable',
-            [
-                'context' => $paymentContext,
-                'payment_method' => $checkout->getPaymentMethod()
-            ]
-        );
-    }
-
-    private function isPreOrderCreateAllowedByEventListeners(WorkflowItem $workflowItem, ?Collection $errors): bool
-    {
-        $workflowResult = $workflowItem->getResult();
-        $savedInResult = $workflowResult->offsetGet('extendableConditionPreOrderCreate');
-        if ($savedInResult !== null) {
-            return $savedInResult;
-        }
-
-        $isAllowed = $this->actionExecutor->evaluateExpression(
-            expressionName: 'extendable',
-            data: ['events' => ['extendable_condition.pre_order_create']],
-            errors: $errors,
-            context: $workflowItem
-        );
-        $workflowResult->offsetSet('extendableConditionPreOrderCreate', $isAllowed);
-
-        return $isAllowed;
-    }
-
     private function placeOrder(Checkout $checkout, ?array $groupedLineItems): Order
     {
         $placeOrderResult = $this->orderActions->placeOrder($checkout);
@@ -181,19 +116,14 @@ class PlaceOrder implements TransitionServiceInterface
         ?string $additionalData,
         ?string $email
     ): array {
-        $failedShippingAddressUrl = $this->urlGenerator
-            ->generate(
-                'oro_checkout_frontend_checkout',
-                [
-                    'id' => $checkout->getId(),
-                    'transition' => 'back_to_shipping_address_on_fail_address'
-                ]
-            );
         $purchaseResult = $this->checkoutActions->purchase(
             $checkout,
             $order,
             [
-                'failedShippingAddressUrl' => $failedShippingAddressUrl,
+                'failedShippingAddressUrl' => $this->checkoutActions->getCheckoutUrl(
+                    $checkout,
+                    'back_to_shipping_address_on_fail_address'
+                ),
                 'additionalData' => $additionalData,
                 'email' => $email
             ]
@@ -201,12 +131,9 @@ class PlaceOrder implements TransitionServiceInterface
 
         # Used for cases when sub-orders are paid separately and some of sub-order payments failed.
         if (!empty($purchaseResult['responseData']['purchasePartial'])) {
-            $purchaseResult['responseData']['partiallyPaidUrl'] = $this->urlGenerator->generate(
-                'oro_checkout_frontend_checkout',
-                [
-                    'id' => $checkout->getId(),
-                    'transition' => 'paid_partially'
-                ]
+            $purchaseResult['responseData']['partiallyPaidUrl'] = $this->checkoutActions->getCheckoutUrl(
+                $checkout,
+                'paid_partially'
             );
         }
 

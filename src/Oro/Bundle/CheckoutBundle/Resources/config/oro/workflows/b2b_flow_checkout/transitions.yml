@@ -32,8 +32,6 @@ workflows:
             finish_checkout:
                 # Overrides base_transitions.finish_checkout
                 step_to: order_created
-                transition_definition: ~
-                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.finish_checkout'
 
             payment_error:
                 # Overrides base_transitions.payment_error

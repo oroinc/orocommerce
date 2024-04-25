@@ -52,7 +52,8 @@ workflows:
 
             finish_checkout:
                 is_hidden: true
+                transition_service: 'oro_checkout.workflow.base_transition.finish_checkout'
 
             payment_error:
-                transition_service: 'oro_checkout.workflow.transition.payment_error'
+                transition_service: 'oro_checkout.workflow.base_transition.payment_error'
                 is_hidden: true

@@ -53,11 +53,13 @@ class StartQuickOrderCheckout implements StartQuickOrderCheckoutInterface
 
         $checkout = $startResult['checkout'];
         if (empty($startResult['errors']) && $checkout && $transitionName) {
+            // TODO: Check if we can use workflow name from workflow item
             $currentWorkflow = $this->workflowManager->getAvailableWorkflowByRecordGroup(
                 Checkout::class,
                 'b2b_checkout_flow'
             );
 
+            // Transit workflow is called here because internally it will fetch real WorkflowItem instead of stub.
             $this->actionExecutor->executeAction(
                 'transit_workflow',
                 [

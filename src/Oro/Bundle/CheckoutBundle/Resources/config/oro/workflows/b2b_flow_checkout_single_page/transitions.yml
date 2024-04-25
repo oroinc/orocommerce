@@ -7,17 +7,17 @@ workflows:
             __start__:
                 # Overrides base_transitions.__start__
                 step_to: checkout
-                transition_definition: __start___definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout_single_page.transition.start'
 
             start_from_quote:
                 # Overrides base_transitions.start_from_quote
                 step_to: checkout
-                transition_definition: __start___definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout_single_page.transition.start'
 
             start_from_quote_as_guest:
                 # Overrides base_transitions.start_from_quote_as_guest
                 step_to: checkout
-                transition_definition: __start___definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout_single_page.transition.start'
 
             start_from_shoppinglist:
                 # Overrides base_transitions.start_from_shoppinglist
@@ -34,11 +34,10 @@ workflows:
             finish_checkout:
                 # Overrides base_transitions.finish_checkout
                 step_to: order_created
-                transition_definition: finish_checkout_definition
 
             save_state:
                 step_to: checkout
-                transition_definition: save_state_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout_single_page.transition.save_state'
                 is_hidden: true
                 frontend_options:
                     is_checkout_continue: true
@@ -101,7 +100,7 @@ workflows:
 
             create_order:
                 step_to: checkout
-                transition_definition: create_order_transition_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout_single_page.transition.create_order'
                 display_type: page
                 frontend_options:
                     is_checkout_continue: true
@@ -261,4 +260,4 @@ workflows:
 
             purchase:
                 step_to: checkout
-                transition_definition: purchase_transition_definition
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout_single_page.transition.purchase'

@@ -11,6 +11,8 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  */
 interface CheckoutActionsInterface
 {
+    public function getCheckoutUrl(Checkout $checkout, string $transition = null): string;
+
     public function purchase(Checkout $checkout, Order $order, array $transactionOptions = []): array;
 
     public function finishCheckout(

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition;
+namespace Oro\Bundle\CheckoutBundle\Workflow\BaseTransition;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;

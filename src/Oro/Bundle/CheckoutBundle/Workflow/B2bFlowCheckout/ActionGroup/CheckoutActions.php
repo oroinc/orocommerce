@@ -29,32 +29,24 @@ class CheckoutActions implements CheckoutActionsInterface
     ) {
     }
 
+    public function getCheckoutUrl(Checkout $checkout, string $transition = null): string
+    {
+        $parameters = ['id' => $checkout->getId()];
+        if ($transition) {
+            $parameters['transition'] = $transition;
+        }
+
+        return $this->urlGenerator->generate('oro_checkout_frontend_checkout', $parameters);
+    }
+
     public function purchase(
         Checkout $checkout,
         Order $order,
         array $transactionOptions = []
     ): array {
-        $successUrl = $this->urlGenerator->generate(
-            'oro_checkout_frontend_checkout',
-            [
-                'id' => $checkout->getId(),
-                'transition' => 'finish_checkout'
-            ]
-        );
-        $failureUrl = $this->urlGenerator->generate(
-            'oro_checkout_frontend_checkout',
-            [
-                'id' => $checkout->getId(),
-                'transition' => 'payment_error'
-            ]
-        );
-        $partiallyPaidUrl = $this->urlGenerator->generate(
-            'oro_checkout_frontend_checkout',
-            [
-                'id' => $checkout->getId(),
-                'transition' => 'paid_partially'
-            ]
-        );
+        $successUrl = $this->getCheckoutUrl($checkout, 'finish_checkout');
+        $failureUrl = $this->getCheckoutUrl($checkout, 'payment_error');
+        $partiallyPaidUrl = $this->getCheckoutUrl($checkout, 'paid_partially');
 
         $paymentTransactionOptions = array_merge(
             [

@@ -6,12 +6,12 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutPaymentContextProvider;
+use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CheckoutActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\PaymentMethodActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\ShippingMethodActionsInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ContinueToOrderReview implements TransitionServiceInterface
 {
@@ -19,7 +19,8 @@ class ContinueToOrderReview implements TransitionServiceInterface
         private ActionExecutor $actionExecutor,
         private ShippingMethodActionsInterface $shippingMethodActions,
         private CheckoutPaymentContextProvider $paymentContextProvider,
-        private UrlGeneratorInterface $urlGenerator,
+        private CheckoutActionsInterface $checkoutActions,
+        private PaymentMethodActionsInterface $paymentMethodActions,
         private TransitionServiceInterface $baseContinueTransition
     ) {
     }
@@ -86,48 +87,19 @@ class ContinueToOrderReview implements TransitionServiceInterface
 
         /** @var Checkout $checkout */
         $checkout = $workflowItem->getEntity();
+        $data = $workflowItem->getData();
         $workflowResult = $workflowItem->getResult();
-        $workflowResult->offsetSet('validateAction', PaymentMethodInterface::VALIDATE);
 
-        $workflowResult->offsetSet(
-            'successUrl',
-            $this->urlGenerator->generate('oro_checkout_frontend_checkout', ['id' => $checkout->getId()])
-        );
-        $workflowResult->offsetSet(
-            'failureUrl',
-            $this->urlGenerator->generate(
-                'oro_checkout_frontend_checkout',
-                [
-                    'id' => $checkout->getId(),
-                    'transition' => 'payment_error'
-                ]
-            )
+        $validateResult = $this->paymentMethodActions->validate(
+            checkout: $checkout,
+            successUrl: $this->checkoutActions->getCheckoutUrl($checkout),
+            failureUrl: $this->checkoutActions->getCheckoutUrl($checkout, 'payment_error'),
+            additionalData: $data->offsetGet('additional_data'),
+            saveForLaterUse: (bool)$data->offsetGet('payment_save_for_later')
         );
 
-        $isPaymentMethodSupported = $this->actionExecutor->evaluateExpression(
-            'payment_method_supports',
-            [
-                'payment_method' => $checkout->getPaymentMethod(),
-                'action' => $workflowResult->offsetGet('validateAction')
-            ]
-        );
-        if ($isPaymentMethodSupported) {
-            $paymentValidateResult = $this->actionExecutor->executeAction(
-                'payment_validate',
-                [
-                    'attribute' => null,
-                    'object' => $checkout,
-                    'paymentMethod' => $checkout->getPaymentMethod(),
-                    'transactionOptions' => [
-                        'saveForLaterUse' => $workflowItem->getData()->offsetGet('payment_save_for_later'),
-                        'successUrl' => $workflowResult->offsetGet('successUrl'),
-                        'failureUrl' => $workflowResult->offsetGet('failureUrl'),
-                        'additionalData' => $workflowItem->getData()->offsetGet('additional_data'),
-                        'checkoutId' => $checkout->getId()
-                    ]
-                ]
-            );
-            $workflowResult->offsetSet('responseData', $paymentValidateResult['attribute']);
+        if ($validateResult) {
+            $workflowResult->offsetSet('responseData', $validateResult);
         }
     }
 
