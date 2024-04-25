@@ -12,7 +12,6 @@ use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CustomerUserA
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\OrderActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\PaymentMethodActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\PlaceOrder as BasePlaceOrder;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
@@ -124,9 +123,8 @@ class CreateOrder extends BasePlaceOrder
 
         $this->updateShippingPrice->execute($checkout);
 
-        $order = $this->placeOrder($checkout);
+        $order = $this->orderActions->placeOrder($checkout);
         $data->offsetSet('order', $order);
-
 
         $email = $data->offsetGet('email');
         $this->customerUserActions->updateGuestCustomerUser($checkout, $email, $checkout->getBillingAddress());
@@ -215,13 +213,6 @@ class CreateOrder extends BasePlaceOrder
             [$checkout],
             $errors
         );
-    }
-
-    private function placeOrder(Checkout $checkout): Order
-    {
-        $placeOrderResult = $this->orderActions->placeOrder($checkout);
-
-        return $placeOrderResult['order'];
     }
 
     private function doValidatePayment(WorkflowItem $workflowItem): void

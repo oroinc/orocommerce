@@ -38,13 +38,13 @@ class OrderActions implements OrderActionsInterface
         $this->immediateEmailLineItemsLimit = $limit;
     }
 
-    public function placeOrder(Checkout $checkout): array
+    public function placeOrder(Checkout $checkout): Order
     {
         $order = $this->createOrderByCheckout(
             $checkout,
             $checkout->getBillingAddress(),
             $this->getShippingAddress($checkout)
-        )['order'];
+        );
 
         // set customer/customer user
         if ($checkout->getRegisteredCustomerUser()) {
@@ -55,7 +55,7 @@ class OrderActions implements OrderActionsInterface
 
         $this->flushOrder($order);
 
-        return ['order' => $order];
+        return $order;
     }
 
     public function flushOrder(Order $order): void
@@ -67,9 +67,9 @@ class OrderActions implements OrderActionsInterface
         Checkout $checkout,
         OrderAddress $billingAddress,
         OrderAddress $shippingAddress
-    ): array {
-        $orderBillingAddress = $this->addressActions->duplicateOrderAddress($billingAddress)['newAddress'];
-        $orderShippingAddress = $this->addressActions->duplicateOrderAddress($shippingAddress)['newAddress'];
+    ): Order {
+        $orderBillingAddress = $this->addressActions->duplicateOrderAddress($billingAddress);
+        $orderShippingAddress = $this->addressActions->duplicateOrderAddress($shippingAddress);
 
         // Get payment term
         $paymentTerm = $this->paymentTermProvider->getCurrentPaymentTerm();
@@ -92,7 +92,7 @@ class OrderActions implements OrderActionsInterface
         // Fill totals
         $this->totalHelper->fill($order);
 
-        return ['order' => $order];
+        return $order;
     }
 
     public function sendConfirmationEmail(Checkout $checkout, Order $order): void

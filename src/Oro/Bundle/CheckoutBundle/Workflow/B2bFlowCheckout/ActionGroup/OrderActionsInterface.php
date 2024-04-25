@@ -12,7 +12,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
  */
 interface OrderActionsInterface
 {
-    public function placeOrder(Checkout $checkout): array;
+    public function placeOrder(Checkout $checkout): Order;
 
     public function flushOrder(Order $order): void;
 
@@ -20,7 +20,7 @@ interface OrderActionsInterface
         Checkout $checkout,
         OrderAddress $billingAddress,
         OrderAddress $shippingAddress
-    ): array;
+    ): Order;
 
     public function sendConfirmationEmail(Checkout $checkout, Order $order): void;
 }

@@ -47,13 +47,12 @@ class BaseStateAwareTransition extends TransitionServiceAbstract
             $checkout->setShippingAddress($shippingAddress);
         }
 
-        $updateBillingAddressResult = $this->addressActions->updateBillingAddress(
-            $checkout,
-            (bool)$data->offsetGet('disallow_shipping_address_edit')
-        );
         $data->offsetSet(
             'billing_address_has_shipping',
-            $updateBillingAddressResult['billing_address_has_shipping']
+            $this->addressActions->updateBillingAddress(
+                $checkout,
+                (bool)$data->offsetGet('disallow_shipping_address_edit')
+            )
         );
 
         $this->addressActions->updateShippingAddress($checkout);

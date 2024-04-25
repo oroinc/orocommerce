@@ -7,7 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 interface ShippingMethodActionsInterface
 {
-    public function hasApplicableShippingRules(Checkout $checkout, ?Collection $errors): array;
+    public function hasApplicableShippingRules(Checkout $checkout, ?Collection $errors): bool;
 
     public function updateDefaultShippingMethods(
         Checkout $checkout,

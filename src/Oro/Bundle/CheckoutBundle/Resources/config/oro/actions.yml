@@ -161,6 +161,7 @@ action_groups:
 
     prepare_checkout_settings:
         service: oro_checkout.action_group.prepare_checkout_settings
+        return_value_name: 'settings'
 
     start_checkout:
         service: oro_checkout.action_group.start_checkout

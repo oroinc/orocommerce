@@ -100,8 +100,7 @@ class PlaceOrder extends BasePlaceOrder
 
     private function placeOrder(Checkout $checkout, ?array $groupedLineItems): Order
     {
-        $placeOrderResult = $this->orderActions->placeOrder($checkout);
-        $order = $placeOrderResult['order'];
+        $order = $this->orderActions->placeOrder($checkout);
 
         if ($groupedLineItems && $this->configProvider->isCreateSubOrdersForEachGroupEnabled()) {
             $this->splitOrderActions->createChildOrders($checkout, $order, $groupedLineItems);

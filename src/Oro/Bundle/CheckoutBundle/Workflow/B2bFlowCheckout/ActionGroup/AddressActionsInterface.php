@@ -11,9 +11,9 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
  */
 interface AddressActionsInterface
 {
-    public function updateBillingAddress(Checkout $checkout, bool $disallowShippingAddressEdit = false): array;
+    public function updateBillingAddress(Checkout $checkout, bool $disallowShippingAddressEdit = false): bool;
 
     public function updateShippingAddress(Checkout $checkout): void;
 
-    public function duplicateOrderAddress(OrderAddress $address): array;
+    public function duplicateOrderAddress(OrderAddress $address): OrderAddress;
 }

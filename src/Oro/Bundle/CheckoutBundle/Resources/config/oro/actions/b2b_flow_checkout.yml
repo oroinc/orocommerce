@@ -2,10 +2,12 @@ action_groups:
     b2b_flow_checkout_duplicate_address:
         service: oro_checkout.action_group.b2b_flow_checkout.address_actions
         method: duplicateOrderAddress
+        return_value_name: 'newAddress'
 
     b2b_flow_checkout_update_billing_address:
         service: oro_checkout.action_group.b2b_flow_checkout.address_actions
         method: updateBillingAddress
+        return_value_name: 'billing_address_has_shipping'
 
     b2b_flow_checkout_update_shipping_address:
         service: oro_checkout.action_group.b2b_flow_checkout.address_actions
@@ -17,6 +19,7 @@ action_groups:
     b2b_flow_checkout_place_order:
         service: oro_checkout.action_group.b2b_flow_checkout.order_actions
         method: placeOrder
+        return_value_name: 'order'
 
     b2b_flow_checkout_create_child_orders:
         service: oro_checkout.action_group.b2b_flow_checkout.split_order_actions
@@ -49,6 +52,7 @@ action_groups:
     b2b_flow_checkout_has_applicable_shipping_rules:
         service: oro_checkout.action_group.b2b_flow_checkout.shipping_method_actions
         method: hasApplicableShippingRules
+        return_value_name: 'hasRules'
 
     b2b_flow_checkout_update_default_shipping_methods:
         service: oro_checkout.action_group.b2b_flow_checkout.shipping_method_actions

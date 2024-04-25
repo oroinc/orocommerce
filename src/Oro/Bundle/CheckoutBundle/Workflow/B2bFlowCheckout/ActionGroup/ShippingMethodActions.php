@@ -27,13 +27,11 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
     ) {
     }
 
-    public function hasApplicableShippingRules(Checkout $checkout, ?Collection $errors): array
+    public function hasApplicableShippingRules(Checkout $checkout, ?Collection $errors): bool
     {
-        $hasRules = $this->hasEnabledShippingRules($checkout, $errors)
+        return $this->hasEnabledShippingRules($checkout, $errors)
             || $this->hasEnabledShippingRulesForMultiShippingPerLineItem($checkout, $errors)
             || $this->hasEnabledShippingRulesForMultiShippingPerLineItemGroup($checkout, $errors);
-
-        return ['hasRules' => $hasRules];
     }
 
     public function updateDefaultShippingMethods(

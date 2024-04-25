@@ -50,11 +50,10 @@ class ContinueToShippingAddress implements TransitionServiceInterface
 
         $this->customerUserActions->updateGuestCustomerUser($checkout, $email, $billingAddress);
         $this->customerUserActions->createGuestCustomerUser($checkout, $email, $billingAddress);
-        $updateAddressResult = $this->addressActions->updateBillingAddress(
+        $data['billing_address_has_shipping'] = $this->addressActions->updateBillingAddress(
             $checkout,
             $data['disallow_shipping_address_edit']
         );
-        $data['billing_address_has_shipping'] = $updateAddressResult['billing_address_has_shipping'];
 
         $this->actionExecutor->executeAction(
             'save_accepted_consents',

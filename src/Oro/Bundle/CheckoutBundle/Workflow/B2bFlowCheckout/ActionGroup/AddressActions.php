@@ -39,7 +39,7 @@ class AddressActions implements AddressActionsInterface
     public function updateBillingAddress(
         Checkout $checkout,
         bool $disallowShippingAddressEdit = false
-    ): array {
+    ): bool {
         $sourceEntity = $checkout->getSourceEntity();
         if ($sourceEntity instanceof ShoppingList && !$sourceEntity->getCustomerUser()) {
             $sourceEntity->setCustomer($checkout->getCustomer());
@@ -63,7 +63,7 @@ class AddressActions implements AddressActionsInterface
             $this->updateShippingAddress($checkout);
         }
 
-        return ['billing_address_has_shipping' => $billingAddressHasShipping];
+        return $billingAddressHasShipping;
     }
 
     public function updateShippingAddress(Checkout $checkout): void
@@ -78,7 +78,7 @@ class AddressActions implements AddressActionsInterface
             $em->remove($checkout->getShippingAddress());
         }
 
-        $newShippingAddress = $this->duplicateOrderAddress($checkout->getBillingAddress())['newAddress'];
+        $newShippingAddress = $this->duplicateOrderAddress($checkout->getBillingAddress());
 
         $checkout->setShippingAddress($newShippingAddress);
         if ($newShippingAddress) {
@@ -87,10 +87,8 @@ class AddressActions implements AddressActionsInterface
         }
     }
 
-    public function duplicateOrderAddress(OrderAddress $address): array
+    public function duplicateOrderAddress(OrderAddress $address): OrderAddress
     {
-        $duplicator = $this->duplicatorFactory->create();
-
-        return ['newAddress' => $duplicator->duplicate($address, $this->addressDuplicatorConfig)];
+        return $this->duplicatorFactory->create()->duplicate($address, $this->addressDuplicatorConfig);
     }
 }

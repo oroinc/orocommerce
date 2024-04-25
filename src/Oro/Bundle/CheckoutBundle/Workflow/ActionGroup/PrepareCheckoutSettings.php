@@ -22,12 +22,12 @@ class PrepareCheckoutSettings implements PrepareCheckoutSettingsInterface
         $settings = [];
         if (method_exists($source, 'getBillingAddress') && $source->getBillingAddress()) {
             $settings['billing_address'] = $this->addressActions
-                ->duplicateOrderAddress($source->getBillingAddress())['newAddress'];
+                ->duplicateOrderAddress($source->getBillingAddress());
         }
 
         if (method_exists($source, 'getShippingAddress') && $source->getShippingAddress()) {
             $settings['shipping_address'] = $this->addressActions
-                ->duplicateOrderAddress($source->getShippingAddress())['newAddress'];
+                ->duplicateOrderAddress($source->getShippingAddress());
         }
 
         if (method_exists($source, 'getShippingMethod')
@@ -43,6 +43,6 @@ class PrepareCheckoutSettings implements PrepareCheckoutSettingsInterface
             $settings['payment_method'] = reset($paymentMethods);
         }
 
-        return ['settings' => $settings];
+        return $settings;
     }
 }

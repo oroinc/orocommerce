@@ -98,7 +98,7 @@ class StartCheckout implements StartCheckoutInterface
 
         $preparedSettings = $this->prepareCheckoutSettingsProvider->prepareSettings(
             $checkout,
-            $this->prepareCheckoutSettings->execute($sourceEntity)['settings']
+            $this->prepareCheckoutSettings->execute($sourceEntity)
         );
         $settings = ArrayUtil::arrayMergeRecursiveDistinct($settings, $preparedSettings);
 

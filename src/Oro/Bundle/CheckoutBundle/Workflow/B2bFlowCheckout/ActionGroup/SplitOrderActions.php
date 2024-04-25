@@ -55,7 +55,7 @@ class SplitOrderActions implements SplitOrderActionsInterface
                 $splitCheckout,
                 $splitCheckout->getBillingAddress(),
                 $splitCheckout->getShippingAddress()
-            )['order'];
+            );
             $childOrder->setParent($order);
 
             $childOrder->setIdentifier($childOrderIdentifierTemplate . $i);
