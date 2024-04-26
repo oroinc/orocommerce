@@ -61,7 +61,7 @@ class ContinueToPayment implements TransitionServiceInterface
             return false;
         }
 
-        if (!$this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors)['hasRules']) {
+        if (!$this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors)) {
             return false;
         }
 

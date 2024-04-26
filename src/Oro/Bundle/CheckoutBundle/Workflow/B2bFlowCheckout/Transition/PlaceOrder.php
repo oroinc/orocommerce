@@ -51,7 +51,7 @@ class PlaceOrder extends BasePlaceOrder
             $data->offsetGet('line_item_groups_shipping_methods')
         );
 
-        if (!$this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors)['hasRules']) {
+        if (!$this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors)) {
             return false;
         }
 
