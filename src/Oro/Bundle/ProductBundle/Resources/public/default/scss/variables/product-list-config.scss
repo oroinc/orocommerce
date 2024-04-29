@@ -27,6 +27,21 @@ $product-list-gallery-view-grid-count-map: (
     )
 ) !default;
 
+$product-list-narrow-gallery-view-grid-count-map: (
+    (
+        'min-width': 1280px,
+        'count': 2
+    ),
+    (
+        'min-width': 1366px,
+        'count': 3
+    ),
+    (
+        'min-width': 1864px,
+        'count': 4
+    )
+) !default;
+
 $product-list-list-view-display: grid !default;
 $product-list-list-view-gap: spacing('lg') !default;
 $product-list-list-view-padding-top: spacing('lg') !default;

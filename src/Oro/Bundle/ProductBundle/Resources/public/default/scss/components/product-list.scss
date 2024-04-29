@@ -15,6 +15,17 @@
                 --product-list-count: #{map.get($point, 'count')};
             }
         }
+
+        @at-root {
+            .page-content--has-sidebar & {
+                // Each special grid breakpoint
+                @each $point in $product-list-narrow-gallery-view-grid-count-map {
+                    @media (min-width: map.get($point, 'min-width')) {
+                        --product-list-count: #{map.get($point, 'count')};
+                    }
+                }
+            }
+        }
     }
 
     &--list-view {
