@@ -188,7 +188,7 @@ class CompleteWYSIWYGFieldsDescriptionsTest extends ConfigProcessorTestCase
 
         $expectedConfig = $config;
         $expectedConfig['fields']['field1']['description'] =
-            '<p>' . $fieldDocumentation . "</p>\n<p>" . $descriptionFileContent . '</p>';
+            '<p>' . $fieldDocumentation . "</p><p>" . $descriptionFileContent . '</p>';
         $this->assertConfig($expectedConfig, $this->context->getResult());
     }
 
@@ -517,9 +517,7 @@ class CompleteWYSIWYGFieldsDescriptionsTest extends ConfigProcessorTestCase
         $expectedConfig['fields']['field1']['description'] =
             '<p>'
             . $descriptionFileContent
-            . '</p>'
-            . "\n"
-            . '<p><strong>The read-only field. A passed value will be ignored.</strong></p>';
+            . '</p><p><strong>The read-only field. A passed value will be ignored.</strong></p>';
         $this->assertConfig($expectedConfig, $this->context->getResult());
     }
 
@@ -547,7 +545,7 @@ class CompleteWYSIWYGFieldsDescriptionsTest extends ConfigProcessorTestCase
 
         $expectedConfig = $config;
         $expectedConfig['fields']['field1']['description'] =
-            '<p>' . $fieldDocumentation . "</p>\n<p>" . $descriptionFileContent . '</p>';
+            '<p>' . $fieldDocumentation . "</p><p>" . $descriptionFileContent . '</p>';
         $this->assertConfig($expectedConfig, $this->context->getResult());
     }
 
