@@ -1,0 +1,39 @@
+include:
+    - '@OroCustomerBundle/Tests/Behat/Features/Fixtures/CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrecision{1..3}:
+        unit: '@each'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..2}:
+        type: 'simple'
+        sku: 'PSKU<current()>'
+        primaryUnitPrecision: '@productUnitPrecision<current()>'
+        __calls:
+            - setDefaultName: ['Product with Numeric Name <current()>']
+        inventoryStatus: '@inStock'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice{1..2}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@each'
+        value: '<current()>'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToProduct{1..2}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    priceListToWebsite:
+        pricelist: '@defaultPriceList'
+        website: '@website1'
+        sortOrder: 1

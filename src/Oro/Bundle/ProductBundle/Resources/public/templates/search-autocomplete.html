@@ -1,3 +1,4 @@
+<% let oroui = _.macros('oroui') %>
 <%
 function highlightWords(inputString, value) {
     if (!!inputString && _.isString(inputString)) {
@@ -25,11 +26,29 @@ function inventoryStatusToLabelClass(inventoryStatus) {
     <div class="search-autocomplete__content dropdown-menu">
         <% if (total_count > 0) { %>
             <ul class="search-autocomplete__list" id="<%- comboboxId %>" role="listbox">
+                <% if (typeof suggests !== 'undefined') { %>
+                    <%_.each(suggests, function(suggest) { %>
+                    <li class="search-autocomplete__item search-autocomplete-suggest__item" role="option">
+                        <a href="<%- suggest.url %>" class="search-autocomplete-category">
+                            <div class="search-autocomplete-category__image">
+                                <%= oroui.renderIcon({
+                                    name: 'search',
+                                    extraClass: 'theme-icon--lg'
+                                }) %>
+                            </div>
+                            <div class="search-autocomplete-product__info">
+                                <div class="search-autocomplete-product__suggest">
+                                    <%= highlightWords(inputString, suggest.phrase) %>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <% }) %>
+                <% } %>
                 <%_.each(categories, function(category) { %>
                 <li class="search-autocomplete__item" role="option">
                     <a href="<%- category.url %>" class="search-autocomplete-category" title="<%- _.__('oro.product.search.search_in_category.tooltip', { text: inputString, category: category.tree[category.tree.length - 1] }, category.count) %>">
                         <div class="search-autocomplete-category__image">
-                            <% let oroui = _.macros('oroui') %>
                             <%= oroui.renderIcon({
                                 name: 'search',
                                 extraClass: 'theme-icon--lg'

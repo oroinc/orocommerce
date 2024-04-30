@@ -1,0 +1,58 @@
+parameters:
+    oro_website_search_suggestion.delete_suggestion_chunk_size: 1000
+    oro_website_search_suggestion.generate_suggestion_chunk_size: 10000
+    oro_website_search_suggestion.generate_phrases_chunk_size: 10000
+    oro_website_search_suggestion.persist_suggestions_chunk_size: 100000
+
+services:
+    oro_website_search_suggestion.async.delete_orphan_suggestions_processor:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Deletion\DeleteOrphanSuggestionsProcessor
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@doctrine'
+            - '%oro_website_search_suggestion.delete_suggestion_chunk_size%'
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_website_search_suggestion.async.delete_orphan_suggestions_chunk_processor:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Deletion\DeleteOrphanSuggestionsChunkProcessor
+        arguments:
+            - '@doctrine'
+            - '@event_dispatcher'
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_website_search_suggestion.async.generate_suggestion_processor:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\GenerateSuggestionsProcessor
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_website_search_suggestion.products_provider'
+            - '%oro_website_search_suggestion.generate_suggestion_chunk_size%'
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_website_search_suggestion.async.generate_suggestion_phrases_processor:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\GenerateSuggestionPhrasesProcessor
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_website_search_suggestion.suggestion_provider'
+            - '@doctrine'
+            - '%oro_website_search_suggestion.generate_phrases_chunk_size%'
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_website_search_suggestion.async.persist_suggestion_phrases_processor:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\PersistSuggestionPhrasesProcessor
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_website_search_suggestion.suggestion_persister'
+            - '%oro_website_search_suggestion.persist_suggestions_chunk_size%'
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_website_search_suggestion.async.persist_product_suggestion_relation_items_processor:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\PersistSuggestionProductRelationProcessor
+        arguments:
+            - '@oro_website_search_suggestion.product_suggestion_persister'
+        tags:
+            - { name: oro_message_queue.client.message_processor }
