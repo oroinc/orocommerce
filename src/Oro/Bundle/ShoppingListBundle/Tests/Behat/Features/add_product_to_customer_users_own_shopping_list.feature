@@ -2,6 +2,7 @@
 @ticket-BB-20791
 @ticket-BB-21934
 @fixture-OroShoppingListBundle:MyShoppingListsFixture.yml
+@elasticsearch
 Feature: Add Product to Customer User's Own Shopping List
   In order not to add product to customer's sharing shopping list
   As an customer user with administrator role

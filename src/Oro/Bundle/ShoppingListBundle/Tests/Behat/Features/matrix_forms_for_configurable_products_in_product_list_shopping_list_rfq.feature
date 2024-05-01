@@ -9,7 +9,7 @@
 @fixture-OroCheckoutBundle:CheckoutProductWithoutPricesFixture.yml
 @fixture-OroCheckoutBundle:CheckoutShoppingListFixture.yml
 @fixture-OroCheckoutBundle:CheckoutQuoteFixture.yml
-
+@elasticsearch
 Feature: Matrix forms for configurable products in product list, shopping list, RFQ
   In order to quickly add and update specific configurations of a complex product to the shopping list and RFQ
   As a Buyer

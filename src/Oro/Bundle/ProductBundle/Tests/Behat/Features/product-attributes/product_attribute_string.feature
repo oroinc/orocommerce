@@ -81,7 +81,7 @@ Feature: Product attribute string
     Given I proceed as the Buyer
     When I type "TestDaTa" in "search"
     And I click "Search Button"
-    Then I should not see "SKU123" product
+    Then I should not see "SKU123" and continue checking the condition is met for maximum 10 seconds
     And I should not see "SKU456" product
 
   Scenario: Remove new attribute from product family

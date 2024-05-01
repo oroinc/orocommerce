@@ -195,10 +195,14 @@ JS;
      */
     public function openMainMenu(): void
     {
-        $this->getSession()->wait(300);
         $mainMenuTrigger = $this->createElement('Main Menu Button');
         if ($mainMenuTrigger->isValid() && $mainMenuTrigger->isVisible()) {
-            $mainMenuTrigger->click();
+            $this->spin(function () use ($mainMenuTrigger) {
+                $mainMenuTrigger->click();
+                return $mainMenuTrigger->hasClass('side-panel-menu-opened');
+            });
+        } else {
+            self::fail('The main menu didn\'t open');
         }
     }
 
