@@ -326,3 +326,10 @@ services:
             - quote_create_for_customer_user_link
         tags:
             - { name: oro_ui.view_action_provider, group: activity }
+
+    oro_sale.event_listener.quote_status:
+        class: Oro\Bundle\SaleBundle\EventListener\QuoteStatusListener
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\SaleBundle\Entity\Quote, event: prePersist}

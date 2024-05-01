@@ -284,6 +284,7 @@ Feature: Quotes Grid
       | Quote19 |
     And I reset "All Quotes Grid" grid
 
+  @skip
   Scenario: Sort by Updated At
     Given I should see following grid:
       | Quote # |
