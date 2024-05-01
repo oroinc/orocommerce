@@ -17,8 +17,8 @@ Feature: Price List Rules for Custom Attributes
       | Type       | <Type> |
     And I click "Continue"
     And I save form
-    And I remember element "Product Attribute Name" value as "field.<Name>"
     Then I should see "Attribute was successfully saved" flash message
+    And I remember element "Product Attribute Name" value as "field.<Name>"
 
     Examples:
       | Name               | Type    |

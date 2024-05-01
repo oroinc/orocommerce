@@ -1,0 +1,20 @@
+services:
+    oro_website_search_suggestion.command.cron.clean_up_suggestions:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Command\Cron\CleanUpSuggestionsCronCommand
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        calls:
+            - [ 'setLogger', [ '@monolog.logger' ] ]
+        tags:
+            - { name: console.command }
+            - { name: monolog.logger, channel: oro_website_search_suggestion }
+
+    oro_website_search_suggestion.command.generate_suggestions:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Command\GenerateSuggestionsCommand
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        calls:
+            - [ 'setLogger', [ '@monolog.logger' ] ]
+        tags:
+            - { name: console.command }
+            - { name: monolog.logger, channel: oro_website_search_suggestion }
