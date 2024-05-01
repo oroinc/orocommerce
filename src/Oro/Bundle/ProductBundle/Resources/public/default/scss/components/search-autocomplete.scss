@@ -98,6 +98,11 @@
     &__status {
         padding-left: $search-autocomplete-product-status-inner-offset-left;
     }
+
+    &__suggest {
+        color: $search-autocomplete-category-head-color;
+        line-height: 40px;
+    }
 }
 
 .search-autocomplete-category {
@@ -148,6 +153,12 @@
             color: $search-autocomplete-category-body-last-category-color;
             font-weight: $search-autocomplete-category-body-last-category-font-weight;
         }
+    }
+}
+
+.search-autocomplete-suggest {
+    &__item {
+        padding: 4px 12px;
     }
 }
 

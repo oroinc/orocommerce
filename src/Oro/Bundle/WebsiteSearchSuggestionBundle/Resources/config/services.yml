@@ -1,0 +1,96 @@
+parameters:
+    oro_website_search_suggestion.create_product_suggestions_chunk_size: 1000
+
+services:
+    oro_website_search_suggestion.website_search.repository.product_suggestion:
+        parent: oro_website_search.repository.abstract
+        public: true
+        class: 'Oro\Bundle\WebsiteSearchSuggestionBundle\Query\ProductSuggestionRepository'
+        calls:
+            - [setEntityName, ['Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion']]
+            - [setEngineParameters, ['@oro_website_search.engine.parameters']]
+            - [setProductRepository, ['@oro_product.website_search.repository.product']]
+
+    # Event Listener
+    oro_website_search_suggestion.entity_listener.doctrine.create_product_suggestion:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\Doctrine\CreateProductSuggestionListener
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - ['sku', 'status', 'inventory_status']
+            - '%oro_website_search_suggestion.create_product_suggestions_chunk_size%'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+
+    oro_website_search_suggestion.event_listener.website_search.product_suggestion_indexer:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\ProductSuggestionIndexerListener
+        arguments:
+            - '@oro_website_search.manager.website_context_manager'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.suggestion, method: onWebsiteSearchIndex }
+            - { name: oro_featuretogle.feature, feature: oro_website_search_suggestion }
+
+    oro_website_search_suggestion.event_listener.website_search.add_suggest_to_product_autocomplete:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\AddSuggestToProductAutocompleteListener
+        arguments:
+            - '@router'
+            - '@oro_website_search_suggestion.website_search.repository.product_suggestion'
+            - '@oro_website_search.localization_id.placeholder'
+            - '@oro_config.manager'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent, method: onProcessAutocompleteData }
+            - { name: oro_featuretogle.feature, feature: oro_website_search_suggestion }
+
+    oro_website_search_suggestion.event_listener.website_search.product_suggestion_restrict_index:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\ProductSuggestionRestrictIndexListener
+        arguments:
+            - '@oro_website_search.manager.website_context_manager'
+            - '@oro_organization.organization_restriction_provider'
+            - '@oro_website.provider.website_localization'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.restrict_index_entity.suggestion, method: onRestrictIndexEntityEvent }
+            - { name: oro_featuretogle.feature, feature: oro_website_search_suggestion }
+
+    oro_website_search_suggestion.event_listener.indexation:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\SuggestionIndexationListener
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\WebsiteSearchSuggestionBundle\Event\SuggestionPersistEvent, method: startWebsiteReindexForPersistedSuggestions }
+
+    oro_website_search_suggestion.event_listener.feature_toggle_configuration_listener:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearchSuggestionFeatureToggleListener
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: oro_featuretoggle.feature.change.oro_website_search_suggestion, method: onChange }
+
+    oro_website_search_suggestion.phrase_splitter:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Splitter\PhraseSplitter
+
+    oro_website_search_suggestion.products_provider:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Provider\ProductsProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+
+    oro_website_search_suggestion.suggestion_provider:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Provider\SuggestionProvider
+        arguments:
+            - '@oro_website_search_suggestion.products_provider'
+            - '@oro_website_search_suggestion.phrase_splitter'
+            - '@oro_locale.helper.localization'
+
+    oro_website_search_suggestion.suggestion_persister:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Persister\SuggestionPersister
+        arguments:
+            - '@doctrine'
+            - '@event_dispatcher'
+
+    oro_website_search_suggestion.product_suggestion_persister:
+        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Persister\ProductSuggestionPersister
+        arguments:
+            - '@doctrine'
+            - '@event_dispatcher'

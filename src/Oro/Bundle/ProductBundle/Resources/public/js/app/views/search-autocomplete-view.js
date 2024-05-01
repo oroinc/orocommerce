@@ -5,6 +5,7 @@ import BaseView from 'oroui/js/app/views/base/view';
 import routing from 'routing';
 import template from 'tpl-loader!oroproduct/templates/search-autocomplete.html';
 import 'jquery-ui/tabbable';
+import 'jquery-ui/scroll-parent';
 import tools from 'oroui/js/tools';
 
 const SearchAutocompleteView = BaseView.extend({
@@ -221,6 +222,27 @@ const SearchAutocompleteView = BaseView.extend({
         $options.attr('aria-selected', false);
         $activeOption.attr('aria-selected', true);
         this.$el.attr('aria-activedescendant', $activeOption.attr('id'));
+        this.scrollToElement($activeOption);
+    },
+
+    /**
+     * Scrolls to set element
+     * @param {jQuery.Element} $el
+     */
+    scrollToElement($el) {
+        if (!$el.length) {
+            return;
+        }
+
+        const $parent = $el.scrollParent();
+
+        if (!$parent.is(':visible')) {
+            return;
+        }
+
+        $parent.scrollTop(
+            $parent.scrollTop() + $el.position().top - (($parent.outerHeight() - $parent.height()) / 2)
+        );
     },
 
     executeSelectedOption() {

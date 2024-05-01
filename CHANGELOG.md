@@ -76,6 +76,36 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityListener` and `\Oro\Bundle\VisibilityBundle\EventListener\DatagridLineItemsDataVisibilityPrefetchListener` for adding visibility data to the product line items storefront datagrids.
 * Added `is_visible_product` TWIG function for checking if a product is visible.
 
+### WebsiteSearchSuggestionBundle
+* Added the ability to show users in the search autocomplete field on the storefront suggestions
+  * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion` entity class;
+  * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\ProductSuggestion` entity class;
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\GenerateSuggestionsProcessor` for processing MQ messages with or without specified product ids
+  to send messages with filtered product ids grouped by organization to the next processor(see below).
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\GenerateSuggestionPhrasesProcessor` for processing MQ sent messages by processor(see above)
+  to generate suggestions for each localization based on product name and sku to persist them in the next processor(see below).
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\PersistSuggestionPhrasesProcessor` for processing MQ sent messages by processor(see above)
+  to persist suggestions to the database and send inserted ids for the next processor (see below).
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\PersistSuggestionProductRelationProcessor` for processing MQ sent messages by processor(see above)
+  to persist relation between suggestion and product to the database.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Deletion\DeleteIrrelevantSuggestionsProcessor` for processing MQ messages
+  to find suggestions with irrelevant product suggestions and send their ids to the next processor(see below) and send message to DeleteOrphanSuggestionsProcessor processor.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Deletion\DeleteIrrelevantProductSuggestionsChunk` for processing MQ messages
+  to remove product suggestions by their ids from the database.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Deletion\DeleteOrphanSuggestionsProcessor` for processing MQ messages
+  to find suggestions with no products and send their ids to the next processor(see below).
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Deletion\DeleteOrphanSuggestionsChunkProcessor` for processing MQ messages
+  to remove suggestions by their ids from the database.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Event\SuggestionPersistEvent` dispatching in `oro_website_search_suggestion.suggestion_persister` service.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Event\ProductSuggestionPersistEvent` dispatching in `oro_website_search_suggestion.product_suggestion_persister` service.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Event\SuggestionDeletedEvent` dispatching in `oro_website_search_suggestion.async.delete_orphan_suggestions_chunk_processor` processor.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Event\ProductSuggestionDeletedEvent` dispatching in `oro_website_search_suggestion.async.delete_irrelevant_product_suggestions_chunk_processor` processor.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\SuggestionIndexationListener` that handles Suggestion persisting and deleting events to start search reindex operation for search engine.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\Doctrine\CreateProductSuggestionListener` that handles Product create and update events to collect product ids and send them in message to processor \Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\GenerateSuggestionsProcessor (details see above).
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\SuggestionIndexationListener` take into account suggestion fields for the search engine for the storefront.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\ProductSuggestionRestrictIndexListener` filter suggestions by organization and localization for every website for storefront search engine.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearchSuggestionFeatureToggleListener` listen to feature status changes and send messages to MQ for suggestions generation when feature has been enabled.
+
 ### Changed
 
 #### UPSBundle
