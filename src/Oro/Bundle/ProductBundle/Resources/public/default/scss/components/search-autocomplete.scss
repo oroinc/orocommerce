@@ -6,11 +6,17 @@
     min-width: $search-autocomplete-min-width;
 
     &__content {
+        position: $search-autocomplete-content-position;
         max-width: $search-autocomplete-content-max-width;
         display: $search-autocomplete-content-display;
         padding: $search-autocomplete-content-inner-offset;
         float: $search-autocomplete-content-float;
-        position: $search-autocomplete-content-position;
+
+        max-height:
+                calc(
+                        var(--autocomplete-search-viewport-height, 100vh) - var(--sticky-page-header-element-height)
+                );
+        overflow: auto;
     }
 
     &__item {
@@ -78,9 +84,12 @@
     }
 
     &__info {
-        width: $search-autocomplete-product-info-width;
-        flex-grow: $search-autocomplete-product-info-flex-grow;
+        display: $search-autocomplete-product-info-display;
+        justify-content: $search-autocomplete-product-info-justify-content;
+        flex-direction: $search-autocomplete-product-info-flex-direction;
         flex-shrink: $search-autocomplete-product-info-flex-shrink;
+        flex-grow: $search-autocomplete-product-info-flex-grow;
+        width: $search-autocomplete-product-info-width;
     }
 
     &__head {
@@ -211,11 +220,6 @@
         right: $search-autocomplete-mobile-right;
 
         &__content {
-            max-height:
-                calc(
-                    var(--autocomplete-search-viewport-height, 100vh) - var(--sticky-page-header-element-height)
-                );
-            overflow: auto;
             border-radius: 0;
         }
 

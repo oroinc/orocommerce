@@ -1,0 +1,43 @@
+oro:
+    websitesearchsuggestion:
+        suggestion:
+            entity_label: 'Suggestion'
+            entity_plural_label: 'Suggestions'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Stores all possible combinations of suggestions for products displayed during product autocomplete.'
+            id.label: 'ID'
+            phrase:
+                label: Phrase
+                description: 'Word or phrase suggested to a related product.'
+            words_count:
+                label: 'Words count'
+                description: 'Number of words in suggestion.'
+            organization:
+                label: Organization
+                description: 'The value for the organization.'
+            localization:
+                label: Localization
+                description: 'The value for the localization.'
+        productsuggestion:
+            entity_label: 'Product Suggestion'
+            entity_plural_label: 'Product Suggestions'
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: 'Stores relation between product and suggestion displayed during product autocomplete.'
+            id.label: 'ID'
+            product:
+                label: Product
+                description: 'The related product'
+            suggestion:
+                label: Suggestion
+                description: 'The related suggestion'
+        system_configuration:
+            groups:
+                website_search_suggestion:
+                    title: 'Automatic Phrase Suggestions'
+            fields:
+                search_autocomplete_max_suggests:
+                    label: 'Number Of Automatically Suggested Phrases In Search Autocomplete'
+                    tooltip: 'Set the maximum number of suggestions displayed in the storefront autocomplete dropdown.'
+        feature:
+            website_search_suggestion:
+                label: 'Enable Automatic Phrase Suggestions in Search Autocomplete'
