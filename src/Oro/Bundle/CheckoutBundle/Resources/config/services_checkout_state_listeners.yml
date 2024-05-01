@@ -8,21 +8,22 @@ services:
             - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
         tags:
             # Update Checkout state
-            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout_single_page.completed.save_state, method: updateCheckoutState, priority: 50 }
-            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout.transition_form_init, method: onFormInit }
-            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout.completed.paid_partially, method: updateCheckoutState, priority: 50 }
+            - { name: kernel.event_listener, event: oro_workflow.completed, method: updateCheckoutState, priority: 50 }
+            - { name: kernel.event_listener, event: oro_workflow.transition_form_init, method: onFormInit }
             # Transition Pre-guard events
-            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout_single_page.pre_guard.create_order, method: onPreGuard }
-            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout.pre_guard, method: onPreGuard }
+            - { name: kernel.event_listener, event: oro_workflow.pre_guard, method: onPreGuard }
             # Process updateStateToken
-            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout_single_page.start, method: updateStateToken }
-            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout.completed, method: updateStateToken, priority: -100 }
+            - { name: kernel.event_listener, event: oro_workflow.start, method: updateStateTokenSinglePageCheckout }
+            - { name: kernel.event_listener, event: oro_workflow.completed, method: updateStateTokenMultiPageCheckout, priority: -100 }
             # Checkout Workflow Start transitions
-            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout_single_page.completed, method: deleteCheckoutStateOnStart }
-            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout.completed, method: deleteCheckoutStateOnStart }
+            - { name: kernel.event_listener, event: oro_workflow.completed, method: deleteCheckoutStateOnStart }
             # Checkout Workflow Finish events
-            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout_single_page.finish, method: deleteCheckoutState }
-            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout.finish, method: deleteCheckoutState }
+            - { name: kernel.event_listener, event: oro_workflow.finish, method: deleteCheckoutState }
             # Works with current checkout state
             - { name: kernel.event_listener, event: oro_checkout.transition_request.before, method: initializeCurrentCheckoutState }
             - { name: kernel.event_listener, event: oro_checkout.transition_request.after, method: clearCurrentCheckoutState }
+
+    oro_checkout.event_listener.workflow.checkout_state.checkout_config_builder_extension:
+        class: Oro\Bundle\CheckoutBundle\WorkflowState\EventListener\Workflow\CheckoutConfigBuilderExtension
+        tags:
+            - {name: oro.workflow.definition_builder.extension }

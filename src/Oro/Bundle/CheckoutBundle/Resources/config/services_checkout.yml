@@ -491,10 +491,8 @@ services:
         class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\ReturnGuestToEnterCredentialsStep
         arguments:
             - '@oro_workflow.manager'
-            - 'enter_credentials_step'
-            - 'back_to_enter_credentials'
         tags:
-            - { name: kernel.event_listener, event: oro_workflow.b2b_flow_checkout.completed, method: onComplete }
+            - { name: kernel.event_listener, event: oro_workflow.completed, method: onComplete }
 
     oro_checkout.event_listener.checkout_request_actualize_currency:
         class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\CheckoutRequestActualizeCurrencyListener

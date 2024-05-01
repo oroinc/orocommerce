@@ -78,8 +78,6 @@ workflows:
                                 constraints:
                                     - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents: ~
                                     - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages: ~
-                        state_token:
-                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
 
             continue_to_shipping_address:
                 step_to: enter_shipping_address
@@ -106,8 +104,6 @@ workflows:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
-                        state_token:
-                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                         email:
                             form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
 
@@ -136,8 +132,6 @@ workflows:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
-                        state_token:
-                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
 
             continue_to_payment:
                 step_to: enter_payment
@@ -175,8 +169,6 @@ workflows:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\LineItemGroupShippingMethodsType
                             options:
                                 checkout: $checkout
-                        state_token:
-                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
 
             continue_to_order_review:
                 step_to: order_review
@@ -219,8 +211,6 @@ workflows:
                             form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
                         payment_save_for_later:
                             form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
-                        state_token:
-                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                         additional_data:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
 
@@ -306,5 +296,3 @@ workflows:
                                 required: true
                         customer_notes:
                             form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
-                        state_token:
-                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\EventListener\Workflow;
 
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
+use Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateCheckoutStateInterface;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorageInterface;
@@ -12,7 +13,7 @@ use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionEvent;
 use Oro\Bundle\WorkflowBundle\Event\WorkflowItemAwareEvent;
 
 /**
- * Works with various aspect of initialization and checking of checkout state.
+ * Works with various aspects of initialization and checking of checkout state.
  */
 class CheckoutStateListener
 {
@@ -28,6 +29,10 @@ class CheckoutStateListener
 
     public function initializeCurrentCheckoutState(WorkflowItemAwareEvent $event): void
     {
+        if (!$this->isProtectionEnabled($event)) {
+            return;
+        }
+
         $workflowItem = $event->getWorkflowItem();
         $checkout = $workflowItem->getEntity();
 
@@ -41,6 +46,10 @@ class CheckoutStateListener
 
     public function onFormInit(TransitionEvent $event): void
     {
+        if (!CheckoutWorkflowHelper::isMultiStepCheckoutWorkflow($event->getWorkflowItem())) {
+            return;
+        }
+
         $transition = $event->getTransition();
         // Protect only checkout continue transitions
         if (empty($transition->getFrontendOptions()['is_checkout_continue'])) {
@@ -50,8 +59,14 @@ class CheckoutStateListener
         $this->doUpdateCheckoutState($event);
     }
 
-    public function updateCheckoutState(WorkflowItemAwareEvent $event): void
+    public function updateCheckoutState(TransitionEvent $event): void
     {
+        $transitions = $this->getCheckoutStateConfig($event)['additionally_update_state_after'] ?? [];
+        // Additionally update state only after configured additionally_update_state_after transitions
+        if (!\in_array($event->getTransition()->getName(), (array)$transitions, true)) {
+            return;
+        }
+
         $this->doUpdateCheckoutState($event, true);
     }
 
@@ -62,9 +77,21 @@ class CheckoutStateListener
             return;
         }
 
+        if (!$this->isProtectionEnabled($event)) {
+            return;
+        }
+
         // Protect only checkout continue transitions
         $transition = $event->getTransition();
         if (empty($transition->getFrontendOptions()['is_checkout_continue']) && !$transition->isHidden()) {
+            return;
+        }
+
+        // If protect_transitions is configured - protect only listed transitions
+        $protectTransitionsList = $this->getCheckoutStateConfig($event)['protect_transitions'] ?? [];
+        if (!empty($protectTransitionsList)
+            && !\in_array($event->getTransition()->getName(), $protectTransitionsList, true)
+        ) {
             return;
         }
 
@@ -85,8 +112,30 @@ class CheckoutStateListener
         $event->setAllowed($isAllowed);
     }
 
-    public function updateStateToken(WorkflowItemAwareEvent $event): void
+    public function updateStateTokenSinglePageCheckout(WorkflowItemAwareEvent $event): void
     {
+        if (!CheckoutWorkflowHelper::isSinglePageCheckoutWorkflow($event->getWorkflowItem())) {
+            return;
+        }
+
+        $this->updateStateToken($event);
+    }
+
+    public function updateStateTokenMultiPageCheckout(WorkflowItemAwareEvent $event): void
+    {
+        if (!CheckoutWorkflowHelper::isMultiStepCheckoutWorkflow($event->getWorkflowItem())) {
+            return;
+        }
+
+        $this->updateStateToken($event);
+    }
+
+    private function updateStateToken(WorkflowItemAwareEvent $event): void
+    {
+        if (!$this->isProtectionEnabled($event)) {
+            return;
+        }
+
         $workflowItem = $event->getWorkflowItem();
         // Do not update state_token for final steps.
         if ($workflowItem->getCurrentStep()?->isFinal()) {
@@ -97,11 +146,19 @@ class CheckoutStateListener
 
     public function deleteCheckoutState(WorkflowItemAwareEvent $event): void
     {
+        if (!$this->isProtectionEnabled($event)) {
+            return;
+        }
+
         $this->diffStorage->deleteStates($event->getWorkflowItem()->getEntity());
     }
 
     public function deleteCheckoutStateOnStart(TransitionEvent $event): void
     {
+        if (!$this->isProtectionEnabled($event)) {
+            return;
+        }
+
         if (!$event->getTransition()->isStart()) {
             return;
         }
@@ -119,6 +176,10 @@ class CheckoutStateListener
 
     private function doUpdateCheckoutState(WorkflowItemAwareEvent $event, bool $forceUpdate = false): void
     {
+        if (!$this->isProtectionEnabled($event)) {
+            return;
+        }
+
         $workflowItem = $event->getWorkflowItem();
         $checkout = $workflowItem->getEntity();
         $workflowData = $workflowItem->getData();
@@ -130,5 +191,17 @@ class CheckoutStateListener
             $forceUpdate
         );
         $workflowItem->getResult()->offsetSet('updateCheckoutState', !empty($updateData['update_checkout_state']));
+    }
+
+    private function isProtectionEnabled(WorkflowItemAwareEvent $event): bool
+    {
+        return !empty($this->getCheckoutStateConfig($event)['enable_state_protection']);
+    }
+
+    private function getCheckoutStateConfig(WorkflowItemAwareEvent $event): array
+    {
+        return $event->getWorkflowItem()
+            ->getDefinition()
+            ?->getMetadata()['checkout_state_config'] ?? [];
     }
 }

@@ -12,6 +12,14 @@ workflows:
         defaults:
             active: false
 
+        metadata:
+            is_checkout_workflow: true
+            is_single_page_checkout: true
+            checkout_state_config:
+                enable_state_protection: true
+                additionally_update_state_after: ['save_state']
+                protect_transitions: ['create_order']
+
         applications: ['commerce']
 
         exclusive_active_groups:

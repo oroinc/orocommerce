@@ -95,8 +95,6 @@ workflows:
                                 constraints:
                                     - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents: ~
                                     - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages: ~
-                        state_token:
-                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
 
             create_order:
                 step_to: checkout
@@ -255,8 +253,6 @@ workflows:
                                 constraints:
                                     - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents: ~
                                     - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages: ~
-                        state_token:
-                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
 
             purchase:
                 step_to: checkout

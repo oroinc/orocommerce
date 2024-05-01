@@ -82,7 +82,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
 
         $transitionManager = $workflow->getTransitionManager();
 
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
             $this->getExpectedTransitions(),
             array_keys($transitionManager->getTransitions()->toArray())
         );

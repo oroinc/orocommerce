@@ -6,17 +6,23 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionEvent;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
+/**
+ * Returns guest customer users to the first checkout step when entering checkout from source entities.
+ */
 class ReturnGuestToEnterCredentialsStep
 {
     public function __construct(
-        private WorkflowManager $workflowManager,
-        private string $stepName = 'enter_credentials_step',
-        private string $transitionName = 'back_to_enter_credentials'
+        private WorkflowManager $workflowManager
     ) {
     }
 
     public function onComplete(TransitionEvent $event): void
     {
+        $backToLoginTransition = $this->getBackTransitionName($event);
+        if (!$backToLoginTransition) {
+            return;
+        }
+
         if (!$event->getTransition()->isStart()) {
             return;
         }
@@ -27,13 +33,17 @@ class ReturnGuestToEnterCredentialsStep
             return;
         }
 
-        $currentStepName = $workflowItem->getCurrentStep()->getName();
-        // There is no enter_credentials in this workflow, nothing to do
-        if (!$workflowItem->getDefinition()?->getStepByName($this->stepName)) {
+        $workflow = $this->workflowManager->getWorkflow($event->getWorkflowItem());
+        $backTransition = $workflow->getTransitionManager()->getTransition($backToLoginTransition);
+        if (!$backTransition) {
             return;
         }
+
+        $loginStepName = $backTransition->getStepTo()->getName();
+
+        $currentStepName = $workflowItem->getCurrentStep()->getName();
         // The current step is already enter_credentials, nothing to do
-        if ($currentStepName === $this->stepName) {
+        if ($currentStepName === $loginStepName) {
             return;
         }
 
@@ -46,10 +56,17 @@ class ReturnGuestToEnterCredentialsStep
 
         $stepManager = $this->workflowManager->getWorkflow($workflowItem)->getStepManager();
         // back_to_enter_credentials is not allowed for the current step
-        if (!$stepManager->getStep($currentStepName)->isAllowedTransition($this->transitionName)) {
+        if (!$stepManager->getStep($currentStepName)->isAllowedTransition($backToLoginTransition)) {
             return;
         }
 
-        $this->workflowManager->transit($workflowItem, $this->transitionName);
+        $this->workflowManager->transit($workflowItem, $backTransition);
+    }
+
+    private function getBackTransitionName(TransitionEvent $event): ?string
+    {
+        $workflowMetadata = $event->getWorkflowItem()->getDefinition()?->getMetadata() ?? [];
+
+        return $workflowMetadata['guest_checkout']['return_to_login_transition'] ?? null;
     }
 }

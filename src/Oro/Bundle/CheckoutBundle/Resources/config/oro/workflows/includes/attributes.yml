@@ -51,8 +51,6 @@ workflows:
                 type: bool
             additional_data:
                 type: string
-            state_token:
-                type: string
             order:
                 type: entity
                 options:

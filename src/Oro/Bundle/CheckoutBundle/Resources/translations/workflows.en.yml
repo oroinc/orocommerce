@@ -7,6 +7,10 @@
 "Checkout": "Checkout"
 oro:
     workflow:
+        checkout:
+            state_token:
+                attribute_label: 'Token to track checkout state'
+                form_label: ''
         b2b_flow_checkout:
             label: Checkout
             step:
@@ -57,8 +61,6 @@ oro:
                     label: 'Payment validation required'
                 payment_save_for_later:
                     label: 'Save payment data for later use'
-                state_token:
-                    label: 'Token to track checkout state'
                 order:
                     label: 'Instance of Order entity'
                 save_billing_address:
@@ -129,8 +131,6 @@ oro:
                     label: Continue
                 continue_to_billing_address:
                     label: Continue
-                    state_token:
-                        label: ''
                     customerConsents:
                         label: 'Customer consents'
                 continue_to_shipping_address:
@@ -143,8 +143,6 @@ oro:
                             label: 'Ship to this address'
                         billing_address:
                             label: 'Billing address'
-                        state_token:
-                            label: ''
                 continue_checkout_as_guest:
                     label: Continue
                 continue_to_shipping_method:
@@ -157,8 +155,6 @@ oro:
                             label: 'Use billing address'
                         shipping_address:
                             label: 'Shipping address'
-                        state_token:
-                            label: ''
                 continue_to_payment:
                     label: Continue
                     warning_message: ''
@@ -166,8 +162,6 @@ oro:
                         shipping_method:
                             label: ''
                         shipping_method_type:
-                            label: ''
-                        state_token:
                             label: ''
                 continue_to_order_review:
                     label: Continue
@@ -178,8 +172,6 @@ oro:
                         payment_save_for_later:
                             label: ''
                         payment_validate:
-                            label: ''
-                        state_token:
                             label: ''
                         additional_data:
                             label: ''
@@ -222,8 +214,6 @@ oro:
                             label: 'Do Not Ship Later Than'
                         customer_notes:
                             label: 'Customer Notes'
-                        state_token:
-                            label: 'State token'
                 finish_checkout:
                     label: 'Finish checkout'
                     warning_message: ''
@@ -291,8 +281,6 @@ oro:
                     label: 'Flag indicates that payment is in progress'
                 payment_save_for_later:
                     label: 'Save payment data for later use'
-                state_token:
-                    label: 'Token to track checkout state'
                 save_state_url:
                     label: 'Save state url'
                 order:

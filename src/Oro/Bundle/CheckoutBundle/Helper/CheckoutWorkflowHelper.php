@@ -109,6 +109,22 @@ class CheckoutWorkflowHelper
         return $this->workflowItems[$checkoutId];
     }
 
+    public static function isSinglePageCheckoutWorkflow(WorkflowItem $workflowItem): bool
+    {
+        $metadata = $workflowItem->getDefinition()?->getMetadata();
+
+        return !empty($metadata['is_checkout_workflow'])
+            && !empty($metadata['is_single_page_checkout']);
+    }
+
+    public static function isMultiStepCheckoutWorkflow(WorkflowItem $workflowItem): bool
+    {
+        $metadata = $workflowItem->getDefinition()?->getMetadata();
+
+        return !empty($metadata['is_checkout_workflow'])
+            && empty($metadata['is_single_page_checkout']);
+    }
+
     protected function checkLineItemsCount(Checkout $checkout, Request $request): void
     {
         $allOrderLineItemsCount = $this->lineItemsManager->getData($checkout, true)->count();
