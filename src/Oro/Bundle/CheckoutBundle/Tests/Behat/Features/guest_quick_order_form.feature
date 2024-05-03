@@ -1,5 +1,4 @@
 @community-edition-only
-@regression
 @ticket-BB-11426
 @ticket-BB-16275
 @ticket-BB-15931

@@ -1,3 +1,4 @@
+@regression
 @fixture-OroPromotionBundle:product-for-promotion.yml
 
 Feature: Promotions Grid With Promotions ACL Enabled

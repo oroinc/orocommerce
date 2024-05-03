@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-20192
 @fixture-OroLocaleBundle:ZuluLocalization.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml

@@ -1,3 +1,4 @@
+@regression
 @feature-BB-23050
 
 Feature: Landing Page as a Homepage

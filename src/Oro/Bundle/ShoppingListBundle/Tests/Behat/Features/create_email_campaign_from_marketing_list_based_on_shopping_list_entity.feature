@@ -1,3 +1,4 @@
+@regression
 @fixture-OroShoppingListBundle:ShoppingListFixture.yml
 @fixture-OroShoppingListBundle:LoadShoppingListEmailTemplate.yml
 @ticket-BB-19484

@@ -1,3 +1,4 @@
+@regression
 @feature-BB-8416
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml

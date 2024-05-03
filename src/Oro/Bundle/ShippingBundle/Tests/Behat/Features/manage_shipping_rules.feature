@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-12309
 @ticket-BB-22976
 @waf-skip

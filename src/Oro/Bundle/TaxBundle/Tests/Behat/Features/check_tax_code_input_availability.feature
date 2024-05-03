@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-20488
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml

@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-17440
 
 Feature: Category with slash in the url slug

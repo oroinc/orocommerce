@@ -1,4 +1,3 @@
-@regression
 @feature-BB-22730
 @fixture-OroRFPBundle:product-kit/existing_rfq_with_product_kits_validation__product.yml
 @fixture-OroRFPBundle:product-kit/create_order_from_rfq_with_product_kits__rfq.yml
