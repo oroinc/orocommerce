@@ -1,4 +1,3 @@
-@regression
 @feature-BB-22738
 @fixture-OroProductBundle:quick_order_form_with_product_kits__product.yml
 

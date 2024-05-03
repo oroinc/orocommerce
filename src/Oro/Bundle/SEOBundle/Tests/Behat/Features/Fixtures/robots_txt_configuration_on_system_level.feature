@@ -1,3 +1,4 @@
+@regression
 @gridfs-skip
 @ticket-BB-22555
 

@@ -121,6 +121,15 @@ oro:
             wide:
                 label: Wide Template
                 description: Wide Template of product page (additional attribute groups are displayed in collapse one below another for full page width)
+            short:
+                label: Short page
+                description: Short page template of product page (no additional attributes groups are displayed at all)
+            two_columns:
+                label: Two columns page
+                description: Two columns template of product page (additional attribute groups are displayed in two columns)
+            list:
+                label: List page
+                description: List template of product page (additional attribute groups are displayed in column one below another)
         slugs:
             label:              'Slugs'
             singular_label:     'Slug'
@@ -764,12 +773,6 @@ oro:
                         meta.label: 'SEO Meta Description'
                         short.label: 'Simplified Short Description'
                         long.label: 'Simplified [Long] Description'
-                product_details_display_price_tiers_as: #BB-23597
-                    label: 'Display Price Tiers As'
-                    tooltip: 'Multi-unit table will show price tiers for all product units in the same table, which might not work well for products with many units or when quantity tiers are not aligned between units. Single-unit table will show price tiers only for the currently selected unit.'
-                    choice:
-                        multi-unit-table.label: 'Multi-unit table'
-                        single-unit-table.label: 'Single-unit table'
 
             notice:
                 product_image_watermark: >
@@ -1071,6 +1074,31 @@ oro:
                 manage:
                     label: Product Brand Management
                     description: Enables creating and managing product brands.
+
+        theme:
+            default:
+                configuration:
+                    product_details:
+                        label: Product Details Page
+                        template:
+                            label: Product View Page Template
+                            values:
+                                default: Default template
+                                tabs: Tabs template of product page (additional attribute groups are displayed in tabs)
+                                wide: Wide Template of product page (additional attribute groups are displayed in collapse one below another for full page width)
+                        display_price_tiers_as:
+                            label: Display Price Tiers As
+                            tooltip: 'Multi-unit table will show price tiers for all product units in the same table, which might not work well for products with many units or when quantity tiers are not aligned between units. Single-unit table will show price tiers only for the currently selected unit.'
+                            choice:
+                                multi-unit-table.label: Multi-unit table
+                                single-unit-table.label: Single-unit table
+                    product_listing:
+                        label: Product Listing Page
+                        filters_position:
+                            label: Filter Panel Position
+                            values:
+                                top: Top
+                                sidebar: Sidebar
 
     product_unit.each:
         label:

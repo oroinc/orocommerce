@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-22535
 @fixture-OroShoppingListBundle:shopping_list_line_items_prices.yml
 

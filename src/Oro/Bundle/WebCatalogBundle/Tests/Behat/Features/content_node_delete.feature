@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-22552
 @fixture-OroWebCatalogBundle:content_node_with_references.yml
 

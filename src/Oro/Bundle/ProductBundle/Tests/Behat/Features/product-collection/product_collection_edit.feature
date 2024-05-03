@@ -1,3 +1,4 @@
+@regression
 @fixture-OroProductBundle:product_collection_edit.yml
 Feature: Product collection edit
   In order to edit content node

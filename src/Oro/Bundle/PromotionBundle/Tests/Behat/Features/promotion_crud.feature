@@ -1,3 +1,4 @@
+@regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPromotionBundle:promotion_crud.yml
 Feature: Promotion CRUD

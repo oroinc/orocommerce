@@ -1,5 +1,4 @@
 @ticket-BB-21880
-@regression
 @fixture-OroPricingBundle:ProductsWithoutPrices.yml
 
 Feature: Import and validate product prices using different strategies

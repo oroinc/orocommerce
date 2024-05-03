@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-19730
 @fixture-OroCMSBundle:CMSPageWithCodeType.yml
 

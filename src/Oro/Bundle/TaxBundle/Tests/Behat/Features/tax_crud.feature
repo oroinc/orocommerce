@@ -1,3 +1,4 @@
+@regression
 Feature: Tax CRUD
   In order to manage taxes
   As Administrator

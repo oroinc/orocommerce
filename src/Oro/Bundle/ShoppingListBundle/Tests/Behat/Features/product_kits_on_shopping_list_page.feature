@@ -1,4 +1,3 @@
-@regression
 @feature-BB-21126
 @fixture-OroShoppingListBundle:product_kits_on_shopping_list_page.yml
 

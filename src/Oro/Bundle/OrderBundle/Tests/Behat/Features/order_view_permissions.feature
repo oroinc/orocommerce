@@ -1,4 +1,3 @@
-@regression
 @ticket-BB-16902
 @fixture-OroProductBundle:products.yml
 Feature: Order View Permissions

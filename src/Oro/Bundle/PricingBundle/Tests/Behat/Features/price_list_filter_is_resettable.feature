@@ -1,3 +1,4 @@
+@regression
 @fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroPricingBundle:PriceListFilter.yml
 

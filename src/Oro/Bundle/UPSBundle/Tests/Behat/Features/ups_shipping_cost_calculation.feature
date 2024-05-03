@@ -1,3 +1,4 @@
+@regression
 @behat-test-env
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml

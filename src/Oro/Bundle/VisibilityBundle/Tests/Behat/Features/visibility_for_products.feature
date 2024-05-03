@@ -1,4 +1,3 @@
-@regression
 @ticket-BB-13765
 @fixture-OroVisibilityBundle:category_tree_with_product_visibility.yml
 
