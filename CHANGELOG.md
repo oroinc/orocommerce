@@ -2,6 +2,19 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## UNRELEASED
+
+### Removed
+
+### ProductBundle
+* Removed page_template values from `\Oro\Bundle\ProductBundle\Resources\views\layouts\default\config\page_templates.yml`.
+* Removed `oro_product.product_details_display_price_tiers_as` system configuration option.
+
+### Changed
+
+### ProductBundle
+* Changed entity config fallback logic - substituted system config fallback on theme configuration fallback as default.
+
 ## Changes in the Сommerce package versions
 
 - [6.0.0](#600-2024-03-30)

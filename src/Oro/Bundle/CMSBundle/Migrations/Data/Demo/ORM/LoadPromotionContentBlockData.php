@@ -10,11 +10,12 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\LoadGlobalThemeConfiguration;
+use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\LoadGlobalThemeConfigurationData;
 use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration as LayoutThemeConfiguration;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
+use Oro\Bundle\ThemeBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ThemeBundle\Entity\ThemeConfiguration;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -35,7 +36,7 @@ class LoadPromotionContentBlockData extends AbstractFixture implements
     {
         return [
             LoadOrganizationAndBusinessUnitData::class,
-            LoadGlobalThemeConfiguration::class
+            LoadGlobalThemeConfigurationData::class
         ];
     }
 
@@ -107,7 +108,7 @@ class LoadPromotionContentBlockData extends AbstractFixture implements
     {
         /** @var ConfigManager $configManager */
         $configManager = $this->container->get('oro_config.global');
-        $value = $configManager->get('oro_theme.theme_configuration');
+        $value = $configManager->get(Configuration::getConfigKeyByName(Configuration::THEME_CONFIGURATION));
         if (!$value) {
             return null;
         }

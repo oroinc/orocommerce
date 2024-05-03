@@ -139,7 +139,7 @@ Feature: Product attribute multiselect
   Scenario: Change product page view to "Tabs Template"
     Given I proceed as the Admin
     When fill "Page Templates form" with:
-      | Product Page | Tabs Template |
+      | Product Page | Tabs template of product page (additional attribute groups are displayed in tabs) |
     And save form
     Then I should see "Configuration saved" flash message
 

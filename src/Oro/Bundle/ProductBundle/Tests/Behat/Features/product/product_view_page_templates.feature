@@ -240,35 +240,38 @@ Feature: Product View Page Templates
     Given I open product with sku "gtsh_l" on the store frontend
     Then I should see "Green shirt L"
     And I should see "gtsh_l"
-    Then I should see next rows in "Default Page Prices" table in the exact order
+    And I should see next rows in "Default Page Prices" table in the exact order
       | QTY | Item   | Set     |
       | 1+  | $10.00 | $445.50 |
 
     When I operate as the Admin
-    And go to System / Configuration
-    And I follow "Commerce/Design/Theme" on configuration sidebar
-    And fill "Display Price Tiers" with:
-      | Use Default            | false             |
+    And I go to System / Theme Configurations
+    And I click Edit "Refreshing Teal" in grid
+    And I fill "Theme Configuration Form" with:
       | Display Price Tiers As | Single-unit table |
-    And click "Save settings"
-    And I operate as the Buyer
+    And I save and close form
+    Then I should see "Theme Configuration has been saved" flash message
+
+    When I operate as the Buyer
     And I reload the page
     Then I should see next rows in "Default Page Prices" table in the exact order
       | QTY | Item   |
       | 1+  | $10.00 |
-    When click on empty space
+    When I click on empty space
     And I type "set" in "Product View Unit"
     Then I should see next rows in "Default Page Prices" table in the exact order
       | QTY | Set     |
       | 1+  | $445.50 |
 
     When I operate as the Admin
-    And go to System / Configuration
-    And I follow "Commerce/Design/Theme" on configuration sidebar
-    And fill "Display Price Tiers" with:
+    And I go to System / Theme Configurations
+    And I click Edit "Refreshing Teal" in grid
+    And I fill "Theme Configuration Form" with:
       | Display Price Tiers As | Multi-unit table |
-    And click "Save settings"
-    And I operate as the Buyer
+    And I save and close form
+    Then I should see "Theme Configuration has been saved" flash message
+
+    When I operate as the Buyer
     And I reload the page
     Then I should see next rows in "Default Page Prices" table in the exact order
       | QTY | Item   | Set     |
@@ -337,8 +340,8 @@ Feature: Product View Page Templates
     When go to System / Configuration
     And I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates form" with:
-      | Use Default  | false     |
-      | Product Page | Tabs Template |
+      | Use Default  | false                                                                             |
+      | Product Page | Tabs template of product page (additional attribute groups are displayed in tabs) |
     And save form
     Then I should see "Configuration saved" flash message
     And I should see "Tabs Template"

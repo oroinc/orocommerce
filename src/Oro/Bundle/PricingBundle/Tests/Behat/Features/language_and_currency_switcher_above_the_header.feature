@@ -42,7 +42,7 @@ Feature: Language and currency switcher above the header
 
   Scenario: No promo block and no top nav menu
     When I go to System / Theme Configurations
-    And I click Edit "Refreshing Teal [Website: Default]" in grid
+    And I click Edit "Refreshing Teal" in grid
     And I fill "Theme Configuration Form" with:
       | Language and Currency Switchers | Above the header |
       | Quick Access Button Label       | Test Label       |
@@ -97,7 +97,7 @@ Feature: Language and currency switcher above the header
   Scenario: Only one - promo block or top nav menu is enabled
     Given I proceed as the Admin
     When I go to System / Theme Configurations
-    And I click Edit "Refreshing Teal [Website: Default]" in grid
+    And I click Edit "Refreshing Teal" in grid
     And I fill "Theme Configuration Form" with:
       | Promotional Content | test_alias |
     And I save and close form
@@ -142,7 +142,7 @@ Feature: Language and currency switcher above the header
   Scenario: Both promo block and top nav menu are enabled
     Given I proceed as the Admin
     When I go to System / Theme Configurations
-    And I click Edit "Refreshing Teal [Website: Default]" in grid
+    And I click Edit "Refreshing Teal" in grid
     And I fill "Theme Configuration Form" with:
       | Top Navigation Menu | commerce_top_nav |
     And I save and close form

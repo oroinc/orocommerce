@@ -1,0 +1,41 @@
+configuration:
+    sections:
+        product_details:
+            label: 'oro.product.theme.default.configuration.product_details.label'
+            options:
+                template:
+                    label: 'oro.product.theme.default.configuration.product_details.template.label'
+                    type: product_page_template
+                    values:
+                        tabs: 'oro.product.theme.default.configuration.product_details.template.values.tabs'
+                        wide: 'oro.product.theme.default.configuration.product_details.template.values.wide'
+                    previews:
+                        _default: 'bundles/oroproduct/images/previews/page-templates-default.png'
+                        tabs: 'bundles/oroproduct/images/previews/page-templates-tabs.png'
+                        wide: 'bundles/oroproduct/images/previews/page-templates-wide.png'
+                display_price_tiers_as:
+                    label: 'oro.product.theme.default.configuration.product_details.display_price_tiers_as.label'
+                    type: select
+                    default: multi-unit-table
+                    options:
+                        required: true
+                        tooltip: 'oro.product.theme.default.configuration.product_details.display_price_tiers_as.tooltip'
+                    values:
+                        multi-unit-table: oro.product.theme.default.configuration.product_details.display_price_tiers_as.choice.multi-unit-table.label
+                        single-unit-table: oro.product.theme.default.configuration.product_details.display_price_tiers_as.choice.single-unit-table.label
+                    previews:
+                        multi-unit-table: 'bundles/oroproduct/images/previews/price-tiers-multi-unit.png'
+                        single-unit-table: 'bundles/oroproduct/images/previews/price-tiers-single-unit.png'
+        product_listing:
+            label: 'oro.product.theme.default.configuration.product_listing.label'
+            options:
+                filters_position:
+                    label: 'oro.product.theme.default.configuration.product_listing.filters_position.label'
+                    type: radio
+                    default: top
+                    values:
+                        top: 'oro.product.theme.default.configuration.product_listing.filters_position.values.top'
+                        sidebar: 'oro.product.theme.default.configuration.product_listing.filters_position.values.sidebar'
+                    previews:
+                        top: 'bundles/oroproduct/images/previews/filter-panel-top.png'
+                        sidebar: 'bundles/oroproduct/images/previews/filter-panel-sidebar.png'
