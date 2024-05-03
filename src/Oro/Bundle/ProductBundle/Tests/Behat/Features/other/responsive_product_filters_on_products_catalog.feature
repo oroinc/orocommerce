@@ -10,8 +10,8 @@ Feature: Responsive Product Filters On Products Catalog
   Scenario: Feature Background
     Given I set configuration property "oro_product.filters_display_settings_state" to "expanded"
     And sessions active:
-      | admin    |first_session |
-      | customer  |second_session|
+      | admin    | first_session  |
+      | customer | second_session |
 
   Scenario: Check Filter Panel State
     Given I proceed as the customer
@@ -56,16 +56,17 @@ Feature: Responsive Product Filters On Products Catalog
   Scenario: Responsive transformation from dropdown to fullscreen views if filters in sidebar
     Given I proceed as the admin
     And I login as administrator
-    And I go to System / Configuration
-    And I follow "Commerce/Catalog/Filters and Sorters" on configuration sidebar
-    And uncheck "Use default" for "Filter Panel Position" field
-    And I fill form with:
-      | Filter Panel Position | Sidebar |
-    And I submit form
-    Then I proceed as the customer
+    And I go to System / Theme Configurations
+    When I click "Edit" on row "Refreshing Teal" in grid
+    And I fill "Theme Configuration Form" with:
+      | Filter Panel Position | sidebar |
+    And I save and close form
+    Then I should see "Theme Configuration has been saved" flash message
+
+    When I proceed as the customer
     And I reload the page
     And I set filter Any Text as contains "product"
-    Then I click "Apply"
+    And I click "Apply"
     Then I should see filter hints in frontend grid:
       | Any Text: contains "product" |
 

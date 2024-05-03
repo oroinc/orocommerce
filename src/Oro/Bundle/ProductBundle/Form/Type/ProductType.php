@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGValueType;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
-use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
@@ -22,6 +21,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
+use Oro\Bundle\ThemeBundle\Fallback\Provider\ThemeConfigurationFallbackProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -226,7 +226,7 @@ class ProductType extends AbstractType
 
         if (!$product->getPageTemplate()) {
             $entityFallback = new EntityFieldFallbackValue();
-            $entityFallback->setFallback(SystemConfigFallbackProvider::FALLBACK_ID);
+            $entityFallback->setFallback(ThemeConfigurationFallbackProvider::FALLBACK_ID);
             $product->setPageTemplate($entityFallback);
         }
         $form->add(

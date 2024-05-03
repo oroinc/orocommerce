@@ -140,3 +140,19 @@ services:
     Oro\Bundle\CMSBundle\Form\Type\ContentBlockSelectType:
         tags:
             - { name: form.type }
+
+    oro_cms.form.content_block_builder:
+        class: Oro\Bundle\CMSBundle\Form\Configuration\ContentBlockBuilder
+        arguments:
+            - '@assets.packages'
+            - '@oro_cms.form.content_block_transformer'
+            - '@doctrine'
+        tags:
+            - { name: oro_theme.form.configuration_child_builder }
+
+    oro_cms.form.content_block_transformer:
+        class: Oro\Bundle\FormBundle\Form\DataTransformer\EntityToIdTransformer
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - Oro\Bundle\CMSBundle\Entity\ContentBlock
+            - id

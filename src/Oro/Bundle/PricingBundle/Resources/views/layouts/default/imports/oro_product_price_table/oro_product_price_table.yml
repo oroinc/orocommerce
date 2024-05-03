@@ -17,13 +17,13 @@ layout:
                 __product_price_multi_unit_table:
                     blockType: container
                     options:
-                        visible: '=data["product_details_page_configuration"].getDisplayPriceTiersAs() === "multi-unit-table"'
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("product_details__display_price_tiers_as") === "multi-unit-table"'
                         vars:
                             currencies: '=data["oro_pricing_currency"].getAvailableCurrencies()'
                 __product_price_single_unit_table:
                     blockType: container
                     options:
-                        visible: '=data["product_details_page_configuration"].getDisplayPriceTiersAs() === "single-unit-table"'
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("product_details__display_price_tiers_as") === "single-unit-table"'
                         vars:
                             currencies: '=data["oro_pricing_currency"].getAvailableCurrencies()'
                 __product_price_multi_unit_table_body:

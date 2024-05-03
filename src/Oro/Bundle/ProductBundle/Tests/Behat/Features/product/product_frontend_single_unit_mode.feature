@@ -56,13 +56,12 @@ Feature: Product frontend single unit mode
 
   Scenario: Enable "Wide Template" view mode for product units
     Given I proceed as the Admin
-    And I go to System/ Configuration
-    And I follow "Commerce/Design/Theme" on configuration sidebar
-    When I fill "Page Templates Form" with:
-      | Use Default  | false            |
-      | Product Page | Wide Template    |
-    And I click "Save settings"
-    Then I should see "Configuration saved" flash message
+    When I go to System / Theme Configurations
+    And I click "Edit" on row "Refreshing Teal" in grid
+    And I fill "Theme Configuration Form" with:
+      | Page Template | wide |
+    And I save and close form
+    Then I should see "Theme Configuration" flash message
 
   Scenario: Verify that prices in "Related Products Block" are correctly displayed in "Wide Template" layout view
     Given I proceed as the Buyer
@@ -75,13 +74,12 @@ Feature: Product frontend single unit mode
 
   Scenario: Enable "List page" view mode for product units
     Given I proceed as the Admin
-    And I go to System/ Configuration
-    And I follow "Commerce/Design/Theme" on configuration sidebar
-    When I fill "Page Templates Form" with:
-      | Use Default  | false     |
-      | Product Page | Tabs Template |
-    And I click "Save settings"
-    Then I should see "Configuration saved" flash message
+    When I go to System / Theme Configurations
+    And I click "Edit" on row "Refreshing Teal" in grid
+    And I fill "Theme Configuration Form" with:
+      | Page Template | tabs |
+    And I save and close form
+    Then I should see "Theme Configuration" flash message
 
   Scenario: Verify that prices in "Related Products Block" are correctly displayed in "Tabs Template" layout view
     Given I proceed as the Buyer

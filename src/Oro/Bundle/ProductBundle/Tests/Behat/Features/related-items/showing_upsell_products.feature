@@ -240,8 +240,8 @@ Feature: Showing upsell products
     And go to System/ Configuration
     And I follow "Commerce/Design/Theme" on configuration sidebar
     And I fill "Page Templates Form" with:
-      | Use Default  | false         |
-      | Product Page | Tabs Template |
+      | Use Default  | false                                                                             |
+      | Product Page | Tabs template of product page (additional attribute groups are displayed in tabs) |
     And I click "Save settings"
     And I proceed as the Buyer
     And type "PSKU1" in "search"
