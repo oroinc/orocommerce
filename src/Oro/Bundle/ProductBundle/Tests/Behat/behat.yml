@@ -1701,9 +1701,6 @@ oro_behat_extension:
     Toggle Sidebar Button Expanded:
       selector: '.toggle-sidebar-btn[title="Collapse Filters"]'
 
-    Apply Filters Button:
-      selector: '.product-filters-sidebar .filter-box [data-role="apply"]'
-
     Catalog Sidebar Hints Container:
       selector: '[data-hint-container="frontend-product-search-grid"]'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters

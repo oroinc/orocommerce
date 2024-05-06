@@ -2,7 +2,6 @@ import $ from 'jquery';
 import mediator from 'oroui/js/mediator';
 import FilterItemsHintView from 'oroproduct/js/app/views/sidebar-filters/filter-items-hint-view';
 import FilterExtraHintView from 'oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view';
-import FilterApplierComponent from 'oroproduct/js/app/components/sidebar-filters/filter-applier-component';
 import FiltersManager from 'orofilter/js/filters-manager';
 import SidebarToggleFiltersAction from 'oroproduct/js/app/datagrid/actions/sidebar-toggle-filters-action';
 import filtersContainerTemplate from 'tpl-loader!oroproduct/templates/sidebar-filters/filters-container.html';
@@ -34,7 +33,7 @@ export default {
         });
         options.metadata.filters.forEach(filter => {
             filter.outerHintContainer = `[data-hint-container="${options.gridName}"]`;
-            filter.initiallyOpened = true;
+            filter.initiallyOpened = false;
             filter.autoClose = false;
             filter.labelPrefix = '';
             filter.animationDuration = 300;
@@ -92,7 +91,6 @@ export default {
                     disposeExtraHits(Object.values(filterManager.filters));
 
                     if (isAsInitial) {
-                        applyFilterComponent = new FilterApplierComponent({filterManager});
                         initExtraHits(Object.values(filterManager.filters));
                     }
                 });
@@ -105,8 +103,6 @@ export default {
                 }
 
                 initExtraHits(Object.values(filterManager.filters));
-
-                applyFilterComponent = new FilterApplierComponent({filterManager});
 
                 mediator.trigger(`${grid.name}-filters-in-sidebar:connected`, filterManager);
                 filterManager.on('rendered', () => {
