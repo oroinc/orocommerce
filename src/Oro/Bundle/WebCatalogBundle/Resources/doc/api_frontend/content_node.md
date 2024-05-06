@@ -30,7 +30,7 @@ for nodes belong to the root node the level is **1**, and so on.
 ### order
 
 A number that can be used to sort nodes to build a node tree in the order
-it is configured on the management console.
+it is configured in the back-office.
 The less the number, the closer the node to the beginning of the section.
 
 ### url
