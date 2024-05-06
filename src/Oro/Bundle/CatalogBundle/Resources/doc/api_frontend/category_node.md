@@ -21,7 +21,7 @@ Retrieve a collection of master catalog tree nodes visible to the customer user.
 ### order
 
 A number that can be used to sort nodes to build a node tree in the order
-it is configured on the management console.
+it is configured in the back-office.
 The less the number, the closer the node to the beginning of the section.
 
 ### path
