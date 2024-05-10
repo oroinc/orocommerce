@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-20965
 Feature: Wysiwyg check "External Mode" feature
   In order to be able to edit landing page

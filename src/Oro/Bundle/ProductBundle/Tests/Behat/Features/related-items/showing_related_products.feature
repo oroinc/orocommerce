@@ -243,19 +243,21 @@ Feature: Showing related products
 
   Scenario: Verify that "Related Products" block is displayed in "Wide Template" layout view
     Given I proceed as the Admin
-    And go to System/ Configuration
-    And I follow "Commerce/Design/Theme" on configuration sidebar
-    And I fill "Page Templates Form" with:
-      | Use Default  | false            |
-      | Product Page | Wide Template    |
-    And I click "Save settings"
-    And I proceed as the Buyer
-    And type "PSKU1" in "search"
-    And click "Search Button"
-    And I should see "PSKU1" product
+    When I go to System / Theme Configurations
+    And I click "Edit" on row "Refreshing Teal" in grid
+    And I fill "Theme Configuration Form" with:
+      | Page Template | wide |
+    And I save and close form
+    Then I should see "Theme Configuration" flash message
+
+    When I proceed as the Buyer
+    And I type "PSKU1" in "search"
+    And I click "Search Button"
+    Then I should see "PSKU1" product
+
     When I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
-    Then should see the following products in the "Related Products Block":
+    And I should see the following products in the "Related Products Block":
       | Title                               |
       | Product2Localization1`"'&йёщ®&reg;> |
 #    When click "In Shopping List" for "PSKU2" product
@@ -265,19 +267,21 @@ Feature: Showing related products
 
   Scenario: Verify that "Related Products" block is displayed in "Tabs Template" layout view
     Given I proceed as the Admin
-    And go to System/ Configuration
-    And I follow "Commerce/Design/Theme" on configuration sidebar
-    And I fill "Page Templates Form" with:
-      | Use Default  | false         |
-      | Product Page | Tabs Template |
-    And I click "Save settings"
-    And I proceed as the Buyer
-    And type "PSKU1" in "search"
-    And click "Search Button"
-    And I should see "PSKU1" product
+    When I go to System / Theme Configurations
+    And I click "Edit" on row "Refreshing Teal" in grid
+    And I fill "Theme Configuration Form" with:
+      | Page Template | tabs |
+    And I save and close form
+    Then I should see "Theme Configuration" flash message
+
+    When I proceed as the Buyer
+    And I type "PSKU1" in "search"
+    And I click "Search Button"
+    Then I should see "PSKU1" product
+
     When I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
-    Then should see the following products in the "Related Products Block":
+    And I should see the following products in the "Related Products Block":
       | Title                               |
       | Product2Localization1`"'&йёщ®&reg;> |
 #    When click "In Shopping List" for "PSKU2" product
@@ -287,16 +291,17 @@ Feature: Showing related products
 
   Scenario: "Add to Shopping List" button restrictions
     Given I proceed as the Admin
-    And go to System/ Configuration
+    And I go to System/ Configuration
     And I follow "Commerce/Catalog/Related Items" on configuration sidebar
     And I fill "RelatedProductsConfig" with:
       | Show Add Button Use Default | false |
       | Show Add Button             | false |
     And I click "Save settings"
-    And I proceed as the Buyer
-    And type "PSKU1" in "search"
-    And click "Search Button"
-    And I should see "PSKU1" product
-    And I click "View Details" for "PSKU1" product
-    And I should see "Related Products"
-    Then I should not see "Add to Shopping List" in related products
+
+    When I proceed as the Buyer
+    And I type "PSKU1" in "search"
+    And I click "Search Button"
+    Then I should see "PSKU1" product
+    When I click "View Details" for "PSKU1" product
+    Then I should see "Related Products"
+    And I should not see "Add to Shopping List" in related products

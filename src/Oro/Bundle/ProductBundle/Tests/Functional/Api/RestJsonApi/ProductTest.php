@@ -279,10 +279,21 @@ class ProductTest extends RestJsonApiTestCase
         ];
         $response = $this->post(['entity' => 'products'], $data, [], false);
 
+        $fallbackConfig = self::getContainer()
+            ->get('oro_entity.fallback.resolver.entity_fallback_resolver')
+            ->getFallbackConfig(
+                new Product(),
+                'pageTemplate',
+                EntityFieldFallbackValue::FALLBACK_LIST
+            );
+
         $this->assertResponseValidationError(
             [
                 'title'  => 'choice constraint',
-                'detail' => 'The value is not valid. Acceptable values: systemConfig.',
+                'detail' => sprintf(
+                    'The value is not valid. Acceptable values: %s.',
+                    implode(',', array_keys($fallbackConfig))
+                ),
                 'source' => ['pointer' => sprintf('/included/%d/attributes/fallback', count($data['included']) - 1)]
             ],
             $response

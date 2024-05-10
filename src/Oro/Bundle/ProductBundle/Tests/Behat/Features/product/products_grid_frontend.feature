@@ -1,4 +1,3 @@
-@regression
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroProductBundle:products_grid_frontend.yml
 @ticket-BAP-17648

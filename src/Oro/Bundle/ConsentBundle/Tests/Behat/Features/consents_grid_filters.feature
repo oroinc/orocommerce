@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-20941
 @fixture-OroConsentBundle:Consents.yml
 Feature: Consents grid filters

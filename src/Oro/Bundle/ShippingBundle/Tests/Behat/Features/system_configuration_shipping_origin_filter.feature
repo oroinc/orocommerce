@@ -1,3 +1,4 @@
+@regression
 @ticket-BAP-17525
 
 Feature: System configuration shipping origin filter

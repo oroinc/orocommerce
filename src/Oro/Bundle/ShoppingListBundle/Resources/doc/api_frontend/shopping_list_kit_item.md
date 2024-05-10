@@ -128,7 +128,7 @@ Delete a collection of shopping list kit item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -142,7 +142,7 @@ Delete a collection of shopping list kit item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -156,7 +156,7 @@ Delete a collection of shopping list kit item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -170,7 +170,7 @@ Delete a collection of shopping list kit item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 
@@ -184,7 +184,7 @@ Delete a collection of shopping list kit item records.
 
 {@inheritdoc}
 
-**The required field**
+**The required field.**
 
 #### update
 

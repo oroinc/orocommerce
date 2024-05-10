@@ -1,3 +1,4 @@
+@regression
 @fixture-OroProductBundle:product_collections_individual_products.yml
 Feature: Product collection individual products with segment filter
   In order to simplify product collection creation together with filters using

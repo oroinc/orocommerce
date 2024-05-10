@@ -11,7 +11,6 @@
 @fixture-OroCheckoutBundle:Checkout.yml
 @fixture-OroProductBundle:ProductUnitItemZuluTranslation.yml
 @automatically-ticket-tagged
-@regression
 
 Feature: Quick order form
 

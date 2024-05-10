@@ -30,6 +30,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         owner: '@business_unit'
+        updatedAt: '<(new DateTime("29.11.2023 00:01"))>'
     product2:
         sku: 'PSKU2'
         primaryUnitPrecision: '@precision2'
@@ -41,6 +42,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         owner: '@business_unit'
+        updatedAt: '<(new DateTime("29.11.2023 00:02"))>'
     product3:
         sku: 'PSKU3'
         primaryUnitPrecision: '@precision3'
@@ -52,6 +54,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         owner: '@business_unit'
+        updatedAt: '<(new DateTime("29.11.2023 00:03"))>'
     product4:
         sku: 'PSKU4'
         primaryUnitPrecision: '@precision4'
@@ -63,6 +66,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         owner: '@business_unit'
+        updatedAt: '<(new DateTime("29.11.2023 00:04"))>'
     product5:
         sku: 'PSKU5'
         primaryUnitPrecision: '@precision5'
@@ -74,6 +78,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'disabled'
         organization: '@organization'
         owner: '@business_unit'
+        updatedAt: '<(new DateTime("29.11.2023 00:05"))>'
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
     locvalue1:

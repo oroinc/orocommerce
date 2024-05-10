@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-14800
 @ticket-BB-16295
 @fixture-OroPricingBundle:FractionalProductPrices.yml

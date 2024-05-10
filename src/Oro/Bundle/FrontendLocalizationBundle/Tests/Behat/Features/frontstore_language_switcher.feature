@@ -3,8 +3,6 @@
 @ticket-BB-14857
 @fixture-OroFrontendLocalizationBundle:frontstore-customer.yml
 
-@skip
-# wil be fixed in BAP-22475
 Feature: FrontStore language switcher
   In order to manage available localizations for language switcher
   As Administrator

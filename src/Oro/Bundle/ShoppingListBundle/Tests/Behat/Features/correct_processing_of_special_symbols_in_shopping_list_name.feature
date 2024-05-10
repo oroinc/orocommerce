@@ -1,3 +1,4 @@
+@regression
 @fixture-OroShoppingListBundle:ShoppingListFixtureWithSpecialName.yml
 Feature: Correct processing of special symbols in shopping list name
   In order to be able to add products to the shopping list with specific name

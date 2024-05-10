@@ -4,7 +4,6 @@
 @fixture-OroProductBundle:products_hide_variations_prices.yml
 @fixture-OroProductBundle:products_hide_variations_checkout_related.yml
 @ticket-BB-15564
-@regression
 
 Feature: Create RFQ with product variant
   In order to create RFQ

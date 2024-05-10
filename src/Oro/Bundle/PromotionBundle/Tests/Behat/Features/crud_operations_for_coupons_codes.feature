@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-15172
 @fixture-OroPromotionBundle:promotions_for_coupons.yml
 Feature: CRUD operations for Coupons codes

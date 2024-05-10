@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-19268
 @fixture-OroProductBundle:product_collection_add_title_translate.yml
 Feature: Product collection add title translate

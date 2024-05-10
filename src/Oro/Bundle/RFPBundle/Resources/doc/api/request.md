@@ -718,6 +718,7 @@ Retrieve a collection of request for quote customer status records.
 
 The request for quote statuses visible to the buyer.
 
+
 # Extend\Entity\EV_Rfp_Internal_Status
 
 ## ACTIONS
@@ -726,10 +727,10 @@ The request for quote statuses visible to the buyer.
 
 Retrieve a specific request for quote internal status record.
 
-The request for quote statuses visible in the management console.
+The request for quote statuses visible in the back-office.
 
 ### get_list
 
 Retrieve a collection of request for quote internal status records.
 
-The request for quote statuses visible in the management console.
+The request for quote statuses visible in the back-office.

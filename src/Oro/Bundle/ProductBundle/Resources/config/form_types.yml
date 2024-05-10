@@ -345,3 +345,10 @@ services:
       class: 'Oro\Bundle\ProductBundle\Form\Extension\IsOptimizedQuickAddTypeExtension'
       tags:
         - { name: form.type_extension }
+
+    oro_product.form.product_page_template_builder:
+        class: Oro\Bundle\ProductBundle\Form\Configuration\ProductPageTemplateBuilder
+        arguments:
+            - '@assets.packages'
+        tags:
+            - { name: oro_theme.form.configuration_child_builder }

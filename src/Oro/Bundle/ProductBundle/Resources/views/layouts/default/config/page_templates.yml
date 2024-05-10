@@ -1,13 +1,2 @@
-templates:
-    -
-        label: oro.product.page_template.tabs.label
-        description: oro.product.page_template.tabs.description
-        route_name: oro_product_frontend_product_view
-        key: tabs
-    -
-        label: oro.product.page_template.wide.label
-        description: oro.product.page_template.wide.description
-        route_name: oro_product_frontend_product_view
-        key: wide
 titles:
     oro_product_frontend_product_view: oro.product.page_template.title

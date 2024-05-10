@@ -1,0 +1,22 @@
+oro_behat_extension:
+  optional_listeners:
+    required_for_fixtures:
+      - 'oro_website_search_suggestion.entity_listener.doctrine.create_product_suggestion'
+  suites:
+    OroWebsiteSearchSuggestionBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\LocaleBundle\Tests\Behat\Context\LocalizationContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+      paths:
+        - '@OroWebsiteSearchSuggestionBundle/Tests/Behat/Features'
+  elements:
+    Search Suggestion Autocomplete Item:
+      selector: '.search-autocomplete .search-autocomplete-suggest__item'
+    Search Product Suggestion:
+      selector: '.search-autocomplete .search-autocomplete-product__suggest'
