@@ -112,9 +112,9 @@ Feature: Quotes Grid
 
   Scenario: Check Updated At filter
     Given records in grid should be 20
-    When I filter Updated At as between "today-2" and "today-1"
+    When I filter Updated At as between "2000-01-01" and "2000-01-02"
     Then there are no records in grid
-    When I filter Updated At as between "today" and "today+1"
+    When I filter Updated At as between "2023-12-31" and "2024-01-21"
     Then records in grid should be 20
     And I reset "Updated At" filter
 
@@ -140,7 +140,7 @@ Feature: Quotes Grid
     Given I hide column Step in grid
     Then I should see following grid:
       | Quote # |
-      | Quote1 |
+      | Quote1  |
     And records in grid should be 1
     And I reset "Step: Submitted for Review" filter
     When I check "Draft" in "Step: All" filter strictly
@@ -211,7 +211,7 @@ Feature: Quotes Grid
     When I sort grid by "Customer" again
     Then I should see following grid:
       | Quote # |
-      | Quote20  |
+      | Quote20 |
       | Quote19 |
       | Quote18 |
     And I reset "All Quotes Grid" grid
@@ -229,7 +229,7 @@ Feature: Quotes Grid
     When I sort grid by "Internal Status" again
     Then I should see following grid:
       | Quote # |
-      | Quote1 |
+      | Quote1  |
       | Quote20 |
     And I reset "All Quotes Grid" grid
 
@@ -263,8 +263,8 @@ Feature: Quotes Grid
     When I sort grid by "PO Number" again
     Then I should see following grid:
       | Quote # |
-      | Quote9 |
-      | Quote8 |
+      | Quote9  |
+      | Quote8  |
     And I reset "All Quotes Grid" grid
 
   Scenario: Sort by Created At
@@ -292,7 +292,7 @@ Feature: Quotes Grid
     When I sort grid by "Updated At"
     Then I should see following grid:
       | Quote # |
-      | Quote1 |
+      | Quote1  |
       | Quote2  |
     When I sort grid by "Updated At" again
     Then I should see following grid:

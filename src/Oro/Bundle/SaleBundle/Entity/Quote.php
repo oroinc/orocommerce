@@ -386,7 +386,9 @@ class Quote extends ExtendQuote implements
     public function prePersist()
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        if (!$this->isUpdatedAtSet()) {
+            $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
     }
 
     /**
@@ -396,7 +398,9 @@ class Quote extends ExtendQuote implements
      */
     public function preUpdate()
     {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        if (!$this->isUpdatedAtSet()) {
+            $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
     }
 
     /**

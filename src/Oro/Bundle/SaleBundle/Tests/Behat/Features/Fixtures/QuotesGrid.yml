@@ -28,14 +28,43 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'PO1'
         qid: 'Quote1'
         website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-01 00:00:00 UTC"))>'
 
-    quote{2..5}:
+    quote2:
         organization: '@organization'
         owner: '@admin'
         customerUser: '@test1'
-        poNumber: 'PO<current()>'
-        qid: 'Quote<current()>'
+        poNumber: 'PO2'
+        qid: 'Quote2'
         website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-02 00:00:00 UTC"))>'
+
+    quote3:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO3'
+        qid: 'Quote3'
+        website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-03 00:00:00 UTC"))>'
+
+    quote4:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO4'
+        qid: 'Quote4'
+        website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-04 00:00:00 UTC"))>'
+
+    quote5:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO5'
+        qid: 'Quote5'
+        website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-05 00:00:00 UTC"))>'
 
     quote6:
         owner: '@charlie'
@@ -44,6 +73,7 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'PO6'
         qid: 'Quote6'
         website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-06 00:00:00 UTC"))>'
 
     quote7:
         customerUser: '@test2'
@@ -52,6 +82,7 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'PO7'
         qid: 'Quote7'
         website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-07 00:00:00 UTC"))>'
 
     quote8:
         customer: '@customer2'
@@ -61,6 +92,7 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'PO8'
         qid: 'Quote8'
         website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-08 00:00:00 UTC"))>'
 
     quote9:
         internal_status: '@quote_internal_status_sent_to_customer'
@@ -70,6 +102,7 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'PO9'
         qid: 'Quote9'
         website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-09 00:00:00 UTC"))>'
 
     quote10:
         customer_status: '@quote_customer_status_not_approved'
@@ -79,6 +112,7 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'PO10'
         qid: 'Quote10'
         website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-10 00:00:00 UTC"))>'
 
     quote11:
         expired: true
@@ -88,6 +122,7 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'PO11'
         qid: 'Quote11'
         website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-11 00:00:00 UTC"))>'
 
     quote12:
         validUntil: '<dateTimeBetween("today +1 day", "today +1 day")>'
@@ -97,6 +132,7 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'PO12'
         qid: 'Quote12'
         website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-12 00:00:00 UTC"))>'
 
     quote13:
         shipUntil: '<dateTimeBetween("today +1 day", "today +1 day")>'
@@ -106,6 +142,7 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'PO13'
         qid: 'Quote13'
         website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-13 00:00:00 UTC"))>'
 
     quote14:
         payment_term_7c4f1e8e: '@paymentTerm10'
@@ -115,14 +152,61 @@ Oro\Bundle\SaleBundle\Entity\Quote:
         poNumber: 'PO14'
         qid: 'Quote14'
         website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-14 00:00:00 UTC"))>'
 
-    quote{15..20}:
+    quote15:
         organization: '@organization'
         owner: '@admin'
         customerUser: '@test1'
-        poNumber: 'PO<current()>'
-        qid: 'Quote<current()>'
+        poNumber: 'PO15'
+        qid: 'Quote15'
         website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-15 00:00:00 UTC"))>'
+
+    quote16:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO16'
+        qid: 'Quote16'
+        website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-16 00:00:00 UTC"))>'
+
+    quote17:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO17'
+        qid: 'Quote17'
+        website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-17 00:00:00 UTC"))>'
+
+    quote18:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO18'
+        qid: 'Quote18'
+        website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-18 00:00:00 UTC"))>'
+
+    quote19:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO19'
+        qid: 'Quote19'
+        website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-19 00:00:00 UTC"))>'
+
+    quote20:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@test1'
+        poNumber: 'PO20'
+        qid: 'Quote20'
+        website: '@website1'
+        updatedAt: '<(new DateTime("2024-01-20 00:00:00 UTC"))>'
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
     paymentTerm10:

@@ -41,7 +41,7 @@ layout:
         - '@setOption':
             id: __grid_container_datagrid
             optionName: grid_name
-            optionValue: order-line-items-grid-frontend
+            optionValue: '=data["grid_name"]'
 
         - '@setOption':
             id: __grid_container_datagrid
