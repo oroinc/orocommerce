@@ -1,3 +1,4 @@
+@regression
 @fixture-OroShoppingListBundle:DuplicateShoppingListFixture.yml
 Feature: Shopping list duplication
   In order to manager shopping lists on front store

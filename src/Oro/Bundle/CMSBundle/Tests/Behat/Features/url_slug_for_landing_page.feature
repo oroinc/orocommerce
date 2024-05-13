@@ -1,3 +1,4 @@
+@regression
 Feature: URL Slug for Landing Page
   In order to be sure that every landing page is accessible for it's own url
   As administrator

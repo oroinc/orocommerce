@@ -1,3 +1,4 @@
+@regression
 @fixture-OroSaleBundle:Quote.yml
 @fixture-OroSaleBundle:LoadQuoteEmailTemplate.yml
 @ticket-BB-19484

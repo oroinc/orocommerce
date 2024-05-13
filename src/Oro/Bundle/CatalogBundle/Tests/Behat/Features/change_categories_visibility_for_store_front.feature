@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-10960
 @ticket-BB-22268
 @automatically-ticket-tagged

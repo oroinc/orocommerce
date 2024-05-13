@@ -1,5 +1,4 @@
 @ticket-BB-20651
-@regression
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 
 Feature: Shopping list include a product without a price

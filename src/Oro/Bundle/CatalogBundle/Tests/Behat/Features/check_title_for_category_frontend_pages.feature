@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-19940
 @fixture-OroCatalogBundle:categories.yml
 @fixture-OroLocaleBundle:ZuluLocalization.yml

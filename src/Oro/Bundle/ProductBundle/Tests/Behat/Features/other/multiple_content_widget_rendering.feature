@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-17551
 @fixture-OroProductBundle:new_arrivals_segment_fixture.yml
 

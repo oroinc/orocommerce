@@ -1,4 +1,3 @@
-@regression
 @ticket-BB-10111
 @ticket-BB-14588
 @fixture-OroProductBundle:ProductDuplicateFixture.yml

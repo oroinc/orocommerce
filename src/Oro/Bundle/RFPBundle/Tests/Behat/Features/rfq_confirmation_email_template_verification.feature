@@ -1,3 +1,4 @@
+@regression
 @fixture-OroProductBundle:product_frontend_single_unit_mode.yml
 Feature: RFQ confirmation email template verification
   In order to check that the html comments are correct worked in the template and are edited through the WYSIWYG editor

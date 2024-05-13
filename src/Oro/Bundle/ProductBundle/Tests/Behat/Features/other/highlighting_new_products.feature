@@ -1,6 +1,5 @@
 @fixture-OroCustomerBundle:CustomerUserFixture.yml
 @fixture-OroProductBundle:highlighting_new_products.yml
-@regression
 Feature: Highlighting new products
   In order to highlight selected new products
   As an Administrator

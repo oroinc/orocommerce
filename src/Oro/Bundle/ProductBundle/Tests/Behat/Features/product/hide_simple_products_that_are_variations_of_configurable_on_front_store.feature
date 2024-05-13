@@ -1,7 +1,6 @@
 @fixture-OroProductBundle:products_hide_variations.yml
 @ticket-BB-11940
 @ticket-BB-22211
-@regression
 
 Feature: Hide simple products that are variations of configurable on front store
   In order to clean up search result and product listings from unnecessary clutter

@@ -1,3 +1,4 @@
+@regression
 @fixture-OroPromotionBundle:promotions_for_coupons.yml
 Feature: Generation of coupons
 

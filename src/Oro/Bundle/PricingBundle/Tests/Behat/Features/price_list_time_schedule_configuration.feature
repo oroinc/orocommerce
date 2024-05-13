@@ -1,3 +1,4 @@
+@regression
 @fixture-OroPricingBundle:PriceListTimeScheduleConfiguration.yml
 @ticket-BB-16591
 @pricing-storage-combined

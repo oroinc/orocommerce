@@ -1,3 +1,4 @@
+@regression
 @fixture-OroShoppingListBundle:ShoppingListRule.yml
 Feature: Check shopping list popup
 

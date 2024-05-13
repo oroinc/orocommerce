@@ -1,4 +1,3 @@
-@regression
 @fixture-OroWebCatalogBundle:web_catalog_for_breadcrumbs.yml
 Feature: Product view page breadcrumbs webcatalog
   As a User

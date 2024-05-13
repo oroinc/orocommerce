@@ -1,3 +1,4 @@
+@regression
 @fixture-OroProductBundle:product_collections_individual_products.yml
 Feature: Product collection individual products
   In order to simplify product collection creation

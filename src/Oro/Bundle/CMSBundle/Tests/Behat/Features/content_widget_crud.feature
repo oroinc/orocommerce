@@ -1,3 +1,4 @@
+@regression
 @behat-test-env
 @ticket-BB-17552
 @fixture-OroProductBundle:featured_products.yml

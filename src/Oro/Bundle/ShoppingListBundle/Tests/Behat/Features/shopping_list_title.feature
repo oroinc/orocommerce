@@ -1,3 +1,4 @@
+@regression
 @fixture-OroShoppingListBundle:ShoppingListFixture.yml
 Feature: Shopping list title
   As Customer User I have a possibility to edit title at shopping list

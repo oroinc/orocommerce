@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-17328
 @ticket-BB-18470
 @fixture-OroCatalogBundle:import_export_categories.yml

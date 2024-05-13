@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-20180
 Feature: Wysiwyg check action title in the content
 

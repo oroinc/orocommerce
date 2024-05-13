@@ -1,3 +1,4 @@
+@regression
 @fixture-OroSaleBundle:QuoteBackofficeDefaultFixture.yml
 @fixture-OroCustomerBundle:CustomerUserAddressMarleneFixture.yml
 @ticket-BB-9841

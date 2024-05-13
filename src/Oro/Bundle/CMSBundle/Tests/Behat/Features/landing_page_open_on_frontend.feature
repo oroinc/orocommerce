@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-15244
 @ticket-BB-19940
 Feature: Landing page open on frontend

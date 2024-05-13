@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-21273
 @ticket-BB-21666
 @fixture-OroCMSBundle:content_widget_in_cms_page.yml

@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-19396
 @fixture-OroCMSBundle:content_templates_in_cms_page.yml
 @fixture-OroCMSBundle:content_templates_in_cms_page_tags.yml

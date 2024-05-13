@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-17552
 
 Feature: Content Widget in Content Block

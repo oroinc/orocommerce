@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-17548
 @fixture-OroCMSBundle:CustomerUserFixture.yml
 @fixture-OroCMSBundle:WysiwygRoleFixture.yml
