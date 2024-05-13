@@ -16,7 +16,7 @@ define(function(require) {
             zoomWindowWidth: 376,
             zoomWindowHeight: 520,
             zoomWindowFadeIn: 400,
-            zoomLevel: 0.4,
+            zoomLevel: 1,
             maxZoomLevel: 0.8,
             borderSize: 1,
             borderColour: '#ebebeb',
