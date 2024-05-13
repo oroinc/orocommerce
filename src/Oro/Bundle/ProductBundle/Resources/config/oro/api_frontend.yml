@@ -93,7 +93,6 @@ api:
 
         Extend\Entity\EV_Prod_Inventory_Status:
             documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/inventory_status.md'
-            hints: [ HINT_TRANSLATABLE ]
             fields:
                 priority:
                     exclude: true
