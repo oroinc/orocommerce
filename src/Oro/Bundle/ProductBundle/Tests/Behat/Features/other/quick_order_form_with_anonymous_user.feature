@@ -1,4 +1,3 @@
-@regression
 @ticket-BB-20530
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 

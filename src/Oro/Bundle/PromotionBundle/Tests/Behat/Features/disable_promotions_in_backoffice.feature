@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-17730
 @fixture-OroPromotionBundle:promotions-with-coupons-on-order-page.yml
 @fixture-OroPromotionBundle:promotions-with-coupons-on-order-view-page.yml

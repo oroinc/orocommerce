@@ -1,3 +1,4 @@
+@regression
 @fixture-OroPromotionBundle:show-assigned-coupons-in-promotion-view-page.yml
 
 Feature: Show Assigned Coupons in Promotion view page

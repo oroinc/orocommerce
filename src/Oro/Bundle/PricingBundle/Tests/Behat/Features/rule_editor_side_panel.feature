@@ -1,3 +1,4 @@
+@regression
 @ticket-BAP-22279
 
 Feature: Rule Editor Side Panel

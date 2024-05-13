@@ -1,5 +1,4 @@
 @ticket-BAP-20454
-@regression
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 @fixture-OroCheckoutBundle:quick_order_form_products_with_decimal_prices.yml
 

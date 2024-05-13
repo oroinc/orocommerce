@@ -1,3 +1,4 @@
+@regression
 @fixture-OroShoppingListBundle:ShoppingListsWidgetFixture.yml
 Feature: Shopping Lists Widget
   In order to allow customers to see products they want to purchase

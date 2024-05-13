@@ -1,3 +1,4 @@
+@regression
 @behat-test-env
 @waf-skip
 @fixture-OroCMSBundle:CustomerUserFixture.yml

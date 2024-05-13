@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-20439
 @fixture-OroWebCatalogBundle:customer.yml
 @fixture-OroWebCatalogBundle:web_catalog_for_breadcrumbs.yml

@@ -1,3 +1,4 @@
+@regression
 Feature: Rule Editor with Autocomplete in Price List
   In order to simplify editing of the rules
   As admin

@@ -1,3 +1,4 @@
+@regression
 @fixture-OroShoppingListBundle:ShoppingListFixture.yml
 
 Feature: Check shopping list quick search

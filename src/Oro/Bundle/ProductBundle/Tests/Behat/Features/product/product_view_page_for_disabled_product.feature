@@ -1,4 +1,3 @@
-@regression
 @ticket-BB-20042
 @fixture-OroCustomerBundle:BuyerCustomerFixture.yml
 @fixture-OroProductBundle:products_frontend_search_grid.yml

@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-16205
 Feature: Brand extended fields
   In order to extend brands functionality
