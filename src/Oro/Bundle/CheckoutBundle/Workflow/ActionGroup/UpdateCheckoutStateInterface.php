@@ -9,7 +9,7 @@ interface UpdateCheckoutStateInterface
     public function execute(
         Checkout $checkout,
         string $stateToken,
-        bool $updateCheckoutState = false,
-        bool $forceUpdate = false
+        ?bool $updateCheckoutState = false,
+        ?bool $forceUpdate = false
     ): array;
 }

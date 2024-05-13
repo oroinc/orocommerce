@@ -9,7 +9,7 @@ services:
         tags:
             # Update Checkout state
             - { name: kernel.event_listener, event: oro_workflow.completed, method: updateCheckoutState, priority: 50 }
-            - { name: kernel.event_listener, event: oro_workflow.transition_form_init, method: onFormInit }
+            - { name: kernel.event_listener, event: oro_workflow.transition_form_init, method: onFormInit, priority: -100 }
             # Transition Pre-guard events
             - { name: kernel.event_listener, event: oro_workflow.pre_guard, method: onPreGuard }
             # Process updateStateToken

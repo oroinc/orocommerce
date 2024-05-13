@@ -19,8 +19,8 @@ class UpdateCheckoutState implements UpdateCheckoutStateInterface
     public function execute(
         Checkout $checkout,
         string $stateToken,
-        bool $updateCheckoutState = false,
-        bool $forceUpdate = false
+        ?bool $updateCheckoutState = false,
+        ?bool $forceUpdate = false
     ): array {
         $isSupportedRequest = $this->actionExecutor->evaluateExpression(
             'check_request',

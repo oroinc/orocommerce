@@ -76,6 +76,6 @@ class ContinueToPayment implements TransitionServiceInterface
         $this->shippingMethodActions->updateCheckoutShippingPrices($checkout);
         $this->defaultPaymentMethodSetter->setDefaultPaymentMethod($checkout);
 
-        $workflowItem->getResult()->offsetSet('shippingPriceUpdated', true);
+        $workflowItem->getData()->offsetSet('shipping_data_ready', true);
     }
 }

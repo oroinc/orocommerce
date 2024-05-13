@@ -12,5 +12,6 @@ class UnlockAndRecalculate extends TransitionServiceAbstract
         $data = $workflowItem->getData();
         $data->offsetSet('payment_method', null);
         $data->offsetSet('payment_in_progress', false);
+        $data->offsetSet('shipping_data_ready', false);
     }
 }

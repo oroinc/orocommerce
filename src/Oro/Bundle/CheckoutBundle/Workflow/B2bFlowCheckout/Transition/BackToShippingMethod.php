@@ -33,5 +33,6 @@ class BackToShippingMethod extends ClearPaymentMethodAndRecalculateState
         if (!$this->configProvider->isMultiShippingEnabled()) {
             $this->defaultShippingMethodSetter->setDefaultShippingMethod($checkout);
         }
+        $workflowItem->getData()->offsetSet('shipping_data_ready', false);
     }
 }

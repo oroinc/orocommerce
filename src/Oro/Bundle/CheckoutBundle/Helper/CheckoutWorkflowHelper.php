@@ -113,7 +113,7 @@ class CheckoutWorkflowHelper
     {
         $metadata = $workflowItem->getDefinition()?->getMetadata();
 
-        return !empty($metadata['is_checkout_workflow'])
+        return self::isCheckoutWorkflow($workflowItem)
             && !empty($metadata['is_single_page_checkout']);
     }
 
@@ -121,8 +121,15 @@ class CheckoutWorkflowHelper
     {
         $metadata = $workflowItem->getDefinition()?->getMetadata();
 
-        return !empty($metadata['is_checkout_workflow'])
+        return self::isCheckoutWorkflow($workflowItem)
             && empty($metadata['is_single_page_checkout']);
+    }
+
+    public static function isCheckoutWorkflow(WorkflowItem $workflowItem): bool
+    {
+        $metadata = $workflowItem->getDefinition()?->getMetadata();
+
+        return !empty($metadata['is_checkout_workflow']);
     }
 
     protected function checkLineItemsCount(Checkout $checkout, Request $request): void

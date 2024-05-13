@@ -181,15 +181,6 @@ workflows:
                     form_init:
                         - '@tree':
                             conditions:
-                                '@blank': $.result.shippingPriceUpdated
-                            actions:
-                                - '@assign_value': [$.result.shippingPriceUpdated, true]
-                                - '@run_action_group':
-                                    action_group: oro_update_shipping_price
-                                    parameters_mapping:
-                                        checkout: $checkout
-                        - '@tree':
-                            conditions:
                                 '@blank': $payment_validate
                             actions:
                                 - '@assign_value': [$payment_validate, true]
@@ -273,15 +264,6 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@tree':
-                            conditions:
-                                '@blank': $.result.shippingPriceUpdated
-                            actions:
-                                - '@assign_value': [$.result.shippingPriceUpdated, true]
-                                - '@run_action_group':
-                                    action_group: oro_update_shipping_price
-                                    parameters_mapping:
-                                        checkout: $checkout
                         - '@assign_value': [$late_registration.email, $email]
                     attribute_fields:
                         remove_source: ~

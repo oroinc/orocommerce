@@ -186,16 +186,8 @@ workflows:
                                     service: 'oro_order.manager.order_address'
                                     method: updateFromAbstract
                                     method_parameters: [$.result.customerUserAddresses.defaultAddress]
-                        - '@tree':
-                            conditions:
-                                '@blank': $.result.shippingPriceUpdated
-                            actions:
-                                - '@assign_value': [$.result.shippingPriceUpdated, true]
-                                - '@run_action_group':
-                                    action_group: oro_update_shipping_price
-                                    parameters_mapping:
-                                        checkout: $checkout
-                                - '@assign_value': [$.result.updateCheckoutState, true]
+                        - '@assign_value': [$shipping_data_ready, true]
+                        - '@assign_value': [$.result.updateCheckoutState, true]
                     attribute_fields:
                         billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType

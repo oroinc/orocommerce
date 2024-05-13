@@ -27,5 +27,6 @@ class ClearPaymentMethodAndRecalculateState extends TransitionServiceAbstract
         $data->offsetSet('payment_method', null);
         $data->offsetSet('shipping_method', null);
         $data->offsetSet('payment_in_progress', false);
+        $data->offsetSet('shipping_data_ready', false);
     }
 }

@@ -467,6 +467,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest, priority: -255 }
 
+    oro_checkout.event_listener.update_shipping_price:
+        class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\UpdateShippingPrice
+        arguments:
+            - '@oro_checkout.action_group.update_shipping_price'
+        tags:
+            - { name: kernel.event_listener, event: oro_workflow.transition_form_init, method: updateShippingPrice }
+
     oro_checkout.event_listener.verify_customer_consents:
         class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\VerifyCustomerConsentsListener
         arguments:
