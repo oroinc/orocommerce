@@ -768,20 +768,34 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_checkout_forgot_password_check_email }
 
-    oro_checkout.helper.checkout_workflow_helper:
-        class: Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper
-        public: true
+    oro_checkout.handler.checkout_request_handler_registry:
+        class: Oro\Bundle\CheckoutBundle\Handler\HandlerRegistry
+        arguments:
+            - !tagged_iterator oro_checkout.request_handler
+
+    oro_checkout.handler.checkout_post_request_handler:
+        class: Oro\Bundle\CheckoutBundle\Handler\CheckoutPostRequestHandler
         arguments:
             - '@oro_workflow.manager'
             - '@oro_checkout.layout.data_provider.transition'
             - '@oro_checkout.layout.data_provider.transition_form'
             - '@oro_checkout.workflow_state.handler.checkout_error'
-            - '@oro_checkout.data_provider.manager.checkout_line_items'
-            - '@oro_checkout.helper.checkout_line_item_grouping_invalidation_helper'
-            - '@oro_customer.handler.customer_registration_handler'
-            - '@oro_customer.handler.forgot_password'
             - '@event_dispatcher'
-            - '@translator'
+        tags:
+            - { name: 'oro_checkout.request_handler', priority: 50 }
+
+    oro_checkout.handler.checkout_get_request_handler:
+        class: Oro\Bundle\CheckoutBundle\Handler\CheckoutGetRequestHandler
+        arguments:
+            - '@oro_workflow.manager'
+        tags:
+            - { name: 'oro_checkout.request_handler', priority: 0 }
+
+    oro_checkout.helper.checkout_workflow_helper:
+        class: Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper
+        public: true
+        arguments:
+            - '@oro_workflow.manager'
 
     Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper:
         alias: oro_checkout.helper.checkout_workflow_helper

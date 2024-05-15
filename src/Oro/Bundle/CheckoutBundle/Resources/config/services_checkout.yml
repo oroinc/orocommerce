@@ -460,12 +460,32 @@ services:
         alias: oro_checkout.action_group.update_workflow_item
 
     # Workflow Event listeners
+    oro_checkout.event_listener.invalidate_checkout_line_items_grouping:
+        class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\InvalidateCheckoutLineItemsGrouping
+        arguments:
+            - '@oro_checkout.helper.checkout_workflow_helper'
+            - '@oro_checkout.helper.checkout_line_item_grouping_invalidation_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest, priority: -150 }
+
     oro_checkout.event_listener.process_workflow_request:
         class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\ProcessWorkflowRequestEventListener
         arguments:
             - '@oro_checkout.helper.checkout_workflow_helper'
+            - '@oro_workflow.manager'
+            - '@oro_checkout.handler.checkout_request_handler_registry'
         tags:
-            - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest, priority: -255 }
+            - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest, priority: -200 }
+
+    oro_checkout.event_listener.check_checkout_line_items_count:
+        class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\CheckLineItemsCount
+        arguments:
+            - '@oro_checkout.helper.checkout_workflow_helper'
+            - '@oro_checkout.layout.data_provider.transition'
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest, priority: -250 }
 
     oro_checkout.event_listener.update_shipping_price:
         class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\UpdateShippingPrice
