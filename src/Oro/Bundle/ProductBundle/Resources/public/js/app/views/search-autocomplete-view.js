@@ -338,6 +338,13 @@ const SearchAutocompleteView = BaseView.extend({
                 this.goToOption('down');
                 break;
             case 'Enter':
+                if (this.hasSelectedOption()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    this.executeSelectedOption();
+                }
+                break;
             case ' ':
                 this.executeSelectedOption();
                 break;
