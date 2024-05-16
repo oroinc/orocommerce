@@ -23,7 +23,7 @@ Feature: Deep level of permissions for buyer allows to view customer user owner 
     And I go to Customers/ Customer User Roles
     And I click edit Buyer in grid
     And select following permissions:
-      | Checkout | View:Сorporate (All Levels) |
+      | Checkout | View:Corporate (All Levels) |
     And I save and close form
     And I operate as the Buyer
     And I click "Account Dropdown"

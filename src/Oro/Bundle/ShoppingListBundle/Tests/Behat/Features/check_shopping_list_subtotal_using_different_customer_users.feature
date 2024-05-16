@@ -25,7 +25,7 @@ Feature: Check shopping list subtotal using different customer users
     Given I go to Customers/Customer User Roles
     When I click Edit Administrator in grid
     And select following permissions:
-      | Shopping List | View:Сorporate (All Levels) |
+      | Shopping List | View:Corporate (All Levels) |
     And save and close form
     Then I should see "Customer User Role has been saved" flash message
 
