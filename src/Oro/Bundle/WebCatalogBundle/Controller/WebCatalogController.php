@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Web сatalog сontroller
+ * Web catalog controller
  */
 class WebCatalogController extends AbstractController
 {
