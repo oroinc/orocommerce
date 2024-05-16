@@ -5,7 +5,7 @@
 @fixture-OroProductBundle:single_product.yml
 
 Feature: Product search and filter using flat prices and bayer
-  Сheck whether the pricing on the storefront is appropriate, the filters and product search work correctly.
+  Check whether the pricing on the storefront is appropriate, the filters and product search work correctly.
 
   Scenario: Feature Background
     Given sessions active:

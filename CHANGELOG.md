@@ -15,7 +15,7 @@ The current file describes significant changes in the code that may affect the u
 ### ProductBundle
 * Changed entity config fallback logic - substituted system config fallback on theme configuration fallback as default.
 
-## Changes in the Сommerce package versions
+## Changes in the Commerce package versions
 
 - [6.0.0](#600-2024-03-30)
 - [5.1.0](#510-2023-03-31)
