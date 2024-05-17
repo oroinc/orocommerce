@@ -77,7 +77,7 @@ Feature: Calculate taxes after promotions
     And I should see "Shipping $3.00"
     And I should see "Shipping Discount -$1.00"
     And I should see "Tax $0.24"
-    And I should see "Total $5.74"
+    And I should see "Total: $5.74"
     When I fill form with:
       | PO Number | PONumber2 |
     And I click "Delete this shopping list after submitting order"
@@ -152,7 +152,7 @@ Feature: Calculate taxes after promotions
     And I should see "Shipping $3.00"
     And I should see "Shipping Discount -$1.00"
     And I should see "Tax $0.21"
-    And I should see "Total $5.50"
+    And I should see "Total: $5.50"
     When I fill form with:
       | PO Number | PONumber4 |
     And I click "Delete this shopping list after submitting order"

@@ -32,7 +32,7 @@ Feature: Create Order from Checkout with product kits and taxes
     When I follow "Shopping List" link within flash message "Product kit has been added to \"Shopping list\""
     Then I should see "Subtotal $124.69"
     And I should see "Discount -$12.47"
-    And I should see "Total $112.22"
+    And I should see "Total: $112.22"
     When I click "Create Order"
     And I click "Ship to This Address"
     And I click "Continue"
@@ -40,7 +40,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Discount -$12.47"
     And I should see "Shipping $3.00"
     And I should see "Tax $12.35"
-    And I should see "Total $127.57"
+    And I should see "Total: $127.57"
     And I should see following grid:
       | SKU               | Item                              | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 1   | $124.6867 | $124.69 -$12.46867 $112.22 |
@@ -53,14 +53,14 @@ Feature: Create Order from Checkout with product kits and taxes
     And I click "Shopping List Line Item 1 Save Changes Button"
     Then I should see "Subtotal $249.37"
     And I should see "Discount -$24.94"
-    And I should see "Total $224.43"
+    And I should see "Total: $224.43"
     When I click "Create Order"
     And I click "Continue"
     Then I should see "Subtotal $249.37"
     And I should see "Discount -$24.94"
     And I should see "Shipping $3.00"
     And I should see "Tax $24.69"
-    And I should see "Total $252.12"
+    And I should see "Total: $252.12"
     And I should see following grid:
       | SKU               | Item                              | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 2   | $124.6867 | $249.37 -$24.93734 $224.43 |
@@ -75,14 +75,14 @@ Feature: Create Order from Checkout with product kits and taxes
     When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $256.77"
     And I should see "Discount -$25.68"
-    And I should see "Total $231.09"
+    And I should see "Total: $231.09"
     When I click "Create Order"
     And I click "Continue"
     Then I should see "Subtotal $256.77"
     And I should see "Discount -$25.68"
     And I should see "Shipping $3.00"
     And I should see "Tax $25.43"
-    And I should see "Total $259.52"
+    And I should see "Total: $259.52"
     And I should see following grid:
       | SKU               | Item                              | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 2   | $128.3867 | $256.77 -$25.67734 $231.09 |
@@ -98,14 +98,14 @@ Feature: Create Order from Checkout with product kits and taxes
     When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $259.25"
     And I should see "Discount -$25.93"
-    And I should see "Total $233.32"
+    And I should see "Total: $233.32"
     When I click "Create Order"
     And I click "Continue"
     Then I should see "Subtotal $259.25"
     And I should see "Discount -$25.93"
     And I should see "Shipping $3.00"
     And I should see "Tax $25.92"
-    And I should see "Total $262.24"
+    And I should see "Total: $262.24"
     And I should see following grid:
       | SKU               | Item                              | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 2   | $129.6267 | $259.25 -$25.92534 $233.32 |
@@ -123,14 +123,14 @@ Feature: Create Order from Checkout with product kits and taxes
     When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $276.55"
     And I should see "Discount -$27.66"
-    And I should see "Total $248.89"
+    And I should see "Total: $248.89"
     When I click "Create Order"
     And I click "Continue"
     Then I should see "Subtotal $276.55"
     And I should see "Discount -$27.66"
     And I should see "Shipping $3.00"
     And I should see "Tax $27.65"
-    And I should see "Total $279.54"
+    And I should see "Total: $279.54"
     And I should see following grid:
       | SKU               | Item                              | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 2   | $138.2767 | $276.55 -$27.65534 $248.89 |
@@ -147,14 +147,14 @@ Feature: Create Order from Checkout with product kits and taxes
     When I click "Update Shopping List" in "Shopping List Button Group in Dialog" element
     Then I should see "Subtotal $414.83"
     And I should see "Discount -$41.48"
-    And I should see "Total $373.35"
+    And I should see "Total: $373.35"
     When I click "Create Order"
     And I click "Continue"
     Then I should see "Subtotal $414.83"
     And I should see "Discount -$41.48"
     And I should see "Shipping $3.00"
     And I should see "Tax $41.48"
-    And I should see "Total $417.83"
+    And I should see "Total: $417.83"
     And I should see following grid:
       | SKU               | Item                              | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 3   | $138.2767 | $414.83 -$41.48301 $373.35 |
@@ -169,7 +169,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Discount -$41.48"
     And I should see "Shipping $3.00"
     And I should see "Tax $37.71"
-    And I should see "Total $376.35"
+    And I should see "Total: $376.35"
     And I should see following grid:
       | SKU               | Item                              | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 3   | $138.2767 | $414.83 -$41.48301 $373.35 |
@@ -186,7 +186,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Discount -$41.48"
     And I should see "Shipping $3.00"
     And I should see "Tax $37.33"
-    And I should see "Total $413.68"
+    And I should see "Total: $413.68"
     And I should see following grid:
       | SKU               | Item                              | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 3   | $138.2767 | $414.83 -$41.48301 $373.35 |
@@ -201,7 +201,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Discount -$41.48"
     And I should see "Shipping $3.00"
     And I should see "Tax $33.94"
-    And I should see "Total $376.35"
+    And I should see "Total: $376.35"
     And I should see following grid:
       | SKU               | Item                              | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 3   | $138.2767 | $414.83 -$41.48301 $373.35 |

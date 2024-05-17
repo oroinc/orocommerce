@@ -62,7 +62,13 @@
             transition: transitionData.transition.name
         })
     %}
-    <a href="{{ transitionUrl }}" class="btn btn--no-padding btn--outlined btn--text checkout-form__btn-back no-decoration"
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " btn checkout-form__btn-back",
+        'href': transitionUrl
+    }) %}
+
+    <a {{ block('block_attributes') }}
         {{ layout.transitionAttributes(transitionData, checkout) }}
         {{ layout.conditionMessages(transitionData) }}
     >
@@ -75,18 +81,84 @@
     {% import _self as layout %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
 
+    {% if buttonCssStyle is not defined %}
+        {% set buttonCssStyle = 'btn--outlined' %}
+    {% endif %}
+
     {% if transitionData is defined and transitionData %}
-        <div class="tooltip-container" {{ layout.conditionMessages(transitionData) }}>
-            <button type="submit"
-                class="btn {% if not transitionData.isAllowed %} btn--disabled{% endif %} checkout-form__submit"
-                disabled="disabled"
-                {{ layout.transitionAttributes(transitionData, checkout, componentOptions) }}
-            >
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' btn checkout-form__submit ' ~ buttonCssStyle,
+            'type': 'submit'
+        }) %}
+
+        {% if not transitionData.isAllowed %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' btn--disabled',
+                'disabled': 'disabled'
+            }) %}
+        {% endif %}
+
+        {% if form.vars.id is defined %}
+            {% set attr = layout_attr_defaults(attr, {
+                'form': form.vars.id
+            }) %}
+        {% endif %}
+
+        <div class="tooltip-container {{ containerClass|default('') }}" {{ layout.conditionMessages(transitionData) }}>
+            <button {{ block('block_attributes') }} {{ layout.transitionAttributes(transitionData, checkout, componentOptions) }}>
                 {{ transitionData.transition.label|trans({},'workflows') }}
                 {% if showIcon is defined and showIcon %}
                     {{ renderIcon.icon({name: 'arrow-right'}) }}
                 {% endif %}
             </button>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block checkout_transition_submit_widget %}
+    {% import _self as layout %}
+
+    {% if finalTransitionData is defined and finalTransitionData %}
+        {% set buttonLabel = finalTransitionData.transition.label|trans({},'workflows') %}
+    {% endif %}
+
+    {% if transitionData is defined and transitionData %}
+        {% set stepTo = steps[stepOrder + 1 < steps|length ? stepOrder + 1 : stepOrder] %}
+        {% set finalStep = steps.toArray()|filter(step => step.final == true)|first %}
+
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' btn btn--full checkout-form__submit',
+            'type': 'submit'
+        }) %}
+
+        {% if (stepTo != null and not stepTo.final) or not transitionData.isAllowed %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' btn--disabled',
+                'disabled': 'disabled'
+            }) %}
+        {% endif %}
+
+        {% if form.vars.id is defined %}
+            {% set attr = layout_attr_defaults(attr, {
+                'form': form.vars.id
+            }) %}
+        {% endif %}
+
+        <div class="checkout__submit-button-container{% if (stepTo != null and stepTo.final) %} final-step{% endif %}">
+            <div class="tooltip-container {{ containerClass|default('') }}" {{ layout.conditionMessages(transitionData) }}>
+                <button {{ block('block_attributes') }} {{ layout.transitionAttributes(transitionData, checkout, componentOptions) }}>
+                    {{ buttonLabel|default('oro.checkout.workflow.b2b_flow_checkout.transition.place_order.label')|trans }}
+                    {% if showIcon is defined and showIcon %}
+                        {{ renderIcon.icon({name: 'arrow-right'}) }}
+                    {% endif %}
+                </button>
+            </div>
+
+            {% if (stepTo != null and not stepTo.final) and transitionData.isAllowed %}
+                <div class="caption-italic">{{ 'oro.checkout.workflow.b2b_flow_checkout.transition.complete.message'|trans }}</div>
+            {% elseif stepTo != null and stepTo.final and not transitionData.isAllowed %}
+                <div class="caption-italic">{{ 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.order_issues.message'|trans }}</div>
+            {% endif %}
         </div>
     {% endif %}
 {% endblock %}

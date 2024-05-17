@@ -170,6 +170,9 @@ layout:
                 checkout: '=data["checkout"]'
                 transitionData: '=data["oro_checkout_single_page_transition"].getContinueTransition(data["workflowItem"])'
 
+        - '@remove':
+            id: __checkout_outside_form_buttons
+
         - '@move':
             id: checkout_form
             parentId: checkout_container
@@ -216,6 +219,9 @@ layout:
 
         - '@remove':
             id: checkout_content
+
+        - '@remove':
+            id: checkout_outside_submit_order_button
 
         - '@add':
             id: checkout_summary_additional_options
