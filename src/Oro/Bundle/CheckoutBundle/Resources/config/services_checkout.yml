@@ -541,46 +541,6 @@ services:
         arguments:
             - '@Oro\Bundle\EntityBundle\Manager\PreloadingManager'
         calls:
-            -
-                - 'setPreloadConfig'
-                -
-                    -
-                        product:
-                            backOrder: []
-                            category:
-                                backOrder: []
-                                decrementQuantity: []
-                                highlightLowInventory: []
-                                inventoryThreshold: []
-                                isUpcoming: []
-                                lowInventoryThreshold: []
-                                manageInventory: []
-                                maximumQuantityToOrder: []
-                                minimumQuantityToOrder: []
-                            decrementQuantity: []
-                            highlightLowInventory: []
-                            inventoryThreshold: []
-                            isUpcoming: []
-                            lowInventoryThreshold: []
-                            manageInventory: []
-                            maximumQuantityToOrder: []
-                            minimumQuantityToOrder: []
-                            unitPrecisions: []
-                        kitItemLineItems:
-                            kitItem:
-                                labels: []
-                                productUnit: []
-                            product:
-                                names: []
-                                unitPrecisions: []
-                                images:
-                                    types: []
-                                    image:
-                                        digitalAsset:
-                                            titles: []
-                                            sourceFile:
-                                                digitalAsset: []
-                            productUnit: []
-
+            - ['setPreloadConfig', ['%oro_checkout.preload_config.checkout%']]
         tags:
             - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest }

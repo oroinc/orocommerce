@@ -25,7 +25,7 @@ class CheckoutRequestPreloadEntitiesListener
     public function onCheckoutRequest(CheckoutRequestEvent $event): void
     {
         $this->preloadingManager->preloadInEntities(
-            (array)$event->getCheckout()->getLineItems()?->toArray(),
+            $event->getCheckout()->getLineItems()?->toArray() ?? [],
             $this->preloadConfig
         );
     }
