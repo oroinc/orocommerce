@@ -38,7 +38,7 @@ class StartFromShoppingListTransition extends TransitionServiceAbstract
             return false;
         }
 
-        if (!$this->isStartAllowedByListeners($workflowItem, $errors)) {
+        if (!$this->isStartAllowedByListeners($workflowItem, $shoppingList, $errors)) {
             return false;
         }
 
@@ -102,15 +102,23 @@ class StartFromShoppingListTransition extends TransitionServiceAbstract
         return $shoppingList;
     }
 
-    private function isStartAllowedByListeners(WorkflowItem $workflowItem, Collection $errors = null): bool
-    {
+    private function isStartAllowedByListeners(
+        WorkflowItem $workflowItem,
+        ShoppingList $shoppingList,
+        Collection $errors = null
+    ): bool {
         $workflowResult = $workflowItem->getResult();
         if (!$workflowResult->offsetExists('extendableConditionShoppingListStart')) {
             $isAllowed = $this->actionExecutor->evaluateExpression(
                 expressionName: ExtendableCondition::NAME,
-                data: ['events' => ['extendable_condition.shopping_list_start']],
-                errors: $errors,
-                context: $workflowItem
+                data: [
+                    'events' => ['extendable_condition.shopping_list_start'],
+                    'eventData' => [
+                        'checkout' => $workflowItem->getEntity(),
+                        'shoppingList' => $shoppingList
+                    ]
+                ],
+                errors: $errors
             );
             $workflowResult->offsetSet('extendableConditionShoppingListStart', $isAllowed);
         }

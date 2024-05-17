@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\Workflow\ActionGroup;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\PrepareCheckoutSettingsProvider;
@@ -125,21 +124,17 @@ class StartCheckout implements StartCheckoutInterface
         WorkflowItem $workflowItem,
         bool $validateOnStartCheckout
     ): bool {
-        $context = new ActionData($workflowItem->getData()->toArray());
-        $context->offsetSet('validateOnStartCheckout', $validateOnStartCheckout);
-        $isAllowed = $this->actionExecutor->evaluateExpression(
+        return $this->actionExecutor->evaluateExpression(
             expressionName: ExtendableCondition::NAME,
             data: [
                 'events' => ['extendable_condition.start_checkout'],
-                'showErrors' => $showErrors
+                'showErrors' => $showErrors,
+                'eventData' => [
+                    'checkout' => $workflowItem->getEntity(),
+                    'validateOnStartCheckout' => $validateOnStartCheckout
+                ]
             ],
-            errors: $errors,
-            context: $context
+            errors: $errors
         );
-        if ($context->getRedirectUrl()) {
-            $workflowItem->setRedirectUrl($context->getRedirectUrl());
-        }
-
-        return $isAllowed;
     }
 }

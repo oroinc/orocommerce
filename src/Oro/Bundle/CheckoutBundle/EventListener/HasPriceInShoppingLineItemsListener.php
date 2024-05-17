@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
@@ -41,15 +40,11 @@ class HasPriceInShoppingLineItemsListener
 
     public function onStartCheckoutConditionCheck(ExtendableConditionEvent $conditionEvent)
     {
-        /** @var ActionData $context */
-        $context = $conditionEvent->getContext();
-
-        if (!$this->isApplicable($context)) {
+        $checkout = $conditionEvent->getContext()?->offsetGet('checkout');
+        if (!$checkout instanceof Checkout) {
             return;
         }
 
-        /** @var Checkout $checkout */
-        $checkout = $context->get('checkout');
         $lineItems = $checkout->getLineItems();
         $lineItemsWithNotFixedPrice = $lineItems->filter(
             function (CheckoutLineItem $lineItem) {
@@ -74,22 +69,6 @@ class HasPriceInShoppingLineItemsListener
                 'oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_price'
             );
         }
-    }
-
-    /**
-     * @param ActionData|mixed $context
-     *
-     * @return bool
-     */
-    private function isApplicable($context)
-    {
-        if (!$context instanceof ActionData) {
-            return false;
-        }
-
-        $checkout = $context->get('checkout');
-
-        return $checkout instanceof Checkout;
     }
 
     /**

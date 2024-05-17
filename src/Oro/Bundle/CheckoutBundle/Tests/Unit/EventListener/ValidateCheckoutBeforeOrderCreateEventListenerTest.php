@@ -9,8 +9,8 @@ use Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutBeforeOrderCreateEve
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutValidationGroupsBySourceEntityProvider;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
+use Oro\Component\Action\Event\ExtendableEventData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\GroupSequence;
@@ -37,21 +37,9 @@ class ValidateCheckoutBeforeOrderCreateEventListenerTest extends TestCase
         );
     }
 
-    public function testOnBeforeOrderCreateWhenContextNotWorkflowItem(): void
-    {
-        $event = new ExtendableConditionEvent(new \stdClass());
-
-        $this->validator
-            ->expects(self::never())
-            ->method(self::anything());
-
-        $this->listener->onBeforeOrderCreate($event);
-    }
-
     public function testOnBeforeOrderCreateWhenEntityNotCheckout(): void
     {
-        $context = (new WorkflowItem())
-            ->setEntity(new \stdClass());
+        $context = new ExtendableEventData(['checkout' => null, 'shoppingList' => new ShoppingList()]);
         $event = new ExtendableConditionEvent($context);
 
         $this->validator
@@ -66,8 +54,7 @@ class ValidateCheckoutBeforeOrderCreateEventListenerTest extends TestCase
         $shoppingList = new ShoppingList();
         $checkout = (new Checkout())
             ->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
-        $context = (new WorkflowItem())
-            ->setEntity($checkout);
+        $context = new ExtendableEventData(['checkout' => $checkout, 'shoppingList' => $shoppingList]);
         $event = new ExtendableConditionEvent($context);
 
         $validationGroups = new GroupSequence(['Default', 'checkout_before_order_create%from_alias%']);
@@ -80,7 +67,7 @@ class ValidateCheckoutBeforeOrderCreateEventListenerTest extends TestCase
         $this->validator
             ->expects(self::once())
             ->method('validate')
-            ->with($context->getEntity(), null, [$validationGroups])
+            ->with($checkout, null, [$validationGroups])
             ->willReturn(new ConstraintViolationList());
 
         $this->listener->onBeforeOrderCreate($event);
@@ -93,8 +80,7 @@ class ValidateCheckoutBeforeOrderCreateEventListenerTest extends TestCase
         $shoppingList = new ShoppingList();
         $checkout = (new Checkout())
             ->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
-        $context = (new WorkflowItem())
-            ->setEntity($checkout);
+        $context = new ExtendableEventData(['checkout' => $checkout, 'shoppingList' => $shoppingList]);
         $event = new ExtendableConditionEvent($context);
 
         $validationGroups = new GroupSequence(['Default', 'checkout_before_order_create%from_alias%']);
@@ -109,7 +95,7 @@ class ValidateCheckoutBeforeOrderCreateEventListenerTest extends TestCase
         $this->validator
             ->expects(self::once())
             ->method('validate')
-            ->with($context->getEntity(), null, [$validationGroups])
+            ->with($checkout, null, [$validationGroups])
             ->willReturn(new ConstraintViolationList([$violation1, $violation2]));
 
         $this->listener->onBeforeOrderCreate($event);

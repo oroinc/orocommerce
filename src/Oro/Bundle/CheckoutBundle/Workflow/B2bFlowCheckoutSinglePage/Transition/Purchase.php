@@ -14,6 +14,8 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
+use Oro\Component\Action\Action\ExtendableAction;
+use Oro\Component\Action\Condition\ExtendableCondition;
 
 class Purchase extends TransitionServiceAbstract
 {
@@ -76,12 +78,13 @@ class Purchase extends TransitionServiceAbstract
         $checkout = $workflowItem->getEntity();
         $data = $workflowItem->getData();
         $workflowResult = $workflowItem->getResult();
+        $order = $data->offsetGet('order');
 
         $data->offsetSet('payment_in_progress', true);
 
         $purchaseResult = $this->checkoutActions->purchase(
             $checkout,
-            $data->offsetGet('order'),
+            $order,
             [
                 'additionalData' => $data->offsetGet('additional_data'),
                 'email' => $data->offsetGet('email')
@@ -91,9 +94,16 @@ class Purchase extends TransitionServiceAbstract
         $workflowResult->offsetSet('responseData', $responseData);
 
         $this->actionExecutor->executeAction(
-            'extendable',
-            ['events' => ['extendable_action.finish_checkout']],
-            $workflowItem
+            ExtendableAction::NAME,
+            [
+                'events' => ['extendable_action.finish_checkout'],
+                'eventData' => [
+                    'order' => $order,
+                    'checkout' => $checkout,
+                    'responseData' => $responseData,
+                    'email' => $data->offsetGet('email')
+                ]
+            ]
         );
 
         if (!empty($responseData['purchaseSuccessful'])) {
@@ -121,21 +131,28 @@ class Purchase extends TransitionServiceAbstract
         }
 
         return $this->actionExecutor->evaluateExpression(
-            'has_applicable_payment_methods',
-            [$paymentContext],
-            $errors,
-            'oro.checkout.workflow.condition.payment_method_is_not_applicable.message'
+            expressionName: 'has_applicable_payment_methods',
+            data: [$paymentContext],
+            errors: $errors,
+            message: 'oro.checkout.workflow.condition.payment_method_is_not_applicable.message'
         );
     }
 
     private function isOrderCreateAllowedByEventListeners(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
+        $data = $workflowItem->getData();
+
         return $this->actionExecutor->evaluateExpression(
-            expressionName: 'extendable',
-            data: ['events' => ['extendable_condition.before_order_create']],
+            expressionName: ExtendableCondition::NAME,
+            data: [
+                'events' => ['extendable_condition.before_order_create'],
+                'eventData' => [
+                    'checkout' => $data->offsetGet('checkout'),
+                    'order' => $data->offsetGet('order')
+                ]
+            ],
             errors: $errors,
-            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message',
-            context: $workflowItem
+            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
         );
     }
 }

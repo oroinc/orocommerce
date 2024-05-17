@@ -10,6 +10,7 @@ use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CheckoutActio
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\OrderActionsInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
+use Oro\Component\Action\Condition\ExtendableCondition;
 
 abstract class PlaceOrder implements TransitionServiceInterface
 {
@@ -42,11 +43,15 @@ abstract class PlaceOrder implements TransitionServiceInterface
     public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         return $this->actionExecutor->evaluateExpression(
-            expressionName: 'extendable',
-            data: ['events' => ['extendable_condition.before_order_create']],
+            expressionName: ExtendableCondition::NAME,
+            data: [
+                'events' => ['extendable_condition.before_order_create'],
+                'eventData' => [
+                    'checkout' => $workflowItem->getEntity()
+                ]
+            ],
             errors: $errors,
-            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message',
-            context: $workflowItem
+            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
         );
     }
 
@@ -88,10 +93,14 @@ abstract class PlaceOrder implements TransitionServiceInterface
         }
 
         $isAllowed = $this->actionExecutor->evaluateExpression(
-            expressionName: 'extendable',
-            data: ['events' => ['extendable_condition.pre_order_create']],
-            errors: $errors,
-            context: $workflowItem
+            expressionName: ExtendableCondition::NAME,
+            data: [
+                'events' => ['extendable_condition.pre_order_create'],
+                'eventData' => [
+                    'checkout' => $workflowItem->getEntity()
+                ]
+            ],
+            errors: $errors
         );
         $workflowResult->offsetSet('extendableConditionPreOrderCreate', $isAllowed);
 

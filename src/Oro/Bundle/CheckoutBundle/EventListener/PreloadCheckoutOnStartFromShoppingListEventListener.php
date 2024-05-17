@@ -6,7 +6,6 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
 /**
@@ -76,16 +75,14 @@ class PreloadCheckoutOnStartFromShoppingListEventListener
 
     public function onStartFromShoppingList(ExtendableConditionEvent $event): void
     {
-        $context = $event->getContext();
-        if (!$context instanceof WorkflowItem) {
-            return;
-        }
-
-        $shoppingList = $context->getResult()->get('shoppingList');
+        $shoppingList = $event->getContext()?->offsetGet('shoppingList');
         if (!$shoppingList instanceof ShoppingList) {
             return;
         }
 
-        $this->preloadingManager->preloadInEntities($shoppingList->getLineItems()->toArray(), $this->fieldsToPreload);
+        $this->preloadingManager->preloadInEntities(
+            $shoppingList->getLineItems()?->toArray() ?? [],
+            $this->fieldsToPreload
+        );
     }
 }

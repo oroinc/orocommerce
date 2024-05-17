@@ -76,17 +76,6 @@ class PreloadCheckoutOnStartEventListenerTest extends TestCase
         $this->listener = new PreloadCheckoutOnStartEventListener($this->preloadingManager);
     }
 
-    public function testOnStartWhenContextNotActionData(): void
-    {
-        $event = new ExtendableConditionEvent(new \stdClass());
-
-        $this->preloadingManager
-            ->expects(self::never())
-            ->method(self::anything());
-
-        $this->listener->onStart($event);
-    }
-
     public function testOnStartWhenEntityNotCheckout(): void
     {
         $context = (new ActionData())

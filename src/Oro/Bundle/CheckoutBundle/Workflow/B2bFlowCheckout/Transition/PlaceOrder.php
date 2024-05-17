@@ -15,6 +15,7 @@ use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\PlaceOrder as BasePlaceOrd
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
+use Oro\Component\Action\Action\ExtendableAction;
 
 class PlaceOrder extends BasePlaceOrder
 {
@@ -85,9 +86,16 @@ class PlaceOrder extends BasePlaceOrder
         $workflowResult->offsetSet('responseData', $responseData);
 
         $this->actionExecutor->executeAction(
-            'extendable',
-            ['events' => ['extendable_action.finish_checkout']],
-            $workflowItem
+            ExtendableAction::NAME,
+            [
+                'events' => ['extendable_action.finish_checkout'],
+                'eventData' => [
+                    'order' => $order,
+                    'checkout' => $checkout,
+                    'responseData' => $responseData,
+                    'email' => $data->offsetGet('email')
+                ]
+            ]
         );
 
         if (empty($responseData['paymentMethodSupportsValidation'])) {
