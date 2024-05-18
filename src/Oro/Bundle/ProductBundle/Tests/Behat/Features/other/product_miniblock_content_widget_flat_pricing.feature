@@ -160,7 +160,7 @@ Feature: Product mini-block content widget flat pricing
     And I should not see "Product1"
     And I should see "Additional test data"
 
-  Scenario: As the admin set product visibility config option to to hidden
+  Scenario: As the admin set product visibility config option to hidden
     Given I proceed as the Admin
     And I go to Products/Products
     And click "edit" on row "PSKU1" in grid

@@ -6,7 +6,7 @@
 @community-edition-only
 
 Feature: Default Checkout From Quote Quantity Errors
-  In order to to create order from Quote on front store
+  In order to create order from Quote on front store
   As a buyer
   I want to start checkout from Quote view page and view quantity validation errors before submit order
 

@@ -5,7 +5,7 @@
 Feature: Quote creation without customer
   In order to create a quote
   As an Administrator
-  I want to have ability to to fill only shipping address and product sections
+  I want to have ability to fill only shipping address and product sections
 
   Scenario: Create quote
     Given I login as administrator
