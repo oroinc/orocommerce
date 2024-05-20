@@ -7,7 +7,7 @@
 Feature: Product Image Placeholder in system configuration
   In order to manage product images
   As an Administrator
-  I want to be able to to override the default placeholder for product image in the system configuration
+  I want to be able to override the default placeholder for product image in the system configuration
 
   Scenario: Feature Background
     Given sessions active:

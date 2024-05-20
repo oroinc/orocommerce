@@ -1,8 +1,9 @@
 /* @theme: default; */
 
 .product-upcoming-label {
-    margin-top: spacing('md');
-    margin-bottom: spacing('md');
+    padding-top: spacing('md');
+    padding-bottom: spacing('md');
+    margin: 0;
     font-size: $base-font-size--s;
 
     color: $product-upcoming-label-color;

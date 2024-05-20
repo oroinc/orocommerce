@@ -9,7 +9,7 @@
 @fixture-OroShoppingListBundle:SimpleProductFixture.yml
 
 Feature: Shopping list confirmation popup
-  Сheck whether the confirmation popup is displayed only when an empty configurable product is added to shopping list.
+  Check whether the confirmation popup is displayed only when an empty configurable product is added to shopping list.
 
   Scenario: Feature Background
     Given sessions active:

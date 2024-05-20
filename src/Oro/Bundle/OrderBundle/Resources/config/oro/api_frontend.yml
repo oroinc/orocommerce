@@ -159,7 +159,7 @@ api:
 
         Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
             documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order_product_kit_item_line_item.md'
-            disable_meta_properties: [title]
+            disable_meta_properties: [ title ]
             fields:
                 productId:
                     form_options:

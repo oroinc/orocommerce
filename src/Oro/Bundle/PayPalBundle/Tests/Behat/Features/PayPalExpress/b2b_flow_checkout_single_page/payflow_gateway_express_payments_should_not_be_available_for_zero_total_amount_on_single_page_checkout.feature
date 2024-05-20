@@ -32,6 +32,6 @@ Feature: Payflow Gateway Express payments should not be available for zero total
     And I click "Apply"
     And I should see "coupon-100-order Promotion Order 100 Label" in the "Coupons List" element
     And I should see "coupon-100-shipping Promotion Shipping 100 Label" in the "Coupons List" element
-    And I should see "Total $0.00"
+    And I should see "Total: $0.00"
     And I should see "No payment methods are available, please contact us to complete the order submission."
     And I should not see "ExpressPayPal"

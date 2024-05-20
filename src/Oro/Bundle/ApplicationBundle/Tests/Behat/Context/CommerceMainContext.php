@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ApplicationBundle\Tests\Behat\Context;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeStepScope;
 use Behat\Gherkin\Node\TableNode;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
@@ -12,7 +13,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Context\SpinTrait;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\EntityPage;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Tabs;
+use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
+use WebDriver\Exception\NoSuchElement;
 use WebDriver\Exception\UnexpectedAlertOpen;
 
 class CommerceMainContext extends OroFeatureContext implements
@@ -22,6 +25,19 @@ class CommerceMainContext extends OroFeatureContext implements
     use PageObjectDictionary;
     use SessionAliasProviderAwareTrait;
     use SpinTrait;
+
+    private ?OroMainContext $oroMainContext = null;
+
+    /**
+     * @BeforeScenario
+     */
+    public function gatherContexts(BeforeScenarioScope $scope): void
+    {
+        $environment = $scope->getEnvironment();
+        if ($environment->hasContextClass(OroMainContext::class)) {
+            $this->oroMainContext = $environment->getContext(OroMainContext::class);
+        }
+    }
 
     /**
      * @BeforeStep
@@ -217,5 +233,26 @@ JS;
         if ($sidebarMainMenuPopup->isValid() && $sidebarMainMenuPopup->isVisible()) {
             $closeButton->clickForce();
         }
+    }
+
+    /**
+     * Click on button in hamburger menu
+     * Example: When I click "Category 1" in hamburger menu
+     * @When /^(?:|I )click "(?P<button>(?:[^"]|\\")*)" in hamburger menu$/
+     */
+    public function pressButtonInHamburgerMenu($button)
+    {
+        $this->openMainMenu();
+
+        $this->spin(function () use ($button) {
+            try {
+                $this->oroMainContext->pressButtonInModalWindow($button);
+                return true;
+            } catch (NoSuchElement $exception) {
+                return false;
+            }
+
+            return true;
+        }, 5);
     }
 }

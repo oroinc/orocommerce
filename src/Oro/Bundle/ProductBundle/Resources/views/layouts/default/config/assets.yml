@@ -4,6 +4,7 @@ styles:
         - 'bundles/oroproduct/default/scss/variables/product-view-layout-config.scss'
         - 'bundles/oroproduct/default/scss/variables/product-view-desc-title-config.scss'
         - 'bundles/oroproduct/default/scss/variables/product-view-quantity-config.scss'
+        - 'bundles/oroproduct/default/scss/variables/product-view-line-form-config.scss'
         - 'bundles/oroproduct/default/scss/variables/product-view-brand-config.scss'
         - 'bundles/oroproduct/default/scss/variables/embedded-products-config.scss'
         - 'bundles/oroproduct/default/scss/variables/quick-order-config.scss'

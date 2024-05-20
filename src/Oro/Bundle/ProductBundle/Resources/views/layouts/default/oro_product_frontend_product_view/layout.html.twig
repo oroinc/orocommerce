@@ -32,7 +32,6 @@
 {% endblock %}
 
 {% block _product_view_microdata_container_widget %}
-
     {% if matrixFormType is not defined %}
         {% set matrixFormType = '' %}
     {% endif %}
@@ -55,7 +54,7 @@
             {% endset %}
         {% endif %}
     {% endif %}
-    <div {{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }} class="product-view-microdata-container">
         {% if productSchemaOrgDescription is defined %}
             {{ productSchemaOrgDescription }}
         {% endif %}
@@ -71,6 +70,91 @@
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block _product_view_headline_widget %}
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__headline',
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _product_view_headline_group_first_widget %}
+    {% set visibleBlock = block.children|filter(child => child.children|default(false))|length %}
+    {% if visibleBlock %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__headline-group'
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _product_view_headline_group_second_widget %}
+    {% set visibleBlock = block.children|filter(child => child.children|default(false))|length %}
+    {% if visibleBlock %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__headline-group'
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _product_view_headline_sku_slot_widget %}
+    {% if block.children|length %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__headline-item'
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _product_view_headline_inventory_status_slot_widget %}
+    {% if block.children|length %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__headline-item'
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _product_view_headline_brand_slot_widget %}
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__headline-item'
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _product_view_headline_seller_name_slot_widget %}
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__headline-item'
+        }) %}
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block _product_view_aside_container_widget %}
@@ -95,7 +179,8 @@
 
 {% block _product_view_content_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__content'
+        '~class': ' product-view__content',
+        'data-product-view-content': '',
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -187,18 +272,6 @@
     {% endif %}
 {% endblock %}
 
-{% block _product_view_brand_container_widget %}
-    {% if block.children is not empty %}
-        {% set attr = layout_attr_defaults(attr, {
-            '~class': ' product-view__brand'
-        }) %}
-
-        <div {{ block('block_attributes') }}>
-            {{ block_widget(block) }}
-        </div>
-    {% endif %}
-{% endblock %}
-
 {% block _product_view_brand_inventory_status_widget %}
     {% set inventoryStatus = oro_inventory_status_code(product) %}
     {% set statusesMap = {
@@ -250,7 +323,7 @@
         '~class': ' sku'
     }) %}
     <div {{ block('block_attributes') }}>
-        <span class="sku__code" itemprop="sku">{{ entity.sku|e }}</span>
+        {{ 'oro.product.frontend.index.sku'|trans }} <span class="sku__code" itemprop="sku">{{ entity.sku|e }}</span>
     </div>
 {% endblock %}
 
@@ -262,6 +335,9 @@
         'itemtype': 'http://schema.org/Brand'
     }) %}
     <div {{ block('block_attributes') }} >
+        {% if label|trans|first != '_' %}
+            {{ label|trans }}:
+        {% endif %}
         <span class="product-view-brand-title" itemprop="name">{{ block('attribute_localized_fallback_widget')|trim }}</span>
     </div>
 {% endblock %}
@@ -306,9 +382,37 @@
     }) }}
 {% endblock %}
 
+{% block _product_view_line_item_container_wrapper_widget %}
+    {% if matrixFormType is not defined %}
+        {% set matrixFormType = '' %}
+    {% endif %}
+    {% set isNoMatrixForm = product.isConfigurable and matrixFormType == 'none' %}
+
+    {% if not isNoMatrixForm %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-line-item-form': '',
+            'data-dom-relocation-options': {
+                scroll: [
+                    {
+                        viewport: 'desktop',
+                        moveTo: '[data-product-view-line-form-panel]',
+                        endpointClass: 'line-item-form-moved'
+                    }
+                ]
+            }
+        }) %}
+    {% endif %}
+    {% set children = block_widget(block, {attr: attr}) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block _product_view_line_item_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' line-item-form',
+        '~class': ' product-view__line-item-form line-item-form'
     }) %}
     {% set children = block_widget(block, {attr: attr}) %}
     {% if children|trim|length %}

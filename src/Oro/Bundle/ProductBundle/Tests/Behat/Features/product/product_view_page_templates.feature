@@ -257,8 +257,9 @@ Feature: Product View Page Templates
     Then I should see next rows in "Default Page Prices" table in the exact order
       | QTY | Item   |
       | 1+  | $10.00 |
+    When I fill "Product Shopping List Form" with:
+      | Unit | set |
     When I click on empty space
-    And I type "set" in "Product View Unit"
     Then I should see next rows in "Default Page Prices" table in the exact order
       | QTY | Set     |
       | 1+  | $445.50 |

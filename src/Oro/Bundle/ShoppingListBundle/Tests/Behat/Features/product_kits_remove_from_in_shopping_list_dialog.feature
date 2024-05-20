@@ -81,7 +81,7 @@ Feature: Product kits remove from in shopping list dialog
     Then there are no records in grid
     And I should see "There are no shopping list line items"
     And I should see "Summary No Items"
-    And I should see "Total $0.00"
+    And I should see "Total: $0.00"
 
   Scenario: Check shopping list edit page
     When I click "Shopping List Actions"
@@ -89,4 +89,4 @@ Feature: Product kits remove from in shopping list dialog
     Then there are no records in grid
     And I should see "There are no shopping list line items"
     And I should see "Summary No Items"
-    And I should see "Total $0.00"
+    And I should see "Total: $0.00"

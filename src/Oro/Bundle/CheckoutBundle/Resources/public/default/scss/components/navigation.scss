@@ -54,13 +54,16 @@
 
         font-weight: font-weight('bold');
 
-        @include badge(
-            $checkout-navigation-icon-size,
-            $checkout-navigation-icon-font-size,
-            $badge-bg: get-color('neutral', 'grey2'),
-            $badge-color: get-color('text', 'disabled'),
-            $badge-icon-offset: 5px
-        );
+        border-radius: 100%;
+
+        display: inline-flex;
+        min-width: $checkout-navigation-icon-size;
+        height: $checkout-navigation-icon-size;
+        justify-content: center;
+        align-items: center;
+
+        background-color: $checkout-navigation-icon-background-color;
+        color: $checkout-navigation-icon-color;
 
         &--current {
             color: $checkout-navigation-current-color;

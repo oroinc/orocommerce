@@ -44,7 +44,7 @@ define(function(require) {
             this.initializeTriggers();
 
             if (this.options.hasForm) {
-                this.$form = this.$el.closest('form');
+                this.$form = this.getForm();
                 this.$form.bindFirst('submit.' + this.cid, this.preventSubmit.bind(this));
                 this.$form.on('submit.' + this.cid, this.onSubmit.bind(this));
             } else {
@@ -61,6 +61,10 @@ define(function(require) {
 
             mediator.on('checkout:transition-button:enable', this.enableTransitionButton, this);
             mediator.on('checkout:transition-button:disable', this.disableTransitionButton, this);
+        },
+
+        getForm() {
+            return this.$el.prop('form') ? $(this.$el.prop('form')) : this.$el.closest('form');
         },
 
         enableTransitionButton: function() {
@@ -98,6 +102,10 @@ define(function(require) {
         },
 
         onSubmit: function(e) {
+            if (e.originalEvent && !e.originalEvent.submitter.isEqualNode(this.$el[0])) {
+                return false;
+            }
+
             if (this.options.flashMessageOnSubmit) {
                 e.preventDefault();
                 mediator.execute('showFlashMessage', 'error', this.options.flashMessageOnSubmit);
@@ -131,6 +139,7 @@ define(function(require) {
             }
 
             this.inProgress = true;
+
             mediator.execute('showLoading');
 
             $.ajax(this.prepareAjaxData(data, this.options.transitionUrl))

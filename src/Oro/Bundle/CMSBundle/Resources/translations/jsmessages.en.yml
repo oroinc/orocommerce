@@ -6,7 +6,7 @@ oro.cms:
                 desc: 'If you exit external markup mode, the editor may change the source code and break the imported content markup and styles.'
             message: 'Style Manager is disabled in External Markup Mode'
             label: 'Enable External Markup'
-            info: "The option disables the GrapeJs built-in style manager to prevent it from breaking the imported СSS styles. Use the Source Code dialog to add/edit styles."
+            info: "The option disables the GrapeJs built-in style manager to prevent it from breaking the imported CSS styles. Use the Source Code dialog to add/edit styles."
         option_panel:
             show_borders: 'Show Borders'
             preview: 'Preview'

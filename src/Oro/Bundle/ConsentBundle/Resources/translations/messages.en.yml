@@ -25,7 +25,7 @@ oro:
         assigned_customer_users.label: Customer Users Accepted
         content_node:
             label: Content Node
-            description: The selected web сatalog node can be configured to display different landing pages (content variants) in different languages.
+            description: The selected web catalog node can be configured to display different landing pages (content variants) in different languages.
         webcatalog:
             label: Web Catalog
             description: Select the web catalog where you intend to use this consent.

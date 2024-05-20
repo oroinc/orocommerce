@@ -257,4 +257,14 @@
     .extra-block-bg {
         background-color: $cms-typography-extra-block-bg-color;
     }
+
+    .product-item {
+        &__title {
+            margin-block: $product-item-title-margin-block;
+        }
+    }
+
+    .product-upcoming-label {
+        margin: 0;
+    }
 }

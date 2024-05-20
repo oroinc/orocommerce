@@ -1,7 +1,15 @@
 /* @theme: default;  */
 
-$product-view-line-item-quantity-width: 200px !default;
+$product-view-line-item-quantity-width: 142px !default;
 
-// Mobile
+$product-view-line-item-choice-width: 162px !default;
 
-$product-view-line-item-quantity-width-mobile: 100% !default;
+$product-view-line-item-unit-color: get-var-color('text', 'secondary') !default;
+$product-view-line-item-unit-margin: 0 spacing('base') 0 spacing('sm') !default;
+$product-view-line-item-unit-min-width: 64px !default;
+
+// Tablet
+
+$product-view-line-item-quantity-width-tablet: calc(50% - #{spacing('xs')}) !default;
+$product-view-line-item-choice-width-tablet: $product-view-line-item-quantity-width-tablet !default;
+$product-view-line-item-unit-width-tablet: calc(50% - #{spacing('md')}) !default;

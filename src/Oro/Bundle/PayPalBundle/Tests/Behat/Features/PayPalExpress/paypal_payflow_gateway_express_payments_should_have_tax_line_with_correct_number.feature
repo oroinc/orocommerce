@@ -28,6 +28,6 @@ Feature: Paypal payflow gateway express payments should have tax line with corre
       | Subtotal | $10.00  |
       | Shipping | $3.00   |
       | Tax      | $0.91   |
-    And I should see "Total $13.00"
+    And I should see "Total: $13.00"
     When I click "Submit Order"
     And I see the "Thank You" page with "Thank You For Your Purchase!" title

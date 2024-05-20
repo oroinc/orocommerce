@@ -301,7 +301,7 @@ Feature: My Shopping List
     And I should see "Summary 30 Items"
     And I should see "Subtotal $8,012.00"
     And I should see "Discount -$647.50"
-    And I should see "Total $7,364.50"
+    And I should see "Total: $7,364.50"
 
   Scenario: Check view second page
     When I click "Next"

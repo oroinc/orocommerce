@@ -5,7 +5,7 @@
 @fixture-OroCheckoutBundle:Checkout.yml
 
 Feature: Default Checkout From Shopping List With Wrong Order Confirmation Template
-  In order to to create order from Shopping List on front store
+  In order to create order from Shopping List on front store
   As a Buyer
   I want to start and complete checkout from shopping list with wrong order confirmation template, email will not be sent
 

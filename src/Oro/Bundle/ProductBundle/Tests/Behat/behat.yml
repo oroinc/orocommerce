@@ -1132,6 +1132,11 @@ oro_behat_extension:
       options:
         mapping:
           Quantity: 'oro_product_frontend_line_item[quantity]'
+          Unit:
+            type: 'css'
+            locator: '[name="oro_product_frontend_line_item[unit]"]'
+            element: ProductUnitSelector
+
 
     Product Shopping List Dropdown:
       selector:
@@ -1482,12 +1487,12 @@ oro_behat_extension:
     Uploaded Product Image:
       selector:
         type: xpath
-        locator: '//img[contains (@src,"/media/cache/attachment")]'
+        locator: '//img[contains(@src,"/media/cache/attachment") and not(contains(@class, "product-view-line-form-image"))]'
 
     Empty Product Image:
       selector:
-       type: xpath
-       locator: '//img[contains (@src,"no_image.png")]'
+        type: xpath
+        locator: '//img[contains (@src,"no_image.png") and not(contains(@class, "product-view-line-form-image"))]'
 
     Unit Of Quantity:
       selector:
@@ -1747,7 +1752,7 @@ oro_behat_extension:
       selector: 'div.product-view'
 
     Product Details:
-      selector: 'div.product-view > div:nth-child(1)'
+      selector: '.product-view-microdata-container'
 
     SchemaOrg SKU:
       selector: '[itemprop="sku"]'

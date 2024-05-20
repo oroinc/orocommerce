@@ -7,7 +7,7 @@
 Feature: Order Country and region selectors should contain translated values
   In order to manage orders
   As an Administrator
-  I want to to see correctly translated names of country and region during creation and editing of order
+  I want to see correctly translated names of country and region during creation and editing of order
 
   Scenario: Feature Background
     Given I login as administrator

@@ -179,27 +179,30 @@
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_notes_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set collapseId = 'collapse-'|uniqid %}
     {% set attr = layout_attr_defaults(attr, {
         'id': collapseId,
         '~class': ' shopping-list-notes__content shopping-list-notes__content--limited collapse collapse-overflow no-transition',
-        'data-trigger-icon-show-class': 'fa-angle-up',
-        'data-trigger-icon-hide-class': 'fa-angle-down',
         'data-collapsed-text': 'oro.ui.collapse.more'|trans,
         'data-expanded-text': 'oro.ui.collapse.less'|trans,
         'data-check-overflow': 'true',
-        'data-toggle': 'false'
+        'data-toggle': 'false',
+        'data-trigger-icon-hide': 'chevron-down',
+        'data-trigger-icon-show': 'chevron-up'
     }) %}
     {% if notes is not null %}
 
         <div {{ block('block_attributes') }}>{{- notes -}}</div>
-        <button class="btn btn--no-padding collapse-toggle"
+        <button class="btn btn--flat collapse-toggle"
                 data-toggle="collapse"
                 data-target="{{ '#' ~ collapseId }}"
                 aria-controls="{{ collapseId }}"
         >
             <span data-text>{{ 'oro.ui.collapse.more'|trans }}</span>
-            <span class="fa-angle-down fa--offset-l" aria-hidden="true" data-icon></span>
+            <span class="shopping-list-notes__icon" data-icon>
+                {{ renderIcon.icon({name: 'chevron-down'}) }}
+            </span>
         </button>
     {% endif %}
 {% endblock %}
@@ -299,13 +302,12 @@
     </div>
 {% endblock %}
 
-{% block __oro_checkout_content__checkout_button_back_widget -%}
+{% block __oro_checkout_content__checkout_outside_form_buttons_widget -%}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout-form__back hide-on-empty"
+        '~class': " checkout-form__buttons"
     }) %}
-    {% apply spaceless %}
+
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
-    {%- endapply -%}
-{%- endblock %}
+{% endblock %}

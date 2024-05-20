@@ -3,13 +3,22 @@
 .coupon-container {
     &__form {
         display: grid;
-        gap: spacing('sm');
+        grid-template-columns: $coupon-container-form-grid-template-column;
+        gap: $coupon-container-form-gap;
     }
 
     &__errors {
+        grid-column: 1 / 3;
+
         &:empty {
             display: none;
         }
+    }
+
+    &__content {
+        display: grid;
+        gap: spacing('base');
+        margin-block-start: spacing('sm');
     }
 
     .coupon-trigger {
@@ -18,10 +27,53 @@
         justify-content: space-between;
         background: none;
 
-        &:not(.collapsed) {
-            .theme-icon {
-                transform: rotate(180deg);
-            }
+        &:has(.badge) {
+            grid-template-columns: $coupon-container-trigger-grid-template-column;
+        }
+
+        .trigger-icon {
+            display: inline-flex;
+
+            margin-left: auto;
+        }
+
+        &__loading {
+            display: inline-flex;
+
+            width: $coupon-container-loading-size;
+            height: $coupon-container-loading-size;
+
+            background: transparent url($loader-mask-loader-url) no-repeat center left;
+            background-size: $coupon-container-loading-size;
+        }
+    }
+
+    &:not(.loading) .coupon-trigger__loading {
+        display: none;
+    }
+
+    &.loading,
+    &.coupon-is-applied {
+        .coupon-trigger {
+            grid-template-columns: $coupon-container-trigger-grid-template-column;
+        }
+
+        .badge {
+            display: none;
+        }
+    }
+
+    .loader-mask {
+        opacity: 0;
+    }
+
+    .coupon-success-icon {
+        color: $coupon-container-success-icon-color;
+    }
+
+    &:not(.coupon-is-applied) {
+        .coupon-success-icon {
+            display: none;
         }
     }
 }

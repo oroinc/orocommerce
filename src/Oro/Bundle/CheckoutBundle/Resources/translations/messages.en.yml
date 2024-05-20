@@ -235,7 +235,9 @@ oro:
                     place_order:
                         label: Submit Order
                         condition.extendable.message: There was an error while processing the order.
+                        order_issues.message: Please check the order contents for possible issues preventing checkout completion.
                     back.label: Back
+                    complete.message: Complete all steps to submit order
 
                 form:
                     save_address.label: Save address
