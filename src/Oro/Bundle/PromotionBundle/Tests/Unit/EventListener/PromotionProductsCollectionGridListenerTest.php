@@ -7,13 +7,13 @@ use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
-use Oro\Bundle\MarketplaceSellerOrganizationBundle\EventListener\PromotionProductsCollectionGridListener;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\EventListener\PromotionProductsCollectionGridListener;
 
 class PromotionProductsCollectionGridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    protected function testOnBuildAfter(): void
+    public function testOnBuildAfter(): void
     {
         $datagrid = $this->createMock(DatagridInterface::class);
         $datasource = $this->createMock(OrmDatasource::class);
