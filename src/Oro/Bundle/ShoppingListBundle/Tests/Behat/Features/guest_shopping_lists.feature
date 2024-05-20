@@ -152,8 +152,8 @@ Feature: Guest Shopping Lists
     Given I should see "Update Shopping list"
     When I fill "FrontendLineItemForm" with:
       | Quantity | 10   |
-    And I click on empty space
-    And I type "each" in "Product View Unit"
+    When I fill "Product Shopping List Form" with:
+      | Unit | each |
     And I click "Update Shopping List"
     Then I should see 'Product has been updated in "Shopping List"' flash message
     Then type "SKU003" in "search"

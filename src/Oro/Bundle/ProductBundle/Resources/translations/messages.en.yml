@@ -809,6 +809,7 @@ oro:
 
         frontend:
             index:
+                sku: 'SKU:'
                 item: 'Item #:'
                 mfg: 'MFG Model #:'
                 view_details: 'View Details'

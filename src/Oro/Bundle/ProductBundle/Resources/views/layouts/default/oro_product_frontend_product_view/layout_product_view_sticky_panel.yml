@@ -1,0 +1,15 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+              themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/layout_product_view_sticky_panel.html.twig'
+
+        - '@add':
+            id: product_view_sticky_panel
+            blockType: container
+            parentId: product_view_container
+            siblingId: product_view_microdata_container
+            prepend: true
+            options:
+                vars:
+                    product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
+    conditions: 'context["is_mobile"]==false'

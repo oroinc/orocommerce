@@ -42,6 +42,9 @@ layout:
                             product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
                             render_rest: false
                             isLoggedIn: '=context["is_logged_in"]'
+                            singleUnitMode: '=data["oro_product_single_unit_mode"].isSingleUnitMode()'
+                            singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
+                            defaultUnitCode: '=data["oro_product_single_unit_mode"].getDefaultUnitCode()'
                 line_item_form_end:
                     blockType: form_end
                     options:
@@ -49,7 +52,7 @@ layout:
                 product_line_item_form_buttons:
                     blockType: container
             tree:
-                product_view_line_item_container:
+                product_view_line_item_container_wrapper:
                     line_item_form_update:
                         line_item_form:
                             line_item_form_start: ~
@@ -57,8 +60,3 @@ layout:
                             line_item_form_fields_unit: ~
                             product_line_item_form_buttons: ~
                             line_item_form_end: ~
-
-        - '@move':
-            id: line_item_form_fields_unit
-            parentId: product_price_container
-            prepend: false

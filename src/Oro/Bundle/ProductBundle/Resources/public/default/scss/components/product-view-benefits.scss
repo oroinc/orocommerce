@@ -6,6 +6,10 @@
         flex-wrap: wrap;
         gap: $product-view-benefits-gap;
         margin-block-end: $product-view-benefits-margin-block-end;
+
+        + .product-view__description {
+            margin-top: $product-view-benefits-description-top;
+        }
     }
 
     &__featured,

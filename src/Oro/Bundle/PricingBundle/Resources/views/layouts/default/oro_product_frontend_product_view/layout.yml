@@ -2,7 +2,7 @@ layout:
     actions:
         - '@add':
             id: product_price_subtree_update
-            parentId: product_view_specification_container
+            parentId: product_view_line_item_container_wrapper
             blockType: layout_subtree_update
             options:
                 visible: '=data["frontend_product_prices"].isShowProductPriceContainer(data["oro_product_variant"].getProductVariantOrProduct(data))'
@@ -20,10 +20,6 @@ layout:
             id: product_price_container
             optionName: vars.visible
             optionValue: '=data["frontend_product_prices"].isShowProductPriceContainer(product)'
-
-        - '@move':
-            id: product_price_table_container
-            parentId: product_price_subtree_update
         - '@setOption':
             id: product_price_table_container
             optionName: product

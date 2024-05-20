@@ -12,6 +12,8 @@ layout:
                         isPriceUnitsVisible: '=product ? data["oro_price_unit_visibility"].isPriceUnitsVisibleByProduct(product) : true'
                         vars:
                             applicableForConfiguredProduct: true
+                        attr:
+                            class: 'product-price__table-container'
                 __product_price_table_container_scroll:
                     blockType: container
                 __product_price_multi_unit_table:

@@ -22,7 +22,8 @@ define(function(require) {
             borderColour: '#ebebeb',
             lensBorderColour: '#7d7d7d',
             lensColour: '#000',
-            lensOpacity: 0.22
+            lensOpacity: 0.22,
+            zIndex: 90
         },
 
         _zoomedImageLoadedState: false,
@@ -159,6 +160,10 @@ define(function(require) {
 
                 // Call to internal method of elevatezoom for reinit zoom containers
                 imageZoomData.startZoom();
+            }
+
+            if (imageZoomData.zoomWindow) {
+                imageZoomData.zoomWindow.css('z-index', this.options.zIndex);
             }
         },
 

@@ -9,19 +9,21 @@ $product-price-listed-text-align: left !default;
 $product-price-value-font-weight: font-weight('semi-bold') !default;
 $product-price-value-color: null !default;
 $product-price-value-font-size: 24px !default;
+$product-price-value-font-size-mobile-big: 18px !default;
 $product-price-value-line-height: 27px !default;
 
-$product-price-simple-value-font-size: $base-font-size--large + 2 !default;
-$product-price-simple-value-color: get-var-color('text', 'primary') !default;
+$product-price-simple-value-font-size: null !default;
+$product-price-simple-value-color: null !default;
+$product-price-simple-listed-value-font-size: $base-font-size--s !default;
 $product-price-simple-listed-value-color: get-color('primary', 'normal') !default;
 
 $product-price-simple-label-display: none !default;
 $product-price-unit-short-display: none !default;
 
-$product-price-not-found-font-size: 13px !default;
+$product-price-not-found-font-size: $base-font-size--s !default;
 $product-price-not-found-color: get-var-color('text', 'secondary') !default;
-$product-price-listed-value-font-size: 13px !default;
-$product-price-listed-value-line-height: 20px !default;
+$product-price-listed-value-font-size: 24px !default;
+$product-price-listed-value-line-height: 1.3 !default;
 $product-price-listed-value-color: get-var-color('text', 'secondary') !default;
 $product-price-listed-value-margin-offset-top: 3px !default;
 
