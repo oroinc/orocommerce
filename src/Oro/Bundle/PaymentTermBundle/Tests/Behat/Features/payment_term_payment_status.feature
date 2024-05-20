@@ -51,7 +51,7 @@ Feature: Payment Term payment status
       | PO Number | TEST_PO_NUMBER |
     And I should see "Subtotal $10.00"
     And I should see "Shipping $3.00"
-    And I should see "Total $13.00"
+    And I should see "Total: $13.00"
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 

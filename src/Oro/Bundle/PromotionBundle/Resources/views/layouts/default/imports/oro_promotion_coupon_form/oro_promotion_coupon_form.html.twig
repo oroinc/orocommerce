@@ -33,13 +33,36 @@
 {% block __oro_promotion_coupon_form__expand_link_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
 
-    <button type="button" class="btn btn--outlined btn--text btn--neutral-dark coupon-trigger collapsed" data-toggle="collapse"
-         data-role="coupon-trigger"
-         aria-expanded="false"
-         data-target="{{ '#' ~ _collapseId }}"
-         aria-controls="{{ _collapseId }}">
+    {% set attr = layout_attr_defaults(attr, {
+        'type': 'button',
+        '~class': ' btn btn--outlined btn--text btn--neutral-dark coupon-trigger',
+        'data-toggle': 'collapse',
+        'data-role': 'coupon-trigger',
+        'aria-expanded': 'false',
+        'data-target': '#' ~ _collapseId,
+        'aria-controls': _collapseId,
+        'data-trigger-icon-hide': 'chevron-down',
+        'data-trigger-icon-show': 'chevron-up'
+    }) %}
+
+    {% if not _collapseIsOpened %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' collapsed',
+        }) %}
+    {% endif %}
+
+    <button {{ block('block_attributes') }}>
         <span data-text>{{- 'oro.frontend.coupon.expand_link.label'|trans -}}</span>
-        {{ renderIcon.icon({name: 'chevron-down'}) }}
+
+        {% if appliedCoupons|length > 0 %}
+            <span class="badge">{{ appliedCoupons|length }}</span>
+        {% endif %}
+
+        <span class="coupon-trigger__loading"></span>
+        {{ renderIcon.icon({name: 'check', extraClass: 'coupon-success-icon'}) }}
+        <span class="trigger-icon" data-icon>
+            {{ renderIcon.icon({name: _collapseIsOpened ? 'chevron-up' : 'chevron-down'}) }}
+        </span>
     </button>
 {% endblock %}
 
@@ -52,9 +75,7 @@
         '~class': classes,
         'id': _collapseId,
         'role': 'region',
-        'data-toggle': _collapseIsOpened,
-        'data-trigger-icon-show-class': 'fa-minus-square-o',
-        'data-trigger-icon-hide-class': 'fa-plus-square-o'
+        'data-toggle': _collapseIsOpened
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -96,7 +117,8 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': 'btn btn--outlined',
         'data-role': 'apply-coupon',
-        'aria-label': 'oro.frontend.coupon.widget.apply_button.aria_label'|trans
+        'aria-label': 'oro.frontend.coupon.widget.apply_button.aria_label'|trans,
+        'disabled': true
     }) %}
 
     <button {{ block('block_attributes') }}>{{ 'oro.frontend.coupon.widget.apply_button.label'|trans }}</button>
@@ -112,13 +134,13 @@
 {% endblock %}
 
 {% block __oro_promotion_coupon_form__applied_coupons_list_container_widget %}
-    <div>
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' coupons-list__wrapper'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
-{% endblock %}
-
-{% block __oro_promotion_coupon_form__applied_coupons_list_header_widget %}
-    <h4 {{ block('block_attributes') }}>{{ 'oro.frontend.coupon.widget.applied_coupons_header.label'|trans }}</h4>
 {% endblock %}
 
 {% block __oro_promotion_coupon_form__applied_coupons_list_rows_container_widget %}
@@ -159,24 +181,25 @@
 {% endblock %}
 
 {% block __oro_promotion_coupon_form__applied_coupons_list_row_text_container_widget %}
-    <span>
+    <div>
         {{ block_widget(block) }}
-    </span>
+    </div>
 {% endblock %}
 
 {% block __oro_promotion_coupon_form__applied_coupons_list_row_coupon_code_widget %}
-    <span>{{ appliedCoupon.couponCode }}</span>
+    <h5>{{ appliedCoupon.couponCode }}</h5>
 {% endblock %}
 
 {% block __oro_promotion_coupon_form__applied_coupons_list_row_promotion_name_widget %}
     {% if promotion is not null %}
-        <span>{{ promotion.labels|localized_value ? promotion.labels|localized_value|oro_html_sanitize : promotion.rule.name  }}</span>
+        <div class="caption-italic">{{ promotion.labels|localized_value ? promotion.labels|localized_value|oro_html_sanitize : promotion.rule.name  }}</div>
     {% endif %}
 {% endblock %}
 
 {% block __oro_promotion_coupon_form__applied_coupons_list_row_delete_button_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': 'btn btn--icon btn--plain',
+        'class': 'btn btn--icon btn--neutral-dark coupons-list__remove',
         'data-object-id': appliedCoupon.id,
         'data-role': 'remove-coupon'
     }) %}
@@ -184,6 +207,6 @@
         '%counter%': loop.index,
         '%coupon_name%': appliedCoupon.couponCode
     }) }}">
-        <span class="fa-trash-o fa--x-large fa--no-offset" aria-hidden="true"></span>
+        {{ renderIcon.icon({name: 'trash'}) }}
     </button>
 {% endblock %}

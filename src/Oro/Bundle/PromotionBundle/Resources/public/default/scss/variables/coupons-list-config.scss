@@ -3,3 +3,7 @@
 $coupons-list-offset: 0 0 spacing('xs') !default;
 
 $coupons-list-item-offset: spacing('xs') !default;
+$coupons-list-item-color: get-color('text', 'secondary') !default;
+$coupons-list-item-gap: spacing('sm') !default;
+
+$coupons-list-wrapper-max-height: 225px !default;

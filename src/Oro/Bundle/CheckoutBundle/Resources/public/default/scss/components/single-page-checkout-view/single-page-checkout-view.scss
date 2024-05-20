@@ -58,12 +58,6 @@
                     align-items: center;
                 }
 
-                .order-checkout-widget__total:first-child {
-                    &:after {
-                        content: ':';
-                    }
-                }
-
                 .order-checkout-widget__table {
                     tr:not(.order-checkout-widget__total-row) {
                         display: none;
@@ -74,7 +68,7 @@
             &.show {
                 .order-checkout-widget {
                     &__wrapper {
-                        grid-column-start: 2 span;
+                        grid-column-start: 2;
                     }
                 }
             }

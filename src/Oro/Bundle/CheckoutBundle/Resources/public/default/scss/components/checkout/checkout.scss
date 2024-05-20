@@ -58,6 +58,9 @@
 
     &__footer {
         &-col {
+            display: grid;
+            gap: spacing('base');
+
             &:empty {
                 display: none;
             }
@@ -69,6 +72,11 @@
         align-items: center;
         flex-wrap: wrap;
         gap: spacing('xl');
+    }
+
+    &__submit-button-container {
+        display: grid;
+        gap: spacing('sm');
     }
 
     .required-label {
@@ -124,6 +132,9 @@
 
             margin: 0 -#{spacing('base')};
             border-top: $checkout-tablet-sidebar-border-top;
+
+            // For sticky panel on mobile devices
+            z-index: z('fixed');
         }
 
         &__footer {
@@ -141,6 +152,14 @@
                     margin: 0;
                 }
             }
+        }
+
+        &__submit-button-container {
+            grid-column: 4 / 5;
+        }
+
+        &__submit-button-container:not(.final-step) {
+            display: none;
         }
     }
 }
