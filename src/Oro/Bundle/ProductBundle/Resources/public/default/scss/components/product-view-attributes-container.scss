@@ -12,6 +12,10 @@
             flex-direction: column;
             border-bottom: $product-view-attribute-group-border-bottom;
 
+            &:last-child {
+                border-bottom: none;
+            }
+
             &-title {
                 padding-block: $product-view-attribute-group-title-border-bottom;
             }

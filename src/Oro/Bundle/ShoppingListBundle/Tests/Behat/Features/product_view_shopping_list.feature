@@ -21,8 +21,9 @@ Feature: Product view shopping list
     And click "View Details" for "PSKU1" product
     And I click on "Shopping List Dropdown"
     And I should see "Request A Quote Button" element inside "Product Shopping List Dropdown" element
-    And I click on empty space
-    When I type "set" in "Product View Unit"
+    And I fill "Product Shopping List Form" with:
+      | Unit | set |
+    And click on empty space
     And I click on "Shopping List Dropdown"
     And I should see "Request A Quote Button" element inside "Product Shopping List Dropdown" element
     And I click "Request A Quote Button"

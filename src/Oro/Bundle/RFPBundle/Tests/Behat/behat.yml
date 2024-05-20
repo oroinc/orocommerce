@@ -53,7 +53,7 @@ oro_behat_extension:
         TargetPriceField:
             selector: 'input[name="oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][value]"]'
         LineItemDropdown:
-            selector: '.line-item-form .dropdown-toggle'
+            selector: '[data-role="line-item-form-container"] .dropdown-toggle'
 
         Request Notes:
             selector: 'textarea[name="oro_rfp_frontend_request[note]"]'

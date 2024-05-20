@@ -11,4 +11,9 @@
     .product-view__description {
         width: 100%;
     }
+
+    .product-view__kit-container-end:not(:has(.shopping-lists)),
+    .product-view__kit-container-end:has(.shopping-lists:empty) {
+        display: none;
+    }
 }
