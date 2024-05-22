@@ -1,4 +1,10 @@
 oro:
+    api:
+        open_api:
+            views:
+                frontend_sku_rest_json_api:
+                    label: SKU Based Storefront API
+                    description: JSON:API for the storefront where all product-related resources operate with SKU as a product identifier.
     product:
         search:
             search_title:
