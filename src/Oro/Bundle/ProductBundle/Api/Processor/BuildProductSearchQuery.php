@@ -138,12 +138,14 @@ class BuildProductSearchQuery implements ProcessorInterface
         return $resolvedOrderings;
     }
 
-    private function getSortFilterName(RequestType $requestType, FilterValueAccessorInterface $filterValues): string
-    {
+    private function getSortFilterName(
+        RequestType $requestType,
+        FilterValueAccessorInterface $filterValueAccessor
+    ): string {
         $sortFilterName = $this->filterNamesRegistry
             ->getFilterNames($requestType)
             ->getSortFilterName();
-        $sortFilterValue = $filterValues->get($sortFilterName);
+        $sortFilterValue = $filterValueAccessor->getOne($sortFilterName);
         if (null === $sortFilterValue) {
             return $sortFilterName;
         }

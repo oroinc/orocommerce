@@ -36,7 +36,7 @@ class HandleVariantsFilter implements ProcessorInterface
             return;
         }
 
-        $filterValue = $context->getFilterValues()->get(self::FILTER_NAME);
+        $filterValue = $context->getFilterValues()->getOne(self::FILTER_NAME);
         if (null === $filterValue || $filterValue->getValue()) {
             // the filtering of variants for configurable products was not requested
             return;
