@@ -20,7 +20,7 @@ class HandlePriceListFilter implements ProcessorInterface
     {
         /** @var Context $context */
 
-        $priceListFilterValue = $context->getFilterValues()->get('priceList');
+        $priceListFilterValue = $context->getFilterValues()->getOne('priceList');
         if (null !== $priceListFilterValue) {
             PriceListIdContextUtil::storePriceListId($context, $priceListFilterValue->getValue());
         } else {

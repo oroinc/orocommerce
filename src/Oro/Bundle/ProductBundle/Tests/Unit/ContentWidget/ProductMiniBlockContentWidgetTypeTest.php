@@ -3,11 +3,12 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ContentWidget;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
+use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
@@ -149,21 +150,25 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
 
     protected function getExtensions(): array
     {
-        $configProvider = $this->createMock(ConfigProvider::class);
-        $configProvider->expects($this->any())
-            ->method('getConfig')
-            ->willReturnCallback(function ($className, $fieldName) {
-                return new Config(
-                    new FieldConfigId('form', $className, $fieldName),
-                    ['grid_name' => 'test_grid']
-                );
-            });
+        $entityManager = $this->createMock(EntityManager::class);
+        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
+        $entityManager->expects($this->any())
+            ->method('getMetadataFactory')
+            ->willReturn($metadataFactory);
+        $metadataFactory->expects($this->any())
+            ->method('hasMetadataFor')
+            ->willReturn(true);
 
         $configManager = $this->createMock(ConfigManager::class);
         $configManager->expects($this->any())
-            ->method('getProvider')
+            ->method('hasConfig')
+            ->willReturn(true);
+        $configManager->expects($this->any())
+            ->method('getEntityConfig')
             ->with('form')
-            ->willReturn($configProvider);
+            ->willReturnCallback(function ($className) {
+                return new Config(new EntityConfigId('form', $className), ['grid_name' => 'test_grid']);
+            });
 
         $searchHandler = $this->createMock(SearchHandlerInterface::class);
         $searchHandler->expects($this->any())
@@ -189,7 +194,7 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
                         $this->createMock(AuthorizationCheckerInterface::class),
                         $this->createMock(FeatureChecker::class),
                         $configManager,
-                        $this->createMock(EntityManager::class),
+                        $entityManager,
                         $searchRegistry
                     ),
                     OroJquerySelect2HiddenType::class => new OroJquerySelect2HiddenType(
