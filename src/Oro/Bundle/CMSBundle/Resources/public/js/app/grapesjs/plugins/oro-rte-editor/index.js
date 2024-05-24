@@ -193,6 +193,16 @@ export default editor => {
     const originalUndo = UndoManager.undo;
     const originalRedo = UndoManager.redo;
 
+    /**
+     * Compare couple ids and detect if equal or it is match incremented id pattern `origin_id-{increment}`
+     * @param {string} id
+     * @param {string} compareId
+     * @return {boolean}
+     */
+    const compareIncrementIds = (id, compareId) => {
+        return id === compareId || new RegExp(`(${compareId})-([\\d]+)`, 'g').test(id);
+    };
+
     editor.on('component:selected', (component, opts) => {
         if (opts.wrapping && component.get('stateModel')) {
             component.get('stateModel').set('useOuterHTML', true);
@@ -208,7 +218,7 @@ export default editor => {
 
         const [origin, ...duplicates] = parent
             .components()
-            .filter(({ccid}) => ccid === component.ccid || component.ccid.startsWith(ccid))
+            .filter(({ccid}) => component.get('stateModel') && compareIncrementIds(component.ccid, ccid))
             .reverse();
 
         if (duplicates.length) {
@@ -223,7 +233,7 @@ export default editor => {
             const index = parent.index();
             const prev = parent.collection.at(index - 1);
 
-            if (component.ccid.startsWith(prev.ccid)) {
+            if (compareIncrementIds(component.ccid, prev.ccid)) {
                 UndoManager.skip(() => {
                     parent.remove();
                     editor.select(prev);
