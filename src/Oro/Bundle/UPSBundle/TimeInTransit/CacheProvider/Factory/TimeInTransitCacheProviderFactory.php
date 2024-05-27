@@ -8,6 +8,9 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProvider;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\TimeInTransitCacheProviderInterface;
 
+/**
+ * Cache factory class. Uses enableVersioning param of Symfony adapter in order to have different settings cached
+ */
 class TimeInTransitCacheProviderFactory implements TimeInTransitCacheProviderFactoryInterface
 {
     /**

@@ -28,6 +28,8 @@ services:
             - '@oro_ups.client.factory_basic'
             - '@oro_ups.time_in_transit.result.factory'
             - '@logger'
+        calls:
+            - [ 'setAccessTokenProvider', [ '@oro_ups.token_provider' ]]
 
     oro_ups.cache.time_in_transit:
         public: false

@@ -4,6 +4,9 @@ namespace Oro\Bundle\UPSBundle\Client\Request;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
+/**
+ * Base implementation of UPS Client Request
+ */
 class UpsClientRequest extends ParameterBag implements UpsClientRequestInterface
 {
     const FIELD_URL = 'url';

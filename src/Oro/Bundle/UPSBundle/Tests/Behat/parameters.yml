@@ -16,3 +16,10 @@ services:
             - !service
                 class: Oro\Bundle\IntegrationBundle\Test\FakeRestClientFactory
             - '@oro_ups.client.url_provider_basic'
+        calls:
+            - [ 'setUpsClientUrlOAuthProvider', [ '@oro_ups.client.url_provider_basic_oauth' ] ]
+
+    oro_ups.token_provider.mock:
+        class: 'Oro\Bundle\UPSBundle\Tests\Behat\Mock\Client\AccessTokenProviderMock'
+        decorates: oro_ups.token_provider
+

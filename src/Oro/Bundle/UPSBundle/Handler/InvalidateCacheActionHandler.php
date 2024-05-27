@@ -10,6 +10,9 @@ use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache as UPSShippingPriceCache;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheProviderFactoryInterface;
 
+/**
+ * Action handler for invalidate UPS shipping prices cache
+ */
 class InvalidateCacheActionHandler implements InvalidateCacheActionHandlerInterface
 {
     const PARAM_TRANSPORT_ID = 'transportId';

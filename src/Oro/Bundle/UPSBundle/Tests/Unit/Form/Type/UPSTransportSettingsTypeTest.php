@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
+use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
@@ -21,6 +22,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -120,7 +122,9 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     LocalizedFallbackValueCollectionType::class => $localizedFallbackValue,
                     new OroEncodedPlaceholderPasswordType($this->crypter),
                 ],
-                []
+                [
+                    FormType::class => [new TooltipFormExtensionStub($this)],
+                ]
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
@@ -140,11 +144,10 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         UPSTransport $expectedData
     ) {
         if (count($submittedData) > 0) {
-            $this->crypter
-                ->expects($this->once())
+            $this->crypter->expects($this->once())
                 ->method('encryptData')
-                ->with($submittedData['upsApiPassword'])
-                ->willReturn($submittedData['upsApiPassword']);
+                ->with($submittedData['upsClientSecret'])
+                ->willReturn($submittedData['upsClientSecret']);
         }
 
         $shippingOrigin = new ShippingOrigin(
@@ -166,13 +169,13 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
 
         $form = $this->factory->create(UPSTransportSettingsType::class, $defaultData, []);
 
-        static::assertEquals($defaultData, $form->getData());
+        self::assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
 
-        static::assertEquals($isValid, $form->isValid());
-        static::assertTrue($form->isSynchronized());
-        static::assertEquals($expectedData, $form->getData());
+        self::assertEquals($isValid, $form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($expectedData, $form->getData());
     }
 
     /**
@@ -205,9 +208,11 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                         'values' => [ 'default' => 'first label'],
                     ],
                     'upsTestMode' => true,
-                    'upsApiUser' => 'user',
-                    'upsApiPassword' => 'password',
-                    'upsApiKey' => 'key',
+                    //'upsApiUser' => 'user',
+                    //'upsApiPassword' => 'password',
+                    //'upsApiKey' => 'key',
+                    'upsClientId' => 'client_id',
+                    'upsClientSecret' => 'client_secret',
                     'upsShippingAccountName' => 'name',
                     'upsShippingAccountNumber' => 'number',
                     'upsPickupType' => '01',
@@ -218,9 +223,11 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                 'isValid' => true,
                 'expectedData' => (new UPSTransport())
                     ->setUpsTestMode(true)
-                    ->setUpsApiUser('user')
-                    ->setUpsApiPassword('password')
-                    ->setUpsApiKey('key')
+                    //->setUpsApiUser('user')
+                    //->setUpsApiPassword('password')
+                    //->setUpsApiKey('key')
+                    ->setUpsClientId('client_id')
+                    ->setUpsClientSecret('client_secret')
                     ->setUpsShippingAccountName('name')
                     ->setUpsShippingAccountNumber('number')
                     ->setUpsPickupType('01')

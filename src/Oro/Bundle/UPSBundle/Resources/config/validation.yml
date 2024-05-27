@@ -3,11 +3,11 @@ Oro\Bundle\UPSBundle\Entity\UPSTransport:
         - Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServicesConstraint: ~
         - Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceConstraint: ~
     properties:
-        upsApiUser:
+        upsClientId:
             - NotBlank: ~
-        upsApiPassword:
-            - NotBlank: ~
-        upsApiKey:
+            - Length:
+                  max: 255
+        upsClientSecret:
             - NotBlank: ~
         upsShippingAccountName:
             - NotBlank: ~

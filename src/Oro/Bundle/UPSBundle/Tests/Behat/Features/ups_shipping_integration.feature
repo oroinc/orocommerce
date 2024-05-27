@@ -54,9 +54,8 @@ Feature: UPS shipping integration
       | Name                    | UPS                       |
       | Label                   | UPS                       |
       | Test Mode               | true                      |
-      | API User                | api_user                  |
-      | API Password            | api_password              |
-      | API Key                 | api_key                   |
+      | OAuth Client Id         | client_id                 |
+      | OAuth Client Secret     | client_secret             |
       | Shipping Account Name   | Oro Inc.                  |
       | Shipping Account Number | 123                       |
       | Country                 | United States             |
