@@ -5,6 +5,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Connection\Validator;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
+use Oro\Bundle\UPSBundle\Client\AccessTokenProviderInterface;
 use Oro\Bundle\UPSBundle\Client\Factory\UpsClientFactoryInterface;
 use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequestInterface;
 use Oro\Bundle\UPSBundle\Connection\Validator\Request\Factory\UpsConnectionValidatorRequestFactoryInterface;
@@ -25,6 +26,9 @@ class UpsConnectionValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var UpsConnectionValidatorResultFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $resultFactory;
 
+    /** @var AccessTokenProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $accessTokenProvider;
+
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
@@ -36,6 +40,7 @@ class UpsConnectionValidatorTest extends \PHPUnit\Framework\TestCase
         $this->requestFactory = $this->createMock(UpsConnectionValidatorRequestFactoryInterface::class);
         $this->clientFactory = $this->createMock(UpsClientFactoryInterface::class);
         $this->resultFactory = $this->createMock(UpsConnectionValidatorResultFactoryInterface::class);
+        $this->accessTokenProvider = $this->createMock(AccessTokenProviderInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->validator = new UpsConnectionValidator(
@@ -44,6 +49,8 @@ class UpsConnectionValidatorTest extends \PHPUnit\Framework\TestCase
             $this->resultFactory,
             $this->logger
         );
+        $this->validator
+            ->setAccessTokenProvider($this->accessTokenProvider);
     }
 
     public function testValidateConnectionByUpsSettings()

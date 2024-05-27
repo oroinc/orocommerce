@@ -4,6 +4,9 @@ namespace Oro\Bundle\UPSBundle\TimeInTransit\Result;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * Base implementation of UPS TimeInTransit result
+ */
 class TimeInTransitResult extends ParameterBag implements TimeInTransitResultInterface
 {
     const STATUS_KEY = 'status';

@@ -12,6 +12,9 @@ use Oro\Bundle\UPSBundle\Method\Identifier\UPSMethodTypeIdentifierGeneratorInter
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
 
+/**
+ * Basic implementation of UPS Shipping Method Type Factory
+ */
 class UPSShippingMethodTypeFactory implements UPSShippingMethodTypeFactoryInterface
 {
     /**

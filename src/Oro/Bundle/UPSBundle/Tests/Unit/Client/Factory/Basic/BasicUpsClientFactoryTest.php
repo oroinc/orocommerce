@@ -28,11 +28,13 @@ class BasicUpsClientFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $this->restClientFactoryMock = $this->createMock(RestClientFactoryInterface::class);
         $this->upsClientUrlProviderMock = $this->createMock(UpsClientUrlProviderInterface::class);
+        $this->upsClientUrlOAuthProvider = $this->createMock(UpsClientUrlProviderInterface::class);
 
         $this->testedUpsClientFactory = new BasicUpsClientFactory(
             $this->restClientFactoryMock,
             $this->upsClientUrlProviderMock
         );
+        $this->testedUpsClientFactory->setUpsClientUrlOAuthProvider($this->upsClientUrlOAuthProvider);
     }
 
     public function testCreateUpsClient()

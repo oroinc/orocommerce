@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Method;
 
+use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
@@ -188,6 +189,15 @@ class UPSShippingMethod implements
         return self::TRACKING_URL . $match[0];
     }
 
+    /**
+     * @param ShippingContextInterface $context
+     * @param array $types
+     * @return array
+     *
+     * @throws RestException
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     private function fetchPrices(ShippingContextInterface $context, array $types): array
     {
         $prices = [];
@@ -214,9 +224,19 @@ class UPSShippingMethod implements
             if ($notCachedTypesNumber === 1) {
                 $typeId = reset($notCachedTypes);
                 $shippingService = $this->getType($typeId)->getShippingService();
-                $priceRequest->setServiceCode($shippingService->getCode())
+                $priceRequest
+                    ->setServiceCode($shippingService->getCode())
                     ->setServiceDescription($shippingService->getDescription());
+            } else {
+                $shippingServiceCodes = [];
+                foreach ($types as $typeId) {
+                    $shippingService = $this->getType($typeId)->getShippingService();
+                    $shippingServiceCodes[] = $shippingService->getCode();
+                }
+                $priceRequest
+                    ->setServiceCodes(array_values($shippingServiceCodes));
             }
+
             $priceResponse = $this->transportProvider->getPriceResponse($priceRequest, $transport);
             if ($priceResponse) {
                 foreach ($notCachedTypes as $typeId) {

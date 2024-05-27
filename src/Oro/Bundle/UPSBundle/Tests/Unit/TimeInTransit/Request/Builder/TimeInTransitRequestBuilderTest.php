@@ -12,6 +12,8 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
     private const UPS_API_USERNAME = 'user';
     private const UPS_API_PASSWORD = 'pass';
     private const UPS_API_KEY = 'key';
+    private const UPS_OAUTH_CLIENT_ID = null;
+    private const UPS_OAUTH_CLIENT_SECRET = null;
     private const WEIGHT_UNIT_CODE = 'LBS';
     private const WEIGHT = '1';
     private const CUSTOMER_CONTEXT = 'sample context';
@@ -46,6 +48,9 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
             $this->pickupDate
         );
 
+        $builder->setUpsClientId(self::UPS_OAUTH_CLIENT_ID);
+        $builder->setUpsClientSecret(self::UPS_OAUTH_CLIENT_SECRET);
+
         self::assertEquals($expected, $builder->createRequest());
     }
 
@@ -64,6 +69,9 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
             $this->address,
             $this->pickupDate
         );
+
+        $builder->setUpsClientId(self::UPS_OAUTH_CLIENT_ID);
+        $builder->setUpsClientSecret(self::UPS_OAUTH_CLIENT_SECRET);
 
         $builder
             ->setMaximumListSize(self::MAXIMUM_LIST_SIZE)

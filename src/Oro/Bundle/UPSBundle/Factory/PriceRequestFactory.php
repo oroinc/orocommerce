@@ -71,6 +71,8 @@ class PriceRequestFactory
             ->setUsername($transport->getUpsApiUser())
             ->setPassword($decryptedPassword)
             ->setAccessLicenseNumber($transport->getUpsApiKey())
+            ->setClientId($transport->getUpsClientId())
+            ->setClientSecret($transport->getUpsClientSecret())
             ->setRequestOption($requestOption)
             ->setShipperName($transport->getUpsShippingAccountName())
             ->setShipperNumber($transport->getUpsShippingAccountNumber())
@@ -80,7 +82,8 @@ class PriceRequestFactory
             ->setShipFromAddress($context->getShippingOrigin());
 
         if (null !== $shippingService) {
-            $priceRequest->setServiceCode($shippingService->getCode())
+            $priceRequest
+                ->setServiceCode($shippingService->getCode())
                 ->setServiceDescription($shippingService->getDescription());
         }
 

@@ -4,11 +4,14 @@ namespace Oro\Bundle\UPSBundle\Connection\Validator\Result;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * Basic implementation of UPS Connection Validator Result
+ */
 class UpsConnectionValidatorResult extends ParameterBag implements UpsConnectionValidatorResultInterface
 {
-    const STATUS_KEY = 'status';
-    const ERROR_SEVERITY_KEY = 'error_severity';
-    const ERROR_MESSAGE_KEY = 'error_message';
+    public const STATUS_KEY = 'status';
+    public const ERROR_SEVERITY_KEY = 'error_severity';
+    public const ERROR_MESSAGE_KEY = 'error_message';
 
     /**
      * {@inheritDoc}

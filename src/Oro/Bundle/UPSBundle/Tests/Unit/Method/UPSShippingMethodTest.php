@@ -66,11 +66,57 @@ class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
             ->method('getIdentifier')
             ->willReturn(self::TYPE_IDENTIFIER);
 
+        $service1 = (new ShippingService())
+            ->setCode('01');
+        $type1 = $this->createMock(UPSShippingMethodType::class);
+        $type1->expects(self::any())
+            ->method('getIdentifier')
+            ->willReturn('01');
+        $type1->expects(self::any())
+            ->method('getShippingService')
+            ->willReturn($service1);
+
+        $service2 = (new ShippingService())
+            ->setCode('02');
+        $type2 = $this->createMock(UPSShippingMethodType::class);
+        $type2->expects(self::any())
+            ->method('getIdentifier')
+            ->willReturn('02');
+        $type2->expects(self::any())
+            ->method('getShippingService')
+            ->willReturn($service2);
+
+        $service3 = (new ShippingService())
+            ->setCode('03');
+        $type3 = $this->createMock(UPSShippingMethodType::class);
+        $type3->expects(self::any())
+            ->method('getIdentifier')
+            ->willReturn('03');
+        $type3->expects(self::any())
+            ->method('getShippingService')
+            ->willReturn($service3);
+
+        $service4 = (new ShippingService())
+            ->setCode('04');
+        $type4 = $this->createMock(UPSShippingMethodType::class);
+        $type4->expects(self::any())
+            ->method('getIdentifier')
+            ->willReturn('04');
+        $type4->expects(self::any())
+            ->method('getShippingService')
+            ->willReturn($service4);
+
         $this->upsShippingMethod = new UPSShippingMethod(
             self::IDENTIFIER,
             self::LABEL,
             self::ICON,
-            [$type],
+            [
+                $type,
+                $type1,
+                $type2,
+                $type3,
+                $type4
+            ],
             $this->transport,
             $this->transportProvider,
             $this->priceRequestFactory,
@@ -103,7 +149,7 @@ class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
     {
         $types = $this->upsShippingMethod->getTypes();
 
-        self::assertCount(1, $types);
+        self::assertCount(5, $types);
         self::assertEquals(self::TYPE_IDENTIFIER, $types[0]->getIdentifier());
     }
 

@@ -6,6 +6,9 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequestInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 
+/**
+ * Base implementation of UPS TimeInTransit request factory
+ */
 class BasicTimeInTransitRequestFactory implements TimeInTransitRequestFactoryInterface
 {
     /**

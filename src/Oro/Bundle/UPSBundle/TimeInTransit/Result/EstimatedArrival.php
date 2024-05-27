@@ -4,6 +4,9 @@ namespace Oro\Bundle\UPSBundle\TimeInTransit\Result;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * Base implementation of UPS EstimatedArrivals response
+ */
 class EstimatedArrival extends ParameterBag implements EstimatedArrivalInterface
 {
     const ARRIVAL_DATE_KEY = 'arrival_date';

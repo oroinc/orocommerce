@@ -4,10 +4,19 @@ Oro\Bundle\UPSBundle\Entity\UPSTransport:
         - Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceConstraint: ~
     properties:
         upsApiUser:
-            - NotBlank: ~
+            - NotBlank:
+                allowNull: true
         upsApiPassword:
-            - NotBlank: ~
+            - NotBlank:
+                allowNull: true
         upsApiKey:
+            - NotBlank:
+                allowNull: true
+        upsClientId:
+            - NotBlank: ~
+            - Length:
+                  max: 255
+        upsClientSecret:
             - NotBlank: ~
         upsShippingAccountName:
             - NotBlank: ~

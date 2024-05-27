@@ -8,12 +8,14 @@ Oro\Bundle\UPSBundle\Entity\UPSTransport:
             - addLabel: ['@upsLabel']
             - addApplicableShippingService: ['@UPS2ndDayAirShippingService']
         upsApiUser: 'test'
+        upsApiKey: 'ups_api_key_pub'
+        upsApiPassword: 'test_pass'
         upsUnitOfWeight: 'KGS'
         upscountry: '@united_states'
         upsPickupType: '19'
         upsShippingAccountNumber: '24'
-        upsApiKey: 'ups_api_key_pub'
-        upsApiPassword: 'test_pass'
+        upsClientId: 'client_id'
+        upsClientSecret: 'client_secret'
         upsShippingAccountName: 'Ups Account Test'
 
 Oro\Bundle\IntegrationBundle\Entity\Channel:
