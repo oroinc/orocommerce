@@ -15,38 +15,14 @@ use Oro\Bundle\UPSBundle\TimeInTransit\CacheProvider\Factory\TimeInTransitCacheP
  */
 class InvalidateCacheActionHandler implements InvalidateCacheActionHandlerInterface
 {
-    const PARAM_TRANSPORT_ID = 'transportId';
-
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
-
-    /**
-     * @var UPSShippingPriceCache
-     */
-    private $upsPriceCache;
-
-    /**
-     * @var ShippingPriceCache
-     */
-    private $shippingPriceCache;
-
-    /**
-     * @var TimeInTransitCacheProviderFactoryInterface
-     */
-    private $timeInTransitCacheProviderFactory;
+    public const PARAM_TRANSPORT_ID = 'transportId';
 
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        UPSShippingPriceCache $upsPriceCache,
-        ShippingPriceCache $shippingPriceCache,
-        TimeInTransitCacheProviderFactoryInterface $timeInTransitCacheProviderFactory
+        private DoctrineHelper $doctrineHelper,
+        private UPSShippingPriceCache $upsPriceCache,
+        private ShippingPriceCache $shippingPriceCache,
+        private TimeInTransitCacheProviderFactoryInterface $timeInTransitCacheProviderFactory
     ) {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->upsPriceCache = $upsPriceCache;
-        $this->shippingPriceCache = $shippingPriceCache;
-        $this->timeInTransitCacheProviderFactory = $timeInTransitCacheProviderFactory;
     }
 
     public function handle(DataStorageInterface $dataStorage)

@@ -27,6 +27,7 @@ services:
             - '@oro_ups.time_in_transit.request.factory'
             - '@oro_ups.client.factory_basic'
             - '@oro_ups.time_in_transit.result.factory'
+            - '@oro_ups.token_provider'
             - '@logger'
 
     oro_ups.cache.time_in_transit:

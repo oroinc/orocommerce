@@ -3,6 +3,7 @@
 namespace Oro\Bundle\UPSBundle\Method\Factory;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
@@ -12,53 +13,21 @@ use Oro\Bundle\UPSBundle\Method\Identifier\UPSMethodTypeIdentifierGeneratorInter
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
 
+/**
+ * Basic implementation of UPS Shipping Method Type Factory
+ */
 class UPSShippingMethodTypeFactory implements UPSShippingMethodTypeFactoryInterface
 {
-    /**
-     * @var UPSMethodTypeIdentifierGeneratorInterface
-     */
-    private $typeIdentifierGenerator;
-
-    /**
-     * @var IntegrationIdentifierGeneratorInterface
-     */
-    private $integrationIdentifierGenerator;
-
-    /**
-     * @var UPSTransport
-     */
-    private $transport;
-
-    /**
-     * @var PriceRequestFactory
-     */
-    private $priceRequestFactory;
-
-    /**
-     * @var ShippingPriceCache
-     */
-    private $shippingPriceCache;
-
     public function __construct(
-        UPSMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator,
-        IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator,
-        UPSTransport $transport,
-        PriceRequestFactory $priceRequestFactory,
-        ShippingPriceCache $shippingPriceCache
+        private UPSMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator,
+        private IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator,
+        private UPSTransport $transport,
+        private PriceRequestFactory $priceRequestFactory,
+        private ShippingPriceCache $shippingPriceCache
     ) {
-        $this->typeIdentifierGenerator = $typeIdentifierGenerator;
-        $this->integrationIdentifierGenerator = $integrationIdentifierGenerator;
-        $this->transport = $transport;
-        $this->priceRequestFactory = $priceRequestFactory;
-        $this->shippingPriceCache = $shippingPriceCache;
     }
 
-    /**
-     * @param Channel $channel
-     * @param ShippingService $service
-     * @return UPSShippingMethodType
-     */
-    public function create(Channel $channel, ShippingService $service)
+    public function create(Channel $channel, ShippingService $service): UPSShippingMethodType
     {
         return new UPSShippingMethodType(
             $this->getIdentifier($channel, $service),
@@ -72,30 +41,17 @@ class UPSShippingMethodTypeFactory implements UPSShippingMethodTypeFactoryInterf
         );
     }
 
-    /**
-     * @param Channel $channel
-     * @param ShippingService $service
-     * @return string
-     */
-    private function getIdentifier(Channel $channel, ShippingService $service)
+    private function getIdentifier(Channel $channel, ShippingService $service): string
     {
         return $this->typeIdentifierGenerator->generateIdentifier($channel, $service);
     }
 
-    /**
-     * @param ShippingService $service
-     * @return string
-     */
-    private function getLabel(ShippingService $service)
+    private function getLabel(ShippingService $service): string
     {
         return $service->getDescription();
     }
 
-    /**
-     * @param Channel $channel
-     * @return \Oro\Bundle\IntegrationBundle\Entity\Transport|UPSSettings
-     */
-    private function getSettings(Channel $channel)
+    private function getSettings(Channel $channel): UPSSettings|Transport
     {
         return $channel->getTransport();
     }

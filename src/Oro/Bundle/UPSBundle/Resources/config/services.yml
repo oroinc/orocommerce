@@ -1,8 +1,13 @@
 parameters:
     oro_ups.integration.channel.type: 'ups'
     oro_ups.integration.transport.type: 'ups'
+
     oro_ups.api.url.production: 'https://onlinetools.ups.com/rest'
     oro_ups.api.url.test: 'https://wwwcie.ups.com/rest'
+
+    oro_ups.api.url.production_oauth: 'https://onlinetools.ups.com'
+    oro_ups.api.url.test_oauth: 'https://wwwcie.ups.com'
+
     oro_ups.admin_view.method_template: '@@OroUPS/UPSMethodWithOptions.html.twig'
 
 services:
@@ -16,6 +21,8 @@ services:
         class: 'Oro\Bundle\UPSBundle\Provider\UPSTransport'
         arguments:
             - '@oro_ups.client.url_provider_basic'
+            - '@oro_ups.client.url_provider_basic_oauth'
+            - '@oro_ups.token_provider'
             - '@logger'
         calls:
             - [setRestClientFactory, ['@oro_integration.transport.rest.client_factory']]
@@ -144,11 +151,18 @@ services:
             - '%oro_ups.api.url.production%'
             - '%oro_ups.api.url.test%'
 
+    oro_ups.client.url_provider_basic_oauth:
+        class: 'Oro\Bundle\UPSBundle\Client\Url\Provider\Basic\BasicUpsClientUrlProvider'
+        arguments:
+            - '%oro_ups.api.url.production_oauth%'
+            - '%oro_ups.api.url.test_oauth%'
+
     oro_ups.client.factory_basic:
         class: 'Oro\Bundle\UPSBundle\Client\Factory\Basic\BasicUpsClientFactory'
         arguments:
             - '@oro_integration.transport.rest.client_factory'
             - '@oro_ups.client.url_provider_basic'
+            - '@oro_ups.client.url_provider_basic_oauth'
 
     oro_ups.repository.shipping_service:
         alias: Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository
@@ -159,3 +173,9 @@ services:
             - 'Oro\Bundle\UPSBundle\Entity\ShippingService'
         tags:
             - { name: doctrine.repository_service }
+
+    oro_ups.token_provider:
+        class: Oro\Bundle\UPSBundle\Client\AccessTokenProvider
+        arguments:
+            - '@oro_security.encoder.default'
+            - '@doctrine'

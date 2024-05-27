@@ -2,59 +2,59 @@
 
 namespace Oro\Bundle\UPSBundle\Client\Result;
 
+use LogicException;
+
+/**
+ * Contains methods to simplify UPS Result Error(s) handling
+ */
 trait UpsErrorResultTrait
 {
     /**
      * @param array $data
-     *
-     * @return array
-     * @throws \LogicException
+     * @return array|string
+     * @throws LogicException
      */
-    private function getErrorDetails(array $data)
+    private function getErrorDetails(array $data): array|string
     {
         return $this->getValueByKeyRecursively($data, 'ErrorDetail');
     }
 
     /**
      * @param array $data
-     *
-     * @return string
-     * @throws \LogicException
+     * @return array|string
+     * @throws LogicException
      */
-    private function getErrorSeverity(array $data)
+    private function getErrorSeverity(array $data): array|string
     {
         return $this->getValueByKeyRecursively($this->getErrorDetails($data), 'Severity');
     }
 
     /**
      * @param array $data
-     *
-     * @return array
-     * @throws \LogicException
+     * @return array|string
+     * @throws LogicException
      */
-    private function getPrimaryError(array $data)
+    private function getPrimaryError(array $data): array|string
     {
         return $this->getValueByKeyRecursively($this->getErrorDetails($data), 'PrimaryErrorCode');
     }
 
     /**
      * @param array $data
-     *
-     * @return string
-     * @throws \LogicException
+     * @return array|string
+     * @throws LogicException
      */
-    private function getErrorCode(array $data)
+    private function getErrorCode(array $data): array|string
     {
         return $this->getValueByKeyRecursively($this->getPrimaryError($data), 'Code');
     }
 
     /**
      * @param array $data
-     *
-     * @return string
-     * @throws \LogicException
+     * @return array|string
+     * @throws LogicException
      */
-    private function getErrorMessage(array $data)
+    private function getErrorMessage(array $data): array|string
     {
         return $this->getValueByKeyRecursively($this->getPrimaryError($data), 'Description');
     }
@@ -62,11 +62,10 @@ trait UpsErrorResultTrait
     /**
      * @param array  $array
      * @param string $key
-     *
      * @return string|array
-     * @throws \LogicException
+     * @throws LogicException
      */
-    private function getValueByKeyRecursively(array $array, $key)
+    private function getValueByKeyRecursively(array $array, string $key): array|string
     {
         if (array_key_exists($key, $array)) {
             return $array[$key];
@@ -78,6 +77,6 @@ trait UpsErrorResultTrait
             }
         }
 
-        throw new \LogicException('UPS Error Response format has been changed');
+        throw new LogicException('UPS Error Response format has been changed');
     }
 }

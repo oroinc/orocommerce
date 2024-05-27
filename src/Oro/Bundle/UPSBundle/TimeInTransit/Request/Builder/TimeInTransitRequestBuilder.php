@@ -6,35 +6,29 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequest;
 use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequestInterface;
 
+/**
+ * Base implementation of UPS TimeInTransit request builder
+ */
 class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterface
 {
-    const WEIGHT_KGS = 'KGS';
-    const WEIGHT_LBS = 'LBS';
+    private const REQUEST_URL = 'TimeInTransit';
+
+    /**
+     * @internal
+     * https://developer.ups.com/api/reference?loc=en_US#tag/TimeInTransit_other
+     */
+    private const REQUEST_URL_OAUTH = '/api/shipments/v1/transittimes';
 
     /**
      * @internal
      */
-    const REQUEST_URL = 'TimeInTransit';
+    private const REQUEST_OPTION = 'TNT';
 
-    /**
-     * @internal
-     */
-    const REQUEST_OPTION = 'TNT';
-
-    /**
-     * @var string
-     */
-    private $upsApiUsername;
-
-    /**
-     * @var string
-     */
-    private $upsApiPassword;
-
-    /**
-     * @var string
-     */
-    private $upsApiKey;
+    private ?string $upsApiUsername;
+    private ?string $upsApiPassword;
+    private ?string $upsApiKey;
+    private ?string $upsClientId;
+    private ?string $upsClientSecret;
 
     /**
      * Customer provided data.
@@ -106,17 +100,21 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
     private $maximumListSize;
 
     /**
-     * @param string           $upsApiUsername
-     * @param string           $upsApiPassword
-     * @param string           $upsApiKey
+     * @param ?string $upsApiUsername
+     * @param ?string $upsApiPassword
+     * @param ?string $upsApiKey
+     * @param ?string $upsClientId
+     * @param ?string $upsClientSecret
      * @param AddressInterface $shipFromAddress
      * @param AddressInterface $shipToAddress
-     * @param \DateTime        $pickupDate
+     * @param \DateTime $pickupDate
      */
     public function __construct(
         $upsApiUsername,
         $upsApiPassword,
         $upsApiKey,
+        $upsClientId,
+        $upsClientSecret,
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
         \DateTime $pickupDate
@@ -127,6 +125,8 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
         $this->upsApiUsername = $upsApiUsername;
         $this->upsApiPassword = $upsApiPassword;
         $this->upsApiKey = $upsApiKey;
+        $this->upsClientId = $upsClientId;
+        $this->upsClientSecret = $upsClientSecret;
     }
 
     /**
@@ -137,50 +137,57 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
         $requestData = $this->getRequestData();
 
         return new UpsClientRequest([
-            UpsClientRequest::FIELD_URL => self::REQUEST_URL,
+            UpsClientRequest::FIELD_URL => $this->isOAuthConfigured()
+                ? self::REQUEST_URL_OAUTH
+                : self::REQUEST_URL,
             UpsClientRequest::FIELD_REQUEST_DATA => $requestData,
         ]);
     }
 
-    /**
-     * @return array
-     */
-    private function getRequestData()
+    private function isOAuthConfigured(): bool
     {
-        $request = [
-            'Security' => [
+        return
+            !empty($this->upsClientId)
+            && !empty($this->upsClientSecret);
+    }
+
+    private function getRequestData(): array
+    {
+        if (!$this->isOAuthConfigured()) {
+            $request['Security'] = [
                 'UsernameToken' => [
                     'Username' => $this->upsApiUsername,
                     'Password' => $this->upsApiPassword,
                 ],
                 'UPSServiceAccessToken' => [
                     'AccessLicenseNumber' => $this->upsApiKey,
+                ]
+            ];
+        }
+
+        $request['TimeInTransitRequest'] = [
+            'Request' => [
+                'RequestOption' => static::REQUEST_OPTION
+            ],
+            'ShipFrom' => [
+                'Address' => [
+                    'StateProvinceCode' => $this->shipFromAddress->getRegionCode(),
+                    'PostalCode' => (string)$this->shipFromAddress->getPostalCode(),
+                    'CountryCode' => $this->shipFromAddress->getCountryIso2(),
+                    'City' => $this->shipFromAddress->getCity()
                 ],
             ],
-            'TimeInTransitRequest' => [
-                'Request' => [
-                    'RequestOption' => static::REQUEST_OPTION,
-                ],
-                'ShipFrom' => [
-                    'Address' => [
-                        'StateProvinceCode' => $this->shipFromAddress->getRegionCode(),
-                        'PostalCode' => (string)$this->shipFromAddress->getPostalCode(),
-                        'CountryCode' => $this->shipFromAddress->getCountryIso2(),
-                        'City' => $this->shipFromAddress->getCity(),
-                    ],
-                ],
-                'ShipTo' => [
-                    'Address' => [
-                        'StateProvinceCode' => $this->shipToAddress->getRegionCode(),
-                        'PostalCode' => (string)$this->shipToAddress->getPostalCode(),
-                        'CountryCode' => $this->shipToAddress->getCountryIso2(),
-                        'City' => $this->shipToAddress->getCity(),
-                    ],
-                ],
-                'Pickup' => [
-                    'Date' => $this->pickupDate->format('Ymd'),
+            'ShipTo' => [
+                'Address' => [
+                    'StateProvinceCode' => $this->shipToAddress->getRegionCode(),
+                    'PostalCode' => (string)$this->shipToAddress->getPostalCode(),
+                    'CountryCode' => $this->shipToAddress->getCountryIso2(),
+                    'City' => $this->shipToAddress->getCity()
                 ],
             ],
+            'Pickup' => [
+                'Date' => $this->pickupDate->format('Ymd')
+            ]
         ];
 
         if ($this->customerContext !== null) {
@@ -216,7 +223,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
     /**
      * {@inheritDoc}
      */
-    public function setWeight(int $weight, string $weightUnitCode)
+    public function setWeight(int $weight, string $weightUnitCode): self
     {
         $this->weight = $weight;
         $this->weightUnitCode = $weightUnitCode;
@@ -227,7 +234,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
     /**
      * {@inheritDoc}
      */
-    public function setMaximumListSize(string $maximumListSize)
+    public function setMaximumListSize(string $maximumListSize): self
     {
         $this->maximumListSize = $maximumListSize;
 
@@ -237,7 +244,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
     /**
      * {@inheritDoc}
      */
-    public function setTransactionIdentifier(string $transactionIdentifier)
+    public function setTransactionIdentifier(string $transactionIdentifier): self
     {
         $this->transactionIdentifier = $transactionIdentifier;
 
@@ -247,7 +254,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
     /**
      * {@inheritDoc}
      */
-    public function setCustomerContext(string $customerContext)
+    public function setCustomerContext(string $customerContext): self
     {
         $this->customerContext = $customerContext;
 

@@ -4,144 +4,105 @@ namespace Oro\Bundle\UPSBundle\Model;
 
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 
+/**
+ * UPS Price Request model
+ *
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class PriceRequest
 {
-    /**
-     * @var string
-     */
-    protected $username;
+    protected ?string $username = null;
+    protected ?string $password = null;
+    protected ?string $clientId = null;
+    protected ?string $clientSecret = null;
+    protected ?string $accessLicenseNumber = null;
+    protected ?string $requestOption = null;
+    protected ?string $serviceDescription = null;
+    protected ?string $serviceCode = null;
+    protected array $serviceCodes = [];
+    protected ?string $shipperName = null;
+    protected ?string $shipperNumber = null;
+    protected ?AddressInterface $shipperAddress = null;
+    protected ?string $shipFromName = null;
+    protected ?AddressInterface $shipFromAddress = null;
+    protected ?string $shipToName = null;
+    protected ?AddressInterface $shipToAddress = null;
+
+    /** @var Package[] */
+    protected array $packages = [];
 
     /**
-     * @var string
-     */
-    protected $password;
-
-    /**
-     * @var string
-     */
-    protected $accessLicenseNumber;
-
-    /**
-     * @var string
-     */
-    protected $requestOption;
-
-    /**
-     * @var string
-     */
-    protected $serviceDescription;
-
-    /**
-     * @var string
-     */
-    protected $serviceCode;
-
-    /**
-     * @var string
-     */
-    protected $shipperName;
-
-    /**
-     * @var string
-     */
-    protected $shipperNumber;
-
-    /**
-     * @var AddressInterface
-     */
-    protected $shipperAddress;
-
-    /**
-     * @var string
-     */
-    protected $shipFromName;
-
-    /**
-     * @var AddressInterface
-     */
-    protected $shipFromAddress;
-
-    /**
-     * @var string
-     */
-    protected $shipToName;
-
-    /**
-     * @var AddressInterface
-     */
-    protected $shipToAddress;
-
-    /**
-     * @var Package[]
-     */
-    protected $packages = [];
-
-    /**
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function toJson()
+    public function toJson(): string
     {
-        $request = [
-            'UPSSecurity' => [
+        if (empty($this->clientId)
+            && empty($this->clientSecret)
+        ) {
+            $request['UPSSecurity'] = [
                 'UsernameToken' => [
                     'Username' => $this->username,
                     'Password' => $this->password,
                 ],
                 'ServiceAccessToken' => [
                     'AccessLicenseNumber' => $this->accessLicenseNumber,
-                ],
+                ]
+            ];
+        }
+
+        $request['RateRequest'] = [
+            'Request' => [
+                'RequestOption' => $this->requestOption,
             ],
-            'RateRequest' => [
-                'Request' => [
-                    'RequestOption' => $this->requestOption,
+            'Shipment' => [
+                'Shipper' => [
+                    'Name' => $this->shipperName,
+                    'ShipperNumber' => $this->shipperNumber,
+                    'Address' => $this->shipperAddress ? [
+                        'AddressLine' => [
+                            $this->shipperAddress->getStreet(),
+                            $this->shipperAddress->getStreet2()
+                        ],
+                        'City' => $this->shipperAddress->getCity(),
+                        'StateProvinceCode' => $this->shipperAddress->getRegionCode(),
+                        'PostalCode' => $this->shipperAddress->getPostalCode(),
+                        'CountryCode' => $this->shipperAddress->getCountryIso2(),
+                    ] : [],
                 ],
-                'Shipment' => [
-                    'Shipper' => [
-                        'Name' => $this->shipperName,
-                        'ShipperNumber' => $this->shipperNumber,
-                        'Address' => $this->shipperAddress ? [
-                            'AddressLine' => [
-                                $this->shipperAddress->getStreet(),
-                                $this->shipperAddress->getStreet2()
-                            ],
-                            'City' => $this->shipperAddress->getCity(),
-                            'StateProvinceCode' => $this->shipperAddress->getRegionCode(),
-                            'PostalCode' => $this->shipperAddress->getPostalCode(),
-                            'CountryCode' => $this->shipperAddress->getCountryIso2(),
-                        ] : [],
-                    ],
-                    'ShipTo' => [
-                        'Name' => $this->shipToName,
-                        'Address' => $this->shipToAddress ? [
-                            'AddressLine' => [
-                                $this->shipToAddress->getStreet(),
-                                $this->shipToAddress->getStreet2()
-                            ],
-                            'City' => $this->shipToAddress->getCity(),
-                            'StateProvinceCode' => $this->shipToAddress->getRegionCode(),
-                            'PostalCode' => $this->shipToAddress->getPostalCode(),
-                            'CountryCode' => $this->shipToAddress->getCountryIso2(),
-                        ] : [],
-                    ],
-                    'ShipFrom' => [
-                        'Name' => $this->shipFromName,
-                        'Address' => $this->shipFromAddress ? [
-                            'AddressLine' => [
-                                $this->shipFromAddress->getStreet(),
-                                $this->shipFromAddress->getStreet2()
-                            ],
-                            'City' => $this->shipFromAddress->getCity(),
-                            'StateProvinceCode' => $this->shipFromAddress->getRegionCode(),
-                            'PostalCode' => $this->shipFromAddress->getPostalCode(),
-                            'CountryCode' => $this->shipFromAddress->getCountryIso2(),
-                        ] : [],
-                    ],
-                    'Package' => array_map(function (Package $package) {
-                        return $package->toArray();
-                    }, $this->packages),
+                'ShipTo' => [
+                    'Name' => $this->shipToName,
+                    'Address' => $this->shipToAddress ? [
+                        'AddressLine' => [
+                            $this->shipToAddress->getStreet(),
+                            $this->shipToAddress->getStreet2()
+                        ],
+                        'City' => $this->shipToAddress->getCity(),
+                        'StateProvinceCode' => $this->shipToAddress->getRegionCode(),
+                        'PostalCode' => $this->shipToAddress->getPostalCode(),
+                        'CountryCode' => $this->shipToAddress->getCountryIso2(),
+                    ] : [],
                 ],
-            ],
+                'ShipFrom' => [
+                    'Name' => $this->shipFromName,
+                    'Address' => $this->shipFromAddress ? [
+                        'AddressLine' => [
+                            $this->shipFromAddress->getStreet(),
+                            $this->shipFromAddress->getStreet2()
+                        ],
+                        'City' => $this->shipFromAddress->getCity(),
+                        'StateProvinceCode' => $this->shipFromAddress->getRegionCode(),
+                        'PostalCode' => $this->shipFromAddress->getPostalCode(),
+                        'CountryCode' => $this->shipFromAddress->getCountryIso2(),
+                    ] : [],
+                ],
+                'Package' => array_map(function (Package $package) {
+                    return $package->toArray();
+                }, $this->packages),
+            ]
         ];
 
         if ($this->getServiceCode() && $this->getServiceDescription()) {
@@ -149,6 +110,20 @@ class PriceRequest
                 'Code' => $this->serviceCode,
                 'Description' => $this->serviceDescription,
             ];
+        } elseif (!empty($this->serviceCodes)) {
+            /**
+             * The following Services are not available to return shipment: 13, 59, 82, 83, 84, 85, 86
+             * https://developer.ups.com/api/reference?loc=en_US#operation/Shipment
+             */
+            $restrictedServices = [13, 59, 82, 83, 84, 85, 86];
+            foreach ($this->serviceCodes as $serviceCode) {
+                if (isset($restrictedServices[(int) $serviceCode])) {
+                    continue;
+                }
+                $request['RateRequest']['Shipment']['Service'][] = [
+                    'Code' => (string) $serviceCode
+                ];
+            }
         }
 
         return json_encode($request);
@@ -348,6 +323,17 @@ class PriceRequest
     }
 
     /**
+     * @param array $serviceCode
+     * @return $this
+     */
+    public function setServiceCodes(array $serviceCodes)
+    {
+        $this->serviceCodes = $serviceCodes;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getShipperName()
@@ -496,6 +482,28 @@ class PriceRequest
     {
         $this->packages = $packages;
 
+        return $this;
+    }
+
+    public function getClientId(): string
+    {
+        return $this->clientId;
+    }
+
+    public function setClientId(?string $clientId): PriceRequest
+    {
+        $this->clientId = $clientId;
+        return $this;
+    }
+
+    public function getClientSecret(): string
+    {
+        return $this->clientSecret;
+    }
+
+    public function setClientSecret(?string $clientSecret): PriceRequest
+    {
+        $this->clientSecret = $clientSecret;
         return $this;
     }
 }

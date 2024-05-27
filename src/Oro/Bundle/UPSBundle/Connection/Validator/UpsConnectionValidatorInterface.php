@@ -5,12 +5,10 @@ namespace Oro\Bundle\UPSBundle\Connection\Validator;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResultInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 
+/**
+ * Interface for UPS Connection Validator
+ */
 interface UpsConnectionValidatorInterface
 {
-    /**
-     * @param UPSTransport $transport
-     *
-     * @return UpsConnectionValidatorResultInterface
-     */
-    public function validateConnectionByUpsSettings(UPSTransport $transport);
+    public function validateConnectionByUpsSettings(UPSTransport $transport): UpsConnectionValidatorResultInterface;
 }
