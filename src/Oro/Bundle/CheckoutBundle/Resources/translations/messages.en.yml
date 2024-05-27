@@ -5,6 +5,10 @@ oro:
         entity_grid_all_view_label: All %entity_plural_label%
         entity_frontend_grid_all_view_label: All Open Orders
         id.label: Id
+        uuid:
+            label: UUID
+            description: Unique identifier that is used as a reference for the checkout.
+            short_label: 'Checkout #'
         owner.label: Owner
         customer.label: Customer
         customer_user.label: Customer User
