@@ -26,7 +26,10 @@ class LoadEmailTemplates extends AbstractEmailFixture implements VersionedFixtur
      */
     protected $emailsUpdateConfig = [
         'checkout_registration_confirmation' => ['61d0aa78a03cff496e373d85f3f3bfce'],
-        'checkout_customer_user_reset_password' => ['d5eac9230ad16940519a2cd1e0bfa88e'],
+        'checkout_customer_user_reset_password' => [
+            'd5eac9230ad16940519a2cd1e0bfa88e',
+            'f8037a44b89505241b3907df7f7e1e61'
+        ],
     ];
 
     /**
@@ -34,7 +37,7 @@ class LoadEmailTemplates extends AbstractEmailFixture implements VersionedFixtur
      */
     public function getVersion()
     {
-        return '1.0';
+        return '1.1';
     }
 
     /**
