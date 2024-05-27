@@ -24,6 +24,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodConfigurationInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -33,7 +34,13 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 /**
  * Order entity
  *
- * @ORM\Table(name="oro_order",indexes={@ORM\Index(name="oro_order_created_at_index", columns={"created_at"})})
+ * @ORM\Table(
+ *     name="oro_order",
+ *     indexes={
+ *          @ORM\Index(name="oro_order_created_at_index", columns={"created_at"}),
+ *          @ORM\Index(name="oro_order_uuid", columns={"uuid"})
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository")
  * @Config(
  *      routeName="oro_order_index",
@@ -485,6 +492,11 @@ class Order extends ExtendOrder implements
     protected $subOrders;
 
     /**
+     * @ORM\Column(name="uuid", type="guid", unique=true, nullable=false)
+     */
+    protected $uuid;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -495,6 +507,7 @@ class Order extends ExtendOrder implements
         $this->discounts = new ArrayCollection();
         $this->shippingTrackings = new ArrayCollection();
         $this->subOrders = new ArrayCollection();
+        $this->uuid = UUIDGenerator::v4();
         $this->loadMultiCurrencyFields();
     }
 
@@ -559,6 +572,18 @@ class Order extends ExtendOrder implements
     public function setIdentifier($identifier)
     {
         $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    public function getUuid(): string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }
@@ -1416,5 +1441,10 @@ class Order extends ExtendOrder implements
         }
 
         return $this;
+    }
+
+    public function __clone()
+    {
+        $this->uuid = UUIDGenerator::v4();
     }
 }

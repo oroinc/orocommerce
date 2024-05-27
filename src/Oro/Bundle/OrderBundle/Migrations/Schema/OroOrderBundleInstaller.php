@@ -54,7 +54,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_15';
+        return 'v1_15_1';
     }
 
     /**
@@ -91,6 +91,7 @@ class OroOrderBundleInstaller implements
     {
         $table = $schema->createTable('oro_order');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('uuid', 'guid', ['notnull' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
@@ -158,9 +159,11 @@ class OroOrderBundleInstaller implements
         $table->addColumn('source_entity_identifier', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'oro_order_created_at_index', []);
+        $table->addIndex(['uuid'], 'oro_order_uuid');
         $table->addUniqueIndex(['identifier'], 'uniq_oro_order_identifier');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_c036ff904d4cff2b');
         $table->addUniqueIndex(['billing_address_id'], 'uniq_c036ff9079d0c0e4');
+        $table->addUniqueIndex(['uuid'], 'UNIQ_388B2E9DD17F50A6');
 
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', $table->getName());
         $this->attachmentExtension->addAttachmentAssociation($schema, $table->getName());
