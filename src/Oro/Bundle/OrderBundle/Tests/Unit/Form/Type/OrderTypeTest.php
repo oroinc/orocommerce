@@ -121,6 +121,7 @@ class OrderTypeTest extends TypeTestCase
     public function testSubmitValidData(array $submitData, Order $expectedOrder): void
     {
         $order = new Order();
+        $order->setUuid($expectedOrder->getUuid());// Sync order.
         $order->setTotalDiscounts(Price::create(99, 'USD'));
 
         $options = [

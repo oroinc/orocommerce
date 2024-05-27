@@ -433,6 +433,8 @@ services:
             - '@oro_action.expression.context_accessor'
             - '@oro_checkout.mapper.order_mapper'
             - '@oro_checkout.payment_methods_provider'
+        calls:
+            - [ setManagerRegistry, ['@doctrine'] ]
         tags:
             - { name: oro_action.action, alias: create_order }
 
@@ -876,6 +878,15 @@ services:
         arguments:
             - '@oro_checkout.workflow_state.manager.checkout_state_diff'
             - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
+        tags:
+            - { name: kernel.event_subscriber }
+
+    oro_checkout.listener.checkout_transition_purchase:
+        class: Oro\Bundle\CheckoutBundle\EventListener\CheckoutTransitionPurchase
+        arguments:
+            - '@oro_workflow.manager'
+            - '@security.token_storage'
+            - 'finish_checkout'
         tags:
             - { name: kernel.event_subscriber }
 

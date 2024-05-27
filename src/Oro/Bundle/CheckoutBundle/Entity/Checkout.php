@@ -27,6 +27,7 @@ use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
@@ -35,10 +36,13 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  * Checkout entity
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ *
  * @mixin OroCheckoutBundle_Entity_Checkout
  */
 #[ORM\Entity(repositoryClass: CheckoutRepository::class)]
 #[ORM\Table(name: 'oro_checkout')]
+#[ORM\Index(columns: ['uuid'], name: 'oro_checkout_uuid')]
 #[ORM\HasLifecycleCallbacks]
 #[Config(
     defaultValues: [
@@ -173,11 +177,15 @@ class Checkout implements
     )]
     protected ?CustomerUser $registeredCustomerUser = null;
 
+    #[ORM\Column(name: 'uuid', type: Types::GUID, unique: true, nullable: false)]
+    protected $uuid;
+
     public function __construct()
     {
         $this->completedData = new CompletedCheckoutData();
         $this->lineItems = new ArrayCollection();
         $this->subtotals = new ArrayCollection();
+        $this->uuid = UUIDGenerator::v4();
     }
 
     /**
@@ -558,5 +566,22 @@ class Checkout implements
         $this->registeredCustomerUser = $customerUser;
 
         return $this;
+    }
+
+    public function getUuid(): string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    public function __clone()
+    {
+        $this->uuid = UUIDGenerator::v4();
     }
 }

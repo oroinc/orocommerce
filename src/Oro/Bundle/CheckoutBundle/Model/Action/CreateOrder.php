@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Model\Action;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\CheckoutBundle\Payment\Method\EntityPaymentMethodsProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
@@ -45,6 +47,11 @@ class CreateOrder extends AbstractAction
      */
     protected $paymentMethodsProvider;
 
+    /**
+     * @var ManagerRegistry
+     */
+    protected $managerRegistry;
+
     public function __construct(
         ContextAccessor $contextAccessor,
         MapperInterface $mapper,
@@ -54,6 +61,11 @@ class CreateOrder extends AbstractAction
 
         $this->mapper = $mapper;
         $this->paymentMethodsProvider = $paymentMethodsProvider;
+    }
+
+    public function setManagerRegistry(ManagerRegistry $managerRegistry): void
+    {
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -98,7 +110,7 @@ class CreateOrder extends AbstractAction
             );
         }
 
-        $order = $this->mapper->map($checkout, $additionalData);
+        $order = $this->getOrder($checkout, $additionalData);
         $this->paymentMethodsProvider->storePaymentMethodsToEntity($order, [$checkout->getPaymentMethod()]);
 
         $this->contextAccessor->setValue($context, $this->options[self::OPTION_KEY_ATTRIBUTE], $order);
@@ -120,5 +132,23 @@ class CreateOrder extends AbstractAction
         }
 
         return $arguments;
+    }
+
+    private function getOrder(Checkout $checkout, array $additionalData): Order
+    {
+        $uuid = $checkout->getUuid();
+        $order = $this->findOrder($uuid) ?: $this->mapper->map($checkout, $additionalData);
+        // Use a unique checkout uuid to associate it with an order.
+        // This is necessary to make sure that there is one order for each checkout.
+        $order->setUuid($uuid);
+
+        return $order;
+    }
+
+    private function findOrder(string $uuid): ?Order
+    {
+        $repository = $this->managerRegistry->getManager()->getRepository(Order::class);
+
+        return $repository->findOneBy(['uuid' => $uuid]);
     }
 }

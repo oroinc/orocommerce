@@ -24,6 +24,10 @@ oro:
         id.label: ID
         identifier:
             label:                        Order Number
+            description:                  Unique number that is used as a reference for the order.
+            short_label:                  'Order #'
+        uuid:
+            label: UUID
             description:                  Unique identifier that is used as a reference for the order.
             short_label:                  'Order #'
         owner.label: Owner

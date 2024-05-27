@@ -31,6 +31,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodConfigurationInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -54,6 +55,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: 'oro_order')]
 #[ORM\Index(columns: ['created_at'], name: 'oro_order_created_at_index')]
+#[ORM\Index(columns: ['uuid'], name: 'oro_order_uuid')]
 #[ORM\HasLifecycleCallbacks]
 #[Config(
     routeName: 'oro_order_index',
@@ -115,6 +117,9 @@ class Order implements
     #[ORM\Column(name: 'identifier', type: Types::STRING, length: 255, unique: true, nullable: true)]
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?string $identifier = null;
+
+    #[ORM\Column(name: 'uuid', type: Types::GUID, unique: true, nullable: false)]
+    protected $uuid;
 
     #[ORM\OneToOne(targetEntity: OrderAddress::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'billing_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
@@ -313,6 +318,7 @@ class Order implements
         $this->discounts = new ArrayCollection();
         $this->shippingTrackings = new ArrayCollection();
         $this->subOrders = new ArrayCollection();
+        $this->uuid = UUIDGenerator::v4();
         $this->loadMultiCurrencyFields();
     }
 
@@ -374,6 +380,18 @@ class Order implements
     public function setIdentifier($identifier)
     {
         $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    public function getUuid(): string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }
@@ -1235,5 +1253,10 @@ class Order implements
         }
 
         return $this;
+    }
+
+    public function __clone(): void
+    {
+        $this->uuid = UUIDGenerator::v4();
     }
 }
