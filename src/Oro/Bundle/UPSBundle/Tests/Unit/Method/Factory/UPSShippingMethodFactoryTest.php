@@ -19,44 +19,28 @@ use Oro\Bundle\UPSBundle\Provider\UPSTransport;
 
 class UPSShippingMethodFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UPSTransport|\PHPUnit\Framework\MockObject\MockObject */
     private $transport;
 
-    /**
-     * @var PriceRequestFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var PriceRequestFactory|\PHPUnit\Framework\MockObject\MockObject */
     private $priceRequestFactory;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelper;
 
-    /**
-     * @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingPriceCache;
 
-    /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $integrationIdentifierGenerator;
 
-    /**
-     * @var UPSShippingMethodTypeFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UPSShippingMethodTypeFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $methodTypeFactory;
 
-    /**
-     * @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $integrationIconProvider;
 
-    /**
-     * @var UPSShippingMethodFactory
-     */
+    /** @var UPSShippingMethodFactory */
     private $factory;
 
     /**
@@ -147,7 +131,7 @@ class UPSShippingMethodFactoryTest extends \PHPUnit\Framework\TestCase
             ->with($labelsCollection)
             ->willReturn('en');
 
-        $this->assertEquals(new UPSShippingMethod(
+        $expectedUPSShippingMethod = new UPSShippingMethod(
             $identifier,
             'en',
             $iconUri,
@@ -157,6 +141,11 @@ class UPSShippingMethodFactoryTest extends \PHPUnit\Framework\TestCase
             $this->priceRequestFactory,
             $this->shippingPriceCache,
             true
-        ), $this->factory->create($channel));
+        );
+
+        $this->assertEquals(
+            $expectedUPSShippingMethod,
+            $this->factory->create($channel)
+        );
     }
 }

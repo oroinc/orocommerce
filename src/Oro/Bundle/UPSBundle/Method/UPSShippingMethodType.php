@@ -11,6 +11,9 @@ use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 
+/**
+ * UPS shipping method type implementation.
+ */
 class UPSShippingMethodType implements ShippingMethodTypeInterface
 {
     const REQUEST_OPTION = 'Rate';

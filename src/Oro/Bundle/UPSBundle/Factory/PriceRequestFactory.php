@@ -12,6 +12,10 @@ use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
 
+/**
+ * Creates {@see PriceRequest} by {@see UPSTransport}, {@see ShippingContextInterface},
+ * Request option and {@see ShippingService}.
+ */
 class PriceRequestFactory
 {
     const MAX_PACKAGE_WEIGHT_KGS = 70;
@@ -64,6 +68,8 @@ class PriceRequestFactory
             ->setUsername($transport->getUpsApiUser())
             ->setPassword($decryptedPassword)
             ->setAccessLicenseNumber($transport->getUpsApiKey())
+            ->setClientId($transport->getUpsClientId())
+            ->setClientSecret($transport->getUpsClientSecret())
             ->setRequestOption($requestOption)
             ->setShipperName($transport->getUpsShippingAccountName())
             ->setShipperNumber($transport->getUpsShippingAccountNumber())
@@ -73,7 +79,8 @@ class PriceRequestFactory
             ->setShipFromAddress($context->getShippingOrigin());
 
         if (null !== $shippingService) {
-            $priceRequest->setServiceCode($shippingService->getCode())
+            $priceRequest
+                ->setServiceCode($shippingService->getCode())
                 ->setServiceDescription($shippingService->getDescription());
         }
 

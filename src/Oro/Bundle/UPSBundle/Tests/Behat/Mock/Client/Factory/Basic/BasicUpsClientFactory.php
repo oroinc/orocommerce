@@ -12,6 +12,8 @@ class BasicUpsClientFactory implements UpsClientFactoryInterface
 {
     private RestClientFactoryInterface $restClientFactory;
     private UpsClientUrlProviderInterface $upsClientUrlProvider;
+    private UpsClientUrlProviderInterface $upsClientUrlOAuthProvider;
+    private bool $isOAuthConfigured;
 
     public function __construct(
         RestClientFactoryInterface $restClientFactory,
@@ -31,50 +33,66 @@ class BasicUpsClientFactory implements UpsClientFactoryInterface
         $date = new \DateTime('now', new \DateTimeZone('GMT'));
 
         $client = $this->restClientFactory->createRestClient($url, []);
-        $client->setResponseList(
+
+        $fakeRateResponse = new FakeRestResponse(
+            200,
             [
-                'Rate' => new FakeRestResponse(
-                    200,
-                    [
-                        'Date' => [$date->format(\DateTime::RFC7231)],
-                        'Server' => ['Apache'],
-                        'X-Frame-Options' => ['DENY'],
-                        'X-XSS-Protection' => ['1; mode=block'],
-                        'X-Content-Type-Options' => ['nosniff'],
-                        'Strict-Transport-Security' => ['max-age=31536000; includeSubDomains'],
-                        'Cache-Control' => ['no-store, no-cache'],
-                        'Pragma' => ['no-cache'],
-                        'APIErrorMsg' => ['Invalid Access License number'],
-                        'APIHttpStatus' => ['401'],
-                        'APIErrorCode' => ['250003'],
-                        'Transfer-Encoding' => ['chunked'],
-                        'Content-Type' => ['application/json'],
-                    ],
-                    \json_encode(
-                        [
-                            'Fault' => [
-                                'faultcode' => 'Client',
-                                'faultstring' => 'An exception has been raised as a result of client data.',
-                                'detail' => [
-                                    'Errors' => [
-                                        'ErrorDetail' => [
-                                            'Severity' => 'Hard',
-                                            'PrimaryErrorCode' => [
-                                                'Code' => '111210',
-                                                'Description' => 'The requested service is unavailable between the ' .
-                                                    'selected locations.'
-                                            ]
-                                        ]
+                'Date' => [$date->format(\DateTime::RFC7231)],
+                'Server' => ['Apache'],
+                'X-Frame-Options' => ['DENY'],
+                'X-XSS-Protection' => ['1; mode=block'],
+                'X-Content-Type-Options' => ['nosniff'],
+                'Strict-Transport-Security' => ['max-age=31536000; includeSubDomains'],
+                'Cache-Control' => ['no-store, no-cache'],
+                'Pragma' => ['no-cache'],
+                'APIErrorMsg' => ['Invalid Access License number'],
+                'APIHttpStatus' => ['401'],
+                'APIErrorCode' => ['250003'],
+                'Transfer-Encoding' => ['chunked'],
+                'Content-Type' => ['application/json'],
+            ],
+            \json_encode(
+                [
+                    'Fault' => [
+                        'faultcode' => 'Client',
+                        'faultstring' => 'An exception has been raised as a result of client data.',
+                        'detail' => [
+                            'Errors' => [
+                                'ErrorDetail' => [
+                                    'Severity' => 'Hard',
+                                    'PrimaryErrorCode' => [
+                                        'Code' => '111210',
+                                        'Description' => 'The requested service is unavailable between the ' .
+                                            'selected locations.'
                                     ]
                                 ]
                             ]
-                        ],
-                        JSON_THROW_ON_ERROR
-                    )
-                ),
+                        ]
+                    ]
+                ],
+                JSON_THROW_ON_ERROR
+            )
+        );
+
+        $client->setResponseList(
+            [
+                '/api/rating/v2403/Rate' => $fakeRateResponse,
+                'Rate' => $fakeRateResponse,
             ]
         );
 
         return $client;
+    }
+
+    public function setUpsClientUrlOAuthProvider(UpsClientUrlProviderInterface $upsClientUrlOAuthProvider): void
+    {
+        $this->upsClientUrlOAuthProvider = $upsClientUrlOAuthProvider;
+    }
+
+    public function setIsOAuthConfigured(bool $isConfigured): self
+    {
+        $this->isOAuthConfigured = $isConfigured;
+
+        return $this;
     }
 }

@@ -5,6 +5,8 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -14,6 +16,7 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionType
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
@@ -21,6 +24,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -110,6 +114,12 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         $registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
         $localizedFallbackValue = new LocalizedFallbackValueCollectionType($registry);
 
+        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $configProvider */
+        $configProvider = $this->createMock(ConfigProvider::class);
+
+        /** @var Translator|\PHPUnit\Framework\MockObject\MockObject $translator */
+        $translator = $this->createMock(Translator::class);
+
         return [
             new PreloadedExtension(
                 [
@@ -120,7 +130,10 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     LocalizedFallbackValueCollectionType::class => $localizedFallbackValue,
                     new OroEncodedPlaceholderPasswordType($this->crypter),
                 ],
-                []
+                [
+                    FormType::class =>
+                        [new TooltipFormExtension($configProvider, $translator)],
+                ]
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
@@ -140,11 +153,10 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         UPSTransport $expectedData
     ) {
         if (count($submittedData) > 0) {
-            $this->crypter
-                ->expects($this->once())
+            $this->crypter->expects($this->once())
                 ->method('encryptData')
-                ->with($submittedData['upsApiPassword'])
-                ->willReturn($submittedData['upsApiPassword']);
+                ->with($submittedData['upsClientSecret'])
+                ->willReturn($submittedData['upsClientSecret']);
         }
 
         $shippingOrigin = new ShippingOrigin(
@@ -205,9 +217,11 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                         'values' => [ 'default' => 'first label'],
                     ],
                     'upsTestMode' => true,
-                    'upsApiUser' => 'user',
-                    'upsApiPassword' => 'password',
-                    'upsApiKey' => 'key',
+                    //'upsApiUser' => 'user',
+                    //'upsApiPassword' => 'password',
+                    //'upsApiKey' => 'key',
+                    'upsClientId' => 'client_id',
+                    'upsClientSecret' => 'client_secret',
                     'upsShippingAccountName' => 'name',
                     'upsShippingAccountNumber' => 'number',
                     'upsPickupType' => '01',
@@ -218,9 +232,11 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                 'isValid' => true,
                 'expectedData' => (new UPSTransport())
                     ->setUpsTestMode(true)
-                    ->setUpsApiUser('user')
-                    ->setUpsApiPassword('password')
-                    ->setUpsApiKey('key')
+                    //->setUpsApiUser('user')
+                    //->setUpsApiPassword('password')
+                    //->setUpsApiKey('key')
+                    ->setUpsClientId('client_id')
+                    ->setUpsClientSecret('client_secret')
                     ->setUpsShippingAccountName('name')
                     ->setUpsShippingAccountNumber('number')
                     ->setUpsPickupType('01')
