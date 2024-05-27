@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\UPSBundle\Model;
 
+/**
+ * UPS Package model
+ */
 class Package
 {
-    const PACKAGING_TYPE_CODE = '00';
+    public const PACKAGING_TYPE_CODE = '00';
 
     /**
      * @var string

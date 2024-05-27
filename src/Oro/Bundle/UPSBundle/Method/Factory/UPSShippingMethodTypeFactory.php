@@ -12,45 +12,18 @@ use Oro\Bundle\UPSBundle\Method\Identifier\UPSMethodTypeIdentifierGeneratorInter
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
 
+/**
+ * Basic implementation of UPS Shipping Method Type Factory
+ */
 class UPSShippingMethodTypeFactory implements UPSShippingMethodTypeFactoryInterface
 {
-    /**
-     * @var UPSMethodTypeIdentifierGeneratorInterface
-     */
-    private $typeIdentifierGenerator;
-
-    /**
-     * @var IntegrationIdentifierGeneratorInterface
-     */
-    private $integrationIdentifierGenerator;
-
-    /**
-     * @var UPSTransport
-     */
-    private $transport;
-
-    /**
-     * @var PriceRequestFactory
-     */
-    private $priceRequestFactory;
-
-    /**
-     * @var ShippingPriceCache
-     */
-    private $shippingPriceCache;
-
     public function __construct(
-        UPSMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator,
-        IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator,
-        UPSTransport $transport,
-        PriceRequestFactory $priceRequestFactory,
-        ShippingPriceCache $shippingPriceCache
+        private UPSMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator,
+        private IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator,
+        private UPSTransport $transport,
+        private PriceRequestFactory $priceRequestFactory,
+        private ShippingPriceCache $shippingPriceCache
     ) {
-        $this->typeIdentifierGenerator = $typeIdentifierGenerator;
-        $this->integrationIdentifierGenerator = $integrationIdentifierGenerator;
-        $this->transport = $transport;
-        $this->priceRequestFactory = $priceRequestFactory;
-        $this->shippingPriceCache = $shippingPriceCache;
     }
 
     /**

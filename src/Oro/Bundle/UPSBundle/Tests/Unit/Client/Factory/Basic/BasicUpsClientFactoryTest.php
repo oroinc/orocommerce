@@ -9,30 +9,26 @@ use Oro\Bundle\UPSBundle\Client\Url\Provider\UpsClientUrlProviderInterface;
 
 class BasicUpsClientFactoryTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var RestClientFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RestClientFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $restClientFactoryMock;
 
-    /**
-     * @var UpsClientUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UpsClientUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $upsClientUrlProviderMock;
 
-    /**
-     * @var BasicUpsClientFactory
-     */
+    /** @var BasicUpsClientFactory */
     private $testedUpsClientFactory;
 
     protected function setUp(): void
     {
         $this->restClientFactoryMock = $this->createMock(RestClientFactoryInterface::class);
         $this->upsClientUrlProviderMock = $this->createMock(UpsClientUrlProviderInterface::class);
+        $this->upsClientUrlOAuthProvider = $this->createMock(UpsClientUrlProviderInterface::class);
 
         $this->testedUpsClientFactory = new BasicUpsClientFactory(
             $this->restClientFactoryMock,
             $this->upsClientUrlProviderMock
         );
+        $this->testedUpsClientFactory->setUpsClientUrlOAuthProvider($this->upsClientUrlOAuthProvider);
     }
 
     public function testCreateUpsClient()

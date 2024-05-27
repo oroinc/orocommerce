@@ -4,13 +4,16 @@ namespace Oro\Bundle\UPSBundle\TimeInTransit\Result;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * Base implementation of UPS EstimatedArrivals response
+ */
 class EstimatedArrival extends ParameterBag implements EstimatedArrivalInterface
 {
-    const ARRIVAL_DATE_KEY = 'arrival_date';
-    const BUSINESS_DAYS_IN_TRANSIT_KEY = 'business_days_in_transit';
-    const DAY_OF_WEEK_KEY = 'day_of_week';
-    const TOTAL_TRANSIT_DAYS_KEY = 'total_transit_days';
-    const CUSTOMER_CENTER_CUTOFF_KEY = 'customer_center_cutoff';
+    public const ARRIVAL_DATE_KEY = 'arrival_date';
+    public const BUSINESS_DAYS_IN_TRANSIT_KEY = 'business_days_in_transit';
+    public const DAY_OF_WEEK_KEY = 'day_of_week';
+    public const TOTAL_TRANSIT_DAYS_KEY = 'total_transit_days';
+    public const CUSTOMER_CENTER_CUTOFF_KEY = 'customer_center_cutoff';
 
     /**
      * {@inheritDoc}

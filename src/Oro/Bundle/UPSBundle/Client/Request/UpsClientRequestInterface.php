@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\UPSBundle\Client\Request;
 
+/**
+ * Interface for UPS Client Request
+ */
 interface UpsClientRequestInterface
 {
     /**

@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class UPSShippingMethodOptionsType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_ups_shipping_method_config_options';
+    public const BLOCK_PREFIX = 'oro_ups_shipping_method_config_options';
 
     /**
      * @var RoundingServiceInterface

@@ -7,18 +7,21 @@ use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Oro\Bundle\UPSBundle\Client\Result\UpsErrorResultTrait;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResult;
 
+/**
+ * Basic implementation of UPS Connection Validator Result Factory
+ */
 class UpsConnectionValidatorResultFactory implements UpsConnectionValidatorResultFactoryInterface
 {
     use UpsErrorResultTrait;
 
-    const AUTHENTICATION_ERROR_SEVERITY_CODE = 'Authentication';
-    const WRONG_MEASUREMENT_SYSTEM_ERROR_CODE = '111057';
-    const UNAVAILABLE_SERVICE_BETWEEN_LOCATIONS_ERROR_CODE = '111210';
+    public const AUTHENTICATION_ERROR_SEVERITY_CODE = 'Authentication';
+    public const WRONG_MEASUREMENT_SYSTEM_ERROR_CODE = '111057';
+    public const UNAVAILABLE_SERVICE_BETWEEN_LOCATIONS_ERROR_CODE = '111210';
 
-    const AUTHENTICATION_SEVERITY = 'authentication';
-    const MEASUREMENT_SYSTEM_SEVERITY = 'measurement_system';
-    const UNEXPECTED_SEVERITY = 'unexpected';
-    const SERVER_SEVERITY = 'server';
+    public const AUTHENTICATION_SEVERITY = 'authentication';
+    public const MEASUREMENT_SYSTEM_SEVERITY = 'measurement_system';
+    public const UNEXPECTED_SEVERITY = 'unexpected';
+    public const SERVER_SEVERITY = 'server';
 
     /**
      * {@inheritDoc}

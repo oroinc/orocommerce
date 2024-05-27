@@ -20,3 +20,5 @@ services:
             - '@oro_ups.client.factory_basic'
             - '@oro_ups.connection.validator.result.factory'
             - '@logger'
+        calls:
+            - [ 'setAccessTokenProvider', [ '@oro_ups.token_provider' ]]

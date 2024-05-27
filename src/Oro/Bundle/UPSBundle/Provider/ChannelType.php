@@ -5,9 +5,12 @@ namespace Oro\Bundle\UPSBundle\Provider;
 use Oro\Bundle\IntegrationBundle\Provider\ChannelInterface;
 use Oro\Bundle\IntegrationBundle\Provider\IconAwareIntegrationInterface;
 
+/**
+ * UPS Channel Type provider
+ */
 class ChannelType implements ChannelInterface, IconAwareIntegrationInterface
 {
-    const TYPE = 'ups';
+    public const TYPE = 'ups';
 
     /**
      * {@inheritdoc}

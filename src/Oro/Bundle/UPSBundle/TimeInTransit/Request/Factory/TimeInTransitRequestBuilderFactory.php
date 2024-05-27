@@ -8,16 +8,14 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\TimeInTransit\Request\Builder\TimeInTransitRequestBuilder;
 use Oro\Bundle\UPSBundle\TimeInTransit\Request\Builder\TimeInTransitRequestBuilderInterface;
 
+/**
+ * Base implementation of UPS TimeInTransit request builder factory
+ */
 class TimeInTransitRequestBuilderFactory implements TimeInTransitRequestBuilderFactoryInterface
 {
-    /**
-     * @var SymmetricCrypterInterface
-     */
-    private $crypter;
-
-    public function __construct(SymmetricCrypterInterface $crypter)
-    {
-        $this->crypter = $crypter;
+    public function __construct(
+        private SymmetricCrypterInterface $crypter
+    ) {
     }
 
     /**
@@ -29,7 +27,7 @@ class TimeInTransitRequestBuilderFactory implements TimeInTransitRequestBuilderF
         AddressInterface $shipToAddress,
         \DateTime $pickupDate
     ): TimeInTransitRequestBuilderInterface {
-        return new TimeInTransitRequestBuilder(
+        $timeInTransitRequestBuilder = new TimeInTransitRequestBuilder(
             $transport->getUpsApiUser(),
             $this->crypter->decryptData($transport->getUpsApiPassword()),
             $transport->getUpsApiKey(),
@@ -37,5 +35,12 @@ class TimeInTransitRequestBuilderFactory implements TimeInTransitRequestBuilderF
             $shipToAddress,
             $pickupDate
         );
+
+        $timeInTransitRequestBuilder->setUpsClientId($transport->getUpsClientId());
+        $timeInTransitRequestBuilder->setUpsClientSecret(
+            $this->crypter->decryptData($transport->getUpsClientSecret())
+        );
+
+        return $timeInTransitRequestBuilder;
     }
 }

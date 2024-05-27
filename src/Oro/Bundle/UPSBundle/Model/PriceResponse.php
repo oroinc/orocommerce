@@ -4,9 +4,12 @@ namespace Oro\Bundle\UPSBundle\Model;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
+/**
+ * UPS Price Response model
+ */
 class PriceResponse
 {
-    const TOTAL_CHARGES = 'TotalCharges';
+    public const TOTAL_CHARGES = 'TotalCharges';
 
     /**
      * @var Price[]
