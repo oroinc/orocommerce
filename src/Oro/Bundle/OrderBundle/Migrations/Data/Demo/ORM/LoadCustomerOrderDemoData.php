@@ -37,16 +37,13 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
     use ContainerAwareTrait;
     use OrderLineItemsDemoDataTrait;
 
-    /** @var array */
-    private $countries = [];
-
-    /** @var array */
-    private $regions = [];
+    private array $countries = [];
+    private array $regions = [];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadCustomerDemoData::class,
@@ -61,12 +58,22 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
 
     /**
      * @param EntityManagerInterface $manager
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
+        $orderMetadata = $manager->getClassMetadata(Order::class);
+        $this->disablePrePersistCallback($orderMetadata);
+        $this->toggleFeatures(false);
+
         /** @var CustomerUser[] $customerUsers */
-        $customerUsers = $manager->getRepository(CustomerUser::class)->findAll();
+        $customerUsers = $manager->getRepository(CustomerUser::class)
+            ->findBy([
+                'emailLowercase' => [
+                    'amandarcole@example.org',
+                    'brandajsanborn@example.org'
+                ]
+            ]);
 
         /** @var User $user */
         $defaultUser = $manager->getRepository(User::class)->findOneBy([]);
@@ -79,9 +86,6 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         $paymentTerm = $manager->getRepository(PaymentTerm::class)->findOneBy([]);
         $paymentTermAccessor = $this->container->get('oro_payment_term.provider.payment_term_association');
         $website = $this->getWebsite($manager);
-
-        $orderMetadata = $manager->getClassMetadata(Order::class);
-        $this->disablePrePersistCallback($orderMetadata);
 
         $index = 0;
         $timeZone = new \DateTimeZone('UTC');
@@ -119,19 +123,19 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
             }
         }
 
-        $this->enablePrePersistCallback($orderMetadata);
-
         $manager->flush();
+
+        $this->enablePrePersistCallback($orderMetadata);
+        $this->toggleFeatures(true);
+
+        $this->countries = [];
+        $this->regions = [];
     }
 
-    /**
-     * @param CustomerUser $customerUser
-     * @param EntityManagerInterface $manager
-     *
-     * @return OrderAddress
-     */
-    private function getOrderAddressByCustomer(CustomerUser $customerUser, EntityManagerInterface $manager)
-    {
+    private function getOrderAddressByCustomer(
+        CustomerUser $customerUser,
+        EntityManagerInterface $manager
+    ): OrderAddress {
         $customerAddresses = $customerUser->getAddresses();
         $customerAddress = $customerAddresses->first();
 
@@ -163,24 +167,14 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         return $orderAddress;
     }
 
-    /**
-     * @param EntityManagerInterface $manager
-     * @param string $name
-     *
-     * @return Website
-     */
-    private function getWebsite(EntityManagerInterface $manager, $name = LoadWebsiteData::DEFAULT_WEBSITE_NAME)
-    {
+    private function getWebsite(
+        ObjectManager $manager,
+        string $name = LoadWebsiteData::DEFAULT_WEBSITE_NAME
+    ): Website {
         return $manager->getRepository(Website::class)->findOneBy(['name' => $name]);
     }
 
-    /**
-     * @param EntityManagerInterface $manager
-     * @param string $iso2Code
-     *
-     * @return Country|null
-     */
-    private function getCountryByIso2Code(EntityManagerInterface $manager, $iso2Code)
+    private function getCountryByIso2Code(EntityManagerInterface $manager, string $iso2Code): ?Country
     {
         if (!array_key_exists($iso2Code, $this->countries)) {
             $this->countries[$iso2Code] = $manager->getReference(Country::class, $iso2Code);
@@ -189,13 +183,7 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         return $this->countries[$iso2Code];
     }
 
-    /**
-     * @param EntityManagerInterface $manager
-     * @param string $code
-     *
-     * @return Region|null
-     */
-    private function getRegionByIso2Code(EntityManagerInterface $manager, $code)
+    private function getRegionByIso2Code(EntityManagerInterface $manager, string $code): ?Region
     {
         if (!array_key_exists($code, $this->regions)) {
             $this->regions[$code] = $manager->getReference(Region::class, $code);
@@ -214,7 +202,20 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
     private function disablePrePersistCallback(ClassMetadata $classMetadata): void
     {
         $lifecycleCallbacks = $classMetadata->lifecycleCallbacks;
-        $lifecycleCallbacks['prePersist'] = array_diff($lifecycleCallbacks['prePersist'], ['prePersist']);
+        $lifecycleCallbacks['prePersist'] = array_diff(
+            $lifecycleCallbacks['prePersist'],
+            [
+                'prePersist',
+                'updateTotalDiscounts'
+            ]
+        );
+        $lifecycleCallbacks['preUpdate'] = array_diff(
+            $lifecycleCallbacks['preUpdate'],
+            [
+                'updateTotalDiscounts'
+            ]
+        );
+
         $classMetadata->setLifecycleCallbacks($lifecycleCallbacks);
     }
 
@@ -229,5 +230,12 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
             ),
             new \DateTimeZone('UTC')
         );
+    }
+
+    private function toggleFeatures(?bool $enable): void
+    {
+        $configManager = $this->container->get('oro_config.global');
+        $configManager->set('oro_promotion.feature_enabled', $enable ?? false);
+        $configManager->flush();
     }
 }

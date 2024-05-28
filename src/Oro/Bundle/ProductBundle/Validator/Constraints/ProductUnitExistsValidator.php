@@ -15,12 +15,12 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class ProductUnitExistsValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_product_product_unit_exists';
+    public const ALIAS = 'oro_product_product_unit_exists';
 
     /**
      * {@inheritDoc}
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ProductUnitExists) {
             throw new UnexpectedTypeException($constraint, ProductUnitExists::class);
@@ -67,12 +67,7 @@ class ProductUnitExistsValidator extends ConstraintValidator
         return false;
     }
 
-    /**
-     * @param object $value
-     *
-     * @return string|null
-     */
-    private function getUnitCode($value): ?string
+    private function getUnitCode(object $value): ?string
     {
         $unit = $value instanceof ProductUnitHolderInterface
             ? $value->getProductUnit()
@@ -84,12 +79,7 @@ class ProductUnitExistsValidator extends ConstraintValidator
         return $unit;
     }
 
-    /**
-     * @param object $value
-     *
-     * @return Product|null
-     */
-    private function getProduct($value): ?Product
+    private function getProduct(object $value): ?Product
     {
         return $value->getProduct();
     }

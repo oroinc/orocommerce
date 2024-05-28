@@ -17,22 +17,19 @@ use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
  */
 class BuiltinEntityTaxListener
 {
-    /** @var TaxProviderRegistry */
-    private $taxProviderRegistry;
+    /** @var array|TaxValue[] */
+    private array $taxValues = [];
 
-    /** @var TaxValue[] */
-    private $taxValues = [];
-
-    public function __construct(TaxProviderRegistry $taxProviderRegistry)
-    {
-        $this->taxProviderRegistry = $taxProviderRegistry;
+    public function __construct(
+        private TaxProviderRegistry $taxProviderRegistry
+    ) {
     }
 
     /**
      * @param object $entity
      * @param LifecycleEventArgs $event
      */
-    public function prePersist($entity, LifecycleEventArgs $event)
+    public function prePersist(object $entity, LifecycleEventArgs $event): void
     {
         $provider = $this->getProvider();
 
@@ -64,7 +61,7 @@ class BuiltinEntityTaxListener
      * @param object $entity
      * @param LifecycleEventArgs $event
      */
-    public function postPersist($entity, LifecycleEventArgs $event)
+    public function postPersist(object $entity, LifecycleEventArgs $event): void
     {
         $key = $this->getKey($entity);
         if (array_key_exists($key, $this->taxValues)) {
@@ -89,10 +86,9 @@ class BuiltinEntityTaxListener
      * @param EntityManagerInterface $entityManager
      * @return mixed false if empty
      */
-    private function getIdentifier($object, EntityManagerInterface $entityManager)
+    private function getIdentifier(object $object, EntityManagerInterface $entityManager): mixed
     {
         $ids = $entityManager->getClassMetadata(ClassUtils::getClass($object))->getIdentifierValues($object);
-
         if (!$ids) {
             return false;
         }
@@ -100,19 +96,12 @@ class BuiltinEntityTaxListener
         return reset($ids);
     }
 
-    /**
-     * @param $object
-     * @return string
-     */
-    private function getKey($object)
+    private function getKey(object $object): string
     {
         return spl_object_hash($object);
     }
 
-    /**
-     * @return TaxProviderInterface
-     */
-    private function getProvider()
+    private function getProvider(): TaxProviderInterface
     {
         return $this->taxProviderRegistry->getEnabledProvider();
     }

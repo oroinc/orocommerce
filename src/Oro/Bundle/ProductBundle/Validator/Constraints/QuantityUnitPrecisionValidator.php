@@ -16,10 +16,9 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class QuantityUnitPrecisionValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_product_quantity_unit_precision';
+    public const ALIAS = 'oro_product_quantity_unit_precision';
 
-    /** @var RoundingServiceInterface */
-    private $roundingService;
+    private RoundingServiceInterface $roundingService;
 
     public function __construct(RoundingServiceInterface $roundingService)
     {
@@ -29,7 +28,7 @@ class QuantityUnitPrecisionValidator extends ConstraintValidator
     /**
      * {@inheritDoc}
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof QuantityUnitPrecision) {
             throw new UnexpectedTypeException($constraint, QuantityUnitPrecision::class);
@@ -67,34 +66,17 @@ class QuantityUnitPrecisionValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param object  $value
-     * @param Product $product
-     * @param string  $unitCode
-     *
-     * @return int|null
-     */
-    private function getPrecision($value, Product $product, string $unitCode): ?int
+    private function getPrecision(object $value, Product $product, string $unitCode): ?int
     {
         $unitPrecision = $product->getUnitPrecision($unitCode);
         if (null !== $unitPrecision) {
             return $unitPrecision->getPrecision();
         }
 
-        $unit = $this->getProductUnit($value);
-        if (null !== $unit) {
-            return $unit->getDefaultPrecision();
-        }
-
-        return null;
+        return $this->getProductUnit($value)?->getDefaultPrecision();
     }
 
-    /**
-     * @param object $value
-     *
-     * @return ProductUnit|null
-     */
-    private function getProductUnit($value): ?ProductUnit
+    private function getProductUnit(object $value): ?ProductUnit
     {
         $unit = $value instanceof ProductUnitHolderInterface
             ? $value->getProductUnit()
@@ -106,12 +88,7 @@ class QuantityUnitPrecisionValidator extends ConstraintValidator
         return $unit;
     }
 
-    /**
-     * @param object $value
-     *
-     * @return string|null
-     */
-    private function getUnitCode($value): ?string
+    private function getUnitCode(object $value): ?string
     {
         $unit = $value instanceof ProductUnitHolderInterface
             ? $value->getProductUnit()
@@ -123,12 +100,7 @@ class QuantityUnitPrecisionValidator extends ConstraintValidator
         return $unit;
     }
 
-    /**
-     * @param object $value
-     *
-     * @return float|null
-     */
-    private function getQuantity($value): ?float
+    private function getQuantity(object $value): ?float
     {
         $quantity = $value->getQuantity();
         if (\is_float($quantity) || \is_int($quantity)) {
@@ -147,12 +119,7 @@ class QuantityUnitPrecisionValidator extends ConstraintValidator
         return $parsedQuantity;
     }
 
-    /**
-     * @param object $value
-     *
-     * @return Product|null
-     */
-    private function getProduct($value): ?Product
+    private function getProduct(object $value): ?Product
     {
         return $value->getProduct();
     }

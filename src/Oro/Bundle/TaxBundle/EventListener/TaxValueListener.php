@@ -6,17 +6,17 @@ use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
 
+/**
+ * Clears taxValueManager caches on postRemove
+ */
 class TaxValueListener
 {
-    /** @var TaxValueManager */
-    protected $taxValueManager;
-
-    public function __construct(TaxValueManager $taxValueManager)
-    {
-        $this->taxValueManager = $taxValueManager;
+    public function __construct(
+        private TaxValueManager $taxValueManager
+    ) {
     }
 
-    public function postRemove(TaxValue $taxValue, LifecycleEventArgs $event)
+    public function postRemove(TaxValue $taxValue, LifecycleEventArgs $event): void
     {
         $this->taxValueManager->clear();
     }

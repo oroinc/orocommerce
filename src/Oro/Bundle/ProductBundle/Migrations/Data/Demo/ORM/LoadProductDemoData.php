@@ -152,6 +152,9 @@ class LoadProductDemoData extends AbstractFixture implements
         $manager->flush();
 
         $this->createSlugs($loadedProducts, $manager);
+
+        unset($loadedProducts);
+        unset($this->productUnits);
     }
 
     protected function getProducts(): \Iterator
@@ -249,7 +252,6 @@ class LoadProductDemoData extends AbstractFixture implements
             $image = new AttachmentFile();
             $image->setDigitalAsset($digitalAsset);
             $manager->persist($image);
-            $manager->flush();
 
             $productImage = new ProductImage();
             $productImage->setImage($image);
