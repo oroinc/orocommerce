@@ -7,23 +7,27 @@ use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 
+/**
+ * Tax Value Result Transformer
+ */
 class TaxValueToResultTransformer implements TaxTransformerInterface
 {
-    /** @var TaxValueManager */
-    protected $taxValueManager;
-
-    public function __construct(TaxValueManager $taxValueManager)
-    {
-        $this->taxValueManager = $taxValueManager;
+    public function __construct(
+        private TaxValueManager $taxValueManager
+    ) {
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function transform(TaxValue $taxValue)
     {
         return new Result($taxValue->getResult()->getArrayCopy());
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function reverseTransform(Result $result, Taxable $taxable)
     {
         $taxValue = $this->taxValueManager->getTaxValue($taxable->getClassName(), $taxable->getIdentifier());

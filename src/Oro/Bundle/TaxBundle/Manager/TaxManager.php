@@ -19,32 +19,20 @@ use Symfony\Contracts\Cache\CacheInterface;
 class TaxManager
 {
     protected array $transformers = [];
-    protected TaxFactory $taxFactory;
-    protected TaxEventDispatcher $eventDispatcher;
-    protected TaxValueManager $taxValueManager;
-    protected TaxationSettingsProvider $settingsProvider;
-    protected CacheInterface $cacheProvider;
-    protected ObjectCacheKeyGenerator $objectCacheKeyGenerator;
 
     public function __construct(
-        TaxFactory $taxFactory,
-        TaxEventDispatcher $eventDispatcher,
-        TaxValueManager $taxValueManager,
-        TaxationSettingsProvider $settingsProvider,
-        CacheInterface $cacheProvider,
-        ObjectCacheKeyGenerator $objectCacheKeyGenerator
+        private TaxFactory $taxFactory,
+        private TaxEventDispatcher $eventDispatcher,
+        private TaxValueManager $taxValueManager,
+        private TaxationSettingsProvider $settingsProvider,
+        private CacheInterface $cacheProvider,
+        private ObjectCacheKeyGenerator $objectCacheKeyGenerator
     ) {
-        $this->taxFactory = $taxFactory;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->taxValueManager = $taxValueManager;
-        $this->settingsProvider = $settingsProvider;
-        $this->cacheProvider = $cacheProvider;
-        $this->objectCacheKeyGenerator = $objectCacheKeyGenerator;
     }
 
     public function addTransformer(string $className, TaxTransformerInterface $transformer): void
     {
-        $this->transformers[(string)$className] = $transformer;
+        $this->transformers[$className] = $transformer;
     }
 
     protected function getTaxTransformer(?string $className): ?TaxTransformerInterface
@@ -58,6 +46,7 @@ class TaxManager
 
     /**
      * Load tax and return Result by object
+     *
      * @throws TaxationDisabledException if taxation disabled in system configuration
      * @throws \InvalidArgumentException if taxes for object could not be loaded
      */
@@ -84,6 +73,12 @@ class TaxManager
         return $this->getTaxable($object)->getResult();
     }
 
+    /**
+     * @param object $object
+     * @param bool $includeItems
+     * @return Result|false|null
+     * @throws TaxationDisabledException
+     */
     public function saveTax(object $object, bool $includeItems = false): Result|null|false
     {
         $this->throwExceptionIfTaxationDisabled();

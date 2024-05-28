@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -15,15 +16,19 @@ use Oro\Bundle\PromotionBundle\Provider\SubtotalProvider;
  */
 class OrderSubtotalWithDiscountsListener
 {
-    private SubtotalProviderInterface $subtotalProvider;
+    use FeatureCheckerHolderTrait;
 
-    public function __construct(SubtotalProviderInterface $subtotalProvider)
-    {
-        $this->subtotalProvider = $subtotalProvider;
+    public function __construct(
+        private SubtotalProviderInterface $subtotalProvider
+    ) {
     }
 
     public function prePersist(Order $order, LifecycleEventArgs $event): void
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $orderSubtotal = $order->getSubtotal();
         if ($this->subtotalProvider->isSupported($order)) {
             $orderSubtotal = $this->calculateSubtotalWithDiscount($order);
@@ -34,6 +39,10 @@ class OrderSubtotalWithDiscountsListener
 
     public function preUpdate(Order $order, PreUpdateEventArgs $event): void
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $orderSubtotal = $order->getSubtotal();
         if ($this->subtotalProvider->isSupported($order)) {
             $orderSubtotal = $this->calculateSubtotalWithDiscount($order);

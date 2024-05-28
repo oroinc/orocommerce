@@ -42,6 +42,16 @@ Oro\Bundle\OrderBundle\Entity\Order:
                     maxMessage: 'oro.order.subtotal.max.error.label'
         customer:
             -   NotBlank: ~
+        shippingMethod:
+            -   NotBlank:
+                    allowNull: true
+            -   Length:
+                    max: 255
+        shippingMethodType:
+            -   NotBlank:
+                    allowNull: true
+            -   Length:
+                    max: 255
         lineItems:
             -   Count:
                     min: 1
@@ -146,15 +156,15 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             -   Length:
                     max: 255
         shippingMethod:
-            - AtLeastOneOf:
-                -   Blank: ~
-                -   Length:
-                        max: 255
+            -   NotBlank:
+                    allowNull: true
+            -   Length:
+                    max: 255
         shippingMethodType:
-            - AtLeastOneOf:
-                -   Blank: ~
-                -   Length:
-                        max: 255
+            -   NotBlank:
+                    allowNull: true
+            -   Length:
+                    max: 255
         shippingEstimateAmount:
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         kitItemLineItems:
