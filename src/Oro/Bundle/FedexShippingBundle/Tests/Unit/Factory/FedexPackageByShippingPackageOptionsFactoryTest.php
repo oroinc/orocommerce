@@ -32,16 +32,16 @@ class FedexPackageByShippingPackageOptionsFactoryTest extends TestCase
                     Weight::create(4, (new WeightUnit())->setCode('kg'))
                 ),
                 [
-                    'GroupPackageCount' => 1,
-                    'Weight' => [
-                        'Value' => 4,
-                        'Units' => 'kg',
+                    'groupPackageCount' => 1,
+                    'weight' => [
+                        'value' => 4,
+                        'units' => 'kg',
                     ],
-                    'Dimensions' => [
-                        'Length' => 1,
-                        'Width' => 2,
-                        'Height' => 3,
-                        'Units' => 'cm'
+                    'dimensions' => [
+                        'length' => 1,
+                        'width' => 2,
+                        'height' => 3,
+                        'units' => 'cm'
                     ]
                 ]
             ],
@@ -51,16 +51,16 @@ class FedexPackageByShippingPackageOptionsFactoryTest extends TestCase
                     Weight::create(4, (new WeightUnit())->setCode('kg'))
                 ),
                 [
-                    'GroupPackageCount' => 1,
-                    'Weight' => [
-                        'Value' => 4,
-                        'Units' => 'kg',
+                    'groupPackageCount' => 1,
+                    'weight' => [
+                        'value' => 4,
+                        'units' => 'kg',
                     ],
-                    'Dimensions' => [
-                        'Length' => 1,
-                        'Width' => 0,
-                        'Height' => 0,
-                        'Units' => 'cm'
+                    'dimensions' => [
+                        'length' => 1,
+                        'width' => 0,
+                        'height' => 0,
+                        'units' => 'cm'
                     ]
                 ]
             ],
@@ -70,10 +70,10 @@ class FedexPackageByShippingPackageOptionsFactoryTest extends TestCase
                     Weight::create(4, (new WeightUnit())->setCode('kg'))
                 ),
                 [
-                    'GroupPackageCount' => 1,
-                    'Weight' => [
-                        'Value' => 4,
-                        'Units' => 'kg',
+                    'groupPackageCount' => 1,
+                    'weight' => [
+                        'value' => 4,
+                        'units' => 'kg',
                     ]
                 ]
             ],

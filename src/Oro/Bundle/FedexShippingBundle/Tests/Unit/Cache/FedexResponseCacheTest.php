@@ -40,7 +40,7 @@ class FedexResponseCacheTest extends TestCase
             ->with($key->getCacheKey())
             ->willReturn(true);
 
-        static::assertTrue($this->fedexCache->has($key));
+        self::assertTrue($this->fedexCache->has($key));
     }
 
     public function testGetNoResponse()
@@ -54,7 +54,7 @@ class FedexResponseCacheTest extends TestCase
             ->with($key->getCacheKey())
             ->willReturn(false);
 
-        static::assertNull($this->fedexCache->get($key));
+        self::assertNull($this->fedexCache->get($key));
     }
 
     public function testGet()
@@ -69,7 +69,7 @@ class FedexResponseCacheTest extends TestCase
             ->with($key->getCacheKey())
             ->willReturn($response);
 
-        static::assertSame($response, $this->fedexCache->get($key));
+        self::assertSame($response, $this->fedexCache->get($key));
     }
 
     public function testSetInvalidateAtIsSetInSettings()
@@ -83,7 +83,7 @@ class FedexResponseCacheTest extends TestCase
             ->method('save')
             ->willReturn(true);
 
-        static::assertTrue($this->fedexCache->set($key, $response));
+        self::assertTrue($this->fedexCache->set($key, $response));
     }
 
     public function testSetInvalidateAtNotSetInSettings()
@@ -158,7 +158,7 @@ class FedexResponseCacheTest extends TestCase
     private function createCacheKey(\DateTime $invalidateAt = null): FedexResponseCacheKey
     {
         return new FedexResponseCacheKey(
-            new FedexRequest(),
+            new FedexRequest('test/uri'),
             (new FedexIntegrationSettings())->setInvalidateCacheAt($invalidateAt)
         );
     }

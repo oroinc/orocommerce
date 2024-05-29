@@ -23,49 +23,33 @@ use PHPUnit\Framework\TestCase;
 
 class FedexShippingMethodFactoryTest extends TestCase
 {
-    const IDENTIFIER = 'id';
-    const LABEL = 'label';
-    const ICON_PATH = 'path';
-    const ENABLED = true;
-
     /**
      * @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $identifierGenerator;
 
-    /**
-     * @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelper;
 
-    /**
-     * @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var IntegrationIconProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $iconProvider;
 
-    /**
-     * @var FedexShippingMethodTypeFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FedexShippingMethodTypeFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $typeFactory;
 
-    /**
-     * @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rateServiceRequestSettingsFactory;
 
-    /**
-     * @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rateServiceRequestFactory;
 
-    /**
-     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $rateServiceRequestSoapFactory;
+
+    /** @var FedexRateServiceBySettingsClientInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rateServiceClient;
 
-    /**
-     * @var FedexShippingMethodFactory
-     */
+    /** @var FedexShippingMethodFactory */
     private $factory;
 
     protected function setUp(): void
@@ -78,6 +62,9 @@ class FedexShippingMethodFactoryTest extends TestCase
             FedexRateServiceRequestSettingsFactoryInterface::class
         );
         $this->rateServiceRequestFactory = $this->createMock(FedexRequestByRateServiceSettingsFactoryInterface::class);
+        $this->rateServiceRequestSoapFactory = $this->createMock(
+            FedexRequestByRateServiceSettingsFactoryInterface::class
+        );
         $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
 
         $this->factory = new FedexShippingMethodFactory(
@@ -87,69 +74,65 @@ class FedexShippingMethodFactoryTest extends TestCase
             $this->typeFactory,
             $this->rateServiceRequestSettingsFactory,
             $this->rateServiceRequestFactory,
+            $this->rateServiceRequestSoapFactory,
             $this->rateServiceClient
         );
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
-        $services = new ArrayCollection(
-            [
-                new FedexShippingService(),
-                new FedexShippingService(),
-            ]
-        );
-        $settings = new FedexIntegrationSettings();
-        $settings
-            ->addShippingService($services[0])
-            ->addShippingService($services[1]);
+        $identifier = 'id';
+        $label = 'label';
+        $iconUri = 'icon';
+        $enabled = true;
+
+        $services = new ArrayCollection([
+            new FedexShippingService(),
+            new FedexShippingService(),
+        ]);
+        $transport = new FedexIntegrationSettings();
+        $transport->addShippingService($services[0]);
+        $transport->addShippingService($services[1]);
 
         $channel = new Channel();
-        $channel
-            ->setTransport($settings)
-            ->setEnabled(self::ENABLED);
+        $channel->setTransport($transport);
+        $channel->setEnabled($enabled);
 
-        $this->identifierGenerator
-            ->expects(static::once())
+        $this->identifierGenerator->expects(self::once())
             ->method('generateIdentifier')
             ->with($channel)
-            ->willReturn(self::IDENTIFIER);
+            ->willReturn($identifier);
 
-        $this->localizationHelper
-            ->expects(static::once())
+        $this->localizationHelper->expects(self::once())
             ->method('getLocalizedValue')
-            ->with($settings->getLabels())
-            ->willReturn(self::LABEL);
+            ->with($transport->getLabels())
+            ->willReturn($label);
 
-        $this->iconProvider
-            ->expects(static::once())
+        $this->iconProvider->expects(self::once())
             ->method('getIcon')
             ->with($channel)
-            ->willReturn(self::ICON_PATH);
+            ->willReturn($iconUri);
 
         $types = [
             $this->createMock(ShippingMethodTypeInterface::class),
             $this->createMock(ShippingMethodTypeInterface::class),
         ];
-        $this->typeFactory
-            ->expects(static::exactly(2))
+        $this->typeFactory->expects(self::exactly(2))
             ->method('create')
             ->withConsecutive([$channel, $services[0]], [$channel, $services[1]])
             ->willReturnOnConsecutiveCalls($types[0], $types[1]);
 
-        static::assertEquals(
-            new FedexShippingMethod(
-                $this->rateServiceRequestSettingsFactory,
-                $this->rateServiceRequestFactory,
-                $this->rateServiceClient,
-                self::IDENTIFIER,
-                self::LABEL,
-                self::ICON_PATH,
-                self::ENABLED,
-                $settings,
-                $types
-            ),
-            $this->factory->create($channel)
+        $expected = new FedexShippingMethod(
+            $this->rateServiceRequestSettingsFactory,
+            $this->rateServiceRequestFactory,
+            $this->rateServiceClient,
+            $identifier,
+            $label,
+            $iconUri,
+            $enabled,
+            $transport,
+            $types
         );
+        self::assertEquals($expected, $this->factory->create($channel));
     }
 }
