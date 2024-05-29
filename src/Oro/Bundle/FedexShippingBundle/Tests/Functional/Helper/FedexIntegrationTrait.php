@@ -24,12 +24,11 @@ trait FedexIntegrationTrait
 
         $settings = new FedexIntegrationSettings();
         $settings
-            ->setKey('key')
-            ->setPassword('pass')
+            ->setClientId('key')
+            ->setClientSecret('pass')
             ->setAccountNumber('number')
-            ->setMeterNumber('meter')
             ->setFedexTestMode(true)
-            ->setPickupType(FedexIntegrationSettings::PICKUP_TYPE_DROP_BOX)
+            ->setPickupType(FedexIntegrationSettings::PICKUP_CONTACT_FEDEX_TO_SCHEDULE)
             ->setUnitOfWeight(FedexIntegrationSettings::UNIT_OF_WEIGHT_KG);
 
         $services = self::getContainer()

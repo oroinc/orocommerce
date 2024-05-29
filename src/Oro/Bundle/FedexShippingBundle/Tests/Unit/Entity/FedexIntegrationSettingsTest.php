@@ -13,40 +13,45 @@ class FedexIntegrationSettingsTest extends TestCase
 {
     use EntityTestCaseTrait;
 
-    public function testAccessors()
+    public function testAccessors(): void
     {
-        static::assertPropertyAccessors(new FedexIntegrationSettings(), [
+        self::assertPropertyAccessors(new FedexIntegrationSettings(), [
             ['fedexTestMode', true],
             ['key', 'key'],
             ['password', 'password'],
+            ['clientId', 'clientId'],
+            ['clientSecret', 'clientSecret'],
             ['accountNumber', 'accountNumber'],
             ['meterNumber', 'meterNumber'],
+            ['accessToken', 'accessToken'],
+            ['accessTokenExpiresAt', new \DateTime()],
             ['pickupType', 'pickupType'],
+            ['pickupTypeSoap', 'pickupTypeSoap'],
             ['unitOfWeight', 'unitOfWeight'],
             ['invalidateCacheAt', new \DateTime()],
             ['invalidateCacheAt', new \DateTime()],
             ['ignorePackageDimensions', true],
         ]);
 
-        static::assertPropertyCollections(new FedexIntegrationSettings(), [
+        self::assertPropertyCollections(new FedexIntegrationSettings(), [
             ['shippingServices', new FedexShippingService()],
             ['labels', new LocalizedFallbackValue()],
         ]);
     }
 
-    public function testGetSettingsBag()
+    public function testGetSettingsBag(): void
     {
-        static::assertEquals(new ParameterBag(), (new FedexIntegrationSettings())->getSettingsBag());
+        self::assertEquals(new ParameterBag(), (new FedexIntegrationSettings())->getSettingsBag());
     }
 
-    public function testGetDimensionsUnit()
+    public function testGetDimensionsUnit(): void
     {
         $settings = new FedexIntegrationSettings();
 
         $settings->setUnitOfWeight(FedexIntegrationSettings::UNIT_OF_WEIGHT_KG);
-        static::assertSame(FedexIntegrationSettings::DIMENSION_CM, $settings->getDimensionsUnit());
+        self::assertSame(FedexIntegrationSettings::DIMENSION_CM, $settings->getDimensionsUnit());
 
         $settings->setUnitOfWeight(FedexIntegrationSettings::UNIT_OF_WEIGHT_LB);
-        static::assertSame(FedexIntegrationSettings::DIMENSION_IN, $settings->getDimensionsUnit());
+        self::assertSame(FedexIntegrationSettings::DIMENSION_IN, $settings->getDimensionsUnit());
     }
 }

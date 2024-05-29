@@ -8,12 +8,20 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceR
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequestInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 
+/**
+ * FedEx API client that can cahe own result.
+ */
 class FedexRateServiceCachedClient implements FedexRateServiceBySettingsClientInterface
 {
     /**
      * @var FedexRateServiceBySettingsClientInterface
      */
     private $rateServiceClient;
+
+    /**
+     * @var FedexRateServiceBySettingsClientInterface
+     */
+    private $soapRateServiceClient;
 
     /**
      * @var FedexResponseCacheInterface
@@ -27,10 +35,12 @@ class FedexRateServiceCachedClient implements FedexRateServiceBySettingsClientIn
 
     public function __construct(
         FedexRateServiceBySettingsClientInterface $rateServiceClient,
+        FedexRateServiceBySettingsClientInterface $soapRateServiceClient,
         FedexResponseCacheInterface $cache,
         FedexResponseCacheKeyFactoryInterface $cacheKeyFactory
     ) {
         $this->rateServiceClient = $rateServiceClient;
+        $this->soapRateServiceClient = $soapRateServiceClient;
         $this->cache = $cache;
         $this->cacheKeyFactory = $cacheKeyFactory;
     }
@@ -49,7 +59,12 @@ class FedexRateServiceCachedClient implements FedexRateServiceBySettingsClientIn
             return $response;
         }
 
-        $response = $this->rateServiceClient->send($request, $settings);
+        $client = $this->soapRateServiceClient;
+        if ($settings->getClientSecret() && $settings->getClientId()) {
+            $client = $this->rateServiceClient;
+        }
+
+        $response = $client->send($request, $settings);
         if ($response->isSuccessful()) {
             $this->cache->set($cacheKey, $response);
         }
