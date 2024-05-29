@@ -9,25 +9,23 @@ use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
  */
 class FedexPackageByShippingPackageOptionsFactory implements FedexPackageByShippingPackageOptionsFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(ShippingPackageOptionsInterface $packageOptions): array
     {
         $data = [
-            'GroupPackageCount' => 1,
-            'Weight' => [
-                'Value' => $packageOptions->getWeight(),
-                'Units' => $packageOptions->getWeightUnitCode(),
+            'groupPackageCount' => 1,
+            'weight' => [
+                'value' => $packageOptions->getWeight(),
+                'units' => $packageOptions->getWeightUnitCode(),
             ]
         ];
 
         if ($packageOptions->getLength() || $packageOptions->getWidth() || $packageOptions->getHeight()) {
-            $data['Dimensions'] = [
-                'Length' => $packageOptions->getLength(),
-                'Width' => $packageOptions->getWidth(),
-                'Height' => $packageOptions->getHeight(),
-                'Units' => $packageOptions->getDimensionsUnitCode(),
+            $data['dimensions'] = [
+                'length' => $packageOptions->getLength(),
+                'width' => $packageOptions->getWidth(),
+                'height' => $packageOptions->getHeight(),
+                'units' => $packageOptions->getDimensionsUnitCode(),
             ];
         }
 

@@ -1,0 +1,7 @@
+"/oauth/token":
+    code: 503
+    headers: ~
+    body:
+        transactionId: bc95c0e4-b33e-42a2-80d2-334282b5d37a
+        errors:
+            - {code: NOT.FOUND.ERROR, message: Service Unavailable}
