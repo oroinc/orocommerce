@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod;
 
-// @codingStandardsIgnoreStart
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
+// @codingStandardsIgnoreStart
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
+// @codingStandardsIgnoreEnd
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\FedexRateServiceRequestSettingsInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
@@ -19,8 +20,6 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use PHPUnit\Framework\TestCase;
 
-// @codingStandardsIgnoreEnd
-
 class FedexShippingMethodTest extends TestCase
 {
     const IDENTIFIER = 'id';
@@ -28,19 +27,13 @@ class FedexShippingMethodTest extends TestCase
     const ICON_PATH = 'path';
     const ENABLED = true;
 
-    /**
-     * @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FedexRateServiceRequestSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rateServiceRequestSettingsFactory;
 
-    /**
-     * @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rateServiceRequestFactory;
 
-    /**
-     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var FedexRateServiceBySettingsClientInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rateServiceClient;
 
     protected function setUp(): void
@@ -60,17 +53,17 @@ class FedexShippingMethodTest extends TestCase
         ];
         $method = $this->createShippingMethod(new FedexIntegrationSettings(), $types);
 
-        static::assertTrue($method->isGrouped());
-        static::assertSame(self::ENABLED, $method->isEnabled());
-        static::assertSame(self::IDENTIFIER, $method->getIdentifier());
-        static::assertSame(self::LABEL, $method->getLabel());
-        static::assertSame(self::ICON_PATH, $method->getIcon());
-        static::assertSame($types, $method->getTypes());
-        static::assertSame(FedexShippingMethodOptionsType::class, $method->getOptionsConfigurationFormType());
-        static::assertSame(20, $method->getSortOrder());
+        self::assertTrue($method->isGrouped());
+        self::assertSame(self::ENABLED, $method->isEnabled());
+        self::assertSame(self::IDENTIFIER, $method->getIdentifier());
+        self::assertSame(self::LABEL, $method->getLabel());
+        self::assertSame(self::ICON_PATH, $method->getIcon());
+        self::assertSame($types, $method->getTypes());
+        self::assertSame(FedexShippingMethodOptionsType::class, $method->getOptionsConfigurationFormType());
+        self::assertSame(20, $method->getSortOrder());
 
-        static::assertNull($method->getType('no'));
-        static::assertSame($types[0], $method->getType('test1'));
+        self::assertNull($method->getType('no'));
+        self::assertSame($types[0], $method->getType('test1'));
     }
 
     public function testGetTrackingLinkMatches()
@@ -96,7 +89,7 @@ class FedexShippingMethodTest extends TestCase
             );
         }
 
-        static::assertNull($method->getTrackingLink('000'));
+        self::assertNull($method->getTrackingLink('000'));
     }
 
     public function testCalculatePrices()
@@ -126,33 +119,30 @@ class FedexShippingMethodTest extends TestCase
         ];
 
         $requests = [
-            new FedexRequest(),
+            new FedexRequest('test/uri'),
             null,
         ];
-        $response = new FedexRateServiceResponse('', 0, $prices);
+        $response = new FedexRateServiceResponse(200, $prices);
 
         $method = $this->createShippingMethod($settings, []);
         $context = $this->createMock(ShippingContextInterface::class);
 
-        $this->rateServiceRequestSettingsFactory
-            ->expects(static::exactly(2))
+        $this->rateServiceRequestSettingsFactory->expects(self::exactly(2))
             ->method('create')
             ->withConsecutive([$settings, $context, $rules[0]], [$settings, $context, $rules[1]])
             ->willReturnOnConsecutiveCalls($requestSettings[0], $requestSettings[1]);
 
-        $this->rateServiceRequestFactory
-            ->expects(static::exactly(2))
+        $this->rateServiceRequestFactory->expects(self::exactly(2))
             ->method('create')
             ->withConsecutive([$requestSettings[0]], [$requestSettings[1]])
             ->willReturnOnConsecutiveCalls($requests[0], $requests[1]);
 
-        $this->rateServiceClient
-            ->expects(static::once())
+        $this->rateServiceClient->expects(self::once())
             ->method('send')
             ->with($requests[0], $settings)
             ->willReturn($response);
 
-        static::assertEquals(
+        self::assertEquals(
             [
                 'test2' => Price::create(13.8, 'USD'),
             ],
@@ -178,8 +168,7 @@ class FedexShippingMethodTest extends TestCase
     private function createMethodType(string $identifier)
     {
         $type = $this->createMock(ShippingMethodTypeInterface::class);
-        $type
-            ->expects(static::any())
+        $type->expects(self::any())
             ->method('getIdentifier')
             ->willReturn($identifier);
 
@@ -204,8 +193,7 @@ class FedexShippingMethodTest extends TestCase
     private function createShippingServiceRule(int $id)
     {
         $rule = $this->createMock(ShippingServiceRule::class);
-        $rule
-            ->expects(static::any())
+        $rule->expects(self::any())
             ->method('getId')
             ->willReturn($id);
 

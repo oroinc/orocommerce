@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Controller;
 
-use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponseInterface;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceSoapResponse;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Form\Type\ChannelType;
@@ -50,10 +50,21 @@ class ValidateConnectionController extends AbstractController
         /** @var FedexIntegrationSettings $settings */
         $settings = $channel->getTransport();
 
-        $request = $this
-            ->get('oro_fedex_shipping.client.rate_service.connection_validate_request.factory')
-            ->create($settings);
-        $response = $this->get('oro_fedex_shipping.client.rate_service')->send($request, $settings);
+        $isRest = $settings->getClientSecret() && $settings->getClientId();
+        if ($isRest) {
+            $response = $this->get('oro_fedex_shipping.client.rate_service')->send(
+                $this->get('oro_fedex_shipping.client.rate_service.connection_validate_request.factory')
+                    ->create($settings),
+                $settings
+            );
+        } else {
+            $response = $this->get('oro_fedex_shipping.client.rate_service_soap')
+                ->send(
+                    $this->get('oro_fedex_shipping.client.rate_service.connection_validate_request_soap.factory')
+                        ->create($settings),
+                    $settings
+                );
+        }
 
         if (!empty($response->getPrices())) {
             return new JsonResponse([
@@ -64,17 +75,50 @@ class ValidateConnectionController extends AbstractController
 
         return new JsonResponse([
             'success' => false,
-            'message' => $this->get('translator')->trans($this->getErrorMessageTranslation($response)),
+            'message' => $this->get('translator')->trans(
+                $isRest
+                    ? $this->getErrorMessageTranslation($response)
+                    : $this->getErrorMessageSoapTranslation($response)
+            ),
         ]);
     }
 
-    private function getErrorMessageTranslation(FedexRateServiceResponseInterface $response): string
+    private function getErrorMessageSoapTranslation(FedexRateServiceSoapResponse $response)
     {
-        if ($response->getSeverityCode() === FedexRateServiceResponse::AUTHORIZATION_ERROR) {
+        if ($response->getSeverityCode() === FedexRateServiceSoapResponse::AUTHORIZATION_ERROR) {
             return 'oro.fedex.connection_validation.result.authorization_error.message';
-        } elseif ($response->getSeverityCode() === FedexRateServiceResponse::CONNECTION_ERROR) {
+        }
+        if ($response->getSeverityCode() === FedexRateServiceSoapResponse::CONNECTION_ERROR) {
             return 'oro.fedex.connection_validation.result.connection_error.message';
-        } elseif (empty($response->getPrices())) {
+        }
+        if (empty($response->getPrices())) {
+            return 'oro.fedex.connection_validation.result.no_services_error.message';
+        }
+
+        return 'oro.fedex.connection_validation.result.connection_error.message';
+    }
+
+    private function getErrorMessageTranslation(FedexRateServiceResponseInterface $response)
+    {
+        if ($response->getResponseStatusCode() === 400) {
+            return 'oro.fedex.connection_validation.result.bad_request.message';
+        }
+        if ($response->getResponseStatusCode() === 401) {
+            return 'oro.fedex.connection_validation.result.authorization_error.message';
+        }
+        if ($response->getResponseStatusCode() === 403) {
+            return 'oro.fedex.connection_validation.result.forbidden.message';
+        }
+        if ($response->getResponseStatusCode() === 404) {
+            return 'oro.fedex.connection_validation.result.not_found.message';
+        }
+        if ($response->getResponseStatusCode() === 500) {
+            return 'oro.fedex.connection_validation.result.failure.message';
+        }
+        if ($response->getResponseStatusCode() === 503) {
+            return 'oro.fedex.connection_validation.result.service_unavailable.message';
+        }
+        if (empty($response->getPrices())) {
             return 'oro.fedex.connection_validation.result.no_services_error.message';
         }
 

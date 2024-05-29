@@ -26,10 +26,23 @@ services:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Response\Factory\FedexRateServiceResponseFactory'
         public: false
 
+    oro_fedex_shipping.client.rate_service.response_soap.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Response\Factory\FedexRateServiceResponseSoapFactory'
+        public: false
+
+    oro_fedex_shipping.client.rate_service:
+        class: Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceRestClient
+        public: true
+        arguments:
+            - '@oro_fedex_oauth.token_provider'
+            - '@oro_integration.transport.rest.client_factory'
+            - '@oro_fedex_shipping.client.rate_service.response.factory'
+            - '@logger'
+
     oro_fedex_shipping.client.rate_service.soap_settings:
         class: 'Oro\Bundle\SoapBundle\Client\Settings\SoapClientSettings'
         public: false
-        factory: 'oro_soap.client.factory.settings:create'
+        factory: ['@oro_soap.client.factory.settings', 'create']
         arguments:
             - '%fedex_root_dir%Resources/wsdl/RateService_v20.wsdl' #fedex_root_dir is defined in OroFedexShippingBundle class
             - 'getRates'
@@ -38,18 +51,21 @@ services:
     oro_fedex_shipping.client.rate_service.soap_test_settings:
         class: 'Oro\Bundle\SoapBundle\Client\Settings\SoapClientSettings'
         public: false
-        factory: 'oro_soap.client.factory.settings:create'
+        factory: ['@oro_soap.client.factory.settings', 'create']
         arguments:
             - '%fedex_root_dir%Resources/wsdl/RateService_v20_test_mode.wsdl' #fedex_root_dir is defined in OroFedexShippingBundle class
             - 'getRates'
             - connection_timeout: 3
 
-    oro_fedex_shipping.client.rate_service:
+    Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient:
+        alias: oro_fedex_shipping.client.rate_service_soap
+
+    oro_fedex_shipping.client.rate_service_soap:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient'
         public: true
         arguments:
             - '@oro_soap.client'
-            - '@oro_fedex_shipping.client.rate_service.response.factory'
+            - '@oro_fedex_shipping.client.rate_service.response_soap.factory'
             - '@oro_fedex_shipping.client.rate_service.soap_settings'
             - '@oro_fedex_shipping.client.rate_service.soap_test_settings'
 
@@ -61,9 +77,17 @@ services:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceRequestFactory'
         public: false
         arguments:
-            - '@oro_security.encoder.default'
             - '@oro_fedex_shipping.factory.fedex_package_settings_by_integration_settings_and_rule'
             - '@oro_fedex_shipping.factory.fedex_packages_by_line_items_and_package_settings'
+            - '@oro_fedex_shipping.modifier.convert_to_fedex_units_shipping_line_item_collection'
+
+    oro_fedex_shipping.client.rate_service.request_soap.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceRequestSoapFactory'
+        public: false
+        arguments:
+            - '@oro_security.encoder.default'
+            - '@oro_fedex_shipping.factory.fedex_package_settings_by_integration_settings_and_rule'
+            - '@oro_fedex_shipping.factory.fedex_packages_by_line_items_and_package_settings_soap'
             - '@oro_fedex_shipping.modifier.convert_to_fedex_units_shipping_line_item_collection'
 
     oro_fedex_shipping.transfomer.shipping_dimensions_unit:
@@ -92,12 +116,23 @@ services:
         class: 'Oro\Bundle\FedexShippingBundle\Factory\FedexPackageByShippingPackageOptionsFactory'
         public: false
 
+    oro_fedex_shipping.factory.fedex_package_by_shipping_package_options_soap:
+        class: 'Oro\Bundle\FedexShippingBundle\Factory\FedexPackageByShippingPackageOptionsSoapFactory'
+        public: false
+
     oro_fedex_shipping.factory.fedex_packages_by_line_items_and_package_settings:
         class: 'Oro\Bundle\FedexShippingBundle\Factory\FedexPackagesByLineItemsAndPackageSettingsFactory'
         public: false
         arguments:
             - '@oro_fedex_shipping.builder.shipping_packages_by_line_item'
             - '@oro_fedex_shipping.factory.fedex_package_by_shipping_package_options'
+
+    oro_fedex_shipping.factory.fedex_packages_by_line_items_and_package_settings_soap:
+        class: 'Oro\Bundle\FedexShippingBundle\Factory\FedexPackagesByLineItemsAndPackageSettingsFactory'
+        public: false
+        arguments:
+            - '@oro_fedex_shipping.builder.shipping_packages_by_line_item'
+            - '@oro_fedex_shipping.factory.fedex_package_by_shipping_package_options_soap'
 
     oro_fedex_shipping.builder.shipping_packages_by_line_item:
         class: 'Oro\Bundle\FedexShippingBundle\Builder\ShippingPackagesByLineItemBuilder'
@@ -108,6 +143,12 @@ services:
 
     oro_fedex_shipping.client.rate_service.connection_validate_request.factory:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestFactory'
+        public: true
+        arguments:
+            - '@oro_shipping.shipping_origin.provider'
+
+    oro_fedex_shipping.client.rate_service.connection_validate_request_soap.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestSoapFactory'
         public: true
         arguments:
             - '@oro_security.encoder.default'
@@ -124,6 +165,7 @@ services:
             - '@oro_fedex_shipping.shipping_method.method_type_identifier_generator'
             - '@oro_fedex_shipping.client.rate_service.request.settings.factory'
             - '@oro_fedex_shipping.client.rate_service.request.factory'
+            - '@oro_fedex_shipping.client.rate_service.request_soap.factory'
             - '@oro_fedex_shipping.client.rate_service_cached'
 
     oro_fedex_shipping.shipping_method.factory.method:
@@ -136,6 +178,7 @@ services:
             - '@oro_fedex_shipping.shipping_method.factory.method_type'
             - '@oro_fedex_shipping.client.rate_service.request.settings.factory'
             - '@oro_fedex_shipping.client.rate_service.request.factory'
+            - '@oro_fedex_shipping.client.rate_service.request_soap.factory'
             - '@oro_fedex_shipping.client.rate_service_cached'
 
     oro_fedex_shipping.shipping_method.provider:
@@ -204,6 +247,7 @@ services:
         public: false
         arguments:
             - '@oro_fedex_shipping.client.rate_service'
+            - '@oro_fedex_shipping.client.rate_service_soap'
             - '@oro_fedex_shipping.cache.response'
             - '@oro_fedex_shipping.cache.cache_key_factory'
 
@@ -218,3 +262,10 @@ services:
 
     oro_fedex_shipping.expression_language:
         class: 'Symfony\Component\ExpressionLanguage\ExpressionLanguage'
+
+    oro_fedex_oauth.token_provider:
+        class: Oro\Bundle\FedexShippingBundle\Client\RateService\AccessTokenProvider
+        arguments:
+            - '@oro_integration.transport.rest.client_factory'
+            - '@oro_security.encoder.default'
+            - '@doctrine'
