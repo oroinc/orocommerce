@@ -7,7 +7,6 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestFactory;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 
@@ -16,7 +15,6 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends \PHPUnit\Fram
     private const KEY = 'key';
     private const PASS = 'pass';
     private const ACCOUNT_NUMBER = 'account';
-    private const METER_NUMBER = 'meter';
     private const UNIT_OF_WEIGHT = 'unit';
     private const PICKUP_TYPE = 'pickup';
     private const STREET = 'street';
@@ -24,9 +22,6 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends \PHPUnit\Fram
     private const REGION = 'region';
     private const POSTAL_CODE = 'postal';
     private const COUNTRY = 'country';
-
-    /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $crypter;
 
     /** @var SystemShippingOriginProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $systemShippingOriginProvider;
@@ -36,23 +31,17 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends \PHPUnit\Fram
 
     protected function setUp(): void
     {
-        $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
         $this->systemShippingOriginProvider = $this->createMock(SystemShippingOriginProvider::class);
 
         $this->factory = new FedexRateServiceValidateConnectionRequestFactory(
-            $this->crypter,
             $this->systemShippingOriginProvider
         );
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $settings = $this->createSettings();
         $shippingOrigin = $this->createShippingOrigin();
-
-        $this->crypter->expects(self::once())
-            ->method('decryptData')
-            ->willReturn(self::PASS);
 
         $this->systemShippingOriginProvider->expects(self::once())
             ->method('getSystemShippingOrigin')
@@ -80,9 +69,8 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends \PHPUnit\Fram
         $settings = new FedexIntegrationSettings();
 
         $settings
-            ->setKey(self::KEY)
-            ->setPassword(self::PASS)
-            ->setMeterNumber(self::METER_NUMBER)
+            ->setClientId(self::KEY)
+            ->setClientSecret(self::PASS)
             ->setAccountNumber(self::ACCOUNT_NUMBER)
             ->setPickupType(self::PICKUP_TYPE)
             ->setUnitOfWeight(self::UNIT_OF_WEIGHT);
@@ -93,56 +81,46 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends \PHPUnit\Fram
     private function getExpectedAddress(): array
     {
         return [
-            'Address' => [
-                'StreetLines' => [
+            'address' => [
+                'streetLines' => [
                     self::STREET
                 ],
-                'City' => self::CITY,
-                'StateOrProvinceCode' => self::REGION,
-                'PostalCode' => self::POSTAL_CODE,
-                'CountryCode' => self::COUNTRY,
+                'city' => self::CITY,
+                'stateOrProvinceCode' => self::REGION,
+                'postalCode' => self::POSTAL_CODE,
+                'countryCode' => self::COUNTRY,
             ]
         ];
     }
 
     private function getExpectedRequest(): FedexRequest
     {
-        return new FedexRequest([
-            'WebAuthenticationDetail' => [
-                'UserCredential' => [
-                    'Key' => self::KEY,
-                    'Password' => self::PASS,
-                ]
-            ],
-            'ClientDetail' => [
-                'AccountNumber' => self::ACCOUNT_NUMBER,
-                'MeterNumber' => self::METER_NUMBER,
-            ],
-            'Version' => [
-                'ServiceId' => 'crs',
-                'Major' => '20',
-                'Intermediate' => '0',
-                'Minor' => '0'
-            ],
-            'RequestedShipment' => [
-                'DropoffType' => self::PICKUP_TYPE,
-                'Shipper' => $this->getExpectedAddress(),
-                'Recipient' => $this->getExpectedAddress(),
-                'PackageCount' => 1,
-                'RequestedPackageLineItems' => [
-                    'GroupPackageCount' => 1,
-                    'Weight' => [
-                        'Value' => '10',
-                        'Units' => self::UNIT_OF_WEIGHT,
-                    ],
-                    'Dimensions' => [
-                        'Length' => '5',
-                        'Width' => '10',
-                        'Height' => '10',
-                        'Units' => FedexIntegrationSettings::DIMENSION_CM,
-                    ],
+        return new FedexRequest(
+            '/rate/v1/rates/quotes',
+            [
+                'accountNumber' => ['value' => self::ACCOUNT_NUMBER],
+                'requestedShipment' => [
+                    "rateRequestType" => ["ACCOUNT"],
+                    'pickupType' => self::PICKUP_TYPE,
+                    'shipper' => $this->getExpectedAddress(),
+                    'recipient' => $this->getExpectedAddress(),
+                    'totalPackageCount' => 1,
+                    'requestedPackageLineItems' => [[
+                        'groupPackageCount' => 1,
+                        'weight' => [
+                            'value' => 10,
+                            'units' => self::UNIT_OF_WEIGHT,
+                        ],
+                        'dimensions' => [
+                            'length' => 5,
+                            'width' => 10,
+                            'height' => 10,
+                            'units' => FedexIntegrationSettings::DIMENSION_CM,
+                        ],
+                    ]],
                 ],
             ],
-        ]);
+            true
+        );
     }
 }

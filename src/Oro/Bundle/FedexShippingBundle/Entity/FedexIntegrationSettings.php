@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  * FedexIntegrationSettings ORM entity.
  *
  * @ORM\Entity
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class FedexIntegrationSettings extends Transport
 {
@@ -22,8 +23,12 @@ class FedexIntegrationSettings extends Transport
     const PICKUP_TYPE_BUSINESS_SERVICE_CENTER = 'BUSINESS_SERVICE_CENTER';
     const PICKUP_TYPE_STATION = 'STATION';
 
-    const UNIT_OF_WEIGHT_KG = 'KG';
-    const UNIT_OF_WEIGHT_LB = 'LB';
+    public const PICKUP_CONTACT_FEDEX_TO_SCHEDULE = 'CONTACT_FEDEX_TO_SCHEDULE';
+    public const PICKUP_DROPOFF_AT_FEDEX_LOCATION = 'DROPOFF_AT_FEDEX_LOCATION';
+    public const PICKUP_USE_SCHEDULED_PICKUP = 'USE_SCHEDULED_PICKUP';
+
+    public const UNIT_OF_WEIGHT_KG = 'KG';
+    public const UNIT_OF_WEIGHT_LB = 'LB';
 
     const DIMENSION_CM = 'CM';
     const DIMENSION_IN = 'IN';
@@ -52,9 +57,45 @@ class FedexIntegrationSettings extends Transport
     /**
      * @var string
      *
+     * @ORM\Column(name="fedex_client_id", type="string", length=255)
+     */
+    private $clientId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="fedex_client_secret", type="string", length=255)
+     */
+    private $clientSecret;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="fedex_access_token", type="text")
+     */
+    private $accessToken;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="fedex_access_token_expires", type="datetime")
+     */
+    private $accessTokenExpiresAt;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="fedex_account_number", type="string", length=100)
      */
+    private $accountNumberSoap;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="fedex_account_number_rest", type="string", length=100)
+     */
     private $accountNumber;
+
 
     /**
      * @var string
@@ -67,6 +108,13 @@ class FedexIntegrationSettings extends Transport
      * @var string
      *
      * @ORM\Column(name="fedex_pickup_type", type="string", length=100)
+     */
+    private $pickupTypeSoap;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="fedex_pickup_type_rest", type="string", length=100)
      */
     private $pickupType;
 
@@ -151,32 +199,26 @@ class FedexIntegrationSettings extends Transport
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getKey()
+    public function getClientId(): ?string
     {
-        return $this->key;
+        return $this->clientId;
     }
 
-    public function setKey(string $key): self
+    public function setClientId(string $clientId): self
     {
-        $this->key = $key;
+        $this->clientId = $clientId;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getPassword()
+    public function getClientSecret(): ?string
     {
-        return $this->password;
+        return $this->clientSecret;
     }
 
-    public function setPassword(string $password): self
+    public function setClientSecret(string $clientSecret): self
     {
-        $this->password = $password;
+        $this->clientSecret = $clientSecret;
 
         return $this;
     }
@@ -196,17 +238,14 @@ class FedexIntegrationSettings extends Transport
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getMeterNumber()
+    public function getAccountNumberSoap()
     {
-        return $this->meterNumber;
+        return $this->accountNumberSoap;
     }
 
-    public function setMeterNumber(string $meterNumber): self
+    public function setAccountNumberSoap(string $accountNumber)
     {
-        $this->meterNumber = $meterNumber;
+        $this->accountNumberSoap = $accountNumber;
 
         return $this;
     }
@@ -226,10 +265,19 @@ class FedexIntegrationSettings extends Transport
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getUnitOfWeight()
+    public function getPickupTypeSoap(): ?string
+    {
+        return $this->pickupTypeSoap;
+    }
+
+    public function setPickupTypeSoap(string $pickupTypeSoap): self
+    {
+        $this->pickupTypeSoap = $pickupTypeSoap;
+
+        return $this;
+    }
+
+    public function getUnitOfWeight(): ?string
     {
         return $this->unitOfWeight;
     }
@@ -335,5 +383,55 @@ class FedexIntegrationSettings extends Transport
         $this->ignorePackageDimensions = $ignorePackageDimensions;
 
         return $this;
+    }
+
+    public function getAccessToken(): ?string
+    {
+        return $this->accessToken;
+    }
+
+    public function setAccessToken(?string $accessToken): void
+    {
+        $this->accessToken = $accessToken;
+    }
+
+    public function getAccessTokenExpiresAt(): ?\DateTime
+    {
+        return $this->accessTokenExpiresAt;
+    }
+
+    public function setAccessTokenExpiresAt(?\DateTime $accessTokenExpiresAt): void
+    {
+        $this->accessTokenExpiresAt = $accessTokenExpiresAt;
+    }
+
+    public function getKey(): ?string
+    {
+        return $this->key;
+    }
+
+    public function setKey(?string $key): void
+    {
+        $this->key = $key;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): void
+    {
+        $this->password = $password;
+    }
+
+    public function getMeterNumber(): ?string
+    {
+        return $this->meterNumber;
+    }
+
+    public function setMeterNumber(?string $meterNumber): void
+    {
+        $this->meterNumber = $meterNumber;
     }
 }

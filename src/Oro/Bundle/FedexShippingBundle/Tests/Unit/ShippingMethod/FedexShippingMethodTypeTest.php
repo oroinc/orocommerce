@@ -43,7 +43,7 @@ class FedexShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
         $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
     }
 
-    public function testGetters()
+    public function testGetters(): void
     {
         $service = new FedexShippingService();
         $service->setDescription(self::LABEL);
@@ -56,7 +56,7 @@ class FedexShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
         self::assertSame(FedexShippingMethodOptionsType::class, $type->getOptionsConfigurationFormType());
     }
 
-    public function testCalculatePriceNoRequest()
+    public function testCalculatePriceNoRequest(): void
     {
         $settings = new FedexIntegrationSettings();
         $context = $this->createMock(ShippingContextInterface::class);
@@ -82,15 +82,15 @@ class FedexShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testCalculatePricesHasNoNeededPrice()
+    public function testCalculatePricesHasNoNeededPrice(): void
     {
         $prices = [
             'other' => Price::create(1, ''),
             'other2' => Price::create(2, ''),
         ];
         $settings = new FedexIntegrationSettings();
-        $request = new FedexRequest();
-        $response = new FedexRateServiceResponse('', 0, $prices);
+        $request = new FedexRequest('test/uri');
+        $response = new FedexRateServiceResponse(200, $prices);
         $rule = new ShippingServiceRule();
         $requestSettings = $this->createMock(FedexRateServiceRequestSettingsInterface::class);
 
@@ -115,7 +115,7 @@ class FedexShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
         self::assertNull($type->calculatePrice($context, [], []));
     }
 
-    public function testCalculatePrice()
+    public function testCalculatePrice(): void
     {
         $prices = [
             'other' => Price::create(1, ''),
@@ -123,8 +123,8 @@ class FedexShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
             self::IDENTIFIER => Price::create(14.1, 'USD'),
         ];
         $settings = new FedexIntegrationSettings();
-        $request = new FedexRequest();
-        $response = new FedexRateServiceResponse('', 0, $prices);
+        $request = new FedexRequest('test/uri');
+        $response = new FedexRateServiceResponse(200, $prices);
         $rule = new ShippingServiceRule();
         $requestSettings = $this->createMock(FedexRateServiceRequestSettingsInterface::class);
 

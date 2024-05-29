@@ -14,9 +14,7 @@ use Oro\Bundle\FedexShippingBundle\Factory\FedexPackagesByLineItemsAndPackageSet
 use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Model\FedexPackageSettingsInterface;
 use Oro\Bundle\FedexShippingBundle\Modifier\ShippingLineItemCollectionBySettingsModifierInterface;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
@@ -28,26 +26,13 @@ class FedexRateServiceRequestFactoryTest extends \PHPUnit\Framework\TestCase
     private const METER_NUMBER = 'meter';
     private const PICKUP_TYPE = 'pickup';
 
-    /** @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $crypter;
-
-    /**
-     * @var FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $packageSettingsFactory;
-
-    /** @var FedexPackagesByLineItemsAndPackageSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $packagesFactory;
-
-    /** @var ShippingLineItemCollectionBySettingsModifierInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $convertToFedexUnitsModifier;
-
-    /** @var FedexRateServiceRequestFactory */
-    private $factory;
+    private FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface|MockObject $packageSettingsFactory;
+    private FedexPackagesByLineItemsAndPackageSettingsFactoryInterface|MockObject $packagesFactory;
+    private ShippingLineItemCollectionBySettingsModifierInterface|MockObject $convertToFedexUnitsModifier;
+    private FedexRateServiceRequestFactory $factory;
 
     protected function setUp(): void
     {
-        $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
         $this->packageSettingsFactory = $this->createMock(
             FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface::class
         );
@@ -57,7 +42,6 @@ class FedexRateServiceRequestFactoryTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->factory = new FedexRateServiceRequestFactory(
-            $this->crypter,
             $this->packageSettingsFactory,
             $this->packagesFactory,
             $this->convertToFedexUnitsModifier
@@ -68,7 +52,6 @@ class FedexRateServiceRequestFactoryTest extends \PHPUnit\Framework\TestCase
     {
         $context = $this->createContext();
         $integrationSettings = new FedexIntegrationSettings();
-
         $settings = new FedexRateServiceRequestSettings(
             $integrationSettings,
             $context,
@@ -93,14 +76,13 @@ class FedexRateServiceRequestFactoryTest extends \PHPUnit\Framework\TestCase
             ->method('create')
             ->with($lineItemsConverted, $packageSettings)
             ->willReturn([]);
-
         self::assertNull($this->factory->create($settings));
     }
 
     /**
      * @dataProvider brokenContextDataProvider
      */
-    public function testCreateNotAllDataFilled(ShippingContext $context)
+    public function testCreateNotAllDataFilled(ShippingContext $context): void
     {
         $packages = $this->createPackages();
         $integrationSettings = $this->createIntegrationSettings();
@@ -116,25 +98,28 @@ class FedexRateServiceRequestFactoryTest extends \PHPUnit\Framework\TestCase
             $rule
         );
 
-        $this->packageSettingsFactory->expects(self::once())
+        $this->packageSettingsFactory
+            ->expects(self::once())
             ->method('create')
             ->with($integrationSettings)
             ->willReturn($this->createMock(FedexPackageSettingsInterface::class));
 
-        $this->convertToFedexUnitsModifier->expects(self::once())
+        $this->convertToFedexUnitsModifier
+            ->expects(self::once())
             ->method('modify')
-            ->willReturn($this->createMock(ShippingLineItemCollectionInterface::class));
+            ->willReturn(new DoctrineShippingLineItemCollection([]));
 
-        $this->packagesFactory->expects(self::once())
+        $this->packagesFactory
+            ->expects(self::once())
             ->method('create')
             ->willReturn($packages);
-
-        $this->crypter->expects(self::never())
-            ->method('decryptData');
 
         self::assertNull($this->factory->create($settings));
     }
 
+    /**
+     * @retrun array
+     */
     public function brokenContextDataProvider(): array
     {
         return [
@@ -155,7 +140,7 @@ class FedexRateServiceRequestFactoryTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $packages = $this->createPackages();
         $integrationSettings = $this->createIntegrationSettings();
@@ -172,23 +157,21 @@ class FedexRateServiceRequestFactoryTest extends \PHPUnit\Framework\TestCase
             $rule
         );
 
-        $this->packageSettingsFactory->expects(self::once())
+        $this->packageSettingsFactory
+            ->expects(self::once())
             ->method('create')
             ->with($integrationSettings)
             ->willReturn($this->createMock(FedexPackageSettingsInterface::class));
 
-        $this->convertToFedexUnitsModifier->expects(self::once())
+        $this->convertToFedexUnitsModifier
+            ->expects(self::once())
             ->method('modify')
-            ->willReturn($this->createMock(ShippingLineItemCollectionInterface::class));
+            ->willReturn(new DoctrineShippingLineItemCollection([]));
 
-        $this->packagesFactory->expects(self::once())
+        $this->packagesFactory
+            ->expects(self::once())
             ->method('create')
             ->willReturn($packages);
-
-        $this->crypter->expects(self::once())
-            ->method('decryptData')
-            ->with(self::PASS)
-            ->willReturn(self::PASS);
 
         self::assertEquals($this->getExpectedRequest(), $this->factory->create($settings));
     }
@@ -210,6 +193,7 @@ class FedexRateServiceRequestFactoryTest extends \PHPUnit\Framework\TestCase
     private function createShipperAddress(): Address
     {
         $address = new Address();
+
         $address
             ->setStreet('street')
             ->setCity('city')
@@ -223,6 +207,7 @@ class FedexRateServiceRequestFactoryTest extends \PHPUnit\Framework\TestCase
     private function createRecipientAddress(): Address
     {
         $address = new Address();
+
         $address
             ->setStreet('street2')
             ->setCity('city2')
@@ -236,10 +221,10 @@ class FedexRateServiceRequestFactoryTest extends \PHPUnit\Framework\TestCase
     private function createIntegrationSettings(): FedexIntegrationSettings
     {
         $settings = new FedexIntegrationSettings();
+
         $settings
-            ->setKey(self::KEY)
-            ->setPassword(self::PASS)
-            ->setMeterNumber(self::METER_NUMBER)
+            ->setClientId(self::KEY)
+            ->setClientSecret(self::PASS)
             ->setAccountNumber(self::ACCOUNT_NUMBER)
             ->setPickupType(self::PICKUP_TYPE);
 
@@ -249,14 +234,14 @@ class FedexRateServiceRequestFactoryTest extends \PHPUnit\Framework\TestCase
     private function getExpectedAddress(Address $address): array
     {
         return [
-            'StreetLines' => [
+            'streetLines' => [
                 $address->getStreet(),
                 $address->getStreet2(),
             ],
-            'City' => $address->getCity(),
-            'StateOrProvinceCode' => $address->getRegionCode(),
-            'PostalCode' => $address->getPostalCode(),
-            'CountryCode' => $address->getCountryIso2(),
+            'city' => $address->getCity(),
+            'stateOrProvinceCode' => $address->getRegionCode(),
+            'postalCode' => $address->getPostalCode(),
+            'countryCode' => $address->getCountryIso2(),
         ];
     }
 
@@ -265,45 +250,34 @@ class FedexRateServiceRequestFactoryTest extends \PHPUnit\Framework\TestCase
         $packages = $this->createPackages();
         $recipientAddress = $this->createRecipientAddress();
 
-        return new FedexRequest([
-            'WebAuthenticationDetail' => [
-                'UserCredential' => [
-                    'Key' => self::KEY,
-                    'Password' => self::PASS,
-                ]
-            ],
-            'ClientDetail' => [
-                'AccountNumber' => self::ACCOUNT_NUMBER,
-                'MeterNumber' => self::METER_NUMBER,
-            ],
-            'Version' => [
-                'ServiceId' => 'crs',
-                'Major' => '20',
-                'Intermediate' => '0',
-                'Minor' => '0'
-            ],
-            'RequestedShipment' => [
-                'ServiceType' => 'service',
-                'DropoffType' => self::PICKUP_TYPE,
-                'Shipper' => [
-                    'Address' => $this->getExpectedAddress($this->createShipperAddress())
+        return new FedexRequest(
+            '/rate/v1/rates/quotes',
+            [
+                'accountNumber' => ['value' => self::ACCOUNT_NUMBER],
+                'requestedShipment' => [
+                    "rateRequestType" => ["ACCOUNT"],
+                    'pickupType' => self::PICKUP_TYPE,
+                    'shipper' => [
+                        'address' => $this->getExpectedAddress($this->createShipperAddress())
+                    ],
+                    'recipient' => [
+                        'address' => [
+                            'streetLines' => [
+                                $recipientAddress->getStreet(),
+                                $recipientAddress->getStreet2(),
+                            ],
+                            'city' => $recipientAddress->getCity(),
+                            'stateOrProvinceCode' => $recipientAddress->getRegionCode(),
+                            'postalCode' => $recipientAddress->getPostalCode(),
+                            'countryCode' => $recipientAddress->getCountryIso2(),
+                            'residential' => true,
+                        ]
+                    ],
+                    'totalPackageCount' => count($packages),
+                    'requestedPackageLineItems' => $packages,
+                    'serviceType' => 'service'
                 ],
-                'Recipient' => [
-                    'Address' => [
-                        'StreetLines' => [
-                            $recipientAddress->getStreet(),
-                            $recipientAddress->getStreet2(),
-                        ],
-                        'City' => $recipientAddress->getCity(),
-                        'StateOrProvinceCode' => $recipientAddress->getRegionCode(),
-                        'PostalCode' => $recipientAddress->getPostalCode(),
-                        'CountryCode' => $recipientAddress->getCountryIso2(),
-                        'Residential' => true,
-                    ]
-                ],
-                'PackageCount' => count($packages),
-                'RequestedPackageLineItems' => $packages,
-            ],
-        ]);
+            ]
+        );
     }
 }

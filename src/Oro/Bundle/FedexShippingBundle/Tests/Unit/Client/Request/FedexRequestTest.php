@@ -7,10 +7,16 @@ use PHPUnit\Framework\TestCase;
 
 class FedexRequestTest extends TestCase
 {
-    public function testGetRequestData()
+    public function testGetRequestData(): void
     {
+        $uri = 'test/uri';
         $data = ['1', '2'];
+        $isCheckMode = true;
 
-        static::assertSame($data, (new FedexRequest($data))->getRequestData());
+        $request = new FedexRequest($uri, $data, $isCheckMode);
+
+        self::assertEquals($uri, $request->getUri());
+        self::assertEquals($data, $request->getRequestData());
+        self::assertEquals($isCheckMode, $request->isCheckMode());
     }
 }

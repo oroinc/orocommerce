@@ -79,15 +79,14 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
         return $service;
     }
 
-    public function testSubmit()
+    public function testSubmit(): void
     {
         $submitData = [
             'fedexTestMode' => true,
-            'key' => 'key2',
-            'password' => 'pass2',
+            'clientId' => 'key2',
+            'clientSecret' => 'pass2',
             'accountNumber' => 'num2',
-            'meterNumber' => 'meter2',
-            'pickupType' => FedexIntegrationSettings::PICKUP_TYPE_BUSINESS_SERVICE_CENTER,
+            'pickupType' => FedexIntegrationSettings::PICKUP_CONTACT_FEDEX_TO_SCHEDULE,
             'unitOfWeight' => FedexIntegrationSettings::UNIT_OF_WEIGHT_KG,
             'labels' => [
                 'values' => ['default' => 'first label'],
@@ -98,10 +97,9 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
         $settings = new FedexIntegrationSettings();
         $settings
             ->setFedexTestMode(false)
-            ->setKey('key')
-            ->setPassword('pass')
+            ->setClientId('key')
+            ->setClientSecret('pass')
             ->setAccountNumber('num')
-            ->setMeterNumber('meter')
             ->setPickupType('pickup')
             ->setUnitOfWeight('unit')
             ->setIgnorePackageDimensions(true)
@@ -124,7 +122,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
         $this->assertEquals($settings, $form->getData());
     }
 
-    public function testGetBlockPrefix()
+    public function testGetBlockPrefix(): void
     {
         $formType = new FedexIntegrationSettingsType(
             $this->fedexResponseCache,
@@ -133,7 +131,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
         self::assertSame('oro_fedex_settings', $formType->getBlockPrefix());
     }
 
-    public function testConfigureOptions()
+    public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects(self::once())

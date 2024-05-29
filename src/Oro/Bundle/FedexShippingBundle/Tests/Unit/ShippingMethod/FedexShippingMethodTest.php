@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod;
 
-// @codingStandardsIgnoreStart
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRequestByRateServiceSettingsFactoryInterface;
+// @codingStandardsIgnoreStart
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\FedexRateServiceRequestSettingsFactoryInterface;
+// @codingStandardsIgnoreEnd
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\FedexRateServiceRequestSettingsInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
@@ -17,8 +18,6 @@ use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
-
-// @codingStandardsIgnoreEnd
 
 class FedexShippingMethodTest extends \PHPUnit\Framework\TestCase
 {
@@ -45,7 +44,7 @@ class FedexShippingMethodTest extends \PHPUnit\Framework\TestCase
         $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
     }
 
-    public function testGetters()
+    public function testGetters(): void
     {
         $types = [
             $this->createMethodType('test1'),
@@ -66,7 +65,7 @@ class FedexShippingMethodTest extends \PHPUnit\Framework\TestCase
         self::assertSame($types[0], $method->getType('test1'));
     }
 
-    public function testGetTrackingLinkMatches()
+    public function testGetTrackingLinkMatches(): void
     {
         $method = $this->createShippingMethod(new FedexIntegrationSettings(), []);
         $matchingNumbers = [
@@ -92,7 +91,7 @@ class FedexShippingMethodTest extends \PHPUnit\Framework\TestCase
         self::assertNull($method->getTrackingLink('000'));
     }
 
-    public function testCalculatePrices()
+    public function testCalculatePrices(): void
     {
         $settings = new FedexIntegrationSettings();
 
@@ -119,10 +118,10 @@ class FedexShippingMethodTest extends \PHPUnit\Framework\TestCase
         ];
 
         $requests = [
-            new FedexRequest(),
+            new FedexRequest('test/uri'),
             null,
         ];
-        $response = new FedexRateServiceResponse('', 0, $prices);
+        $response = new FedexRateServiceResponse(200, $prices);
 
         $method = $this->createShippingMethod($settings, []);
         $context = $this->createMock(ShippingContextInterface::class);

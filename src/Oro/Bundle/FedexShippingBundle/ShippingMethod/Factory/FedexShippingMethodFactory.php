@@ -28,6 +28,7 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
     private FedexShippingMethodTypeFactoryInterface $typeFactory;
     private FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory;
     private FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory;
+    private FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestSoapFactory;
     private FedexRateServiceBySettingsClientInterface $rateServiceClient;
 
     public function __construct(
@@ -37,6 +38,7 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
         FedexShippingMethodTypeFactoryInterface $typeFactory,
         FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory,
         FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory,
+        FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestSoapFactory,
         FedexRateServiceBySettingsClientInterface $rateServiceClient
     ) {
         $this->identifierGenerator = $identifierGenerator;
@@ -45,6 +47,7 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
         $this->typeFactory = $typeFactory;
         $this->rateServiceRequestSettingsFactory = $rateServiceRequestSettingsFactory;
         $this->rateServiceRequestFactory = $rateServiceRequestFactory;
+        $this->rateServiceRequestSoapFactory = $rateServiceRequestSoapFactory;
         $this->rateServiceClient = $rateServiceClient;
     }
 
@@ -61,9 +64,14 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
             $types[] = $this->typeFactory->create($channel, $shippingService);
         }
 
+        $requestFactory = $this->rateServiceRequestSoapFactory;
+        if ($transport->getClientSecret() && $transport->getClientId()) {
+            $requestFactory = $this->rateServiceRequestFactory;
+        }
+
         return new FedexShippingMethod(
             $this->rateServiceRequestSettingsFactory,
-            $this->rateServiceRequestFactory,
+            $requestFactory,
             $this->rateServiceClient,
             $this->identifierGenerator->generateIdentifier($channel),
             (string)$this->localizationHelper->getLocalizedValue($transport->getLabels()),
