@@ -15,8 +15,8 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
  */
 class AccessTokenProvider
 {
-    private const STRING REQUEST_URI = '/oauth/token';
-    private const INT MAX_RETRY_ATTEMPTS = 3;
+    private const REQUEST_URI = '/oauth/token';
+    private const MAX_RETRY_ATTEMPTS = 3;
 
     private RestClientFactoryInterface $restClientFactory;
     private SymmetricCrypterInterface $crypter;
