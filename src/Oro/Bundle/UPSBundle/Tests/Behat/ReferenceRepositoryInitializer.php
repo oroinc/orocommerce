@@ -9,7 +9,7 @@ use Oro\Bundle\UPSBundle\Entity\ShippingService;
 
 class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerInterface
 {
-    const UPS_2ND_DAY_AIR_DESCRIPTION = 'UPS 2nd Day Air';
+    public const UPS_2ND_DAY_AIR_DESCRIPTION = 'UPS 2nd Day Air';
 
     /**
      * {@inheritdoc}

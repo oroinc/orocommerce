@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
 use Brick\Math\BigDecimal;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
@@ -16,40 +17,22 @@ use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
  */
 class OrderLineItemAppliedDiscountsListener
 {
-    /**
-     * @var TaxProviderRegistry
-     */
-    protected $taxProviderRegistry;
-
-    /**
-     * @var TaxationSettingsProvider
-     */
-    protected $taxationSettingsProvider;
-
-    /**
-     * @var LineItemSubtotalProvider
-     */
-    protected $lineItemSubtotalProvider;
-
-    /**
-     * @var AppliedDiscountsProvider
-     */
-    protected $appliedDiscountsProvider;
+    use FeatureCheckerHolderTrait;
 
     public function __construct(
-        TaxProviderRegistry $taxProviderRegistry,
-        TaxationSettingsProvider $taxationSettingsProvider,
-        LineItemSubtotalProvider $lineItemSubtotalProvider,
-        AppliedDiscountsProvider $appliedDiscountsProvider
+        private TaxProviderRegistry $taxProviderRegistry,
+        private TaxationSettingsProvider $taxationSettingsProvider,
+        private LineItemSubtotalProvider $lineItemSubtotalProvider,
+        private AppliedDiscountsProvider $appliedDiscountsProvider
     ) {
-        $this->taxProviderRegistry = $taxProviderRegistry;
-        $this->taxationSettingsProvider = $taxationSettingsProvider;
-        $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
-        $this->appliedDiscountsProvider = $appliedDiscountsProvider;
     }
 
-    public function onOrderEvent(OrderEvent $event)
+    public function onOrderEvent(OrderEvent $event): void
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         $order = $event->getEntity();
         $isTaxationEnabled = $this->taxationSettingsProvider->isEnabled();
 
@@ -65,12 +48,7 @@ class OrderLineItemAppliedDiscountsListener
         $event->getData()->offsetSet('appliedDiscounts', $discounts);
     }
 
-    /**
-     * @param float $discountAmount
-     * @param OrderLineItem $lineItem
-     * @return array
-     */
-    protected function getDiscountWithTaxes(float $discountAmount, OrderLineItem $lineItem)
+    private function getDiscountWithTaxes(float $discountAmount, OrderLineItem $lineItem): array
     {
         $taxesRow = $this->getProvider()->getTax($lineItem)->getRow();
 
@@ -93,12 +71,7 @@ class OrderLineItemAppliedDiscountsListener
         ];
     }
 
-    /**
-     * @param float $discountAmount
-     * @param OrderLineItem $lineItem
-     * @return array
-     */
-    protected function getDiscountsWithoutTaxes(float $discountAmount, OrderLineItem $lineItem)
+    private function getDiscountsWithoutTaxes(float $discountAmount, OrderLineItem $lineItem): array
     {
         $rowTotalWithoutDiscount = $this->lineItemSubtotalProvider->getRowTotal($lineItem, $lineItem->getCurrency());
         $currency = $this->getLineItemCurrency($lineItem);
@@ -117,10 +90,7 @@ class OrderLineItemAppliedDiscountsListener
             : $lineItem->getCurrency();
     }
 
-    /**
-     * @return TaxProviderInterface
-     */
-    private function getProvider()
+    private function getProvider(): TaxProviderInterface
     {
         return $this->taxProviderRegistry->getEnabledProvider();
     }

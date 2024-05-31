@@ -5,5 +5,7 @@ oro_sanitize:
                 ups_api_user: md5
                 ups_api_password: md5
                 ups_api_key: md5
+                ups_client_id: md5
+                ups_client_secret: md5
                 ups_shipping_account_number: md5
                 ups_shipping_account_name: md5

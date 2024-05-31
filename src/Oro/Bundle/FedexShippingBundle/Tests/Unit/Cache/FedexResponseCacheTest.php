@@ -36,7 +36,7 @@ class FedexResponseCacheTest extends TestCase
         $this->fedexCache = new FedexResponseCache($this->cache);
     }
 
-    public function testHas()
+    public function testHas(): void
     {
         $key = $this->createCacheKey();
 
@@ -48,10 +48,10 @@ class FedexResponseCacheTest extends TestCase
             ->method('isHit')
             ->willReturn(true);
 
-        static::assertTrue($this->fedexCache->has($key));
+        self::assertTrue($this->fedexCache->has($key));
     }
 
-    public function testGetNoResponse()
+    public function testGetNoResponse(): void
     {
         $key = $this->createCacheKey();
 
@@ -63,10 +63,10 @@ class FedexResponseCacheTest extends TestCase
             ->method('isHit')
             ->willReturn(false);
 
-        static::assertNull($this->fedexCache->get($key));
+        self::assertNull($this->fedexCache->get($key));
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $key = $this->createCacheKey();
         $response = $this->createMock(FedexRateServiceResponseInterface::class);
@@ -82,10 +82,10 @@ class FedexResponseCacheTest extends TestCase
             ->method('get')
             ->willReturn($response);
 
-        static::assertSame($response, $this->fedexCache->get($key));
+        self::assertSame($response, $this->fedexCache->get($key));
     }
 
-    public function testSetInvalidateAtIsSetInSettings()
+    public function testSetInvalidateAtIsSetInSettings(): void
     {
         $datetime = new \DateTime('now +1 day');
         $key = $this->createCacheKey($datetime);
@@ -109,7 +109,7 @@ class FedexResponseCacheTest extends TestCase
         self::assertTrue($this->fedexCache->set($key, $response));
     }
 
-    public function testSetInvalidateAtNotSetInSettings()
+    public function testSetInvalidateAtNotSetInSettings(): void
     {
         $key = $this->createCacheKey();
         $response = $this->createMock(FedexRateServiceResponseInterface::class);
@@ -133,12 +133,12 @@ class FedexResponseCacheTest extends TestCase
         self::assertTrue($this->fedexCache->set($key, $response));
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $key = $this->createCacheKey();
 
         $this->cache
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('deleteItem')
             ->with($this->normalizeCacheKey($key))
             ->willReturn(true);
@@ -146,10 +146,10 @@ class FedexResponseCacheTest extends TestCase
         self::assertTrue($this->fedexCache->delete($key));
     }
 
-    public function testDeleteAll()
+    public function testDeleteAll(): void
     {
         $this->cache
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('clear')
             ->willReturn(true);
 
@@ -159,7 +159,7 @@ class FedexResponseCacheTest extends TestCase
     private function createCacheKey(\DateTime $invalidateAt = null): FedexResponseCacheKey
     {
         return new FedexResponseCacheKey(
-            new FedexRequest(),
+            new FedexRequest('test/uri'),
             (new FedexIntegrationSettings())->setInvalidateCacheAt($invalidateAt)
         );
     }

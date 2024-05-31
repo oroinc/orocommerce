@@ -6,12 +6,10 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodType;
 
+/**
+ * Interface for UPS Shipping Method Type Factory
+ */
 interface UPSShippingMethodTypeFactoryInterface
 {
-    /**
-     * @param Channel $channel
-     * @param ShippingService $service
-     * @return UPSShippingMethodType
-     */
-    public function create(Channel $channel, ShippingService $service);
+    public function create(Channel $channel, ShippingService $service): UPSShippingMethodType;
 }

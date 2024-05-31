@@ -20,28 +20,12 @@ class PaymentTransactionProvider
 {
     use LoggerAwareTrait;
 
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var CustomerUserProvider */
-    protected $customerUserProvider;
-
-    /** @var string */
-    protected $paymentTransactionClass;
-
-    /** @var EventDispatcherInterface */
-    protected $dispatcher;
-
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        CustomerUserProvider $customerUserProvider,
-        EventDispatcherInterface $dispatcher,
-        string $paymentTransactionClass
+        private DoctrineHelper $doctrineHelper,
+        private CustomerUserProvider $customerUserProvider,
+        private EventDispatcherInterface $dispatcher,
+        private string $paymentTransactionClass
     ) {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->customerUserProvider = $customerUserProvider;
-        $this->paymentTransactionClass = $paymentTransactionClass;
-        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -50,8 +34,11 @@ class PaymentTransactionProvider
      * @param array $orderBy
      * @return PaymentTransaction|null
      */
-    public function getPaymentTransaction($object, array $criteria = [], array $orderBy = []): ?PaymentTransaction
-    {
+    public function getPaymentTransaction(
+        object $object,
+        array $criteria = [],
+        array $orderBy = []
+    ): ?PaymentTransaction {
         $paymentTransactions = $this->getPaymentTransactions($object, $criteria, $orderBy, 1);
 
         return reset($paymentTransactions) ?: null;
@@ -66,7 +53,7 @@ class PaymentTransactionProvider
      * @return PaymentTransaction[]
      */
     public function getPaymentTransactions(
-        $object,
+        object $object,
         array $criteria = [],
         array $orderBy = [],
         int $limit = null,
@@ -93,7 +80,7 @@ class PaymentTransactionProvider
      * @param object $object
      * @return array|string[]
      */
-    public function getPaymentMethods($object): array
+    public function getPaymentMethods(object $object): array
     {
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
         if (!$identifier) {
@@ -116,7 +103,7 @@ class PaymentTransactionProvider
      * @return null|PaymentTransaction
      */
     public function getActiveAuthorizePaymentTransaction(
-        $object,
+        object $object,
         float $amount,
         string $currency,
         ?string $paymentMethod = null
@@ -166,21 +153,19 @@ class PaymentTransactionProvider
         $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
 
-        $paymentTransaction = $this->createEmptyPaymentTransaction()
+        return $this->createEmptyPaymentTransaction()
             ->setPaymentMethod($paymentMethod)
             ->setAction($type)
             ->setEntityClass($className)
             ->setEntityIdentifier($identifier)
             ->setFrontendOwner($this->customerUserProvider->getLoggedUser(true));
-
-        return $paymentTransaction;
     }
 
     public function createPaymentTransactionByParentTransaction(
         string $action,
         PaymentTransaction $parentPaymentTransaction
     ): PaymentTransaction {
-        $paymentTransaction = $this->createEmptyPaymentTransaction()
+        return $this->createEmptyPaymentTransaction()
             ->setAction($action)
             ->setPaymentMethod($parentPaymentTransaction->getPaymentMethod())
             ->setEntityClass($parentPaymentTransaction->getEntityClass())
@@ -189,8 +174,6 @@ class PaymentTransactionProvider
             ->setCurrency($parentPaymentTransaction->getCurrency())
             ->setFrontendOwner($this->customerUserProvider->getLoggedUser(true))
             ->setSourcePaymentTransaction($parentPaymentTransaction);
-
-        return $paymentTransaction;
     }
 
     /**
@@ -201,7 +184,7 @@ class PaymentTransactionProvider
         $em = $this->doctrineHelper->getEntityManager($paymentTransaction);
 
         try {
-            $em->transactional(
+            $em->wrapInTransaction(
                 function (EntityManagerInterface $em) use ($paymentTransaction) {
                     if (!$paymentTransaction->getId()) {
                         $em->persist($paymentTransaction);

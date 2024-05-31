@@ -9,6 +9,16 @@ Oro\Bundle\CheckoutBundle\Entity\Checkout:
                     # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutBeforeOrderCreateEventListener
                     - checkout_pre_order_create_from_quotedemand
     properties:
+        shippingMethod:
+            -   NotBlank:
+                    allowNull: true
+            -   Length:
+                    max: 255
+        shippingMethodType:
+            -   NotBlank:
+                    allowNull: true
+            -   Length:
+                    max: 255
         lineItems:
             -   Count:
                     min: 1
@@ -128,15 +138,15 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
                         # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
                         - quote_demand_line_item_to_checkout_line_item_convert
         shippingMethod:
-            - AtLeastOneOf:
-                -   Blank: ~
-                -   Length:
-                        max: 255
+            -   NotBlank:
+                    allowNull: true
+            -   Length:
+                    max: 255
         shippingMethodType:
-            - AtLeastOneOf:
-                -   Blank: ~
-                -   Length:
-                        max: 255
+            -   NotBlank:
+                    allowNull: true
+            -   Length:
+                    max: 255
         shippingEstimateAmount:
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         product:

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -17,31 +18,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterface
 {
-    const TYPE = 'discount';
-    const ORDER_DISCOUNT_SUBTOTAL = 'order_discount_subtotal';
-    const SHIPPING_DISCOUNT_SUBTOTAL = 'shipping_discount_subtotal';
-    const ORDER_DISCOUNT_SUBTOTAL_SORT_ORDER = 100;
-    const SHIPPING_DISCOUNT_SUBTOTAL_SORT_ORDER = 300;
+    use FeatureCheckerHolderTrait;
 
-    /**
-     * @var PromotionExecutor
-     */
-    private $promotionExecutor;
+    public const TYPE = 'discount';
+    public const ORDER_DISCOUNT_SUBTOTAL = 'order_discount_subtotal';
+    public const SHIPPING_DISCOUNT_SUBTOTAL = 'shipping_discount_subtotal';
+    public const ORDER_DISCOUNT_SUBTOTAL_SORT_ORDER = 100;
+    public const SHIPPING_DISCOUNT_SUBTOTAL_SORT_ORDER = 300;
 
-    /**
-     * @var AppliedDiscountsProvider
-     */
-    private $appliedDiscountsProvider;
-
-    /**
-     * @var RoundingServiceInterface
-     */
-    private $rounding;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private PromotionExecutor $promotionExecutor;
+    private AppliedDiscountsProvider $appliedDiscountsProvider;
+    private RoundingServiceInterface $rounding;
+    private TranslatorInterface $translator;
 
     public function __construct(
         SubtotalProviderConstructorArguments $arguments,
@@ -58,7 +46,7 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSubtotal($entity)
     {
@@ -73,9 +61,10 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
 
     /**
      * @param Order $entity
-     * {@inheritdoc}
+     *
+     * {@inheritDoc}
      */
-    public function getCachedSubtotal($entity)
+    public function getCachedSubtotal($entity): array|Subtotal
     {
         if (!$this->supportsCachedSubtotal($entity)) {
             throw new \RuntimeException(sprintf(
@@ -91,29 +80,22 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function isSupported($entity)
+    public function isSupported($entity): bool
     {
-        return $this->promotionExecutor->supports($entity);
+        return $this->isFeaturesEnabled() && $this->promotionExecutor->supports($entity);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function supportsCachedSubtotal($entity)
+    public function supportsCachedSubtotal($entity): bool
     {
         return $entity instanceof Order && $entity->getId();
     }
 
-    /**
-     * @param float $amount
-     * @param string $currency
-     * @param string $label
-     * @param int $sortOrder
-     * @return Subtotal
-     */
-    private function createSubtotal($amount, $currency, $label, $sortOrder): Subtotal
+    private function createSubtotal(float $amount, string $currency, string $label, int $sortOrder): Subtotal
     {
         $subtotal = new Subtotal();
         $subtotal->setLabel($label);
@@ -128,13 +110,7 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
         return $subtotal;
     }
 
-    /**
-     * @param object $entity
-     * @param float $orderAmount
-     * @param float $shippingAmount
-     * @return array
-     */
-    private function createOrderAndShippingSubtotals($entity, float $orderAmount, float $shippingAmount)
+    private function createOrderAndShippingSubtotals(object $entity, float $orderAmount, float $shippingAmount): array
     {
         $currency = $this->getBaseCurrency($entity);
         $orderDiscountSubtotal = $this->createSubtotal(

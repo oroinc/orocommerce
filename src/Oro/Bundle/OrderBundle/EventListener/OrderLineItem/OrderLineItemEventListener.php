@@ -13,25 +13,22 @@ use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
  */
 class OrderLineItemEventListener
 {
-    /** @var ConfigurableProductProvider */
-    protected $configurableProductProvider;
-
-    public function __construct(ConfigurableProductProvider $configurableProductProvider)
-    {
-        $this->configurableProductProvider = $configurableProductProvider;
+    public function __construct(
+        private ConfigurableProductProvider $configurableProductProvider
+    ) {
     }
 
-    public function prePersist(OrderLineItem $lineItem, LifecycleEventArgs $event)
+    public function prePersist(OrderLineItem $lineItem, LifecycleEventArgs $event): void
     {
         $this->updateProductVariantFields($lineItem);
     }
 
-    public function preUpdate(OrderLineItem $lineItem, PreUpdateEventArgs $event)
+    public function preUpdate(OrderLineItem $lineItem, PreUpdateEventArgs $event): void
     {
         $this->updateProductVariantFields($lineItem);
     }
 
-    protected function updateProductVariantFields(OrderLineItem $lineItem)
+    protected function updateProductVariantFields(OrderLineItem $lineItem): void
     {
         $product = $lineItem->getProduct();
         if (!$product || !$product->getId()) {

@@ -99,9 +99,7 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
     {
         $tiers = [
             10 => 0.05,
-            20 => 0.10,
-            50 => 0.15,
-            100 => 0.20,
+            20 => 0.10
         ];
         foreach ($tiers as $qty => $discount) {
             $price = clone $productPrice;

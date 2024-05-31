@@ -19,4 +19,5 @@ services:
             - '@oro_ups.connection.validator.request.factory.rate_request'
             - '@oro_ups.client.factory_basic'
             - '@oro_ups.connection.validator.result.factory'
+            - '@oro_ups.token_provider'
             - '@logger'

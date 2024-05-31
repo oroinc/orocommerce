@@ -16,52 +16,47 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 // @codingStandardsIgnoreEnd
 
+/**
+ * Factory that creates FedexShippingMethodType instance.
+ */
 class FedexShippingMethodTypeFactory implements FedexShippingMethodTypeFactoryInterface
 {
-    /**
-     * @var FedexMethodTypeIdentifierGeneratorInterface
-     */
-    private $identifierGenerator;
-
-    /**
-     * @var FedexRateServiceRequestSettingsFactoryInterface
-     */
-    private $rateServiceRequestSettingsFactory;
-
-    /**
-     * @var FedexRequestByRateServiceSettingsFactoryInterface
-     */
-    private $rateServiceRequestFactory;
-
-    /**
-     * @var FedexRateServiceBySettingsClientInterface
-     */
-    private $rateServiceClient;
+    private FedexMethodTypeIdentifierGeneratorInterface $identifierGenerator;
+    private FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory;
+    private FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory;
+    private FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestSoapFactory;
+    private FedexRateServiceBySettingsClientInterface $rateServiceClient;
 
     public function __construct(
         FedexMethodTypeIdentifierGeneratorInterface $identifierGenerator,
         FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory,
         FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory,
+        FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestSoapFactory,
         FedexRateServiceBySettingsClientInterface $rateServiceClient
     ) {
         $this->identifierGenerator = $identifierGenerator;
         $this->rateServiceRequestSettingsFactory = $rateServiceRequestSettingsFactory;
         $this->rateServiceRequestFactory = $rateServiceRequestFactory;
+        $this->rateServiceRequestSoapFactory = $rateServiceRequestSoapFactory;
         $this->rateServiceClient = $rateServiceClient;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(Channel $channel, FedexShippingService $service): ShippingMethodTypeInterface
     {
+        $settings = $this->getSettings($channel);
+        $requestFactory = $this->rateServiceRequestSoapFactory;
+        if ($settings->getClientSecret() && $settings->getClientId()) {
+            $requestFactory = $this->rateServiceRequestFactory;
+        }
+
         return new FedexShippingMethodType(
             $this->rateServiceRequestSettingsFactory,
-            $this->rateServiceRequestFactory,
+            $requestFactory,
             $this->rateServiceClient,
             $this->identifierGenerator->generate($service),
             $service,
-            $this->getSettings($channel)
+            $settings
         );
     }
 

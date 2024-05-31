@@ -198,7 +198,6 @@ services:
         arguments:
             - '@oro_payment.provider.payment_status'
             - '@oro_entity.doctrine_helper'
-            - '@oro_payment.provider.payment_transaction'
 
     oro_payment.formatter.payment_status_label:
         class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter'

@@ -5,19 +5,18 @@ namespace Oro\Bundle\PaymentBundle\EventListener;
 use Oro\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
 use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 
+/**
+ * Updates PaymentTransaction status
+ */
 class PaymentTransactionListener
 {
-    /** @var PaymentStatusManager */
-    protected $manager;
-
-    public function __construct(PaymentStatusManager $manager)
-    {
-        $this->manager = $manager;
+    public function __construct(
+        private PaymentStatusManager $manager
+    ) {
     }
 
-    public function onTransactionComplete(TransactionCompleteEvent $event)
+    public function onTransactionComplete(TransactionCompleteEvent $event): void
     {
-        $transaction = $event->getTransaction();
-        $this->manager->updateStatus($transaction);
+        $this->manager->updateStatus($event->getTransaction());
     }
 }

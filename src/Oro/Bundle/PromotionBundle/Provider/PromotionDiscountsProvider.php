@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Provider;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
@@ -14,6 +15,8 @@ use Oro\Bundle\PromotionBundle\Model\MultiShippingPromotionData;
  */
 class PromotionDiscountsProvider implements PromotionDiscountsProviderInterface
 {
+    use FeatureCheckerHolderTrait;
+
     public function __construct(
         private PromotionProvider $promotionProvider,
         private DiscountFactory $discountFactory,
@@ -26,6 +29,10 @@ class PromotionDiscountsProvider implements PromotionDiscountsProviderInterface
      */
     public function getDiscounts(object $sourceEntity, DiscountContextInterface $context): array
     {
+        if (!$this->isFeaturesEnabled()) {
+            return [];
+        }
+
         $discounts = [];
         $promotions = $this->promotionProvider->getPromotions($sourceEntity);
         foreach ($promotions as $promotion) {
