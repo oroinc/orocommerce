@@ -8,6 +8,9 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxCodeProvider;
 
+/**
+ * Set tax_code value for order context during tax calculation.
+ */
 class OrderHandler
 {
     /**
@@ -39,6 +42,7 @@ class OrderHandler
         $this->taxCodeProvider->preloadTaxCodes(TaxCodeInterface::TYPE_PRODUCT, $products);
 
         $context->offsetSet(Taxable::ACCOUNT_TAX_CODE, $this->getCustomerTaxCode($order));
+        $context->offsetSet('scopeValue', $order);
     }
 
     /**

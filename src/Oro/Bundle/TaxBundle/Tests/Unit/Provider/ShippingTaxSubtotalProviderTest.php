@@ -26,7 +26,7 @@ class ShippingTaxSubtotalProviderTest extends TaxSubtotalProviderTest
     public function testGetSubtotal(): void
     {
         $this->taxSettingsProvider->expects($this->once())
-            ->method('isShippingRatesIncludeTax')
+            ->method('isShippingRatesIncludeTaxWithEntity')
             ->willReturn(false);
 
         $total = $this->createTotalResultElement(100, 'USD');
@@ -45,7 +45,7 @@ class ShippingTaxSubtotalProviderTest extends TaxSubtotalProviderTest
     public function testGetSubtotalShippingRatesIncludeTax(): void
     {
         $this->taxSettingsProvider->expects($this->once())
-            ->method('isShippingRatesIncludeTax')
+            ->method('isShippingRatesIncludeTaxWithEntity')
             ->willReturn(true);
 
         $total = $this->createTotalResultElement(100, 'USD');
@@ -64,7 +64,7 @@ class ShippingTaxSubtotalProviderTest extends TaxSubtotalProviderTest
     public function testGetCachedSubtotal(): void
     {
         $this->taxSettingsProvider->expects($this->once())
-            ->method('isShippingRatesIncludeTax')
+            ->method('isShippingRatesIncludeTaxWithEntity')
             ->willReturn(false);
 
         $total = $this->createTotalResultElement(100, 'USD');

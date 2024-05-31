@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
 use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 use Oro\Bundle\TaxBundle\Model\Address;
@@ -438,6 +439,24 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($value, $this->provider->getShippingTaxCodes());
     }
 
+    public function testGetShippingTaxCodesWithEntity()
+    {
+        $value = ['AAAA', 'BBBB'];
+        $order = new Order();
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with(
+                'oro_tax.shipping_tax_code',
+                false,
+                false,
+                $order
+            )
+            ->willReturn($value);
+
+        $this->assertEquals($value, $this->provider->getShippingTaxCodesWithEntity($order));
+    }
+
     public function testIsShippingRatesIncludeTax()
     {
         $this->configManager->expects($this->once())
@@ -446,6 +465,22 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn(true);
 
         $this->assertTrue($this->provider->isShippingRatesIncludeTax());
+    }
+
+    public function testIsShippingRatesIncludeTaxWithEntity()
+    {
+        $order = new Order();
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with(
+                'oro_tax.shipping_rates_include_tax',
+                false,
+                false,
+                $order
+            )
+            ->willReturn(true);
+
+        $this->assertTrue($this->provider->isShippingRatesIncludeTaxWithEntity($order));
     }
 
     /**
