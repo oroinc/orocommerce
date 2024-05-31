@@ -52,7 +52,7 @@ class ShippingResolverTest extends TestCase
         $this->matcher->expects($this->never())
             ->method('match');
         $this->taxationSettingsProvider->expects($this->never())
-            ->method('isShippingRatesIncludeTax');
+            ->method('isShippingRatesIncludeTaxWithEntity');
         $this->incTaxCalculator->expects($this->never())
             ->method('calculate');
         $this->excTaxCalculator->expects($this->never())
@@ -71,7 +71,7 @@ class ShippingResolverTest extends TestCase
         $this->matcher->expects($this->never())
             ->method('match');
         $this->taxationSettingsProvider->expects($this->never())
-            ->method('isShippingRatesIncludeTax');
+            ->method('isShippingRatesIncludeTaxWithEntity');
         $this->incTaxCalculator->expects($this->never())
             ->method('calculate');
         $this->excTaxCalculator->expects($this->never())
@@ -92,11 +92,11 @@ class ShippingResolverTest extends TestCase
         $taxable->setTaxationAddress($shippingAddress);
 
         $this->taxationSettingsProvider->expects($this->once())
-            ->method('isShippingRatesIncludeTax')
+            ->method('isShippingRatesIncludeTaxWithEntity')
             ->willReturn(true);
 
         $this->taxationSettingsProvider->expects($this->once())
-            ->method('getShippingTaxCodes')
+            ->method('getShippingTaxCodesWithEntity')
             ->willReturn(['PRODUCT_TAX_CODE']);
 
         $taxCodes = new TaxCodes([
@@ -127,7 +127,7 @@ class ShippingResolverTest extends TestCase
         $taxable->setTaxationAddress($shippingAddress);
 
         $this->taxationSettingsProvider->expects($this->never())
-            ->method('isShippingRatesIncludeTax');
+            ->method('isShippingRatesIncludeTaxWithEntity');
 
         $this->matcher->expects($this->never())
             ->method('match');
@@ -148,7 +148,7 @@ class ShippingResolverTest extends TestCase
         $taxable->setTaxationAddress(null);
 
         $this->taxationSettingsProvider->expects($this->never())
-            ->method('isShippingRatesIncludeTax');
+            ->method('isShippingRatesIncludeTaxWithEntity');
 
         $this->matcher->expects($this->never())
             ->method('match');
@@ -172,7 +172,7 @@ class ShippingResolverTest extends TestCase
         $taxable->setTaxationAddress($shippingAddress);
 
         $this->taxationSettingsProvider->expects($this->never())
-            ->method('isShippingRatesIncludeTax');
+            ->method('isShippingRatesIncludeTaxWithEntity');
 
         $this->matcher->expects($this->never())
             ->method('match');
@@ -196,11 +196,11 @@ class ShippingResolverTest extends TestCase
         $taxable->setTaxationAddress($shippingAddress);
 
         $this->taxationSettingsProvider->expects($this->once())
-            ->method('isShippingRatesIncludeTax')
+            ->method('isShippingRatesIncludeTaxWithEntity')
             ->willReturn(false);
 
         $this->taxationSettingsProvider->expects($this->once())
-            ->method('getShippingTaxCodes')
+            ->method('getShippingTaxCodesWithEntity')
             ->willReturn(['PRODUCT_TAX_CODE']);
 
         $taxCodes = new TaxCodes([

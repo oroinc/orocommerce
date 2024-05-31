@@ -174,9 +174,19 @@ class TaxationSettingsProvider
         return (array)$this->configManager->get('oro_tax.shipping_tax_code');
     }
 
+    public function getShippingTaxCodesWithEntity(?object $entity = null): array
+    {
+        return (array)$this->configManager->get(name: 'oro_tax.shipping_tax_code', scopeIdentifier: $entity);
+    }
+
     public function isShippingRatesIncludeTax(): bool
     {
         return (bool)$this->configManager->get('oro_tax.shipping_rates_include_tax');
+    }
+
+    public function isShippingRatesIncludeTaxWithEntity(?object $entity = null): bool
+    {
+        return (bool)$this->configManager->get(name: 'oro_tax.shipping_rates_include_tax', scopeIdentifier: $entity);
     }
 
     public function isCalculateAfterPromotionsEnabled(): bool

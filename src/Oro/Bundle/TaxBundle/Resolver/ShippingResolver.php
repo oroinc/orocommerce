@@ -41,7 +41,9 @@ class ShippingResolver implements ResolverInterface
         }
 
         $taxableAmount = $taxable->getShippingCost();
-        if ($this->taxationSettingsProvider->isShippingRatesIncludeTax()) {
+        $scopeValue = $taxable->getContextValue('scopeValue');
+
+        if ($this->taxationSettingsProvider->isShippingRatesIncludeTaxWithEntity($scopeValue)) {
             $resultElement = $this->incTaxCalculator->calculate($taxableAmount, $taxRate);
         } else {
             $resultElement = $this->excTaxCalculator->calculate($taxableAmount, $taxRate);
@@ -55,7 +57,11 @@ class ShippingResolver implements ResolverInterface
     protected function getTaxCodes(Taxable $taxable): TaxCodes
     {
         $taxCodes = [];
-        foreach ($this->taxationSettingsProvider->getShippingTaxCodes() as $shippingTaxCode) {
+        $shippingTaxCodes = $this->taxationSettingsProvider->getShippingTaxCodesWithEntity(
+            $taxable->getContextValue('scopeValue')
+        );
+
+        foreach ($shippingTaxCodes as $shippingTaxCode) {
             $taxCodes[] = TaxCode::create($shippingTaxCode, TaxCodeInterface::TYPE_PRODUCT);
         }
 

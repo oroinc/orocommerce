@@ -48,7 +48,7 @@ class TaxAmountProvider
         );
 
         $taxAmount = ($this->taxationSettingsProvider->isProductPricesIncludeTax() ? 0.0 : $productTax)
-            + ($this->taxationSettingsProvider->isShippingRatesIncludeTax() ? 0.0 : $shippingTax);
+            + ($this->taxationSettingsProvider->isShippingRatesIncludeTaxWithEntity($entity) ? 0.0 : $shippingTax);
 
         return $this->prepareResult($taxAmount);
     }

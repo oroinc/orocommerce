@@ -101,7 +101,7 @@ class TaxAmountProviderTest extends TestCase
             ->method('isProductPricesIncludeTax')
             ->willReturn($isProductPricesIncludeTax);
         $this->taxationSettingsProvider->expects(self::once())
-            ->method('isShippingRatesIncludeTax')
+            ->method('isShippingRatesIncludeTaxWithEntity')
             ->willReturn($isShippingRatesIncludeTax);
 
         $this->taxProvider->expects($this->once())
