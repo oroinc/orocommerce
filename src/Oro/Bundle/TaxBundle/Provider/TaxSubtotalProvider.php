@@ -28,7 +28,7 @@ class TaxSubtotalProvider extends AbstractTaxSubtotalProvider
         return $subtotal;
     }
 
-    protected function fillSubtotal(Subtotal $subtotal, Result $tax): Subtotal
+    protected function fillSubtotal(Subtotal $subtotal, Result $tax, ?object $entity = null): Subtotal
     {
         $subtotal->setAmount($tax->getTotal()->getTaxAmount());
         $subtotal->setCurrency($tax->getTotal()->getCurrency());

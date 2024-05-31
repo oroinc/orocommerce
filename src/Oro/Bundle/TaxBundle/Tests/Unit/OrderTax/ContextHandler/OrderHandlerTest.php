@@ -73,5 +73,6 @@ class OrderHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->onContextEvent($event);
         $this->assertNotEquals($oldContext, $event->getContext());
         $this->assertEquals('ACCOUNT_TAX_CODE', $event->getContext()->offsetGet(Taxable::ACCOUNT_TAX_CODE));
+        $this->assertEquals($order, $event->getContext()->offsetGet('scopeValue'));
     }
 }

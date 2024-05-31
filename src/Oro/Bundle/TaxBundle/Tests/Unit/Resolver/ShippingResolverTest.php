@@ -3,6 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver;
 
 use Brick\Math\BigDecimal;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Bundle\TaxBundle\Calculator\TaxCalculatorInterface;
 use Oro\Bundle\TaxBundle\Entity\Tax;
@@ -82,17 +83,20 @@ class ShippingResolverTest extends TestCase
 
     public function testShippingRatesIncludeTaxes(): void
     {
+        $order = new Order();
         $taxable = new Taxable();
         $item = new Taxable();
         $taxable->setShippingCost('10');
         $taxable->addItem($item);
         $taxable->getContext()->offsetSet(Taxable::ACCOUNT_TAX_CODE, 'ACCOUNT_TAX_CODE');
+        $taxable->getContext()->offsetSet('scopeValue', $order);
 
         $shippingAddress = new ShippingAddressStub();
         $taxable->setTaxationAddress($shippingAddress);
 
         $this->taxationSettingsProvider->expects($this->once())
             ->method('isShippingRatesIncludeTax')
+            ->with($order)
             ->willReturn(true);
 
         $this->taxationSettingsProvider->expects($this->once())

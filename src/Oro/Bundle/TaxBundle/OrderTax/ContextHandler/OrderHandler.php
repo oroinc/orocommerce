@@ -36,6 +36,7 @@ class OrderHandler
         $this->taxCodeProvider->preloadTaxCodes(TaxCodeInterface::TYPE_PRODUCT, $products);
 
         $context->offsetSet(Taxable::ACCOUNT_TAX_CODE, $this->getCustomerTaxCode($order));
+        $context->offsetSet('scopeValue', $order);
     }
 
     protected function getCustomerTaxCode(Order $order): ?string

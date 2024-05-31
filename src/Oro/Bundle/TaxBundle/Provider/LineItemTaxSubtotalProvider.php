@@ -65,7 +65,7 @@ class LineItemTaxSubtotalProvider extends AbstractTaxSubtotalProvider
         return $subtotal;
     }
 
-    protected function fillSubtotal(Subtotal $subtotal, Result $tax): Subtotal
+    protected function fillSubtotal(Subtotal $subtotal, Result $tax, ?object $entity = null): Subtotal
     {
         $itemTotalAmount = 0.0;
         $currency = "";
