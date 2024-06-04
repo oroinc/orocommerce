@@ -48,7 +48,7 @@ class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements Depe
                 $slug = new Slug();
                 $slug->setUrl('/'.$nodeReference);
                 $slug->setRouteName($this->getRoute());
-                $slug->setRouteParameters(['categoryId' => $category->getId(), 'includeSubcategories'=>1]);
+                $slug->setRouteParameters(['categoryId' => $category->getId(), 'includeSubcategories' => 1]);
                 $slug->addScope($scope);
                 $slug->setOrganization($category->getOrganization());
 

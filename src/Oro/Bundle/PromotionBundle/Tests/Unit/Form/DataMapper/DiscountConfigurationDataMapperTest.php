@@ -144,7 +144,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
             self::ANY_FIELD => null,
             AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_PERCENT
         ];
-        $valueBasedOnData =123;
+        $valueBasedOnData = 123;
 
         $forms = $this->getForms();
         $this->addTypeForm($forms);
@@ -179,7 +179,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
         $expectedData = [
             self::ANY_FIELD => 123
         ];
-        $valueBasedOnData =123;
+        $valueBasedOnData = 123;
 
         $forms = $this->getForms();
         $forms[self::ANY_FIELD]->expects($this->any())

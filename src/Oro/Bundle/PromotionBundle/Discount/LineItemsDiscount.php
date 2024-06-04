@@ -68,7 +68,7 @@ class LineItemsDiscount extends AbstractDiscount implements DiscountProductUnitC
 
         $subTotal = (float) $entity->getSubtotal();
         $qty = (float) $entity->getQuantity();
-        $actualPrice = $subTotal/$qty;
+        $actualPrice = $subTotal / $qty;
         $discountValue = (float) $this->getDiscountValue();
 
         if ($this->getDiscountType() === DiscountInterface::TYPE_AMOUNT) {

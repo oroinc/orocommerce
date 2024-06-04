@@ -516,7 +516,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
             'format short plural' => [
                 'code' => 'test_format',
                 'isShort' => true,
-                'isPlural'=> true,
+                'isPlural' => true,
                 'expected' => 'formatted_short_plural',
             ],
         ];

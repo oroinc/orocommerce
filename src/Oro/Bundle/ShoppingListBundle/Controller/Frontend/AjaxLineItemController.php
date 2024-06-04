@@ -265,7 +265,7 @@ class AjaxLineItemController extends AbstractLineItemController
         $defaultResponse = [
             'form' => $form->createView(),
             'savedId' => null,
-            'messages' => ['data'=>[]],
+            'messages' => ['data' => []],
             'shoppingList' => $shoppingList,
             'createOnly' => $request->get('createOnly'),
             'routeParameters' => [

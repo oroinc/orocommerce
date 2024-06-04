@@ -87,7 +87,7 @@ class WebpAwareFrontendProductDatagridListenerTest extends \PHPUnit\Framework\Te
                 'expectedConfig' => [
                     'name' => $gridName,
                     'columns' => [
-                        'imageWebp'=> ['label' => 'oro.product.webp_image.label'],
+                        'imageWebp' => ['label' => 'oro.product.webp_image.label'],
                     ],
                 ]
             ],

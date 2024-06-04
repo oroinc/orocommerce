@@ -96,7 +96,7 @@ class FedexResponseCacheTest extends TestCase
             ->willReturn($this->cacheItem);
         $this->cacheItem->expects(self::once())
             ->method('expiresAfter')
-            ->with($datetime->getTimestamp()-\date_timestamp_get(\date_create()))
+            ->with($datetime->getTimestamp() - \date_timestamp_get(\date_create()))
             ->willReturn($this->cacheItem);
         $this->cacheItem->expects(self::once())
             ->method('set')
