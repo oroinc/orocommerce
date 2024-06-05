@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-14586
 @fixture-OroCMSBundle:web_catalog.yml
 Feature: Landing Page as a Content Node

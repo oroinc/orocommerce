@@ -31,7 +31,7 @@ class ExportDatagridListenerTest extends WebTestCase
 
         $expected = [];
 
-        for ($i = 1; $i <= 14; ++ $i) {
+        for ($i = 1; $i <= 14; ++$i) {
             $expected[] = $this->getReference(LoadPriceAttributeProductPrices::REFERENCE.$i)->getId();
         }
 

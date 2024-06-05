@@ -1,3 +1,4 @@
+@regression
 @fixture-OroOrganizationBundle:BusinessUnit.yml
 @fixture-OroPromotionBundle:promotions_for_coupons.yml
 Feature: Import of Coupons codes

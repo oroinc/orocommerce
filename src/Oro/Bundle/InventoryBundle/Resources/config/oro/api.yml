@@ -17,6 +17,7 @@ api:
                 create: false
                 delete: false
                 delete_list: false
+                update_list: true
             subresources:
                 product:
                     actions:

@@ -1,0 +1,15 @@
+/* @theme: default; */
+
+$product-view-line-form-padding-horizontal: 28px !default;
+$product-view-line-form-padding-vertical: spacing('base') !default;
+$product-view-line-form-background-color: get-color('neutral', 'white-100');
+$product-view-line-form-border-radius: 0px 0px 0px 4px !default;
+$product-view-line-form-box-shadow: 0px 3px 3px 0px rgba(5, 59, 66, .03),
+    0px 7px 12px 0px rgba(91, 126, 131, .12) !default;
+$product-view-line-form-container-width: 590px !default;
+$product-view-line-form-image-border: 1px solid get-color('neutral', 'grey1') !default;
+$product-view-line-form-image-width: 48px !default;
+$product-view-line-form-image-height: 48px !default;
+
+$product-view-line-form-line-item-form-moved-gap: spacing('lg') !default;
+$product-view-line-form-product-price-min-height: 100% !default;

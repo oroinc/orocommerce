@@ -34,7 +34,7 @@ abstract class AbstractTaxSubtotalProvider implements SubtotalProviderInterface,
 
         try {
             $tax = $this->getProvider()->getTax($entity);
-            $this->fillSubtotal($subtotal, $tax);
+            $this->fillSubtotal($subtotal, $tax, $entity);
         } catch (TaxationDisabledException $e) {
         }
 
@@ -49,7 +49,7 @@ abstract class AbstractTaxSubtotalProvider implements SubtotalProviderInterface,
         $subtotal = $this->createSubtotal();
         try {
             $tax = $this->getProvider()->loadTax($entity);
-            $this->fillSubtotal($subtotal, $tax);
+            $this->fillSubtotal($subtotal, $tax, $entity);
         } catch (TaxationDisabledException $e) {
         }
 
@@ -58,7 +58,7 @@ abstract class AbstractTaxSubtotalProvider implements SubtotalProviderInterface,
 
     abstract protected function createSubtotal(): Subtotal;
 
-    abstract protected function fillSubtotal(Subtotal $subtotal, Result $tax): Subtotal;
+    abstract protected function fillSubtotal(Subtotal $subtotal, Result $tax, ?object $entity = null): Subtotal;
 
     /**
      * {@inheritdoc}

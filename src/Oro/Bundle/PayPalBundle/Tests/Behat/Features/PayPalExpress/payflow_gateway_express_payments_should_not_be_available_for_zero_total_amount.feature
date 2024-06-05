@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-16307
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml
@@ -35,7 +36,7 @@ Feature: Payflow Gateway Express payments should not be available for zero total
     Then I should see "The selected payment method is not available. Please return to the payment method selection step and select a different one." flash message
     And I should see "coupon-100-order Promotion Order 100 Label" in the "Coupons List" element
     And I should see "coupon-100-shipping Promotion Shipping 100 Label" in the "Coupons List" element
-    And I should see "Total $0.00"
+    And I should see "Total: $0.00"
 
   Scenario: Ensure payment method is not available anymore
     Given on the "Order Review" checkout step I go back to "Edit Payment"

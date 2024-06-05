@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-23050
 @fixture-OroCMSBundle:web_catalog.yml
 Feature: Content Node as a home page

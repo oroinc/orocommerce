@@ -6,6 +6,9 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceR
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequestInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 
+/**
+ * FedEx Rate Rest API client interface.
+ */
 interface FedexRateServiceBySettingsClientInterface
 {
     public function send(

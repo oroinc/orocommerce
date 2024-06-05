@@ -1,3 +1,4 @@
+@regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Payment.yml
@@ -66,7 +67,7 @@ Feature: Taxes should work with more than two decimal places
     And I should see "Billing information"
     And I should see "Subtotal $10.00"
     And I should see "Tax $1.21"
-    And I should see "Total $11.21"
+    And I should see "Total: $11.21"
     And I click "Continue"
     And I click "Continue"
     And I click "Continue"

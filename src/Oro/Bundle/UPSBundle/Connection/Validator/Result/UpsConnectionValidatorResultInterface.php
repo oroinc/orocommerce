@@ -2,20 +2,14 @@
 
 namespace Oro\Bundle\UPSBundle\Connection\Validator\Result;
 
+/**
+ * Interface for UPS Connection Validator Result
+ */
 interface UpsConnectionValidatorResultInterface
 {
-    /**
-     * @return bool
-     */
-    public function getStatus();
+    public function getStatus(): bool;
 
-    /**
-     * @return string|null
-     */
-    public function getErrorSeverity();
+    public function getErrorSeverity(): ?string;
 
-    /**
-     * @return string|null
-     */
-    public function getErrorMessage();
+    public function getErrorMessage(): ?string;
 }

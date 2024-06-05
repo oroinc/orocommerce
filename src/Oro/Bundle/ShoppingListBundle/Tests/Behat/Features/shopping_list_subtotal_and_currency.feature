@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-14689
 @fixture-OroShoppingListBundle:MyShoppingListsFixture.yml
 Feature: Shopping list subtotal and currency

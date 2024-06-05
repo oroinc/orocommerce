@@ -2,6 +2,7 @@
 @ticket-BB-16555
 @fixture-OroSaleBundle:Quote.yml
 @fixture-OroSaleBundle:QuoteProductFixture.yml
+@pricing-storage-combined
 
 Feature: Backoffice quote create quote with different price lists
 

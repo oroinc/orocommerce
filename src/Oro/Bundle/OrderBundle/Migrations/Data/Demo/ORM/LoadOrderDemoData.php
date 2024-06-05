@@ -42,6 +42,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     private array $regions = [];
     private array $paymentTerms = [];
     private array $websites = [];
+    private array $metadata = [];
 
     /**
      * {@inheritDoc}
@@ -64,6 +65,9 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
      */
     public function load(ObjectManager $manager): void
     {
+        $this->toggleFeatures(false);
+        $this->disableLifecycleCallbacks($manager);
+
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroOrderBundle/Migrations/Data/Demo/ORM/data/orders.csv');
         if (is_array($filePath)) {
@@ -88,10 +92,6 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
 
         $regularCustomerUser = $this->getCustomerUser($manager);
         $guestCustomerUser = $this->getCustomerUser($manager, true);
-
-        /** @var ClassMetadata $orderMetadata */
-        $orderMetadata = $manager->getClassMetadata(Order::class);
-        $this->disablePrePersistCallback($orderMetadata);
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -155,9 +155,11 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
 
         fclose($handler);
 
-        $this->enablePrePersistCallback($orderMetadata);
-
         $manager->flush();
+
+        $this->clearState();
+        $this->toggleFeatures(true);
+        $this->enableLifecycleCallbacks($manager);
     }
 
     private function getBillingAddressData(array $row, CustomerUser $customerUser): array
@@ -256,18 +258,31 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $this->websites[$name];
     }
 
-    private function enablePrePersistCallback(ClassMetadata $classMetadata): void
+    private function enableLifecycleCallbacks(ObjectManager $manager): void
     {
-        $lifecycleCallbacks = $classMetadata->lifecycleCallbacks;
+        $orderMetadata = $this->getClassMetadata($manager, Order::class);
+
+        $lifecycleCallbacks = $orderMetadata->lifecycleCallbacks;
         array_unshift($lifecycleCallbacks['prePersist'], 'prePersist');
-        $classMetadata->setLifecycleCallbacks($lifecycleCallbacks);
+        $orderMetadata->setLifecycleCallbacks($lifecycleCallbacks);
     }
 
-    private function disablePrePersistCallback(ClassMetadata $classMetadata): void
+    private function disableLifecycleCallbacks(ObjectManager $manager): void
     {
-        $lifecycleCallbacks = $classMetadata->lifecycleCallbacks;
+        $orderMetadata = $this->getClassMetadata($manager, Order::class);
+
+        $lifecycleCallbacks = $orderMetadata->lifecycleCallbacks;
         $lifecycleCallbacks['prePersist'] = array_diff($lifecycleCallbacks['prePersist'], ['prePersist']);
-        $classMetadata->setLifecycleCallbacks($lifecycleCallbacks);
+        $orderMetadata->setLifecycleCallbacks($lifecycleCallbacks);
+    }
+
+    private function getClassMetadata(ObjectManager $manager, string $className): ClassMetadata
+    {
+        if (!isset($this->metadata[$className])) {
+            $this->metadata[$className] = $manager->getClassMetadata($className);
+        }
+
+        return $this->metadata[$className];
     }
 
     private function getRandomDateTime(): \DateTime
@@ -281,5 +296,22 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             ),
             new \DateTimeZone('UTC')
         );
+    }
+
+    private function toggleFeatures(?bool $enable): void
+    {
+        $configManager = $this->container->get('oro_config.global');
+        $configManager->set('oro_promotion.feature_enabled', $enable ?? false);
+        $configManager->flush();
+    }
+
+    private function clearState(): void
+    {
+        $this->countries = [];
+        $this->regions = [];
+        $this->paymentTerms = [];
+        $this->websites = [];
+        $this->products = [];
+        $this->metadata = [];
     }
 }

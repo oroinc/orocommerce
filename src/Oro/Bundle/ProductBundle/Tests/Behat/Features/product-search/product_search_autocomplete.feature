@@ -1,4 +1,3 @@
-@regression
 @elasticsearch
 @ticket-BB-20073
 @feature-BAP-19790
@@ -13,6 +12,7 @@ Feature: Product search autocomplete
     Given I enable the existing localizations
     And I signed in as AmandaRCole@example.org on the store frontend
     And I go to the homepage
+    And I set configuration property "oro_website_search_suggestion.search_autocomplete_max_suggests" to "0"
 
   Scenario: Check the search autocomplete when no products found
     When I type "Search string" in "search"

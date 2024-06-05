@@ -2,29 +2,18 @@
 
 namespace Oro\Bundle\UPSBundle\Model;
 
+/**
+ * UPS Package model
+ */
 class Package
 {
-    const PACKAGING_TYPE_CODE = '00';
+    public const PACKAGING_TYPE_CODE = '00';
 
-    /**
-     * @var string
-     */
-    protected $packagingTypeCode;
+    protected ?string $packagingTypeCode = null;
+    protected ?string $weightCode = null;
+    protected ?string $weight = null;
 
-    /**
-     * @var string
-     */
-    protected $weightCode;
-
-    /**
-     * @var string
-     */
-    protected $weight;
-
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'PackagingType' => [
@@ -39,15 +28,8 @@ class Package
         ];
     }
 
-    /**
-     * @param string $unitOfWeight
-     * @param float|int $weight
-     * @return $this
-     */
-    public static function create(
-        $unitOfWeight,
-        $weight
-    ) {
+    public static function create(string $unitOfWeight, float|int $weight): self
+    {
         return (new Package())
             ->setPackagingTypeCode(self::PACKAGING_TYPE_CODE)
             ->setWeightCode($unitOfWeight)
@@ -55,65 +37,41 @@ class Package
         ;
     }
 
-    /**
-     * @return string
-     */
-    public function toJson()
+    public function toJson(): string
     {
         return json_encode($this->toArray());
     }
 
-    /**
-     * @return string
-     */
-    public function getPackagingTypeCode()
+    public function getPackagingTypeCode(): ?string
     {
         return $this->packagingTypeCode;
     }
 
-    /**
-     * @param string $packagingTypeCode
-     * @return $this
-     */
-    public function setPackagingTypeCode($packagingTypeCode)
+    public function setPackagingTypeCode(string $packagingTypeCode): self
     {
         $this->packagingTypeCode = $packagingTypeCode;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getWeightCode()
+    public function getWeightCode(): ?string
     {
         return $this->weightCode;
     }
 
-    /**
-     * @param string $weightCode
-     * @return $this
-     */
-    public function setWeightCode($weightCode)
+    public function setWeightCode(string $weightCode): self
     {
         $this->weightCode = $weightCode;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getWeight()
+    public function getWeight(): ?string
     {
         return $this->weight;
     }
 
-    /**
-     * @param string $weight
-     * @return $this
-     */
-    public function setWeight($weight)
+    public function setWeight(string $weight): self
     {
         $this->weight = $weight;
 

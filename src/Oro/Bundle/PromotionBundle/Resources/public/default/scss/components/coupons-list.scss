@@ -1,17 +1,28 @@
 /* @theme: default; */
 
 .coupons-list {
-    margin: $coupons-list-offset;
+    display: grid;
+    gap: spacing('base');
 
     list-style: none;
 
     &__item {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: start;
 
-        &:not(&first-child) {
-            margin-top: $coupons-list-item-offset;
-        }
+        color: $coupons-list-item-color;
+        gap: $coupons-list-item-gap;
+    }
+
+    &__remove {
+        margin-block-start: spacing('sm');
+    }
+
+    &__wrapper {
+        overflow-y: auto;
+        max-height: $coupons-list-wrapper-max-height;
+        padding: spacing('xs');
+        margin: -#{spacing('xs')};
     }
 }

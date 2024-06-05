@@ -1,5 +1,6 @@
 {% block _line_item_form_widget %}
     {% set attr = layout_attr_defaults(attr, {
+        'class': 'product-view-line-item-form-container',
         'data-role': 'line-item-form-container'
     }) %}
     <div {{ block('block_attributes') }}>
@@ -22,7 +23,10 @@
             {{ form_errors(form.quantity) }}
         {% else %}
             <div data-page-component-view="orofrontend/default/js/app/views/increment-input/increment-input-view">
-                {{ form_widget(form.quantity, { 'attr': {'aria-label': 'oro.product.quantity.aria_label'|trans }}) }}
+                {{ form_widget(form.quantity, { 'attr': {
+                    'aria-label': 'oro.product.quantity.aria_label'|trans,
+                    'data-floating-error': true,
+                } }) }}
             </div>
             <div class="fields-row-error"></div>
         {% endif %}
@@ -31,21 +35,24 @@
 
 {% block _line_item_form_fields_unit_widget %}
     {% if form.unit.vars.choices|length > 1 %}
-        {% set select2Class = ' select2-plain' %}
-        {% if isLoggedIn is defined and isLoggedIn == true %}
-            {% set select2Class = select2Class ~ ' select2-chosen-slash-prefix'%}
-        {% endif %}
-        {{ form_widget(form.unit, {attr: {
-            'form': form.vars.id,
-            'class': 'select-plain select--inline',
-            'data-input-widget-options': {
-                'containerCssClass': select2Class
-            }|json_encode
-        }}) }}
+        <div class="product-view-line-item__choice simple-placeholder"
+             data-page-component-module="oroproduct/js/app/components/product-unit-select-component"
+             data-page-component-options="{{ {
+            'singleUnitMode': singleUnitMode,
+            'singleUnitModeCodeVisible': singleUnitModeCodeVisible,
+            'configDefaultUnit': defaultUnitCode
+            }|json_encode }}
+        ">
+            {{ form_widget(form.unit, {attr: {
+                'form': form.vars.id,
+                'data-skip-input-widgets': '',
+                'class': 'invisible'
+            }}) }}
+        </div>
     {% else %}
-        {% if isLoggedIn is defined and isLoggedIn == true %}
-            <span class="bold" data-role="unit-label">/{{- product.primaryUnitPrecision.unit.code|oro_format_product_unit_label -}}</span>
-        {% endif %}
+        <div class="product-view-line-item__unit">
+            <span data-role="unit-label">{{- product.primaryUnitPrecision.unit.code|oro_format_product_unit_label -}}</span>
+        </div>
         <input form="{{ form.vars.id }}" type="hidden" name="{{ form.unit.vars.full_name }}" value="{{ product.primaryUnitPrecision.unit.code }}" data-name="{{ form.unit.vars.attr['data-name'] }}" data-unit-precisions="{{ form.unit.vars.attr['data-unit-precisions'] }}" />
     {% endif %}
 {% endblock %}

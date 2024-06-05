@@ -1,3 +1,4 @@
+@regression
 @fixture-OroPricingBundle:ProductPrices.yml
 Feature: Check CPL after Prices Import
 

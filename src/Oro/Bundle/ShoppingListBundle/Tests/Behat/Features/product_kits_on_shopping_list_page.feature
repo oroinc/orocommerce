@@ -1,4 +1,3 @@
-@regression
 @feature-BB-21126
 @fixture-OroShoppingListBundle:product_kits_on_shopping_list_page.yml
 
@@ -109,7 +108,7 @@ Feature: Product kits on shopping list page
     And I should see "Summary 7 Items"
     And I should see "Subtotal $708.62"
     And I should see "Discount -$354.31"
-    And I should see "Total $354.31"
+    And I should see "Total: $354.31"
 
   Scenario: Check shopping list edit page
     When I click "Shopping List Actions"
@@ -130,7 +129,7 @@ Feature: Product kits on shopping list page
     And I should see "Summary 7 Items"
     And I should see "Subtotal $708.62"
     And I should see "Discount -$354.31"
-    And I should see "Total $354.31"
+    And I should see "Total: $354.31"
 
   Scenario: Check SKU filter
     When I filter SKU as contains "kit"

@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-20511
 @fixture-OroProductBundle:ProductBrandAclFixture.yml
 Feature: Brand cannot be selected on product form when edit permission is set to none

@@ -4,7 +4,7 @@
 @fixture-OroCheckoutBundle:Checkout.yml
 
 Feature: Checkout by customer user with new role
-  In order to to create order from Shopping List on front store
+  In order to create order from Shopping List on front store
   As a buyer
   I want to be able to create order with any customer user role which has sufficient permissions
 

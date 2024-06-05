@@ -1,4 +1,3 @@
-@regression
 @fixture-OroProductBundle:product_listing_images.yml
 
 Feature: Gallery on product view

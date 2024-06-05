@@ -17,68 +17,30 @@ use ProxyManager\Proxy\VirtualProxyInterface;
  */
 class TaxValueManager
 {
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
+    /** @var TaxValue[]|array */
+    protected array $taxValues = [];
 
-    /** @var DoctrineFlushProgressListener */
-    protected $doctrineFlushProgressListener;
-
-    /** @var string */
-    protected $taxValueClass;
-
-    /** @var string */
-    protected $taxClass;
-
-    /** @var TaxValue[] */
-    protected $taxValues = [];
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param DoctrineFlushProgressListener $doctrineFlushProgressListener
-     * @param string $taxValueClass
-     * @param string $taxClass
-     */
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        DoctrineFlushProgressListener $doctrineFlushProgressListener,
-        $taxValueClass,
-        $taxClass
+        private DoctrineHelper $doctrineHelper,
+        private DoctrineFlushProgressListener $doctrineFlushProgressListener,
+        private string $taxValueClass,
+        private string $taxClass
     ) {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->taxValueClass = (string)$taxValueClass;
-        $this->taxClass = (string)$taxClass;
-        $this->doctrineFlushProgressListener = $doctrineFlushProgressListener;
     }
 
-    /**
-     * @param string $entityClass
-     * @param string $entityId
-     * @return TaxValue
-     */
-    public function getTaxValue($entityClass, $entityId)
+    public function getTaxValue(?string $entityClass, ?string $entityId): ?TaxValue
     {
         $key = $this->getTaxValueCacheKey($entityClass, $entityId);
-
         if (array_key_exists($key, $this->taxValues)) {
             return $this->taxValues[$key];
         }
 
-        $taxValue = null;
-
-        if ($entityId) {
-            $taxValue = $this->findTaxValue($entityClass, $entityId);
-        }
+        $taxValue = $entityId ? $this->findTaxValue($entityClass, $entityId) : null;
 
         return $this->cacheTaxValue($entityClass, $entityId, $taxValue);
     }
 
-    /**
-     * @param string $entityClass
-     * @param string $entityId
-     * @param TaxValue|null $taxValue
-     * @return TaxValue
-     */
-    private function cacheTaxValue($entityClass, $entityId, $taxValue)
+    private function cacheTaxValue(?string $entityClass, ?string $entityId, ?TaxValue $taxValue): TaxValue
     {
         if (!$taxValue) {
             /** @var TaxValue $taxValue */
@@ -97,30 +59,23 @@ class TaxValueManager
         return $taxValue;
     }
 
-    /**
-     * @param string $entityClass
-     * @param array $entityIds
-     * @return bool
-     */
-    private function isCached($entityClass, array $entityIds)
+    private function checkCached(string $entityClass, array $entityIds): array
     {
+        $notCachedEntityIds = [];
         foreach ($entityIds as $entityId) {
             $key = $this->getTaxValueCacheKey($entityClass, $entityId);
             if (!array_key_exists($key, $this->taxValues)) {
-                return false;
+                $notCachedEntityIds[] = $entityId;
             }
         }
 
-        return true;
+        return $notCachedEntityIds;
     }
 
-    /**
-     * @param string $entityClass
-     * @param array $entityIds
-     */
-    public function preloadTaxValues($entityClass, array $entityIds)
+    public function preloadTaxValues(string $entityClass, array $entityIds): void
     {
-        if ($this->isCached($entityClass, $entityIds)) {
+        $entityIds = $this->checkCached($entityClass, $entityIds);
+        if (empty($entityIds)) {
             return;
         }
 
@@ -139,28 +94,24 @@ class TaxValueManager
     }
 
     /**
-     * @param string $entityClass
+     * @param string|null $entityClass
      * @param array $entityIds
+     *
      * @return array|TaxValue[]
      */
-    private function findTaxValues($entityClass, array $entityIds)
+    private function findTaxValues(?string $entityClass, array $entityIds): array
     {
         return $this->doctrineHelper->getEntityRepositoryForClass($this->taxValueClass)
             ->findBy(['entityClass' => $entityClass, 'entityId' => $entityIds]);
     }
 
-    /**
-     * @param string $entityClass
-     * @param string $entityId
-     * @return null|TaxValue
-     */
-    public function findTaxValue($entityClass, $entityId)
+    public function findTaxValue(?string $entityClass, ?string $entityId): ?TaxValue
     {
         return $this->doctrineHelper->getEntityRepositoryForClass($this->taxValueClass)
             ->findOneBy(['entityClass' => $entityClass, 'entityId' => $entityId]);
     }
 
-    public function saveTaxValue(TaxValue $taxValue)
+    public function saveTaxValue(TaxValue $taxValue): void
     {
         $em = $this->getTaxValueEntityManager();
         $em->persist($taxValue);
@@ -177,13 +128,12 @@ class TaxValueManager
     /**
      * Flush tax value changes to database if it is allowed to do
      *
-     * @param null|TaxValue|TaxValue[] $entity
+     * @param TaxValue|TaxValue[]|null $entity
      * @return bool
      */
-    public function flushTaxValueIfAllowed($entity = null): bool
+    public function flushTaxValueIfAllowed(array|TaxValue $entity = null): bool
     {
         $em = $this->getTaxValueEntityManager();
-
         if (!$this->doctrineFlushProgressListener->isFlushInProgress($em)) {
             $em->flush($entity);
 
@@ -193,15 +143,9 @@ class TaxValueManager
         return false;
     }
 
-    /**
-     * @param TaxValue $taxValue
-     * @param bool $flush
-     * @return bool
-     */
-    public function removeTaxValue(TaxValue $taxValue, $flush = false)
+    public function removeTaxValue(TaxValue $taxValue, bool $flush = false): bool
     {
         $em = $this->getTaxValueEntityManager();
-
         if (!$em->contains($taxValue)) {
             return false;
         }
@@ -215,39 +159,28 @@ class TaxValueManager
         return true;
     }
 
-    /**
-     * @param string $taxCode
-     * @return Tax
-     */
-    public function getTax($taxCode)
+    public function getTax(string $taxCode): ?Tax
     {
-        return $this->doctrineHelper->getEntityRepository($this->taxClass)->findOneBy(['code' => $taxCode]);
+        return $this->doctrineHelper->getEntityRepository($this->taxClass)
+            ->findOneBy(['code' => $taxCode]);
     }
 
     /**
      * Clear caches
      */
-    public function clear()
+    public function clear(): void
     {
         $this->taxValues = [];
     }
 
-    /**
-     * @return EntityManager
-     */
-    protected function getTaxValueEntityManager()
+    protected function getTaxValueEntityManager(): EntityManager
     {
         $em = $this->doctrineHelper->getEntityManagerForClass($this->taxValueClass);
 
         return $em instanceof VirtualProxyInterface ? $em->getWrappedValueHolderValue() : $em;
     }
 
-    /**
-     * @param string $entityClass
-     * @param string $entityId
-     * @return string
-     */
-    protected function getTaxValueCacheKey($entityClass, $entityId)
+    private function getTaxValueCacheKey(?string $entityClass, ?string $entityId): string
     {
         return sprintf('%s#%s', $entityClass, $entityId);
     }

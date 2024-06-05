@@ -1,8 +1,6 @@
 @regression
 @ticket-BB-20500
-@skip
-# Unskip when BB-24018 will be fixed
-# Unskip when BB-24016 will be fixed
+
 Feature: Product with slug same to web catalog node
   In order to have the ability to display a "friendly URL" address for customers
   As an administrator
@@ -47,10 +45,11 @@ Feature: Product with slug same to web catalog node
     And I click "Add Category"
     And I fill "Content Node Form" with:
       | Titles   | Test Node |
-      | Url Slug | test-1    |
+    And I fill in URL Slug field with "test-1"
     And I click "Test Category"
     And I click "Save"
     Then I should see "Content Node has been saved" flash message
+    And I should see URL Slug field filled with "test-1"
     And I set "Default Web Catalog" as default web catalog
 
   Scenario: Create product
@@ -75,7 +74,7 @@ Feature: Product with slug same to web catalog node
     When I click "Test Node" in hamburger menu
     And should see "Test Product"
     And click "View Details" for "Test Product" product
-    Then the url should match "/test-node/_item/test-1"
+    Then the url should match "/test-1/_item/test-1"
     And I should see "Home page Test Node Test Product"
     And I should not see "Is Featured"
     And I should not see "View Details"

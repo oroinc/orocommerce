@@ -126,6 +126,6 @@ Feature: Check if the quantity of the product is taken into account when calcula
     Then I should see Checkout Totals with data:
       | Subtotal | $100.00 |
       | Shipping | $10.00  |
-    And should see "Total $110.00"
+    And should see "Total: $110.00"
     When I press "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title

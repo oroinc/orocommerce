@@ -3,6 +3,8 @@ services:
         class: 'Oro\Bundle\UPSBundle\Tests\Behat\Mock\Provider\UPSTransportMock'
         arguments:
             - '@oro_ups.client.url_provider_basic'
+            - '@oro_ups.client.url_provider_basic_oauth'
+            - '@oro_ups.token_provider'
             - '@logger'
         calls:
             - [setRestClientFactory, ['@oro_integration.transport.rest.client_factory']]
@@ -16,3 +18,8 @@ services:
             - !service
                 class: Oro\Bundle\IntegrationBundle\Test\FakeRestClientFactory
             - '@oro_ups.client.url_provider_basic'
+            - '@oro_ups.client.url_provider_basic_oauth'
+
+    oro_ups.token_provider.mock:
+        class: 'Oro\Bundle\UPSBundle\Tests\Behat\Mock\Client\AccessTokenProviderMock'
+        decorates: oro_ups.token_provider

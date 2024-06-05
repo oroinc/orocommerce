@@ -29,6 +29,18 @@ layout:
                         product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
                 product_view_primary_container:
                     blockType: container
+                product_view_headline:
+                    blockType: container
+                product_view_headline_group_first:
+                    blockType: container
+                product_view_headline_sku_slot:
+                    blockType: container
+                product_view_headline_inventory_status_slot:
+                    blockType: container
+                product_view_headline_group_second:
+                    blockType: container
+                product_view_headline_brand_slot:
+                    blockType: container
                 product_view_aside_container:
                     blockType: container
                 product_sticker_new:
@@ -47,6 +59,12 @@ layout:
                     blockType: container
                 product_view_details_inner_container:
                     blockType: container
+                product_view_line_item_container_wrapper:
+                    blockType: container
+                    options:
+                        vars:
+                            product: '=data["product"]'
+                            matrixFormType: '=data.offsetExists("product") ? data["product_view_form_availability_provider"].getAvailableMatrixFormType(data["product"]) : null'
                 product_view_line_item_container:
                     blockType: container
                 product_view_benefits_container:
@@ -78,14 +96,20 @@ layout:
                     product_view_container:
                         product_view_microdata_container:
                             product_view_primary_container:
+                                product_view_headline:
+                                    product_view_headline_group_first:
+                                        product_view_headline_sku_slot:
+                                        product_view_headline_inventory_status_slot:
+                                            product_view_brand_inventory_status: ~
+                                    product_view_headline_group_second:
+                                        product_view_headline_brand_slot:
                                 product_sticker_new: ~
-                                product_view_brand_container: ~
-                                product_view_brand_inventory_status: ~
                             product_view_main_container:
                                 product_view_aside_container: ~
                                 product_view_content_container:
                                     product_view_specification_container: ~
-                                    product_view_line_item_container: ~
+                                    product_view_line_item_container_wrapper:
+                                        product_view_line_item_container: ~
                                 product_view_details_container:
                                     product_view_details_inner_container:
                                         product_view_benefits_container: ~
@@ -97,8 +121,13 @@ layout:
             parentId: product_view_media_wrapper
 
         - '@move':
+            id: product_view_attribute_group_general_attribute_text_sku
+            parentId: product_view_headline_sku_slot
+            prepend: true
+
+        - '@move':
             id: product_view_attribute_group_general_attribute_product_brand_brand
-            parentId: product_view_primary_container
+            parentId: product_view_headline_brand_slot
             siblingId: product_view_brand_inventory_status
             prepend: false
 

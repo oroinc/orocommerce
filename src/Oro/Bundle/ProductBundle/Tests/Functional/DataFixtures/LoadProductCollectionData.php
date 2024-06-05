@@ -34,7 +34,7 @@ class LoadProductCollectionData extends AbstractFixture implements DependentFixt
                 'sorting' => '',
             ],
         ],
-        'filters' =>[
+        'filters' => [
             [
                 'columnName' => 'sku',
                 'criterion' => [

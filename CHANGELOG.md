@@ -2,7 +2,20 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
-## Changes in the Сommerce package versions
+## UNRELEASED
+
+### Removed
+
+### ProductBundle
+* Removed page_template values from `\Oro\Bundle\ProductBundle\Resources\views\layouts\default\config\page_templates.yml`.
+* Removed `oro_product.product_details_display_price_tiers_as` system configuration option.
+
+### Changed
+
+### ProductBundle
+* Changed entity config fallback logic - substituted system config fallback on theme configuration fallback as default.
+
+## Changes in the Commerce package versions
 
 - [6.0.0](#600-2024-03-30)
 - [5.1.0](#510-2023-03-31)
@@ -21,6 +34,40 @@ The current file describes significant changes in the code that may affect the u
 - [1.3.0](#130-2017-07-28)
 - [1.2.0](#120-2017-06-01)
 - [1.1.0](#110-2017-03-31)
+
+## UNRELEASED
+
+### Added
+
+#### WebsiteSearchSuggestionBundle
+* Added the ability to show users in the search autocomplete field on the storefront suggestions
+  * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion` entity class;
+  * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\ProductSuggestion` entity class;
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\GenerateSuggestionsProcessor` for processing MQ messages with or without specified product ids
+  to send messages with filtered product ids grouped by organization to the next processor(see below).
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\GenerateSuggestionPhrasesProcessor` for processing MQ sent messages by processor(see above)
+  to generate suggestions for each localization based on product name and sku to persist them in the next processor(see below).
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\PersistSuggestionPhrasesProcessor` for processing MQ sent messages by processor(see above)
+  to persist suggestions to the database and send inserted ids for the next processor (see below).
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\PersistSuggestionProductRelationProcessor` for processing MQ sent messages by processor(see above)
+  to persist relation between suggestion and product to the database.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Deletion\DeleteIrrelevantSuggestionsProcessor` for processing MQ messages
+  to find suggestions with irrelevant product suggestions and send their ids to the next processor(see below) and send message to DeleteOrphanSuggestionsProcessor processor.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Deletion\DeleteIrrelevantProductSuggestionsChunk` for processing MQ messages
+  to remove product suggestions by their ids from the database.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Deletion\DeleteOrphanSuggestionsProcessor` for processing MQ messages
+  to find suggestions with no products and send their ids to the next processor(see below).
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Deletion\DeleteOrphanSuggestionsChunkProcessor` for processing MQ messages
+  to remove suggestions by their ids from the database.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Event\SuggestionPersistEvent` dispatching in `oro_website_search_suggestion.suggestion_persister` service.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Event\ProductSuggestionPersistEvent` dispatching in `oro_website_search_suggestion.product_suggestion_persister` service.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Event\SuggestionDeletedEvent` dispatching in `oro_website_search_suggestion.async.delete_orphan_suggestions_chunk_processor` processor.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\Event\ProductSuggestionDeletedEvent` dispatching in `oro_website_search_suggestion.async.delete_irrelevant_product_suggestions_chunk_processor` processor.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\SuggestionIndexationListener` that handles Suggestion persisting and deleting events to start search reindex operation for search engine.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\Doctrine\CreateProductSuggestionListener` that handles Product create and update events to collect product ids and send them in message to processor \Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\GenerateSuggestionsProcessor (details see above).
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\SuggestionIndexationListener` take into account suggestion fields for the search engine for the storefront.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\ProductSuggestionRestrictIndexListener` filter suggestions by organization and localization for every website for storefront search engine.
+* Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearchSuggestionFeatureToggleListener` listen to feature status changes and send messages to MQ for suggestions generation when feature has been enabled.
 
 ## 6.0.0 (2024-03-30)
 [Show detailed list of changes](incompatibilities-6-0.md)
@@ -44,8 +91,8 @@ The current file describes significant changes in the code that may affect the u
 * Added new price calculation logic for product kit line item for the `orderlineitems` and `orderproductkititemlineitems` API backend resources.
 
 #### PricingBundle
-* Improved the mechanism of getting product prices. See more in [documentation](https://doc.oroinc.com/bundles/commerce/PricingBundle/getting-product-price.html).
-* Introduced the new mechanism of getting product line item prices, including product kit line item prices. See more in [documentation](https://doc.oroinc.com/bundles/commerce/PricingBundle/getting-product-line-item-price.html).
+* Improved the mechanism of getting product prices. See more in [documentation](https://doc.oroinc.com/bundles/commerce/PricingBundle/getting-product-price/).
+* Introduced the new mechanism of getting product line item prices, including product kit line item prices. See more in [documentation](https://doc.oroinc.com/bundles/commerce/PricingBundle/getting-product-line-item-price/).
 * Added `\Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory` as the main entry point for creating `\Oro\Bundle\PricingBundle\Model\ProductPriceCriteria`. Eliminated all occurrences of manual creation of product price criteria with corresponding BC fallbacks.
 * Added `\Oro\Bundle\PricingBundle\Provider\MatchedProductPriceProviderInterface` implemented in `\Oro\Bundle\PricingBundle\Provider\ProductPriceProvider::getMatchedProductPrices` to get a collection of `\Oro\Bundle\PricingBundle\Model\ProductPriceInterface` product prices.
 * Added `\Oro\Bundle\PricingBundle\ProductKit\ProductPriceCriteria\ProductKitPriceCriteria` and `\Oro\Bundle\PricingBundle\ProductKit\ProductPriceCriteria\ProductKitItemPriceCriteria` product price criteria models for passing to the product price provider.
@@ -97,7 +144,7 @@ The current file describes significant changes in the code that may affect the u
 * Added `Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByUrlSlugsListener` that excludes cms pages without URL slugs from the sitemap.
 
 #### ShoppingListBundle
-* Added the ability to display product kit line items on the shopping list line items storefront datagrid. See more in [documentation](https://doc.oroinc.com/bundles/commerce/ShoppingListBundle/shopping-list-on-storefront.html).
+* Added the ability to display product kit line items on the shopping list line items storefront datagrid. See more in [documentation](https://doc.oroinc.com/bundles/commerce/ShoppingListBundle/shopping-list-on-storefront/).
 * Added `\Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem` entity to the storefront API as `shoppinglistkititem` resource.
 * Added `\Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem` entity to the back-office API.
 * Added `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead of the deprecated `\Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataViolationsListener`.

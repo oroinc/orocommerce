@@ -1,3 +1,4 @@
+@regression
 @fixture-OroProductBundle:product_collection_sort_order.yml
 @elasticsearch
 Feature: Product collection sort order with drag n' drop

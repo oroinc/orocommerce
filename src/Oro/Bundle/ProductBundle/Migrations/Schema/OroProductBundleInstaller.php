@@ -15,10 +15,12 @@ use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
+use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration as LayoutThemeConfiguration;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareTrait;
+use Oro\Bundle\ThemeBundle\Fallback\Provider\ThemeConfigurationFallbackProvider;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -45,7 +47,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_33';
+        return 'v1_34';
     }
 
     /**
@@ -541,6 +543,9 @@ class OroProductBundleInstaller implements
             'pageTemplate',
             'oro.product.page_template.label',
             [
+                ThemeConfigurationFallbackProvider::FALLBACK_ID => [
+                    'configName' => LayoutThemeConfiguration::buildOptionKey('product_details', 'template'),
+                ],
                 SystemConfigFallbackProvider::FALLBACK_ID => [
                     'configName' => 'oro_frontend.page_templates',
                 ],

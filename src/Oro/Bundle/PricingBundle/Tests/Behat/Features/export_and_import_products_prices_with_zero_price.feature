@@ -1,6 +1,7 @@
 @ticket-BB-14904
 @automatically-ticket-tagged
 @fixture-OroPricingBundle:PricelistsForImport.yml
+@pricing-storage-combined
 
 Feature: Export and Import Products Prices with zero price
   In order to export and import products prices with zero price

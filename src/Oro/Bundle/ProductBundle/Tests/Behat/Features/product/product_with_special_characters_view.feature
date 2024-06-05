@@ -49,16 +49,18 @@ Feature: Product with special characters view
 
   Scenario: Check that product name is displayed properly in "Wide template" layout view
     Given I proceed as the Admin
-    And go to System/ Configuration
-    And I follow "Commerce/Design/Theme" on configuration sidebar
-    And I fill "Page Templates Form" with:
-      | Use Default  | false            |
-      | Product Page | Wide Template |
-    And I click "Save settings"
-    Given I proceed as the Buyer
+    When I go to System / Theme Configurations
+    And I click "Edit" on row "Refreshing Teal" in grid
+    And I fill "Theme Configuration Form" with:
+      | Page Template | wide |
+    And I save and close form
+    Then I should see "Theme Configuration" flash message
+
+    When I proceed as the Buyer
     And I reload the page
     Then I should see "Product1`\"'&йёщ®&reg;>"
     And I should not see "Product1`\"'&йёщ®®>"
+
     When I click on "Product View Gallery Trigger"
     Then I should see gallery image with alt "Product1`\"'&йёщ®&reg;>"
     And I click "Popup Gallery Widget Close"
@@ -73,16 +75,18 @@ Feature: Product with special characters view
 
   Scenario: Check that product name is displayed properly in "List page" layout view
     Given I proceed as the Admin
-    And go to System/ Configuration
-    And I follow "Commerce/Design/Theme" on configuration sidebar
-    And I fill "Page Templates Form" with:
-      | Use Default  | false     |
-      | Product Page | Tabs Template |
-    And I click "Save settings"
-    Given I proceed as the Buyer
+    When I go to System / Theme Configurations
+    And I click "Edit" on row "Refreshing Teal" in grid
+    And I fill "Theme Configuration Form" with:
+      | Page Template | tabs |
+    And I save and close form
+    Then I should see "Theme Configuration" flash message
+
+    When I proceed as the Buyer
     And I reload the page
     Then I should see "Product1`\"'&йёщ®&reg;>"
     And I should not see "Product1`\"'&йёщ®®>"
+
     When I click on "Product View Gallery Trigger"
     Then I should see gallery image with alt "Product1`\"'&йёщ®&reg;>"
     And I click "Popup Gallery Widget Close"

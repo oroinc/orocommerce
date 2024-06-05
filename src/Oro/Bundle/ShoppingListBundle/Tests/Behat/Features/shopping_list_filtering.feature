@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-21978
 @fixture-OroShoppingListBundle:ShoppingListFixture.yml
 Feature: Shopping list filtering

@@ -2,33 +2,36 @@
 
 namespace Oro\Bundle\UPSBundle\Model;
 
+use InvalidArgumentException;
+use LogicException;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
+/**
+ * UPS Price Response model
+ */
 class PriceResponse
 {
-    const TOTAL_CHARGES = 'TotalCharges';
+    public const TOTAL_CHARGES = 'TotalCharges';
 
-    /**
-     * @var Price[]
-     */
-    protected $pricesByServices = [];
+    /** @var Price[] */
+    protected array $pricesByServices = [];
 
     /**
      * @param array $data
-     * @throws \LogicException on UPS fault
-     * @throws \InvalidArgumentException
      * @return $this
+     * @throws InvalidArgumentException
+     * @throws LogicException on UPS fault
      */
-    public function parse($data)
+    public function parse(array $data): static
     {
         if ($data && array_key_exists('Fault', $data)) {
-            throw new \LogicException(json_encode($data['Fault']));
+            throw new LogicException(json_encode($data['Fault']));
         }
 
-        if ($data === null || !array_key_exists('RateResponse', $data)
+        if (!array_key_exists('RateResponse', $data)
             || !array_key_exists('RatedShipment', $data['RateResponse'])
         ) {
-            throw new \InvalidArgumentException('No price data in provided string.');
+            throw new InvalidArgumentException('No price data in provided string.');
         }
 
         $this->pricesByServices = [];
@@ -42,17 +45,14 @@ class PriceResponse
         return $this;
     }
 
-    /**
-     * @param array $rateShipments
-     */
-    private function addRatedShipments($rateShipments)
+    private function addRatedShipments(array $rateShipments): void
     {
         foreach ($rateShipments as $rateShipment) {
             $this->addRatedShipment($rateShipment);
         }
     }
 
-    private function addRatedShipment(array $rateShipment)
+    private function addRatedShipment(array $rateShipment): void
     {
         if (array_key_exists(self::TOTAL_CHARGES, $rateShipment)) {
             $price = $this->createPrice($rateShipment[self::TOTAL_CHARGES]);
@@ -62,11 +62,7 @@ class PriceResponse
         }
     }
 
-    /**
-     * @param array $priceData
-     * @return Price
-     */
-    private function createPrice($priceData)
+    private function createPrice(array $priceData): ?Price
     {
         if (!array_key_exists('MonetaryValue', $priceData) ||
             !array_key_exists('CurrencyCode', $priceData)) {
@@ -78,12 +74,13 @@ class PriceResponse
 
     /**
      * @return Price[]
-     * @throws \InvalidArgumentException
+     *
+     * @throws InvalidArgumentException
      */
-    public function getPricesByServices()
+    public function getPricesByServices(): array
     {
         if (!$this->pricesByServices) {
-            throw new \InvalidArgumentException('Response data not loaded');
+            throw new InvalidArgumentException('Response data not loaded');
         }
 
         return $this->pricesByServices;
@@ -91,10 +88,11 @@ class PriceResponse
 
     /**
      * @param string $code
-     * @throws \InvalidArgumentException
-     * @return Price
+     * @return Price|null
+     *
+     * @throws InvalidArgumentException
      */
-    public function getPriceByService($code)
+    public function getPriceByService(string $code): ?Price
     {
         if (!array_key_exists($code, $this->pricesByServices)) {
             return null;

@@ -126,7 +126,7 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
                 $shippingAddress,
                 []
             ],
-            'shipping address' =>[
+            'shipping address' => [
                 $shippingAddress,
                 TaxationSettingsProvider::DESTINATION_SHIPPING_ADDRESS,
                 new Address(),
@@ -135,7 +135,7 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
                 $shippingAddress,
                 []
             ],
-            'null address' =>[
+            'null address' => [
                 null,
                 null,
                 new Address(),

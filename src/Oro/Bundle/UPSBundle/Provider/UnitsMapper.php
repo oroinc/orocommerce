@@ -13,13 +13,13 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSTransportEntity;
  */
 class UnitsMapper
 {
-    const UNIT_OF_WEIGHT_KG = 'kg';
-    const UNIT_OF_WEIGHT_LBS = 'lbs';
+    public const UNIT_OF_WEIGHT_KG = 'kg';
+    public const UNIT_OF_WEIGHT_LBS = 'lbs';
 
-    const UNIT_OF_LENGTH_INCH = 'inch';
-    const UNIT_OF_LENGTH_FOOT = 'foot';
-    const UNIT_OF_LENGTH_CM = 'cm';
-    const UNIT_OF_LENGTH_M = 'm';
+    public const UNIT_OF_LENGTH_INCH = 'inch';
+    public const UNIT_OF_LENGTH_FOOT = 'foot';
+    public const UNIT_OF_LENGTH_CM = 'cm';
+    public const UNIT_OF_LENGTH_M = 'm';
 
     /**
      * @var  ManagerRegistry

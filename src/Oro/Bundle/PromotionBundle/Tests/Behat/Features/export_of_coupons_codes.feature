@@ -1,3 +1,4 @@
+@regression
 @fixture-OroOrganizationBundle:BusinessUnit.yml
 @fixture-OroPromotionBundle:promotions_for_coupons.yml
 @fixture-OroPromotionBundle:export-coupons.yml

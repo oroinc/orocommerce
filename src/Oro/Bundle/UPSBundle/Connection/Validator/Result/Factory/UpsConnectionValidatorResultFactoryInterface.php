@@ -6,19 +6,16 @@ use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResultInterface;
 
+/**
+ * Interface for UPS Connection Validator Result Factory
+ */
 interface UpsConnectionValidatorResultFactoryInterface
 {
-    /**
-     * @param RestResponseInterface $response
-     *
-     * @return UpsConnectionValidatorResultInterface
-     */
-    public function createResultByUpsClientResponse(RestResponseInterface $response);
+    public function createResultByUpsClientResponse(
+        RestResponseInterface $response
+    ): UpsConnectionValidatorResultInterface;
 
-    /**
-     * @param RestException $exception
-     *
-     * @return UpsConnectionValidatorResultInterface
-     */
-    public function createExceptionResult(RestException $exception);
+    public function createExceptionResult(
+        RestException $exception
+    ): UpsConnectionValidatorResultInterface;
 }

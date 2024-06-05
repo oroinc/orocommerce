@@ -6,6 +6,7 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
+use Oro\Bundle\UPSBundle\Client\AccessTokenProviderInterface;
 use Oro\Bundle\UPSBundle\Client\Url\Provider\UpsClientUrlProviderInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
@@ -30,6 +31,12 @@ class UPSTransportTest extends \PHPUnit\Framework\TestCase
     /** @var UpsClientUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $upsClientUrlProviderMock;
 
+    /** @var UpsClientUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $upsClientOAuthUrlProvider;
+
+    /** @var AccessTokenProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $accessTokenProvider;
+
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
@@ -40,10 +47,17 @@ class UPSTransportTest extends \PHPUnit\Framework\TestCase
     {
         $this->client = $this->createMock(RestClientInterface::class);
         $this->clientFactory = $this->createMock(RestClientFactoryInterface::class);
+        $this->accessTokenProvider = $this->createMock(AccessTokenProviderInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->upsClientUrlProviderMock = $this->createMock(UpsClientUrlProviderInterface::class);
+        $this->upsClientOAuthUrlProvider = $this->createMock(UpsClientUrlProviderInterface::class);
 
-        $this->transport = new UPSTransport($this->upsClientUrlProviderMock, $this->logger);
+        $this->transport = new UPSTransport(
+            $this->upsClientUrlProviderMock,
+            $this->upsClientOAuthUrlProvider,
+            $this->accessTokenProvider,
+            $this->logger
+        );
         $this->transport->setRestClientFactory($this->clientFactory);
     }
 

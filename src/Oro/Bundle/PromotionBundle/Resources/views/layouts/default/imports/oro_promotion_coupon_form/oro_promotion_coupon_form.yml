@@ -45,7 +45,6 @@ layout:
                             __expand_link: ~
                             __expandable_container:
                                 __applied_coupons_list_container:
-                                    __applied_coupons_list_header: ~
                                     __applied_coupons_list_rows_container:
                                         __applied_coupons_list_row_container:
                                             __applied_coupons_list_row_text_container:
@@ -55,5 +54,5 @@ layout:
                                 __form_container:
                                     __coupon_input_container:
                                         __coupon_input: ~
-                                        __errors_container: ~
                                     __apply_button: ~
+                                    __errors_container: ~

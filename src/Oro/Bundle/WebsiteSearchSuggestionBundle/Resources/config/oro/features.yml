@@ -1,0 +1,19 @@
+features:
+    oro_website_search_suggestion:
+        label: oro.websitesearchsuggestion.feature.oro_website_search_suggestion.label
+        toggle: oro_website_search_suggestion.website_search_suggestion_feature_enabled
+        entities:
+            - 'Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion'
+            - 'Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\ProductSuggestion'
+        configuration:
+            - 'oro_website_search_suggestion.search_autocomplete_max_suggests'
+        commands:
+            - 'oro:website-search-suggestions:generate'
+            - 'oro:cron:website-search-suggestions:clean-up'
+        mq_topics:
+            - 'oro_website_search_suggestion.generate_for_products'
+            - 'oro_website_search_suggestion.generate_product_suggestions'
+            - 'oro_website_search_suggestion.persist_suggestions'
+            - 'oro_website_search_suggestion.persist_product_suggestions'
+            - 'oro_website_search_suggestion.delete_orphan_suggestions'
+            - 'oro_website_search_suggestion.delete_orphan_suggestions_chunk'

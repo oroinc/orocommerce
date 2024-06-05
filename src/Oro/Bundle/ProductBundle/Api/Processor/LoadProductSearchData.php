@@ -53,7 +53,7 @@ class LoadProductSearchData implements ProcessorInterface
             $searchRecords = $searchResult->getRecords();
         } catch (InvalidSearchQueryException $e) {
             $error = Error::createValidationError(Constraint::FILTER, $e->getMessage());
-            $filterValue = $context->getFilterValues()->get('searchQuery');
+            $filterValue = $context->getFilterValues()->getOne('searchQuery');
             if (null !== $filterValue) {
                 $error->setSource(ErrorSource::createByParameter($filterValue->getSourceKey()));
             }

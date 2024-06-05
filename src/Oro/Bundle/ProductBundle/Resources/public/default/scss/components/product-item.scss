@@ -323,7 +323,8 @@
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: spacing('sm');
+        gap: spacing('xs');
+        font-size: $product-item-number-font-size;
     }
 }
 

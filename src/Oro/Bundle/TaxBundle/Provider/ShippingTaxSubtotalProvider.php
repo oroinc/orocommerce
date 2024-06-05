@@ -26,13 +26,13 @@ class ShippingTaxSubtotalProvider extends AbstractTaxSubtotalProvider
         return $subtotal;
     }
 
-    protected function fillSubtotal(Subtotal $subtotal, Result $tax): Subtotal
+    protected function fillSubtotal(Subtotal $subtotal, Result $tax, ?object $entity = null): Subtotal
     {
         $subtotal->setAmount($tax->getShipping()->getTaxAmount());
         $subtotal->setCurrency($tax->getShipping()->getCurrency());
         $subtotal->setVisible(false);
 
-        if ($this->taxationSettingsProvider->isShippingRatesIncludeTax()) {
+        if ($this->taxationSettingsProvider->isShippingRatesIncludeTax($entity)) {
             $subtotal->setOperation(Subtotal::OPERATION_IGNORE);
         }
 

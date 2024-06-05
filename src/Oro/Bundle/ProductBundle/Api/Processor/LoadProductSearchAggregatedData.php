@@ -33,7 +33,7 @@ class LoadProductSearchAggregatedData implements ProcessorInterface
             $aggregatedData = $searchResult->getAggregatedData();
         } catch (InvalidSearchQueryException $e) {
             $error = Error::createValidationError(Constraint::FILTER, $e->getMessage());
-            $filterValue = $context->getFilterValues()->get('aggregations');
+            $filterValue = $context->getFilterValues()->getOne('aggregations');
             if (null !== $filterValue) {
                 $error->setSource(ErrorSource::createByParameter($filterValue->getSourceKey()));
             }

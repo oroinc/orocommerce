@@ -1,0 +1,8 @@
+layout:
+    imports:
+        -
+            id: oro_product_price_table
+            root: product_view_content_container
+            siblingId: product_view_line_item_container_wrapper
+            prepend: false
+    actions: []

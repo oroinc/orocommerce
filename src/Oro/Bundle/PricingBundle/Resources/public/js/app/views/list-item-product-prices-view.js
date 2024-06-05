@@ -64,6 +64,13 @@ define(function(require) {
             this.changeUnitLabel = options.changeUnitLabel;
 
             this.initializeElements(options);
+
+            if (this.doUpdateQtyForUnit) {
+                this.updateQtyForUnit();
+                this.model.off('change:unit', this.updateQtyForUnit, this);
+                this.model.on('change:unit', this.updateQtyForUnit, this);
+            }
+
             this.render();
         },
 
@@ -84,12 +91,6 @@ define(function(require) {
          * @inheritdoc
          */
         render: function() {
-            if (this.doUpdateQtyForUnit) {
-                this.updateQtyForUnit();
-                this.model.off('change:unit', this.updateQtyForUnit, this);
-                this.model.on('change:unit', this.updateQtyForUnit, this);
-            }
-
             if (this.showListedPrice || this.showValuePrice) {
                 this.renderPriceBlock();
             }
@@ -106,6 +107,11 @@ define(function(require) {
          */
         updateQtyForUnit: function() {
             const unit = this.model.get('unit');
+
+            if (this.showHint) {
+                this.renderHint(unit);
+            }
+
             const qtyCheckedForUnit = this.model.get('qtyCheckedForUnit');
             if (!_.isEmpty(qtyCheckedForUnit[unit])) {
                 return false;
@@ -125,7 +131,7 @@ define(function(require) {
             return true;
         },
 
-        renderHint: function() {
+        renderHint: function(unit) {
             const $pricesHint = this.getElement('pricesHint');
             const prices = this.getPreparedPriceForHint();
             if (0 === $pricesHint.length) {
@@ -143,8 +149,11 @@ define(function(require) {
                 }, true);
             }
 
+            const fallbackUnit = _.first(Object.keys(prices));
+            const selectedUnit = unit || this.model.get('unit') || fallbackUnit;
             $pricesHint.data(Popover.DATA_KEY).updateContent(this.pricesHintContent({
                 prices: prices,
+                unit: selectedUnit,
                 formatter: NumberFormatter
             }));
         },

@@ -60,23 +60,26 @@ class RateUpsConnectionValidatorRequestFactoryTest extends \PHPUnit\Framework\Te
                     'Shipper' => [
                         'Name' => 'Company2',
                         'Address' => [
-                            'PostalCode' => '0000000000000000',
+                            'PostalCode' => '10001',
                             'CountryCode' => self::COUNTRY_CODE,
                         ]
                     ],
                     'ShipTo' => [
                         'Name' => 'Company1',
-                        'Address' =>[
-                            'PostalCode' => '0000000000000000',
+                        'Address' => [
+                            'PostalCode' => '10001',
                             'CountryCode' => self::COUNTRY_CODE,
                         ]
                     ],
                     'ShipFrom' => [
                         'Name' => 'Company2',
-                        'Address' =>[
-                            'PostalCode' => '0000000000000000',
+                        'Address' => [
+                            'PostalCode' => '10001',
                             'CountryCode' => self::COUNTRY_CODE,
                         ]
+                    ],
+                    'Service' => [
+                        'Code' => '03'
                     ],
                     'Package' => [
                         0 => [

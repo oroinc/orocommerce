@@ -45,7 +45,7 @@ Feature: Check that shipping tax supports address resolver granularity settings
     Then I should see "Subtotal $40.00"
     And should see "Shipping $3.00"
     And should see "Tax $4.30"
-    And should see "Total $47.30"
+    And should see "Total: $47.30"
 
   Scenario: Add restrictions to the tax for the country and the region
     Given I proceed as the Admin
@@ -62,4 +62,4 @@ Feature: Check that shipping tax supports address resolver granularity settings
     Then I should see "Subtotal $40.00"
     And should see "Shipping $3.00"
     And should not see "Tax $0.30"
-    And should see "Total $43.00"
+    And should see "Total: $43.00"

@@ -1,4 +1,3 @@
-@regression
 @ticket-BB-13406
 @ticket-BB-16195
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
@@ -126,13 +125,13 @@ Feature: Pricing rounding
     And should see "Total $7"
     When click "Continue"
     Then should see "Subtotal $7"
-    And should see "Total $10"
+    And should see "Total: $10"
     When I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     Then should see "Subtotal $7"
-    And should see "Total $10"
+    And should see "Total: $10"
     When I check "Payment Terms" on the "Payment" checkout step and press Continue
     Then should see "Subtotal $7"
-    And should see "Total $10"
+    And should see "Total: $10"
     And fill "Order Review Form" with:
       | PO Number | Order1 |
     And click "Submit Order"
@@ -150,13 +149,13 @@ Feature: Pricing rounding
     And should see "Total $5"
     When click "Continue"
     Then should see "Subtotal $5"
-    And should see "Total $8"
+    And should see "Total: $8"
     When I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     Then should see "Subtotal $5"
-    And should see "Total $8"
+    And should see "Total: $8"
     When I check "Payment Terms" on the "Payment" checkout step and press Continue
     Then should see "Subtotal $5"
-    And should see "Total $8"
+    And should see "Total: $8"
     And fill "Order Review Form" with:
       | PO Number | Order2 |
     And click "Submit Order"
@@ -260,13 +259,13 @@ Feature: Pricing rounding
     And should see "Total $7.5"
     When click "Continue"
     Then should see "Subtotal $7.5"
-    And should see "Total $10.5"
+    And should see "Total: $10.5"
     When I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     Then should see "Subtotal $7.5"
-    And should see "Total $10.5"
+    And should see "Total: $10.5"
     When I check "Payment Terms" on the "Payment" checkout step and press Continue
     Then should see "Subtotal $7.5"
-    And should see "Total $10.5"
+    And should see "Total: $10.5"
     And fill "Order Review Form" with:
       | PO Number | Order3 |
     And click "Submit Order"
@@ -293,13 +292,13 @@ Feature: Pricing rounding
     And should see "Total $4.5"
     When click "Continue"
     Then should see "Subtotal $4.5"
-    And should see "Total $7.5"
+    And should see "Total: $7.5"
     When I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     Then should see "Subtotal $4.5"
-    And should see "Total $7.5"
+    And should see "Total: $7.5"
     When I check "Payment Terms" on the "Payment" checkout step and press Continue
     Then should see "Subtotal $4.5"
-    And should see "Total $7.5"
+    And should see "Total: $7.5"
     And fill "Order Review Form" with:
       | PO Number | Order4 |
     And click "Submit Order"

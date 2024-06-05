@@ -57,10 +57,10 @@ class OrganizationListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnCreateOrganizations(): void
     {
         /** @var Organization $organization1 */
-        $organization1 = $this->getEntity(Organization::class, ['id' =>1, 'name' => 'org1']);
+        $organization1 = $this->getEntity(Organization::class, ['id' => 1, 'name' => 'org1']);
 
         /** @var Organization $organization1 */
-        $organization2 = $this->getEntity(Organization::class, ['id' =>2, 'name' => 'org2']);
+        $organization2 = $this->getEntity(Organization::class, ['id' => 2, 'name' => 'org2']);
 
         $existingPriceList = new PriceList();
 

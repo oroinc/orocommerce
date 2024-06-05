@@ -17,30 +17,18 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class SameOrganizationValidator extends ConstraintValidator
 {
-    /**
-     * @var ContentVariantTypeRegistry
-     */
-    private $typeRegistry;
-
-    /**
-     * @var EntityOwnerAccessor
-     */
-    private $entityOwnerAccessor;
-
     public function __construct(
-        ContentVariantTypeRegistry $typeRegistry,
-        EntityOwnerAccessor $entityOwnerAccessor
+        private ContentVariantTypeRegistry $typeRegistry,
+        private EntityOwnerAccessor $entityOwnerAccessor
     ) {
-        $this->typeRegistry = $typeRegistry;
-        $this->entityOwnerAccessor = $entityOwnerAccessor;
     }
 
     /**
      * @param SameOrganization $constraint
      *
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (!$value instanceof ContentVariant) {
             return;
@@ -82,6 +70,6 @@ class SameOrganizationValidator extends ConstraintValidator
             return true;
         }
 
-        return $expectedOrganization && $organization->getId() === $expectedOrganization->getId();
+        return $organization->getId() === $expectedOrganization->getId();
     }
 }

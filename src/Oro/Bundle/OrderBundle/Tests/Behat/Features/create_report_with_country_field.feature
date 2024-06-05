@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-18410
 @fixture-OroOrderBundle:OrderAddressesFixture.yml
 @fixture-OroLocaleBundle:ZuluLocalization.yml

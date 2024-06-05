@@ -1,3 +1,4 @@
+@regression
 @fixture-OroProductBundle:product_collection_add.yml
 Feature: Product collection product change reflected
   In order to changes products included in product collection to reflected on store frontend

@@ -2,11 +2,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/page_template/wide/layout.html.twig'
-        - '@move':
-            id: product_view_line_item_container
-            parentId: product_view_content_container
-            siblingId: product_view_description_container
-            prepend: false
         - '@remove':
             id: attribute_group_rest
         - '@move':

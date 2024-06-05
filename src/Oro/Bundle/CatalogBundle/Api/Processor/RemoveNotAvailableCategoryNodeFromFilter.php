@@ -37,14 +37,15 @@ class RemoveNotAvailableCategoryNodeFromFilter implements ProcessorInterface
             return;
         }
 
-        $filterValues = $context->getFilterValues();
-        $filterValue = $filterValues->get($this->filterKey);
-        if (null === $filterValue) {
+        $filterValues = $context->getFilterValues()->get($this->filterKey);
+        if (!$filterValues) {
             // the filtering was not requested
             return;
         }
 
-        $this->correctFilterValue($filterValue, $context);
+        foreach ($filterValues as $filterValue) {
+            $this->correctFilterValue($filterValue, $context);
+        }
     }
 
     private function correctFilterValue(FilterValue $filterValue, Context $context): void

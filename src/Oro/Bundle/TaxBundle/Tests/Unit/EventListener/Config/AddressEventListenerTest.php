@@ -114,7 +114,7 @@ class AddressEventListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testBeforeSaveNoAddress()
     {
-        $address ='some_value';
+        $address = 'some_value';
         $settings = ['value' => $address];
         $event = $this->getEvent($settings);
 

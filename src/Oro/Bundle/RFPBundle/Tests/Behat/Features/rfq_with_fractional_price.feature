@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-14800
 @ticket-BB-21621
 @fixture-OroLocaleBundle:GermanLocalization.yml

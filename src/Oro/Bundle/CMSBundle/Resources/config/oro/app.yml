@@ -199,6 +199,17 @@ oro_entity:
             full: [ title ]
             short: [ title ]
 
+oro_api:
+    api_doc_data_types:
+        wysiwyg: string
+        wysiwyg_style: string
+        wysiwyg_properties: object
+    open_api:
+        data_types:
+            wysiwyg: [string]
+            wysiwyg_style: [string]
+            wysiwyg_properties: [object]
+
 oro_customer:
     frontend_api:
         non_authenticated_visitors_api_resources:

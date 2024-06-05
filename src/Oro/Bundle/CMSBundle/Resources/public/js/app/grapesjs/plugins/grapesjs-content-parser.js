@@ -85,6 +85,7 @@ export default function ContentParser(editor) {
                 content = type.model.beforeParse(content);
             }
         }
+
         return originParse.call(editor.Parser.parserHtml, content, options);
     };
 

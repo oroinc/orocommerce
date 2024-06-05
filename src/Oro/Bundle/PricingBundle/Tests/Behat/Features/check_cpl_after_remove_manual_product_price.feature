@@ -1,4 +1,3 @@
-@regression
 @pricing-storage-combined
 @ticket-BB-13422
 @ticket-BB-16591

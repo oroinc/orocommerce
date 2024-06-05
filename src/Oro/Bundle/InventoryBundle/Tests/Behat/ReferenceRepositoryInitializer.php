@@ -33,8 +33,18 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
         );
 
         $referenceRepository->set(
+            'inStock',
+            $inventoryStatuses[Product::INVENTORY_STATUS_IN_STOCK]
+        );
+
+        $referenceRepository->set(
             'enumInventoryStatusOutOfStock',
             $inventoryStatuses[Product::INVENTORY_STATUS_OUT_OF_STOCK]
+        );
+
+        $referenceRepository->set(
+            'outOfStock',
+            $inventoryStatuses[Product::INVENTORY_STATUS_IN_STOCK]
         );
     }
 }

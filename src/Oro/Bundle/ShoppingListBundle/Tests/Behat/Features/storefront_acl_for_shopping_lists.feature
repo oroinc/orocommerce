@@ -68,10 +68,10 @@ Feature: Storefront acl for shopping lists
       | Shopping List 3 |
       | Shopping List 4 |
 
-  Scenario: Set view permission to Сorporate
+  Scenario: Set view permission to Corporate
     Given I proceed as the Admin
     And select following permissions:
-      | Shopping List | View:Сorporate |
+      | Shopping List | View:Corporate |
     When I save form
     Then I should see "Customer User Role has been saved" flash message
 
@@ -141,7 +141,7 @@ Feature: Storefront acl for shopping lists
   Scenario: Set assign permission to Corporate
     Given I proceed as the Admin
     And select following permissions:
-      | Shopping List | Assign:Сorporate |
+      | Shopping List | Assign:Corporate |
     When I save form
     Then I should see "Customer User Role has been saved" flash message
 
@@ -222,7 +222,7 @@ Feature: Storefront acl for shopping lists
   Scenario: Set edit permission to Corporate
     Given I proceed as the Admin
     And select following permissions:
-      | Shopping List | Edit:Сorporate | Rename:Сorporate |
+      | Shopping List | Edit:Corporate | Rename:Corporate |
     When I save form
     Then I should see "Customer User Role has been saved" flash message
 
@@ -294,7 +294,7 @@ Feature: Storefront acl for shopping lists
   Scenario: Set "Set as Default" permission to Corporate
     Given I proceed as the Admin
     And select following permissions:
-      | Shopping List | Edit:Сorporate | Set as Default:Сorporate |
+      | Shopping List | Edit:Corporate | Set as Default:Corporate |
     When I save form
     Then I should see "Customer User Role has been saved" flash message
 
@@ -365,7 +365,7 @@ Feature: Storefront acl for shopping lists
   Scenario: Set edit permission to Corporate
     Given I proceed as the Admin
     And select following permissions:
-      | Shopping List | Delete:Сorporate |
+      | Shopping List | Delete:Corporate |
     When I save form
     Then I should see "Customer User Role has been saved" flash message
 
@@ -411,7 +411,7 @@ Feature: Storefront acl for shopping lists
   Scenario: Set create permission to Corporate
     Given I proceed as the Admin
     And select following permissions:
-      | Shopping List | Create:Сorporate |
+      | Shopping List | Create:Corporate |
     When I save form
     Then I should see "Customer User Role has been saved" flash message
 

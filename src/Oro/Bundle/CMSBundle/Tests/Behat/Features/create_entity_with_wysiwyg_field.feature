@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-18779
 
 Feature: Create entity with wysiwyg field

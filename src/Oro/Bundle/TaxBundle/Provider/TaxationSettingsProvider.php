@@ -169,14 +169,14 @@ class TaxationSettingsProvider
         return $this->addressModelFactory->create($originAddressValues);
     }
 
-    public function getShippingTaxCodes(): array
+    public function getShippingTaxCodes(?object $entity = null): array
     {
-        return (array)$this->configManager->get('oro_tax.shipping_tax_code');
+        return (array)$this->configManager->get(name: 'oro_tax.shipping_tax_code', scopeIdentifier: $entity);
     }
 
-    public function isShippingRatesIncludeTax(): bool
+    public function isShippingRatesIncludeTax(?object $entity = null): bool
     {
-        return (bool)$this->configManager->get('oro_tax.shipping_rates_include_tax');
+        return (bool)$this->configManager->get(name: 'oro_tax.shipping_rates_include_tax', scopeIdentifier: $entity);
     }
 
     public function isCalculateAfterPromotionsEnabled(): bool

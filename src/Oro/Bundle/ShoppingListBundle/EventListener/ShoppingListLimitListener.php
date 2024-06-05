@@ -64,7 +64,7 @@ class ShoppingListLimitListener
             });
         } catch (\Exception $e) {
             if (null !== $this->logger) {
-                $this->logger->error('Unable to remove guest shopping list', ['exception'=> $e]);
+                $this->logger->error('Unable to remove guest shopping list', ['exception' => $e]);
             }
         }
     }

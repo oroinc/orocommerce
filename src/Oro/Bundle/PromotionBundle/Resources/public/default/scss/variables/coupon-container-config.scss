@@ -9,3 +9,11 @@ $coupon-container-content-inner-offset: 12px 0 0 !default;
 
 $coupon-container-input-wrap-width: 240px !default;
 $coupon-container-input-wrap-inner-offset: 0 0 spacing('sm') !default;
+
+$coupon-container-success-icon-color: get-color('primary', 'main') !default;
+$coupon-container-trigger-grid-template-column: auto auto 1fr !default;
+
+$coupon-container-loading-size: 24px !default;
+
+$coupon-container-form-grid-template-column: minmax(166px, auto) auto !default;
+$coupon-container-form-gap: 0 spacing('sm') !default;
