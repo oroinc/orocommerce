@@ -50,9 +50,9 @@ class ContentNodeContentVariantProviderTest extends \PHPUnit\Framework\TestCase
         $expectedCount = 3;
         $this->assertCount($expectedCount, $result);
         $this->assertEquals([
-            'metaTitles'=>['array'],
-            'metaDescriptions'=>['array'],
-            'metaKeywords'=>['keywords'] ], $result);
+            'metaTitles' => ['array'],
+            'metaDescriptions' => ['array'],
+            'metaKeywords' => ['keywords'] ], $result);
     }
 
     public function testGetValues()

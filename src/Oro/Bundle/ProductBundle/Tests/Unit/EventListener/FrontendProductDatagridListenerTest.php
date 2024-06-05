@@ -83,7 +83,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
                         ]
                     ],
                     'columns' => [
-                        'image'=> ['label' => 'oro.product.image.label'],
+                        'image' => ['label' => 'oro.product.image.label'],
                     ]
                 ],
             ],

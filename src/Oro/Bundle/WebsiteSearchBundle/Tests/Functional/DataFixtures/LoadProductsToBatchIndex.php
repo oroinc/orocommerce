@@ -22,7 +22,7 @@ class LoadProductsToBatchIndex extends AbstractFixture implements ContainerAware
      */
     public function load(ObjectManager $manager)
     {
-        for ($i = 1; $i <= self::AMOUNT; ++ $i) {
+        for ($i = 1; $i <= self::AMOUNT; ++$i) {
             $product = new TestProduct();
             $product->setName(self::NAME.$i);
             $manager->persist($product);

@@ -218,7 +218,7 @@ class ProductController extends AbstractController
             ];
         }
 
-        $form = $this->createForm(ProductStepOneType::class, $product, ['validation_groups'=> false]);
+        $form = $this->createForm(ProductStepOneType::class, $product, ['validation_groups' => false]);
         $form->submit($request->request->all(ProductType::NAME));
 
         return $this->update($product);

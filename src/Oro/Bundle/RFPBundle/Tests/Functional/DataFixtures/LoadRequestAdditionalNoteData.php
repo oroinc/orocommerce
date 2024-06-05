@@ -14,7 +14,7 @@ class LoadRequestAdditionalNoteData extends AbstractFixture implements Dependent
     const NUM_SELLER_NOTES = 5;
 
     const CUSTOMER_NOTE = 'request.1.additional_note.1.customer_note';
-    const SELLER_NOTE =' request.1.additional_note.1.seller_note';
+    const SELLER_NOTE = ' request.1.additional_note.1.seller_note';
 
     /**
      * {@inheritdoc}

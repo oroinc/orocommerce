@@ -79,14 +79,14 @@ class RateUpsConnectionValidatorRequestFactory implements UpsConnectionValidator
                 ],
                 'ShipTo' => [
                     'Name' => 'Company1',
-                    'Address' =>[
+                    'Address' => [
                         'PostalCode' => '10001', // ZipCode should correspond with CountryCode
                         'CountryCode' => $transport->getUpsCountry()->getIso2Code()
                     ]
                 ],
                 'ShipFrom' => [
                     'Name' => 'Company2',
-                    'Address' =>[
+                    'Address' => [
                         'PostalCode' => '10001', // ZipCode should correspond with CountryCode
                         'CountryCode' => $transport->getUpsCountry()->getIso2Code()
                     ]

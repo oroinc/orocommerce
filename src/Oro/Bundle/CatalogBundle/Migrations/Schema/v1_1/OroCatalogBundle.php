@@ -11,7 +11,7 @@ class OroCatalogBundle implements Migration
     const ORO_B2B_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME = 'orob2b_catalog_cat_short_desc';
     const ORO_B2B_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME = 'orob2b_catalog_cat_long_desc';
     const ORO_B2B_CATALOG_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
-    const ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME ='orob2b_fallback_locale_value';
+    const ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME = 'orob2b_fallback_locale_value';
 
     /**
      * @inheritDoc

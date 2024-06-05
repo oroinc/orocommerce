@@ -188,7 +188,7 @@ class CategoryResolvedCacheBuilder extends AbstractCategoryResolvedCacheBuilder 
                     $categoryVisibilities[$parentCategoryId]
                 );
             }
-        // static value
+            // static value
         } elseif ($visibility !== CategoryVisibility::CONFIG) {
             $resolvedVisibility = $this->convertVisibility($visibility === CategoryVisibility::VISIBLE);
         }

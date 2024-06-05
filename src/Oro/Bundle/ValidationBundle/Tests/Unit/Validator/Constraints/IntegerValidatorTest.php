@@ -62,7 +62,7 @@ class IntegerValidatorTest extends ConstraintValidatorTestCase
             ],
             'string' => [
                 'value' => 'ten',
-                'correct' =>false
+                'correct' => false
             ],
             'null' => [
                 'value' => null,

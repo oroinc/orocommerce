@@ -153,7 +153,7 @@ class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit\Framework\Test
         $meta->expects($this->once())
             ->method('getAssociationsByTargetClass')
             ->with(get_class($customer))
-            ->willReturn([['fieldName'=>'customer']]);
+            ->willReturn([['fieldName' => 'customer']]);
 
         $em = $this->createMock(EntityManagerInterface::class);
 

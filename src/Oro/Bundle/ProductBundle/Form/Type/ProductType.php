@@ -290,7 +290,7 @@ class ProductType extends AbstractType
                         'class' => 'product-kit-control-group'
                     ],
                     'prototype_data' => (new ProductKitItem())->setProductKit($product),
-                    'error_bubbling'=> false
+                    'error_bubbling' => false
                 ]
             );
         }

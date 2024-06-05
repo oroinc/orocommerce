@@ -82,7 +82,7 @@ class CouponValidationService implements CouponValidatorInterface
     private function isCouponUsageLimitExceeded(Coupon $coupon): bool
     {
         return $coupon->getUsesPerCoupon() !== null
-            &&$coupon->getUsesPerCoupon() <= $this->couponUsageManager->getCouponUsageCount($coupon);
+            && $coupon->getUsesPerCoupon() <= $this->couponUsageManager->getCouponUsageCount($coupon);
     }
 
     private function isCouponUsagePerCustomerUserLimitExceeded(Coupon $coupon, CustomerUser $customerUser = null): bool
