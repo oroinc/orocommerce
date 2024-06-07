@@ -4,6 +4,9 @@ namespace Oro\Bundle\OrderBundle\Provider;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 
+/**
+ * Represents a service to get order related configuration.
+ */
 interface OrderConfigurationProviderInterface
 {
     /**
@@ -41,4 +44,13 @@ interface OrderConfigurationProviderInterface
      * @return array
      */
     public function getApplicableInternalStatuses($identifier = null);
+
+    /**
+     * Returns configured 'Enable External Status Management' for given scope
+     *
+     * @param mixed $identifier
+     *
+     * @return array
+     */
+    public function isExternalStatusManagementEnabled($identifier = null);
 }

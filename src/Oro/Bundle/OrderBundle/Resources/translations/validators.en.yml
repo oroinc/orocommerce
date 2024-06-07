@@ -59,3 +59,6 @@ oro:
                     not_in_range_message: 'The quantity should be between {{ min }} and {{ max }}'
         inventory_status:
             not_supported: 'The specified inventory status is not supported.'
+        status:
+            unchangeable:
+                message: 'The order status cannot be changed when "Enable External Status Management" configuration option is disabled.'

@@ -1,4 +1,9 @@
 api:
+    entity_aliases:
+        Extend\Entity\EV_Order_Status:
+            alias: orderstatus
+            plural_alias: orderstatuses
+
     entities:
         Oro\Bundle\OrderBundle\Entity\Order:
             documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order.md'
@@ -97,6 +102,7 @@ api:
                 subtotalValue:
                     form_options:
                         mapped: false
+                status: ~
             filters:
                 fields:
                     identifier:
@@ -114,6 +120,17 @@ api:
                 update: false
                 delete: false
                 delete_list: false
+
+        Extend\Entity\EV_Order_Status:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order.md'
+            fields:
+                priority:
+                    exclude: true
+                default:
+                    exclude: true
+            actions:
+                get_list:
+                    page_size: -1 # disable paging
 
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order_line_item.md'

@@ -46,6 +46,8 @@ data:
             data:
                 type: customers
                 id: '<toString(@customer->id)>'
+        status:
+            data: null
 included:
     -
         type: orderlineitems

@@ -48,8 +48,10 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @method AbstractEnumValue getInternalStatus()
- * @method $this setInternalStatus(AbstractEnumValue $status)
+ * @method AbstractEnumValue|null getInternalStatus()
+ * @method $this setInternalStatus(AbstractEnumValue|null $internalStatus)
+ * @method AbstractEnumValue|null getStatus()
+ * @method $this setStatus(AbstractEnumValue|null $status)
  * @mixin OroOrderBundle_Entity_Order
  */
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
@@ -107,7 +109,8 @@ class Order implements
     use DatesAwareTrait;
     use ExtendEntityTrait;
 
-    const INTERNAL_STATUS_CODE = 'order_internal_status';
+    public const INTERNAL_STATUS_CODE = 'order_internal_status';
+    public const STATUS_CODE = 'order_status';
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]

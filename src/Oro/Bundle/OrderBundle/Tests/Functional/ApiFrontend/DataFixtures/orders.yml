@@ -10,6 +10,7 @@ dependencies:
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData
+    - Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderStatuses
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
     payment_term_net_10:
@@ -515,6 +516,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         organization: '@organization'
         billingAddress: '@order3_billing_address'
         shippingAddress: '@order3_shipping_address'
+        status: '@order_status.open'
     order4:
         identifier: order4
         currency: 'USD'
@@ -529,6 +531,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         organization: '@organization'
         billingAddress: '@order4_billing_address'
         shippingAddress: '@order4_shipping_address'
+        status: '@order_status.wait_for_approval'
     order5:
         identifier: order5
         currency: 'USD'

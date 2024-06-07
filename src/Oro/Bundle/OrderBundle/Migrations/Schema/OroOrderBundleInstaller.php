@@ -40,7 +40,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_18_1';
+        return 'v1_19';
     }
 
     /**
@@ -65,6 +65,7 @@ class OroOrderBundleInstaller implements
         $this->addOroOrderShippingTrackingForeignKeys($schema);
 
         $this->addOrderInternalStatusField($schema);
+        $this->addOrderStatusField($schema);
 
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_order');
     }
@@ -441,6 +442,19 @@ class OroOrderBundleInstaller implements
             ['dataaudit' => ['auditable' => true]]
         );
         $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);
+    }
+
+    private function addOrderStatusField(Schema $schema): void
+    {
+        $this->extendExtension->addEnumField(
+            $schema,
+            'oro_order',
+            'status',
+            Order::STATUS_CODE,
+            false,
+            false,
+            ['dataaudit' => ['auditable' => true]]
+        );
     }
 
     private function createOroOrderProductKitItemLineItemTable(Schema $schema): void

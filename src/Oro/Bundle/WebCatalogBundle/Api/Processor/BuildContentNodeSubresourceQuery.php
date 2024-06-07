@@ -1,17 +1,17 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Api\Processor;
+namespace Oro\Bundle\WebCatalogBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\Context;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
-use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Builds ORM QueryBuilder object that will be used to get sub-resources for a master catalog tree node.
+ * Builds ORM QueryBuilder object that will be used to get sub-resources for a content node.
  */
-class BuildCategoryNodeSubresourceQuery implements ProcessorInterface
+class BuildContentNodeSubresourceQuery implements ProcessorInterface
 {
     private DoctrineHelper $doctrineHelper;
 
@@ -32,6 +32,6 @@ class BuildCategoryNodeSubresourceQuery implements ProcessorInterface
             return;
         }
 
-        $context->setQuery($this->doctrineHelper->createQueryBuilder(Category::class, 'e'));
+        $context->setQuery($this->doctrineHelper->createQueryBuilder(ContentNode::class, 'e'));
     }
 }
