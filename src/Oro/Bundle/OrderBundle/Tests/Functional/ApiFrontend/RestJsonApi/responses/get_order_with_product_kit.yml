@@ -55,4 +55,6 @@ data:
                 type: customers
                 id: '<toString(@customer->id)>'
         status:
-            data: null
+            data:
+                type: orderstatuses
+                id: open

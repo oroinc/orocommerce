@@ -34,20 +34,24 @@ class ConfigureOrderStatusField implements ProcessorInterface
         }
 
         $statusField = $context->getResult()->findField('status', true);
-        if (null === $statusField || $statusField->isExcluded()) {
+        if (null === $statusField) {
             return;
         }
 
-        $statusField->setPropertyPath(ConfigUtil::IGNORE_PROPERTY_PATH);
+        if ($context->getRequestType()->contains('frontend')) {
+            $context->getResult()->findField('internal_status', true)
+                ?->setPropertyPath(ConfigUtil::IGNORE_PROPERTY_PATH);
+            $statusField->setPropertyPath('internal_status');
+        } else {
+            $statusField->setPropertyPath(ConfigUtil::IGNORE_PROPERTY_PATH);
+        }
         switch ($context->getTargetAction()) {
             case ApiAction::CREATE:
             case ApiAction::UPDATE:
             case ApiAction::UPDATE_RELATIONSHIP:
                 $statusFieldFormOptions = $statusField->getFormOptions();
-                if (null === $statusFieldFormOptions || !\array_key_exists('mapped', $statusFieldFormOptions)) {
-                    $statusFieldFormOptions['mapped'] = false;
-                    $statusField->setFormOptions($statusFieldFormOptions);
-                }
+                $statusFieldFormOptions['mapped'] = false;
+                $statusField->setFormOptions($statusFieldFormOptions);
                 break;
         }
     }
