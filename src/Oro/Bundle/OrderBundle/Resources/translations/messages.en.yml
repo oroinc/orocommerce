@@ -99,7 +99,12 @@ oro:
             description:                  A subtotal amount is the sum of the line item cost.
         base_subtotal_value.label:        'Subtotal In Base Currency'
         contact_information.label:        'Contact Information'
-        internal_status.label:            'Internal Status'
+        internal_status:
+            label:                        Internal Status
+            description:                  An order status is managed only in the back-office.
+        status:
+            label:                        Status
+            description:                  An order status is managed by an external system and visible when "Enable External Status Management" configuration option is enabled.
         recency.label:                    'Recency'
         parent:
             label:                        'Parent Order'
@@ -575,6 +580,9 @@ oro:
                 order_automation_target_status:
                     title: 'Target Status'
                     tooltip: 'Change the order status to modify the default behavior.'
+                order_enable_external_status_management:
+                    title: 'Enable External Status Management'
+                    tooltip: 'Enable the option to allow external systems to manage order statuses.'
                 enable_purchase_history:
                     title: 'Enable Purchase History'
                 order_previously_purchased_period:
@@ -592,6 +600,7 @@ oro:
                 order_automation.title: 'Order Automation'
                 order_creation.title: 'Order Creation'
                 purchase_history.title: 'Purchase History'
+                order_status_management.title: 'Order Status Management'
 
         privilege:
             category.orders.label: 'Orders'
@@ -686,6 +695,7 @@ oro:
             create.label: 'Create Order'
             past_orders.label: Past Orders
             identifier.label: 'Order #%identifier%'
+            order_status.label: Order Status
             method_type:
                 view:
                     label: '%translatedMethodType%'

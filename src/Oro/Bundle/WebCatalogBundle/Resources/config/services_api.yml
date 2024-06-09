@@ -118,6 +118,14 @@ services:
             - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, association: content, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: -90 }
             - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, association: content, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: -90 }
 
+    oro_web_catalog.api.subresource.build_content_node_path_query:
+        class: Oro\Bundle\WebCatalogBundle\Api\Processor\BuildContentNodeSubresourceQuery
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, association: path, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: -90 }
+            - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, association: path, parentClass: Oro\Bundle\WebCatalogBundle\Entity\ContentNode, priority: -90 }
+
     oro_web_catalog.api.subresource.add_parent_content_node_id_to_path_query:
         class: Oro\Bundle\ApiBundle\Processor\Subresource\Shared\AddParentEntityIdToTreeNodePathQuery
         arguments:

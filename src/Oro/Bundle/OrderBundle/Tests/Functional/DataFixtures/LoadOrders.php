@@ -7,7 +7,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -64,6 +63,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'subtotal' => self::SUBTOTAL,
             'total' => self::TOTAL,
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+            'status' => 'open',
         ],
         self::ORDER_4 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
@@ -74,6 +74,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'subtotal' => self::SUBTOTAL,
             'total' => self::TOTAL,
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+            'status' => 'wait_for_approval',
         ],
         self::ORDER_5 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
@@ -137,6 +138,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             LoadOrganization::class,
             LoadCustomerUserData::class,
             LoadOrderUsers::class,
+            LoadOrderStatuses::class,
             LoadPaymentTermData::class
         ];
     }
@@ -177,30 +179,34 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         $this->setReference('defaultWebsite', $website);
 
         $order = new Order();
-        $order
-            ->setIdentifier($name)
-            ->setOwner($user)
-            ->setOrganization($user->getOrganization())
-            ->setShipUntil(new \DateTime())
-            ->setCurrency($orderData['currency'])
-            ->setPoNumber($orderData['poNumber'])
-            ->setSubtotal($orderData['subtotal'])
-            ->setTotal($orderData['total'])
-            ->setCustomer($customerUser->getCustomer())
-            ->setWebsite($website)
-            ->setCustomerUser($customerUser);
+        $order->setIdentifier($name);
+        $order->setOwner($user);
+        $order->setOrganization($user->getOrganization());
+        $order->setShipUntil(new \DateTime());
+        $order->setCurrency($orderData['currency']);
+        $order->setPoNumber($orderData['poNumber']);
+        $order->setSubtotal($orderData['subtotal']);
+        $order->setTotal($orderData['total']);
+        $order->setCustomer($customerUser->getCustomer());
+        $order->setWebsite($website);
+        $order->setCustomerUser($customerUser);
 
         if (isset($orderData['parentOrder'])) {
             $order->setParent($this->getReference($orderData['parentOrder']));
         }
 
         if (isset($orderData['internalStatus'])) {
-            /** @var AbstractEnumValue $internalStatus */
-            $internalStatus = $manager
-                ->getRepository(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
-                ->find($orderData['internalStatus']);
+            $order->setInternalStatus(
+                $manager->getRepository(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
+                    ->find($orderData['internalStatus'])
+            );
+        }
 
-            $order->setInternalStatus($internalStatus);
+        if (isset($orderData['status'])) {
+            $order->setStatus(
+                $manager->getRepository(ExtendHelper::buildEnumValueClassName(Order::STATUS_CODE))
+                    ->find($orderData['status'])
+            );
         }
 
         $this->container->get('oro_payment_term.provider.payment_term_association')

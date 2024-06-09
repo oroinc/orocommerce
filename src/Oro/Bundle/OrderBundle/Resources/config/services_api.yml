@@ -335,3 +335,10 @@ services:
             - '@oro_checkout.api.guest_checkout_checker'
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 100 }
+
+    oro_order.api.configure_order_status_field:
+        class: Oro\Bundle\OrderBundle\Api\Processor\ConfigureOrderStatusField
+        arguments:
+            - '@oro_order.provider.configuration'
+        tags:
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', class: Oro\Bundle\OrderBundle\Entity\Order, targetAction: get|get_list|create|update|get_subresource|get_relationship|update_relationship, priority: -40 }
