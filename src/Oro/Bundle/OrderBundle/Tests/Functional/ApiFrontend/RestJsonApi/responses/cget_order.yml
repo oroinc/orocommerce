@@ -63,7 +63,9 @@ data:
                     type: customers
                     id: '<toString(@customer->id)>'
             status:
-                data: null
+                data:
+                    type: orderstatuses
+                    id: archived
     -
         type: orders
         id: '<toString(@order2->id)>'
@@ -111,7 +113,9 @@ data:
                     type: customers
                     id: '<toString(@customer->id)>'
             status:
-                data: null
+                data:
+                    type: orderstatuses
+                    id: open
     -
         type: orders
         id: '<toString(@order3->id)>'
@@ -167,7 +171,9 @@ data:
                     type: customers
                     id: '<toString(@customer1->id)>'
             status:
-                data: null
+                data:
+                    type: orderstatuses
+                    id: open
     -
         type: orders
         id: '<toString(@order4->id)>'
@@ -225,7 +231,9 @@ data:
                     type: customers
                     id: '<toString(@customer->id)>'
             status:
-                data: null
+                data:
+                    type: orderstatuses
+                    id: open
     -
         type: orders
         id: '<toString(@order5->id)>'
@@ -277,4 +285,6 @@ data:
                     type: customers
                     id: '<toString(@customer1->id)>'
             status:
-                data: null
+                data:
+                    type: orderstatuses
+                    id: open

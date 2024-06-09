@@ -2,12 +2,18 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
+use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderStatuses;
 
-class OrderStatusTest extends FrontendRestJsonApiTestCase
+/**
+ * @dbIsolationPerTest
+ */
+class OrderStatusWithExternalStatusManagementTest extends FrontendRestJsonApiTestCase
 {
+    use ConfigManagerAwareTestTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -15,6 +21,13 @@ class OrderStatusTest extends FrontendRestJsonApiTestCase
             LoadAdminCustomerUserData::class,
             LoadOrderStatuses::class
         ]);
+        self::getConfigManager()->set('oro_order.order_enable_external_status_management', true);
+    }
+
+    protected function tearDown(): void
+    {
+        self::getConfigManager()->set('oro_order.order_enable_external_status_management', false);
+        parent::tearDown();
     }
 
     public function testGetList(): void
@@ -23,11 +36,6 @@ class OrderStatusTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    [
-                        'type'       => 'orderstatuses',
-                        'id'         => 'archived',
-                        'attributes' => ['name' => 'Archived']
-                    ],
                     [
                         'type'       => 'orderstatuses',
                         'id'         => 'cancelled',
@@ -45,8 +53,8 @@ class OrderStatusTest extends FrontendRestJsonApiTestCase
                     ],
                     [
                         'type'       => 'orderstatuses',
-                        'id'         => 'shipped',
-                        'attributes' => ['name' => 'Shipped']
+                        'id'         => 'wait_for_approval',
+                        'attributes' => ['name' => 'Wait For Approval']
                     ]
                 ]
             ],
@@ -56,13 +64,13 @@ class OrderStatusTest extends FrontendRestJsonApiTestCase
 
     public function testGet(): void
     {
-        $response = $this->get(['entity' => 'orderstatuses', 'id' => 'archived']);
+        $response = $this->get(['entity' => 'orderstatuses', 'id' => 'wait_for_approval']);
         $this->assertResponseContains(
             [
                 'data' => [
                     'type'       => 'orderstatuses',
-                    'id'         => 'archived',
-                    'attributes' => ['name' => 'Archived']
+                    'id'         => 'wait_for_approval',
+                    'attributes' => ['name' => 'Wait For Approval']
                 ]
             ],
             $response

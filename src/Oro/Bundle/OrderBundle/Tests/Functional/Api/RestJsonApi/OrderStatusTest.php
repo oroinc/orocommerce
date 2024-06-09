@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional\Api\RestJsonApi;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderStatuses;

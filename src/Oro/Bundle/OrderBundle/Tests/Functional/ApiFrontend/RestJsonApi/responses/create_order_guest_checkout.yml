@@ -56,7 +56,9 @@ data:
                 type: customers
                 id: new
         status:
-            data: null
+            data:
+                type: orderstatuses
+                id: open
 included:
     -
         type: orderlineitems
