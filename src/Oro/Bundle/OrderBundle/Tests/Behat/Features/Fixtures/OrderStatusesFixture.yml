@@ -1,0 +1,5 @@
+Extend\Entity\EV_Order_Status:
+    orderStatusOpen:
+        __construct: [open, 'Open', 1]
+    orderStatusWaitForApproval:
+        __construct: [wait_for_approval, 'Wait For Approval', 2]

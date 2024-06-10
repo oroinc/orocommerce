@@ -219,6 +219,22 @@ The entity from which this order was created.
 
 **The read-only field. A passed value will be ignored.**
 
+### internalStatus
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### status
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field when "Enable External Status Management" configuration option is disabled. A passed value will be ignored in this case.**
+
 ## SUBRESOURCES
 
 ### billingAddress
@@ -747,3 +763,69 @@ Example:
 }
 ```
 {@/request}
+
+### internalStatus
+
+#### get_subresource
+
+Retrieve internal status record assigned to a specific order record.
+
+#### get_relationship
+
+Retrieve the ID of the internal status record assigned to a specific order record.
+
+### status
+
+#### get_subresource
+
+Retrieve status record assigned to a specific order record.
+
+#### get_relationship
+
+Retrieve the ID of the status record assigned to a specific order record.
+
+#### update_relationship
+
+Replace the status record assigned to a specific order record.
+
+**Note:**
+The status can be changed only when "Enable External Status Management" configuration option is enabled.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "orderstatuses",
+    "id": "open"
+  }
+}
+```
+{@/request}
+
+
+# Extend\Entity\EV_Order_Internal_Status
+
+## ACTIONS
+
+### get
+
+Retrieve a specific order internal status record.
+
+### get_list
+
+Retrieve a collection of order internal status records.
+
+
+# Extend\Entity\EV_Order_Status
+
+## ACTIONS
+
+### get
+
+Retrieve a specific order status record.
+
+### get_list
+
+Retrieve a collection of order status records.

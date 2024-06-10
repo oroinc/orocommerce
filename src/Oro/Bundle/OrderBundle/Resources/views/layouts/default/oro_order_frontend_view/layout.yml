@@ -127,6 +127,12 @@ layout:
                         label: 'oro.order.po_number.label'
                         text: '=data["order"].getPoNumber()'
                         additional_block_prefixes: ['order_body_column_element']
+                order_status:
+                    blockType: text
+                    options:
+                        text: '=data["system_config_provider"].getValue("oro_order.order_enable_external_status_management") ? data["order"].getStatus() : data["order"].getInternalStatus()'
+                        label: 'oro.frontend.order.order_status.label'
+                        additional_block_prefixes: ['order_body_column_element']
                 order_shipping_method:
                     blockType: text
                     options:
@@ -198,6 +204,7 @@ layout:
                                     order_body_column_right:
                                         order_po_number: ~
                                         order_sub_orders: ~
+                                        order_status: ~
                                         order_shipping_method: ~
                                         order_payment_method: ~
                                         order_payment_term: ~

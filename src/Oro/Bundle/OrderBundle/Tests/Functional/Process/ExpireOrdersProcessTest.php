@@ -19,38 +19,37 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WorkflowBundle\Entity\ProcessDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\ProcessTrigger;
-use Oro\Bundle\WorkflowBundle\Tests\Functional\Process\AbstractProcessTest;
+use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 
 /**
  * @group CommunityEdition
  */
-class ExpireOrdersProcessTest extends AbstractProcessTest
+class ExpireOrdersProcessTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    /** @var ProcessDefinition */
-    private $processDefinition;
-
-    /** @var ManagerRegistry */
-    private $doctrine;
-
-    /** @var ConfigManager */
-    private $configManager;
+    private ManagerRegistry $doctrine;
+    private ProcessDefinition $processDefinition;
+    private ConfigManager $configManager;
 
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
 
-        $this->processDefinition = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository(ProcessDefinition::class)
+        self::assertEquals(
+            OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
+            self::getConfigManager(null)->get('oro_order.order_creation_new_internal_order_status')
+        );
+
+        $this->doctrine = self::getContainer()->get('doctrine');
+        $this->processDefinition = $this->doctrine->getRepository(ProcessDefinition::class)
             ->findOneBy(['name' => 'expire_orders']);
 
-        $this->doctrine = $this->getContainer()->get('doctrine');
         $this->configManager = self::getConfigManager();
 
         $this->loadFixtures([
@@ -58,12 +57,11 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
             LoadCustomerAddresses::class,
             LoadCustomerUserData::class,
             LoadCustomerUserAddresses::class,
-            LoadOrders::class,
+            LoadOrders::class
         ]);
 
         /** @var Connection $connection */
-        $connection = $this->getContainer()->get('doctrine')->getConnection();
-
+        $connection = $this->doctrine->getConnection();
         $qb = $connection->createQueryBuilder();
         $qb->delete('oro_config_value')
             ->andWhere($qb->expr()->eq('section', 'oro_order'));
@@ -79,9 +77,7 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
 
     public function testProcessTrigger()
     {
-        $processTriggers = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository(ProcessTrigger::class)
+        $processTriggers = $this->doctrine->getRepository(ProcessTrigger::class)
             ->findBy(['definition' => $this->processDefinition]);
 
         $this->assertNotEmpty($processTriggers);
@@ -89,33 +85,35 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
 
     public function testExecuteWithoutDNSL()
     {
-        $this->configureMockManager();
-
         $order = $this->prepareOrderObject();
         $internalStatus = $order->getInternalStatus();
+
+        $this->initializeConfigs();
         $this->executeProcess($this->processDefinition);
+
         $order = $this->reloadOrder($order);
         $this->assertEquals($internalStatus, $order->getInternalStatus());
     }
 
     public function testExecuteWithDisabledAutomation()
     {
-        $this->configureMockManager(false);
-
         $order = $this->prepareOrderObject((new \DateTime())->modify('-1 day'));
-
         $internalStatus = $order->getInternalStatus();
+
+        $this->initializeConfigs(false);
         $this->executeProcess($this->processDefinition);
+
         $order = $this->reloadOrder($order);
         $this->assertEquals($internalStatus->getId(), $order->getInternalStatus()->getId());
     }
 
     public function testExecuteDefault()
     {
-        $this->configureMockManager();
-
         $order = $this->prepareOrderObject((new \DateTime())->modify('-1 day'));
+
+        $this->initializeConfigs();
         $this->executeProcess($this->processDefinition);
+
         $order = $this->reloadOrder($order);
         $this->assertEquals(
             $this->getOrderInternalStatusById(OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED)->getId(),
@@ -125,11 +123,12 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
 
     public function testExecuteWithCurrentDateForDNSL()
     {
-        $this->configureMockManager();
-
         $order = $this->prepareOrderObject((new \DateTime()));
         $internalStatus = $order->getInternalStatus();
+
+        $this->initializeConfigs();
         $this->executeProcess($this->processDefinition);
+
         $order = $this->reloadOrder($order);
         $this->assertEquals(
             $internalStatus->getId(),
@@ -139,10 +138,15 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
 
     public function testExecuteWithOverriddenTargetStatus()
     {
-        $this->configureMockManager(true, [OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN], 'closed');
-
         $order = $this->prepareOrderObject((new \DateTime())->modify('-1 day'));
+
+        $this->initializeConfigs(
+            true,
+            [OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN],
+            OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED
+        );
         $this->executeProcess($this->processDefinition);
+
         $order = $this->reloadOrder($order);
         $this->assertEquals(
             $this->getOrderInternalStatusById('closed')->getId(),
@@ -152,11 +156,15 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
 
     public function testExecuteWithOverriddenApplicableStatuses()
     {
-        $this->configureMockManager(true, ['closed']);
-
         $order1 = $this->prepareOrderObject((new \DateTime())->modify('-1 day'));
-        $order2 = $this->prepareOrderObject((new \DateTime())->modify('-1 day'), 'closed');
+        $order2 = $this->prepareOrderObject(
+            (new \DateTime())->modify('-1 day'),
+            OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED
+        );
+
+        $this->initializeConfigs(true, [OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED]);
         $this->executeProcess($this->processDefinition);
+
         $order1 = $this->reloadOrder($order1);
         $this->assertEquals(
             $this->getOrderInternalStatusById(OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN)->getId(),
@@ -169,7 +177,18 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
         );
     }
 
-    private function configureMockManager(
+    private function executeProcess(ProcessDefinition $definition): void
+    {
+        $trigger = new ProcessTrigger();
+        $trigger->setId($definition->getName());
+        $trigger->setDefinition($definition);
+        $trigger->setEvent(ProcessTrigger::EVENT_CREATE);
+
+        self::getContainer()->get('oro_workflow.process.process_handler')
+            ->handleTrigger($trigger, new ProcessData());
+    }
+
+    private function initializeConfigs(
         bool $enabled = true,
         array $statuses = [OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN],
         string $target = OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
@@ -177,14 +196,6 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
         $this->configManager->set('oro_order.order_automation_enable_cancellation', $enabled);
         $this->configManager->set('oro_order.order_automation_applicable_statuses', $statuses);
         $this->configManager->set('oro_order.order_automation_target_status', $target);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getProcessHandler()
-    {
-        return $this->getContainer()->get('oro_workflow.process.process_handler');
     }
 
     private function prepareOrderObject(
@@ -202,19 +213,18 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
         $paymentTerm = $this->doctrine->getRepository(PaymentTerm::class)->findOneBy([]);
 
         $order = new Order();
-        $order
-            ->setOwner($user)
-            ->setOrganization($user->getOrganization())
-            ->setCurrency('USD')
-            ->setSubtotal(100)
-            ->setShipUntil($doNotShipLater)
-            ->setTotal(100)
-            ->setCustomer($customerUser->getCustomer())
-            ->setWebsite($this->getDefaultWebsite())
-            ->setCustomerUser($customerUser)
-            ->setInternalStatus($this->getOrderInternalStatusById($internalStatus));
+        $order->setOwner($user);
+        $order->setOrganization($user->getOrganization());
+        $order->setCurrency('USD');
+        $order->setSubtotal(100);
+        $order->setShipUntil($doNotShipLater);
+        $order->setTotal(100);
+        $order->setCustomer($customerUser->getCustomer());
+        $order->setWebsite($this->getDefaultWebsite());
+        $order->setCustomerUser($customerUser);
+        $order->setInternalStatus($this->getOrderInternalStatusById($internalStatus));
 
-        $this->getContainer()->get('oro_payment_term.provider.payment_term_association')
+        self::getContainer()->get('oro_payment_term.provider.payment_term_association')
             ->setPaymentTerm($order, $paymentTerm);
 
         $em = $this->doctrine->getManager();
@@ -233,8 +243,7 @@ class ExpireOrdersProcessTest extends AbstractProcessTest
 
     private function reloadOrder(Order $order): Order
     {
-        return $this->doctrine->getRepository(Order::class)
-            ->findOneBy(['id' => $order->getId()]);
+        return $this->doctrine->getRepository(Order::class)->findOneBy(['id' => $order->getId()]);
     }
 
     private function getDefaultWebsite(): Website

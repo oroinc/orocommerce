@@ -13,6 +13,7 @@ features:
         entities:
             - Oro\Bundle\OrderBundle\Entity\Order
             - Extend\Entity\EV_Order_Internal_Status
+            - Extend\Entity\EV_Order_Status
             - Oro\Bundle\OrderBundle\Entity\OrderLineItem
             - Oro\Bundle\OrderBundle\Entity\OrderAddress
             - Oro\Bundle\OrderBundle\Entity\OrderDiscount
@@ -20,6 +21,7 @@ features:
         api_resources:
             - Oro\Bundle\OrderBundle\Entity\Order
             - Extend\Entity\EV_Order_Internal_Status
+            - Extend\Entity\EV_Order_Status
             - Oro\Bundle\OrderBundle\Entity\OrderLineItem
             - Oro\Bundle\OrderBundle\Entity\OrderAddress
             - Oro\Bundle\OrderBundle\Entity\OrderDiscount

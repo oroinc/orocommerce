@@ -59,6 +59,17 @@
     {% endif %}
 {% endblock pageHeader %}
 
+{% block breadcrumbs %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {{ parent() }}
+    {% if oro_config_value('oro_order.order_enable_external_status_management') and entity.status %}
+        <span class="page-title__status">
+            {{ UI.badge(entity.status.name, 'info') }}
+        </span>
+    {% endif %}
+{% endblock breadcrumbs %}
+
 {% set pageComponent = {
     module: 'oroorder/js/app/components/entry-point-component',
     options: { route: 'oro_order_entry_point', routeParams: {id: entity.id|default(0)} },

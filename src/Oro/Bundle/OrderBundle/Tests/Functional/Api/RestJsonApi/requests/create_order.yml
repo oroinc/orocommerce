@@ -32,6 +32,10 @@ data:
               data:
                    type: customers
                    id: '<toString(@simple_order->customer->id)>'
+          status:
+              data:
+                  type: orderstatuses
+                  id: open
 included:
     -
         type: orderlineitems

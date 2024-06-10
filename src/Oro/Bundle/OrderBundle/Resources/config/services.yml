@@ -678,3 +678,19 @@ services:
         arguments:
             - '@validator'
             - ['product_kit_item_product_is_available_for_order']
+
+    oro_order.datagrid.order_status_datagrid_listener:
+        class: Oro\Bundle\OrderBundle\Datagrid\OrderStatusDatagridListener
+        arguments:
+            - '@oro_order.provider.configuration'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orders-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.embed-orders-grid, method: onBuildBefore }
+
+    oro_order.datagrid.order_status_frontend_datagrid_listener:
+        class: Oro\Bundle\OrderBundle\Datagrid\OrderStatusFrontendDatagridListener
+        arguments:
+            - '@oro_order.provider.configuration'
+            - '@oro_entity_extend.enum_value_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-orders-grid, method: onBuildBefore }

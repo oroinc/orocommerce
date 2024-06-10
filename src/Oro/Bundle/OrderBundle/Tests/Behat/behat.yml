@@ -510,6 +510,9 @@ oro_behat_extension:
             locator: '//div[contains(@id,"s2id_sales_orders_number_includedOrderStatuses-uid")]//input[contains(@class, "select2-input")]'
             element: Select2Entities
 
+    Wait For Approval Order Status Badge:
+      selector: '.badge.status-info:contains("Wait For Approval") i.fa-circle'
+
   pages:
     OrderFrontendView:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderFrontendViewPage

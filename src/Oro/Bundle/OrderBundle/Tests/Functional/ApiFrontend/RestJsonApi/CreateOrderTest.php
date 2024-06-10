@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTermData;
 
 /**
@@ -25,7 +26,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
-    protected function postFixtureLoad()
+    protected function postFixtureLoad(): void
     {
         parent::postFixtureLoad();
         self::getContainer()->get('oro_payment_term.provider.payment_term_association')
@@ -44,10 +45,17 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             $data
         );
 
+        $orderId = (int)$this->getResourceId($response);
+
         $responseContent = $this->getResponseData('create_order.yml');
         $responseContent['data']['attributes']['shipUntil'] = $shipUntil;
         $responseContent = $this->updateResponseContent($responseContent, $response);
         $this->assertResponseContains($responseContent, $response);
+
+        /** @var Order $item */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        // the status should be read-only when "Enable External Status Management" configuration option is disabled
+        self::assertNull($order->getStatus());
     }
 
     public function testCreateWithRequiredDataOnly(): void

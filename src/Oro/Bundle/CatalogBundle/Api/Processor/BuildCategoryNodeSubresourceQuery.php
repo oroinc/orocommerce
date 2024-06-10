@@ -32,8 +32,6 @@ class BuildCategoryNodeSubresourceQuery implements ProcessorInterface
             return;
         }
 
-        $context->setQuery(
-            $this->doctrineHelper->createQueryBuilder(Category::class, 'e')
-        );
+        $context->setQuery($this->doctrineHelper->createQueryBuilder(Category::class, 'e'));
     }
 }

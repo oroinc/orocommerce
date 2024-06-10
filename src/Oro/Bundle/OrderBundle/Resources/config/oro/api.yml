@@ -1,4 +1,12 @@
 api:
+    entity_aliases:
+        Extend\Entity\EV_Order_Status:
+            alias: orderstatus
+            plural_alias: orderstatuses
+        Extend\Entity\EV_Order_Internal_Status:
+            alias: orderinternalstatus
+            plural_alias: orderinternalstatuses
+
     entities:
         Oro\Bundle\OrderBundle\Entity\Order:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order.md'
@@ -19,6 +27,10 @@ api:
                     form_options:
                         mapped: false
                 totalDiscountsAmount:
+                    form_options:
+                        mapped: false
+                internalStatus:
+                    property_path: internal_status
                     form_options:
                         mapped: false
             filters:
@@ -50,9 +62,21 @@ api:
                 createdBy:
                     actions:
                         update_relationship: false
+                internalStatus:
+                    actions:
+                        update_relationship: false
+
+        Extend\Entity\EV_Order_Status:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api/order.md'
+            actions:
+                get_list:
+                    page_size: -1 # disable paging
 
         Extend\Entity\EV_Order_Internal_Status:
-            actions: false
+            documentation_resource: '@OroOrderBundle/Resources/doc/api/order.md'
+            actions:
+                get_list:
+                    page_size: -1 # disable paging
 
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_line_item.md'

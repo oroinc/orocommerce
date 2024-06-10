@@ -21,6 +21,10 @@ data:
                 -
                     type: orderlineitems
                     id: item2
+        status:
+            data:
+                type: orderstatuses
+                id: archived
 included:
     -
         type: orderlineitems

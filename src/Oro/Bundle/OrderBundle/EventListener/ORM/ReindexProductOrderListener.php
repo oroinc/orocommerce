@@ -20,10 +20,7 @@ class ReindexProductOrderListener
 {
     use FeatureCheckerHolderTrait;
 
-    /**
-     * This is extended field
-     * @see \Oro\Bundle\OrderBundle\Model\ExtendOrder::getInternalStatus()
-     */
+    /** @see \Oro\Bundle\OrderBundle\Entity\Order::getInternalStatus() */
     private const INTERNAL_STATUS_FIELD = 'internal_status';
     /** @see \Oro\Bundle\OrderBundle\Entity\Order::$website */
     private const WEBSITE_FIELD = 'website';
