@@ -20,7 +20,7 @@ class SetDefaultProductSearchSorting extends SetDefaultSorting
     protected function getDefaultValue(EntityDefinitionConfig $config, ?SortersConfig $configOfSorters): array
     {
         $orderBy = $config->getOrderBy();
-        if (!$orderBy && $this->isSorterEnabled(self::RELEVANCE_SORT_FIELD, $configOfSorters, false)) {
+        if (!$orderBy && $this->isSorterEnabled(self::RELEVANCE_SORT_FIELD, $configOfSorters)) {
             $orderBy = [self::RELEVANCE_SORT_FIELD => Criteria::ASC];
         }
 
