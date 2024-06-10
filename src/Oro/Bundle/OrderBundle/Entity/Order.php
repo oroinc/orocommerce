@@ -400,18 +400,11 @@ class Order implements
         return $this->identifier;
     }
 
-    /**
-     * @return User|null
-     */
     public function getCreatedBy(): ?User
     {
         return $this->createdBy;
     }
 
-    /**
-     * @param User|null $createdBy
-     * @return Order
-     */
     public function setCreatedBy(?User $createdBy): Order
     {
         $this->createdBy = $createdBy;

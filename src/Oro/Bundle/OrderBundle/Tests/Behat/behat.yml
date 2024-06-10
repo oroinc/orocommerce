@@ -420,6 +420,32 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="customer-user-orders-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Customer User Sales Orders GridFilters:
+      selector: 'div[data-page-component-name="customer-user-orders-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    Customer User Sales Orders GridToolbarActions:
+      selector: 'div[data-page-component-name="customer-user-orders-grid"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    Customer User Sales Orders GridFiltersState:
+      selector: 'div[data-page-component-name="customer-user-orders-grid"] .filters-state'
+
+    Customer Sales Orders Grid:
+      selector: 'div[data-page-component-name="customer-orders-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Customer Sales Orders GridFilters:
+      selector: 'div[data-page-component-name="customer-orders-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    Customer Sales Orders GridToolbarActions:
+      selector: 'div[data-page-component-name="customer-orders-grid"] div.toolbar div.actions-panel'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    Customer Sales Orders GridFiltersState:
+      selector: 'div[data-page-component-name="customer-orders-grid"] .filters-state'
+
     Sales Orders Volume:
       selector:
         type: 'xpath'
