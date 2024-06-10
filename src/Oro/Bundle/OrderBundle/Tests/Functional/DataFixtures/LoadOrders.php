@@ -163,6 +163,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
      * @param string $name
      * @param array $orderData
      * @return Order
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function createOrder(ObjectManager $manager, $name, array $orderData)
     {
