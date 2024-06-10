@@ -3,6 +3,7 @@
         showValuePrice: showValuePrice,
         showListedPrice: showListedPrice
     }) %}
+
     {% if not is_price_hidden(product, matrixFormType|default('') == 'none') %}
         {% set attr = layout_attr_defaults(attr, {
             'data-page-component-module': 'oroui/js/app/components/view-component',
@@ -15,19 +16,18 @@
                 }
             }
         }) %}
-    {% endif %}
-
-    {% if productPrices is not empty or forceComponentRender %}
-        {% set attr = layout_attr_defaults(attr, {
-            '~class': ' product-price product-price__main'
-        }) %}
-        <div {{ block('block_attributes') }}>
-            {{ block_widget(block) }}
-        </div>
-    {% else %}
-        <div class="product-price__not_found">
-            {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
-        </div>
+        {% if productPrices is not empty or forceComponentRender %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-price product-price__main'
+            }) %}
+            <div {{ block('block_attributes') }}>
+                {{ block_widget(block) }}
+            </div>
+        {% else %}
+            <div class="product-price__not_found">
+                {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
+            </div>
+        {% endif %}
     {% endif %}
 {% endblock %}
 

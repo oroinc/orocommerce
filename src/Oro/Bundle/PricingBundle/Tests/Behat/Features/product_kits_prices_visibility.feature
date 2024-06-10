@@ -40,7 +40,7 @@ Feature: Product kits prices visibility
     Then should see the following products in the "Featured Products Block":
       | SKU         |
       | productkit2 |
-    And I should not see "Product Price Container" for "productkit2" product
+    And I should not see "Product Price Main" for "productkit2" product
     And should see the following products in the "Featured Products Block":
       | SKU             | Product Price Your |
       | secondproduct01 | $32.00             |
@@ -50,7 +50,7 @@ Feature: Product kits prices visibility
     And I should see the following products in the "New Arrivals Block":
       | SKU         |
       | productkit1 |
-    And I should not see "Product Price Container" for "productkit1" product
+    And I should not see "Product Price Main" for "productkit1" product
     And I should see the following products in the "New Arrivals Block":
       | SKU             | Product Price Your |
       | simpleproduct01 | $31.00             |
@@ -59,13 +59,13 @@ Feature: Product kits prices visibility
 
   Scenario: Check product prices in category page
     When I click "NewCategory" in hamburger menu
-    Then I should not see "Product Price Container" for "productkit1" product
+    Then I should not see "Product Price Main" for "productkit1" product
     And should not see "$11.00" for "productkit1" product
 
-    And I should see "Product Price Container" for "simpleproduct01" product
+    And I should see "Product Price Main" for "simpleproduct01" product
     And should see "$31.00" for "simpleproduct01" product
 
-    And I should see "Product Price Container" for "secondproduct01" product
+    And I should see "Product Price Main" for "secondproduct01" product
     And should see "$32.00" for "secondproduct01" product
 
   Scenario: Check prices in search Autocomplete
@@ -81,10 +81,10 @@ Feature: Product kits prices visibility
 
     When I type "ProductTheKit" in "search"
     And I click "Search Button"
-    Then I should see "Product Price Container" for "simpleproduct03" product
+    Then I should see "Product Price Main" for "simpleproduct03" product
     And should see "$31.00" for "simpleproduct03" product
 
-    And I should not see "Product Price Container" for "productkit1" product
+    And I should not see "Product Price Main" for "productkit1" product
     And should not see "$11.00" for "productkit1" product
 
   Scenario: Check prices in product details page
@@ -95,7 +95,7 @@ Feature: Product kits prices visibility
     And I should see the following products in the "Related Products Block":
       | SKU         |
       | productkit2 |
-    And I should not see "Product Price Container" for "productkit2" product
+    And I should not see "Product Price Main" for "productkit2" product
     And I should see the following products in the "Related Products Block":
       | SKU             | Product Price Your |
       | secondproduct01 | $32.00             |
@@ -122,8 +122,8 @@ Feature: Product kits prices visibility
 
     When I type "ProductTheKit" in "search"
     And I click "Search Button"
-    Then I should see "Product Price Container" for "simpleproduct03" product
+    Then I should see "Product Price Main" for "simpleproduct03" product
     And should see "$31.00" for "simpleproduct03" product
 
-    And I should not see "Product Price Container" for "productkit1" product
+    And I should not see "Product Price Main" for "productkit1" product
     And should not see "$11.00" for "productkit1" product
