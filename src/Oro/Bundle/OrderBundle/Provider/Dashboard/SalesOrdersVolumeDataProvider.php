@@ -3,6 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Provider\Dashboard;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\DashboardBundle\Helper\DateHelper;
 use Oro\Bundle\DashboardBundle\Model\WidgetOptionBag;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -17,9 +18,16 @@ class SalesOrdersVolumeDataProvider implements SalesOrdersDataProviderInterface
 
     private ?OrderRepository $orderRepository = null;
 
+    private ?CurrencyProviderInterface $currencyProvider = null;
+
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
+    }
+
+    public function setCurrencyProvider(CurrencyProviderInterface $currencyProvider): void
+    {
+        $this->currencyProvider = $currencyProvider;
     }
 
     /**
@@ -53,6 +61,18 @@ class SalesOrdersVolumeDataProvider implements SalesOrdersDataProviderInterface
         WidgetOptionBag $widgetOptions,
         string $scaleType
     ): array {
+        if ($this->currencyProvider !== null) {
+            return $this->getOrderRepository()->getSalesOrdersVolumeForCurrency(
+                $dateFrom,
+                $dateTo,
+                $widgetOptions->get('includedOrderStatuses', []),
+                $widgetOptions->get('includeSubOrders'),
+                $widgetOptions->get('orderTotal'),
+                $this->currencyProvider->getDefaultCurrency(),
+                $scaleType
+            );
+        }
+
         return $this->getOrderRepository()->getSalesOrdersVolume(
             $dateFrom,
             $dateTo,

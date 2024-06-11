@@ -603,6 +603,8 @@ services:
         class: Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersVolumeDataProvider
         arguments:
             - '@doctrine'
+        calls:
+            - [setCurrencyProvider, ['@oro_currency.config.currency']]
 
     oro_order.provider.dashboard.sales_orders_number_data_provider:
         class: Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersNumberDataProvider
@@ -694,3 +696,21 @@ services:
             - '@oro_entity_extend.enum_value_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-orders-grid, method: onBuildBefore }
+
+    oro_order.provider.orders_number_usage_stats_provider:
+        class: Oro\Bundle\OrderBundle\Provider\OrdersNumberUsageStatsProvider
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@oro_organization.organization_restriction_provider'
+        tags:
+            - { name: oro_platform.usage_stats_provider, priority: 80 }
+
+    oro_order.provider.orders_volume_usage_stats_provider:
+        class: Oro\Bundle\OrderBundle\Provider\OrdersVolumeUsageStatsProvider
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@oro_organization.organization_restriction_provider'
+            - '@oro_currency.config.currency'
+            - '@oro_locale.formatter.number'
+        tags:
+            - { name: oro_platform.usage_stats_provider, priority: 70 }

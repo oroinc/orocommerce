@@ -693,6 +693,14 @@ oro:
                         included_order_statuses.label: Included Order Statuses
                         include_sub_orders.label: Include Sub-Orders
 
+        usage_stats:
+            orders_number:
+                label: Sales Orders Number, YTD
+                tooltip: This number does not include sub-orders, and it does not take into account order status.
+            orders_volume:
+                label: Sales Orders Volume, YTD
+                tooltip: The sales orders volume does not include sub-orders, and it does not take into account order status.
+
     frontend:
         order:
             entity_plural_label: Orders

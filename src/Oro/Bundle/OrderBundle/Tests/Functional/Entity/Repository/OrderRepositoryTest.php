@@ -249,19 +249,47 @@ class OrderRepositoryTest extends WebTestCase
         array $includedOrderStatuses,
         bool $isIncludeSubOrders,
         string $amountType,
+        string $currency,
         string $scaleType,
         array $expectedResults
     ): void {
-        $salesOrdersVolume = $this->getRepository()->getSalesOrdersVolume(
+        $salesOrdersVolume = $this->getRepository()->getSalesOrdersVolumeForCurrency(
             $startDate,
             $endDate,
             $includedOrderStatuses,
             $isIncludeSubOrders,
             $amountType,
+            $currency,
             $scaleType
         );
 
         self::assertEquals($expectedResults, $salesOrdersVolume);
+    }
+
+    /**
+     * @dataProvider getSalesOrdersVolumeDataProvider
+     */
+    public function testGetSalesOrdersVolumeQueryBuilder(
+        \DateTime $startDate,
+        \DateTime $endDate,
+        array $includedOrderStatuses,
+        bool $isIncludeSubOrders,
+        string $amountType,
+        string $currency,
+        string $scaleType,
+        array $expectedResults
+    ): void {
+        $queryBuilder = $this->getRepository()->getSalesOrdersVolumeQueryBuilder(
+            $startDate,
+            $endDate,
+            $includedOrderStatuses,
+            $isIncludeSubOrders,
+            $amountType,
+            $currency,
+            $scaleType
+        );
+
+        self::assertEquals($expectedResults, $queryBuilder->getQuery()->getResult());
     }
 
     /**
@@ -278,6 +306,8 @@ class OrderRepositoryTest extends WebTestCase
         $startDate = new \DateTime('today - 2 days', new \DateTimeZone('UTC'));
         $endDate = new \DateTime('today + 1 day', new \DateTimeZone('UTC'));
 
+        $currency = 'USD';
+
         return [
             'all orders with total amount type' => [
                 'startDate' => $minDate,
@@ -285,6 +315,7 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
                 'isIncludeSubOrders' => true,
                 'amountType' => 'total',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [
                     [
@@ -294,11 +325,11 @@ class OrderRepositoryTest extends WebTestCase
                         'dayCreated' => '4',
                     ],
                     [
-                        'amount' => '11572.0000',
+                        'amount' => '9872.0000',
                         'yearCreated' => $yearCreated,
                         'monthCreated' => $monthCreated,
                         'dayCreated' => $dayCreated,
-                    ]
+                    ],
                 ],
             ],
             'date range with total amount type' => [
@@ -307,14 +338,15 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
                 'isIncludeSubOrders' => true,
                 'amountType' => 'total',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [
                     [
-                        'amount' => '11572.0000',
+                        'amount' => '9872.0000',
                         'yearCreated' => $yearCreated,
                         'monthCreated' => $monthCreated,
                         'dayCreated' => $dayCreated,
-                    ]
+                    ],
                 ],
             ],
             'without suborders with subtotal total type' => [
@@ -323,14 +355,15 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
                 'isIncludeSubOrders' => false,
                 'amountType' => 'total',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [
                     [
-                        'amount' => '10338.0000',
+                        'amount' => '8638.0000',
                         'yearCreated' => $yearCreated,
                         'monthCreated' => $monthCreated,
                         'dayCreated' => $dayCreated,
-                    ]
+                    ],
                 ],
             ],
             'filtered by order status with total amount type' => [
@@ -339,6 +372,7 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => [OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED],
                 'isIncludeSubOrders' => true,
                 'amountType' => 'total',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [
                     [
@@ -346,7 +380,7 @@ class OrderRepositoryTest extends WebTestCase
                         'yearCreated' => $yearCreated,
                         'monthCreated' => $monthCreated,
                         'dayCreated' => $dayCreated,
-                    ]
+                    ],
                 ],
             ],
             'empty results by unknown order status with total amount type' => [
@@ -355,6 +389,7 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => ['unknown status'],
                 'isIncludeSubOrders' => true,
                 'amountType' => 'total',
+                'currency' => $currency,
                 'scaleType' => 'year',
                 'expectedResults' => [],
             ],
@@ -364,6 +399,7 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
                 'isIncludeSubOrders' => true,
                 'amountType' => 'total',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [],
             ],
@@ -373,6 +409,7 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [
                     [
@@ -382,11 +419,11 @@ class OrderRepositoryTest extends WebTestCase
                         'dayCreated' => '4',
                     ],
                     [
-                        'amount' => '7812.0000',
+                        'amount' => '6312.0000',
                         'yearCreated' => $yearCreated,
                         'monthCreated' => $monthCreated,
                         'dayCreated' => $dayCreated,
-                    ]
+                    ],
                 ],
             ],
             'date range with subtotal amount type' => [
@@ -395,14 +432,15 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [
                     [
-                        'amount' => '7812.0000',
+                        'amount' => '6312.0000',
                         'yearCreated' => $yearCreated,
                         'monthCreated' => $monthCreated,
                         'dayCreated' => $dayCreated,
-                    ]
+                    ],
                 ],
             ],
             'without suborders with subtotal amount type' => [
@@ -411,14 +449,15 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
                 'isIncludeSubOrders' => false,
                 'amountType' => 'subtotal',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [
                     [
-                        'amount' => '7023.0000',
+                        'amount' => '5523.0000',
                         'yearCreated' => $yearCreated,
                         'monthCreated' => $monthCreated,
                         'dayCreated' => $dayCreated,
-                    ]
+                    ],
                 ],
             ],
             'filtered by order status with subtotal amount type' => [
@@ -427,6 +466,7 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => [OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED],
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [
                     [
@@ -434,7 +474,7 @@ class OrderRepositoryTest extends WebTestCase
                         'yearCreated' => $yearCreated,
                         'monthCreated' => $monthCreated,
                         'dayCreated' => $dayCreated,
-                    ]
+                    ],
                 ],
             ],
             'empty results by unknown order status with subtotal amount type' => [
@@ -443,6 +483,7 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => ['unknown status'],
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal',
+                'currency' => $currency,
                 'scaleType' => 'year',
                 'expectedResults' => [],
             ],
@@ -452,6 +493,7 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [],
             ],
@@ -461,6 +503,7 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal_with_discounts',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [
                     [
@@ -470,11 +513,11 @@ class OrderRepositoryTest extends WebTestCase
                         'dayCreated' => '4',
                     ],
                     [
-                        'amount' => '7812.0000',
+                        'amount' => '6312.0000',
                         'yearCreated' => $yearCreated,
                         'monthCreated' => $monthCreated,
                         'dayCreated' => $dayCreated,
-                    ]
+                    ],
                 ],
             ],
             'date range with subtotal_with_discounts amount type' => [
@@ -483,14 +526,15 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal_with_discounts',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [
                     [
-                        'amount' => '7812.0000',
+                        'amount' => '6312.0000',
                         'yearCreated' => $yearCreated,
                         'monthCreated' => $monthCreated,
                         'dayCreated' => $dayCreated,
-                    ]
+                    ],
                 ],
             ],
             'without suborders with subtotal_with_discounts amount type' => [
@@ -499,14 +543,15 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
                 'isIncludeSubOrders' => false,
                 'amountType' => 'subtotal_with_discounts',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [
                     [
-                        'amount' => '7023.0000',
+                        'amount' => '5523.0000',
                         'yearCreated' => $yearCreated,
                         'monthCreated' => $monthCreated,
                         'dayCreated' => $dayCreated,
-                    ]
+                    ],
                 ],
             ],
             'filtered by order status with subtotal_with_discounts amount type' => [
@@ -515,6 +560,7 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => [OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED],
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal_with_discounts',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [
                     [
@@ -522,7 +568,7 @@ class OrderRepositoryTest extends WebTestCase
                         'yearCreated' => $yearCreated,
                         'monthCreated' => $monthCreated,
                         'dayCreated' => $dayCreated,
-                    ]
+                    ],
                 ],
             ],
             'empty results by unknown order status with subtotal_with_discounts amount type' => [
@@ -531,6 +577,7 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => ['unknown status'],
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal_with_discounts',
+                'currency' => $currency,
                 'scaleType' => 'year',
                 'expectedResults' => [],
             ],
@@ -540,6 +587,7 @@ class OrderRepositoryTest extends WebTestCase
                 'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal_with_discounts',
+                'currency' => $currency,
                 'scaleType' => 'day',
                 'expectedResults' => [],
             ],
@@ -566,6 +614,28 @@ class OrderRepositoryTest extends WebTestCase
         );
 
         self::assertEquals($expectedResults, $salesOrdersVolume);
+    }
+
+    /**
+     * @dataProvider getSalesOrdersNumberDataProvider
+     */
+    public function testGetSalesOrdersNumberQueryBuilder(
+        \DateTime $startDate,
+        \DateTime $endDate,
+        array $includedOrderStatuses,
+        bool $isIncludeSubOrders,
+        string $scaleType,
+        array $expectedResults
+    ): void {
+        $queryBuilder = $this->getRepository()->getSalesOrdersNumberQueryBuilder(
+            $startDate,
+            $endDate,
+            $includedOrderStatuses,
+            $isIncludeSubOrders,
+            $scaleType
+        );
+
+        self::assertEquals($expectedResults, $queryBuilder->getQuery()->getResult());
     }
 
     public function getSalesOrdersNumberDataProvider(): array

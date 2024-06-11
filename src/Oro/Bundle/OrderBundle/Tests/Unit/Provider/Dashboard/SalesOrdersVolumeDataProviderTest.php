@@ -3,6 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider\Dashboard;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\DashboardBundle\Model\WidgetOptionBag;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
@@ -15,11 +16,14 @@ class SalesOrdersVolumeDataProviderTest extends TestCase
 {
     private OrderRepository|MockObject $orderRepository;
 
+    private CurrencyProviderInterface|MockObject $currencyProvider;
+
     private SalesOrdersVolumeDataProvider $salesOrdersVolumeDataProvider;
 
     protected function setUp(): void
     {
         $this->orderRepository = $this->createMock(OrderRepository::class);
+        $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);
 
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects(self::once())
@@ -73,6 +77,72 @@ class SalesOrdersVolumeDataProviderTest extends TestCase
                 $scaleType,
             )
             ->willReturn($salesOrdersVolumeData);
+
+        $this->currencyProvider->expects(self::never())
+            ->method('getDefaultCurrency');
+
+        self::assertSame(
+            $salesOrdersVolumeData,
+            $this->salesOrdersVolumeDataProvider->getData($dateFrom, $dateTo, $widgetOptions, $scaleType)
+        );
+        // Checks that we get repository only once
+        self::assertSame(
+            $salesOrdersVolumeData,
+            $this->salesOrdersVolumeDataProvider->getData($dateFrom, $dateTo, $widgetOptions, $scaleType)
+        );
+    }
+
+    public function testGetDataByCurrency(): void
+    {
+        $today = new \DateTime('today', new \DateTimeZone('UTC'));
+
+        $dateFrom = (clone $today)->modify('-5 days');
+        $dateTo = clone $today;
+        $includedOrderStatuses = [
+            OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
+        ];
+        $isIncludeSubOrders = true;
+
+        $amountType = 'total';
+        $widgetOptions = new WidgetOptionBag(
+            [
+                'dateRange1' => [],
+                'dateRange2' => null,
+                'dateRange3' => null,
+                'includedOrderStatuses' => $includedOrderStatuses,
+                'includeSubOrders' => $isIncludeSubOrders,
+                'orderTotal' => $amountType,
+            ]
+        );
+        $scaleType = 'day';
+        $currency = 'USD';
+
+        $salesOrdersVolumeData = [
+            [
+                'amount' => '123.0000',
+                'yearCreated' => '2023',
+                'monthCreated' => '1',
+                'dayCreated' => '1',
+            ],
+        ];
+        $this->orderRepository->expects(self::exactly(2))
+            ->method('getSalesOrdersVolumeForCurrency')
+            ->with(
+                $dateFrom,
+                $dateTo,
+                $includedOrderStatuses,
+                $isIncludeSubOrders,
+                $amountType,
+                $currency,
+                $scaleType,
+            )
+            ->willReturn($salesOrdersVolumeData);
+
+        $this->currencyProvider->expects(self::exactly(2))
+            ->method('getDefaultCurrency')
+            ->willReturn($currency);
+
+        $this->salesOrdersVolumeDataProvider->setCurrencyProvider($this->currencyProvider);
 
         self::assertSame(
             $salesOrdersVolumeData,
