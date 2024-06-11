@@ -2400,3 +2400,11 @@ services:
             - '@security.authorization_checker'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onViewList, priority: -260 }
+
+    oro_product.provider.products_usage_stats_provider:
+        class: Oro\Bundle\ProductBundle\Provider\ProductsUsageStatsProvider
+        arguments:
+            - '@oro_product.repository.product'
+            - '@oro_organization.organization_restriction_provider'
+        tags:
+            - { name: oro_platform.usage_stats_provider, priority: 100 }

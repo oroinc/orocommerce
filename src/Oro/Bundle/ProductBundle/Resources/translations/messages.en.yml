@@ -1107,6 +1107,9 @@ oro:
                                 top: Top
                                 sidebar: Sidebar
 
+        usage_stats:
+            products.label: Products
+
     product_unit.each:
         label:
             full: each
