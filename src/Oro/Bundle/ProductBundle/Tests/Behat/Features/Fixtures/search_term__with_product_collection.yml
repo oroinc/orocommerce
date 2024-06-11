@@ -1,0 +1,44 @@
+include:
+    - '@OroCustomerBundle:CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrevision1:
+        unit: '@item'
+        precision: '1'
+
+    productUnitPrevision2:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        type: 'simple'
+        sku: 'PSKU1'
+        primaryUnitPrecision: '@productUnitPrevision1'
+        unitPrecisions: [ '@productUnitPrevision1' ]
+        __calls:
+            - setDefaultName: ['Product 1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+
+    product2:
+        type: 'simple'
+        sku: 'PSKU2'
+        primaryUnitPrecision: '@productUnitPrevision2'
+        __calls:
+            - setDefaultName: ['Product 2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@defaultProductFamily'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    productCollection1Segment:
+        name: 'Product Collection 1'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"PSKU1","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\DataGrid\EventListener;
 
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\ProductBundle\Handler\SearchProductHandler;
@@ -14,6 +15,8 @@ use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
  */
 class SearchEventListener
 {
+    const SKIP_FILTER_SEARCH_QUERY_KEY = 'skipSearchQuery';
+
     /** @var SearchProductHandler */
     private $searchProductHandler;
 
@@ -31,9 +34,7 @@ class SearchEventListener
     public function onPreBuild(PreBuild $event): void
     {
         $parameterBag = $event->getParameters();
-        $searchString = $parameterBag->has(SearchProductHandler::SEARCH_KEY)
-            ? $parameterBag->get(SearchProductHandler::SEARCH_KEY)
-            : $this->searchProductHandler->getSearchString();
+        $searchString = $this->getSearchString($parameterBag);
 
         if ($searchString) {
             $parameterBag->set(SearchProductHandler::SEARCH_KEY, $searchString);
@@ -62,5 +63,18 @@ class SearchEventListener
     private function getConfigPath(): string
     {
         return sprintf('[options][urlParams][%s]', SearchProductHandler::SEARCH_KEY);
+    }
+
+    private function getSearchString(ParameterBag $parameterBag): ?string
+    {
+        if ($parameterBag->has(SearchProductHandler::SEARCH_KEY)) {
+            return $parameterBag->get(SearchProductHandler::SEARCH_KEY);
+        }
+
+        if ($parameterBag->get(self::SKIP_FILTER_SEARCH_QUERY_KEY) === '1') {
+            return null;
+        }
+
+        return $this->searchProductHandler->getSearchString();
     }
 }

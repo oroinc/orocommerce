@@ -1,0 +1,73 @@
+services:
+    oro_web_catalog.event_listener.website_search_term.add_content_node_to_search_term_edit_page:
+        class: Oro\Bundle\WebCatalogBundle\EventListener\WebsiteSearchTerm\AddContentNodeToSearchTermEditPageListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-edit, method: onEntityEdit, priority: 10 }
+
+    oro_web_catalog.event_listener.website_search_term.add_content_node_to_search_term_view_page_listener:
+        class: Oro\Bundle\WebCatalogBundle\EventListener\WebsiteSearchTerm\AddContentNodeToSearchTermViewPageListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-view, method: onEntityView, priority: 10 }
+
+    oro_web_catalog.event_listener.website_search_term.add_content_node_to_search_terms_datagrid:
+        class: Oro\Bundle\WebCatalogBundle\EventListener\WebsiteSearchTerm\AddContentNodeToSearchTermsDatagridListener
+        arguments:
+            - '@router'
+            - '@translator'
+            - '@oro_ui.html_tag_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.website-search-terms, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.website-search-terms, method: onResultAfter }
+
+    oro_web_catalog.event_listener.website_search_term.content_node_search_term_action:
+        class: Oro\Bundle\WebCatalogBundle\EventListener\WebsiteSearchTerm\ContentNodeSearchTermRedirectActionEventListener
+        arguments:
+            - '@oro_web_catalog.content_node_tree_resolver'
+            - '@oro_web_catalog.request_web_content_scope_provider'
+            - '@oro_locale.helper.localization'
+            - '@oro_website_search_term.redirect_action_type.basic_handler'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\WebsiteSearchTermBundle\Event\SearchTermRedirectActionEvent, method: onRedirectAction }
+
+    oro_web_catalog.form.type.extension.add_content_node_to_website_search_term_form:
+        class: Oro\Bundle\WebCatalogBundle\Form\Extension\AddContentNodeToWebsiteSearchTermFormExtension
+        arguments:
+            - '@oro_web_catalog.web_catalog_provider'
+        tags:
+            - { name: form.type_extension }
+
+    oro_web_catalog.form.type.empty_search_result_page_select_system_config:
+        class: Oro\Bundle\WebCatalogBundle\Form\Type\EmptySearchResultPageSelectSystemConfigType
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: form.type }
+
+    oro_web_catalog.validator.node_has_ho_restrictions_validator:
+        class: Oro\Bundle\WebCatalogBundle\Validator\Constraint\NodeHasNoRestrictionsValidator
+        arguments:
+            - '@oro_config.form.handler.config'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_web_catalog.provider.empty_search_result_page_content_variant_provider:
+        class: Oro\Bundle\WebCatalogBundle\Provider\EmptySearchResultPageContentVariantProvider
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_web_catalog.content_node_tree_resolver'
+            - '@oro_web_catalog.request_web_content_scope_provider'
+
+    oro_web_catalog.event_listener.empty_search_results_page_listener:
+        class: Oro\Bundle\WebCatalogBundle\EventListener\EmptySearchResultsPageEventListener
+        arguments:
+            - '@oro_website_search_term.provider.search_term_provider'
+            - '@oro_web_catalog.provider.empty_search_result_page_content_variant_provider'
+            - '@oro_locale.helper.localization'
+            - '@oro_redirect.factory.sub_request'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
+            - { name: oro_featuretogle.feature, feature: oro_website_search_terms_management }
+            - { name: monolog.logger, channel: oro_web_catalog }

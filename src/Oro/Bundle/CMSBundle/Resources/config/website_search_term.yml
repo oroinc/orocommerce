@@ -1,0 +1,65 @@
+services:
+    oro_cms.layout.data_provider.search_term_data_provider:
+        class: Oro\Bundle\CMSBundle\Layout\DataProvider\SearchTermDataProvider
+        arguments:
+            - '@oro_website_search_term.provider.search_term_provider'
+        tags:
+            - { name: layout.data_provider, alias: oro_cms_search_term }
+
+    oro_cms.form.type.extension.add_page_to_website_search_term:
+        class: Oro\Bundle\CMSBundle\Form\Extension\AddPageToWebsiteSearchTermFormExtension
+        tags:
+            - { name: form.type_extension }
+
+    oro_cms.form.type.extension.add_content_block_to_website_search_term:
+        class: Oro\Bundle\CMSBundle\Form\Extension\AddContentBlockToWebsiteSearchTermFormExtension
+        tags:
+            - { name: form.type_extension }
+
+    oro_cms.event_listener.website_search_term.content_block.add_content_block_to_search_term_edit_page:
+        class: Oro\Bundle\CMSBundle\EventListener\WebsiteSearchTerm\ContentBlock\AddContentBlockToSearchTermEditPageListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-edit, method: onEntityEdit, priority: 10 }
+
+    oro_cms.event_listener.website_search_term.content_block.add_content_block_to_search_term_view_page:
+        class: Oro\Bundle\CMSBundle\EventListener\WebsiteSearchTerm\ContentBlock\AddContentBlockToSearchTermViewPageListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-view, method: onEntityView, priority: 10 }
+
+    oro_cms.event_listener.website_search_term.content_block.add_content_block_to_search_terms_datagrid:
+        class: Oro\Bundle\CMSBundle\EventListener\WebsiteSearchTerm\ContentBlock\AddContentBlockToSearchTermsDatagridListener
+        arguments:
+            - '@router'
+            - '@translator'
+            - '@oro_ui.html_tag_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.website-search-terms, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.website-search-terms, method: onResultAfter }
+
+    oro_cms.event_listener.website_search_term.page.add_page_to_search_term_edit_page:
+        class: Oro\Bundle\CMSBundle\EventListener\WebsiteSearchTerm\Page\AddPageToSearchTermEditPageListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-edit, method: onEntityEdit, priority: 10 }
+
+    oro_cms.event_listener.website_search_term.page.add_page_to_search_term_view_page:
+        class: Oro\Bundle\CMSBundle\EventListener\WebsiteSearchTerm\Page\AddPageToSearchTermViewPageListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-view, method: onEntityView, priority: 10 }
+
+    oro_cms.event_listener.website_search_term.page.add_page_to_search_terms_datagrid:
+        class: Oro\Bundle\CMSBundle\EventListener\WebsiteSearchTerm\Page\AddPageToSearchTermsDatagridListener
+        arguments:
+            - '@router'
+            - '@translator'
+            - '@oro_ui.html_tag_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.website-search-terms, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.website-search-terms, method: onResultAfter }
+
+    oro_cms.event_listener.website_search_term.page.page_search_term_action:
+        class: Oro\Bundle\CMSBundle\EventListener\WebsiteSearchTerm\Page\PageSearchTermRedirectActionEventListener
+        arguments:
+            - '@oro_website_search_term.redirect_action_type.basic_handler'
+            - '@router'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\WebsiteSearchTermBundle\Event\SearchTermRedirectActionEvent, method: onRedirectAction }

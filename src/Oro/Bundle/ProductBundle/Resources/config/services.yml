@@ -1436,7 +1436,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
-
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.website-search-term-run-original-search-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.website-search-term-run-original-search-grid, method: onBuildAfter }
 
     oro_product.datagrid.event_listener.frontend_product_grid:
         class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendProductGridEventListener'
@@ -1450,6 +1451,7 @@ services:
             - '@oro_product.provider.family_attribute_counts'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.website-search-term-run-original-search-grid, method: onPreBuild }
 
     oro_product.datagrid.event_listener.product_grid:
         class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\ProductGridEventListener'
@@ -1815,7 +1817,8 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_security.acl_helper'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onSearchResultAfter}
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onSearchResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.website-search-term-run-original-search-grid, method: onSearchResultAfter }
 
     oro_product.event_listener.manually_added_product_collection_indexer_listener:
         class: Oro\Bundle\ProductBundle\EventListener\ManuallyAddedProductCollectionIndexerListener

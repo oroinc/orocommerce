@@ -1,0 +1,14 @@
+{% import '@OroScope/macros.html.twig' as scope %}
+
+{% set scopeEntities = oro_scope_entities('website_search_term') %}
+
+<div class="grid-container">
+    <table class="restrictions table table-bordered table-condensed">
+        <thead>
+            {{ scope.renderRestrictionsViewGridHead(scopeEntities) }}
+        </thead>
+        <tbody>
+            {{ scope.renderRestrictionsViewGridRows(scopeEntities, record.getRootEntity().scopes) }}
+        </tbody>
+    </table>
+</div>

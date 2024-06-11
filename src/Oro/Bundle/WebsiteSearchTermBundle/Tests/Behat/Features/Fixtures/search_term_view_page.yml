@@ -1,0 +1,13 @@
+include:
+    - '@OroProductBundle:products_grid_frontend.yml'
+    - '@OroCustomerBundle:CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\WebsiteSearchTermBundle\Entity\SearchTerm:
+    searchTerm1:
+        owner: '@business_unit'
+        organization: '@organization'
+        phrases: 'Product'
+        actionType: 'modify'
+        partialMatch: false
+        modifyActionType: 'original_results'
+        scopes: ['@default_scope']

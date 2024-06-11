@@ -1,0 +1,27 @@
+{% macro renderRunOriginSearchDropdown(phrases, scopeEntities, scope = null) %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    <div class="dropdown search-term-run-original-search-dropdown" {{ UI.renderPageComponentAttributes({
+        view: 'oroproduct/js/app/views/search-term-run-original-search-view'
+    }) }}>
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+           aria-expanded="false"
+           data-inherit-parent-width="strictly"
+           data-modifiers="{{ {preventOverflow: {enabled: false}, hide: {enabled: false}}|json_encode }}"
+        >
+            {{ 'oro.websitesearchterm.searchterm.btn.run_original_search'|trans }}
+        </a>
+
+        <div class="dropdown-menu">
+            {%- set phraseDataAttributes = {} %}
+            {%- for fieldName, entityClass in scopeEntities %}
+                {%- set scopeEntity = scope ? attribute(scope, fieldName) : null %}
+                {%- set phraseDataAttributes = phraseDataAttributes|merge({('data-'~fieldName): scopeEntity ? scopeEntity.id : ''}) %}
+            {%- endfor %}
+            {%- for phrase in phrases %}
+                {%- set phraseDataAttributes = phraseDataAttributes|merge({'data-phrase': phrase}) %}
+                <a href="#" {{ UI.attributes(phraseDataAttributes) }} class="dropdown-item search-term-run-original-search-btn ellipsis" title="{{ phrase }}">{{ phrase }}</a>
+            {%- endfor %}
+        </div>
+    </div>
+{% endmacro %}

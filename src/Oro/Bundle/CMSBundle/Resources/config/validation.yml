@@ -144,3 +144,16 @@ Oro\Bundle\CMSBundle\Entity\ContentTemplate:
         contentStyle:
             - Oro\Bundle\CMSBundle\Validator\Constraints\TwigContent: ~
             - Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGStyle: ~
+
+Oro\Bundle\WebsiteSearchTermBundle\Entity\SearchTerm:
+    properties:
+        redirectCmsPage:
+            -   When:
+                    expression: 'this.getRedirectActionType() == "cms_page"'
+                    constraints:
+                        -   NotBlank: ~
+                    groups:
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_create
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_update

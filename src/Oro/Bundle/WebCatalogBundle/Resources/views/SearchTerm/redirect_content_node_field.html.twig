@@ -1,0 +1,6 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{{ UI.renderHtmlProperty(
+    'oro.websitesearchterm.searchterm.redirect_content_node.label'|trans,
+    UI.entityViewLink(entity, entity.defaultTitle, 'oro_content_node_update', 'oro_web_catalog_update')
+) }}

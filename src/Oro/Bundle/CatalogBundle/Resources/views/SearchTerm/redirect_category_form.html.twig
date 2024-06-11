@@ -1,0 +1,15 @@
+<div data-page-component-module="orosale/js/app/components/dependent-field-component"
+     data-page-component-options="{{ { selectors: { rowContainer: 'div' } }|json_encode }}"
+     data-depend-on="search-term-action-type"
+     data-show-if="redirect"
+     data-disable-element=":input">
+    <div class="control-group"
+         data-page-component-module="orosale/js/app/components/dependent-field-component"
+         data-page-component-options="{{ { selectors: { rowContainer: 'div' } }|json_encode }}"
+         data-depend-on="search-term-redirect-action-type"
+         data-show-if="category"
+         data-disable-element=":input">
+        {{ form_row(form.redirectCategory, { label: 'oro.websitesearchterm.searchterm.redirect_category.label' }) }}
+    </div>
+    <div class="control-group"></div>
+</div>

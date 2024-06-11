@@ -9,6 +9,7 @@ oro:
                 unique.message: 'URL Slug must be unique within the same parent Content Node'
             scope:
                 empty.message: 'Content node must have at least one restriction'
+                not_empty.message: 'Content node cannot have restrictions'
             content_variants:
                 blank: 'Please add one or more content variants.'
             denied_deletion_due_to_child: 'This node cannot be deleted because it’s child node “%nodeName%” is referenced in ”%key%” %subject%'

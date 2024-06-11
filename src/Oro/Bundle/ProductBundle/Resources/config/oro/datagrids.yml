@@ -1176,3 +1176,39 @@ datagrids:
                     attributes:
                         target: _blank
                 rowAction: true
+
+    website-search-term-run-original-search-grid:
+        options:
+            entityHint: oro.product.entity_plural_label
+        source:
+            type: search
+            search_index: website
+            skip_acl_apply: true
+            query:
+                select:
+                    - text.sku as sku
+                    - text.names_LOCALIZATION_ID as names
+                    - text.inv_status as inventoryStatus
+                from:
+                    - oro_product_WEBSITE_ID
+        columns:
+            inventoryStatus:
+                label: oro.product.inventory_status.label
+                frontend_type: select
+                choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                translatable_options: false
+                order: 10
+        filters:
+            columns:
+                inventoryStatus:
+                    type: enum
+                    data_name: inv_status
+                    enum_code: prod_inventory_status
+        properties:
+            id: ~
+        sorters:
+            columns:
+                inventoryStatus:
+                    data_name: inventory_status
+            toolbar_sorting: true
+            disable_default_sorting: true
