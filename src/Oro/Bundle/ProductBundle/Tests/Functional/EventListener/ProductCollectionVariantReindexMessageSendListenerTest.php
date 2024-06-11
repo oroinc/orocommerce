@@ -196,7 +196,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends WebTestCase
         $segment->setType($this->getSegmentType());
         $segment->setName('Collection');
         $segment->setEntity(Product::class);
-        $segment->setDefinition(json_encode(['columns' => [], 'filters' =>[]], JSON_THROW_ON_ERROR));
+        $segment->setDefinition(json_encode(['columns' => [], 'filters' => []], JSON_THROW_ON_ERROR));
 
         $contentVariant = new TestContentVariant();
         $contentVariant->setProductCollectionSegment($segment);

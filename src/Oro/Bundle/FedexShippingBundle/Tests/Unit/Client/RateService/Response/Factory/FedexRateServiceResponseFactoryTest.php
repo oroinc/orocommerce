@@ -55,7 +55,7 @@ class FedexRateServiceResponseFactoryTest extends TestCase
             Price::create(46.03, 'USD'),
         ];
 
-        $restResponse =$this->createMock(RestResponseInterface::class);
+        $restResponse = $this->createMock(RestResponseInterface::class);
         $restResponse->expects(self::once())
             ->method('json')
             ->willReturn([

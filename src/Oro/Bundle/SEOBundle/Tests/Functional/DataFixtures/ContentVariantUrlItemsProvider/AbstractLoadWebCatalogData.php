@@ -36,7 +36,7 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
 
         foreach ($this->nodesConfigs as $nodeIndex => $nodeConfig) {
             $nodeTitle = new LocalizedFallbackValue();
-            $nodeTitle->setString(self::CONTENT_NODE_TITLE . ($nodeIndex+1));
+            $nodeTitle->setString(self::CONTENT_NODE_TITLE . ($nodeIndex + 1));
 
             $node = new ContentNode();
             $node->setWebCatalog($webCatalog);
@@ -44,9 +44,9 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
             $node->setDefaultTitle($nodeTitle);
 
             $slug = new Slug();
-            $slug->setUrl(sprintf('%s-%s', self::CONTENT_NODE_SLUG, ($nodeIndex+1)));
+            $slug->setUrl(sprintf('%s-%s', self::CONTENT_NODE_SLUG, ($nodeIndex + 1)));
             $slug->setRouteName($this->getRoute());
-            $slug->setRouteParameters(['id' => ($nodeIndex+1)]);
+            $slug->setRouteParameters(['id' => ($nodeIndex + 1)]);
             $slug->setOrganization($webCatalog->getOrganization());
             foreach ($nodeConfig['nodeScopes'] as $nodeScopeRef) {
                 /** @var Scope $scope */
@@ -82,7 +82,7 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
             }
 
             $manager->persist($node);
-            $this->setReference(self::CONTENT_NODE . '-' . ($nodeIndex+1), $node);
+            $this->setReference(self::CONTENT_NODE . '-' . ($nodeIndex + 1), $node);
 
             if (0 !== $nodeIndex) {
                 $node->setParentNode($this->getReference(self::CONTENT_NODE . '-1'));

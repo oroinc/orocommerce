@@ -16,7 +16,7 @@ class ProductKitLineItemContainsRequiredKitItems extends Constraint
     ];
 
     public string $message = 'oro.product.validators.product_kit_line_item_contains_required_kit_items'
-    . '.missing_required_kit_item';
+        . '.missing_required_kit_item';
 
     public function getTargets(): array
     {

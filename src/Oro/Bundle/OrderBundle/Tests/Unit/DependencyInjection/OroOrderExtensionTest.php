@@ -26,6 +26,7 @@ class OroOrderExtensionTest extends \PHPUnit\Framework\TestCase
                         'order_automation_enable_cancellation' => ['value' => false, 'scope' => 'app'],
                         'order_automation_applicable_statuses' => ['value' => ['open'], 'scope' => 'app'],
                         'order_automation_target_status' => ['value' => 'cancelled', 'scope' => 'app'],
+                        'order_enable_external_status_management' => ['value' => false, 'scope' => 'app'],
                         'order_creation_new_internal_order_status' => ['value' => 'open', 'scope' => 'app'],
                         'order_creation_new_order_owner' => ['value' => null, 'scope' => 'app'],
                         'order_previously_purchased_period' => ['value' => 90, 'scope' => 'app'],

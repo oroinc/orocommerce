@@ -11,6 +11,9 @@ system_configuration:
         purchase_history:
             title: oro.order.system_configuration.groups.purchase_history.title
             icon: fa-shopping-basket
+        order_status_management:
+            title: oro.order.system_configuration.groups.order_status_management.title
+            icon: fa-cogs
 
     fields:
         oro_order.backend_product_visibility:
@@ -63,6 +66,12 @@ system_configuration:
                     'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
                     'data-depend-on': 'order_automation_enable_cancellation'
                     'data-show-if': 'checked'
+        oro_order.order_enable_external_status_management:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.order.system_configuration.fields.order_enable_external_status_management.title
+                tooltip: oro.order.system_configuration.fields.order_enable_external_status_management.tooltip
         oro_order.order_creation_new_internal_order_status:
             data_type: string
             type: Oro\Bundle\EntityExtendBundle\Form\Type\EnumIdChoiceType
@@ -133,4 +142,9 @@ system_configuration:
                                         children:
                                             - oro_order.enable_purchase_history
                                             - oro_order.order_previously_purchased_period
+                            order_status_management:
+                                children:
+                                    order_status_management:
+                                        children:
+                                            - oro_order.order_enable_external_status_management
 

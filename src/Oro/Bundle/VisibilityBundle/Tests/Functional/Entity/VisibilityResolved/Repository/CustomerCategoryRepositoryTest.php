@@ -167,34 +167,34 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         ];
     }
 
-//    /**
-//     * @dataProvider getCategoryIdsByVisibilityDataProvider
-//     * @param int $visibility
-//     * @param string $customerName
-//     * @param int $configValue
-//     * @param array $expected
-//     */
-//    public function testGetCategoryIdsByVisibility($visibility, $customerName, $configValue, array $expected)
-//    {
-//        /** @var Customer $customer */
-//        $customer = $this->getReference($customerName);
-//
-//        $categoryIds = $this->getRepository()->getCategoryIdsByVisibility($visibility, $customer, $configValue);
-//
-//        $expectedCategoryIds = [];
-//        foreach ($expected as $categoryName) {
-//            /** @var Category $category */
-//            $category = $this->getReference($categoryName);
-//            $expectedCategoryIds[] = $category->getId();
-//        }
-//
-//        if ($visibility == BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
-//            $masterCatalogId = $this->getMasterCatalog()->getId();
-//            array_unshift($expectedCategoryIds, $masterCatalogId);
-//        }
-//
-//        $this->assertEquals($expectedCategoryIds, $categoryIds);
-//    }
+    //    /**
+    //     * @dataProvider getCategoryIdsByVisibilityDataProvider
+    //     * @param int $visibility
+    //     * @param string $customerName
+    //     * @param int $configValue
+    //     * @param array $expected
+    //     */
+    //    public function testGetCategoryIdsByVisibility($visibility, $customerName, $configValue, array $expected)
+    //    {
+    //        /** @var Customer $customer */
+    //        $customer = $this->getReference($customerName);
+    //
+    //        $categoryIds = $this->getRepository()->getCategoryIdsByVisibility($visibility, $customer, $configValue);
+    //
+    //        $expectedCategoryIds = [];
+    //        foreach ($expected as $categoryName) {
+    //            /** @var Category $category */
+    //            $category = $this->getReference($categoryName);
+    //            $expectedCategoryIds[] = $category->getId();
+    //        }
+    //
+    //        if ($visibility == BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
+    //            $masterCatalogId = $this->getMasterCatalog()->getId();
+    //            array_unshift($expectedCategoryIds, $masterCatalogId);
+    //        }
+    //
+    //        $this->assertEquals($expectedCategoryIds, $categoryIds);
+    //    }
 
     public function getCategoryIdsByVisibilityDataProvider(): array
     {
@@ -287,41 +287,41 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         ];
     }
 
-//    /**
-//     * @dataProvider updateCustomerCategoryVisibilityByCategoryDataProvider
-//     * @param string $customer
-//     * @param array $categories
-//     * @param int $visibility
-//     */
-//    public function testUpdateCustomerCategoryVisibilityByCategory($customer, array $categories, $visibility)
-//    {
-//        /** @var Customer $customer */
-//        $customer = $this->getReference($customer);
-//
-//        /** @var Category[] $categoriesForUpdate */
-//        $categoriesForUpdate = [];
-//        foreach ($categories as $categoryName) {
-//            $categoriesForUpdate[] = $this->getReference($categoryName);
-//        }
-//
-//        $categoryIdsForUpdate = array_filter(
-//            $categoriesForUpdate,
-//            function (Category $category) {
-//                return $category->getId();
-//            }
-//        );
-//
-//        $this->getRepository()->updateCustomerCategoryVisibilityByCategory(
-//            $customer,
-//            $categoryIdsForUpdate,
-//            $visibility
-//        );
-//
-//        foreach ($categoriesForUpdate as $category) {
-//            $visibilityResolved = $this->getRepository()->findByPrimaryKey($category, $customer);
-//            $this->assertEquals($visibility, $visibilityResolved->getVisibility());
-//        }
-//    }
+    //    /**
+    //     * @dataProvider updateCustomerCategoryVisibilityByCategoryDataProvider
+    //     * @param string $customer
+    //     * @param array $categories
+    //     * @param int $visibility
+    //     */
+    //    public function testUpdateCustomerCategoryVisibilityByCategory($customer, array $categories, $visibility)
+    //    {
+    //        /** @var Customer $customer */
+    //        $customer = $this->getReference($customer);
+    //
+    //        /** @var Category[] $categoriesForUpdate */
+    //        $categoriesForUpdate = [];
+    //        foreach ($categories as $categoryName) {
+    //            $categoriesForUpdate[] = $this->getReference($categoryName);
+    //        }
+    //
+    //        $categoryIdsForUpdate = array_filter(
+    //            $categoriesForUpdate,
+    //            function (Category $category) {
+    //                return $category->getId();
+    //            }
+    //        );
+    //
+    //        $this->getRepository()->updateCustomerCategoryVisibilityByCategory(
+    //            $customer,
+    //            $categoryIdsForUpdate,
+    //            $visibility
+    //        );
+    //
+    //        foreach ($categoriesForUpdate as $category) {
+    //            $visibilityResolved = $this->getRepository()->findByPrimaryKey($category, $customer);
+    //            $this->assertEquals($visibility, $visibilityResolved->getVisibility());
+    //        }
+    //    }
 
     public function updateCustomerCategoryVisibilityByCategoryDataProvider(): array
     {

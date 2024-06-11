@@ -10,6 +10,9 @@ dependencies:
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData
+    - Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderStatuses
+    - Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderStatuses
+    - Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderInternalStatuses
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
     payment_term_net_10:
@@ -480,13 +483,15 @@ Oro\Bundle\OrderBundle\Entity\Order:
         estimatedShippingCostAmount: '10.0000'
         overriddenShippingCostAmount: '7.0000'
         payment_term_7c4f1e8e: '@payment_term_net_10'
-        billingAddress: '@order1_billing_address'
-        shippingAddress: '@order1_shipping_address'
         customer: '@customer'
         customerUser: '@customer_user'
         website: '@website'
         owner: '@user'
         organization: '@organization'
+        billingAddress: '@order1_billing_address'
+        shippingAddress: '@order1_shipping_address'
+        status: '@order_status.wait_for_approval'
+        internal_status: '@order_internal_status.archived'
     order2:
         identifier: order2
         currency: 'EUR'
@@ -515,6 +520,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         organization: '@organization'
         billingAddress: '@order3_billing_address'
         shippingAddress: '@order3_shipping_address'
+        status: '@order_status.open'
     order4:
         identifier: order4
         currency: 'USD'

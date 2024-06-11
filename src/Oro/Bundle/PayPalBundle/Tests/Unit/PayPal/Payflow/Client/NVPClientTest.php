@@ -94,7 +94,7 @@ class NVPClientTest extends TestCase
                 ],
                 [
                     'verify' => true,
-                    'body'=> ''
+                    'body' => ''
                 ],
             ],
             'pass proxy host and port both' => [
@@ -104,11 +104,11 @@ class NVPClientTest extends TestCase
                 ],
                 [
                     'verify' => true,
-                    'body'=> '',
+                    'body' => '',
                     'proxy' => '12.23.34.45:1234',
                 ],
             ],
-            'pass proxy host and port both with disabled ssl verification' =>[
+            'pass proxy host and port both with disabled ssl verification' => [
                 [
                     'SSL_VERIFY' => false,
                     'PROXY_HOST' => '12.23.34.45',
@@ -116,7 +116,7 @@ class NVPClientTest extends TestCase
                 ],
                 [
                     'verify' => false,
-                    'body'=> '',
+                    'body' => '',
                     'proxy' => '12.23.34.45:1234',
                 ],
             ],

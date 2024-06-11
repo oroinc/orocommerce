@@ -61,7 +61,7 @@ class FixDuplicatedProducts extends AbstractFixture implements ContainerAwareInt
             $event = new ProductDuplicateAfterEvent($product, $product);
             $duplicateListener->onDuplicateAfter($event);
 
-            ++ $counter;
+            ++$counter;
 
             if ($counter > self::BATCH_SIZE) {
                 $manager->clear();

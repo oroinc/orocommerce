@@ -102,8 +102,8 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
 
         $consentData = [
             '1_3' => $this->getConsentData('first', 1, 3),
-            '2_5' =>$this->getConsentData('second', 2, 5),
-            '3_' =>$this->getConsentData('second', 3, null)
+            '2_5' => $this->getConsentData('second', 2, 5),
+            '3_' => $this->getConsentData('second', 3, null)
         ];
 
         $this->featureChecker->expects(self::once())

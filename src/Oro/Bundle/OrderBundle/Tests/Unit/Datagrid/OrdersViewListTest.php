@@ -10,27 +10,21 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrdersViewListTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $translator;
-
-    /** @var OrdersViewList */
-    protected $viewList;
+    private OrdersViewList $viewList;
 
     protected function setUp(): void
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects(self::any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($key) {
-                    return sprintf('*%s*', $key);
-                }
-            );
+            ->willReturnCallback(function ($key) {
+                return sprintf('*%s*', $key);
+            });
 
-        $this->viewList = new OrdersViewList($this->translator);
+        $this->viewList = new OrdersViewList($translator);
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $view = new View(
             'oro_order.open_orders',
@@ -43,6 +37,6 @@ class OrdersViewListTest extends \PHPUnit\Framework\TestCase
         );
         $view->setLabel('*oro.order.datagrid.view.open_orders*')->setDefault(true);
 
-        $this->assertEquals(new ArrayCollection([$view]), $this->viewList->getList());
+        self::assertEquals(new ArrayCollection([$view]), $this->viewList->getList());
     }
 }

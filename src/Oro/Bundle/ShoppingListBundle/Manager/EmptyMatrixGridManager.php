@@ -156,7 +156,7 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
             do {
                 $product = $lineItemsCollection->current()->getProduct();
                 if ($product instanceof Proxy && !$product->__isInitialized()) {
-                    $notInitializedCount ++;
+                    $notInitializedCount++;
                     if ($notInitializedCount > 2) {
                         $result = true;
                         break;

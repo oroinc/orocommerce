@@ -133,7 +133,7 @@ class CustomerDatagridListener
             return [];
         }
 
-        $selectedFields =$this->selectedFieldsProvider
+        $selectedFields = $this->selectedFieldsProvider
             ->getSelectedFields($event->getConfig(), $event->getDatagrid()->getParameters());
 
         $associationNames = $this->paymentTermAssociationProvider->getAssociationNames($className);

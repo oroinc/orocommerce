@@ -250,6 +250,8 @@ class OrderTest extends RestJsonApiTestCase
         self::assertEquals('USD', $order->getCurrency());
         self::assertNotEmpty($order->getOwner()->getId());
         self::assertEquals($organizationId, $order->getOrganization()->getId());
+        // the status should be read-only when "Enable External Status Management" configuration option is disabled
+        self::assertNull($order->getStatus());
         $lineItems = $order->getLineItems();
         self::assertEquals(2, $lineItems->count());
 
@@ -457,6 +459,12 @@ class OrderTest extends RestJsonApiTestCase
                                 'type' => 'paymentterms',
                                 'id'   => '<toString(@payment_term.net_20->id)>'
                             ]
+                        ],
+                        'status'      => [
+                            'data' => [
+                                'type' => 'orderstatuses',
+                                'id'   => 'open'
+                            ]
                         ]
                     ]
                 ]
@@ -471,6 +479,8 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame('444.5000', $updatedOrder->getSubtotal());
         self::assertSame('444.5000', $updatedOrder->getTotal());
         self::assertNull($updatedOrder->getTotalDiscounts());
+        // the status should be read-only when "Enable External Status Management" configuration option is disabled
+        self::assertNull($updatedOrder->getStatus());
     }
 
     public function testAddProductKitLineItem(): void
@@ -481,11 +491,11 @@ class OrderTest extends RestJsonApiTestCase
 
         $data = $this->getRequestData('add_product_kit_line_item_to_order.yml');
         // Oro doesn't take into account order line item price from request body if product with type kit
-        $this->assertEquals(200, $data['included'][0]['attributes']['value']);
+        self::assertEquals(200, $data['included'][0]['attributes']['value']);
 
         $response = $this->patch(
             ['entity' => 'orders', 'id' => $orderId],
-            'add_product_kit_line_item_to_order.yml',
+            $data
         );
 
         $responseContent = $this->updateResponseContent('add_product_kit_line_item_to_order.yml', $response);
@@ -665,6 +675,45 @@ class OrderTest extends RestJsonApiTestCase
             ['data' => [['type' => 'orderlineitems', 'id' => (string)$productKitLineItemId]]],
             $response
         );
+    }
+
+    public function testGetSubresourceForStatus(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_3)->getId();
+
+        $response = $this->getSubresource(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'status']
+        );
+
+        // the status should not be returned when "Enable External Status Management" configuration option is disabled
+        $this->assertResponseContains(['data' => null], $response);
+    }
+
+    public function testGetRelationshipForStatus(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_3)->getId();
+
+        $response = $this->getRelationship(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'status']
+        );
+
+        // the status should not be returned when "Enable External Status Management" configuration option is disabled
+        $this->assertResponseContains(['data' => null], $response);
+    }
+
+    public function testTryToUpdateStatusViaRelationship(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+
+        $this->patchRelationship(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'status'],
+            ['data' => ['type' => 'orderstatuses', 'id' => 'open']]
+        );
+
+        /** @var Order $updatedOrder */
+        $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
+        // the status should be read-only when "Enable External Status Management" configuration option is disabled
+        self::assertNull($updatedOrder->getStatus());
     }
 
     public function testTryToCreateWithoutLineItems(): void

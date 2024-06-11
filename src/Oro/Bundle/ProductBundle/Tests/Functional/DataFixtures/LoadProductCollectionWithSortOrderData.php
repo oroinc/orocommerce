@@ -37,7 +37,7 @@ class LoadProductCollectionWithSortOrderData extends AbstractFixture implements 
                 'sorting' => '',
             ],
         ],
-        'filters' =>[
+        'filters' => [
             [
                 'columnName' => 'sku',
                 'criterion' => [

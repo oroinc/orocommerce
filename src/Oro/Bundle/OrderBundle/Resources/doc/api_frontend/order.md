@@ -397,6 +397,14 @@ Example of data: **\[{"code": "payment_term_1", "label": "Payment Term"}, {"code
 
 **When feature "Guest Checkout" is enabled and an order is created by a visitor, this field is required.**
 
+### status
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field when "Enable External Status Management" configuration option is disabled. A passed value will be ignored in this case.**
+
 ## SUBRESOURCES
 
 ### billingAddress
@@ -478,3 +486,32 @@ Retrieve a record of suborder assigned to a specific order record.
 #### get_relationship
 
 Retrieve IDs of suborders records assigned to a specific order record.
+
+### status
+
+#### get_subresource
+
+Retrieve status record assigned to a specific order record.
+
+#### get_relationship
+
+Retrieve the ID of the status record assigned to a specific order record.
+
+
+# Extend\Entity\EV_Order_Status
+
+## ACTIONS
+
+### get
+
+Retrieve a specific order status record.
+
+### get_list
+
+Retrieve a collection of order status records.
+
+## FIELDS
+
+### internal
+
+Indicates whether the order status is an internal and cannot be used during creation of new orders.

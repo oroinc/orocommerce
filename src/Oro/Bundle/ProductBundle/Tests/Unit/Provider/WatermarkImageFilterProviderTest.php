@@ -94,7 +94,7 @@ class WatermarkImageFilterProviderTest extends \PHPUnit\Framework\TestCase
             'filters' => [
                 'watermark_image' => [
                     'image' => $expectedImagePath,
-                    'size' => round(self::SIZE/ 100, 2),
+                    'size' => round(self::SIZE / 100, 2),
                     'position' => self::POSITION
                 ]
             ]

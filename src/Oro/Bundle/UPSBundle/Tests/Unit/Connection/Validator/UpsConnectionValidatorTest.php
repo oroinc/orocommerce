@@ -54,7 +54,7 @@ class UpsConnectionValidatorTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateConnectionByUpsSettings()
     {
-        $transport= new UPSTransport();
+        $transport = new UPSTransport();
 
         $request = $this->createMock(UpsClientRequestInterface::class);
         $client = $this->createMock(RestClientInterface::class);

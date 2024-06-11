@@ -39,7 +39,7 @@ class SetCommentOnJsonArrayQuery extends ParametrizedMigrationQuery
     {
         $platform = $this->connection->getDatabasePlatform();
         if ($platform instanceof PostgreSQL92Platform) {
-            $commentQueries =[
+            $commentQueries = [
                 "COMMENT ON COLUMN oro_promotion_applied.config_options IS '(DC2Type:json_array)'",
                 "COMMENT ON COLUMN oro_promotion_applied.promotion_data IS '(DC2Type:json_array)'"
             ];
