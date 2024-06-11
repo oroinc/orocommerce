@@ -1,0 +1,26 @@
+system_configuration:
+    groups:
+        website_search_terms_management:
+            title: oro.websitesearchterm.system_configuration.fieldsets.search_terms_management.title
+
+    fields:
+        oro_website_search_term.enable_search_terms_management_feature:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 100
+            page_reload: true
+            options:
+                label: oro.websitesearchterm.feature.website_search_terms.label
+                tooltip: oro.websitesearchterm.feature.website_search_terms.description
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    search:
+                        children:
+                            website_search_terms:
+                                children:
+                                    website_search_terms_management:
+                                        children:
+                                            - oro_website_search_term.enable_search_terms_management_feature

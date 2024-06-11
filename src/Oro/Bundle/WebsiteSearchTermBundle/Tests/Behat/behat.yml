@@ -1,0 +1,81 @@
+oro_behat_extension:
+    elements:
+        Search Term Title:
+            selector: 'span.page-title__text'
+        Search Term Restrictions section:
+            selector:
+                type: xpath
+                locator: '//h4[contains(@class, "scrollspy-title") and text()[contains(.,"Restrictions")]]/following-sibling::div[contains(@class, "section-content")]'
+        Search Term Form:
+            selector: 'form[name="search_term"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Restriction 1 Website:
+                        type: 'css'
+                        locator: 'div[id^="s2id_search_term_scopes_0_website-uid-"]'
+                        element: Select2Entity
+                    Restriction 1 Customer:
+                        type: 'css'
+                        locator: 'div[id^="s2id_search_term_scopes_0_customer-uid-"]'
+                        element: Select2Entity
+                    Restriction 1 Customer Group:
+                        type: 'css'
+                        locator: 'div[id^="s2id_search_term_scopes_0_customerGroup-uid-"]'
+                        element: Select2Entity
+                    Restriction 2 Website:
+                        type: 'css'
+                        locator: 'div[id^="s2id_search_term_scopes_1_website-uid-"]'
+                        element: Select2Entity
+                    Restriction 2 Customer:
+                        type: 'css'
+                        locator: 'div[id^="s2id_search_term_scopes_1_customer-uid-"]'
+                        element: Select2Entity
+                    Restriction 2 Customer Group:
+                        type: 'css'
+                        locator: 'div[id^="s2id_search_term_scopes_1_customerGroup-uid-"]'
+                        element: Select2Entity
+        Search Term Restrictions Table:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+            selector:
+                locator: '//h4[contains(text(), "Restrictions")]//ancestor-or-self::div[contains(@class, "responsive-section")]//table'
+                type: xpath
+        Search Term Redirect URI:
+            selector:
+                type: xpath
+                locator: '//label[contains(@class, "attribute-item__term") and text()[contains(.,"URI")]]/following-sibling::div[contains(@class, "attribute-item__description")]'
+        Run Original Search:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "oro-collection-item") and contains(@data-content,"0")]//div[contains(@class, "search-term-run-original-search-dropdown")]'
+        Run Original Search (Restriction 2):
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "oro-collection-item") and contains(@data-content,"1")]//div[contains(@class, "search-term-run-original-search-dropdown")]'
+        Run Original Search Dropdown:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "oro-collection-item") and contains(@data-content,"0")]//a[contains(@class, "dropdown-toggle")]'
+        Run Original Search - Product:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "oro-collection-item") and contains(@data-content,"0")]//a[contains(@class, "search-term-run-original-search-btn") and contains(text(), "Product")]'
+        Run Original Search on View Page:
+            selector:
+                type: xpath
+                locator: '//h4[contains(@class, "scrollspy-title") and text()[contains(.,"Restrictions")]]/following-sibling::div[contains(@class, "section-content")]//div[contains(@class, "search-term-run-original-search-dropdown")]'
+        Run Original Search on View Page - Product:
+            selector:
+                type: xpath
+                locator: '//h4[contains(@class, "scrollspy-title") and text()[contains(.,"Restrictions")]]/following-sibling::div[contains(@class, "section-content")]//div[contains(@class, "search-term-run-original-search-dropdown")]//a[contains(@class, "search-term-run-original-search-btn") and contains(text(), "Product")]'
+    suites:
+        OroWebsiteSearchTermBundle:
+            contexts:
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+                - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+                - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+                - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+            paths:
+                - '@OroWebsiteSearchTermBundle/Tests/Behat/Features'

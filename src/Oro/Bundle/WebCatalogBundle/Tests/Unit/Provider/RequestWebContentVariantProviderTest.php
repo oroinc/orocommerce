@@ -7,14 +7,16 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository;
 use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentVariantProvider;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class RequestWebContentVariantProviderTest extends \PHPUnit\Framework\TestCase
+class RequestWebContentVariantProviderTest extends TestCase
 {
-    private RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack;
+    private RequestStack|MockObject $requestStack;
 
-    private ContentVariantRepository|\PHPUnit\Framework\MockObject\MockObject $contentVariantRepository;
+    private ContentVariantRepository|MockObject $contentVariantRepository;
 
     private RequestWebContentVariantProvider $provider;
 
@@ -24,7 +26,7 @@ class RequestWebContentVariantProviderTest extends \PHPUnit\Framework\TestCase
         $this->contentVariantRepository = $this->createMock(ContentVariantRepository::class);
 
         $doctrine = $this->createMock(ManagerRegistry::class);
-        $doctrine->expects($this->any())
+        $doctrine->expects(self::any())
             ->method('getRepository')
             ->with(ContentVariant::class)
             ->willReturn($this->contentVariantRepository);
@@ -37,26 +39,10 @@ class RequestWebContentVariantProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetContentVariantWhenNoRequest(): void
     {
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn(null);
-        $this->requestStack->expects($this->never())
-            ->method('getMainRequest');
-        $this->contentVariantRepository->expects($this->never())
-            ->method('findVariantBySlug');
-
-        self::assertNull($this->provider->getContentVariant());
-    }
-
-    public function testGetContentVariantForSubRequest(): void
-    {
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($this->createMock(Request::class));
-        $this->requestStack->expects($this->once())
-            ->method('getMainRequest')
-            ->willReturn($this->createMock(Request::class));
-        $this->contentVariantRepository->expects($this->never())
+        $this->contentVariantRepository->expects(self::never())
             ->method('findVariantBySlug');
 
         self::assertNull($this->provider->getContentVariant());
@@ -65,14 +51,10 @@ class RequestWebContentVariantProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetContentVariantWhenNotSlug(): void
     {
         $request = Request::create('/');
-
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn($request);
-        $this->requestStack->expects($this->once())
-            ->method('getMainRequest')
-            ->willReturn($request);
-        $this->contentVariantRepository->expects($this->never())
+        $this->contentVariantRepository->expects(self::never())
             ->method('findVariantBySlug');
 
         self::assertNull($this->provider->getContentVariant());
@@ -89,13 +71,10 @@ class RequestWebContentVariantProviderTest extends \PHPUnit\Framework\TestCase
 
         $variant = $this->createMock(ContentVariant::class);
 
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn($request);
-        $this->requestStack->expects($this->once())
-            ->method('getMainRequest')
-            ->willReturn($request);
-        $this->contentVariantRepository->expects($this->once())
+        $this->contentVariantRepository->expects(self::once())
             ->method('findVariantBySlug')
             ->with($slug)
             ->willReturn($variant);
@@ -112,13 +91,10 @@ class RequestWebContentVariantProviderTest extends \PHPUnit\Framework\TestCase
         $slug = $this->createMock(Slug::class);
         $request->attributes->set('_used_slug', $slug);
 
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects(self::once())
             ->method('getCurrentRequest')
             ->willReturn($request);
-        $this->requestStack->expects($this->once())
-            ->method('getMainRequest')
-            ->willReturn($request);
-        $this->contentVariantRepository->expects($this->once())
+        $this->contentVariantRepository->expects(self::once())
             ->method('findVariantBySlug')
             ->with($slug)
             ->willReturn(null);

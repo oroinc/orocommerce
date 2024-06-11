@@ -1,0 +1,15 @@
+<div data-page-component-module="orosale/js/app/components/dependent-field-component"
+     data-page-component-options="{{ { selectors: { rowContainer: 'div' } }|json_encode }}"
+     data-depend-on="search-term-action-type"
+     data-show-if="modify"
+     data-disable-element=":input">
+    <div class="control-group"
+         data-page-component-module="orosale/js/app/components/dependent-field-component"
+         data-page-component-options="{{ { selectors: { rowContainer: 'div' } }|json_encode }}"
+         data-depend-on="search-term-modify-action-type"
+         data-show-if="product_collection"
+         data-disable-element=":input">
+        {{ form_row(form.productCollectionSegment, { label: 'oro.websitesearchterm.searchterm.product_collection_segment.label' }) }}
+    </div>
+    <div class="control-group"></div>
+</div>

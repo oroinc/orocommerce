@@ -1,0 +1,20 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    promotional_content_block_title:
+        string: 'Promotional Content Block'
+
+Oro\Bundle\CMSBundle\Entity\TextContentVariant:
+    promotional_content_block_content_variant:
+        contentBlock: '@promotional_content_block'
+        content: >
+            <a title="Fast &amp; Free Shipping for orders over $45" href="#" class="page-header__promotional-block">Fast &amp; Free Shipping for orders over $45</a>
+
+Oro\Bundle\CMSBundle\Entity\ContentBlock:
+    promotional_content_block:
+        organization: '@organization'
+        owner: '@business_unit'
+        alias: 'promotional-content-block'
+        titles: ['@promotional_content_block_title']
+        __calls:
+            - addScope: ['@default_scope']
+            - addContentVariant: ['@promotional_content_block_content_variant']
+        enabled: true

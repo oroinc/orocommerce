@@ -36,7 +36,7 @@ class OroCMSBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_14_1';
+        return 'v1_14_2';
     }
 
     /**
@@ -83,6 +83,8 @@ class OroCMSBundleInstaller implements
 
         $this->addContentVariantTypes($schema);
         $this->addLocalizedFallbackValueFields($schema);
+        $this->addContentBlockToSearchTermTable($schema);
+        $this->addPageToSearchTermTable($schema);
     }
 
     private function createOroCmsContentTemplateTable(Schema $schema): void
@@ -755,6 +757,58 @@ class OroCMSBundleInstaller implements
             ['localized_value_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    private function addContentBlockToSearchTermTable(Schema $schema): void
+    {
+        $owningSideTable = $schema->getTable('oro_website_search_search_term');
+        $inverseSideTable = $schema->getTable('oro_cms_content_block');
+
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $owningSideTable,
+            'contentBlock',
+            $inverseSideTable,
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'SET NULL',
+                ],
+                'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+                'view' => ['is_displayable' => false],
+                'form' => ['is_enabled' => false],
+            ]
+        );
+    }
+
+    private function addPageToSearchTermTable(Schema $schema): void
+    {
+        $owningSideTable = $schema->getTable('oro_website_search_search_term');
+        $inverseSideTable = $schema->getTable('oro_cms_page');
+
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $owningSideTable,
+            'redirectCmsPage',
+            $inverseSideTable,
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'SET NULL',
+                ],
+                'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+                'view' => ['is_displayable' => false],
+                'form' => ['is_enabled' => false],
+            ]
         );
     }
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Model;
 
 use Doctrine\Common\Collections\Expr\CompositeExpression;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Placeholder\CustomerIdPlaceholder;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -14,6 +15,9 @@ use Oro\Bundle\VisibilityBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+/**
+ * Adds customer visibility conditions for the product search.
+ */
 class ProductVisibilitySearchQueryModifier implements QueryModifierInterface
 {
     /**
@@ -26,12 +30,19 @@ class ProductVisibilitySearchQueryModifier implements QueryModifierInterface
      */
     private $placeholderProvider;
 
+    private ?Customer $currentCustomer = null;
+
     public function __construct(
         TokenStorageInterface $tokenStorage,
         PlaceholderProvider $placeholderProvider
     ) {
         $this->tokenStorage = $tokenStorage;
         $this->placeholderProvider = $placeholderProvider;
+    }
+
+    public function setCurrentCustomer(?Customer $customer): void
+    {
+        $this->currentCustomer = $customer;
     }
 
     /**
@@ -93,11 +104,12 @@ class ProductVisibilitySearchQueryModifier implements QueryModifierInterface
         return Criteria::implodeFieldTypeName(Query::TYPE_INTEGER, $name);
     }
 
-    /**
-     * @return CustomerUser|null
-     */
-    private function getCustomer()
+    private function getCustomer(): ?Customer
     {
+        if ($this->currentCustomer !== null) {
+            return $this->currentCustomer;
+        }
+
         $token = $this->tokenStorage->getToken();
         if ($token && ($user = $token->getUser()) instanceof CustomerUser) {
             return $user->getCustomer();

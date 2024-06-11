@@ -1,0 +1,43 @@
+include:
+    - '@OroProductBundle:default_webcatalog.yml'
+    - '@OroCustomerBundle:CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    nodeDefaultWebCatalog:
+        __calls:
+            - addTitle: ['@localValueDefaultWebCatalog']
+            - addContentVariant: ['@defaultWebCatalogVariant']
+            - addScope: ['@defaultWebCatalogScope']
+        webCatalog: '@webCatalog'
+
+    nodeClearance:
+        __calls:
+            - addTitle: ['@localValueClearance']
+            - addSlugPrototype: ['@localValueClearanceSlug']
+            - addLocalizedUrl: ['@localValueClearanceSlug']
+            - addContentVariant: ['@clearanceVariant']
+            - addScope: ['@defaultWebCatalogScope']
+        ParentNode: '@nodeDefaultWebCatalog'
+        webCatalog: '@webCatalog'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localValueDefaultWebCatalog:
+        string: 'Default Web Catalog'
+    localValueClearance:
+        string: 'Clearance'
+    localValueClearanceSlug:
+        string: 'clearance'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+    defaultWebCatalogVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_frontend_root'
+        default: true
+        __calls:
+            - addScope: ['@defaultWebCatalogScope']
+    clearanceVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_product_frontend_product_index'
+        default: true
+        __calls:
+            - addScope: ['@defaultWebCatalogScope']

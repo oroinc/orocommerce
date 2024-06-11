@@ -1,0 +1,106 @@
+parameters:
+    oro_website_search_term.phrase_delimiter: '�' # NULL character (U+0000) here.
+
+services:
+    oro_website_search_term.localization_scope_criteria_provider:
+        class: Oro\Bundle\LocaleBundle\Provider\LocalizationScopeCriteriaProvider
+        arguments:
+            - '@oro_locale.provider.current_localization'
+        tags:
+            - { name: oro_scope.provider, scopeType: website_search_term, priority: 1 }
+
+    oro_website_search_term.event_listener.add_phrases_view_data_datagrid_listener:
+        class: Oro\Bundle\WebsiteSearchTermBundle\EventListener\AddPhrasesViewDataDatagridListener
+        arguments:
+            - '@oro_website_search_term.formatter.search_term_phrases_formatter'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.website-search-terms, method: onResultAfter }
+
+    oro_website_search_term.provider.search_term_provider:
+        class: Oro\Bundle\WebsiteSearchTermBundle\Provider\SearchTermProvider
+        arguments:
+            - '@oro_scope.scope_manager'
+            - '@doctrine'
+
+    oro_website_search_term.form.search_term:
+        class: Oro\Bundle\WebsiteSearchTermBundle\Form\Type\SearchTermType
+        arguments:
+            - '%oro_website_search_term.phrase_delimiter%'
+            - '@oro_form.form.event_listener.disable_fields'
+        tags:
+            - { name: form.type }
+
+    Oro\Bundle\WebsiteSearchTermBundle\Entity\Repository\SearchTermRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            $entityClass: 'Oro\Bundle\WebsiteSearchTermBundle\Entity\SearchTerm'
+            $delimiter: '%oro_website_search_term.phrase_delimiter%'
+        tags:
+            - { name: doctrine.repository_service }
+
+    oro_website_search_term.formatter.search_term_phrases_formatter:
+        class: Oro\Bundle\WebsiteSearchTermBundle\Formatter\SearchTermPhrasesFormatter
+        arguments:
+            - '%oro_website_search_term.phrase_delimiter%'
+
+    oro_website_search_term.twig.search_term_extension:
+        class: Oro\Bundle\WebsiteSearchTermBundle\Twig\SearchTermExtension
+        arguments:
+            - '@oro_platform.twig.service_locator'
+        tags:
+            - { name: twig.extension }
+
+    oro_website_search_term.redirect_action_type.basic_handler:
+        class: Oro\Bundle\WebsiteSearchTermBundle\RedirectActionType\BasicRedirectActionHandler
+        arguments:
+            - '@kernel'
+            - '@oro_redirect.factory.sub_request'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: oro_website_search_term }
+
+    oro_website_search_term.event_listener.add_uri_to_search_terms_datagrid:
+        class: Oro\Bundle\WebsiteSearchTermBundle\EventListener\AddUriToSearchTermsDatagridListener
+        arguments:
+            - '@translator'
+            - '@oro_ui.html_tag_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.website-search-terms, method: onResultAfter }
+
+    oro_website_search_term.event_listener.website_search_term.uri_search_term_action:
+        class: Oro\Bundle\WebsiteSearchTermBundle\EventListener\UriSearchTermRedirectActionEventListener
+        arguments:
+            - '@oro_website_search_term.redirect_action_type.basic_handler'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\WebsiteSearchTermBundle\Event\SearchTermRedirectActionEvent, method: onRedirectAction }
+
+    oro_website_search_term.event_listener.add_system_page_to_search_terms_datagrid:
+        class: Oro\Bundle\WebsiteSearchTermBundle\EventListener\AddSystemPageToSearchTermsDatagridListener
+        arguments:
+            - '@router'
+            - '@translator'
+            - '@oro_navigation.provider.route_title'
+            - '@oro_ui.html_tag_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.website-search-terms, method: onResultAfter }
+
+    oro_website_search_term.event_listener.website_search_term.system_page_search_term_action:
+        class: Oro\Bundle\WebsiteSearchTermBundle\EventListener\SystemPageSearchTermRedirectActionEventListener
+        arguments:
+            - '@oro_website_search_term.redirect_action_type.basic_handler'
+            - '@router'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\WebsiteSearchTermBundle\Event\SearchTermRedirectActionEvent, method: onRedirectAction }
+
+    oro_website_search_term.event_listener.add_system_page_to_search_term_view_page:
+        class: Oro\Bundle\WebsiteSearchTermBundle\EventListener\AddSystemPageToSearchTermViewPageListener
+        arguments:
+            - '@oro_navigation.provider.route_title'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-view, method: onEntityView, priority: 10 }
+
+    oro_website_search_term.event_listener.add_system_page_to_search_term_edit_page:
+        class: Oro\Bundle\WebsiteSearchTermBundle\EventListener\AddSystemPageToSearchTermEditPageListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-edit, method: onEntityEdit, priority: 10 }

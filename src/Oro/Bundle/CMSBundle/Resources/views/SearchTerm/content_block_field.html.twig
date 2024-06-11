@@ -1,0 +1,6 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{{ UI.renderHtmlProperty(
+    'oro.websitesearchterm.searchterm.content_block.label'|trans,
+    '<a href="' ~ path('oro_cms_content_block_view', { id: entity.id }) ~ '">' ~ entity.alias|escape ~ '</a>'
+) }}

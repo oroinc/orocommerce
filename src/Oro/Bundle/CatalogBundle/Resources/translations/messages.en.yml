@@ -261,3 +261,11 @@ oro:
             label: 'Category'
         category_sort_order:
             label: 'Category sort order'
+
+    websitesearchterm:
+        searchterm:
+            redirect_category.label: Category
+            redirect_action_type.choices.category.label: Category
+            grid:
+                action_details:
+                    redirect_category: 'Redirect to category: <a href="{{ category_url }}" target="_blank">{{ category_title }}</a>'

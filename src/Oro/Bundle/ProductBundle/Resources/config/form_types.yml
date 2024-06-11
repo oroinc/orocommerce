@@ -7,7 +7,7 @@ services:
             - "@router"
             - "@oro_product.helper.product_image_helper"
         calls:
-            - [setDataClass, ['Oro\Bundle\ProductBundle\Entity\Product']]
+            - [ setDataClass, [ 'Oro\Bundle\ProductBundle\Entity\Product' ] ]
         tags:
             - { name: form.type, alias: oro_product }
 
@@ -23,7 +23,7 @@ services:
             - "@oro_product.formatter.product_unit_label"
             - "@translator"
         calls:
-            - [setEntityClass, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]
+            - [ setEntityClass, [ 'Oro\Bundle\ProductBundle\Entity\ProductUnit' ] ]
         tags:
             - { name: form.type, alias: oro_product_unit_selection }
 
@@ -32,7 +32,7 @@ services:
         arguments:
             - '@oro_product.formatter.product_unit_label'
         calls:
-            - [setEntityClass, ['Oro\Bundle\ProductBundle\Entity\ProductUnit']]
+            - [ setEntityClass, [ 'Oro\Bundle\ProductBundle\Entity\ProductUnit' ] ]
         tags:
             - { name: form.type, alias: oro_product_unit_select }
 
@@ -55,14 +55,14 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
         public: true
         calls:
-            - [setDataClass, ['Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision']]
+            - [ setDataClass, [ 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision' ] ]
         tags:
             - { name: form.type, alias: oro_product_primary_unit_precision }
 
     oro_product.form.type.product_unit_precision:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType'
         calls:
-            - [setDataClass, ['Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision']]
+            - [ setDataClass, [ 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision' ] ]
         tags:
             - { name: form.type, alias: oro_product_unit_precision }
 
@@ -211,7 +211,7 @@ services:
         arguments:
             - '@oro_security.form.field_acl_helper'
         tags:
-            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType}
+            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
     oro_product.form.extension.attribute_config_extension:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\AttributeConfigExtension'
@@ -224,7 +224,7 @@ services:
     oro_product.form.type.brand:
         class: 'Oro\Bundle\ProductBundle\Form\Type\BrandType'
         calls:
-            - [setDataClass, ['Oro\Bundle\ProductBundle\Entity\Brand']]
+            - [ setDataClass, [ 'Oro\Bundle\ProductBundle\Entity\Brand' ] ]
         tags:
             - { name: form.type, alias: oro_product_brand }
 
@@ -338,13 +338,13 @@ services:
         arguments:
             - '@security.authorization_checker'
         tags:
-            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType}
+            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
     # Component added back for theme layout BC from version 5.0
     oro_product.form.type.extension.is_optimized_quick_add:
-      class: 'Oro\Bundle\ProductBundle\Form\Extension\IsOptimizedQuickAddTypeExtension'
-      tags:
-        - { name: form.type_extension }
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\IsOptimizedQuickAddTypeExtension'
+        tags:
+            - { name: form.type_extension }
 
     oro_product.form.product_page_template_builder:
         class: Oro\Bundle\ProductBundle\Form\Configuration\ProductPageTemplateBuilder

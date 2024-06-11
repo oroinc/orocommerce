@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ContentWidget;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -212,17 +211,6 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
         $this->repository->expects($this->any())
             ->method('findByEntity')
             ->with($this->aclHelper, Product::class);
-
-        $manager = $this->createMock(ObjectManager::class);
-        $manager->expects($this->any())
-            ->method('getRepository')
-            ->with(Segment::class)
-            ->willReturn($this->repository);
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(Segment::class)
-            ->willReturn($manager);
 
         $form = $this->contentWidgetType->getSettingsForm(new ContentWidget(), $this->factory);
 
