@@ -1,0 +1,4 @@
+bundles:
+    -
+        name: Oro\Bundle\WebsiteSearchTermBundle\OroWebsiteSearchTermBundle
+        priority: 9 # Should be loaded before bundles which might use the functionality of this bundle

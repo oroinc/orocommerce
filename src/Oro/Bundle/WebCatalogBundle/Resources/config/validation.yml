@@ -25,3 +25,16 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
 Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
     constraints:
         - Oro\Bundle\WebCatalogBundle\Validator\Constraint\SameOrganization: ~
+
+Oro\Bundle\WebsiteSearchTermBundle\Entity\SearchTerm:
+    properties:
+        redirectContentNode:
+            -   Oro\Bundle\PlatformBundle\Validator\Constraints\When:
+                    expression: 'this.getRedirectActionType() == "content_node"'
+                    constraints:
+                        -   NotBlank: ~
+                    groups:
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_create
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_update

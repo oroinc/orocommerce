@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType;
@@ -34,17 +33,11 @@ class ProductSegmentContentWidgetSettingsTypeTest extends FormIntegrationTestCas
             ->with($this->aclHelper, Product::class)
             ->willReturn(['Sample Segment' => 42]);
 
-        $manager = $this->createMock(ObjectManager::class);
-        $manager->expects($this->any())
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->registry->expects($this->any())
             ->method('getRepository')
             ->with(Segment::class)
             ->willReturn($repository);
-
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(Segment::class)
-            ->willReturn($manager);
 
         parent::setUp();
     }

@@ -7,6 +7,7 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\FormBundle\Form\Extension\DataBlockExtension;
 use Oro\Bundle\ProductBundle\ContentWidget\ProductSegmentContentWidgetType;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSegmentContentWidgetSettingsType;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SegmentBundle\Entity\Repository\SegmentRepository;
@@ -52,6 +53,11 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
             ->method('getManagerForClass')
             ->with(Segment::class)
             ->willReturn($this->manager);
+
+        $this->registry->expects($this->any())
+            ->method('getRepository')
+            ->with(Segment::class)
+            ->willReturn($this->repository);
 
         $this->contentWidgetType = new ProductSegmentContentWidgetType($this->registry);
 
@@ -128,6 +134,10 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
 
     public function testGetSettingsForm(): void
     {
+        $this->repository->expects($this->any())
+            ->method('findByEntity')
+            ->with($this->aclHelper, Product::class);
+
         $form = $this->contentWidgetType->getSettingsForm(new ContentWidget(), $this->factory);
 
         $this->assertInstanceOf(

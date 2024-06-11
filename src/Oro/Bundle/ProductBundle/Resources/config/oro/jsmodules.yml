@@ -40,3 +40,6 @@ dynamic-imports:
         - oroproduct/js/app/views/product-kit/product-kit-widget-view
         - oroproduct/js/app/views/product-kit/product-kit-sorting-view
         - oroproduct/datagrid/builder/product-kit-items-builder
+    orowebsitesearch:
+        - oroproduct/js/app/views/search-term-run-original-search-form-view
+        - oroproduct/js/app/views/search-term-run-original-search-view

@@ -1,0 +1,16 @@
+{%- macro renderScopePart(elements) -%}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {% set elementsRaw = elements|split('')|array_unique %}
+
+    {% set elements = [] %}
+    {% for element in elementsRaw %}
+        {% if element == 'ANY' %}
+            {% set element = 'oro.websitesearchterm.searchterm.grid.restrictions.any.label'|trans %}
+        {% endif %}
+
+        {% set elements = elements|merge([element]) %}
+    {% endfor %}
+
+    {{ UI.renderList(elements) }}
+{%- endmacro -%}

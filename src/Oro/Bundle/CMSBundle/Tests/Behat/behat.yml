@@ -532,9 +532,34 @@ oro_behat_extension:
 
         FirstColumnInGrid:
             selector: '[data-gjs-type="grid-row"] > [data-gjs-type="grid-column"]:first-child'
+
+        Search Term Additional Content Block Select Field:
+            selector:
+                locator: '//select[@name="search_term[contentBlock]"]'
+                type: xpath
+
+        Search Term With Target Landing Page Form:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            selector: 'form[name="search_term"]'
+            options:
+                mapping:
+                    Page:
+                        type: 'xpath'
+                        locator: '//input[@name="search_term[redirectCmsPage]"]'
+                        element: Select2Entity
+                    Restriction 1 Website:
+                        type: 'css'
+                        locator: 'div[id^="s2id_search_term_scopes_0_website-uid-"]'
+                        element: Select2Entity
+                    Restriction 2 Website:
+                        type: 'css'
+                        locator: 'div[id^="s2id_search_term_scopes_1_website-uid-"]'
+                        element: Select2Entity
+
     suites:
         OroCMSBundle:
             contexts:
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
                 - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
                 - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
                 - Oro\Bundle\FormBundle\Tests\Behat\Context\WysiwygContext

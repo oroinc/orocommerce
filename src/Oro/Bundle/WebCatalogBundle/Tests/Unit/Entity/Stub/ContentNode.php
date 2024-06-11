@@ -16,6 +16,13 @@ class ContentNode extends BaseContentNode
         'title' => 'titles',
     ];
 
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     /**
      * {@inheritdoc}
      */

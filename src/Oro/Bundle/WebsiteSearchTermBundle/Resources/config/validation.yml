@@ -1,0 +1,57 @@
+Oro\Bundle\WebsiteSearchTermBundle\Entity\SearchTerm:
+    properties:
+        phrases:
+            -   NotBlank: ~
+        actionType:
+            -   NotBlank: ~
+            -   Length:
+                    max: 128
+        modifyActionType:
+            -   Length:
+                    max: 128
+            -   Oro\Bundle\PlatformBundle\Validator\Constraints\When:
+                    expression: 'this.getActionType() == "modify"'
+                    constraints:
+                        -   NotBlank: ~
+                    groups:
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_create
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_update
+        redirectActionType:
+            -   Length:
+                    max: 128
+            -   Oro\Bundle\PlatformBundle\Validator\Constraints\When:
+                    expression: 'this.getActionType() == "redirect"'
+                    constraints:
+                        -   NotBlank: ~
+                    groups:
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_create
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_update
+        redirectSystemPage:
+            -   Length:
+                    max: 255
+            -   Oro\Bundle\PlatformBundle\Validator\Constraints\When:
+                    expression: 'this.getRedirectActionType() == "system_page"'
+                    constraints:
+                        -   NotBlank: ~
+                    groups:
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_create
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_update
+        redirectUri:
+            -   Length:
+                    max: 2083
+            -   Oro\Bundle\PlatformBundle\Validator\Constraints\When:
+                    expression: 'this.getRedirectActionType() == "uri"'
+                    constraints:
+                        -   NotBlank: ~
+                        -   Url: ~
+                    groups:
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_create
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_update

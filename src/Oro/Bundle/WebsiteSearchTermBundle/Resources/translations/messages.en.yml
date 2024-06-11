@@ -1,0 +1,79 @@
+oro:
+    websitesearchterm:
+        system_configuration:
+            fieldsets:
+                search_terms_management:
+                    title: 'Search Terms Management'
+        feature:
+            website_search_terms:
+                label: 'Enable Search Terms Management'
+                description: >
+                    Search Terms Management feature helps you respond to certain search phrases with tailored actions. When a specific search term is detected in the storefront, you can choose a corresponding action from a range of pre-set responses (e.g., forward users to another page, replace default search results, etc.)
+        navigation:
+            search_terms.label: Search Terms
+        controller:
+            search_terms:
+                saved.message: Search Term has been saved
+                deleted.message: Search Term has been deleted
+        searchterm:
+            entity_label: Search Term
+            entity_plural_label: Search Terms
+            entity_grid_all_view_label: 'All %entity_plural_label%'
+            id.label: Id
+            phrases.label: Phrases
+            created_at.label: Created At
+            updated_at.label: Updated At
+            owner.label: Owner
+            organization.label: Organization
+            redirect_system_page:
+                label: System Page
+                placeholder: Choose a System Page
+            redirect_uri.label: URI
+            redirect301.label: 301 Redirect
+            partial_match.label: Partial match
+            scopes.label: Scopes
+            type:
+                label: Type
+                redirect:
+                    label: Redirect
+                    subtype:
+                        url.label: URL
+            action_type:
+                label: Action
+                choices:
+                    modify.label: Show search results page
+                    redirect.label: Redirect to a different page
+            modify_action_type:
+                label: Search Results
+                choices:
+                    original_results.label: Original search results
+            redirect_action_type:
+                label: Target Type
+                choices:
+                    uri.label: URI
+                    system_page.label: System Page
+            sections:
+                general.label: General
+                additional_information.label: Additional Information
+                use_for.label: Restrictions
+                action.label: Action
+            grid:
+                action_details:
+                    label: Action
+                    redirect_uri: 'Redirect to: {{ link }}'
+                    redirect_system_page: 'Redirect to system page: <a href="{{ system_page_url }}" target="_blank">{{ system_page_title }}</a>'
+
+                website:
+                    label: Website
+                localization:
+                    label: Localization
+                customer_group:
+                    label: Customer Group
+                customer:
+                    label: Customer
+                restrictions:
+                    label: Restrictions
+                    any.label: Any
+                partial_match:
+                    enabled: Yes
+                    disabled: No

@@ -32,7 +32,7 @@ class RequestWebContentVariantProvider
     public function getContentVariant(): ?ContentVariant
     {
         $request = $this->requestStack->getCurrentRequest();
-        if (null === $request || $this->requestStack->getMainRequest() !== $request) {
+        if (null === $request) {
             return null;
         }
 

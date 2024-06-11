@@ -79,8 +79,9 @@ oro.cms:
         form:
             add_variant.label: Add Content
         sections:
-            general.label: General
+            general.label: Genera
             use_for.label: Restrictions
+        choose_content_block.label: Choose Content Block
 
     contentwidget:
         entity_label: Content Widget
@@ -274,6 +275,18 @@ oro.cms:
         feature:
             label: Content Templates
             description: Enables creating and managing content templates.
+
+oro.websitesearchterm:
+    searchterm:
+        content_block.label: Additional Content Block
+        redirect_cms_page.label: Page
+        redirect_action_type.choices.cms_page.label: Landing Page
+        grid:
+            action_details:
+                redirect_cms_page: 'Redirect to landing page: <a href="{{ cms_page_url }}" target="_blank">{{ cms_page_title }}</a>'
+                additional_content_block: |
+                    {{ main_action_details }}
+                    <div>Show additional content block: <a href="{{ content_block_url }}" target="_blank">{{ content_block_title }}</a></div>
 
 oro.entity_extend.form.data_type:
     wysiwyg: WYSIWYG

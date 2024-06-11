@@ -96,7 +96,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_33';
+        return 'v1_33_1';
     }
 
     /**
@@ -160,6 +160,8 @@ class OroProductBundleInstaller implements
         $this->addAttributeFamilyField($schema);
 
         $this->addPageTemplateField($schema);
+        $this->addProductToSearchTermTable($schema);
+        $this->addProductCollectionSegmentToSearchTermTable($schema);
     }
 
     /**
@@ -979,6 +981,58 @@ class OroProductBundleInstaller implements
             ['product_unit_precision_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    private function addProductToSearchTermTable(Schema $schema): void
+    {
+        $owningSideTable = $schema->getTable('oro_website_search_search_term');
+        $inverseSideTable = $schema->getTable('oro_product');
+
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $owningSideTable,
+            'redirectProduct',
+            $inverseSideTable,
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'SET NULL',
+                ],
+                'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+                'view' => ['is_displayable' => false],
+                'form' => ['is_enabled' => false],
+            ]
+        );
+    }
+
+    private function addProductCollectionSegmentToSearchTermTable(Schema $schema): void
+    {
+        $owningSideTable = $schema->getTable('oro_website_search_search_term');
+        $inverseSideTable = $schema->getTable('oro_segment');
+
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $owningSideTable,
+            'productCollectionSegment',
+            $inverseSideTable,
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'SET NULL',
+                ],
+                'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+                'view' => ['is_displayable' => false],
+                'form' => ['is_enabled' => false],
+            ]
         );
     }
 }

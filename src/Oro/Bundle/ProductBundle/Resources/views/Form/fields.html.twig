@@ -1,3 +1,5 @@
+{% extends '@OroScope/Form/fields.html.twig' %}
+
 {% block oro_product_primary_unit_precision_widget %}
     {% set precisions = {} %}
     {% set initialAdditionalUnits = {} %}
@@ -859,4 +861,43 @@
     }) %}
 
     {{ block('oro_collection_widget') }}
+{% endblock %}
+
+{% block oro_website_search_term_scopes_widget %}
+    <div data-page-component-module="oroui/js/app/components/view-component"
+         data-page-component-options="{{ {
+             view: 'oroproduct/js/app/views/search-term-run-original-search-form-view',
+             delimiter: phraseDelimiter
+         }|json_encode }}">
+    </div>
+    {{ form_widget(form) }}
+{% endblock %}
+
+{% block _search_term_scopes_entry_widget %}
+    {% import '@OroWebsiteSearchTerm/SearchTerm/macros.html.twig' as searchTerm %}
+
+    <div class="form-horizontal">
+        <div class="control-group-container">
+            {% for child in form.children %}
+                <div class="control-group">
+                    {% if child.vars.label is not empty %}
+                        <div class="control-label wrap">{{ form_label(child) }}</div>
+                    {% endif %}
+                    <div class="controls">{{ form_widget(child) }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div>
+        {{ form_errors(form) }}
+    </div>
+    <div class="mt-4">
+        <div class="btn-group">
+            <div class="pinned-dropdown">
+                {{ searchTerm.renderRunOriginSearchDropdown([], oro_scope_entities('website_search_term'), []) }}
+
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

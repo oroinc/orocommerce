@@ -458,7 +458,6 @@ services:
 
     oro_visibility.model.product_visibility_search_query_modifier:
         class: 'Oro\Bundle\VisibilityBundle\Model\ProductVisibilitySearchQueryModifier'
-        public: false
         arguments:
             - '@security.token_storage'
             - '@oro_website_search.provider.placeholder_provider'

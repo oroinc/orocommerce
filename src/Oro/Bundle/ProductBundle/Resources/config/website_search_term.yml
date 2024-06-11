@@ -1,0 +1,158 @@
+services:
+    oro_product.form.type.extension.add_product_collection_to_website_search_term_form:
+        class: Oro\Bundle\ProductBundle\Form\Extension\WebsiteSearchTerm\AddProductCollectionToWebsiteSearchTermFormExtension
+        tags:
+            - { name: form.type_extension }
+
+    oro_product.form.type.extension.add_product_to_website_search_term_form:
+        class: Oro\Bundle\ProductBundle\Form\Extension\WebsiteSearchTerm\AddProductToWebsiteSearchTermFormExtension
+        tags:
+            - { name: form.type_extension }
+
+    oro_product.event_listener.products_search_page_kernel_listener:
+        class: Oro\Bundle\ProductBundle\EventListener\WebsiteSearchTerm\RedirectActionTypeSearchPageKernelListener
+        arguments:
+            - '@oro_website_search_term.provider.search_term_provider'
+            - '@event_dispatcher'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelEvent }
+            - { name: oro_featuretogle.feature, feature: oro_website_search_terms_management }
+
+    oro_product.event_listener.website_search_term.product_collection.add_product_collection_to_search_term_edit_page:
+        class: Oro\Bundle\ProductBundle\EventListener\WebsiteSearchTerm\ProductCollection\AddProductCollectionToSearchTermEditPageListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-edit, method: onEntityEdit, priority: 10 }
+
+    oro_product.event_listener.website_search_term.product_collection.add_product_collection_to_search_terms_datagrid:
+        class: Oro\Bundle\ProductBundle\EventListener\WebsiteSearchTerm\ProductCollection\AddProductCollectionToSearchTermsDatagridListener
+        arguments:
+            - '@router'
+            - '@translator'
+            - '@oro_ui.html_tag_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.website-search-terms, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.website-search-terms, method: onResultAfter }
+
+    oro_product.event_listener.website_search_term.product_collection.add_product_collection_to_search_term_view_page:
+        class: Oro\Bundle\ProductBundle\EventListener\WebsiteSearchTerm\ProductCollection\AddProductCollectionToSearchTermViewPageListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-view, method: onEntityView, priority: 10 }
+
+    oro_product.event_listener.website_search_term.product.add_product_to_search_term_edit_page:
+        class: Oro\Bundle\ProductBundle\EventListener\WebsiteSearchTerm\Product\AddProductToSearchTermEditPageListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-edit, method: onEntityEdit, priority: 10 }
+
+    oro_product.event_listener.website_search_term.product.add_product_to_search_term_view_page:
+        class: Oro\Bundle\ProductBundle\EventListener\WebsiteSearchTerm\Product\AddProductToSearchTermViewPageListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-view, method: onEntityView, priority: 10 }
+
+    oro_product.event_listener.website_search_term.product.add_product_to_search_terms_datagrid:
+        class: Oro\Bundle\ProductBundle\EventListener\WebsiteSearchTerm\Product\AddProductToSearchTermsDatagridListener
+        arguments:
+            - '@router'
+            - '@translator'
+            - '@oro_ui.html_tag_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.website-search-terms, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.website-search-terms, method: onResultAfter }
+
+    oro_product.event_listener.website_search_term.product.product_search_term_action:
+        class: Oro\Bundle\ProductBundle\EventListener\WebsiteSearchTerm\Product\ProductSearchTermRedirectActionEventListener
+        arguments:
+            - '@oro_website_search_term.redirect_action_type.basic_handler'
+            - '@router'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\WebsiteSearchTermBundle\Event\SearchTermRedirectActionEvent, method: onRedirectAction }
+
+    oro_product.event_listener.website_search_term.search_term_run_original_search_grid:
+        class: Oro\Bundle\ProductBundle\EventListener\WebsiteSearchTerm\SearchTermRunOriginalSearchGridListener
+        arguments:
+            - '@doctrine'
+            - '@request_stack'
+            - '@oro_website.manager'
+            - '@oro_locale.provider.current_localization'
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_visibility.model.product_visibility_search_query_modifier'
+            - '@oro_customer.provider.customer_user_relations_provider'
+        tags:
+            -
+                name: kernel.event_listener
+                event: oro_datagrid.datagrid.build.pre.website-search-term-run-original-search-grid
+                method: onPreBuild
+                priority: 1024 # Must be called as early as possible as it replaces data which might be used by others.
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.before.website-search-term-run-original-search-grid, method: onSearchResultBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.website-search-term-run-original-search-grid, method: onSearchResultAfter }
+            - { name: oro_featuretogle.feature, feature: oro_website_search_terms_management }
+
+    oro_product.event_listener.website_search_term.product_collection.website_search_index_entity_listener:
+        class: Oro\Bundle\ProductBundle\EventListener\WebsiteSearchTerm\ProductCollection\ProductCollectionSearchTermWebsiteSearchIndexEntityListener
+        arguments:
+            - '@oro_product.provider.website_search_term.search_terms_index_data'
+            - '@oro_website_search.manager.website_context_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
+
+    oro_product.event_listener.website_search_term.product_collection.product_collection_content_variant_filtering:
+        class: Oro\Bundle\ProductBundle\EventListener\WebsiteSearchTerm\ProductCollection\ProductCollectionSearchTermFilteringEventListener
+        arguments:
+            - '@request_stack'
+            - '@oro_website_search_term.provider.search_term_provider'
+        tags:
+            -   name: kernel.event_listener
+                event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid
+                method: onPreBuild
+                priority: 10 # Ensures execution before the oro_product.datagrid.event_listener.search_event_listener
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
+            - { name: oro_featuretogle.feature, feature: oro_website_search_terms_management }
+
+    oro_product.async.website_search_term.search_term_product_collection_segment_reindex:
+        class: Oro\Bundle\ProductBundle\Async\WebsiteSearchTerm\SearchTermProductCollectionSegmentReindexProcessor
+        arguments:
+            - '@oro_segment.provider.segment_snapshot_delta_provider'
+            - '@event_dispatcher'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_product.event_listener.doctrine.product_collection_search_term:
+        class: Oro\Bundle\ProductBundle\EventListener\Doctrine\ProductCollectionSearchTermDoctrineListener
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
+
+    oro_product.event_listener.doctrine.product_collection_search_term_segment:
+        class: Oro\Bundle\ProductBundle\EventListener\Doctrine\ProductCollectionSearchTermSegmentDoctrineListener
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_product.provider.website_search_term.search_terms_by_product_collection_segments'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
+
+    oro_product.event_listener.website_search_term.product_collection.product_collection_search_term_before_reindex:
+        class: Oro\Bundle\ProductBundle\EventListener\WebsiteSearchTerm\ProductCollection\ProductCollectionSearchTermBeforeReindexEventListener
+        arguments:
+            - '@oro_segment.static_segment_manager'
+            - '@oro_product.provider.website_search_term.search_term_product_collection_segments'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.before_reindex, method: onBeforeReindex }
+
+    oro_product.provider.website_search_term.search_terms_by_product_collection_segments:
+        class: Oro\Bundle\ProductBundle\Provider\WebsiteSearchTerm\SearchTermsByProductCollectionSegmentsProvider
+        arguments:
+            - '@doctrine'
+
+    oro_product.provider.website_search_term.search_term_product_collection_segments:
+        class: Oro\Bundle\ProductBundle\Provider\WebsiteSearchTerm\SearchTermProductCollectionSegmentsProvider
+        arguments:
+            - '@doctrine'
+
+    oro_product.provider.website_search_term.search_terms_index_data:
+        class: Oro\Bundle\ProductBundle\Provider\WebsiteSearchTerm\SearchTermsIndexDataProvider
+        arguments:
+            - '@doctrine'

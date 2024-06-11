@@ -310,3 +310,26 @@ Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderDTO:
     properties:
         lineItems:
             - Valid: ~
+
+Oro\Bundle\WebsiteSearchTermBundle\Entity\SearchTerm:
+    properties:
+        productCollectionSegment:
+            -   Oro\Bundle\PlatformBundle\Validator\Constraints\When:
+                    expression: 'this.getModifyActionType() == "product_collection"'
+                    constraints:
+                        -   NotBlank: ~
+                    groups:
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_create
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_update
+        redirectProduct:
+            -   Oro\Bundle\PlatformBundle\Validator\Constraints\When:
+                    expression: 'this.getRedirectActionType() == "product"'
+                    constraints:
+                        -   NotBlank: ~
+                    groups:
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_create
+                        # Used in \Oro\Bundle\WebsiteSearchTermBundle\Controller\SearchTermController
+                        - website_search_term_update

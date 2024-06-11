@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional\Command\Cron;
+namespace Oro\Bundle\WebsiteSearchSuggestionBundle\Tests\Functional\Command\Cron;
 
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;

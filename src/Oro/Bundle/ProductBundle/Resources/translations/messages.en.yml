@@ -1203,6 +1203,20 @@ oro:
             sort_products:
                 dialog:
                     title: 'Sort products in {{ segment }} product collection'
+    websitesearchterm:
+        searchterm:
+            redirect_product.label: Product
+            product_collection_segment.label: Product Collection
+            redirect_action_type.choices.product.label: Product
+            modify_action_type.choices.product_collection.label: Product Collection
+            grid:
+                action_details:
+                    redirect_product: 'Redirect to product: <a href="{{ product_url }}" target="_blank">{{ product_name }}</a>'
+                    product_collection: 'Show product collection: <a href="{{ product_collection_url }}" target="_blank">{{ product_collection_name }}</a>'
+
+            btn:
+                run_original_search: Run Original Search
+                run_original_search_placeholder: 'Run original search for: {{ placeholder }}'
 
     feature:
         quick_add_import_help_widget:

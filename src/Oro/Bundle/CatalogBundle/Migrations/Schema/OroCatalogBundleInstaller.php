@@ -67,7 +67,7 @@ class OroCatalogBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_21';
+        return 'v1_21_1';
     }
 
     /**
@@ -123,6 +123,7 @@ class OroCatalogBundleInstaller implements
         $this->addContentVariantTypes($schema);
 
         $this->createProductCategorySortOrder($schema);
+        $this->addCategoryToSearchTermTable($schema);
     }
 
     /**
@@ -511,6 +512,32 @@ class OroCatalogBundleInstaller implements
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'on_delete' => 'CASCADE',
                 ],
+                'form' => ['is_enabled' => false],
+            ]
+        );
+    }
+
+    private function addCategoryToSearchTermTable(Schema $schema)
+    {
+        $owningSideTable = $schema->getTable('oro_website_search_search_term');
+        $inverseSideTable = $schema->getTable('oro_catalog_category');
+
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $owningSideTable,
+            'redirectCategory',
+            $inverseSideTable,
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'SET NULL',
+                ],
+                'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+                'view' => ['is_displayable' => false],
                 'form' => ['is_enabled' => false],
             ]
         );

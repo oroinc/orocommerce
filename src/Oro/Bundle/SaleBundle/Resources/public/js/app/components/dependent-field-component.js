@@ -133,10 +133,12 @@ define(function(require) {
          * @returns {boolean}
          */
         evaluateCondition: function() {
-            let condition = this.evaluateDisjunction(this.getShowIf());
+            const showIf = this.getShowIf();
+            const hideIf = this.getHideIf();
+            let condition = typeof showIf !== 'undefined' ? this.evaluateDisjunction(showIf) : true;
 
             // Evaluate hide condition only if it is specified.
-            if (this.getHideIf()) {
+            if (typeof hideIf !== 'undefined') {
                 condition = condition && !this.evaluateDisjunction(this.getHideIf());
             }
 

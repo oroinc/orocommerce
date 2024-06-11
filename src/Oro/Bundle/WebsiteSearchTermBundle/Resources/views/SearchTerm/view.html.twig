@@ -1,0 +1,115 @@
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroScope/macros.html.twig' as scope %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
+{% import '@OroWebsiteSearchTerm/SearchTerm/macros.html.twig' as searchTerm %}
+
+{%- if entity.phrases|length > 100 %}
+    {%- set entityTitle = entity.phrases|slice(0, 97) ~ '...' %}
+{%- else %}
+    {%- set entityTitle = entity.phrases %}
+{%- endif %}
+
+{%- set entityTitle = entityTitle|oro_format_search_term_phrases(', ') %}
+
+{% oro_title_set({params : {"%title%": entityTitle, '%entityName%': 'oro.websitesearchterm.searchterm.entity_label'|trans} }) %}
+
+{% block pageHeader %}
+    {%- set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('oro_website_search_term_index'),
+        'indexLabel': 'oro.websitesearchterm.searchterm.entity_plural_label'|trans,
+        'entityTitle': entityTitle
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {%- set actionSubBlocks = {
+        'actionType': UI.renderProperty('oro.websitesearchterm.searchterm.action_type.label'|trans, ('oro.websitesearchterm.searchterm.action_type.choices.' ~ entity.actionType ~ '.label')|trans)
+    } %}
+
+    {%- if entity.actionType == 'modify' %}
+        {%- set actionSubBlocks = actionSubBlocks|merge({
+            'modifyActionType': UI.renderProperty('oro.websitesearchterm.searchterm.modify_action_type.label'|trans, ('oro.websitesearchterm.searchterm.modify_action_type.choices.' ~ entity.modifyActionType ~ '.label')|trans)
+        }) %}
+    {%- elseif entity.actionType == 'redirect' %}
+        {%- set actionSubBlocks = actionSubBlocks|merge({
+            'redirectActionType': UI.renderProperty('oro.websitesearchterm.searchterm.redirect_action_type.label'|trans, ('oro.websitesearchterm.searchterm.redirect_action_type.choices.' ~ entity.redirectActionType ~ '.label')|trans)
+        }) %}
+
+        {%- if entity.redirectActionType == 'uri' %}
+            {%- if entity.redirectUri|length > 100 %}
+                {%- set redirectUriTitle = entity.redirectUri|slice(0, 97) ~ '...' %}
+            {%- else %}
+                {%- set redirectUriTitle = entity.redirectUri %}
+            {%- endif %}
+            {%- set actionSubBlocks = actionSubBlocks|merge({
+                'redirectUri': UI.renderHtmlProperty(
+                    'oro.websitesearchterm.searchterm.redirect_uri.label'|trans,
+                    ('<a href="' ~ entity.redirectUri|escape('html_attr') ~ '">' ~ redirectUriTitle|escape ~ '</a>')|oro_html_sanitize
+                )
+            }) %}
+        {%- else %}
+            {%- set actionSubBlocks = actionSubBlocks|merge({
+                'redirect301': UI.renderProperty(
+                    'oro.websitesearchterm.searchterm.redirect301.label'|trans,
+                    entity.redirect301 ? 'Yes'|trans : 'No'|trans
+                )
+            }) %}
+        {%- endif %}
+    {%- endif %}
+
+    {%- set restrictionsSubBlock %}
+        {%- set extraData = [] %}
+        {%- set phrases = entity.phrases|oro_format_search_term_phrases %}
+        {%- for key, scope in entity.scopes %}
+            {%- set extraDataRow %}
+                {{ searchTerm.renderRunOriginSearchDropdown(phrases, scopeEntities, scope) }}
+            {%- endset %}
+            {%- set extraData = extraData|merge({(key): {'': extraDataRow}}) %}
+        {%- endfor %}
+        
+        {{ scope.renderRestrictionsViewGrid(scopeEntities, entity.scopes, extraData) }}
+    {% endset %}
+
+    {%- set dataBlocks = {
+        'general': {
+            'title': 'oro.websitesearchterm.searchterm.sections.general.label'|trans,
+            'class': 'active',
+            'subblocks': [
+                {
+                    'data': {
+                        'phrases': UI.renderHtmlProperty('oro.websitesearchterm.searchterm.phrases.label'|trans, UI.renderList(entity.phrases|oro_format_search_term_phrases)),
+                        'partialMatch': UI.renderProperty('oro.websitesearchterm.searchterm.partial_match.label'|trans, entity.partialMatch ? 'oro.websitesearchterm.searchterm.grid.partial_match.enabled'|trans : 'oro.websitesearchterm.searchterm.grid.partial_match.disabled'|trans),
+                        'additional': entityConfig.renderDynamicFields(entity)
+                    }
+                }
+            ]
+        },
+        'action': {
+            'title': 'oro.websitesearchterm.searchterm.sections.action.label'|trans,
+            'subblocks': [
+                {
+                    'data': actionSubBlocks
+                }
+            ]
+        },
+        'use_for': {
+            'title': 'oro.websitesearchterm.searchterm.sections.use_for.label'|trans,
+            'subblocks': [
+                {
+                    'data' : [restrictionsSubBlock]
+                }
+            ]
+        }
+    } %}
+
+    {%- set id = 'website-search-term-view' %}
+    {%- set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

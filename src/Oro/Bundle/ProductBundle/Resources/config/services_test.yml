@@ -58,3 +58,18 @@ services:
         decorates: oro_entity.tests.entity_name_resolver.data_loader
         arguments:
             - '@.inner'
+
+    oro_product.tests.provider.website_search_term.search_terms_by_product_collection_segments:
+        parent: oro_product.provider.website_search_term.search_terms_by_product_collection_segments
+        decorates: oro_product.provider.website_search_term.search_terms_by_product_collection_segments
+        public: true
+
+    oro_product.tests.provider.website_search_term.search_terms_index_data:
+        parent: oro_product.provider.website_search_term.search_terms_index_data
+        decorates: oro_product.provider.website_search_term.search_terms_index_data
+        public: true
+
+    oro_product.tests.provider.website_search_term.search_term_product_collection_segments:
+        parent: oro_product.provider.website_search_term.search_term_product_collection_segments
+        decorates: oro_product.provider.website_search_term.search_term_product_collection_segments
+        public: true

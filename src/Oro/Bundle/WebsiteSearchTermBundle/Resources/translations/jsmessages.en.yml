@@ -1,0 +1,5 @@
+oro:
+    websitesearchterm:
+        searchterm:
+            grid:
+                delete_success: Search Term has been deleted

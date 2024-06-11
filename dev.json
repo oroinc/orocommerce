@@ -112,6 +112,7 @@
             "Oro\\Bundle\\UPSBundle\\": "src/Oro/Bundle/UPSBundle",
             "Oro\\Bundle\\ValidationBundle\\": "src/Oro/Bundle/ValidationBundle",
             "Oro\\Bundle\\VisibilityBundle\\": "src/Oro/Bundle/VisibilityBundle",
+            "Oro\\Bundle\\WebsiteSearchTermBundle\\": "src/Oro/Bundle/WebsiteSearchTermBundle",
             "Oro\\Bundle\\WebCatalogBundle\\": "src/Oro/Bundle/WebCatalogBundle",
             "Oro\\Bundle\\WebsiteSearchBundle\\": "src/Oro/Bundle/WebsiteSearchBundle",
             "Oro\\Bundle\\WebsiteSearchSuggestionBundle\\": "src/Oro/Bundle/WebsiteSearchSuggestionBundle",

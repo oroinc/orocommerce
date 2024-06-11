@@ -1,0 +1,15 @@
+features:
+    oro_website_search_terms_management:
+        label: oro.websitesearchterm.feature.website_search_terms.label
+        description: oro.websitesearchterm.feature.website_search_terms.description
+        toggle: 'oro_website_search_term.enable_search_terms_management_feature'
+        routes:
+            - 'oro_website_search_term_create'
+            - 'oro_website_search_term_view'
+            - 'oro_website_search_term_update'
+            - 'oro_website_search_term_delete'
+            - 'oro_website_search_term_index'
+        entities:
+            - 'Oro\Bundle\WebsiteSearchTermBundle\Entity\SearchTerm'
+        navigation_items:
+            - 'application_menu.marketing_tab.oro_website_search_tab.oro_website_search_search_term'
