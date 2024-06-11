@@ -359,7 +359,7 @@ oro_behat_extension:
         About Page Image:
             selector:
                 type: xpath
-                locator: '//div[contains(@class, "cms-page")]//figcaption[contains(text(),"RV & Gear Seller")]/..//img'
+                locator: '//div[contains(@class, "cms-page")]//figcaption/p[contains(text(),"RV & GEAR SELLER")]/../..//img'
 
         External Mode Button:
             selector: 'span[title="Enable External Markup"]'
