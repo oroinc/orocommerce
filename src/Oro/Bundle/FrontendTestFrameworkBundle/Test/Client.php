@@ -4,7 +4,6 @@ namespace Oro\Bundle\FrontendTestFrameworkBundle\Test;
 
 use Oro\Bundle\TestFrameworkBundle\Test\Client as BaseClient;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Handle backend prefix for application with front store
