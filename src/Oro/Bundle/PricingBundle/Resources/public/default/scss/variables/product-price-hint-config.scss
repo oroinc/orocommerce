@@ -5,5 +5,6 @@ $product-price-hint-align-items: center !default;
 $product-price-hint-height: var(--btn-min-height, 44px) !default;
 
 $product-price-hint-prices-display: flex !default;
+$product-price-hint-prices-flex-wrap: wrap !default;
 $product-price-hint-prices-align-items: flex-end !default;
 $product-price-hint-prices-gap: spacing('sm') !default;
