@@ -7,20 +7,14 @@ use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 
 class CustomerStub extends Customer
 {
-    /**
-     * @var CustomerTaxCode
-     */
-    protected $taxCode;
+    private ?CustomerTaxCode $taxCode = null;
 
-    /**
-     * @return CustomerTaxCode|null
-     */
-    public function getTaxCode()
+    public function getTaxCode(): ?CustomerTaxCode
     {
         return $this->taxCode;
     }
 
-    public function setTaxCode(CustomerTaxCode $taxCode = null)
+    public function setTaxCode(CustomerTaxCode $taxCode = null): void
     {
         $this->taxCode = $taxCode;
     }

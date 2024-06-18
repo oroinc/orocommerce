@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\DataGrid\EventListener\SearchEventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchTermBundle\Event\SearchTermRedirectActionEvent;
 use Oro\Bundle\WebsiteSearchTermBundle\RedirectActionType\BasicRedirectActionHandler;
+use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,9 +20,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class CategorySearchTermRedirectActionEventListenerTest extends TestCase
 {
     private BasicRedirectActionHandler|MockObject $basicRedirectActionHandler;
-
     private UrlGeneratorInterface|MockObject $urlGenerator;
-
     private CategorySearchTermRedirectActionEventListener $listener;
 
     protected function setUp(): void
@@ -42,8 +41,7 @@ class CategorySearchTermRedirectActionEventListenerTest extends TestCase
         $requestEvent = $this->createMock(RequestEvent::class);
         $event = new SearchTermRedirectActionEvent(Product::class, $searchTerm, $requestEvent);
 
-        $requestEvent
-            ->expects(self::never())
+        $requestEvent->expects(self::never())
             ->method('setResponse');
 
         $this->listener->onRedirectAction($event);
@@ -58,8 +56,7 @@ class CategorySearchTermRedirectActionEventListenerTest extends TestCase
         $requestEvent = $this->createMock(RequestEvent::class);
         $event = new SearchTermRedirectActionEvent(Product::class, $searchTerm, $requestEvent);
 
-        $requestEvent
-            ->expects(self::never())
+        $requestEvent->expects(self::never())
             ->method('setResponse');
 
         $this->listener->onRedirectAction($event);
@@ -74,8 +71,7 @@ class CategorySearchTermRedirectActionEventListenerTest extends TestCase
         $requestEvent = $this->createMock(RequestEvent::class);
         $event = new SearchTermRedirectActionEvent(Product::class, $searchTerm, $requestEvent);
 
-        $requestEvent
-            ->expects(self::never())
+        $requestEvent->expects(self::never())
             ->method('setResponse');
 
         $this->listener->onRedirectAction($event);
@@ -83,8 +79,9 @@ class CategorySearchTermRedirectActionEventListenerTest extends TestCase
 
     public function testWhenHasRedirectCategory(): void
     {
-        $redirectCategory = (new CategoryStub())
-            ->setId(42);
+        $redirectCategory = new CategoryStub();
+        ReflectionUtil::setId($redirectCategory, 42);
+
         $searchTerm = (new SearchTermStub())
             ->setActionType('redirect')
             ->setRedirectActionType('category')
@@ -94,22 +91,19 @@ class CategorySearchTermRedirectActionEventListenerTest extends TestCase
         $event = new SearchTermRedirectActionEvent(Product::class, $searchTerm, $requestEvent);
 
         $categoryUrl = '/sample-page';
-        $this->urlGenerator
-            ->expects(self::once())
+        $this->urlGenerator->expects(self::once())
             ->method('generate')
             ->with('oro_product_frontend_product_index')
             ->willReturn($categoryUrl);
 
         $request = new Request();
         $request->query->set('search', 'sample_phrase');
-        $requestEvent
-            ->expects(self::once())
+        $requestEvent->expects(self::once())
             ->method('getRequest')
             ->willReturn($request);
 
         $response = new Response('category page content');
-        $this->basicRedirectActionHandler
-            ->expects(self::once())
+        $this->basicRedirectActionHandler->expects(self::once())
             ->method('getResponse')
             ->with(
                 $request,
@@ -126,8 +120,7 @@ class CategorySearchTermRedirectActionEventListenerTest extends TestCase
             )
             ->willReturn($response);
 
-        $requestEvent
-            ->expects(self::once())
+        $requestEvent->expects(self::once())
             ->method('setResponse')
             ->with($response);
 

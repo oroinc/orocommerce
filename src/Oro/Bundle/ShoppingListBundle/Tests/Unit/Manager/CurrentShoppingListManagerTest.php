@@ -7,7 +7,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -33,21 +32,13 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 class CurrentShoppingListManagerTest extends TestCase
 {
     private ShoppingListManager|MockObject $shoppingListManager;
-
     private GuestShoppingListManager|MockObject $guestShoppingListManager;
-
     private CacheItemPoolInterface|MockObject $cache;
-
     private CacheItemInterface|MockObject $cacheItem;
-
     private AclHelper|MockObject $aclHelper;
-
     private TokenAccessorInterface|MockObject $tokenAccessor;
-
     private ShoppingListRepository|MockObject $shoppingListRepository;
-
     private ConfigManager|MockObject $configManager;
-
     private CurrentShoppingListManager $currentShoppingListManager;
 
     protected function setUp(): void
@@ -967,8 +958,7 @@ class CurrentShoppingListManagerTest extends TestCase
     {
         $shoppingLists = [$this->getShoppingList(123)];
 
-        $customerUser = new CustomerUserStub();
-        $customerUser->setId(42);
+        $customerUser = $this->getCustomerUser(42);
 
         $this->tokenAccessor->expects(self::never())
             ->method('getUser');
@@ -993,8 +983,7 @@ class CurrentShoppingListManagerTest extends TestCase
         $sortCriteria = ['label' => 'ASC'];
         $shoppingLists = [$this->getShoppingList(123)];
 
-        $customerUser = new CustomerUserStub();
-        $customerUser->setId(42);
+        $customerUser = $this->getCustomerUser(42);
 
         $this->expectNoGuestShoppingLists();
 
