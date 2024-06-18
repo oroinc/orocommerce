@@ -648,6 +648,12 @@ oro_behat_extension:
                 type: xpath
                 locator: '//input[@name="routing[oro_cms___home_page][value]"]'
 
+        Theme Selector:
+            selector: '[id^="dropdown-theme-selector"]'
+
+        Theme Selector Dropdown:
+            selector: '[aria-labelledby^="dropdown-theme-selector"]'
+
         Search Term Additional Content Block Select Field:
             selector:
                 locator: '//select[@name="search_term[contentBlock]"]'

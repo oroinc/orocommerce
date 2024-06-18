@@ -4,6 +4,7 @@
 @ticket-BB-19940
 @ticket-BB-20744
 @ticket-BB-10466
+@ticket-BB-24178
 @waf-skip
 @automatically-ticket-tagged
 @fixture-OroCatalogBundle:categories.yml
@@ -39,6 +40,13 @@ Feature: Create product
     Then Page title equals to "Create Product - Products - Products"
     And I should see "Products / Products" in breadcrumbs
     And I should see "Type: Simple Product Family: Default Category: All Products / Retail Supplies"
+    And I should see a "Theme Selector" element
+    When I click "Theme Selector"
+    Then I should see a "Theme Selector Dropdown" element
+    And I should see "Refreshing Teal" in the "Theme Selector Dropdown" element
+    And I should not see "Blank Theme" in the "Theme Selector Dropdown" element
+    And I should not see "Optimized Theme" in the "Theme Selector Dropdown" element
+    And I click on empty space
 
   Scenario: Finalizing product creation
     Given fill "Create Product Form" with:
