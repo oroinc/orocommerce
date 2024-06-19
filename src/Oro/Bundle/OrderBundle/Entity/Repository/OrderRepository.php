@@ -315,15 +315,23 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
             $scaleType
         );
 
-        $currencyExpression = match ($amountType) {
-            self::AMOUNT_TYPE_SUBTOTAL_WITH_DISCOUNT, self::AMOUNT_TYPE_SUBTOTAL =>
-            $salesOrdersDataQueryBuilder->expr()->eq('o.subtotalCurrency', ':currency'),
-            self::AMOUNT_TYPE_TOTAL => $salesOrdersDataQueryBuilder->expr()->eq('o.totalCurrency', ':currency'),
-        };
-
-        $salesOrdersDataQueryBuilder
-            ->andWhere($currencyExpression)
-            ->setParameter('currency', $currency);
+        switch ($amountType) {
+            case self::AMOUNT_TYPE_SUBTOTAL_WITH_DISCOUNT:
+            case self::AMOUNT_TYPE_SUBTOTAL:
+                $salesOrdersDataQueryBuilder
+                    ->andWhere(
+                        $salesOrdersDataQueryBuilder->expr()->eq('o.subtotalCurrency', ':currency')
+                    )
+                    ->setParameter('currency', $currency);
+                break;
+            case self::AMOUNT_TYPE_TOTAL:
+                $salesOrdersDataQueryBuilder
+                    ->andWhere(
+                        $salesOrdersDataQueryBuilder->expr()->eq('o.totalCurrency', ':currency')
+                    )
+                    ->setParameter('currency', $currency);
+                break;
+        }
 
         return $salesOrdersDataQueryBuilder;
     }
