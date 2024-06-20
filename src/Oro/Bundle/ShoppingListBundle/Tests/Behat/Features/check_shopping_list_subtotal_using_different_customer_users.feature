@@ -84,7 +84,7 @@ Feature: Check shopping list subtotal using different customer users
     When I click "Shopping List" on shopping list widget
     Then should see "Subtotal $90.00"
     And should see "Discount -$9.00"
-    And should see "Total $81.00"
+    And should see "Total: $81.00"
 
   Scenario: View Shopping List from headoffice customer
     Given I proceed as the CustomerHeadoffice
@@ -98,7 +98,7 @@ Feature: Check shopping list subtotal using different customer users
     When I click "Shopping List" on shopping list widget
     Then I should see "Subtotal $50.00"
     And should see "Discount -$5.00"
-    And should see "Total $45.00"
+    And should see "Total: $45.00"
 
     When I open shopping list widget
     # $50.00 because cache for AmandaRCole created.
@@ -121,7 +121,7 @@ Feature: Check shopping list subtotal using different customer users
     When I click "Shopping List" on shopping list widget
     Then I should see "Subtotal $25.00"
     And should see "Discount -$2.50"
-    And should see "Total $22.50"
+    And should see "Total: $22.50"
     When I open shopping list widget
     # 25.00 because cache for AmandaRCole created.
     Then I should see "1 item | $25.00"
@@ -164,7 +164,7 @@ Feature: Check shopping list subtotal using different customer users
     When I click "Shopping List" on shopping list widget
     Then I should see "Subtotal $40.00"
     And should see "Discount -$4.00"
-    And should see "Total $36.00"
+    And should see "Total: $36.00"
 
   Scenario: Check subtotal in shopping list widget from headoffice customer
     Given I proceed as the CustomerHeadoffice
@@ -177,7 +177,7 @@ Feature: Check shopping list subtotal using different customer users
     When I click "Shopping List" on shopping list widget
     Then I should see "Subtotal $25.00"
     And should see "Discount -$2.50"
-    And should see "Total $22.50"
+    And should see "Total: $22.50"
     When I open shopping list widget
     # $25.00 because cache for AmandaRCole created.
     Then I should see "1 item | $25.00"

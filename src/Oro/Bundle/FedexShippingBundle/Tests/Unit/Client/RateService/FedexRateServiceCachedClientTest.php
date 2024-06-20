@@ -21,6 +21,11 @@ class FedexRateServiceCachedClientTest extends TestCase
     private $rateServiceClient;
 
     /**
+     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit\Framework\MockObject\MockObject
+     */
+    private $restRateServiceClient;
+
+    /**
      * @var FedexResponseCacheInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $cache;
@@ -38,100 +43,102 @@ class FedexRateServiceCachedClientTest extends TestCase
     protected function setUp(): void
     {
         $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
+        $this->restRateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
         $this->cache = $this->createMock(FedexResponseCacheInterface::class);
         $this->cacheKeyFactory = $this->createMock(FedexResponseCacheKeyFactoryInterface::class);
 
         $this->client = new FedexRateServiceCachedClient(
+            $this->restRateServiceClient,
             $this->rateServiceClient,
             $this->cache,
             $this->cacheKeyFactory
         );
     }
 
-    public function testSendCacheHasResponse()
+    public function testSendCacheHasResponse(): void
     {
-        $request = new FedexRequest();
+        $request = new FedexRequest('test/uri');
         $settings = new FedexIntegrationSettings();
         $cacheKey = new FedexResponseCacheKey($request, $settings);
         $response = $this->createMock(FedexRateServiceResponseInterface::class);
 
         $this->cacheKeyFactory
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('create')
             ->with($request, $settings)
             ->willReturn($cacheKey);
 
         $this->cache
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('get')
             ->with($cacheKey)
             ->willReturn($response);
         $this->cache
-            ->expects(static::never())
+            ->expects(self::never())
             ->method('set');
 
-        static::assertSame($response, $this->client->send($request, $settings));
+        self::assertSame($response, $this->client->send($request, $settings));
     }
 
-    public function testSendResponseNotSuccessful()
+    public function testSendResponseNotSuccessful(): void
     {
-        $request = new FedexRequest();
+        $request = new FedexRequest('test/uri');
         $settings = new FedexIntegrationSettings();
         $cacheKey = new FedexResponseCacheKey($request, $settings);
-        $response = new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_ERROR, 0);
+        $response = new FedexRateServiceResponse(400);
 
         $this->cacheKeyFactory
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('create')
             ->with($request, $settings)
             ->willReturn($cacheKey);
 
         $this->cache
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('get')
             ->with($cacheKey)
             ->willReturn(null);
         $this->cache
-            ->expects(static::never())
+            ->expects(self::never())
             ->method('set');
 
         $this->rateServiceClient
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('send')
             ->willReturn($response);
 
-        static::assertSame($response, $this->client->send($request, $settings));
+        self::assertSame($response, $this->client->send($request, $settings));
     }
 
-    public function testSendResponseSuccessful()
+    public function testSendResponseSuccessful(): void
     {
-        $request = new FedexRequest();
+        $request = new FedexRequest('test/uri');
         $settings = new FedexIntegrationSettings();
         $cacheKey = new FedexResponseCacheKey($request, $settings);
-        $response = new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_SUCCESS, 0);
+        $response = new FedexRateServiceResponse();
 
         $this->cacheKeyFactory
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('create')
             ->with($request, $settings)
             ->willReturn($cacheKey);
 
         $this->cache
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('get')
             ->with($cacheKey)
             ->willReturn(null);
         $this->cache
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('set')
             ->with($cacheKey, $response);
 
         $this->rateServiceClient
-            ->expects(static::once())
+            ->expects(self::once())
             ->method('send')
             ->with($request, $settings)
             ->willReturn($response);
 
-        static::assertSame($response, $this->client->send($request, $settings));
+        self::assertSame($response, $this->client->send($request, $settings));
     }
 }

@@ -400,3 +400,8 @@ services:
             - ['setSlugQueryBuilderModifier', ['@oro_redirect.slug_query_builder_modifier']]
         tags:
             - { name: doctrine.repository_service }
+
+    oro_redirect.factory.sub_request:
+        class: Oro\Bundle\RedirectBundle\Factory\SubRequestFactory
+        arguments:
+            - '@router'

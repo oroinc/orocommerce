@@ -64,7 +64,7 @@ class LoadCategoryVisibilityResolvedData extends AbstractFixture implements Depe
         $categoryVisibility = (new CategoryVisibilityResolved($category))
             ->setVisibility($data['visibility']);
 
-//        $this->setReference($data['reference'], $categoryVisibility);
+        //        $this->setReference($data['reference'], $categoryVisibility);
 
         $this->em->persist($categoryVisibility);
     }
@@ -77,7 +77,7 @@ class LoadCategoryVisibilityResolvedData extends AbstractFixture implements Depe
             $customerGroupCategoryVisibility = (new CustomerGroupCategoryVisibilityResolved($category, $customerGroup))
                 ->setVisibility($data['visibility']);
 
-//            $this->setReference($data['reference'], $customerGroupCategoryVisibility);
+            //            $this->setReference($data['reference'], $customerGroupCategoryVisibility);
 
             $this->em->persist($customerGroupCategoryVisibility);
         }
@@ -91,7 +91,7 @@ class LoadCategoryVisibilityResolvedData extends AbstractFixture implements Depe
             $customerCategoryVisibility = (new CustomerCategoryVisibilityResolved($category, $customer))
                 ->setVisibility($data['visibility']);
 
-//            $this->setReference($data['reference'], $customerCategoryVisibility);
+            //            $this->setReference($data['reference'], $customerCategoryVisibility);
 
             $this->em->persist($customerCategoryVisibility);
         }

@@ -2,6 +2,9 @@
 
 $checkout-navigation-title-color: get-color('text', 'disabled') !default;
 $checkout-navigation-icon-size: 26px !default;
+$checkout-navigation-icon-background-color: get-color('neutral', 'grey2') !default;
+$checkout-navigation-icon-color: get-color('text', 'disabled') !default;
+$checkout-navigation-icon-size: 26px !default;
 $checkout-navigation-current-color: get-color('text', 'primary') !default;
 $checkout-navigation-icon-current-background-color: get-color('secondary', 'c1') !default;
 $checkout-navigation-icon-font-size: 14px !default;

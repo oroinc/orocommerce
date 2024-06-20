@@ -283,12 +283,12 @@ final class ContentBlockBuilderTest extends TestCase
             ->with(self::callback(function (CallbackTransformer $callbackTransformer) {
                 self::assertEquals([], $callbackTransformer->reverseTransform([]));
                 self::assertEquals(
-                    ['blockName'=> 'identifier'],
-                    $callbackTransformer->reverseTransform(['blockName'=> 'identifier'])
+                    ['blockName' => 'identifier'],
+                    $callbackTransformer->reverseTransform(['blockName' => 'identifier'])
                 );
                 self::assertEquals(
-                    ['blockName'=> 'identifier'],
-                    $callbackTransformer->reverseTransform(['blockName'=> new \stdClass()])
+                    ['blockName' => 'identifier'],
+                    $callbackTransformer->reverseTransform(['blockName' => new \stdClass()])
                 );
 
                 return true;
@@ -334,12 +334,12 @@ final class ContentBlockBuilderTest extends TestCase
             ->with(self::callback(function (CallbackTransformer $callbackTransformer) {
                 self::assertEquals([], $callbackTransformer->transform([]));
                 self::assertEquals(
-                    ['blockName'=> new \stdClass()],
-                    $callbackTransformer->transform(['blockName'=> new \stdClass()])
+                    ['blockName' => new \stdClass()],
+                    $callbackTransformer->transform(['blockName' => new \stdClass()])
                 );
                 self::assertEquals(
-                    ['blockName'=> new \stdClass()],
-                    $callbackTransformer->transform(['blockName'=> 'identifier'])
+                    ['blockName' => new \stdClass()],
+                    $callbackTransformer->transform(['blockName' => 'identifier'])
                 );
 
                 return true;

@@ -12,6 +12,8 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
     private const UPS_API_USERNAME = 'user';
     private const UPS_API_PASSWORD = 'pass';
     private const UPS_API_KEY = 'key';
+    private const UPS_OAUTH_CLIENT_ID = null;
+    private const UPS_OAUTH_CLIENT_SECRET = null;
     private const WEIGHT_UNIT_CODE = 'LBS';
     private const WEIGHT = '1';
     private const CUSTOMER_CONTEXT = 'sample context';
@@ -41,6 +43,8 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
             self::UPS_API_USERNAME,
             self::UPS_API_PASSWORD,
             self::UPS_API_KEY,
+            self::UPS_OAUTH_CLIENT_ID,
+            self::UPS_OAUTH_CLIENT_SECRET,
             $this->address,
             $this->address,
             $this->pickupDate
@@ -60,6 +64,8 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
             self::UPS_API_USERNAME,
             self::UPS_API_PASSWORD,
             self::UPS_API_KEY,
+            self::UPS_OAUTH_CLIENT_ID,
+            self::UPS_OAUTH_CLIENT_SECRET,
             $this->address,
             $this->address,
             $this->pickupDate

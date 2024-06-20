@@ -13,24 +13,17 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
  */
 class PromotionSubtotalProviderDecorator implements SubtotalProviderInterface
 {
-    private SubtotalProviderInterface $subtotalProvider;
-    private RoundingServiceInterface $rounding;
-    private SplitEntitiesProviderInterface $splitEntitiesProvider;
-
     public function __construct(
-        SubtotalProviderInterface $subtotalProvider,
-        RoundingServiceInterface $rounding,
-        SplitEntitiesProviderInterface $splitEntitiesProvider
+        private SubtotalProviderInterface $subtotalProvider,
+        private RoundingServiceInterface $rounding,
+        private SplitEntitiesProviderInterface $splitEntitiesProvider
     ) {
-        $this->subtotalProvider = $subtotalProvider;
-        $this->rounding = $rounding;
-        $this->splitEntitiesProvider = $splitEntitiesProvider;
     }
 
     /**
      * Subtotal for Orders with subOrders should be calculated as the sum of its subOrders subtotals.
      *
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSubtotal($entity)
     {
@@ -73,9 +66,9 @@ class PromotionSubtotalProviderDecorator implements SubtotalProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function isSupported($entity)
+    public function isSupported($entity): bool
     {
         return $this->subtotalProvider->isSupported($entity);
     }

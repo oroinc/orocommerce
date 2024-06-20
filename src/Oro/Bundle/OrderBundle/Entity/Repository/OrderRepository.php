@@ -169,11 +169,29 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         bool $isIncludeSubOrders,
         string $scaleType
     ): array {
-        $qb = $this->createQueryBuilder('o');
-        $qb->select('COUNT(o.id) AS number');
+        $qb = $this->getSalesOrdersNumberQueryBuilder(
+            $dateTimeFrom,
+            $dateTimeTo,
+            $includedOrderStatuses,
+            $isIncludeSubOrders,
+            $scaleType
+        );
 
-        return $this->getSalesOrdersData(
-            $qb,
+        return $this->aclHelper->apply($qb)->getResult();
+    }
+
+    public function getSalesOrdersNumberQueryBuilder(
+        \DateTime $dateTimeFrom,
+        \DateTime $dateTimeTo,
+        array $includedOrderStatuses,
+        bool $isIncludeSubOrders,
+        string $scaleType
+    ): QueryBuilder {
+        $queryBuilder = $this->createQueryBuilder('o');
+        $queryBuilder->select('COUNT(o.id) AS number');
+
+        return $this->getSalesOrdersDataQueryBuilder(
+            $queryBuilder,
             $dateTimeFrom,
             $dateTimeTo,
             $includedOrderStatuses,
@@ -182,32 +200,14 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         );
     }
 
-    /**
-     * @param QueryBuilder $queryBuilder Query builder with selection expressions
-     * @param \DateTime $dateTimeFrom
-     * @param \DateTime $dateTimeTo
-     * @param array $includedOrderStatuses
-     * @param bool $isIncludeSubOrders
-     * @param string $scaleType
-     *
-     * @return array<array{
-     *     value: string,
-     *     yearCreated?: string,
-     *     monthCreated?: string,
-     *     weekCreated?: string,
-     *     dayCreated?: string,
-     *     dateCreated?: string,
-     *     hourCreated?: string
-     * }>
-     */
-    public function getSalesOrdersData(
+    public function getSalesOrdersDataQueryBuilder(
         QueryBuilder $queryBuilder,
         \DateTime $dateTimeFrom,
         \DateTime $dateTimeTo,
         array $includedOrderStatuses,
         bool $isIncludeSubOrders,
         string $scaleType
-    ): array {
+    ): QueryBuilder {
         $dateTimeFrom = clone $dateTimeFrom;
         $dateTimeTo = clone $dateTimeTo;
 
@@ -226,7 +226,7 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
             ->setParameter('to', $dateTimeTo, Types::DATETIME_MUTABLE)
             ->setParameter('from', $dateTimeFrom, Types::DATETIME_MUTABLE);
 
-        return $this->aclHelper->apply($queryBuilder)->getResult();
+        return $queryBuilder;
     }
 
     /**
@@ -235,6 +235,7 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
      * @param array $includedOrderStatuses
      * @param bool $isIncludeSubOrders
      * @param string $amountType
+     * @param string $currency
      * @param string $scaleType
      *
      * @return array<array{
@@ -253,8 +254,31 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         array $includedOrderStatuses,
         bool $isIncludeSubOrders,
         string $amountType,
+        string $currency,
         string $scaleType
     ): array {
+        $queryBuilder = $this->getSalesOrdersVolumeQueryBuilder(
+            $dateTimeFrom,
+            $dateTimeTo,
+            $includedOrderStatuses,
+            $isIncludeSubOrders,
+            $amountType,
+            $currency,
+            $scaleType
+        );
+
+        return $this->aclHelper->apply($queryBuilder)->getResult();
+    }
+
+    public function getSalesOrdersVolumeQueryBuilder(
+        \DateTime $dateTimeFrom,
+        \DateTime $dateTimeTo,
+        array $includedOrderStatuses,
+        bool $isIncludeSubOrders,
+        string $amountType,
+        string $currency,
+        string $scaleType
+    ): QueryBuilder {
         $qb = $this->createQueryBuilder('o');
         switch ($amountType) {
             case self::AMOUNT_TYPE_SUBTOTAL_WITH_DISCOUNT:
@@ -282,7 +306,7 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
                 throw new \InvalidArgumentException(sprintf('Unsupported amount type "%s"', $amountType));
         }
 
-        return $this->getSalesOrdersData(
+        $salesOrdersDataQueryBuilder = $this->getSalesOrdersDataQueryBuilder(
             $qb,
             $dateTimeFrom,
             $dateTimeTo,
@@ -290,5 +314,25 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
             $isIncludeSubOrders,
             $scaleType
         );
+
+        switch ($amountType) {
+            case self::AMOUNT_TYPE_SUBTOTAL_WITH_DISCOUNT:
+            case self::AMOUNT_TYPE_SUBTOTAL:
+                $salesOrdersDataQueryBuilder
+                    ->andWhere(
+                        $salesOrdersDataQueryBuilder->expr()->eq('o.subtotalCurrency', ':currency')
+                    )
+                    ->setParameter('currency', $currency);
+                break;
+            case self::AMOUNT_TYPE_TOTAL:
+                $salesOrdersDataQueryBuilder
+                    ->andWhere(
+                        $salesOrdersDataQueryBuilder->expr()->eq('o.totalCurrency', ':currency')
+                    )
+                    ->setParameter('currency', $currency);
+                break;
+        }
+
+        return $salesOrdersDataQueryBuilder;
     }
 }

@@ -51,10 +51,10 @@ Feature: WYSIWYG image type component
       | picture | 1 |
       | image   | 1 |
     And I enter to edit mode "SelectedComponent" component in canvas
-    And I filter "Title" as Contains "about_1384"
-    And I click on about_1384.jpg in grid
+    And I filter "Title" as Contains "about_1_1920"
+    And I click on about_1_1920.jpg in grid
     And I check wysiwyg content in "CMS Page Content":
-      | 5 | <img alt="about_1384.jpg"/> |
+      | 5 | <img alt="about_1_1920.jpg"/> |
 
   Scenario: Copy/Move/Delete image
     When I add new component "2 Columns" from panel to editor area
@@ -72,7 +72,7 @@ Feature: WYSIWYG image type component
       | 10 | <source type="image/webp"/> |
       | 11 | <source type="image/jpeg"/> |
       | 12 | <source type="image/jpeg"/> |
-      | 13 | <img alt="about_1384.jpg"/> |
+      | 13 | <img alt="about_1_1920.jpg"/> |
       | 14 | </picture>                  |
       | 15 | </div>                      |
     And I select component in canvas by tree:
@@ -89,6 +89,7 @@ Feature: WYSIWYG image type component
 
   Scenario: Cancel add image
     When I add new component "Image" from panel to editor area
+    And I wait for "UiDialog" element to appear
     And I close ui dialog
     Then I check wysiwyg content in "CMS Page Content":
       | 1 | <style> |
@@ -104,6 +105,7 @@ Feature: WYSIWYG image type component
 
   Scenario: Add style to image
     When I add new component "Image" from panel to editor area
+    And I wait for "UiDialog" element to appear
     And I filter "Title" as Contains "cat1.jpg"
     And I click on cat1.jpg in grid
     And I select component in canvas by tree:

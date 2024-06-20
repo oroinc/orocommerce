@@ -1132,6 +1132,11 @@ oro_behat_extension:
       options:
         mapping:
           Quantity: 'oro_product_frontend_line_item[quantity]'
+          Unit:
+            type: 'css'
+            locator: '[name="oro_product_frontend_line_item[unit]"]'
+            element: ProductUnitSelector
+
 
     Product Shopping List Dropdown:
       selector:
@@ -1482,12 +1487,12 @@ oro_behat_extension:
     Uploaded Product Image:
       selector:
         type: xpath
-        locator: '//img[contains (@src,"/media/cache/attachment")]'
+        locator: '//img[contains(@src,"/media/cache/attachment") and not(contains(@class, "product-view-line-form-image"))]'
 
     Empty Product Image:
       selector:
-       type: xpath
-       locator: '//img[contains (@src,"no_image.png")]'
+        type: xpath
+        locator: '//img[contains (@src,"no_image.png") and not(contains(@class, "product-view-line-form-image"))]'
 
     Unit Of Quantity:
       selector:
@@ -1750,7 +1755,7 @@ oro_behat_extension:
       selector: 'div.product-view'
 
     Product Details:
-      selector: 'div.product-view > div:nth-child(1)'
+      selector: '.product-view-microdata-container'
 
     SchemaOrg SKU:
       selector: '[itemprop="sku"]'
@@ -1995,6 +2000,42 @@ oro_behat_extension:
         locator: '//div[contains(@class,"navbar navbar-static")]/nav/a'
         type: xpath
 
+    Search Term With Target Product Form:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      selector: 'form[name="search_term"]'
+      options:
+        mapping:
+          Product:
+            type: 'xpath'
+            locator: '//input[@name="search_term[redirectProduct]"]'
+            element: Select2Entity
+          Restriction 1 Website:
+            type: 'css'
+            locator: 'div[id^="s2id_search_term_scopes_0_website-uid-"]'
+            element: Select2Entity
+          Restriction 2 Website:
+            type: 'css'
+            locator: 'div[id^="s2id_search_term_scopes_1_website-uid-"]'
+            element: Select2Entity
+
+    Search Term With Product Collection Form:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      selector: 'form[name="search_term"]'
+      options:
+        mapping:
+          Product Collection:
+            type: 'xpath'
+            locator: '//select[@name="search_term[productCollectionSegment]"]'
+            element: Select2Entity
+          Restriction 1 Website:
+            type: 'css'
+            locator: 'div[id^="s2id_search_term_scopes_0_website-uid-"]'
+            element: Select2Entity
+          Restriction 2 Website:
+            type: 'css'
+            locator: 'div[id^="s2id_search_term_scopes_1_website-uid-"]'
+            element: Select2Entity
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
@@ -2004,6 +2045,7 @@ oro_behat_extension:
     # Revert by OPI-52
     OroProductBundle:
       contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
         - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
         - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
         - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
@@ -2048,6 +2090,7 @@ oro_behat_extension:
         - '@OroProductBundle/Tests/Behat/Features/product-attributes'
         - '@OroProductBundle/Tests/Behat/Features/frontend-product-export'
         - '@OroProductBundle/Tests/Behat/Features/product-kit'
+        - '@OroProductBundle/Tests/Behat/Features/search-terms'
     OroProductBundleRelatedItems:
       contexts:
         - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext

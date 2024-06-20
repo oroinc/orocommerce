@@ -2,15 +2,12 @@
 
 namespace Oro\Bundle\UPSBundle\Client\Request;
 
+/**
+ * Interface for UPS Client Request
+ */
 interface UpsClientRequestInterface
 {
-    /**
-     * @return string
-     */
-    public function getUrl();
+    public function getUrl(): ?string;
 
-    /**
-     * @return array
-     */
-    public function getRequestData();
+    public function getRequestData(): ?array;
 }

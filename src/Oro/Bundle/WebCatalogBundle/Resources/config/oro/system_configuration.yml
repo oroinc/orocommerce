@@ -1,4 +1,11 @@
 system_configuration:
+    groups:
+        catalog_search:
+            title: oro.webcatalog.system_configuration.groups.catalog_search.title
+            icon: fa-search
+        website_search_special_pages:
+            title: oro.webcatalog.system_configuration.groups.website_search_terms.special_pages.title
+            priority: -10
     fields:
         oro_web_catalog.web_catalog:
             ui_only: true
@@ -27,6 +34,15 @@ system_configuration:
             options:
                 label: oro.webcatalog.system_configuration.fields.enable_web_catalog_canonical_url.label
                 tooltip: oro.webcatalog.system_configuration.fields.enable_web_catalog_canonical_url.tooltip
+        oro_web_catalog.empty_search_result_page:
+            data_type: array
+            type: Oro\Bundle\WebCatalogBundle\Form\Type\EmptySearchResultPageSelectSystemConfigType
+            options:
+                label: oro.webcatalog.system_configuration.fields.empty_search_result_page.label
+                tooltip: oro.webcatalog.system_configuration.fields.empty_search_result_page.tooltip
+                attr:
+                    'data-page-component-module': 'oroui/js/app/components/view-component'
+                    'data-page-component-options': '{"view": "orowebcatalog/js/app/views/content-node-from-webcatalog-view","listenedFieldName":"website_search_terms[oro_web_catalog___empty_search_result_page][value][webCatalog]","triggeredFieldName":"website_search_terms[oro_web_catalog___empty_search_result_page][value][contentNode]"}'
 
     tree:
         system_configuration:
@@ -43,3 +59,12 @@ system_configuration:
                                     oro_redirect_canonical_urls:
                                         children:
                                             - oro_web_catalog.enable_web_catalog_canonical_url
+            commerce:
+                children:
+                    search:
+                        children:
+                            website_search_terms:
+                                children:
+                                    website_search_special_pages:
+                                        children:
+                                            - oro_web_catalog.empty_search_result_page

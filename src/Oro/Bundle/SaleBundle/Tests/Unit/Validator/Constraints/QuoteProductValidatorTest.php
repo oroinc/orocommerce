@@ -84,7 +84,7 @@ class QuoteProductValidatorTest extends ConstraintValidatorTestCase
             ],
             'filled product replacement' => [
                 'value' => $item6,
-                'valid'=> true,
+                'valid' => true,
                 'fieldPath' => 'product',
             ],
         ];

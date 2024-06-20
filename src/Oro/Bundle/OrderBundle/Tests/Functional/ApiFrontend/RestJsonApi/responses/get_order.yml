@@ -61,3 +61,7 @@ data:
             data:
                 type: customers
                 id: '<toString(@customer->id)>'
+        status:
+            data:
+                type: orderstatuses
+                id: archived

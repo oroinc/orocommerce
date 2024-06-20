@@ -47,7 +47,7 @@ class TimeInTransitResultFactory implements TimeInTransitResultFactoryInterface
         // Parsing transit response data is important, so we should fire an exception if some elements are not found.
         try {
             // Define a shortcut to make lines shorter.
-            $timeInTransitResponse =& $data['TimeInTransitResponse'];
+            $timeInTransitResponse = & $data['TimeInTransitResponse'];
 
             // A "1" normally indicates a successful response, whereas a "0" indicates a Transient or Hard error.
             $responseStatusCode = (string) $timeInTransitResponse['Response']['ResponseStatus']['Code'];
@@ -61,7 +61,7 @@ class TimeInTransitResultFactory implements TimeInTransitResultFactoryInterface
             }
 
             foreach ($serviceSummary as $serviceTimeInTransit) {
-                $estimatedArrival =& $serviceTimeInTransit['EstimatedArrival'];
+                $estimatedArrival = & $serviceTimeInTransit['EstimatedArrival'];
 
                 $arrivalDate = $this
                     ->parseArrivalDateTime($estimatedArrival['Arrival']['Date'], $estimatedArrival['Arrival']['Time']);

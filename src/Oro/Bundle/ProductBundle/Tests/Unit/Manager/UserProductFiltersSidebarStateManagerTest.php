@@ -7,12 +7,12 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Manager\UserProductFiltersSidebarStateManager;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Bundle\WebsiteBundle\Tests\Unit\Stub\WebsiteStub;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -25,17 +25,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestCase
 {
     private SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session;
-
-    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $managerRegistry;
-
+    private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $doctrine;
     private EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject $entityManager;
-
     private TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor;
-
     private WebsiteManager|\PHPUnit\Framework\MockObject\MockObject $websiteManager;
-
     private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
-
     private UserProductFiltersSidebarStateManager $sidebarStateManager;
 
     protected function setUp(): void
@@ -54,35 +48,47 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
 
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
 
-        $this->managerRegistry = $this->createMock(ManagerRegistry::class);
-        $this->managerRegistry
-            ->expects(self::any())
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->doctrine->expects(self::any())
             ->method('getManagerForClass')
             ->with(CustomerUser::class)
             ->willReturn($this->entityManager);
 
         $this->sidebarStateManager = new UserProductFiltersSidebarStateManager(
             $requestStack,
-            $this->managerRegistry,
+            $this->doctrine,
             $this->tokenAccessor,
             $this->websiteManager,
             $this->configManager
         );
     }
 
+    private function getCustomerUser(int $id): CustomerUser
+    {
+        $customerUser = new CustomerUser();
+        ReflectionUtil::setId($customerUser, $id);
+
+        return $customerUser;
+    }
+
+    private function getWebsite(int $id): Website
+    {
+        $website = new Website();
+        ReflectionUtil::setId($website, $id);
+
+        return $website;
+    }
+
     public function testSetCurrentProductFiltersSidebarStateNoWebsite(): void
     {
-        $this->websiteManager
-            ->expects(self::once())
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn(null);
 
-        $this->tokenAccessor
-            ->expects(self::never())
+        $this->tokenAccessor->expects(self::never())
             ->method('getToken');
 
-        $this->session
-            ->expects(self::never())
+        $this->session->expects(self::never())
             ->method('get');
 
         $this->sidebarStateManager->setCurrentProductFiltersSidebarState(true);
@@ -93,24 +99,20 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
      */
     public function testSetCurrentProductFiltersSidebarStateForCustomerUserNoSettings(bool $isSidebarExpanded): void
     {
-        $website = new WebsiteStub(1);
-        $this->websiteManager
-            ->expects(self::once())
+        $website = $this->getWebsite(1);
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
-        $user = new CustomerUserStub(1);
+        $user = $this->getCustomerUser(1);
 
         self::assertNull($user->getWebsiteSettings($website));
 
         $token = $this->createMock(TokenInterface::class);
-        $token
-            ->expects(self::once())
+        $token->expects(self::once())
             ->method('getUser')
             ->willReturn($user);
-
-        $this->tokenAccessor
-            ->expects(self::once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
@@ -130,26 +132,22 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
      */
     public function testSetCurrentProductFiltersSidebarStateForCustomerUser(bool $isSidebarExpanded): void
     {
-        $website = new WebsiteStub(1);
-        $this->websiteManager
-            ->expects(self::once())
+        $website = $this->getWebsite(1);
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
         $userWebsiteSettings = new CustomerUserSettings($website);
-        $user = (new CustomerUserStub(1))
-            ->setWebsiteSettings($userWebsiteSettings);
+        $user = $this->getCustomerUser(1);
+        $user->setWebsiteSettings($userWebsiteSettings);
 
         self::assertNull($user->getWebsiteSettings($website)->isProductFiltersSidebarExpanded());
 
         $token = $this->createMock(TokenInterface::class);
-        $token
-            ->expects(self::once())
+        $token->expects(self::once())
             ->method('getUser')
             ->willReturn($user);
-
-        $this->tokenAccessor
-            ->expects(self::once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
@@ -166,37 +164,30 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
      */
     public function testSetCurrentProductFiltersSidebarStateForAnonNoSettings(bool $isSidebarExpanded): void
     {
-        $website = new WebsiteStub(1);
-        $this->websiteManager
-            ->expects(self::once())
+        $website = $this->getWebsite(1);
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
         $token = $this->createMock(TokenInterface::class);
-        $token
-            ->expects(self::once())
+        $token->expects(self::once())
             ->method('getUser')
             ->willReturn($this->createMock(UserInterface::class));
-
-        $this->tokenAccessor
-            ->expects(self::once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
-        $this->managerRegistry
-            ->expects(self::never())
+        $this->doctrine->expects(self::never())
             ->method('getManagerForClass');
 
-        $this->session
-            ->expects(self::once())
+        $this->session->expects(self::once())
             ->method('get')
             ->with(
                 'product_filters_sidebar_states_by_website',
                 []
             )
             ->willReturn([]);
-        $this->session
-            ->expects(self::once())
+        $this->session->expects(self::once())
             ->method('set')
             ->with(
                 'product_filters_sidebar_states_by_website',
@@ -213,40 +204,34 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
      */
     public function testSetCurrentProductFiltersSidebarStateForAnon(bool $isSidebarExpanded): void
     {
-        $website = new WebsiteStub(1);
-        $this->websiteManager
-            ->expects(self::once())
+        $website = $this->getWebsite(1);
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
         $token = $this->createMock(TokenInterface::class);
-        $token
-            ->expects(self::once())
+        $token->expects(self::once())
             ->method('getUser')
             ->willReturn($this->createMock(UserInterface::class));
 
-        $this->tokenAccessor
-            ->expects(self::once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
-        $this->managerRegistry
-            ->expects(self::never())
+        $this->doctrine->expects(self::never())
             ->method('getManagerForClass');
 
         $sessionProductFiltersSidebarStates = [
             $website->getId() => true,
         ];
-        $this->session
-            ->expects(self::once())
+        $this->session->expects(self::once())
             ->method('get')
             ->with(
                 'product_filters_sidebar_states_by_website',
                 []
             )
             ->willReturn($sessionProductFiltersSidebarStates);
-        $this->session
-            ->expects(self::once())
+        $this->session->expects(self::once())
             ->method('set')
             ->with(
                 'product_filters_sidebar_states_by_website',
@@ -263,12 +248,10 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
      */
     public function testIsProductFiltersSidebarExpandedNoWebsite(string $defaultState, bool $expectedResult): void
     {
-        $this->websiteManager
-            ->expects(self::once())
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn(null);
-        $this->configManager
-            ->expects(self::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with(
                 Configuration::getConfigKeyByName(Configuration::FILTERS_DISPLAY_SETTINGS_STATE),
@@ -286,13 +269,11 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
      */
     public function testIsProductFiltersSidebarExpandedCurrentWebsite(string $defaultState, bool $expectedResult): void
     {
-        $website = new WebsiteStub(1);
-        $this->websiteManager
-            ->expects(self::once())
+        $website = $this->getWebsite(1);
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
-        $this->configManager
-            ->expects(self::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with(
                 Configuration::getConfigKeyByName(Configuration::FILTERS_DISPLAY_SETTINGS_STATE),
@@ -310,13 +291,11 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
      */
     public function testIsProductFiltersSidebarExpandedWebsite(string $defaultState, bool $expectedResult): void
     {
-        $this->websiteManager
-            ->expects(self::never())
+        $this->websiteManager->expects(self::never())
             ->method('getCurrentWebsite');
 
-        $website = new WebsiteStub(1);
-        $this->configManager
-            ->expects(self::once())
+        $website = $this->getWebsite(1);
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with(
                 Configuration::getConfigKeyByName(Configuration::FILTERS_DISPLAY_SETTINGS_STATE),
@@ -336,29 +315,24 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
         string $defaultState,
         bool $expectedResult
     ): void {
-        $website = new WebsiteStub(1);
-        $this->websiteManager
-            ->expects(self::once())
+        $website = $this->getWebsite(1);
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
         $userWebsiteSettings = new CustomerUserSettings($website);
-        $user = (new CustomerUserStub(1))
-            ->setWebsiteSettings($userWebsiteSettings);
+        $user = $this->getCustomerUser(1);
+        $user->setWebsiteSettings($userWebsiteSettings);
 
         $token = $this->createMock(TokenInterface::class);
-        $token
-            ->expects(self::once())
+        $token->expects(self::once())
             ->method('getUser')
             ->willReturn($user);
-
-        $this->tokenAccessor
-            ->expects(self::once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
-        $this->configManager
-            ->expects(self::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with(
                 Configuration::getConfigKeyByName(Configuration::FILTERS_DISPLAY_SETTINGS_STATE),
@@ -378,25 +352,20 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
         string $defaultState,
         bool $expectedResult
     ): void {
-        $website = new WebsiteStub(1);
-        $this->websiteManager
-            ->expects(self::once())
+        $website = $this->getWebsite(1);
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
         $token = $this->createMock(TokenInterface::class);
-        $token
-            ->expects(self::once())
+        $token->expects(self::once())
             ->method('getUser')
             ->willReturn($this->createMock(UserInterface::class));
-
-        $this->tokenAccessor
-            ->expects(self::once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
-        $this->session
-            ->expects(self::once())
+        $this->session->expects(self::once())
             ->method('get')
             ->with(
                 'product_filters_sidebar_states_by_website',
@@ -404,8 +373,7 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
             )
             ->willReturn([]);
 
-        $this->configManager
-            ->expects(self::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with(
                 Configuration::getConfigKeyByName(Configuration::FILTERS_DISPLAY_SETTINGS_STATE),
@@ -445,31 +413,26 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
      */
     public function testIsProductFiltersSidebarExpandedForCustomerUser(bool $isSidebarExpanded): void
     {
-        $website = new WebsiteStub(1);
-        $this->websiteManager
-            ->expects(self::once())
+        $website = $this->getWebsite(1);
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
         $userWebsiteSettings = (new CustomerUserSettings($website))
             ->setProductFiltersSidebarExpanded($isSidebarExpanded);
 
-        $user = (new CustomerUserStub(1))
-            ->setWebsiteSettings($userWebsiteSettings);
+        $user = $this->getCustomerUser(1);
+        $user->setWebsiteSettings($userWebsiteSettings);
 
         $token = $this->createMock(TokenInterface::class);
-        $token
-            ->expects(self::once())
+        $token->expects(self::once())
             ->method('getUser')
             ->willReturn($user);
-
-        $this->tokenAccessor
-            ->expects(self::once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
-        $this->configManager
-            ->expects(self::never())
+        $this->configManager->expects(self::never())
             ->method('get');
 
         self::assertEquals($isSidebarExpanded, $this->sidebarStateManager->isProductFiltersSidebarExpanded());
@@ -480,25 +443,20 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
      */
     public function testIsProductFiltersSidebarExpandedForAnon(bool $isSidebarExpanded): void
     {
-        $website = new WebsiteStub(1);
-        $this->websiteManager
-            ->expects(self::once())
+        $website = $this->getWebsite(1);
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
         $token = $this->createMock(TokenInterface::class);
-        $token
-            ->expects(self::once())
+        $token->expects(self::once())
             ->method('getUser')
             ->willReturn($this->createMock(UserInterface::class));
-
-        $this->tokenAccessor
-            ->expects(self::once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
-        $this->session
-            ->expects(self::once())
+        $this->session->expects(self::once())
             ->method('get')
             ->with(
                 'product_filters_sidebar_states_by_website',
@@ -506,8 +464,7 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
             )
             ->willReturn([$website->getId() => $isSidebarExpanded]);
 
-        $this->configManager
-            ->expects(self::never())
+        $this->configManager->expects(self::never())
             ->method('get');
 
         self::assertEquals($isSidebarExpanded, $this->sidebarStateManager->isProductFiltersSidebarExpanded());

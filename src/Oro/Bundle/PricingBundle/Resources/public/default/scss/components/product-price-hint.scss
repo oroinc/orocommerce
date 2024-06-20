@@ -3,9 +3,11 @@
 .product-price-hint {
     display: $product-price-hint-display;
     align-items: $product-price-hint-align-items;
+    min-height: $product-price-hint-height;
 
     &__prices {
         display: $product-price-hint-prices-display;
+        flex-wrap: $product-price-hint-prices-flex-wrap;
         align-items: $product-price-hint-prices-align-items;
         gap: $product-price-hint-prices-gap;
     }

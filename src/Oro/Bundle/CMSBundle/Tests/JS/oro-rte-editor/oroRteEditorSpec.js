@@ -50,5 +50,13 @@ describe('orocms/js/app/grapesjs/plugins/oro-rte-editor', () => {
             expect(editor.RteEditor.collection.length).toEqual(oldLength - 1);
             expect(added).toBeFalsy();
         });
+
+        it('check keep models with same ids on set new component', () => {
+            editor.setComponents(`<div id="test"></div><div id="test-1"></div><div id="test-2"></div>`);
+
+            expect(editor.getHtml()).toEqual(
+                '<body><div id="test"></div><div id="test-1"></div><div id="test-2"></div></body>'
+            );
+        });
     });
 });

@@ -27,8 +27,8 @@ layout:
 
         - '@setOption':
             id: coupon_form_expand_link
-            optionName: visible
-            optionValue: '=data["oro_promotion_applied_coupons"].hasAppliedCoupons(data["checkout"]) != true'
+            optionName: vars.appliedCoupons
+            optionValue: '=data["oro_promotion_applied_coupons"].getAppliedCoupons(data["checkout"])'
 
         - '@setOption':
             id: coupon_form_widget_container

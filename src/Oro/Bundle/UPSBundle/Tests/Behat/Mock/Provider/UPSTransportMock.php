@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Behat\Mock\Provider;
 
+use InvalidArgumentException;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Model\PriceResponse;
@@ -11,12 +12,9 @@ use Symfony\Component\Yaml\Parser;
 
 class UPSTransportMock extends UPSTransport
 {
-    /**
-     * @var string
-     */
-    private $cacheDir;
+    private string $cacheDir;
 
-    public function setCacheDir(string $cacheDir)
+    public function setCacheDir(string $cacheDir): void
     {
         $this->cacheDir = $cacheDir;
     }
@@ -24,10 +22,11 @@ class UPSTransportMock extends UPSTransport
     /**
      * @param PriceRequest $priceRequest
      * @param Transport $transportEntity
-     * @throws \InvalidArgumentException
-     * @return PriceResponse
+     * @throws InvalidArgumentException
+     *
+     * @return PriceResponse|null
      */
-    public function getPriceResponse(PriceRequest $priceRequest, Transport $transportEntity)
+    public function getPriceResponse(PriceRequest $priceRequest, Transport $transportEntity): ?PriceResponse
     {
         $fileName = FeatureContext::getBehatYamlFilename($this->cacheDir);
         $yamlParser = new Parser();

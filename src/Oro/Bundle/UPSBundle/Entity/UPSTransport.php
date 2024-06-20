@@ -12,26 +12,39 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
-* Entity that represents U P S Transport
-*
-*/
+ * Entity that represents UPS Transport
+ *
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ */
 #[ORM\Entity]
 class UPSTransport extends Transport
 {
-    const PICKUP_TYPE_REGULAR_DAILY = '01';
-    const PICKUP_TYPE_CUSTOMER_COUNTER = '03';
-    const PICKUP_TYPE_ONE_TIME = '06';
-    const PICKUP_TYPE_ON_CALL_AIR = '07';
-    const PICKUP_TYPE_LETTER_CENTER = '19';
+    public const PICKUP_TYPE_REGULAR_DAILY = '01';
+    public const PICKUP_TYPE_CUSTOMER_COUNTER = '03';
+    public const PICKUP_TYPE_ONE_TIME = '06';
+    public const PICKUP_TYPE_ON_CALL_AIR = '07';
+    public const PICKUP_TYPE_LETTER_CENTER = '19';
 
-    const UNIT_OF_WEIGHT_KGS = 'KGS';
-    const UNIT_OF_WEIGHT_LBS = 'LBS';
+    public const UNIT_OF_WEIGHT_KGS = 'KGS';
+    public const UNIT_OF_WEIGHT_LBS = 'LBS';
 
-    const UNIT_OF_LENGTH_INCH = 'IN';
-    const UNIT_OF_LENGTH_CM = 'CM';
+    public const UNIT_OF_LENGTH_INCH = 'IN';
+    public const UNIT_OF_LENGTH_CM = 'CM';
 
     #[ORM\Column(name: 'ups_test_mode', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
     protected ?bool $upsTestMode = false;
+
+    #[ORM\Column(name: 'ups_client_id', type: Types::STRING, length: 255)]
+    private ?string $upsClientId = null;
+
+    #[ORM\Column(name: 'ups_client_secret', type: Types::STRING, length: 255)]
+    private ?string $upsClientSecret = null;
+
+    #[ORM\Column(name: 'ups_access_token', type: Types::TEXT)]
+    private ?string $upsAccessToken = null;
+
+    #[ORM\Column(name: 'ups_access_token_expires', type: Types::DATETIME_MUTABLE)]
+    private ?\DateTime $upsAccessTokenExpiresAt = null;
 
     #[ORM\Column(name: 'ups_api_user', type: Types::STRING, length: 255, nullable: false)]
     protected ?string $upsApiUser = null;
@@ -77,12 +90,9 @@ class UPSTransport extends Transport
     protected ?Collection $labels = null;
 
     #[ORM\Column(name: 'ups_invalidate_cache_at', type: Types::DATETIME_MUTABLE, nullable: true)]
-    protected ?\DateTimeInterface $upsInvalidateCacheAt = null;
+    protected ?\DateTime $upsInvalidateCacheAt = null;
 
-    /**
-     * @var ParameterBag
-     */
-    protected $settings;
+    protected ?ParameterBag $settings = null;
 
     public function __construct()
     {
@@ -379,7 +389,9 @@ class UPSTransport extends Transport
                     'country' => $this->getUpsCountry(),
                     'invalidate_cache_at' => $this->getUpsInvalidateCacheAt(),
                     'applicable_shipping_services' => $this->getApplicableShippingServices()->toArray(),
-                    'labels' => $this->getLabels()->toArray()
+                    'labels' => $this->getLabels()->toArray(),
+                    'client_id' => $this->getUpsClientId(),
+                    'client_secret' => $this->getUpsClientSecret()
                 ]
             );
         }
@@ -404,10 +416,54 @@ class UPSTransport extends Transport
     /**
      * Get invalidateCacheAt
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getUpsInvalidateCacheAt()
+    public function getUpsInvalidateCacheAt(): ?\DateTime
     {
         return $this->upsInvalidateCacheAt;
+    }
+
+    public function getUpsClientId(): ?string
+    {
+        return $this->upsClientId;
+    }
+
+    public function setUpsClientId(?string $upsClientId): self
+    {
+        $this->upsClientId = $upsClientId;
+
+        return $this;
+    }
+
+    public function getUpsClientSecret(): ?string
+    {
+        return $this->upsClientSecret;
+    }
+
+    public function setUpsClientSecret(?string $upsClientSecret): self
+    {
+        $this->upsClientSecret = $upsClientSecret;
+
+        return $this;
+    }
+
+    public function getUpsAccessToken(): ?string
+    {
+        return $this->upsAccessToken;
+    }
+
+    public function setUpsAccessToken(?string $upsAccessToken): void
+    {
+        $this->upsAccessToken = $upsAccessToken;
+    }
+
+    public function getUpsAccessTokenExpiresAt(): ?\DateTime
+    {
+        return $this->upsAccessTokenExpiresAt;
+    }
+
+    public function setUpsAccessTokenExpiresAt(?\DateTime $upsAccessTokenExpiresAt): void
+    {
+        $this->upsAccessTokenExpiresAt = $upsAccessTokenExpiresAt;
     }
 }

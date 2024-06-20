@@ -98,7 +98,7 @@ class LoadWebCatalogWithContentNodes extends AbstractFixture implements Dependen
                     'sorting' => ''
                 ]
             ],
-            'filters' =>[]
+            'filters' => []
         ]));
         $this->setReference(self::PRODUCT_STATIC_SEGMENT, $segment);
         $manager->persist($segment);

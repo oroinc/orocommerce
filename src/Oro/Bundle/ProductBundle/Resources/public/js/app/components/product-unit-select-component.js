@@ -46,6 +46,8 @@ define(function(require) {
             } else {
                 $select.removeClass('invisible');
             }
+            this.options._sourceElement.removeClass('simple-placeholder');
+            this.options._sourceElement.children().removeClass('simple-placeholder');
         },
 
         initSelect: function() {

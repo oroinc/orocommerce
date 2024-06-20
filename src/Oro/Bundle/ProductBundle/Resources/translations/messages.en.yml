@@ -1,4 +1,10 @@
 oro:
+    api:
+        open_api:
+            views:
+                frontend_sku_rest_json_api:
+                    label: SKU Based Storefront API
+                    description: JSON:API for the storefront where all product-related resources operate with SKU as a product identifier.
     product:
         search:
             search_title:
@@ -809,6 +815,7 @@ oro:
 
         frontend:
             index:
+                sku: 'SKU:'
                 item: 'Item #:'
                 mfg: 'MFG Model #:'
                 view_details: 'View Details'
@@ -1100,6 +1107,9 @@ oro:
                                 top: Top
                                 sidebar: Sidebar
 
+        usage_stats:
+            products.label: Products
+
     product_unit.each:
         label:
             full: each
@@ -1252,6 +1262,20 @@ oro:
             sort_products:
                 dialog:
                     title: 'Sort products in {{ segment }} product collection'
+    websitesearchterm:
+        searchterm:
+            redirect_product.label: Product
+            product_collection_segment.label: Product Collection
+            redirect_action_type.choices.product.label: Product
+            modify_action_type.choices.product_collection.label: Product Collection
+            grid:
+                action_details:
+                    redirect_product: 'Redirect to product: <a href="{{ product_url }}" target="_blank">{{ product_name }}</a>'
+                    product_collection: 'Show product collection: <a href="{{ product_collection_url }}" target="_blank">{{ product_collection_name }}</a>'
+
+            btn:
+                run_original_search: Run Original Search
+                run_original_search_placeholder: 'Run original search for: {{ placeholder }}'
 
     feature:
         quick_add_import_help_widget:

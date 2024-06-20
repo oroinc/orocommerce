@@ -41,6 +41,9 @@ class FedexShippingMethodFactoryTest extends TestCase
     /** @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rateServiceRequestFactory;
 
+    /** @var FedexRequestByRateServiceSettingsFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $rateServiceRequestSoapFactory;
+
     /** @var FedexRateServiceBySettingsClientInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rateServiceClient;
 
@@ -57,6 +60,9 @@ class FedexShippingMethodFactoryTest extends TestCase
             FedexRateServiceRequestSettingsFactoryInterface::class
         );
         $this->rateServiceRequestFactory = $this->createMock(FedexRequestByRateServiceSettingsFactoryInterface::class);
+        $this->rateServiceRequestSoapFactory = $this->createMock(
+            FedexRequestByRateServiceSettingsFactoryInterface::class
+        );
         $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
 
         $this->factory = new FedexShippingMethodFactory(
@@ -66,6 +72,7 @@ class FedexShippingMethodFactoryTest extends TestCase
             $this->typeFactory,
             $this->rateServiceRequestSettingsFactory,
             $this->rateServiceRequestFactory,
+            $this->rateServiceRequestSoapFactory,
             $this->rateServiceClient
         );
     }

@@ -6,33 +6,19 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 /**
  * Contains methods for managing PaymentStatus entity.
  */
 class PaymentStatusManager
 {
-    /** @var PaymentStatusProviderInterface */
-    protected $statusProvider;
-
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var PaymentTransactionProvider */
-    protected $paymentTransactionProvider;
-
     public function __construct(
-        PaymentStatusProviderInterface $provider,
-        DoctrineHelper $doctrineHelper,
-        PaymentTransactionProvider $transactionProvider
+        private PaymentStatusProviderInterface $statusProvider,
+        private DoctrineHelper $doctrineHelper
     ) {
-        $this->statusProvider = $provider;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->paymentTransactionProvider = $transactionProvider;
     }
 
-    public function updateStatus(PaymentTransaction $transaction)
+    public function updateStatus(PaymentTransaction $transaction): void
     {
         $this->updateStatusForEntity(
             $transaction->getEntityClass(),

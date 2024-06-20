@@ -243,8 +243,8 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_sku_widget %}
-    <div>
-        <span class="product-item__sku-value" itemprop="sku">{{- product.sku -}}</span>
+    <div class="sku bar-separator">
+        {{- 'oro.product.frontend.index.sku'|trans }} <span class="product-item__sku-value" itemprop="sku">{{- product.sku -}}</span>
     </div>
 {% endblock %}
 

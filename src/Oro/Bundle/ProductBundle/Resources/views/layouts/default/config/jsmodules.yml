@@ -35,6 +35,7 @@ dynamic-imports:
         - oroproduct/js/app/components/quick-add-form-button-component
         - oroproduct/js/app/components/quick-add-row-extension-view-component
         - oroproduct/js/app/components/redirect-component
+        - oroproduct/js/app/views/product-view-item-panel
         - oroproduct/js/app/views/base-product-variants-view
         - oroproduct/js/app/views/product-quantity-editable-view
         - oroproduct/js/app/views/product-unit-quantity-view

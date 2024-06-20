@@ -49,7 +49,7 @@ class ProductKitRepositoryTest extends WebTestCase
         );
 
         self::assertEmpty(
-            $this->getRepository()->getProductKitsByProductIds([PHP_INT_MAX, PHP_INT_MAX-1])
+            $this->getRepository()->getProductKitsByProductIds([PHP_INT_MAX, PHP_INT_MAX - 1])
         );
     }
 
@@ -69,7 +69,7 @@ class ProductKitRepositoryTest extends WebTestCase
         );
 
         self::assertEmpty(
-            $this->getRepository()->getProductKitsByProductIds([PHP_INT_MAX, PHP_INT_MAX-1])
+            $this->getRepository()->getProductKitsByProductIds([PHP_INT_MAX, PHP_INT_MAX - 1])
         );
     }
 }

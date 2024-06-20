@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * FedexIntegrationSettings ORM entity.
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 #[ORM\Entity]
 class FedexIntegrationSettings extends Transport
@@ -22,14 +23,18 @@ class FedexIntegrationSettings extends Transport
     const PICKUP_TYPE_BUSINESS_SERVICE_CENTER = 'BUSINESS_SERVICE_CENTER';
     const PICKUP_TYPE_STATION = 'STATION';
 
-    const UNIT_OF_WEIGHT_KG = 'KG';
-    const UNIT_OF_WEIGHT_LB = 'LB';
+    public const PICKUP_CONTACT_FEDEX_TO_SCHEDULE = 'CONTACT_FEDEX_TO_SCHEDULE';
+    public const PICKUP_DROPOFF_AT_FEDEX_LOCATION = 'DROPOFF_AT_FEDEX_LOCATION';
+    public const PICKUP_USE_SCHEDULED_PICKUP = 'USE_SCHEDULED_PICKUP';
 
-    const DIMENSION_CM = 'CM';
-    const DIMENSION_IN = 'IN';
+    public const UNIT_OF_WEIGHT_KG = 'KG';
+    public const UNIT_OF_WEIGHT_LB = 'LB';
+
+    public const DIMENSION_CM = 'CM';
+    public const DIMENSION_IN = 'IN';
 
     #[ORM\Column(name: 'fedex_test_mode', type: Types::BOOLEAN, options: ['default' => false])]
-    private ?bool $fedexTestMode = null;
+    private ?bool $fedexTestMode = false;
 
     #[ORM\Column(name: 'fedex_key', type: Types::STRING, length: 100)]
     private ?string $key = null;
@@ -37,13 +42,31 @@ class FedexIntegrationSettings extends Transport
     #[ORM\Column(name: 'fedex_password', type: Types::STRING, length: 100)]
     private ?string $password = null;
 
+    #[ORM\Column(name: 'fedex_client_id', type: Types::STRING, length: 255)]
+    private ?string $clientId = null;
+
+    #[ORM\Column(name: 'fedex_client_secret', type: Types::STRING, length: 255)]
+    private ?string $clientSecret = null;
+
+    #[ORM\Column(name: 'fedex_access_token', type: Types::TEXT)]
+    private ?string $accessToken = null;
+
+    #[ORM\Column(name: 'fedex_access_token_expires', type: Types::DATETIME_MUTABLE)]
+    private ?\DateTime $accessTokenExpiresAt = null;
+
     #[ORM\Column(name: 'fedex_account_number', type: Types::STRING, length: 100)]
+    private ?string $accountNumberSoap = null;
+
+    #[ORM\Column(name: 'fedex_account_number_rest', type: Types::STRING, length: 100)]
     private ?string $accountNumber = null;
 
     #[ORM\Column(name: 'fedex_meter_number', type: Types::STRING, length: 100)]
     private ?string $meterNumber = null;
 
     #[ORM\Column(name: 'fedex_pickup_type', type: Types::STRING, length: 100)]
+    private ?string $pickupTypeSoap = null;
+
+    #[ORM\Column(name: 'fedex_pickup_type_rest', type: Types::STRING, length: 100)]
     private ?string $pickupType = null;
 
     #[ORM\Column(name: 'fedex_unit_of_weight', type: Types::STRING, length: 3)]
@@ -94,40 +117,31 @@ class FedexIntegrationSettings extends Transport
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getKey()
+    public function getClientId(): ?string
     {
-        return $this->key;
+        return $this->clientId;
     }
 
-    public function setKey(string $key): self
+    public function setClientId(string $clientId): self
     {
-        $this->key = $key;
+        $this->clientId = $clientId;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getPassword()
+    public function getClientSecret(): ?string
     {
-        return $this->password;
+        return $this->clientSecret;
     }
 
-    public function setPassword(string $password): self
+    public function setClientSecret(string $clientSecret): self
     {
-        $this->password = $password;
+        $this->clientSecret = $clientSecret;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getAccountNumber()
+    public function getAccountNumber(): ?string
     {
         return $this->accountNumber;
     }
@@ -139,25 +153,19 @@ class FedexIntegrationSettings extends Transport
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getMeterNumber()
+    public function getAccountNumberSoap(): ?string
     {
-        return $this->meterNumber;
+        return $this->accountNumberSoap;
     }
 
-    public function setMeterNumber(string $meterNumber): self
+    public function setAccountNumberSoap(string $accountNumber): self
     {
-        $this->meterNumber = $meterNumber;
+        $this->accountNumberSoap = $accountNumber;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getPickupType()
+    public function getPickupType(): ?string
     {
         return $this->pickupType;
     }
@@ -169,10 +177,19 @@ class FedexIntegrationSettings extends Transport
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getUnitOfWeight()
+    public function getPickupTypeSoap(): ?string
+    {
+        return $this->pickupTypeSoap;
+    }
+
+    public function setPickupTypeSoap(string $pickupTypeSoap): self
+    {
+        $this->pickupTypeSoap = $pickupTypeSoap;
+
+        return $this;
+    }
+
+    public function getUnitOfWeight(): ?string
     {
         return $this->unitOfWeight;
     }
@@ -278,5 +295,55 @@ class FedexIntegrationSettings extends Transport
         $this->ignorePackageDimensions = $ignorePackageDimensions;
 
         return $this;
+    }
+
+    public function getAccessToken(): ?string
+    {
+        return $this->accessToken;
+    }
+
+    public function setAccessToken(?string $accessToken): void
+    {
+        $this->accessToken = $accessToken;
+    }
+
+    public function getAccessTokenExpiresAt(): ?\DateTime
+    {
+        return $this->accessTokenExpiresAt;
+    }
+
+    public function setAccessTokenExpiresAt(?\DateTime $accessTokenExpiresAt): void
+    {
+        $this->accessTokenExpiresAt = $accessTokenExpiresAt;
+    }
+
+    public function getKey(): ?string
+    {
+        return $this->key;
+    }
+
+    public function setKey(?string $key): void
+    {
+        $this->key = $key;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): void
+    {
+        $this->password = $password;
+    }
+
+    public function getMeterNumber(): ?string
+    {
+        return $this->meterNumber;
+    }
+
+    public function setMeterNumber(?string $meterNumber): void
+    {
+        $this->meterNumber = $meterNumber;
     }
 }

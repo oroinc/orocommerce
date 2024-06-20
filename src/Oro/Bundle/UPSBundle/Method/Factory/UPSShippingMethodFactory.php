@@ -69,6 +69,7 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
             $this->shippingPriceCache,
             $channel->isEnabled()
         );
+
         return $method->setName($channel->getName());
     }
 }

@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\UPSBundle\Client\Url\Provider;
 
+/**
+ * Interface for UPS Client URL Provider
+ */
 interface UpsClientUrlProviderInterface
 {
-    /**
-     * @param bool $isTestMode
-     *
-     * @return string
-     */
-    public function getUpsUrl($isTestMode);
+    public function getUpsUrl(bool $isTestMode): string;
 }

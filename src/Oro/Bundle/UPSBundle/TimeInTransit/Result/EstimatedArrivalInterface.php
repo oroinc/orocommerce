@@ -2,19 +2,22 @@
 
 namespace Oro\Bundle\UPSBundle\TimeInTransit\Result;
 
+/**
+ * Interface for UPS EstimatedArrivals response
+ */
 interface EstimatedArrivalInterface
 {
     /**
      * @return \DateTime
      */
-    public function getArrivalDate();
+    public function getArrivalDate(): \DateTime;
 
     /**
      * Number of business days from Origin to Destination Locations.
      *
-     * @return int
+     * @return string
      */
-    public function getBusinessDaysInTransit();
+    public function getBusinessDaysInTransit(): string;
 
     /**
      * Day of week.
@@ -22,19 +25,19 @@ interface EstimatedArrivalInterface
      *
      * @return string
      */
-    public function getDayOfWeek();
+    public function getDayOfWeek(): string;
 
     /**
      * The total number of days in transit from one location to the next. Returned for International requests.
      *
      * @return string
      */
-    public function getCustomerCenterCutoff();
+    public function getCustomerCenterCutoff(): string;
 
     /**
      * Customer Service call time. Returned for domestic as well as international requests.
      *
-     * @return int
+     * @return string
      */
-    public function getTotalTransitDays();
+    public function getTotalTransitDays(): string;
 }

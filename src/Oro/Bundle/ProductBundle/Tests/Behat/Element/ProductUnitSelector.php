@@ -27,6 +27,8 @@ class ProductUnitSelector extends Element
             if ($valueElement->isVisible() && $valueElement->isValid()) {
                 $valueElement->focus();
                 $valueElement->click();
+            } else {
+                self::fail('Didn\'t set toggle value for product unit');
             }
         } elseif ($selectorType === self::TYPE_SELECT) {
             $select2 = $this->elementFactory->wrapElement('Select2Offscreen', $this);

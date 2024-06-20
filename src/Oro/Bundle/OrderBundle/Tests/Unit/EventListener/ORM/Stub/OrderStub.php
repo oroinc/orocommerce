@@ -7,25 +7,29 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 
 class OrderStub extends Order
 {
-    /** @var AbstractEnumValue */
-    protected $internalStatus;
+    private ?AbstractEnumValue $internalStatus = null;
+    private ?AbstractEnumValue $status = null;
 
-    /**
-     * @return AbstractEnumValue
-     */
-    public function getInternalStatus()
+    public function getInternalStatus(): ?AbstractEnumValue
     {
         return $this->internalStatus;
     }
 
-    /**
-     * @param AbstractEnumValue $internalStatus
-     *
-     * @return $this
-     */
-    public function setInternalStatus($internalStatus)
+    public function setInternalStatus(?AbstractEnumValue $internalStatus): self
     {
         $this->internalStatus = $internalStatus;
+
+        return $this;
+    }
+
+    public function getStatus(): ?AbstractEnumValue
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?AbstractEnumValue $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }

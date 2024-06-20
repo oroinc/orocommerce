@@ -39,6 +39,12 @@ data:
                 data:
                     type: paymentterms
                     id: '<toString(@payment_term.net_10->id)>'
+            internalStatus:
+                data:
+                    type: orderinternalstatuses
+                    id: open
+            status:
+                data: null
             source:
                 data: null
             owner:
@@ -90,6 +96,12 @@ data:
                 data: []
             shippingTrackings:
                 data: []
+            internalStatus:
+                data:
+                    type: orderinternalstatuses
+                    id: open
+            status:
+                data: null
             source:
                 data: null
             owner:
@@ -141,6 +153,12 @@ data:
                 data: []
             shippingTrackings:
                 data: []
+            internalStatus:
+                data:
+                    type: orderinternalstatuses
+                    id: open
+            status:
+                data: null
             source:
                 data: null
             owner:
@@ -189,6 +207,12 @@ data:
                 data: []
             shippingTrackings:
                 data: []
+            internalStatus:
+                data:
+                    type: orderinternalstatuses
+                    id: open
+            status:
+                data: null
             source:
                 data: null
             owner:
@@ -237,6 +261,12 @@ data:
                 data: []
             shippingTrackings:
                 data: []
+            internalStatus:
+                data:
+                    type: orderinternalstatuses
+                    id: open
+            status:
+                data: null
             source:
                 data: null
             owner:
@@ -285,6 +315,12 @@ data:
                 data: []
             shippingTrackings:
                 data: []
+            internalStatus:
+                data:
+                    type: orderinternalstatuses
+                    id: open
+            status:
+                data: null
             source:
                 data: null
             owner:
@@ -333,6 +369,12 @@ data:
                 data: []
             shippingTrackings:
                 data: []
+            internalStatus:
+                data:
+                    type: orderinternalstatuses
+                    id: open
+            status:
+                data: null
             source:
                 data: null
             owner:

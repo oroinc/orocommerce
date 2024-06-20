@@ -538,6 +538,12 @@ class ProductRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function getProductCountQueryBuilder(): QueryBuilder
+    {
+        return $this->createQueryBuilder('product')
+            ->select('COUNT(product.id)');
+    }
+
     /**
      * @param array $ids
      * @return QueryBuilder

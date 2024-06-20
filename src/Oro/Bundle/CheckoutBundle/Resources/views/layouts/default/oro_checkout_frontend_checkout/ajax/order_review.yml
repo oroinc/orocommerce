@@ -25,19 +25,19 @@ layout:
             parentId: checkout_information_body
             prepend: true
 
-        - '@move':
-            id: checkout_order_footer
-            parentId: checkout_form
-            prepend: false
-
         - '@setOption':
             id: checkout_button_continue
             optionName: vars.showRequiredLabel
             optionValue: false
 
         - '@setOption':
-            id: checkout_button_continue
+            id: checkout_outside_button_continue
             optionName: vars.showIcon
             optionValue: false
+
+        - '@setOption':
+            id: checkout_outside_button_continue
+            optionName: vars.buttonCssStyle
+            optionValue: ''
 
     conditions: 'context["workflowStepName"]=="order_review"'

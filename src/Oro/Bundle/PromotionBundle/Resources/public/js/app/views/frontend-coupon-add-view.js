@@ -27,7 +27,8 @@ define(function(require) {
                 couponApplySelector: null,
                 couponRemoveSelector: null,
                 messagesContainer: null
-            }
+            },
+            tempClassRemoveTimeout: 5000
         },
 
         /**
@@ -68,6 +69,7 @@ define(function(require) {
             events['click ' + this.options.selectors.couponApplySelector] = 'applyCoupon';
             events['keydown ' + this.options.selectors.couponCodeSelector] = 'updateCouponState';
             events['change ' + this.options.selectors.couponCodeSelector] = 'updateCouponState';
+            events['input ' + this.options.selectors.couponCodeSelector] = 'ensureApplyButtonEnabled';
             events['click ' + this.options.selectors.couponRemoveSelector] = 'removeCoupon';
             events['shown.bs.collapse'] = 'focusCouponField';
 
@@ -157,6 +159,22 @@ define(function(require) {
             );
         },
 
+        dispose() {
+            if (this.disposed) {
+                return;
+            }
+
+            clearTimeout(this.timeoutRemoveClassId);
+
+            FrontendCouponAddView.__super__.dispose.call(this);
+        },
+
+        addTempClass(className, timeout = this.options.tempClassRemoveTimeout) {
+            clearTimeout(this.timeoutRemoveClassId);
+            this.$el.addClass(className);
+            this.timeoutRemoveClassId = setTimeout(() => this.$el.removeClass(className), timeout);
+        },
+
         /**
          * @param {string} message
          *
@@ -169,6 +187,7 @@ define(function(require) {
                 attr.afterReload = true;
             }
             mediator.execute('showFlashMessage', 'success', message, attr);
+            this.addTempClass('coupon-is-applied');
         },
 
         /**
@@ -179,14 +198,20 @@ define(function(require) {
         _showErrors: function(errors) {
             this._clearMessages();
 
-            this.$(this.options.selectors.couponCodeSelector).addClass('input--error');
+            this.$(this.options.selectors.couponCodeSelector)
+                .addClass('input--error')
+                .attr('aria-invalid', true);
             this.$(this.options.selectors.messagesContainer).html(errorsTemplate({
                 messages: errors.map(message => __(message))
             }));
+
+            this.addTempClass('coupon-is-invalid');
         },
 
         _clearMessages: function() {
-            this.$(this.options.selectors.couponCodeSelector).removeClass('input--error');
+            this.$(this.options.selectors.couponCodeSelector)
+                .removeClass('input--error')
+                .attr('aria-invalid', false);
             this.$el.find(this.options.selectors.messagesContainer).html('');
         },
 
@@ -203,6 +228,16 @@ define(function(require) {
             }
         },
 
+        ensureApplyButtonEnabled() {
+            const {couponApplySelector, couponCodeSelector} = this.options.selectors;
+
+            this.$(couponApplySelector).attr('disabled',
+                this.loading ||
+                this.$(couponCodeSelector).attr('aria-invalid') === 'true' ||
+                !this.$(couponCodeSelector).val()
+            );
+        },
+
         /**
          * @private
          */
@@ -212,9 +247,12 @@ define(function(require) {
             }
 
             this._ensureLoadingMaskLoaded();
+            this.ensureApplyButtonEnabled();
 
             if (!this.subview('loadingMask').isShown()) {
                 this.subview('loadingMask').show();
+
+                this.loading = true;
             }
         },
 
@@ -223,9 +261,12 @@ define(function(require) {
          */
         _hideLoadingMask: function() {
             this._ensureLoadingMaskLoaded();
+            this.ensureApplyButtonEnabled();
 
             if (this.subview('loadingMask').isShown()) {
                 this.subview('loadingMask').hide();
+
+                this.loading = false;
             }
         },
 

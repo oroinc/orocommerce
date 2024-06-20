@@ -359,7 +359,7 @@ oro_behat_extension:
         About Page Image:
             selector:
                 type: xpath
-                locator: '//div[contains(@class, "cms-page")]//figcaption[contains(text(),"RV & Gear Seller")]/..//img'
+                locator: '//div[contains(@class, "cms-page")]//figcaption/p[contains(text(),"RV & GEAR SELLER")]/../..//img'
 
         External Mode Button:
             selector: 'span[title="Enable External Markup"]'
@@ -648,9 +648,39 @@ oro_behat_extension:
                 type: xpath
                 locator: '//input[@name="routing[oro_cms___home_page][value]"]'
 
+        Theme Selector:
+            selector: '[id^="dropdown-theme-selector"]'
+
+        Theme Selector Dropdown:
+            selector: '[aria-labelledby^="dropdown-theme-selector"]'
+
+        Search Term Additional Content Block Select Field:
+            selector:
+                locator: '//select[@name="search_term[contentBlock]"]'
+                type: xpath
+
+        Search Term With Target Landing Page Form:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            selector: 'form[name="search_term"]'
+            options:
+                mapping:
+                    Page:
+                        type: 'xpath'
+                        locator: '//input[@name="search_term[redirectCmsPage]"]'
+                        element: Select2Entity
+                    Restriction 1 Website:
+                        type: 'css'
+                        locator: 'div[id^="s2id_search_term_scopes_0_website-uid-"]'
+                        element: Select2Entity
+                    Restriction 2 Website:
+                        type: 'css'
+                        locator: 'div[id^="s2id_search_term_scopes_1_website-uid-"]'
+                        element: Select2Entity
+
     suites:
         OroCMSBundle:
             contexts:
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
                 - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
                 - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
                 - Oro\Bundle\DigitalAssetBundle\Tests\Behat\Context\DigitalAssetWysiwygContext

@@ -12,6 +12,8 @@ layout:
                     blockType: form_start
                     options:
                         form: '=data["chosenProductVariant"] ? data["oro_product_form"].getVariantFieldsFormViewByVariantProduct(data["product"], data["chosenProductVariant"]) : data["oro_product_form"].getVariantFieldsFormView(data["product"])'
+                        attr:
+                            class: 'product-variant-form'
                 __variant_field_form_fields:
                     blockType: form_fields
                     options:

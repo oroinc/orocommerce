@@ -132,6 +132,6 @@ class ProductViewTest extends \PHPUnit\Framework\TestCase
         $productView->set('sku', 'test-1');
 
         self::assertInstanceOf(\Traversable::class, $productView);
-        self::assertSame(['id' => 123, 'sku' =>'test-1'], iterator_to_array($productView));
+        self::assertSame(['id' => 123, 'sku' => 'test-1'], iterator_to_array($productView));
     }
 }

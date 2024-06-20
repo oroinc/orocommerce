@@ -91,8 +91,8 @@ The current file describes significant changes in the code that may affect the u
 * Added new price calculation logic for product kit line item for the `orderlineitems` and `orderproductkititemlineitems` API backend resources.
 
 #### PricingBundle
-* Improved the mechanism of getting product prices. See more in [documentation](https://doc.oroinc.com/bundles/commerce/PricingBundle/getting-product-price.html).
-* Introduced the new mechanism of getting product line item prices, including product kit line item prices. See more in [documentation](https://doc.oroinc.com/bundles/commerce/PricingBundle/getting-product-line-item-price.html).
+* Improved the mechanism of getting product prices. See more in [documentation](https://doc.oroinc.com/bundles/commerce/PricingBundle/getting-product-price/).
+* Introduced the new mechanism of getting product line item prices, including product kit line item prices. See more in [documentation](https://doc.oroinc.com/bundles/commerce/PricingBundle/getting-product-line-item-price/).
 * Added `\Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactory` as the main entry point for creating `\Oro\Bundle\PricingBundle\Model\ProductPriceCriteria`. Eliminated all occurrences of manual creation of product price criteria with corresponding BC fallbacks.
 * Added `\Oro\Bundle\PricingBundle\Provider\MatchedProductPriceProviderInterface` implemented in `\Oro\Bundle\PricingBundle\Provider\ProductPriceProvider::getMatchedProductPrices` to get a collection of `\Oro\Bundle\PricingBundle\Model\ProductPriceInterface` product prices.
 * Added `\Oro\Bundle\PricingBundle\ProductKit\ProductPriceCriteria\ProductKitPriceCriteria` and `\Oro\Bundle\PricingBundle\ProductKit\ProductPriceCriteria\ProductKitItemPriceCriteria` product price criteria models for passing to the product price provider.
@@ -144,7 +144,7 @@ The current file describes significant changes in the code that may affect the u
 * Added `Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByUrlSlugsListener` that excludes cms pages without URL slugs from the sitemap.
 
 #### ShoppingListBundle
-* Added the ability to display product kit line items on the shopping list line items storefront datagrid. See more in [documentation](https://doc.oroinc.com/bundles/commerce/ShoppingListBundle/shopping-list-on-storefront.html).
+* Added the ability to display product kit line items on the shopping list line items storefront datagrid. See more in [documentation](https://doc.oroinc.com/bundles/commerce/ShoppingListBundle/shopping-list-on-storefront/).
 * Added `\Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem` entity to the storefront API as `shoppinglistkititem` resource.
 * Added `\Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem` entity to the back-office API.
 * Added `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead of the deprecated `\Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataViolationsListener`.

@@ -1,0 +1,4 @@
+oro_website_search_search_term:
+    resource:     "@OroWebsiteSearchTermBundle/Controller/SearchTermController.php"
+    type:         annotation
+    prefix:       /website-search/search-terms

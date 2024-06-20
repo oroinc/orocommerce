@@ -7,6 +7,7 @@ use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
+use Oro\Bundle\UPSBundle\Client\AccessTokenProviderInterface;
 use Oro\Bundle\UPSBundle\Client\Factory\UpsClientFactoryInterface;
 use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequestInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
@@ -18,44 +19,31 @@ use Psr\Log\LoggerInterface;
 
 class TimeInTransitProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var TimeInTransitRequestFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TimeInTransitRequestFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $requestFactory;
 
-    /**
-     * @var UpsClientFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var UpsClientFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $clientFactory;
 
-    /**
-     * @var TimeInTransitResultFactoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var TimeInTransitResultFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $resultFactory;
 
-    /**
-     * @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AccessTokenProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $accessTokenProvider;
+
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
-    /**
-     * @var \DateTime
-     */
+    /** @var \DateTime */
     private $pickupDate;
 
-    /**
-     * @var AddressInterface
-     */
+    /** @var AddressInterface */
     private $address;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $weight;
 
-    /**
-     * @var TimeInTransitProvider
-     */
+    /** @var TimeInTransitProvider */
     private $timeInTransit;
 
     protected function setUp(): void
@@ -66,12 +54,14 @@ class TimeInTransitProviderTest extends \PHPUnit\Framework\TestCase
         $this->requestFactory = $this->createMock(TimeInTransitRequestFactoryInterface::class);
         $this->clientFactory = $this->createMock(UpsClientFactoryInterface::class);
         $this->resultFactory = $this->createMock(TimeInTransitResultFactoryInterface::class);
+        $this->accessTokenProvider = $this->createMock(AccessTokenProviderInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->timeInTransit = new TimeInTransitProvider(
             $this->requestFactory,
             $this->clientFactory,
             $this->resultFactory,
+            $this->accessTokenProvider,
             $this->logger
         );
     }

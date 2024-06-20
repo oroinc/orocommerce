@@ -92,4 +92,4 @@ Feature: Product kits add without kit items
     Then I should see 'The "Product Kit 2" product was successfully deleted' flash message
     And I should see "There are no shopping list line items"
     And I should see "Summary No Items"
-    And I should see "Total $0.00"
+    And I should see "Total: $0.00"

@@ -36,7 +36,7 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
 
         foreach ($this->nodesConfigs as $nodeIndex => $nodeConfig) {
             $nodeTitle = new LocalizedFallbackValue();
-            $nodeTitle->setString(self::CONTENT_NODE_TITLE . ($nodeIndex+1));
+            $nodeTitle->setString(self::CONTENT_NODE_TITLE . ($nodeIndex + 1));
 
             $node = new ContentNode();
             $node->setWebCatalog($webCatalog);
@@ -80,7 +80,7 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
             }
 
             $manager->persist($node);
-            $this->setReference(self::CONTENT_NODE . '-' . ($nodeIndex+1), $node);
+            $this->setReference(self::CONTENT_NODE . '-' . ($nodeIndex + 1), $node);
         }
 
         $manager->flush();

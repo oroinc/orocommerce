@@ -70,7 +70,7 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
             usort($defaultPriceLists, static fn ($a, $b) => $a['priority'] <=> $b['priority']);
 
             $priceListsCount = count($defaultPriceLists);
-            for ($i = 0; $i < (int)($priceListsCount/2); $i++) {
+            for ($i = 0; $i < (int)($priceListsCount / 2); $i++) {
                 $swapIdx = $priceListsCount - 1 - $i;
                 $oldValue = $defaultPriceLists[$i]['priority'];
                 $defaultPriceLists[$i]['priority'] = $defaultPriceLists[$swapIdx]['priority'];

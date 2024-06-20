@@ -98,6 +98,8 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_security.token_accessor'
+        tags:
+            - { name: oro_featuretogle.feature, feature: promotions }
 
     oro_promotion.promotion_provider.memory_cache:
         parent: oro.cache.provider.memory_cache
@@ -411,6 +413,7 @@ services:
             - '@translator'
         tags:
             - { name: oro_pricing.subtotal_provider, alias: oro_promotion.subtotal_discount }
+            - { name: oro_featuretogle.feature, feature: promotions }
 
     oro_promotion.event_listener.payment_discount_surcharge:
         class: Oro\Bundle\PaymentBundle\EventListener\PaymentDiscountSurchargeListener
@@ -471,6 +474,7 @@ services:
              - '@oro_promotion.applied_promotion_manager'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist }
+            - { name: oro_featuretogle.feature, feature: promotions }
 
     oro_promotion.event_listener.order_form_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderFormListener
@@ -544,6 +548,7 @@ services:
             - '@oro_promotion.provider.applied_discounts_provider'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent, priority: -128 }
+            - { name: oro_featuretogle.feature, feature: promotions }
 
     oro_promotion.mass_action.coupon_mass_action_handler:
         class: Oro\Bundle\PromotionBundle\Datagrid\Extension\MassAction\AbstractCouponMassActionHandler
@@ -738,6 +743,8 @@ services:
             - '@oro_promotion.promotion_provider'
             - '@oro_promotion.discount_factory'
             - '@oro_promotion.provider.matching_products_provider'
+        tags:
+            - { name: oro_featuretogle.feature, feature: promotions }
 
     oro_promotion.provider.shipping_promotion_discounts_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProvider
@@ -745,6 +752,8 @@ services:
             - '@oro_promotion.shipping_promotion_provider'
             - '@oro_promotion.discount_factory'
             - '@oro_promotion.provider.matching_products_provider'
+        tags:
+            - { name: oro_featuretogle.feature, feature: promotions }
 
     oro_promotion.provider.disabled_promotion_discounts_provider_decorator:
         class: Oro\Bundle\PromotionBundle\Provider\DisabledPromotionDiscountProviderDecorator
@@ -864,6 +873,7 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: preUpdate }
+            - { name: oro_featuretogle.feature, feature: promotions }
 
     oro_promotion.event_listener.promotion_products_collection_grid_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\PromotionProductsCollectionGridListener

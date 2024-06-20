@@ -1,6 +1,16 @@
 {% block _product_view_kit_content_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid product-view__kit-container'
+        '~class': ' grid product-view__kit-container',
+        'data-line-item-form': '',
+        'data-dom-relocation-options': {
+            scroll: [
+                {
+                    viewport: 'desktop',
+                    moveTo: '[data-product-view-line-form-panel]',
+                    endpointClass: 'line-item-form-moved'
+                }
+            ]
+        },
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -9,7 +19,7 @@
 
 {% block _product_view_kit_content_container_start_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid-col-6 grid-col-tablet-12 '
+        '~class': ' product-view__kit-container-start grid-col-6 grid-col-tablet-12 '
     }) %}
     {% set children = block_widget(block) %}
     {% if children|trim|length %}
@@ -21,7 +31,7 @@
 
 {% block _product_view_kit_content_container_end_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid-col-6 grid-col-tablet-12 '
+        '~class': ' product-view__kit-container-end grid-col-6 grid-col-tablet-12 '
     }) %}
     {% set children = block_widget(block) %}
     {% if children|trim|length %}
@@ -30,4 +40,3 @@
         </div>
     {% endif %}
 {% endblock %}
-

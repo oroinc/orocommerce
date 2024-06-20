@@ -4,11 +4,12 @@ namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Oro\Bundle\FormBundle\Form\Type\Select2ChoiceType;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * An enum select form type for order internal statuses based on 'select2'
+ * The form type to select order internal statuses based on 'select2' form type.
  */
 class OrderInternalStatusType extends AbstractType
 {
@@ -20,18 +21,18 @@ class OrderInternalStatusType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritSoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'multiple' => true,
-            'choices' => $this->enumValueProvider->getEnumChoicesByCode('order_internal_status')
+            'choices' => $this->enumValueProvider->getEnumChoicesByCode(Order::INTERNAL_STATUS_CODE)
         ]);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getParent(): ?string
     {

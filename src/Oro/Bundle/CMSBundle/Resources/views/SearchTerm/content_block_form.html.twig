@@ -1,0 +1,8 @@
+<div class="control-group"
+     data-page-component-module="orosale/js/app/components/dependent-field-component"
+     data-page-component-options="{{ { selectors: { rowContainer: 'div' } }|json_encode }}"
+     data-depend-on="search-term-action-type"
+     data-show-if="modify"
+     data-disable-element=":input">
+    {{ form_row(form.contentBlock, { label: 'oro.websitesearchterm.searchterm.content_block.label' }) }}
+</div>

@@ -2,47 +2,42 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
+use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Fixture\AbstractEnumFixture;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\MakeProductAttributesTrait;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
-class LoadProductMultiEnumValues extends AbstractEnumFixture implements ContainerAwareInterface
+class LoadProductMultiEnumValues extends AbstractFixture implements ContainerAwareInterface
 {
     use MakeProductAttributesTrait;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getData()
-    {
-        return [
-            'first' => 'First Value',
-            'second' => 'Second Value',
-            'third' => 'Third Value',
-            'fourth' => 'Fourth Value'
-        ];
-    }
+    private const DATA = [
+        'first' => 'First Value',
+        'second' => 'Second Value',
+        'third' => 'Third Value',
+        'fourth' => 'Fourth Value'
+    ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getEnumCode()
+    public function load(ObjectManager $manager): void
     {
-        return 'multienum_code';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ObjectManager $manager)
-    {
-        parent::load($manager);
+        /** @var EnumValueRepository $enumRepo */
+        $enumRepo = $manager->getRepository(ExtendHelper::buildEnumValueClassName('multienum_code'));
+        $priority = 1;
+        foreach (self::DATA as $id => $name) {
+            $enumValue = $enumRepo->createEnumValue($name, $priority++, false, $id);
+            $manager->persist($enumValue);
+        }
+        $manager->flush();
 
         $this->makeProductAttributes(['multienum_field' => []], ExtendScope::OWNER_CUSTOM);
 

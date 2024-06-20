@@ -5,148 +5,112 @@ namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Client\RateService\Response\
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\Factory\FedexRateServiceResponseFactory;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
+use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
+use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
+use Oro\Bundle\IntegrationBundle\Test\FakeRestResponse;
 use PHPUnit\Framework\TestCase;
 
 class FedexRateServiceResponseFactoryTest extends TestCase
 {
-    public function testCreateConnectionError()
+    /** @var FedexRateServiceResponseFactory */
+    private $factory;
+
+    protected function setUp(): void
     {
-        static::assertEquals(
-            $this->createErrorResponse(),
-            (new FedexRateServiceResponseFactory())->create(null)
-        );
+        $this->factory = new FedexRateServiceResponseFactory();
     }
 
-    public function testCreateErrorWithMultipleNotifications()
+    public function testCreateWithoutResponse(): void
     {
-        $notification1 = $this->createNotification(23);
-        $notification2 = $this->createNotification(34);
-
-        $soapResponse = new \stdClass();
-        $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_ERROR;
-        $soapResponse->Notifications = [$notification1, $notification2];
-
-        static::assertEquals(
-            new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_ERROR, 23),
-            (new FedexRateServiceResponseFactory())->create($soapResponse)
-        );
+        self::assertEquals(500, $this->factory->create()->getResponseStatusCode());
     }
 
-    public function testCreateFailureWithOneNotification()
+    public function testCreateOnEmptyResponseData(): void
     {
-        $notification = $this->createNotification(1);
+        $response = $this->createMock(RestResponseInterface::class);
+        $response->expects(self::once())
+            ->method('json')
+            ->willReturn([]);
 
-        $soapResponse = new \stdClass();
-        $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_FAILURE;
-        $soapResponse->Notifications = $notification;
-
-        static::assertEquals(
-            new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_FAILURE, 1),
-            (new FedexRateServiceResponseFactory())->create($soapResponse)
-        );
+        self::assertEquals(200, $this->factory->create($response)->getResponseStatusCode());
     }
 
-    public function testCreateWarningWithNoRateDetails()
+    public function testCreateOnEmptyPriceResponseData(): void
     {
-        $notification = $this->createNotification(1);
+        $response = $this->createMock(RestResponseInterface::class);
+        $response->expects(self::once())
+            ->method('json')
+            ->willReturn(['output' => ['rateReplyDetails' => []]]);
 
-        $soapResponse = new \stdClass();
-        $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_WARNING;
-        $soapResponse->Notifications = $notification;
-
-        static::assertEquals(
-            new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_WARNING, 1),
-            (new FedexRateServiceResponseFactory())->create($soapResponse)
-        );
+        $responseObject = $this->factory->create($response);
+        self::assertEquals(200, $responseObject->getResponseStatusCode());
+        self::assertEquals([], $responseObject->getPrices());
     }
 
-    public function testCreateWarningOneRateReply()
-    {
-        $price = 100.04;
-        $currency = 'USD';
-        $service = 'service1';
-        $notificationCode = 42;
-
-        $rateReplyDetails = new \stdClass();
-        $rateReplyDetails->ServiceType = $service;
-        $rateReplyDetails->RatedShipmentDetails = new \stdClass();
-        $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail = new \stdClass();
-        $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail->TotalNetCharge = new \stdClass();
-        $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail->TotalNetCharge->Amount = $price;
-        $rateReplyDetails->RatedShipmentDetails->ShipmentRateDetail->TotalNetCharge->Currency = $currency;
-
-        $soapResponse = new \stdClass();
-        $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_WARNING;
-        $soapResponse->Notifications = $this->createNotification($notificationCode);
-        $soapResponse->RateReplyDetails = $rateReplyDetails;
-
-        static::assertEquals(
-            new FedexRateServiceResponse(
-                FedexRateServiceResponse::SEVERITY_WARNING,
-                $notificationCode,
-                [$service => Price::create($price, $currency)]
-            ),
-            (new FedexRateServiceResponseFactory())->create($soapResponse)
-        );
-    }
-
-    public function testCreateSuccessMultipleRateReplies()
+    public function testCreateSuccessMultipleRateReplies(): void
     {
         $services = ['service1', 'service2'];
         $prices = [
             Price::create(54.6, 'EUR'),
             Price::create(46.03, 'USD'),
         ];
-        $notificationCode = 65;
 
-        $soapResponse = new \stdClass();
-        $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_SUCCESS;
-        $soapResponse->Notifications = $this->createNotification($notificationCode);
-        $soapResponse->RateReplyDetails = [
-            $this->createRateReplyDetail($services[0], $prices[0]),
-            $this->createRateReplyDetail($services[1], $prices[1]),
-        ];
+        $restResponse = $this->createMock(RestResponseInterface::class);
+        $restResponse->expects(self::once())
+            ->method('json')
+            ->willReturn([
+                'output' => [
+                    'rateReplyDetails' => [
+                        $this->createRateReplyDetail($services[0], $prices[0]),
+                        $this->createRateReplyDetail($services[1], $prices[1]),
+                    ]
+                ]
+            ]);
 
-        static::assertEquals(
+        self::assertEquals(
             new FedexRateServiceResponse(
-                FedexRateServiceResponse::SEVERITY_SUCCESS,
-                $notificationCode,
+                200,
                 [
                     $services[0] => $prices[0],
                     $services[1] => $prices[1],
                 ]
             ),
-            (new FedexRateServiceResponseFactory())->create($soapResponse)
+            $this->factory->create($restResponse)
         );
     }
 
-    private function createRateReplyDetail(string $serviceName, Price $price): \stdClass
+    public function testCreateExceptionResultOnCommonException(): void
     {
-        $rateReplyDetails = new \stdClass();
-        $rateReplyDetails->ServiceType = $serviceName;
-        $rateReplyDetails->RatedShipmentDetails = [new \stdClass()];
-        $rateReplyDetails->RatedShipmentDetails[0]->ShipmentRateDetail = new \stdClass();
-        $rateReplyDetails->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetCharge = new \stdClass();
-        $rateReplyDetails->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetCharge->Amount = $price->getValue();
-        $rateReplyDetails->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetCharge->Currency =
-            $price->getCurrency();
+        $result = $this->factory->createExceptionResult(new \Exception());
+
+        self::assertEquals(500, $result->getResponseStatusCode());
+        self::assertEmpty($result->getErrors());
+        self::assertEmpty($result->getPrices());
+    }
+
+    public function testCreateExceptionResultOnRestException(): void
+    {
+        $errors = [[
+            'code' => 'NOT.FOUND.ERROR',
+            'message' => 'We are unable to process this request. Please try again later.'
+        ]];
+        $response = new FakeRestResponse(401, [], \json_encode(['errors' => $errors]));
+        $result = $this->factory->createExceptionResult(RestException::createFromResponse($response));
+
+        self::assertEquals(401, $result->getResponseStatusCode());
+        self::assertEquals($errors, $result->getErrors());
+        self::assertEmpty($result->getPrices());
+    }
+
+    private function createRateReplyDetail(string $serviceName, Price $price): array
+    {
+        $rateReplyDetails = [];
+        $rateReplyDetails['serviceType'] = $serviceName;
+        $rateReplyDetails['ratedShipmentDetails'] = [];
+        $rateReplyDetails['ratedShipmentDetails'][0]['totalNetCharge'] = $price->getValue();
+        $rateReplyDetails['ratedShipmentDetails'][0]['shipmentRateDetail'] = [];
+        $rateReplyDetails['ratedShipmentDetails'][0]['shipmentRateDetail']['currency'] = $price->getCurrency();
 
         return $rateReplyDetails;
-    }
-
-    private function createNotification(int $code): \stdClass
-    {
-        $notification = new \stdClass();
-        $notification->Code = $code;
-
-        return $notification;
-    }
-
-    private function createErrorResponse(): FedexRateServiceResponse
-    {
-        return new FedexRateServiceResponse(
-            FedexRateServiceResponse::SEVERITY_ERROR,
-            FedexRateServiceResponse::CONNECTION_ERROR
-        );
     }
 }

@@ -50,8 +50,8 @@ class FrontendRfqExtension extends AbstractTypeExtension implements FeatureToggl
         // saves consents by its own
         if ($formData instanceof Request && $formData->getCustomerUser()) {
             $formOptions['property_path'] = 'customerUser.acceptedConsents';
-        // Otherwise we disable mapping and consider this is Guest (with empty CustomerUser) so we don't need pre
-        // population and saving will be handled by `RfqBeforeFlushFormListener`
+            // Otherwise we disable mapping and consider this is Guest (with empty CustomerUser) so we don't need pre
+            // population and saving will be handled by `RfqBeforeFlushFormListener`
         } else {
             $formOptions['mapped'] = false;
         }

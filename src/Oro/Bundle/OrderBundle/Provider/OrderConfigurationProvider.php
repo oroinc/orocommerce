@@ -6,6 +6,9 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\OrderBundle\DependencyInjection\Configuration as OrderConfiguration;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
+/**
+ * A service to get order related configuration.
+ */
 class OrderConfigurationProvider implements OrderConfigurationProviderInterface
 {
     /** @var ConfigManager */
@@ -48,6 +51,14 @@ class OrderConfigurationProvider implements OrderConfigurationProviderInterface
     public function getApplicableInternalStatuses($identifier = null)
     {
         return $this->getConfigValue(OrderConfiguration::CONFIG_KEY_APPLICABLE_INTERNAL_STATUSES, $identifier);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isExternalStatusManagementEnabled($identifier = null)
+    {
+        return $this->getConfigValue(OrderConfiguration::CONFIG_KEY_ENABLE_EXTERNAL_STATUS_MANAGEMENT, $identifier);
     }
 
     /**

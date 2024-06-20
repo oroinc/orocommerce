@@ -6,7 +6,7 @@
 @community-edition-only
 
 Feature: Default Checkout From Shopping List Quantity Errors
-  In order to to create order from Shopping List on front store
+  In order to create order from Shopping List on front store
   As a buyer
   I want to start checkout from Shopping List view page and view quantity validation errors before submit order
 

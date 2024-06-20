@@ -1,5 +1,6 @@
 include:
     - '@OroShoppingListBundle:ShoppingListFixture.yml'
+    - '@OroOrderBundle:OrderStatusesFixture.yml'
 
 Oro\Bundle\OrderBundle\Entity\Order:
     simpleOrder:
@@ -23,6 +24,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         currency: USD
         poNumber: 'ORD2'
         lineItems: [ '@secondOrderLineItem' ]
+        status: '@orderStatusWaitForApproval'
 
 Oro\Bundle\CurrencyBundle\Entity\Price:
     price1:

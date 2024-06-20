@@ -48,7 +48,7 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface, D
     public const ACCOUNT1_USER1 = 'sale-customer1-user1@example.com';
     public const ACCOUNT1_USER2 = 'sale-customer1-user2@example.com';
     public const ACCOUNT1_USER3 = 'sale-customer1-user3@example.com';
-    public const ACCOUNT2_USER1= 'sale-customer2-user1@example.com';
+    public const ACCOUNT2_USER1 = 'sale-customer2-user1@example.com';
     public const PARENT_ACCOUNT_USER1 = 'sale-parent-customer-user1@example.com';
     public const PARENT_ACCOUNT_USER2 = 'sale-parent-customer-user2@example.com';
 

@@ -65,14 +65,15 @@ class LineItemTaxSubtotalProvider extends AbstractTaxSubtotalProvider
         return $subtotal;
     }
 
-    protected function fillSubtotal(Subtotal $subtotal, Result $tax): Subtotal
+    protected function fillSubtotal(Subtotal $subtotal, Result $tax, ?object $entity = null): Subtotal
     {
         $itemTotalAmount = 0.0;
         $currency = "";
-        foreach ($tax->getItems() as $item) {
-            $itemTotalAmount += (float)$item->getRow()->getTaxAmount();
-            $currency = $item->getRow()->getCurrency();
+        foreach ($tax->getTaxes() as $taxElement) {
+            $itemTotalAmount += (float)$taxElement->getTaxAmount();
+            $currency = $taxElement->getCurrency();
         }
+
         $subtotal->setAmount($itemTotalAmount);
         $subtotal->setCurrency($currency);
         $subtotal->setVisible(false);

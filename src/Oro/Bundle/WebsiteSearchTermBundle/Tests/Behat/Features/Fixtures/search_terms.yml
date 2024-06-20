@@ -1,0 +1,56 @@
+include:
+    - '@OroLocaleBundle:LocalizationFixture.yml'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
+    customerGroup1:
+        name: 'Customer Group'
+        owner: '@admin'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\ScopeBundle\Entity\Scope:
+    localizationScope:
+        localization: '@localization1'
+    customerGroupScope:
+        customerGroup: '@customerGroup1'
+    customerScope:
+        customer: '@customer1'
+
+Oro\Bundle\WebsiteSearchTermBundle\Entity\SearchTerm:
+    searchTermOriginalResults:
+        owner: '@business_unit'
+        organization: '@organization'
+        phrases: 'search_term1�search_term2'
+        actionType: 'modify'
+        partialMatch: true
+        modifyActionType: 'original_results'
+        scopes: ['@first_website_scope']
+    searchTermWithTargetUri:
+        owner: '@business_unit'
+        organization: '@organization'
+        phrases: 'search_term3'
+        actionType: 'redirect'
+        redirectActionType: 'uri'
+        redirectUri: 'http://non-existing-url.local/someroute'
+        scopes: ['@localizationScope', '@customerGroupScope']
+    searchTermWithTargetSystemPage:
+        owner: '@business_unit'
+        organization: '@organization'
+        phrases: 'search_term4�search_term5'
+        actionType: 'redirect'
+        redirectActionType: 'system_page'
+        redirectSystemPage: 'oro_frontend_root'
+        scopes: ['@customerScope']
+    searchTermWithTargetSystemPage2:
+        owner: '@business_unit'
+        organization: '@organization'
+        phrases: 'search_term6'
+        actionType: 'redirect'
+        redirectActionType: 'system_page'
+        redirectSystemPage: 'oro_frontend_root'
+        scopes: ['@default_scope']

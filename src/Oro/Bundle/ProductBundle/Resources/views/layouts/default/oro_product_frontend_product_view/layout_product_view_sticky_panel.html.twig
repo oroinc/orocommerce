@@ -1,0 +1,42 @@
+{% block _product_view_sticky_panel_widget %}
+    {% set productImages = collect_product_images_by_types(product, ['main', 'additional']) %}
+
+    {% if productImages|length == 0 %}
+        {% set productImages = collect_product_images_by_types(product, ['listing']) %}
+    {% endif %}
+
+    {% set productImage = productImages|first %}
+    {# zoom z-index #}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-view': {
+            view: 'oroproduct/js/app/views/product-view-item-panel',
+            target: '[data-line-item-form]'
+        },
+        'class': 'product-view-line-form-wrapper',
+        'aria-hidden': 'true'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <div class="product-view-line-form-container">
+            <div class="product-view-line-form-product">
+                <div class="product-view-line-form-image-wrapper">
+                    {% include '@OroAttachment/Twig/picture.html.twig' with {
+                        sources: product_filtered_picture_sources(productImage.image is defined ? productImage.image : null, 'product_small'),
+                        picture_attrs: {
+                            class: 'product-view-line-form-picture'
+                        },
+                        img_attrs: {
+                            class: 'product-view-line-form-image cover-img',
+                            alt: product.names|localized_value,
+                            itemprop: 'image'
+                        },
+                    } %}
+                </div>
+                <span class="product-view-line-form-sku">{{product.sku}}</span>
+            </div>
+            <div class="product-view-line-form-info">
+                <div class="product-view-line-form-panel" data-product-view-line-form-panel></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

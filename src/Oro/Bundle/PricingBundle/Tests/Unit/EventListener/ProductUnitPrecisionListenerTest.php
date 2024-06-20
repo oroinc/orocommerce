@@ -89,7 +89,7 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = $this->createMock(LifecycleEventArgs::class);
 
-        $repository =$this->createMock(ProductPriceRepository::class);
+        $repository = $this->createMock(ProductPriceRepository::class);
         $repository->expects($this->once())
             ->method('deleteByProductUnit')
             ->with($this->shardManager, $product, $unit);

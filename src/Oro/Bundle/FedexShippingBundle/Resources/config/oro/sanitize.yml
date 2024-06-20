@@ -2,6 +2,7 @@ oro_sanitize:
     entity:
         oro_integration_transport:
             fields:
-                fedex_key: md5
-                fedex_password: md5
+                fedex_client_id: md5
+                fedex_client_secret: md5
                 fedex_account_number: md5
+                fedex_access_token: md5

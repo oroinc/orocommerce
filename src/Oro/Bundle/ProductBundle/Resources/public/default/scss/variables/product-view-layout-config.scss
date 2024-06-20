@@ -7,6 +7,9 @@ $product-view-primary-bottom-offset: spacing('sm') !default;
 $product-view-primary-gap: spacing('md') spacing('sm') !default;
 $product-view-primary-padding: 0 0 spacing('md') !default;
 
+$product-view-headline-font-size: $base-font-size--s !default;
+$product-view-headline-color: get-color('text', 'secondary') !default;
+$product-view-headline-gap: spacing('md') 0 !default;
 $product-view-main-grid-template-areas:
     'aside content'
     'aside details' !default;

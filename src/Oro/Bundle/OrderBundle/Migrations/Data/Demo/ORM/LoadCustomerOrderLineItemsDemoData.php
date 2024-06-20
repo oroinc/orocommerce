@@ -26,9 +26,9 @@ class LoadCustomerOrderLineItemsDemoData extends AbstractFixture implements
     use OrderLineItemsDemoDataTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadCustomerOrderDemoData::class,
@@ -39,9 +39,10 @@ class LoadCustomerOrderLineItemsDemoData extends AbstractFixture implements
 
     /**
      * @param EntityManagerInterface $manager
-     * {@inheritdoc}
+     *
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $totalHelper = $this->getTotalHelper();
         $orders = $manager->getRepository(Order::class)->findAll();
@@ -66,10 +67,7 @@ class LoadCustomerOrderLineItemsDemoData extends AbstractFixture implements
         $manager->flush();
     }
 
-    /**
-     * @return TotalHelper
-     */
-    protected function getTotalHelper()
+    protected function getTotalHelper(): TotalHelper
     {
         return $this->container->get('oro_order.order.total.total_helper');
     }

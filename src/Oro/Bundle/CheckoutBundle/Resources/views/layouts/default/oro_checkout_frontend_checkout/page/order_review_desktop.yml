@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - '@setOption':
+            id: checkout_button_continue
+            optionName: visible
+            optionValue: false
+
+        - '@setOption':
+            id: checkout_outside_button_continue
+            optionName: visible
+            optionValue: false
+
+    conditions: 'context["workflowStepName"]=="order_review" && !context["is_mobile"]'

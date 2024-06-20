@@ -21,17 +21,12 @@ use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
  */
 class PriceRequestFactory
 {
-    const MAX_PACKAGE_WEIGHT_KGS = 70;
-    const MAX_PACKAGE_WEIGHT_LBS = 150;
+    public const MAX_PACKAGE_WEIGHT_KGS = 70;
+    public const MAX_PACKAGE_WEIGHT_LBS = 150;
 
-    /** @var MeasureUnitConversion */
-    protected $measureUnitConversion;
-
-    /** @var UnitsMapper */
-    protected $unitsMapper;
-
-    /** @var SymmetricCrypterInterface */
-    protected $symmetricCrypter;
+    protected MeasureUnitConversion $measureUnitConversion;
+    protected UnitsMapper $unitsMapper;
+    protected SymmetricCrypterInterface $symmetricCrypter;
 
     /**
      * PriceRequestFactory constructor.
@@ -71,6 +66,8 @@ class PriceRequestFactory
             ->setUsername($transport->getUpsApiUser())
             ->setPassword($decryptedPassword)
             ->setAccessLicenseNumber($transport->getUpsApiKey())
+            ->setClientId($transport->getUpsClientId())
+            ->setClientSecret($transport->getUpsClientSecret())
             ->setRequestOption($requestOption)
             ->setShipperName($transport->getUpsShippingAccountName())
             ->setShipperNumber($transport->getUpsShippingAccountNumber())
@@ -80,7 +77,8 @@ class PriceRequestFactory
             ->setShipFromAddress($context->getShippingOrigin());
 
         if (null !== $shippingService) {
-            $priceRequest->setServiceCode($shippingService->getCode())
+            $priceRequest
+                ->setServiceCode($shippingService->getCode())
                 ->setServiceDescription($shippingService->getDescription());
         }
 

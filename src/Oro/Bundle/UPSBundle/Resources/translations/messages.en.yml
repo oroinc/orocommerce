@@ -6,9 +6,23 @@ oro:
             label: UPS API
             labels.label: Label
             test_mode.label: Test Mode
-            api_user.label: API User
-            api_password.label: API Password
-            api_key.label: API Key
+            api_user:
+                label: API User (Deprecated)
+                description: >
+                    UPS has deprecated access key authentication in favor of an OAuth 2.0 security model for all APIs.
+                    As of June 3, 2024, access keys will no longer be supported for authentication to any UPS APIs.
+            api_password:
+                label: API Password (Deprecated)
+                description: >
+                    UPS has deprecated access key authentication in favor of an OAuth 2.0 security model for all APIs.
+                    As of June 3, 2024, access keys will no longer be supported for authentication to any UPS APIs.
+            api_key:
+                label: API Key (Deprecated)
+                description: >
+                    UPS has deprecated access key authentication in favor of an OAuth 2.0 security model for all APIs.
+                    As of June 3, 2024, access keys will no longer be supported for authentication to any UPS APIs.
+            client_id.label: OAuth Client Id
+            client_secret.label: OAuth Client Secret
             shipping_account_name.label: Shipping Account Name
             shipping_account_number.label: Shipping Account Number
             pickup_type:

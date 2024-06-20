@@ -7,20 +7,14 @@ use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 
 class ProductStub extends Product
 {
-    /**
-     * @var ProductTaxCode
-     */
-    protected $taxCode;
+    private ?ProductTaxCode $taxCode = null;
 
-    /**
-     * @return ProductTaxCode|null
-     */
-    public function getTaxCode()
+    public function getTaxCode(): ?ProductTaxCode
     {
         return $this->taxCode;
     }
 
-    public function setTaxCode(ProductTaxCode $taxCode = null)
+    public function setTaxCode(ProductTaxCode $taxCode = null): void
     {
         $this->taxCode = $taxCode;
     }

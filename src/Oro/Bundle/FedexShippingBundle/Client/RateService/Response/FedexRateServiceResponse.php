@@ -4,70 +4,47 @@ namespace Oro\Bundle\FedexShippingBundle\Client\RateService\Response;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 
+/**
+ * Response of FedEx Rate Rest API.
+ */
 class FedexRateServiceResponse implements FedexRateServiceResponseInterface
 {
-    const SEVERITY_SUCCESS = 'SUCCESS';
-    const SEVERITY_NOTE = 'NOTE';
-    const SEVERITY_WARNING = 'WARNING';
-    const SEVERITY_ERROR = 'ERROR';
-    const SEVERITY_FAILURE = 'FAILURE';
-
-    const CONNECTION_ERROR = 111;
-    const NO_SERVICES_ERROR = 556;
-    const AUTHORIZATION_ERROR = 1000;
-    const SERVICE_NOT_ALLOWED = 868;
-
-    /**
-     * @var string
-     */
-    protected $severityType;
-
-    /**
-     * @var int
-     */
-    protected $severityCode;
+    private int $responseStatusCode;
 
     /**
      * @var Price[]
      */
-    protected $prices;
+    private array $prices;
+    private array $errors;
 
-    public function __construct(string $severityType, int $severityCode, array $prices = [])
+    public function __construct(int $responseStatusCode = 200, array $prices = [], array $errors = [])
     {
-        $this->severityType = $severityType;
-        $this->severityCode = $severityCode;
+        $this->responseStatusCode = $responseStatusCode;
         $this->prices = $prices;
+        $this->errors = $errors;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getSeverityType(): string
+    #[\Override]
+    public function getResponseStatusCode(): int
     {
-        return $this->severityType;
+        return $this->responseStatusCode;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getSeverityCode(): int
-    {
-        return $this->severityCode;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPrices(): array
     {
         return $this->prices;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isSuccessful(): bool
     {
-        return $this->getSeverityType() === self::SEVERITY_SUCCESS || $this->getSeverityType() === self::SEVERITY_NOTE;
+        return $this->getResponseStatusCode() === 200;
+    }
+
+    #[\Override]
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 }

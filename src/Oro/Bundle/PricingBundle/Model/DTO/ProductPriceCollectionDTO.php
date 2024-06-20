@@ -129,10 +129,10 @@ class ProductPriceCollectionDTO extends \ArrayObject
             $this->initProductPricesMap();
         }
 
-        $productPrices =& $this->productPricesMap;
+        $productPrices = & $this->productPricesMap;
         foreach ($criteriaPath as $pathPart) {
             if (array_key_exists($pathPart, $productPrices)) {
-                $productPrices =& $productPrices[$pathPart];
+                $productPrices = & $productPrices[$pathPart];
             } else {
                 unset($productPrices);
                 $productPrices = [];
