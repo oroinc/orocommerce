@@ -106,15 +106,24 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testSubmit()
+    private function getFedexShippingService(int $id, string $code, string $description): FedexShippingService
+    {
+        $service = new FedexShippingService();
+        ReflectionUtil::setId($service, $id);
+        $service->setCode($code);
+        $service->setDescription($description);
+
+        return $service;
+    }
+
+    public function testSubmit(): void
     {
         $submitData = [
             'fedexTestMode' => true,
-            'key' => 'key2',
-            'password' => 'pass2',
+            'clientId' => 'key2',
+            'clientSecret' => 'pass2',
             'accountNumber' => 'num2',
-            'meterNumber' => 'meter2',
-            'pickupType' => FedexIntegrationSettings::PICKUP_TYPE_BUSINESS_SERVICE_CENTER,
+            'pickupType' => FedexIntegrationSettings::PICKUP_CONTACT_FEDEX_TO_SCHEDULE,
             'unitOfWeight' => FedexIntegrationSettings::UNIT_OF_WEIGHT_KG,
             'labels' => [
                 'values' => ['default' => 'first label'],
@@ -125,10 +134,9 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
         $settings = new FedexIntegrationSettings();
         $settings
             ->setFedexTestMode(false)
-            ->setKey('key')
-            ->setPassword('pass')
+            ->setClientId('key')
+            ->setClientSecret('pass')
             ->setAccountNumber('num')
-            ->setMeterNumber('meter')
             ->setPickupType('pickup')
             ->setUnitOfWeight('unit')
             ->setIgnorePackageDimensions(true)

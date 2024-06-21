@@ -359,14 +359,17 @@ class CategoryControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        static::assertStringContainsString('Category has been saved', $html);
-        static::assertStringContainsString($title, $html);
-        static::assertStringContainsString(self::SMALL_SVG_IMAGE_NAME, $html);
-        static::assertStringContainsString(self::LARGE_SVG_IMAGE_NAME, $html);
+        self::assertStringContainsString('Category has been saved', $html);
+        self::assertStringContainsString($title, $html);
+        self::assertStringContainsString(self::SMALL_SVG_IMAGE_NAME, $html);
+        self::assertStringContainsString(self::LARGE_SVG_IMAGE_NAME, $html);
+
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
+        $this->client->useHashNavigation(false);
+
         $em = $this->getContainer()->get('doctrine')->getManager();
         $attachments = $em->getRepository(File::class)->findBy(['extension' => 'svg']);
         foreach ($attachments as $attachmentFile) {

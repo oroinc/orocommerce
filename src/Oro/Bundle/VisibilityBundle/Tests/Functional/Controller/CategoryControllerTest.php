@@ -183,6 +183,8 @@ class CategoryControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
+        $this->client->useHashNavigation(false);
+
         $this->client->request(
             'GET',
             $this->getUrl(

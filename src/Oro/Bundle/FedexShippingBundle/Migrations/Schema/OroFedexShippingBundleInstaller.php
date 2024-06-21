@@ -14,7 +14,7 @@ class OroFedexShippingBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -104,9 +104,19 @@ class OroFedexShippingBundleInstaller implements Installation
         $table->addColumn('fedex_ignore_package_dimension', 'boolean', ['notnull' => false, 'default' => false]);
         $table->addColumn('fedex_key', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('fedex_password', 'string', ['notnull' => false, 'length' => 100]);
+        $table->addColumn('fedex_client_id', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('fedex_client_secret', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('fedex_access_token', 'text', ['notnull' => false]);
+        $table->addColumn(
+            'fedex_access_token_expires',
+            'datetime',
+            ['notnull' => false, 'comment' => '(DC2Type:datetime)']
+        );
         $table->addColumn('fedex_account_number', 'string', ['notnull' => false, 'length' => 100]);
+        $table->addColumn('fedex_account_number_rest', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('fedex_meter_number', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('fedex_pickup_type', 'string', ['notnull' => false, 'length' => 100]);
+        $table->addColumn('fedex_pickup_type_rest', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('fedex_unit_of_weight', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn(
             'fedex_invalidate_cache_at',

@@ -27,15 +27,8 @@ class FedexIntegrationSettingsType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_fedex_settings';
 
-    /**
-     * @var FedexResponseCacheInterface
-     */
-    private $fedexResponseCache;
-
-    /**
-     * @var ShippingPriceCache
-     */
-    private $shippingPriceCache;
+    private FedexResponseCacheInterface $fedexResponseCache;
+    private ShippingPriceCache $shippingPriceCache;
 
     public function __construct(
         FedexResponseCacheInterface $fedexResponseCache,
@@ -74,7 +67,7 @@ class FedexIntegrationSettingsType extends AbstractType
                 TextType::class,
                 [
                     'label' => 'oro.fedex.integration.settings.key.label',
-                    'required' => true
+                    'required' => false,
                 ]
             )
             ->add(
@@ -82,7 +75,50 @@ class FedexIntegrationSettingsType extends AbstractType
                 OroEncodedPlaceholderPasswordType::class,
                 [
                     'label' => 'oro.fedex.integration.settings.password.label',
-                    'required' => true
+                    'required' => false,
+                ]
+            )
+            ->add(
+                'accountNumberSoap',
+                TextType::class,
+                [
+                    'label' => 'oro.fedex.integration.settings.account_number_soap.label',
+                    'required' => false
+                ]
+            )
+            ->add(
+                'pickupTypeSoap',
+                ChoiceType::class,
+                [
+                    'label' => 'oro.fedex.integration.settings.pickup_type_soap.label',
+                    'required' => false,
+                    'choices' => $this->getChoices()
+                ]
+            )
+            ->add(
+                'meterNumber',
+                TextType::class,
+                [
+                    'label' => 'oro.fedex.integration.settings.meter_number.label',
+                    'required' => false
+                ]
+            )
+            ->add(
+                'clientId',
+                TextType::class,
+                [
+                    'label' => 'oro.fedex.integration.settings.client_id.label',
+                    'required' => true,
+                    'constraints' => [new NotBlank()],
+                ]
+            )
+            ->add(
+                'clientSecret',
+                OroEncodedPlaceholderPasswordType::class,
+                [
+                    'label' => 'oro.fedex.integration.settings.client_secret.label',
+                    'required' => true,
+                    'constraints' => [new NotBlank()],
                 ]
             )
             ->add(
@@ -94,20 +130,13 @@ class FedexIntegrationSettingsType extends AbstractType
                 ]
             )
             ->add(
-                'meterNumber',
-                TextType::class,
-                [
-                    'label' => 'oro.fedex.integration.settings.meter_number.label',
-                    'required' => true
-                ]
-            )
-            ->add(
                 'pickupType',
                 ChoiceType::class,
                 [
                     'label' => 'oro.fedex.integration.settings.pickup_type.label',
                     'required' => true,
-                    'choices' => $this->getChoices(),
+                    'choices' => $this->getPickupChoices(),
+                    'constraints' => [new NotBlank()],
                 ]
             )
             ->add(
@@ -145,6 +174,8 @@ class FedexIntegrationSettingsType extends AbstractType
                 ]
             );
 
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             if ($event->getForm()->isValid()) {
                 $data = $event->getData();
@@ -152,6 +183,21 @@ class FedexIntegrationSettingsType extends AbstractType
                 $this->shippingPriceCache->deleteAllPrices();
             }
         });
+    }
+
+    public function preSetData(FormEvent $event): void
+    {
+        $form = $event->getForm();
+        /** @var FedexIntegrationSettings $entity */
+        $entity = $event->getData();
+
+        if (!$entity || !$entity->getId() || ($entity->getClientSecret() && $entity->getClientId())) {
+            $form->remove('key');
+            $form->remove('password');
+            $form->remove('meterNumber');
+            $form->remove('pickupTypeSoap');
+            $form->remove('accountNumberSoap');
+        }
     }
 
     /**
@@ -174,10 +220,19 @@ class FedexIntegrationSettingsType extends AbstractType
         return self::BLOCK_PREFIX;
     }
 
-    /**
-     * @return array
-     */
-    private function getChoices()
+    private function getPickupChoices(): array
+    {
+        return [
+            'oro.fedex.integration.settings.pickup_type.contact_fedex_to_schedule.label' =>
+                FedexIntegrationSettings::PICKUP_CONTACT_FEDEX_TO_SCHEDULE,
+            'oro.fedex.integration.settings.pickup_type.dropoff_at_fedex_location.label' =>
+                FedexIntegrationSettings::PICKUP_DROPOFF_AT_FEDEX_LOCATION,
+            'oro.fedex.integration.settings.pickup_type.use_scheduled_pickup.label' =>
+                FedexIntegrationSettings::PICKUP_USE_SCHEDULED_PICKUP,
+        ];
+    }
+
+    private function getChoices(): array
     {
         return [
             'oro.fedex.integration.settings.pickup_type.regular.label' =>

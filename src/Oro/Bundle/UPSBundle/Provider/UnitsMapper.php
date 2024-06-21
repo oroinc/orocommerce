@@ -6,6 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSTransportEntity;
 
+/**
+ * Provides information about UPS units.
+ */
 class UnitsMapper
 {
     const UNIT_OF_WEIGHT_KG = 'kg';

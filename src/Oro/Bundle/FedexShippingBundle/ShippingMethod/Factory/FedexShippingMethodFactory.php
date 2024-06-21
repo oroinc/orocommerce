@@ -9,15 +9,16 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Settings\Factory\F
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 // @codingStandardsIgnoreEnd
 
+/**
+ * The factory to create FedEx shipping method.
+ */
 class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInterface
 {
     /**
@@ -51,6 +52,11 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
     private $rateServiceRequestFactory;
 
     /**
+     * @var FedexRequestByRateServiceSettingsFactoryInterface
+     */
+    private $rateServiceRequestSoapFactory;
+
+    /**
      * @var FedexRateServiceBySettingsClientInterface
      */
     private $rateServiceClient;
@@ -62,6 +68,7 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
         FedexShippingMethodTypeFactoryInterface $typeFactory,
         FedexRateServiceRequestSettingsFactoryInterface $rateServiceRequestSettingsFactory,
         FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestFactory,
+        FedexRequestByRateServiceSettingsFactoryInterface $rateServiceRequestSoapFactory,
         FedexRateServiceBySettingsClientInterface $rateServiceClient
     ) {
         $this->identifierGenerator = $identifierGenerator;
@@ -70,56 +77,38 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
         $this->typeFactory = $typeFactory;
         $this->rateServiceRequestSettingsFactory = $rateServiceRequestSettingsFactory;
         $this->rateServiceRequestFactory = $rateServiceRequestFactory;
+        $this->rateServiceRequestSoapFactory = $rateServiceRequestSoapFactory;
         $this->rateServiceClient = $rateServiceClient;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function create(Channel $channel): FedexShippingMethod
+    public function create(Channel $channel)
     {
-        return new FedexShippingMethod(
-            $this->rateServiceRequestSettingsFactory,
-            $this->rateServiceRequestFactory,
-            $this->rateServiceClient,
-            $this->identifierGenerator->generateIdentifier($channel),
-            $this->getLabel($channel),
-            $this->iconProvider->getIcon($channel),
-            $channel->isEnabled(),
-            $this->getSettings($channel),
-            $this->createTypes($channel)
-        );
-    }
-
-    private function getLabel(Channel $channel): string
-    {
-        return (string)$this->localizationHelper->getLocalizedValue(
-            $this->getSettings($channel)->getLabels()
-        );
-    }
-
-    /**
-     * @param Channel $channel
-     *
-     * @return Transport|FedexIntegrationSettings
-     */
-    private function getSettings(Channel $channel)
-    {
-        return $channel->getTransport();
-    }
-
-    /**
-     * @param Channel $channel
-     *
-     * @return ShippingMethodTypeInterface[]
-     */
-    private function createTypes(Channel $channel): array
-    {
+        /** @var FedexIntegrationSettings $transport */
+        $transport = $channel->getTransport();
         $types = [];
-        foreach ($this->getSettings($channel)->getShippingServices() as $service) {
-            $types[] = $this->typeFactory->create($channel, $service);
+        $shippingServices = $transport->getShippingServices();
+        foreach ($shippingServices as $shippingService) {
+            $types[] = $this->typeFactory->create($channel, $shippingService);
         }
 
-        return $types;
+        $requestFactory = $this->rateServiceRequestSoapFactory;
+        if ($transport->getClientSecret() && $transport->getClientId()) {
+            $requestFactory = $this->rateServiceRequestFactory;
+        }
+
+        return new FedexShippingMethod(
+            $this->rateServiceRequestSettingsFactory,
+            $requestFactory,
+            $this->rateServiceClient,
+            $this->identifierGenerator->generateIdentifier($channel),
+            (string)$this->localizationHelper->getLocalizedValue($transport->getLabels()),
+            $this->iconProvider->getIcon($channel),
+            $channel->isEnabled(),
+            $transport,
+            $types
+        );
     }
 }

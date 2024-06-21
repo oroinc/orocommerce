@@ -9,16 +9,16 @@ use PHPUnit\Framework\TestCase;
 
 class FedexResponseCacheKeyTest extends TestCase
 {
-    public function testGetters()
+    public function testGetters(): void
     {
-        $request = new FedexRequest();
+        $request = new FedexRequest('test/uri');
         $settings = new FedexIntegrationSettings();
 
         $key = new FedexResponseCacheKey($request, $settings);
 
-        static::assertSame($request, $key->getRequest());
-        static::assertSame($settings, $key->getSettings());
-        static::assertSame(
+        self::assertSame($request, $key->getRequest());
+        self::assertSame($settings, $key->getSettings());
+        self::assertSame(
             (string) crc32(serialize($request->getRequestData())),
             $key->getCacheKey()
         );

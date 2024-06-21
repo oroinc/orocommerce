@@ -81,11 +81,28 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
+            'upsClientId',
+            TextType::class,
+            [
+                'label' => 'oro.ups.transport.client_id.label',
+                'required' => true
+            ]
+        );
+        $builder->add(
+            'upsClientSecret',
+            OroEncodedPlaceholderPasswordType::class,
+            [
+                'label' => 'oro.ups.transport.client_secret.label',
+                'required' => true
+            ]
+        );
+        $builder->add(
             'upsApiUser',
             TextType::class,
             [
                 'label' => 'oro.ups.transport.api_user.label',
-                'required' => true,
+                'tooltip' => 'oro.ups.transport.api_user.description',
+                'required' => false,
                 'attr' => ['autocomplete' => 'off'],
             ]
         );
@@ -94,7 +111,8 @@ class UPSTransportSettingsType extends AbstractType
             OroEncodedPlaceholderPasswordType::class,
             [
                 'label' => 'oro.ups.transport.api_password.label',
-                'required' => true
+                'tooltip' => 'oro.ups.transport.api_password.description',
+                'required' => false
             ]
         );
         $builder->add(
@@ -102,7 +120,8 @@ class UPSTransportSettingsType extends AbstractType
             TextType::class,
             [
                 'label' => 'oro.ups.transport.api_key.label',
-                'required' => true,
+                'tooltip' => 'oro.ups.transport.api_key.description',
+                'required' => false,
                 'attr' => ['autocomplete' => 'off'],
             ]
         );
@@ -172,8 +191,8 @@ class UPSTransportSettingsType extends AbstractType
     public function onPreSetData(FormEvent $event)
     {
         $this->setDefaultCountry($event);
-
         $this->setApplicableShippingServicesChoicesByCountry($event);
+        $this->removeDeprecatedFields($event);
     }
 
     protected function setDefaultCountry(FormEvent $event)
@@ -258,5 +277,23 @@ class UPSTransportSettingsType extends AbstractType
     public function getBlockPrefix()
     {
         return self::BLOCK_PREFIX;
+    }
+
+    private function removeDeprecatedFields(FormEvent $event): void
+    {
+        $form = $event->getForm();
+
+        /** @var UPSTransport $entity */
+        $entity = $event->getData();
+        if (null !== $entity
+            && (
+                !$entity->getId()
+                || (!$entity->getUpsApiUser() && !$entity->getUpsApiKey())
+            )
+        ) {
+            $form->remove('upsApiUser');
+            $form->remove('upsApiPassword');
+            $form->remove('upsApiKey');
+        }
     }
 }

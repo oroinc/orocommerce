@@ -8,6 +8,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * UPS shipping method options form type.
+ */
 class UPSShippingMethodOptionsType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_ups_shipping_method_config_options';

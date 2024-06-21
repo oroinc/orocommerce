@@ -49,7 +49,16 @@ class Client extends BaseClient
     protected function isHashNavigationRequest($uri, array $parameters, array $server)
     {
         // no hash navigation at frontend
-        return parent::isHashNavigationRequest($uri, $parameters, $server) && !$this->isFrontendUri($uri);
+        return parent::isHashNavigationRequest($uri, $parameters, $server);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function isContentResponse($content)
+    {
+        // no hash navigation at frontend
+        return parent::isContentResponse($content) && !$this->isFrontendUri($this->request->getUri());
     }
 
     /**

@@ -5,95 +5,189 @@ namespace Oro\Bundle\FedexShippingBundle\Tests\Functional\Controller;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
-use Oro\Bundle\FedexShippingBundle\Tests\Functional\Stub\SoapClientStub;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolationPerTest
+ */
 class ValidateConnectionControllerTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
     protected function setUp(): void
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
     }
 
-    public function testValidateConnectionActionNoShippingOptions()
+    public function testValidateConnectionActionNoShippingOptions(): void
     {
         $this->ajaxRequest(
             'POST',
             $this->getUrl('oro_fedex_validate_connection', ['channelId' => 0])
         );
 
-        //@codingStandardsIgnoreStart
         $this->assertResponseHasErrorMessage(
-            'No shipping origin options provided. Please, fill them in System Configuration -> Shipping -> Shipping Origin'
+            'No shipping origin options provided.'
+            . ' Please, fill them in System Configuration -> Shipping -> Shipping Origin'
         );
-        //@codingStandardsIgnoreEnd
     }
 
-    public function testValidateConnectionActionAuthorizationError()
+    public function testValidateConnectionAction400Error(): void
     {
         $this->setConfigShippingOrigin();
+
+        self::getContainer()->get('oro_integration.transport.rest.client_factory')->setFixtureFile(
+            __DIR__ . '/response/400.yml'
+        );
 
         $this->ajaxRequest(
             'POST',
             $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
-            $this->getRequestFormData(SoapClientStub::AUTHORIZATION_ERROR_OPTION)
+            $this->getRequestFormData()
         );
 
-        $this->assertResponseHasErrorMessage('Authentication error has occurred');
-    }
-
-    public function testValidateConnectionActionConnectionError()
-    {
-        $this->setConfigShippingOrigin();
-
-        $this->ajaxRequest(
-            'POST',
-            $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
-            $this->getRequestFormData(SoapClientStub::CONNECTION_ERROR_OPTION)
-        );
-
-        $this->assertResponseHasErrorMessage('Connection error has occurred. Please, try again later');
-    }
-
-    public function testValidateConnectionActionNoServices()
-    {
-        $this->setConfigShippingOrigin();
-
-        $this->ajaxRequest(
-            'POST',
-            $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
-            $this->getRequestFormData(SoapClientStub::NO_SERVICES_OPTION)
-        );
         $this->assertResponseHasErrorMessage(
-            'No services are available for current configuration,'
-            .' make sure that Shipping Origin configuration is correct in'
-            .' System Configuration -> Shipping -> Shipping Origin'
+            'Bad request was send. Please check the configuration and try to make a request again'
         );
     }
 
-    public function testValidateConnectionActionOk()
+    public function testValidateConnectionAction401Error(): void
     {
         $this->setConfigShippingOrigin();
+
+        self::getContainer()->get('oro_integration.transport.rest.client_factory')->setFixtureFile(
+            __DIR__ . '/response/401.yml'
+        );
 
         $this->ajaxRequest(
             'POST',
             $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
-            $this->getRequestFormData(SoapClientStub::OK_OPTION)
+            $this->getRequestFormData()
         );
 
-        $result = static::getJsonResponseContent($this->client->getResponse(), 200);
-
-        static::assertTrue($result['success']);
-        static::assertEquals(
-            'Connection is valid',
-            $result['message']
+        $this->assertResponseHasErrorMessage(
+            'Authentication error has occurred. Please check credentials and try to make a request again'
         );
     }
 
-    private function getRequestFormData(string $key): array
+    public function testValidateConnectionAction403Error(): void
+    {
+        $this->setConfigShippingOrigin();
+
+        self::getContainer()->get('oro_integration.transport.rest.client_factory')->setFixtureFile(
+            __DIR__ . '/response/403.yml'
+        );
+
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
+            $this->getRequestFormData()
+        );
+
+        $this->assertResponseHasErrorMessage(
+            'Forbidden. Please check credentials and try to make a request again'
+        );
+    }
+
+    public function testValidateConnectionAction404Error(): void
+    {
+        $this->setConfigShippingOrigin();
+
+        self::getContainer()->get('oro_integration.transport.rest.client_factory')->setFixtureFile(
+            __DIR__ . '/response/404.yml'
+        );
+
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
+            $this->getRequestFormData()
+        );
+
+        $this->assertResponseHasErrorMessage(
+            'Not found. Please try to make a request again later'
+        );
+    }
+
+    public function testValidateConnectionAction500Error(): void
+    {
+        $this->setConfigShippingOrigin();
+
+        self::getContainer()->get('oro_integration.transport.rest.client_factory')->setFixtureFile(
+            __DIR__ . '/response/500.yml'
+        );
+
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
+            $this->getRequestFormData()
+        );
+
+        $this->assertResponseHasErrorMessage(
+            'Failure. Please try to make a request again later'
+        );
+    }
+
+    public function testValidateConnectionAction503Error(): void
+    {
+        $this->setConfigShippingOrigin();
+
+        self::getContainer()->get('oro_integration.transport.rest.client_factory')->setFixtureFile(
+            __DIR__ . '/response/503.yml'
+        );
+
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
+            $this->getRequestFormData()
+        );
+
+        $this->assertResponseHasErrorMessage(
+            'Service unavailable. Please try to make a request again later'
+        );
+    }
+
+    public function testValidateConnectionActionNoPricesError(): void
+    {
+        $this->setConfigShippingOrigin();
+
+        self::getContainer()->get('oro_integration.transport.rest.client_factory')->setFixtureFile(
+            __DIR__ . '/response/no_prices.yml'
+        );
+
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
+            $this->getRequestFormData()
+        );
+
+        $this->assertResponseHasErrorMessage(
+            'No services are available for current configuration, make sure that Shipping Origin configuration'
+            . ' is correct in System Configuration -> Shipping -> Shipping Origin'
+        );
+    }
+
+    public function testValidateConnectionActionOk(): void
+    {
+        $this->setConfigShippingOrigin();
+
+        self::getContainer()->get('oro_integration.transport.rest.client_factory')->setFixtureFile(
+            __DIR__ . '/response/200.yml'
+        );
+
+        $this->ajaxRequest(
+            'POST',
+            $this->getUrl('oro_fedex_validate_connection', ['channelId' => '0']),
+            $this->getRequestFormData()
+        );
+
+        $result = self::getJsonResponseContent($this->client->getResponse(), 200);
+
+        self::assertTrue($result['success']);
+        self::assertEquals('Connection is valid', $result['message']);
+    }
+
+    private function getRequestFormData(): array
     {
         return [
             'oro_integration_channel_form' => [
@@ -104,10 +198,9 @@ class ValidateConnectionControllerTest extends WebTestCase
                     'labels' => [
                         'values' => ['default' => 'fedex'],
                     ],
-                    'key' => $key,
-                    'password' => 'password',
+                    'clientId' => 'testclient',
+                    'clientSecret' => 'password',
                     'accountNumber' => 'accountNumber',
-                    'meterNumber' => 'meterNumber',
                     'pickupType' => 'pickupType',
                     'unitOfWeight' => 'unitOfWeight',
                     'shippingServices' => ['2'],
@@ -116,7 +209,7 @@ class ValidateConnectionControllerTest extends WebTestCase
         ];
     }
 
-    private function setConfigShippingOrigin()
+    private function setConfigShippingOrigin(): void
     {
         $configManager = self::getConfigManager('global');
 
@@ -134,12 +227,9 @@ class ValidateConnectionControllerTest extends WebTestCase
 
     private function assertResponseHasErrorMessage(string $message)
     {
-        $result = static::getJsonResponseContent($this->client->getResponse(), 200);
+        $result = self::getJsonResponseContent($this->client->getResponse(), 200);
 
-        static::assertFalse($result['success']);
-        static::assertEquals(
-            $message,
-            $result['message']
-        );
+        self::assertFalse($result['success']);
+        self::assertEquals($message, $result['message']);
     }
 }
