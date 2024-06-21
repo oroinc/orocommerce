@@ -1108,6 +1108,16 @@ oro_behat_extension:
     ProductItem:
       selector: 'div.product-item'
 
+    ProductItemBySku:
+      selector:
+        locator: "//div[contains(concat(' ',normalize-space(@class),' '),' product-item ') and .//*[@itemprop='sku' and contains(concat(' ',normalize-space(translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')),' '), ' :sku: ')]]"
+        type: xpath
+
+    ProductItemByName:
+      selector:
+        locator: "//div[contains(concat(' ',normalize-space(@class),' '),' product-item ') and .//*[@itemprop='name' and contains(concat(' ',normalize-space(translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')),' '), ' :name: ')]]"
+        type: xpath
+
     ProductAutocomplete:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductAutocomplete
 

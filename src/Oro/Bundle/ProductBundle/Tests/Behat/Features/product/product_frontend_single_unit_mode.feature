@@ -2,7 +2,7 @@
 @ticket-BB-16335
 @ticket-BB-22546
 @fixture-OroProductBundle:product_frontend_single_unit_mode.yml
-
+@pricing-storage-combined
 Feature: Product frontend single unit mode
   In order to successfully use single unit mode in the system
   As a Buyer
