@@ -31,7 +31,8 @@ $cms-typography-blockquote-icon-offset-mobile: -16px !default;
 // Images
 $cms-typography-img-max-width: 100% !default;
 $cms-typography-img-offset: 0 !default;
-$cms-typography-img-border: 1px solid get-color('neutral', 'grey1') !default;
+$cms-typography-img-border-radius: 50% !default;
+//$cms-typography-img-border: 1px solid get-color('neutral', 'grey1') !default;
 
 // Figure
 $cms-typography-figure-display: grid !default;

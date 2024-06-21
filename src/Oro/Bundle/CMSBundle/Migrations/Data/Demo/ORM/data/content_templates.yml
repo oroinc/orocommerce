@@ -119,13 +119,13 @@
     contentStyle: css/four_columns_text_and_images_features.css
     previewImage: preview/four_columns_text_and_images_features.png
 -
-    name: 'Three columns. Text'
+    +-name: 'Three columns. Text'
     tags: [Testimonials]
     content: three_columns_text_testimonials.html
     contentStyle: css/three_columns_text_testimonials.css
     previewImage: preview/three_columns_text_testimonials.png
 -
-    name: 'One column'
+    +name: 'One column'
     tags: [Testimonials]
     content: one_column_testimonials.html
     contentStyle: css/one_column_testimonials.css
@@ -137,13 +137,13 @@
     contentStyle: css/three_columns_testimonials.css
     previewImage: preview/three_columns_testimonials.png
 -
-    name: 'One column. Text and images'
+    +name: 'One column. Text and images'
     tags: [Testimonials]
     content: one_column_text_and_images_testimonials.html
     contentStyle: css/one_column_text_and_images_testimonials.css
     previewImage: preview/one_column_text_and_images_testimonials.png
 -
-    name: 'Four columns'
+    +name: 'Four columns'
     tags: [Testimonials]
     content: four_columns_testimonials.html
     contentStyle: css/four_columns_testimonials.css
