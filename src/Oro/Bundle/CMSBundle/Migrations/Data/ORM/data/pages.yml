@@ -1,138 +1,306 @@
 about:
     slug: about
     title: 'About'
+    contentStyle: >
+        .about-us-page-grid {
+            --grid-gap: 64px 56px;
+        }
+        @media screen and (max-width: 1279px) {
+             .about-us-page-grid {
+                 --grid-gap: 64px 48px;
+             }
+        }
+        @media screen and (max-width: 767px) {
+             .about-us-page-grid {
+                --grid-gap: 48px 40px;
+             }
+        }
+        @media screen and (max-width: 640px) {
+            .about-us-page-grid {
+                --grid-gap: 48px 30px;
+            }
+        }
+        @media screen and (max-width: 430px) {
+             .about-us-page-grid {
+                --grid-gap: 48px 0;
+             }
+        }
     content: >
-        <h1>H1. We Are the Leading RV & Gear Seller in the US</h1>
-    
-        <p> Are you considering buying a recreational vehicle (RV) to spend weekends outdoors with your family? We offer you a wide choice of options, from small campers to motorhomes. You can also find all the necessary RV accessories, inside and outside, to make your holiday trips the most enjoyable experience. If you’re happy, we’re happy!</p>
-    
-        <code> We have the best membership programs that offer worldwide emergency assistance, 24/7 towing, discounts on RV accessories, and many more!</code>
-    
-        <h2>H2. Do You Need an RV?</h2>
-        
-        <p> RVs are a great way to explore the country while enjoying the modern comforts and the company of your family 24/7. If you feel the passion for a nomadic adventure across some breath-taking sites of mother nature, an RV will definitely take you there!</p>
-        
-        <figure>
-            <picture>
-                <source srcset="/bundles/orocms/images/landing-page/320.jpg"
-                        media="(max-width: 414px)">
-                <source srcset="/bundles/orocms/images/landing-page/768.jpg"
-                        media="(max-width: 992px)">
-                <img src="/bundles/orocms/images/landing-page/1384.jpg"
-                     alt="Image">
-            </picture>
-            <figcaption>RV & Gear Seller</figcaption>
-        </figure>
-        
-        <p>
-            <small> There are so many beautiful places in this country that are left unnoticed by most people. Whenever you’re up to having a break from a hectic urban life, take your home with you to the heart of nature.</small>
-        </p>
-        
-        <h3>H3. How Do You Choose an RV?</h3>
-        
-        <p> There are different types of RVs for weekends, travelling, and living. We can <a href="#">help you</a> find your dream RV in minutes. You could also read some of our articles to educate yourself on different aspects of RV as well as email us call our office to ask all the questions you may have.</p>
-
-        <div class="grid">
-            <div class="grid-col-4 grid-col-mobile-landscape-12">
-                <p>
-                    <strong>Popular RV types</strong>
-                </p>
-
-                <ul>
-                    <li>Pop up</li>
-                    <li>Small camper</li>
-                    <li>Fifth wheel</li>
-                    <li>Class C</li>
-                </ul>
+        <div class="grid about-us-page-grid">
+            <div class="grid-col-12">
+                <div class="grid grid-row-gap-mobile-big-32">
+                    <div class="grid-col-5 grid-col-tablet-big-6 grid-col-mobile-big-12">
+                        <div class="grid grid-columns-1 grid-row-gap-16">
+                            <h1>H1. We Are the Leading RV & Gear Seller in the US</h1>
+                            <p> Are you considering buying a recreational vehicle (RV) to spend weekends outdoors with your family? We offer you a wide choice of options, from small campers to motorhomes. You can also find all the necessary RV accessories, inside and outside, to make your holiday trips the most enjoyable experience. If you’re happy, we’re happy!</p>
+                            <div class="grid grid-max-content">
+                                <a href="#" class="btn btn--size-large grid-col-mobile-12" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-col-7 grid-col-tablet-big-6 grid-col-mobile-big-12">
+                        <picture>
+                            <source srcset="/bundles/orocms/images/landing-page/1_360.jpg 1x, /bundles/orocms/images/landing-page/1_360-2x.jpg 2x"
+                                    media="(max-width: 430px)">
+                            <source srcset="/bundles/orocms/images/landing-page/1_768.jpg 1x, /bundles/orocms/images/landing-page/1_768-2x.jpg 2x"
+                                    media="(max-width: 768px)">
+                            <source srcset="/bundles/orocms/images/landing-page/1_1280.jpg 1x, /bundles/orocms/images/landing-page/1_1280-2x.jpg 2x"
+                                    media="(max-width: 1280px)">
+                            <source srcset="/bundles/orocms/images/landing-page/1_1920.jpg 1x, /bundles/orocms/images/landing-page/1_1920-2x.jpg 2x"
+                                    media="(min-width: 1281px)">
+                            <img class="cover-img full-cover" src="/bundles/orocms/images/landing-page/1_1920.jpg"
+                                 alt="Image">
+                        </picture>
+                    </div>
+                </div>
             </div>
 
-            <div class="grid-col-4 grid-col-mobile-landscape-12">
-                <p>
-                    <strong>Our recommended top gear</strong>
-                </p>
-
-                <ol>
-                    <li>Camp kitchen</li>
-                    <li>RV cover</li>
-                    <li>GPS accessories</li>
-                    <li>Power generator</li>
-                </ol>
+            <div class="grid-col-12">
+                <p class="accent-text">We have the best membership programs that offer worldwide emergency assistance, 24/7 towing, discounts on RV accessories, and many more!</p>
             </div>
 
-            <div class="grid-col-4 grid-col-mobile-landscape-12">
-                <p>
-                    <strong>Our popular membership programs</strong>
-                </p>
-
-                <dl>
-                    <dt>Travel assistance</dt>
-                    <dd>Emergency medical evacuation and home transportation</dd>
-                    <dt>Roadside assistance</dt>
-                    <dd>Emergency fuel delivery, towing, flat tyre and low battery service</dd>
-                </dl>
+            <div class="grid-col-12">
+                <div class="grid grid-columns-1 grid-row-gap-8">
+                    <h2>H2. Do You Need an RV?</h2>
+                    <p>RVs are a great way to explore the country while enjoying the modern comforts and the company of your family 24/7. If you feel the passion for a nomadic adventure across some breath-taking sites of mother nature, an RV will definitely take you there!</p>
+                    <figure>
+                            <picture>
+                                <source srcset="/bundles/orocms/images/landing-page/2_360.jpg 1x, /bundles/orocms/images/landing-page/2_360-2x.jpg 2x"
+                                        media="(max-width: 430px)">
+                                <source srcset="/bundles/orocms/images/landing-page/2_768.jpg 1x, /bundles/orocms/images/landing-page/2_768-2x.jpg 2x"
+                                        media="(max-width: 768px)">
+                                <source srcset="/bundles/orocms/images/landing-page/2_1280.jpg 1x, /bundles/orocms/images/landing-page/2_1280-2x.jpg 2x"
+                                        media="(max-width: 1280px)">
+                                <source srcset="/bundles/orocms/images/landing-page/2_1920.jpg 1x, /bundles/orocms/images/landing-page/2_1920-2x.jpg 2x"
+                                        media="(min-width: 1281px)">
+                                <img src="/bundles/orocms/images/landing-page/2_1920.jpg" alt="Image">
+                            </picture>
+                            <figcaption>
+                                <p class="h1">RV & GEAR SELLER</p>
+                                <p class="h5">Reduce the complexity of your custom projects with the features of our out-of-the-box B2B eCommerce solutions</p>
+                            </figcaption>
+                        </figure>
+                    <p><small> There are so many beautiful places in this country that are left unnoticed by most people. Whenever you’re up to having a break from a hectic urban life, take your home with you to the heart of nature.</small></p>
+                </div>
             </div>
-        </div>
-        
-        <h4>H4. We Can Help You Finance Your RV</h4>
-        
-        <p>Over decades helping our customers get financing, we’ve developed relationships with most financial institutions—from national banks to local lenders. We know which lenders are RV-friendly. We pitch your specific finance needs to several lenders, and leverage our relationships to make sure you get the best financing terms possible.</p>
-        
-        <h5>H5. Start Your RV Journey Today</h5>
 
-        <p>
-            <em>Explore our online store for America’s favorite brands, such as Coleman, Pioneer, Mallard, Freedom Elite, Satellite, or Hymer. Read our blog to learn about your RV maintenance, best camping recipes, tips for family trips, and great destinations for your next holiday. We’d like you to become an expert in a million-star recreational experience amidst the wonders of mother nature, just like in this quote from Forrest Stevens.</em>
-        </p>
-        
-        <h6>H6. I find myself...</h6>
-        
-        <p>“I find myself happier and more enthused about life when I’m outside and in what people would consider wilderness. That feels like home to me, so creating my own space that facilitates that is worth it, and that’s going to be different for everyone.”</p>
-        
-        <blockquote>Whatever your RV, our RV service team will keep you on the road. We offer a variety of services for all types of RVs. Workmanship on installations is guaranteed as long as you own your vehicle. Workmanship on service and collision repair guaranteed for 12 months.</blockquote>
+            <div class="grid-col-12">
+                <code> We have the best membership programs that offer worldwide emergency assistance, 24/7 towing, discounts on RV accessories, and many more!</code>
+            </div>
 
-        <p>Photographs are a way of preserving a moment in our lives for the rest of our lives. Many of us have at least been tempted at the flashy array of photo printers which seemingly leap off the shelves at even the least tech-savvy. It surely seems old fashioned to talk about 35mm film and non-digital cameras in today’s day and age.</p>
+            <div class="grid-col-12">
+                <div class="grid grid-columns-1 grid-row-gap-8">
+                    <h3>H3. How Do You Choose an RV?</h3>
+                    <div class="grid grid-row-gap-24">
+                        <div class="grid-col-12 grid">
+                            <p class="grid-col-4 grid-col-tablet-6 grid-col-mobile-big-12">There are <a href="#">different types of RVs</a> for weekends, travelling, and living. We can help you find your dream RV in minutes. You could also read some of our articles to educate yourself on different aspects of RV as well as email us call our office to ask all the questions you may have <span class="line-through">with a 50% discount</span> for free.</p>
+                        </div>
+                    
+                        <div class="grid-col-12 grid grid-row-gap-mobile-big-16">
+                            <div class="grid-col-4 grid-col-mobile-big-6 grid-col-mobile-12">
+                                <p>
+                                    <strong>Popular RV types</strong>
+                                </p>
+    
+                                <ul>
+                                    <li>
+                                        Pop up
+                                        <ul class="list-style-dash">
+                                            <li>Small camper</li>
+                                            <li>Fifth wheel</li>
+                                        </ul>
+                                    </li>
+                                    <li>Small camper</li>
+                                    <li>Fifth wheel</li>
+                                    <li>Class C</li>
+                                </ul>
+                            </div>
+                            <div class="grid-col-4 grid-col-mobile-big-6 grid-col-mobile-12">
+                                <p>
+                                    <strong>Our recommended top gear</strong>
+                                </p>
+    
+                                <ol>
+                                    <li>
+                                        Camp kitchen
+                                        <ul class="list-style-dash">
+                                            <li>Small camper</li>
+                                            <li>Fifth wheel</li>
+                                        </ul>
+                                    </li>
+                                    <li>RV cover</li>
+                                    <li>GPS accessories</li>
+                                    <li>Power generator</li>
+                                </ol>
+                            </div>
+                            <div class="grid-col-4 grid-col-mobile-big-6 grid-col-mobile-12">
+                                <p>
+                                    <strong>Our popular membership programs</strong>
+                                </p>
+    
+                                <dl>
+                                    <dt>Travel assistance</dt>
+                                    <dd>Emergency medical evacuation</dd>
+                                    <dd>Home transportation</dd>
+                                    <dt>Roadside assistance</dt>
+                                    <dd>Emergency fuel delivery, towing</dd>
+                                    <dd>Flat tyre and low battery service</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <hr>
-        
-        <address>
-            Visit us at:<br>
-            buysellrv.com<br>
-            Box 564, Disneyland<br>
-            USA
-        </address>
+            <div class="grid-col-12">
+                <div class="grid grid-columns-1 grid-row-gap-8">
+                    <h3>Our popular membership programs</h3>
+                    <div class="grid grid-row-gap-mobile-big-24">
+                        <div class="grid-col-4 grid-col-tablet-6 grid-col-mobile-big-12">
+                            <dl>
+                                <dt>Travel assistance</dt>
+                                <dd>Emergency medical evacuation</dd>
+                                <dd>Home transportation</dd>
+                            </dl>
+                        </div>
+                        <div class="grid-col-4 grid-col-tablet-6 grid-col-mobile-big-12">
+                            <dl>
+                                <dt>Roadside assistance</dt>
+                                <dd>Emergency fuel delivery, towing</dd>
+                                <dd>Fvc vlat tyre and low battery service</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <h2>H2. RV Search Example</h2>
-        
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>RV Class</th>
-                        <th>RV Type</th>
-                        <th>Max Length <sub>ft</sub></th>
-                        <th>Max Dry Weight <sup>lbs</sup></th>
-                        <th>Max Sleep Number</th>
-                    </tr>
-                </thead>
+            <div class="grid-col-12">
+                <div class="grid grid-columns-1 grid-row-gap-8 grid-row-gap-mobile-big-16">
+                    <h4>H4. We Can Help You Finance Your RV</h4>
+                    <div class="grid grid-row-gap-tablet-small-24">
+                        <div class="grid-col-4 grid-col-tablet-small-12">
+                            <picture>
+                                <source srcset="/bundles/orocms/images/landing-page/3_360.jpg 1x, /bundles/orocms/images/landing-page/3_360-2x.jpg 2x"
+                                        media="(max-width: 430px)">
+                                <source srcset="/bundles/orocms/images/landing-page/3_768.jpg 1x, /bundles/orocms/images/landing-page/3_768-2x.jpg 2x"
+                                        media="(max-width: 992px)">
+                                <source srcset="/bundles/orocms/images/landing-page/3_1280.jpg 1x, /bundles/orocms/images/landing-page/3_1280-2x.jpg 2x"
+                                        media="(max-width: 1280px)">
+                                <source srcset="/bundles/orocms/images/landing-page/3_1920.jpg 1x, /bundles/orocms/images/landing-page/3_1920-2x.jpg 2x"
+                                        media="(min-width: 1281px)">
+                                <img class="cover-img full-cover" src="/bundles/orocms/images/landing-page/3_1920.jpg" alt="Image">
+                            </picture>
+                        </div>
+                        <div class="grid-col-8 grid-col-tablet-small-12">
+                            <div class="grid grid-row-gap-mobile-landscape-24">
+                                <div class="grid-col-6 grid-col-mobile-big-6 grid-col-mobile-landscape-12">
+                                    <p>Over decades helping our customers get financing, we’ve developed relationships with most financial institutions—from national banks to local lenders. We know which lenders are RV-friendly. We pitch your specific finance needs to several lenders, and leverage our relationships to make sure you get the best financing terms possible.Explore our online store for America’s favorite brands, such as Coleman, Pioneer, Mallard, Freedom Elite, Satellite, or Hymer. </p>
+                                </div>
+                                <div class="grid-col-6 grid-col-mobile-big-6 grid-col-mobile-landscape-12">
+                                    <p>Read our blog to learn about your RV maintenance, best camping recipes, tips for family trips, and great destinations for your next holiday. We’d like you to become an expert in a million-star recreational experience amidst the wonders of mother nature, just like in this quote from Forrest Stevens.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <tbody>
-                    <tr>
-                        <td>Towable</td>
-                        <td>Travel Trailer</td>
-                        <td>30</td>
-                        <td>3500</td>
-                        <td>5</td>
-                    </tr>
-                    <tr>
-                        <td>Motorized</td>
-                        <td>Class A</td>
-                        <td>40</td>
-                        <td>2500</td>
-                        <td>6</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="cms-panel-end">
-            <a href="#" class="btn btn--outlined" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
+            <div class="grid-col-12">
+                <div class="grid grid-columns-1 grid-row-gap-4">
+                    <h5>H5. Start Your RV Journey Today</h5>
+                    <div class="grid">
+                        <p class="grid-col-4 grid-col-tablet-6 grid-col-mobile-big-12">
+                            <em>Explore our online store for America’s favorite brands, such as Coleman, Pioneer, Mallard, Freedom Elite, Satellite, or Hymer.</em>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-col-12">
+                <div class="grid grid-columns-1 grid-row-gap-16">
+                    <h6>H6. I find myself...</h6>
+                    <blockquote>
+                        <div class="grid grid-columns-1 grid-row-gap-8">
+                            <p class="h2-italic">I find myself happier and more enthused about life when I’m outside and in what people would consider wilderness. That feels like home to me, so creating my own space that facilitates that is worth it, and that’s going to be different for everyone.</p>
+                            <footer>
+                                <h5>Marguerite Fox</h5>
+                                <p class="extra-text">Position at Company Name</p>
+                            </footer>
+                        </div>
+                    </blockquote>
+                    <p>Whatever your RV, our RV service team will keep you on the road. We offer a variety of services for all types of RVs. Workmanship on installations is guaranteed as long as you own your vehicle. Workmanship on service and collision repair guaranteed for 12 months.</p>
+                </div>
+            </div>
+
+            <div class="grid-col-12">
+                <div class="grid grid-row-gap-mobile-big-24">
+                    <div class="grid-col-4 grid-col-tablet-6 grid-col-mobile-big-12">
+                        <div class="grid grid-columns-1 grid-row-gap-8">
+                            <h5>Visit us at:</h5>
+                            <div class="contact-list">
+                                <div class="contact-list__item">
+                                    <span class="contact-list__icon">{{ widget_icon("globe") }}</span>
+                                    <a href="#" class="link">buysellrv.com</a>
+                                </div>
+                                <div class="contact-list__item">
+                                    <span class="contact-list__icon">{{ widget_icon("mail") }}</span>
+                                    <a href="#" class="link">buysellrv@gmail.com</a>
+                                </div>
+                                <div class="contact-list__item">
+                                    <span class="contact-list__icon">{{ widget_icon("phone-outlined") }}</span>
+                                    1-800-555-5555
+                                </div>
+                                <div class="contact-list__item">
+                                    <span class="contact-list__icon">{{ widget_icon("map-pin") }}</span>
+                                    <i>Box 564, Disneyland<br/>USA</i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-col-8 grid-col-tablet-6 grid-col-mobile-big-12">
+                        <iframe class="iframe-map" frameborder="0" src="https://maps.google.com/maps?&q=Box 564, Disneyland&z=7&t=q&output=embed"></iframe>
+                   </div>
+                </div>
+            </div>
+
+            <div class="grid-col-12">
+                <div class="grid grid-columns-1 grid-row-gap-8">
+                    <h2>H2. RV Search Example</h2>
+                    <div class="table-responsive">
+                        <table class="table-styled">
+                            <thead>
+                                <tr>
+                                    <th>RV Class</th>
+                                    <th>RV Type</th>
+                                    <th>Max Length <sub>ft</sub></th>
+                                    <th>Max Dry Weight <sup>lbs</sup></th>
+                                    <th>Max Sleep Number</th>
+                                </tr>
+                            </thead>
+    
+                            <tbody>
+                                <tr>
+                                    <td>Towable</td>
+                                    <td>Travel Trailer</td>
+                                    <td>30</td>
+                                    <td>3500</td>
+                                    <td>5</td>
+                                </tr>
+                                <tr>
+                                    <td>Motorized</td>
+                                    <td>Class A</td>
+                                    <td>40</td>
+                                    <td>2500</td>
+                                    <td>6</td>
+                                </tr>
+                                </tbody>
+                        </table>
+                    </div>
+                    <div class="cms-panel-end">
+                        <div class="grid grid-max-content">
+                            <a href="#" class="btn btn--size-large grid-col-mobile-12" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>

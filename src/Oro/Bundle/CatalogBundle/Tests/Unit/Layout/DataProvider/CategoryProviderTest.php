@@ -12,32 +12,22 @@ use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProviderBCAdapter;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProviderInterface;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Stub\CategoryStub;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class CategoryProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     private RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject $requestProductHandler;
-
     private CategoryRepository|\PHPUnit\Framework\MockObject\MockObject $categoryRepository;
-
     private CategoryTreeProvider|\PHPUnit\Framework\MockObject\MockObject $categoryTreeProvider;
-
     private TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor;
-
     private MasterCatalogRootProviderInterface|\PHPUnit\Framework\MockObject\MockObject $masterCatalogProvider;
-
-    private CategoryProvider $categoryProvider;
     private CategoryProviderBCAdapter|\PHPUnit\Framework\MockObject\MockObject $categoryProviderBCAdapter;
+    private CategoryProvider $categoryProvider;
 
-    /**
-     * @inheritdoc
-     */
     protected function setUp(): void
     {
         $this->requestProductHandler = $this->createMock(RequestProductHandler::class);
@@ -54,16 +44,15 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
             ->with(Category::class)
             ->willReturn($this->categoryRepository);
 
-        /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry */
-        $registry = $this->createMock(ManagerRegistry::class);
-        $registry->expects(self::any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
             ->method('getManagerForClass')
             ->with(Category::class)
             ->willReturn($manager);
 
         $this->categoryProvider = new CategoryProvider(
             $this->requestProductHandler,
-            $registry,
+            $doctrine,
             $this->categoryTreeProvider,
             $this->tokenAccessor,
             $this->masterCatalogProvider,
@@ -71,17 +60,23 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    private function getCategory(int $id): Category
+    {
+        $category = new CategoryStub();
+        ReflectionUtil::setId($category, $id);
+
+        return $category;
+    }
+
     public function testGetCurrentCategoryUsingMasterCatalogRoot(): void
     {
         $category = new Category();
 
-        $this->requestProductHandler
-            ->expects(self::once())
+        $this->requestProductHandler->expects(self::once())
             ->method('getCategoryId')
             ->willReturn(0);
 
-        $this->masterCatalogProvider
-            ->expects(self::once())
+        $this->masterCatalogProvider->expects(self::once())
             ->method('getMasterCatalogRoot')
             ->willReturn($category);
 
@@ -94,13 +89,11 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         $category = new Category();
         $categoryId = 1;
 
-        $this->requestProductHandler
-            ->expects(self::once())
+        $this->requestProductHandler->expects(self::once())
             ->method('getCategoryId')
             ->willReturn($categoryId);
 
-        $this->categoryRepository
-            ->expects(self::once())
+        $this->categoryRepository->expects(self::once())
             ->method('find')
             ->with($categoryId)
             ->willReturn($category);
@@ -109,13 +102,21 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
         self::assertSame($category, $result);
     }
 
-    public function testGetIncludeSubcategoriesChoice(): void
+    /**
+     * @dataProvider getIncludeSubcategoriesChoiceDataProvider
+     */
+    public function testGetIncludeSubcategoriesChoice(bool $result): void
     {
-        $this->requestProductHandler
+        $this->requestProductHandler->expects(self::once())
             ->method('getIncludeSubcategoriesChoice')
-            ->willReturnOnConsecutiveCalls(true, false);
-        self::assertEquals(true, $this->categoryProvider->getIncludeSubcategoriesChoice());
-        self::assertEquals(false, $this->categoryProvider->getIncludeSubcategoriesChoice());
+            ->willReturn($result);
+
+        self::assertSame($result, $this->categoryProvider->getIncludeSubcategoriesChoice());
+    }
+
+    public static function getIncludeSubcategoriesChoiceDataProvider(): array
+    {
+        return [[false], [true]];
     }
 
     /**
@@ -123,22 +124,23 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetCategoryPath(?UserInterface $userFromToken, ?UserInterface $expectedUser): void
     {
-        $this->mockTokenAccessor($userFromToken);
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects(self::any())
+            ->method('getUser')
+            ->willReturn($userFromToken);
+        $this->tokenAccessor->expects(self::once())
+            ->method('getToken')
+            ->willReturn($token);
 
         $categoryAId = 1;
-        $categoryA = new CategoryStub();
-        $categoryA->setId($categoryAId);
+        $categoryA = $this->getCategory($categoryAId);
+        $categoryB = $this->getCategory(2);
 
-        $categoryB = new CategoryStub();
-        $categoryB->setId(2);
-
-        $this->requestProductHandler
-            ->expects(self::once())
+        $this->requestProductHandler->expects(self::once())
             ->method('getCategoryId')
             ->willReturn($categoryAId);
 
-        $this->categoryRepository
-            ->expects(self::once())
+        $this->categoryRepository->expects(self::once())
             ->method('find')
             ->with($categoryAId)
             ->willReturn($categoryA);
@@ -160,7 +162,8 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
 
     public function getUserDataProvider(): array
     {
-        $customerUser = new CustomerUserStub(1);
+        $customerUser = new CustomerUser();
+        ReflectionUtil::setId($customerUser, 1);
 
         return [
             'null' => [
@@ -176,17 +179,5 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
                 'expectedUser' => $customerUser,
             ],
         ];
-    }
-
-    private function mockTokenAccessor(?UserInterface $user): void
-    {
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects(self::any())
-            ->method('getUser')
-            ->willReturn($user);
-
-        $this->tokenAccessor->expects(self::once())
-            ->method('getToken')
-            ->willReturn($token);
     }
 }

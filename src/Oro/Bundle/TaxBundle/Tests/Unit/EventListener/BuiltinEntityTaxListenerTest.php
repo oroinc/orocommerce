@@ -13,12 +13,10 @@ use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxProviderRegistry;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 
 class BuiltinEntityTaxListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     /** @var BuiltInTaxProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $taxProvider;
 
@@ -165,7 +163,7 @@ class BuiltinEntityTaxListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->prePersist($order, $event);
 
         $orderId = 1;
-        $this->setValue($order, 'id', $orderId);
+        ReflectionUtil::setId($order, $orderId);
 
         $uow = $this->createMock(UnitOfWork::class);
 

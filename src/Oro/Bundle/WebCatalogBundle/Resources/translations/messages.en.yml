@@ -110,6 +110,20 @@ oro:
                 enable_web_catalog_canonical_url:
                     label: Prefer Self-Contained Web Catalog Canonical URLs
                     tooltip: Disable the option for the canonical URLs to point to the direct URLs of the underlying content types if they are available.
-
+                empty_search_result_page:
+                    label: Empty Search Result Page
+                    tooltip: The selected page will be displayed if the product search produced an empty result and there is no custom page configured for that specific combination of search term and additional search criteria. The web-node selected here should be available for all users (cannot have restrictions).
+            groups:
+                website_search_terms:
+                    special_pages.title: 'Special Pages'
     scope:
         web_catalog.label: Web Catalog
+
+    websitesearchterm:
+        searchterm:
+            redirect_web_catalog.label: Web Catalog
+            redirect_content_node.label: Content Node
+            redirect_action_type.choices.content_node.label: Content Node
+            grid:
+                action_details:
+                    redirect_content_node: 'Redirect to content node: <a href="{{ content_node_url }}" target="_blank">{{ content_node_title }}</a>'

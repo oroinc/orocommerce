@@ -1,0 +1,90 @@
+include:
+    - '@OroProductBundle:default_webcatalog.yml'
+    - '@OroProductBundle:products_grid_frontend.yml'
+    - '@OroCustomerBundle:CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\ScopeBundle\Entity\Scope:
+    customerGroupScope:
+        customerGroup: '@Group_AmandaRCole'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    nodeDefaultWebCatalog:
+        __calls:
+            - addTitle: ['@localValueDefaultWebCatalog']
+            - addContentVariant: ['@defaultWebCatalogVariant']
+            - addScope: ['@defaultWebCatalogScope']
+        webCatalog: '@webCatalog'
+
+    nodeClearance:
+        __calls:
+            - addTitle: ['@localValueClearance']
+            - addSlugPrototype: ['@localValueClearanceSlug']
+            - addLocalizedUrl: ['@localValueClearanceSlug']
+            - addContentVariant: ['@clearanceVariant']
+            - addScope: ['@defaultWebCatalogScope']
+        ParentNode: '@nodeDefaultWebCatalog'
+        webCatalog: '@webCatalog'
+
+    nodeNewArrivals:
+        __calls:
+            - addTitle: ['@localValueNewArrivals']
+            - addSlugPrototype: ['@localValueNewArrivalsSlug']
+            - addLocalizedUrl: ['@localValueNewArrivalsSlug']
+            - addContentVariant: ['@newArrivalsVariant']
+            - addScope: ['@first_website_scope']
+        ParentNode: '@nodeDefaultWebCatalog'
+        webCatalog: '@webCatalog'
+        parentScopeUsed: false
+
+    nodeByBrand:
+        __calls:
+            - addTitle: ['@localValueByBrand']
+            - addSlugPrototype: ['@localValueByBrandSlug']
+            - addLocalizedUrl: ['@localValueByBrandSlug']
+            - addContentVariant: ['@byBrandVariant']
+            - addScope: ['@customerGroupScope']
+        ParentNode: '@nodeDefaultWebCatalog'
+        webCatalog: '@webCatalog'
+        parentScopeUsed: false
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localValueDefaultWebCatalog:
+        string: 'Default Web Catalog'
+    localValueClearance:
+        string: 'Clearance'
+    localValueClearanceSlug:
+        string: 'clearance'
+    localValueNewArrivals:
+        string: 'New Arrivals'
+    localValueNewArrivalsSlug:
+        string: 'new-arrivals'
+    localValueByBrand:
+        string: 'By Brand'
+    localValueByBrandSlug:
+        string: 'by-brand'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+    defaultWebCatalogVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_frontend_root'
+        default: true
+        __calls:
+            - addScope: ['@defaultWebCatalogScope']
+    clearanceVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_product_frontend_product_index'
+        default: true
+        __calls:
+            - addScope: ['@defaultWebCatalogScope']
+    newArrivalsVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_product_frontend_product_index'
+        default: true
+        __calls:
+            - addScope: ['@first_website_scope']
+    byBrandVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_product_frontend_product_index'
+        default: true
+        __calls:
+            - addScope: ['@customerGroupScope']

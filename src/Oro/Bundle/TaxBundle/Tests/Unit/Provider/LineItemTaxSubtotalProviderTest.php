@@ -104,6 +104,7 @@ class LineItemTaxSubtotalProviderTest extends TaxSubtotalProviderTest
 
         $tax = new Result();
         $tax->offsetSet(Result::ITEMS, [$rowTax]);
+        $tax->offsetSet(Result::TAXES, [$total]);
 
         return $tax;
     }

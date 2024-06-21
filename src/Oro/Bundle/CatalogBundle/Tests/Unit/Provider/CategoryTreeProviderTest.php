@@ -9,20 +9,16 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Provider\MasterCatalogRootProvider;
-use Oro\Bundle\CatalogBundle\Tests\Unit\Stub\CategoryStub;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
 {
     private CategoryRepository|\PHPUnit\Framework\MockObject\MockObject $categoryRepository;
-
     private EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject $eventDispatcher;
-
     private MasterCatalogRootProvider|\PHPUnit\Framework\MockObject\MockObject $masterCatalogRootProvider;
-
     private CategoryTreeProvider $provider;
 
     protected function setUp(): void
@@ -50,18 +46,26 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    private function getCategory(int $id): Category
+    {
+        $category = new Category();
+        ReflectionUtil::setId($category, $id);
+
+        return $category;
+    }
+
     public function testGetCategories(): void
     {
         $user = new CustomerUser();
 
-        $childCategory = new Category();
+        $childCategory = $this->getCategory(1);
         $childCategory->setLevel(2);
 
-        $mainCategory = new Category();
+        $mainCategory = $this->getCategory(2);
         $mainCategory->setLevel(1);
         $mainCategory->addChildCategory($childCategory);
 
-        $rootCategory = new Category();
+        $rootCategory = $this->getCategory(3);
         $rootCategory->setLevel(0);
         $rootCategory->addChildCategory($mainCategory);
 
@@ -79,8 +83,7 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
             ->with($event, CategoryTreeCreateAfterEvent::NAME)
             ->willReturn($event);
 
-        $this->masterCatalogRootProvider
-            ->expects(self::never())
+        $this->masterCatalogRootProvider->expects(self::never())
             ->method('getMasterCatalogRoot');
 
         $actual = $this->provider->getCategories($user, $rootCategory, false);
@@ -92,14 +95,14 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
     {
         $user = new CustomerUser();
 
-        $childCategory = new Category();
+        $childCategory = $this->getCategory(1);
         $childCategory->setLevel(2);
 
-        $mainCategory = new Category();
+        $mainCategory = $this->getCategory(2);
         $mainCategory->setLevel(1);
         $mainCategory->addChildCategory($childCategory);
 
-        $rootCategory = new Category();
+        $rootCategory = $this->getCategory(3);
         $rootCategory->setLevel(0);
         $rootCategory->addChildCategory($mainCategory);
 
@@ -117,8 +120,7 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
             ->with($event, CategoryTreeCreateAfterEvent::NAME)
             ->willReturn($event);
 
-        $this->masterCatalogRootProvider
-            ->expects(self::once())
+        $this->masterCatalogRootProvider->expects(self::once())
             ->method('getMasterCatalogRoot')
             ->willReturn($rootCategory);
 
@@ -132,11 +134,8 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetParentCategories(?UserInterface $user): void
     {
-        $categoryA = new CategoryStub();
-        $categoryA->setId(1);
-
-        $categoryB = new CategoryStub();
-        $categoryB->setId(2);
+        $categoryA = $this->getCategory(1);
+        $categoryB = $this->getCategory(2);
 
         $originalCategories = [$categoryA, $categoryB];
         $this->categoryRepository->expects(self::once())
@@ -144,7 +143,18 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
             ->with($categoryA)
             ->willReturn($originalCategories);
 
-        $this->mockEventDispatcher($user, $originalCategories);
+        $expectedEvent = new CategoryTreeCreateAfterEvent($originalCategories);
+        $expectedEvent->setUser($user);
+        $this->eventDispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with($expectedEvent, CategoryTreeCreateAfterEvent::NAME)
+            ->willReturnCallback(function (CategoryTreeCreateAfterEvent $event) {
+                $categories = $event->getCategories();
+                array_shift($categories);
+                $event->setCategories($categories);
+
+                return $event;
+            });
 
         self::assertSame(
             [$categoryB],
@@ -156,33 +166,14 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'null' => [
-                'user' => null,
+                'user' => null
             ],
             'not customer user' => [
-                'user' => $this->createMock(UserInterface::class),
+                'user' => $this->createMock(UserInterface::class)
             ],
             'customer user' => [
-                'user' => new CustomerUserStub(1),
-            ],
+                'user' => new CustomerUser()
+            ]
         ];
-    }
-
-    private function mockEventDispatcher(?UserInterface $expectedUser, array $originalCategories): void
-    {
-        $expectedEvent = new CategoryTreeCreateAfterEvent($originalCategories);
-        $expectedEvent->setUser($expectedUser);
-
-        $this->eventDispatcher->expects(self::once())
-            ->method('dispatch')
-            ->with($expectedEvent, CategoryTreeCreateAfterEvent::NAME)
-            ->willReturnCallback(
-                function (CategoryTreeCreateAfterEvent $event) {
-                    $categories = $event->getCategories();
-                    array_shift($categories);
-                    $event->setCategories($categories);
-
-                    return $event;
-                }
-            );
     }
 }

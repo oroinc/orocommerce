@@ -25,6 +25,11 @@ oro_behat_extension:
                 type: xpath
                 locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Headlamps")]'
 
+        New Arrivals:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "New Arrivals")]'
+
         Default Web Catalog:
             selector:
                 type: xpath
@@ -211,6 +216,38 @@ oro_behat_extension:
         Delete Current Content Node Button:
             selector: '.navigation button[data-action-name="oro_web_catalog_delete_content_node"]'
 
+        Search Term Web Catalog Select Field:
+            selector: '[name="search_term[redirectWebCatalog]"]'
+            class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+
+        Search Term Content Node Select Field:
+            selector:
+                locator: '//input[@name="search_term[redirectContentNode]"]'
+                type: xpath
+
+        Search Term With Target Content Node Form:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            selector: 'form[name="search_term"]'
+            options:
+                mapping:
+                    Web Catalog:
+                        type: 'xpath'
+                        locator: '//input[@name="search_term[redirectWebCatalog]"]'
+                        element: Select2Entity
+
+        Empty Search Result Page System Configuration Form:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            selector: 'form[name="website_search_terms"]'
+            options:
+                mapping:
+                    Web Catalog:
+                        type: 'xpath'
+                        locator: '//input[@name="website_search_terms[oro_web_catalog___empty_search_result_page][value][webCatalog]"]'
+                        element: Select2Entity
+                    Content Node:
+                        type: 'xpath'
+                        locator: '//input[@name="website_search_terms[oro_web_catalog___empty_search_result_page][value][contentNode]"]'
+
     pages:
         Content Node Update:
             class: Oro\Bundle\WebCatalogBundle\Tests\Behat\Page\ContentNodeUpdate
@@ -219,6 +256,7 @@ oro_behat_extension:
     suites:
         OroWebCatalogBundle:
             contexts:
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
                 - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
                 - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
                 - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext

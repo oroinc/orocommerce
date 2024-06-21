@@ -5,32 +5,26 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\Localization;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Bundle\WebsiteBundle\Tests\Unit\Stub\WebsiteStub;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\Constraint\IsType;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
-
     private const LIFETIME = 4242;
 
     private CategoryTreeProvider|\PHPUnit\Framework\MockObject\MockObject $categoryTreeProvider;
-
     private TokenAccessor|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor;
-
     private AbstractAdapter|\PHPUnit\Framework\MockObject\MockObject $cache;
-
     private WebsiteManager|\PHPUnit\Framework\MockObject\MockObject $websiteManager;
-
     private FeaturedCategoriesProvider $featuredCategoriesProvider;
 
     protected function setUp(): void
@@ -43,8 +37,7 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
         $localization = new Localization();
         $localization->setId(1);
 
-        $localizationHelper
-            ->expects(self::any())
+        $localizationHelper->expects(self::any())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
@@ -59,18 +52,45 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
         $this->featuredCategoriesProvider->setCache($this->cache, self::LIFETIME);
     }
 
+    private function getCategory(int $id, int $level): Category
+    {
+        $category = new Category();
+        ReflectionUtil::setId($category, $id);
+        $category->setLevel($level);
+
+        return $category;
+    }
+
+    private function getCustomerUser(int $id): CustomerUser
+    {
+        $customerUser = new CustomerUser();
+        ReflectionUtil::setId($customerUser, $id);
+
+        return $customerUser;
+    }
+
+    private function getWebsite(int $id): Website
+    {
+        $website = new Website();
+        ReflectionUtil::setId($website, $id);
+
+        return $website;
+    }
+
+    private function getOrganization(int $id): Organization
+    {
+        $organization = new Organization();
+        ReflectionUtil::setId($organization, $id);
+
+        return $organization;
+    }
+
     /**
      * @dataProvider categoriesDataProvider
      */
-    public function testGetAll(array $data, array $categoryIds, array $result): void
+    public function testGetAll(array $categories, array $categoryIds, array $result): void
     {
-        $categories = [];
-        foreach ($data as $categoryData) {
-            $categories[] = $this->getEntity(Category::class, $categoryData);
-        }
-
-        $this->websiteManager
-            ->expects(self::once())
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn(null);
 
@@ -89,8 +109,8 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
                 return $callback($cacheItem);
             });
 
-        $user = new CustomerUserStub(100);
-        $organization = $this->getEntity(Organization::class, ['id' => 7]);
+        $user = $this->getCustomerUser(100);
+        $organization = $this->getOrganization(7);
 
         $this->tokenAccessor->expects(self::once())
             ->method('getUser')
@@ -114,29 +134,29 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
         return [
             'level is equal zero' => [
                 'data' => [
-                    ['id' => 1, 'level' => 0],
+                    $this->getCategory(1, 0)
                 ],
                 'categoryIds' => [1],
-                'result' => [],
+                'result' => []
             ],
             'not in list of category ids' => [
                 'data' => [
-                    ['id' => 1, 'level' => 1],
+                    $this->getCategory(1, 1)
                 ],
                 'categoryIds' => [2],
-                'result' => [],
+                'result' => []
             ],
             'one proper category in list' => [
                 'data' => [
-                    ['id' => 1, 'level' => 1],
-                    ['id' => 2, 'level' => 0],
-                    ['id' => 3, 'level' => 1],
+                    $this->getCategory(1, 1),
+                    $this->getCategory(2, 0),
+                    $this->getCategory(3, 1)
                 ],
                 'categoryIds' => [1, 2],
                 'result' => [
-                    ['id' => 1, 'title' => '', 'small_image' => null, 'short' => ''],
-                ],
-            ],
+                    ['id' => 1, 'title' => '', 'small_image' => null, 'short' => '']
+                ]
+            ]
         ];
     }
 
@@ -144,9 +164,8 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
     {
         $result = ['id' => 1, 'title' => '', 'small_image' => null];
 
-        $website = new WebsiteStub(42);
-        $this->websiteManager
-            ->expects(self::once())
+        $website = $this->getWebsite(42);
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
@@ -155,8 +174,8 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
             ->with('featured_categories_100_1_0_0__1__7_42')
             ->willReturn($result);
 
-        $user = new CustomerUserStub(100);
-        $organization = $this->getEntity(Organization::class, ['id' => 7]);
+        $user = $this->getCustomerUser(100);
+        $organization = $this->getOrganization(7);
 
         $this->tokenAccessor->expects(self::once())
             ->method('getUser')
