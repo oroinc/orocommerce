@@ -9,24 +9,11 @@ use Oro\Bundle\UPSBundle\TimeInTransit\Request\Builder\TimeInTransitRequestBuild
 
 class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @internal
-     */
     const UPS_API_USERNAME = 'user';
-
-    /**
-     * @internal
-     */
     const UPS_API_PASSWORD = 'pass';
-
-    /**
-     * @internal
-     */
     const UPS_API_KEY = 'key';
-
-    /**
-     * @internal
-     */
+    const UPS_OAUTH_CLIENT_ID = null;
+    const UPS_OAUTH_CLIENT_SECRET = null;
     const WEIGHT_UNIT_CODE = 'LBS';
 
     /**
@@ -84,7 +71,10 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
             $this->pickupDate
         );
 
-        static::assertEquals($expected, $builder->createRequest());
+        $builder->setUpsClientId(self::UPS_OAUTH_CLIENT_ID);
+        $builder->setUpsClientSecret(self::UPS_OAUTH_CLIENT_SECRET);
+
+        self::assertEquals($expected, $builder->createRequest());
     }
 
     public function testCreateWithOptionalParams()
@@ -102,6 +92,9 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
             $this->address,
             $this->pickupDate
         );
+
+        $builder->setUpsClientId(self::UPS_OAUTH_CLIENT_ID);
+        $builder->setUpsClientSecret(self::UPS_OAUTH_CLIENT_SECRET);
 
         $builder
             ->setMaximumListSize(self::MAXIMUM_LIST_SIZE)

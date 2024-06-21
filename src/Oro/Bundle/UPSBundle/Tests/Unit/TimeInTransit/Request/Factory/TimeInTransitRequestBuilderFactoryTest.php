@@ -28,6 +28,16 @@ class TimeInTransitRequestBuilderFactoryTest extends \PHPUnit\Framework\TestCase
     const UPS_API_KEY = 'key';
 
     /**
+     * @internal
+     */
+    const UPS_OAUTH_CLIENT_ID = null;
+
+    /**
+     * @internal
+     */
+    const UPS_OAUTH_CLIENT_SECRET = null;
+
+    /**
      * @var SymmetricCrypterInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     private $crypter;
@@ -68,10 +78,16 @@ class TimeInTransitRequestBuilderFactoryTest extends \PHPUnit\Framework\TestCase
 
     public function testCreateTimeInTransitRequestBuilder()
     {
-        $this->crypter
-            ->expects(static::once())
+        $this->crypter->expects(self::exactly(2))
             ->method('decryptData')
-            ->willReturn(self::UPS_API_PASSWORD);
+            ->withConsecutive(
+                [self::UPS_API_PASSWORD],
+                [null]
+            )
+            ->willReturnOnConsecutiveCalls(
+                self::UPS_API_PASSWORD,
+                null
+            );
 
         $this->upsTransport
             ->expects(static::once())
@@ -96,10 +112,15 @@ class TimeInTransitRequestBuilderFactoryTest extends \PHPUnit\Framework\TestCase
             $this->address,
             $this->pickupDate
         );
+        $expectedBuilder->setUpsClientId(self::UPS_OAUTH_CLIENT_ID);
+        $expectedBuilder->setUpsClientSecret(self::UPS_OAUTH_CLIENT_SECRET);
 
-        $builder = $this
-            ->timeInTransitRequestBuilderFactory
-            ->createTimeInTransitRequestBuilder($this->upsTransport, $this->address, $this->address, $this->pickupDate);
+        $builder = $this->timeInTransitRequestBuilderFactory->createTimeInTransitRequestBuilder(
+            $this->upsTransport,
+            $this->address,
+            $this->address,
+            $this->pickupDate
+        );
 
         static::assertEquals($expectedBuilder, $builder);
     }

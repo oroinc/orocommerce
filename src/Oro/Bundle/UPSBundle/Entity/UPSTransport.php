@@ -11,7 +11,10 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
+ * Entity that represents UPS Transport
  * @ORM\Entity
+ *
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class UPSTransport extends Transport
 {
@@ -37,23 +40,51 @@ class UPSTransport extends Transport
     /**
      * @var string
      *
-     * @ORM\Column(name="ups_api_user", type="string", length=255, nullable=false)
+     * @ORM\Column(name="ups_api_user", type="string", length=255, nullable=true)
      */
     protected $upsApiUser;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="ups_api_password", type="string", length=255, nullable=false)
+     * @ORM\Column(name="ups_api_password", type="string", length=255, nullable=true)
      */
     protected $upsApiPassword;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="ups_api_key", type="string", length=255, nullable=false)
+     * @ORM\Column(name="ups_api_key", type="string", length=255, nullable=true)
      */
     protected $upsApiKey;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ups_client_id", type="string", length=255, nullable=true)
+     */
+    protected $upsClientId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ups_client_secret", type="string", length=255, nullable=true)
+     */
+    protected $upsClientSecret;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ups_access_token", type="text", nullable=true)
+     */
+    protected $upsAccessToken;
+
+    /**
+     * @var \DateTime $upsAccessTokenExpiresAt
+     *
+     * @ORM\Column(name="ups_access_token_expires", type="datetime", nullable=true)
+     */
+    protected $upsAccessTokenExpiresAt;
 
     /**
      * @var string
@@ -437,7 +468,9 @@ class UPSTransport extends Transport
                     'country' => $this->getUpsCountry(),
                     'invalidate_cache_at' => $this->getUpsInvalidateCacheAt(),
                     'applicable_shipping_services' => $this->getApplicableShippingServices()->toArray(),
-                    'labels' => $this->getLabels()->toArray()
+                    'labels' => $this->getLabels()->toArray(),
+                    'client_id' => $this->getUpsClientId(),
+                    'client_secret' => $this->getUpsClientSecret()
                 ]
             );
         }
@@ -467,5 +500,49 @@ class UPSTransport extends Transport
     public function getUpsInvalidateCacheAt()
     {
         return $this->upsInvalidateCacheAt;
+    }
+
+    public function getUpsClientId(): ?string
+    {
+        return $this->upsClientId;
+    }
+
+    public function setUpsClientId(?string $upsClientId): self
+    {
+        $this->upsClientId = $upsClientId;
+
+        return $this;
+    }
+
+    public function getUpsClientSecret(): ?string
+    {
+        return $this->upsClientSecret;
+    }
+
+    public function setUpsClientSecret(?string $upsClientSecret): self
+    {
+        $this->upsClientSecret = $upsClientSecret;
+
+        return $this;
+    }
+
+    public function getUpsAccessToken(): ?string
+    {
+        return $this->upsAccessToken;
+    }
+
+    public function setUpsAccessToken(?string $upsAccessToken): void
+    {
+        $this->upsAccessToken = $upsAccessToken;
+    }
+
+    public function getUpsAccessTokenExpiresAt(): ?\DateTime
+    {
+        return $this->upsAccessTokenExpiresAt;
+    }
+
+    public function setUpsAccessTokenExpiresAt(?\DateTime $upsAccessTokenExpiresAt): void
+    {
+        $this->upsAccessTokenExpiresAt = $upsAccessTokenExpiresAt;
     }
 }

@@ -46,6 +46,8 @@ class OrderMapperDecoratorTest extends \PHPUnit\Framework\TestCase
         $checkout->addAppliedCoupon($appliedCoupon);
 
         $order = new Order();
+        $order->setUuid($checkout->getUuid());
+
         $data = ['paymentTerm' => 'Term30'];
 
         $this->orderMapper
@@ -60,6 +62,7 @@ class OrderMapperDecoratorTest extends \PHPUnit\Framework\TestCase
             ->setSourceCouponId($sourceCouponId);
 
         $expectedOrder = new Order();
+        $expectedOrder->setUuid($checkout->getUuid());
         $expectedOrder->addAppliedCoupon($expectedAppliedCoupon);
 
         static::assertEquals($expectedOrder, $this->orderMapperDecorator->map($checkout, $data));

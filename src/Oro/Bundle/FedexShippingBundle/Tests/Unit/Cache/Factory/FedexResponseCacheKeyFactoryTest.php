@@ -10,12 +10,12 @@ use PHPUnit\Framework\TestCase;
 
 class FedexResponseCacheKeyFactoryTest extends TestCase
 {
-    public function testCreate()
+    public function testCreate(): void
     {
-        $request = new FedexRequest();
+        $request = new FedexRequest('test/uri');
         $settings = new FedexIntegrationSettings();
 
-        static::assertEquals(
+        self::assertEquals(
             new FedexResponseCacheKey($request, $settings),
             (new FedexResponseCacheKeyFactory())->create($request, $settings)
         );

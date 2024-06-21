@@ -7,34 +7,25 @@ use PHPUnit\Framework\TestCase;
 
 class FedexRateServiceResponseTest extends TestCase
 {
-    public function testAccessors()
+    public function testAccessors(): void
     {
-        $severityType = 'code';
-        $severityCode = 35;
+        $responseStatusCode = 450;
         $prices = ['1', '2'];
+        $errors = ['test' => 'error'];
 
-        $response = new FedexRateServiceResponse($severityType, $severityCode, $prices);
+        $response = new FedexRateServiceResponse($responseStatusCode, $prices, $errors);
 
-        static::assertSame($severityType, $response->getSeverityType());
-        static::assertSame($severityCode, $response->getSeverityCode());
+        static::assertSame($responseStatusCode, $response->getResponseStatusCode());
         static::assertSame($prices, $response->getPrices());
+        static::assertSame($errors, $response->getErrors());
     }
 
-    public function testIsSuccessful()
+    public function testIsSuccessful(): void
     {
-        $response = new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_SUCCESS, 0);
+        $response = new FedexRateServiceResponse(200, []);
         static::assertTrue($response->isSuccessful());
 
-        $response = new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_NOTE, 0);
-        static::assertTrue($response->isSuccessful());
-
-        $response = new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_WARNING, 0);
-        static::assertFalse($response->isSuccessful());
-
-        $response = new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_ERROR, 0);
-        static::assertFalse($response->isSuccessful());
-
-        $response = new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_FAILURE, 0);
+        $response = new FedexRateServiceResponse(400, []);
         static::assertFalse($response->isSuccessful());
     }
 }

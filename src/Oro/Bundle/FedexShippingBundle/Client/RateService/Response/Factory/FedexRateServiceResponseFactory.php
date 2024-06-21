@@ -5,90 +5,80 @@ namespace Oro\Bundle\FedexShippingBundle\Client\RateService\Response\Factory;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponseInterface;
+use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
+use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 
+/**
+ * FedEx rate rest API response factory.
+ */
 class FedexRateServiceResponseFactory implements FedexRateServiceResponseFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function create($soapResponse): FedexRateServiceResponseInterface
+    public function createExceptionResult(\Exception $exception): FedexRateServiceResponseInterface
     {
-        if (!$soapResponse) {
-            return $this->createConnectionErrorResponse();
+        $responseStatus = 500;
+        $errors = [];
+
+        if ($exception instanceof RestException) {
+            $responseStatus = $exception->getCode();
+            $response = $exception->getResponse();
+            if ($response) {
+                try {
+                    $errors = $response->json()['errors'];
+                } catch (\Exception $e) {
+                }
+            }
         }
 
-        $severityType = $soapResponse->HighestSeverity;
+        return new FedexRateServiceResponse($responseStatus, [], $errors);
+    }
 
-        $notifications = $soapResponse->Notifications;
-        if (is_array($notifications)) {
-            $notifications = $notifications[0];
+    public function create(?RestResponseInterface $response = null): FedexRateServiceResponseInterface
+    {
+        if (!$response) {
+            return new FedexRateServiceResponse(500);
         }
-        $severityCode = $notifications->Code;
+
+        /** @var array $data */
+        $data = $response->json();
+        if (!\is_array($data)) {
+            return new FedexRateServiceResponse(400);
+        }
 
         $prices = [];
-        if ($this->isResponseHasPrices($severityType, $soapResponse)) {
-            $prices = $this->createPricesByResponse($soapResponse);
+        if (\array_key_exists('output', $data)
+            && \array_key_exists('rateReplyDetails', $data['output'])) {
+            $prices = $this->createPricesByResponse($data['output']['rateReplyDetails']);
         }
 
-        return new FedexRateServiceResponse($severityType, $severityCode, $prices);
-    }
-
-    private function createConnectionErrorResponse(): FedexRateServiceResponse
-    {
-        return new FedexRateServiceResponse(
-            FedexRateServiceResponse::SEVERITY_ERROR,
-            FedexRateServiceResponse::CONNECTION_ERROR
-        );
+        return new FedexRateServiceResponse(200, $prices);
     }
 
     /**
-     * @param string $severityType
-     * @param mixed  $soapResponse
-     *
-     * @return bool
-     */
-    private function isResponseHasPrices(string $severityType, $soapResponse): bool
-    {
-        return $severityType !== FedexRateServiceResponse::SEVERITY_ERROR &&
-            $severityType !== FedexRateServiceResponse::SEVERITY_FAILURE &&
-            property_exists($soapResponse, 'RateReplyDetails');
-    }
-
-    /**
-     * @param $soapResponse
-     *
      * @return Price[]
      */
-    private function createPricesByResponse($soapResponse): array
+    private function createPricesByResponse(array $rateReplyDetails): array
     {
         $prices = [];
-        if (is_array($soapResponse->RateReplyDetails)) {
-            foreach ($soapResponse->RateReplyDetails as $rateReply) {
-                $serviceCode = $rateReply->ServiceType;
-                $prices[$serviceCode] = $this->createPriceByResponse($rateReply);
-            }
-
-            return $prices;
+        foreach ($rateReplyDetails as $rateReply) {
+            $serviceCode = $rateReply['serviceType'];
+            $prices[$serviceCode] = $this->createPriceByResponse($rateReply);
         }
-
-        $rateReply = $soapResponse->RateReplyDetails;
-        $prices[$rateReply->ServiceType] = $this->createPriceByResponse($rateReply);
 
         return $prices;
     }
 
-    private function createPriceByResponse(\StdClass $rateReply): Price
+    private function createPriceByResponse(array $rateReply): Price
     {
-        if ($rateReply->RatedShipmentDetails && is_array($rateReply->RatedShipmentDetails)) {
+        if ($rateReply['ratedShipmentDetails'] && \array_key_exists(0, $rateReply['ratedShipmentDetails'])) {
             return Price::create(
-                $rateReply->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetCharge->Amount,
-                $rateReply->RatedShipmentDetails[0]->ShipmentRateDetail->TotalNetCharge->Currency
+                $rateReply['ratedShipmentDetails'][0]['totalNetCharge'],
+                $rateReply['ratedShipmentDetails'][0]['shipmentRateDetail']['currency'],
             );
         }
 
         return Price::create(
-            $rateReply->RatedShipmentDetails->ShipmentRateDetail->TotalNetCharge->Amount,
-            $rateReply->RatedShipmentDetails->ShipmentRateDetail->TotalNetCharge->Currency
+            $rateReply['ratedShipmentDetails']['totalNetCharge'],
+            $rateReply['ratedShipmentDetails']['shipmentRateDetail']['currency'],
         );
     }
 }

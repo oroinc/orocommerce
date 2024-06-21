@@ -33,7 +33,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_13';
+        return 'v1_13_1';
     }
 
     /**
@@ -74,6 +74,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
     {
         $table = $schema->createTable('oro_checkout');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('uuid', 'guid', ['notnull' => true]);
         $table->addColumn('source_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
@@ -105,10 +106,12 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         $table->addColumn('deleted', 'boolean', ['default' => false]);
         $table->addColumn('completed', 'boolean', ['default' => false]);
         $table->addColumn('completed_data', 'json_array', ['comment' => '(DC2Type:json_array)']);
+        $table->addIndex(['uuid'], 'oro_checkout_uuid');
         $table->addUniqueIndex(['billing_address_id'], 'uniq_checkout_bill_addr');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_checkout_shipp_addr');
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');
         $table->addUniqueIndex(['registered_customer_user_id'], 'UNIQ_C040FD5916A5A0D');
+        $table->addUniqueIndex(['uuid'], 'UNIQ_C040FD59D17F50A6');
         $table->setPrimaryKey(['id']);
     }
 

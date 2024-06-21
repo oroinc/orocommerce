@@ -10,6 +10,9 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Method\Identifier\UPSMethodTypeIdentifierGeneratorInterface;
 use Oro\Bundle\UPSBundle\Provider\ChannelType;
 
+/**
+ * Listens to UPSTransport Entity update event and removes connected services
+ */
 class UPSTransportEntityListener
 {
     /**

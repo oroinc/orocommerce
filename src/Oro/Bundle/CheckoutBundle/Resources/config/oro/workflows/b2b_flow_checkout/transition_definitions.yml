@@ -509,6 +509,14 @@ workflows:
 
             place_order_definition:
                 preactions:
+                    - '@run_action_group':
+                          action_group: order_line_items_not_empty
+                          parameters_mapping:
+                              checkout: $checkout
+                          results:
+                              result.orderLineItemsNotEmpty: $.orderLineItemsNotEmpty
+                              result.orderLineItemsNotEmptyForRfp: $.orderLineItemsNotEmptyForRfp
+
                     - '@flash_message':
                         conditions:
                             '@and':
@@ -596,6 +604,12 @@ workflows:
 
                 preconditions:
                     '@and':
+                        - '@equal':
+                              parameters: [$.result.orderLineItemsNotEmptyForRfp, true]
+                              message: oro.checkout.workflow.condition.order_line_items_not_empty.not_allow_rfp.message
+                        - '@equal':
+                              parameters: [$.result.orderLineItemsNotEmpty, true]
+                              message: oro.checkout.workflow.condition.order_line_items_not_empty.allow_rfp.message
                         - '@not_empty': $.result.paymentContext
                         - '@equal':
                             parameters: [$.result.shippingMethodHasEnabledShippingRules, true]

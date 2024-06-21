@@ -242,8 +242,12 @@ class UPSShippingMethod implements
 
     /**
      * @param ShippingContextInterface $context
-     * @param array                    $types
+     * @param array $types
      * @return array
+     *
+     * @throws RestException
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     private function fetchPrices(ShippingContextInterface $context, array $types)
     {
@@ -265,15 +269,25 @@ class UPSShippingMethod implements
         }
 
         $notCachedTypes = array_diff($types, array_keys($prices));
-        $notCachedTypesNumber = count($notCachedTypes);
+        $notCachedTypesNumber = \count($notCachedTypes);
 
         if ($notCachedTypesNumber > 0) {
             if ($notCachedTypesNumber === 1) {
                 $typeId = reset($notCachedTypes);
                 $shippingService = $this->getType($typeId)->getShippingService();
-                $priceRequest->setServiceCode($shippingService->getCode())
+                $priceRequest
+                    ->setServiceCode($shippingService->getCode())
                     ->setServiceDescription($shippingService->getDescription());
+            } else {
+                $shippingServiceCodes = [];
+                foreach ($types as $typeId) {
+                    $shippingService = $this->getType($typeId)->getShippingService();
+                    $shippingServiceCodes[] = $shippingService->getCode();
+                }
+                $priceRequest
+                    ->setServiceCodes(array_values($shippingServiceCodes));
             }
+
             $priceResponse = $this->transportProvider->getPriceResponse($priceRequest, $transport);
             if ($priceResponse) {
                 foreach ($notCachedTypes as $typeId) {

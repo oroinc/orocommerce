@@ -7,6 +7,9 @@ use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Oro\Bundle\UPSBundle\Client\Result\UpsErrorResultTrait;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResult;
 
+/**
+ * Basic implementation of UPS Connection Validator Result Factory
+ */
 class UpsConnectionValidatorResultFactory implements UpsConnectionValidatorResultFactoryInterface
 {
     use UpsErrorResultTrait;

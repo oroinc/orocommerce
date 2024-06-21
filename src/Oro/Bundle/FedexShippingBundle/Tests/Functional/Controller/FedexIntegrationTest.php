@@ -19,7 +19,7 @@ class FedexIntegrationTest extends WebTestCase
         $this->initClient([], self::generateBasicAuthHeader());
     }
 
-    public function testCreateAction()
+    public function testCreateAction(): void
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_integration_create'));
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
@@ -36,11 +36,10 @@ class FedexIntegrationTest extends WebTestCase
                 ]
             ],
             'fedexTestMode' => true,
-            'key' => 'key',
-            'password' => 'password',
+            'clientId' => 'key',
+            'clientSecret' => 'password',
             'accountNumber' => 'accountNumber',
-            'meterNumber' => 'meterNumber',
-            'pickupType' => FedexIntegrationSettings::PICKUP_TYPE_DROP_BOX,
+            'pickupType' => FedexIntegrationSettings::PICKUP_CONTACT_FEDEX_TO_SCHEDULE,
             'unitOfWeight' => FedexIntegrationSettings::UNIT_OF_WEIGHT_LB,
             'shippingServices' => [1, 2],
         ];
@@ -65,7 +64,7 @@ class FedexIntegrationTest extends WebTestCase
         self::assertContains(2, $serviceIds);
     }
 
-    public function testIndexAction()
+    public function testIndexAction(): void
     {
         $this->createFedexIntegrationSettings();
 
@@ -90,13 +89,12 @@ class FedexIntegrationTest extends WebTestCase
 
     private function assertSettingsCorrect(FedexIntegrationSettings $settings, array $settingsData): void
     {
-        self::assertSame($settingsData['key'], $settings->getKey());
+        self::assertSame($settingsData['clientId'], $settings->getClientId());
         self::assertSame(
-            $settingsData['password'],
-            self::getContainer()->get('oro_security.encoder.default')->decryptData($settings->getPassword())
+            $settingsData['clientSecret'],
+            self::getContainer()->get('oro_security.encoder.default')->decryptData($settings->getClientSecret())
         );
         self::assertSame($settingsData['accountNumber'], $settings->getAccountNumber());
-        self::assertSame($settingsData['meterNumber'], $settings->getMeterNumber());
         self::assertSame($settingsData['pickupType'], $settings->getPickupType());
         self::assertSame($settingsData['unitOfWeight'], $settings->getUnitOfWeight());
         self::assertCount(count($settingsData['shippingServices']), $settings->getShippingServices());

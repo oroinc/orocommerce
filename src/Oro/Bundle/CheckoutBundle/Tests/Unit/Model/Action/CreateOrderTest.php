@@ -3,21 +3,27 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder;
 use Oro\Bundle\CheckoutBundle\Payment\Method\EntityPaymentMethodsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Component\Action\Action\ActionInterface;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class CreateOrderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /** @var MapperInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $mapper;
 
@@ -27,17 +33,21 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
     /** @var CreateOrder */
     private $action;
 
+    private $managerRegistry;
+
     protected function setUp(): void
     {
-        $this->mapper = $this->createMock(MapperInterface::class);
-        $this->paymentMethodsProvider = $this->createMock(EntityPaymentMethodsProvider::class);
+        $this->mapper = self::createMock(MapperInterface::class);
+        $this->paymentMethodsProvider = self::createMock(EntityPaymentMethodsProvider::class);
+        $this->managerRegistry = self::createMock(ManagerRegistry::class);
 
         $this->action = new CreateOrder(
             new ContextAccessor(),
             $this->mapper,
             $this->paymentMethodsProvider
         );
-        $this->action->setDispatcher($this->createMock(EventDispatcherInterface::class));
+        $this->action->setManagerRegistry($this->managerRegistry);
+        $this->action->setDispatcher(self::createMock(EventDispatcherInterface::class));
     }
 
     public function testInitialize()
@@ -99,11 +109,12 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testExecute()
+    public function testExecuteWithoutOrder(): void
     {
-        $expected = new Order();
-        $checkout = new Checkout();
+        $checkout = self::getEntity(Checkout::class, ['id' => 100]);
         $checkout->setPaymentMethod('pm1');
+        $expected = new Order();
+        $expected->setUuid($checkout->getUuid());
         $data = [
             'lineItems' => new ArrayCollection([new PropertyPath('lineItems')]),
         ];
@@ -125,17 +136,101 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->mapper->expects($this->once())
+        $this->mapper->expects(self::once())
             ->method('map')
             ->with($checkout, $data)
             ->willReturn($expected);
 
-        $this->paymentMethodsProvider->expects($this->once())
+        $this->paymentMethodsProvider->expects(self::once())
             ->method('storePaymentMethodsToEntity')
             ->with($expected, ['pm1']);
 
+        $repository = self::createMock(OrderRepository::class);
+        $repository
+            ->expects(self::once())
+            ->method('findOneBy')
+            ->with(['uuid' => $checkout->getUuid()])
+            ->willReturn(null);
+
+        $manager = self::createMock(EntityManager::class);
+        $manager
+            ->expects(self::once())
+            ->method('getRepository')
+            ->willReturn($repository);
+
+        $this->managerRegistry
+            ->expects(self::once())
+            ->method('getManager')
+            ->willReturn($manager);
+
         $this->action->execute($context);
 
-        $this->assertEquals($expected, $context['order']);
+        /** @var Order $contextOrder */
+        $contextOrder = $context['order'];
+
+        self::assertEquals($expected, $contextOrder);
+        self::assertEquals($checkout->getUuid(), $contextOrder->getUuid());
+    }
+
+    public function testExecuteWithOrder(): void
+    {
+        $checkout = self::getEntity(Checkout::class, ['id' => 10]);
+        $checkout->setPaymentMethod('pm1');
+
+        $expected = new Order();
+        $expected->setUuid($checkout->getUuid());
+
+        $data = [
+            'lineItems' => new ArrayCollection([new PropertyPath('lineItems')]),
+        ];
+        $context = new ActionData(
+            [
+                'checkout' => $checkout,
+                'data' => $data,
+                'array_value' => [
+                    'array' => 'value',
+                ],
+            ]
+        );
+
+        $this->action->initialize(
+            [
+                CreateOrder::OPTION_KEY_CHECKOUT => new PropertyPath('checkout'),
+                CreateOrder::OPTION_KEY_ATTRIBUTE => new PropertyPath('order'),
+                CreateOrder::OPTION_KEY_DATA => $data,
+            ]
+        );
+
+        $this->mapper->expects(self::never())->method('map');
+
+        $this->paymentMethodsProvider->expects(self::once())
+            ->method('storePaymentMethodsToEntity')
+            ->with($expected, ['pm1']);
+
+        $repository = self::createMock(OrderRepository::class);
+        $repository
+            ->expects(self::once())
+            ->method('findOneBy')
+            ->with(['uuid' => $checkout->getUuid()])
+            ->willReturn($expected);
+
+        $manager = self::createMock(EntityManager::class);
+        $manager
+            ->expects(self::once())
+            ->method('getRepository')
+            ->willReturn($repository);
+
+        $this->managerRegistry
+            ->expects(self::once())
+            ->method('getManager')
+            ->willReturn($manager);
+
+        $this->action->execute($context);
+
+        /** @var Order $contextOrder */
+        $contextOrder = $context['order'];
+
+        self::assertEquals($expected, $contextOrder);
+        self::assertEquals($checkout->getUuid(), $contextOrder->getUuid());
     }
 }
