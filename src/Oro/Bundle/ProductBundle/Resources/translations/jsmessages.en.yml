@@ -236,3 +236,8 @@ oro:
                 select:
                     title: 'Select Product'
             drop_placeholder_label: Drag your item here.
+
+    websitesearchterm:
+        searchterm:
+            dialog:
+                run_original_search.title: Original Search Results for "{{ term }}"

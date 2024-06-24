@@ -9,14 +9,13 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\TestCase;
 
 class CheckoutLineItemTest extends TestCase
 {
     use EntityTestCaseTrait;
-    use EntityTrait;
 
     public function testProperties(): void
     {
@@ -53,7 +52,8 @@ class CheckoutLineItemTest extends TestCase
         self::assertFalse($entity->isPriceFixed());
 
         self::assertPropertyAccessors($entity, $properties);
-        $this->setValue($entity, 'id', $id);
+
+        ReflectionUtil::setId($entity, $id);
         self::assertSame($id, $entity->getEntityIdentifier());
         self::assertSame($entity, $entity->getProductHolder());
 

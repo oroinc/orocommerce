@@ -340,7 +340,7 @@ Feature: Create Order with product kits and taxes
       | Subtotal | $811.11 |
       | Discount | -$81.11 |
       | Tax      | $72.67  |
-      | Total    | $802.66 |
+      | Total    | $802.67 |
     And I should see next rows in "Backend Order Taxes Totals Table" table
       |          | Incl. Tax | Excl. Tax | Tax Amount |
       | Shipping | $0.00     | $0.00     | $0.00      |

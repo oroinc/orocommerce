@@ -1,104 +1,147 @@
 /* @theme: default; */
 
-// Offsets
-$offset-default: 8px !default;
-$offset-twice: $offset-default * 2 !default;
-$offset-triple: $offset-default * 3 !default;
-$offset-half: 4px !default;
+$cms-typography-paragraph-offset: 0 0 spacing('base') 0 !default;
+$cms-typography-inner-padding: spacing('base');
+$cms-typography-offset-bottom: spacing('base');
 
-$cms-typography-paragraph-offset: 0 0 $offset-twice 0 !default;
+// Heading
+$cms-typography-heading-offset: $headline-bottom-offset !default;
 
 // Blockquote
-$cms-typography-blockquote-offset: 0 0 $offset-triple 0 !default;
-$cms-typography-blockquote-font-size: $base-font-size--large + 2px !default;
-$cms-typography-blockquote-font-weight: font-weight('semi-bold') !default;
-$cms-typography-blockquote-line-height: 1.5 !default;
-$cms-typography-blockquote-font-style: normal !default;
-$cms-typography-blockquote-background-color: get-color('neutral', 'grey2') !default;
-$cms-typography-blockquote-inner-offset: $offset-twice 52px !default;
-$cms-typography-blockquote-color: get-color('neutral', 'dark') !default;
-$cms-typography-blockquote-fa-icon: $fa-var-quote-left !default;
-$cms-typography-blockquote-fa-end-icon: $fa-var-quote-right !default;
-$cms-typography-blockquote-fa-icon-font-size: $base-font-size--large !default;
-$cms-typography-blockquote-fa-icon-color: get-color('neutral', 'grey3') !default;
-$cms-typography-blockquote-fa-icon-top: 18px !default;
-$cms-typography-blockquote-fa-icon-left: 20px !default;
-
-$cms-typography-blockquote-fa-icon-right: 20px !default;
-$cms-typography-blockquote-fa-icon-bottom: 18px !default;
-
-// List
-$cms-typography-list-offset: 0 0 $offset-triple 0 !default;
-$cms-typography-list-inner-offset: 0 0 0 35px !default;
+$cms-typography-blockquote-offset: spacing('lg') 0 !default;
+$cms-typography-blockquote-inner-offset: 40px 150px !default;
+$cms-typography-blockquote-background-color: get-color('neutral', 'grey1') !default;
+$cms-typography-blockquote-icon-mask: url('#{$global-url}/orofrontend/default/svg-icons/blockquote.svg') no-repeat 100% 100% !default;
+$cms-typography-blockquote-icon-color: get-color('neutral', 'grey3') !default;
+$cms-typography-blockquote-icon-mask-size: contain !default;
+$cms-typography-blockquote-icon-height: 75px !default;
+$cms-typography-blockquote-icon-width: 75px !default;
+$cms-typography-blockquote-icon-offset: -24px !default;
+$cms-typography-blockquote-icon-gap: 44px !default;
+$cms-typography-blockquote-inner-offset-mobile-big: 40px 115px !default;
+$cms-typography-blockquote-inner-offset-mobile: 36px 24px !default;
+$cms-typography-blockquote-offset-mobile: 16px 0 !default;
+$cms-typography-blockquote-icon-height-mobile-big: 65px !default;
+$cms-typography-blockquote-icon-width-mobile-big: 65px !default;
+$cms-typography-blockquote-icon-gap-mobile-big: 24px !default;
+$cms-typography-blockquote-icon-height-mobile: 40px !default;
+$cms-typography-blockquote-icon-width-mobile: 40px !default;
+$cms-typography-blockquote-icon-offset-mobile: -16px !default;
 
 // Images
 $cms-typography-img-max-width: 100% !default;
 $cms-typography-img-offset: 0 !default;
 $cms-typography-img-border: 1px solid get-color('neutral', 'grey1') !default;
 
+// Figure
 $cms-typography-figure-display: grid !default;
-$cms-typography-figure-offset: 0 auto $offset-default !default;
-
+$cms-typography-figure-offset: 0 auto spacing('sm') !default;
 $cms-typography-figure-picture-grid-column: 1 !default;
 $cms-typography-figure-picture-grid-row: 1 !default;
-
 $cms-typography-figure-img-width: 100% !default;
 $cms-typography-figure-img-height: 100% !default;
 $cms-typography-figure-img-object-fit: cover !default;
 
-$cms-typography-figcaption-font-size: 55px !default;
-$cms-typography-figcaption-text-align: center !default;
-$cms-typography-figcaption-text-transform: uppercase !default;
-$cms-typography-figcaption-align-items: center !default;
-$cms-typography-figcaption-justify-content: center !default;
-$cms-typography-figcaption-color: get-color('neutral', 'white-100') !default;
+// Figcaption
 $cms-typography-figcaption-grid-column: 1 !default;
 $cms-typography-figcaption-grid-row: 1 !default;
 $cms-typography-figcaption-display: flex !default;
+$cms-typography-figcaption-flex-direction: column !default;
+$cms-typography-figcaption-max-width: 550px !default;
+$cms-typography-figcaption-text-align: center !default;
+$cms-typography-figcaption-align-items: center !default;
+$cms-typography-figcaption-padding: spacing('base') spacing('base') !default;
 $cms-typography-figcaption-offset: auto !default;
+$cms-typography-figcaption-color: get-color('neutral', 'white-100') !default;
+$cms-typography-figcaption-font-weight: font-weight('semi-bold') !default;
 $cms-typography-figcaption-offset-left: 20px !default;
 $cms-typography-figcaption-offset-right: 18px !default;
-$cms-typography-figcaption-padding: spacing('base') spacing('base') !default;
 
-// Heading
-$cms-typography-heading-offset: $headline-bottom-offset !default;
+//ul
+$cms-typography-ul-list-style-dash: '- ' !default;
+$cms-typography-ul-2-level-margin-bottom: 0 !default;
+$cms-typography-ul-2-level-padding-inline-start: 10px !default;
 
-// Divider
-$cms-typography-hr-offset: 0 0 20px !default;
-$cms-typography-border-top: 1px solid get-color('neutral', 'grey1') !default;
+//dl
+$cms-typography-dl-margin-bottom: 0 !default;
+
+//dt
+$cms-typography-dt-font-weight: font-weight('semi-bold') !default;
+$cms-typography-dt-margin-bottom: spacing('xs') !default;
+$cms-typography-dt-margin-top: spacing('sm') !default;
+
+// dd
+$cms-typography-dd-color: get-color('text', 'secondary') !default;
+$cms-typography-dd-margin-left: spacing('sm') !default;
+$cms-typography-dd-margin-bottom: spacing('xs') !default;
+$cms-typography-dd-last-child-margin-bottom: spacing('sm') !default;
 
 // Code
-$cms-typography-code-border: 3px solid get-color('neutral', 'grey2') !default;
-$cms-typography-code-inner-offset: $offset-twice 22px !default;
-$cms-typography-code-offset: 0 0 $offset-twice !default;
-$cms-typography-code-font-family: 'Courier', 'Courier New', monospace !default;
-$cms-typography-code-line-height: 1.43 !default;
+$cms-typography-code-border: 1px solid get-color('neutral', 'grey1') !default;
+$cms-typography-code-inner-offset: spacing('base') 0 !default;
+$cms-typography-code-text-align: center !default;
+$cms-typography-code-font-family: $code-font !default;
+
+//Sub, Sup
+$cms-typography-sub-sup-font-size: $base-font-size--xs !default;
+$cms-typography-sub-sup-letter-spacing: .5px !default;
+$cms-typography-sub-sup-text-transform: lowercase !default;
+$cms-typography-sub-sup-line-height: 1 !default;
 
 // Sub
 $cms-typography-sub-vertical-align: sub !default;
-$cms-typography-sub-font-size: smaller !default;
 
 // Sup
 $cms-typography-sup-vertical-align: super !default;
-$cms-typography-sup-font-size: smaller !default;
 
 // Small
-$cms-typography-small-font-size: $base-font-size--s - 1px !default;
+$cms-typography-small-font-size: $base-font-size--xs !default;
+$cms-typography-small-line-height: 1.5 !default;
+
+// Secondary text
+$cms-typography-extra-text-color: get-color('text', 'secondary') !default;
 
 // Address
-$cms-typography-address-font-style: italic !default;
+$cms-typography-address-font-style: normal !default;
 
 // Time
-
 $cms-typography-time-color: get-color('neutral', 'grey3') !default;
+
+// ul
+$cms-typography-ul-margin-bottom: spacing('lg') !default;
+$cms-typography-ul-marker-font-size: 10px !default;
 
 // NavTabs
 $cms-typography-nav-tabs-inner-offset: 0 !default;
 $cms-typography-nav-tabs-offset: 0 !default;
 
 // Tabs
-$cms-typography-tabbed-content-bottom-offset: $offset-triple !default;
+$cms-typography-tabbed-content-bottom-offset: spacing('xl') !default;
 
-// Extra
-$cms-typography-extra-text-color: get-color('neutral', 'dark') !default;
-$cms-typography-extra-block-bg-color: get-color('neutral', 'grey3') !default;
+// Divider
+$cms-typography-hr-offset: spacing('lg') 0 !default;
+$cms-typography-border-top: 1px solid get-color('neutral', 'grey2') !default;
+
+// Extra block
+$cms-typography-extra-block-bg-color: get-color('neutral', 'grey1') !default;
+
+// Accent text
+$cms-typography-accent-text-font-size: 30px !default;
+$cms-typography-accent-text-font-weight: font-weight('semi-bold') !default;
+$cms-typography-accent-text-font-family: $secondary-font !default;
+$cms-typography-accent-text-line-height: 1.65 !default;
+$cms-typography-accent-text-text-align: center !default;
+$cms-typography-accent-text-max-width: 875px !default;
+$cms-typography-accent-text-display: block !default;
+$cms-typography-accent-text-offset: 0 auto !default;
+$cms-typography-accent-text-inner-offset: 8px 0 !default;
+
+//Iframe map
+$cms-typography-iframe-map-width: 100% !default;
+$cms-typography-iframe-map-min-height: 400px !default;
+
+// Panel-end
+$cms-panel-end-margin-top: spacing('base') !default;
+$cms-panel-end-display: flex !default;
+$cms-panel-end-justify-content: flex-end !default;
+$cms-panel-end-flex-direction-mobile: column !default;

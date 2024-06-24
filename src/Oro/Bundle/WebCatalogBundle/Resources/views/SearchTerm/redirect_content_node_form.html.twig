@@ -1,0 +1,24 @@
+<div data-page-component-module="orosale/js/app/components/dependent-field-component"
+     data-page-component-options="{{ { selectors: { rowContainer: 'div' } }|json_encode }}"
+     data-depend-on="search-term-action-type"
+     data-show-if="redirect"
+     data-disable-element=":input">
+    <div class="control-group"
+         data-page-component-module="orosale/js/app/components/dependent-field-component"
+         data-page-component-options="{{ { selectors: { rowContainer: 'div' } }|json_encode }}"
+         data-depend-on="search-term-redirect-action-type"
+         data-show-if="content_node"
+         data-disable-element=":input">
+        <div data-role="redirect-content-node"
+             data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 'view': 'orowebcatalog/js/app/views/content-node-from-webcatalog-view',
+                 'listenedFieldName': form.redirectWebCatalog.vars.full_name,
+                 'triggeredFieldName': form.redirectContentNode.vars.full_name
+             }|json_encode }}">
+            {{ form_row(form.redirectWebCatalog, { label: 'oro.websitesearchterm.searchterm.redirect_web_catalog.label' }) }}
+            {{ form_row(form.redirectContentNode, { label: 'oro.websitesearchterm.searchterm.redirect_content_node.label' }) }}
+        </div>
+    </div>
+    <div class="control-group"></div>
+</div>

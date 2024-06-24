@@ -16,6 +16,13 @@
 
     small {
         font-size: $cms-typography-small-font-size;
+        line-height: $cms-typography-small-line-height;
+    }
+
+    hr {
+        border: none;
+        border-top: $cms-typography-border-top;
+        margin: $cms-typography-hr-offset;
     }
 
     address {
@@ -31,74 +38,58 @@
         }
     }
 
-    blockquote {
-        margin: $cms-typography-blockquote-offset;
-
-        font-size: $cms-typography-blockquote-font-size;
-        font-style: $cms-typography-blockquote-font-style;
-        font-weight: $cms-typography-blockquote-font-weight;
-
-        background-color: $cms-typography-blockquote-background-color;
-        padding: $cms-typography-blockquote-inner-offset;
-        line-height: $cms-typography-blockquote-line-height;
-
-        color: $cms-typography-blockquote-color;
-
-        position: relative;
-
-        @include fa-icon($icon: $cms-typography-blockquote-fa-icon, $extra-rules: true) {
-            position: absolute;
-            top: $cms-typography-blockquote-fa-icon-top;
-            left: $cms-typography-blockquote-fa-icon-left;
-            font-size: $cms-typography-blockquote-fa-icon-font-size;
-            color: $cms-typography-blockquote-fa-icon-color;
+    ul {
+        li {
+            &::marker {
+                font-size: $cms-typography-ul-marker-font-size;
+            }
         }
-
-        @include fa-icon($icon: $cms-typography-blockquote-fa-end-icon, $state: after, $extra-rules: true) {
-            position: absolute;
-            bottom: $cms-typography-blockquote-fa-icon-bottom;
-            right: $cms-typography-blockquote-fa-icon-right;
-            font-size: $cms-typography-blockquote-fa-icon-font-size;
-            color: $cms-typography-blockquote-fa-icon-color;
-        }
-
-        &:last-child {
-            margin-bottom: 0;
-        }
-    }
-
-    hr {
-        margin: $cms-typography-hr-offset;
-        border: none;
-        border-top: $cms-typography-border-top;
     }
 
     ul,
     ol {
-        margin: $cms-typography-list-offset;
-        padding: $cms-typography-list-inner-offset;
+        padding-inline-start: $ul-padding-inline-start;
+        margin-bottom: $cms-typography-ul-margin-bottom;
 
         ul,
         ol {
-            margin-bottom: 0;
+            margin-bottom: $cms-typography-ul-2-level-margin-bottom;
+            padding-inline-start: $cms-typography-ul-2-level-padding-inline-start;
         }
     }
 
     dt {
-        font-weight: font-weight('bold');
-        margin-bottom: $offset-half;
+        font-weight: $cms-typography-dt-font-weight;
+        margin-bottom: $cms-typography-dt-margin-bottom;
     }
 
     dd {
-        margin-left: $offset-default;
-        margin-bottom: $offset-default;
+        margin-left: $cms-typography-dd-margin-left;
+        margin-bottom: $cms-typography-dd-margin-bottom;
+        color: $cms-typography-dd-color;
+    }
+
+    dl {
+        margin-bottom: $cms-typography-dl-margin-bottom;
+
+        dd:last-child {
+            margin-bottom: $cms-typography-dd-last-child-margin-bottom;
+        }
+
+        dd + dt {
+            margin-top: $cms-typography-dt-margin-top;
+        }
     }
 
     img {
-        max-width: $cms-typography-img-max-width;
         height: auto;
         display: block;
+        max-width: $cms-typography-img-max-width;
         margin: $cms-typography-img-offset;
+
+        &.full-cover {
+            @extend %full-cover;
+        }
 
         &.bordered {
             border: $cms-typography-img-border;
@@ -125,27 +116,19 @@
         grid-column: $cms-typography-figcaption-grid-column;
         grid-row: $cms-typography-figcaption-grid-row;
         display: $cms-typography-figcaption-display;
+        flex-direction: $cms-typography-figcaption-flex-direction;
+        max-width: $cms-typography-figcaption-max-width;
+        align-items: $cms-typography-figcaption-align-items;
         margin: $cms-typography-figcaption-offset;
         padding: $cms-typography-figcaption-padding;
-
-        font-size: $cms-typography-figcaption-font-size;
         text-align: $cms-typography-figcaption-text-align;
-        text-transform: $cms-typography-figcaption-text-transform;
-
-        align-items: $cms-typography-figcaption-align-items;
-        justify-content: $cms-typography-figcaption-justify-content;
-
+        font-weight: $cms-typography-figcaption-font-weight;
         color: $cms-typography-figcaption-color;
-
-        &.centered {
-            flex-direction: column;
-            text-transform: none;
-        }
     }
 
     strong,
     b {
-        font-weight: font-weight('bold');
+        font-weight: font-weight('semi-bold');
     }
 
     em,
@@ -155,28 +138,69 @@
 
     code,
     samp {
+        display: block;
         border-top: $cms-typography-code-border;
         border-bottom: $cms-typography-code-border;
         padding: $cms-typography-code-inner-offset;
-        margin: $cms-typography-code-offset;
-        display: block;
-
+        text-align: $cms-typography-code-text-align;
         font-family: $cms-typography-code-font-family;
-        line-height: $cms-typography-code-line-height;
+    }
+
+    sub,
+    sup {
+        font-size: $cms-typography-sub-sup-font-size;
+        letter-spacing: $cms-typography-sub-sup-letter-spacing;
+        text-transform: $cms-typography-sub-sup-text-transform;
+        line-height: $cms-typography-sub-sup-line-height;
     }
 
     sub {
         vertical-align: $cms-typography-sub-vertical-align;
-        font-size: $cms-typography-sub-font-size;
     }
 
     sup {
         vertical-align: $cms-typography-sup-vertical-align;
-        font-size: $cms-typography-sup-font-size;
     }
 
     time {
         color: $cms-typography-time-color;
+    }
+
+    blockquote {
+        position: relative;
+        margin: $cms-typography-blockquote-offset;
+        background-color: $cms-typography-blockquote-background-color;
+        padding: $cms-typography-blockquote-inner-offset;
+
+        &:before,
+        &:after {
+            display: inline-block;
+            position: absolute;
+            content: '';
+            height: $cms-typography-blockquote-icon-height;
+            width: $cms-typography-blockquote-icon-width;
+            mask: $cms-typography-blockquote-icon-mask;
+            mask-size: $cms-typography-blockquote-icon-mask-size;
+            background-color: $cms-typography-blockquote-icon-color;
+        }
+
+        &:before {
+            top: 0;
+            margin-top: $cms-typography-blockquote-icon-offset;
+            left: $cms-typography-blockquote-icon-gap;
+        }
+
+        &:after {
+            bottom: 0;
+            margin-bottom: $cms-typography-blockquote-icon-offset;
+            right: $cms-typography-blockquote-icon-gap;
+            transform: rotate(180deg);
+        }
+    }
+
+    .iframe-map {
+        width: $cms-typography-iframe-map-width;
+        min-height: $cms-typography-iframe-map-min-height;
     }
 
     .dropdown-menu,
@@ -191,44 +215,50 @@
         width: 100%;
     }
 
-    .list-style-none {
-        list-style-type: none;
-    }
+    .list-style {
+        &-none {
+            list-style-type: none;
+        }
 
-    .list-style-disc {
-        list-style-type: disc;
-    }
+        &-disc {
+            list-style-type: disc;
+        }
 
-    .list-style-circle {
-        list-style-type: circle;
-    }
+        &-circle {
+            list-style-type: circle;
+        }
 
-    .list-style-square {
-        list-style-type: square;
-    }
+        &-square {
+            list-style-type: square;
+        }
 
-    .list-style-decimal {
-        list-style-type: decimal;
-    }
+        &-decimal {
+            list-style-type: decimal;
+        }
 
-    .list-style-lower-alpha {
-        list-style-type: lower-alpha;
-    }
+        &-lower-alpha {
+            list-style-type: lower-alpha;
+        }
 
-    .list-style-upper-alpha {
-        list-style-type: upper-alpha;
-    }
+        &-upper-alpha {
+            list-style-type: upper-alpha;
+        }
 
-    .list-style-lower-roman {
-        list-style-type: lower-roman;
-    }
+        &-lower-roman {
+            list-style-type: lower-roman;
+        }
 
-    .list-style-upper-roman {
-        list-style-type: upper-roman;
-    }
+        &-upper-roman {
+            list-style-type: upper-roman;
+        }
 
-    .list-style-greek {
-        list-style-type: lower-greek;
+        &-greek {
+            list-style-type: lower-greek;
+        }
+
+        &-dash {
+            list-style-type: $cms-typography-ul-list-style-dash;
+        }
     }
 
     .nav-tabs {
@@ -242,11 +272,11 @@
 
     .offset {
         &-inner {
-            padding: spacing('base');
+            padding: $cms-typography-inner-padding;
         }
 
         &-bottom {
-            margin-bottom: spacing('base');
+            margin-bottom: $cms-typography-offset-bottom;
         }
     }
 
@@ -266,5 +296,71 @@
 
     .product-upcoming-label {
         margin: 0;
+    }
+
+    .accent-text {
+        display: $cms-typography-accent-text-display;
+        max-width: $cms-typography-accent-text-max-width;
+        margin: $cms-typography-accent-text-offset;
+        padding: $cms-typography-accent-text-inner-offset;
+        font-size: $cms-typography-accent-text-font-size;
+        font-weight: $cms-typography-accent-text-font-weight;
+        font-family: $cms-typography-accent-text-font-family;
+        line-height: $cms-typography-accent-text-line-height;
+        text-align: $cms-typography-accent-text-text-align;
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .cms-typography {
+        blockquote {
+            padding: $cms-typography-blockquote-inner-offset-mobile-big;
+
+            &:before,
+            &:after {
+                height: $cms-typography-blockquote-icon-height-mobile-big;
+                width: $cms-typography-blockquote-icon-width-mobile-big;
+            }
+
+            &:before {
+                left: $cms-typography-blockquote-icon-gap-mobile-big;
+            }
+
+            &:after {
+                right: $cms-typography-blockquote-icon-gap-mobile-big;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .cms-typography {
+        blockquote {
+            padding: $cms-typography-blockquote-inner-offset-mobile;
+            margin: $cms-typography-blockquote-offset-mobile;
+
+            &:before,
+            &:after {
+                height: $cms-typography-blockquote-icon-height-mobile;
+                width: $cms-typography-blockquote-icon-width-mobile;
+            }
+
+            &:before {
+                margin-top: $cms-typography-blockquote-icon-offset-mobile;
+            }
+
+            &:after {
+                margin-bottom: $cms-typography-blockquote-icon-offset-mobile;
+            }
+
+            .h2-italic {
+                font-size: $base-font-size;
+                line-height: $base-line-height;
+            }
+
+            h5 {
+                margin-bottom: 0;
+            }
+        }
     }
 }

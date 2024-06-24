@@ -234,6 +234,7 @@ oro_behat_extension:
     OroCatalogBundle:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
         - Oro\Bundle\FrontendBundle\Tests\Behat\Context\FrontendMenuContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
         - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext

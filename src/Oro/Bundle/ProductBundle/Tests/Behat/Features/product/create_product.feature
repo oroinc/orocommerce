@@ -4,6 +4,7 @@
 @ticket-BB-19940
 @ticket-BB-20744
 @ticket-BB-10466
+@ticket-BB-24178
 @waf-skip
 @automatically-ticket-tagged
 @fixture-OroCatalogBundle:categories.yml
@@ -39,6 +40,13 @@ Feature: Create product
     Then Page title equals to "Create Product - Products - Products"
     And I should see "Products / Products" in breadcrumbs
     And I should see "Type: Simple Product Family: Default Category: All Products / Retail Supplies"
+    And I should see a "Theme Selector" element
+    When I click "Theme Selector"
+    Then I should see a "Theme Selector Dropdown" element
+    And I should see "Refreshing Teal" in the "Theme Selector Dropdown" element
+    And I should not see "Blank Theme" in the "Theme Selector Dropdown" element
+    And I should not see "Optimized Theme" in the "Theme Selector Dropdown" element
+    And I click on empty space
 
   Scenario: Finalizing product creation
     Given fill "Create Product Form" with:
@@ -68,7 +76,7 @@ Feature: Create product
     When I save form
     Then I should see "Please remove not permitted HTML-tags in the content field: - \"src\" attribute on \"<iframe>\" should be removed (near <iframe src=" error message
     When fill "Create Product Form" with:
-      | Description | Sample content <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(4, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(4, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a> |
+      | Description | Sample content <img alt=\"cat1_wysiwyg_image\" src=\"{{ wysiwyg_image(25, 'f23ac0ff-2cc0-4d9e-8d00-78053a569a50') }}\"/><a title=\"cat1_wysiwyg_file\" href=\"{{ wysiwyg_file(25, '902dfb57-57c0-4a2f-88bf-adf365d74895') }}\">File of cat1</a> |
     And I save form
     Then I should see "Product has been saved" flash message
     And I should not see text matching "\{\{ wysiwyg_image\(" in WYSIWYG editor

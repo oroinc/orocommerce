@@ -1,0 +1,195 @@
+datagrids:
+    website-search-terms:
+        extended_entity_name: 'Oro\Bundle\WebsiteSearchTermBundle\Entity\SearchTerm'
+        requiredFeatures:
+            - oro_website_search_terms_management
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: oro_website_search_term_view
+                params: [ id ]
+            update_link:
+                type: url
+                route: oro_website_search_term_update
+                params: [ id ]
+            delete_link:
+                type: url
+                route: oro_website_search_term_delete
+                params: [ id ]
+        source:
+            type: orm
+            query:
+                select:
+                    - searchTerm
+                    - searchTerm.id
+                    - searchTerm.phrases
+                    - searchTerm.partialMatch
+                    - searchTerm.actionType
+                    - searchTerm.redirectActionType
+                    - searchTerm.modifyActionType
+                    - searchTerm.redirectUri
+                    - searchTerm.redirectSystemPage
+                    - searchTerm.createdAt
+                    - searchTerm.updatedAt
+                    - GROUP_CONCAT(CASE WHEN website.name IS NOT NULL THEN website.name ELSE 'ANY' END ORDER BY scope.id ASC SEPARATOR '') as websites
+                    - GROUP_CONCAT(CASE WHEN localization.name IS NOT NULL THEN localization.name ELSE 'ANY' END ORDER BY scope.id ASC SEPARATOR '') as localizations
+                    - GROUP_CONCAT(CASE WHEN customerGroup.name IS NOT NULL THEN customerGroup.name ELSE 'ANY' END ORDER BY scope.id ASC SEPARATOR '') as customerGroups
+                    - GROUP_CONCAT(CASE WHEN customer.name IS NOT NULL THEN customer.name ELSE 'ANY' END ORDER BY scope.id ASC SEPARATOR '') as customers
+                from:
+                    - { table: 'Oro\Bundle\WebsiteSearchTermBundle\Entity\SearchTerm', alias: searchTerm }
+                join:
+                    left:
+                        - { join: searchTerm.scopes, alias: scope }
+                        - { join: scope.website, alias: website }
+                        - { join: scope.localization, alias: localization }
+                        - { join: scope.customerGroup, alias: customerGroup }
+                        - { join: scope.customer, alias: customer }
+                groupBy: >
+                    searchTerm,
+                    searchTerm.id,
+                    searchTerm.phrases,
+                    searchTerm.partialMatch,
+                    searchTerm.actionType,
+                    searchTerm.redirectActionType,
+                    searchTerm.modifyActionType,
+                    searchTerm.redirectUri,
+                    searchTerm.redirectSystemPage,
+                    searchTerm.createdAt,
+                    searchTerm.updatedAt
+        columns:
+            phrases:
+                label: oro.websitesearchterm.searchterm.phrases.label
+                type: twig
+                template: '@OroWebsiteSearchTerm/SearchTerm/Datagrid/Property/phrases.html.twig'
+                frontend_type: html
+            partialMatch:
+                label: oro.websitesearchterm.searchterm.partial_match.label
+                frontend_type: select
+                renderable: false
+                choices:
+                    oro.websitesearchterm.searchterm.grid.partial_match.enabled: 1
+                    oro.websitesearchterm.searchterm.grid.partial_match.disabled: 0
+            actionDetails:
+                label: oro.websitesearchterm.searchterm.grid.action_details.label
+                frontend_type: html
+            websites:
+                label: oro.websitesearchterm.searchterm.grid.website.label
+                type: twig
+                template: '@OroWebsiteSearchTerm/SearchTerm/Datagrid/Property/websites.html.twig'
+                frontend_type: html
+                renderable: false
+            localizations:
+                label: oro.websitesearchterm.searchterm.grid.localization.label
+                type: twig
+                template: '@OroWebsiteSearchTerm/SearchTerm/Datagrid/Property/localizations.html.twig'
+                frontend_type: html
+                renderable: false
+            customers:
+                label: oro.websitesearchterm.searchterm.grid.customer.label
+                type: twig
+                template: '@OroWebsiteSearchTerm/SearchTerm/Datagrid/Property/customers.html.twig'
+                frontend_type: html
+                renderable: false
+            customerGroups:
+                label: oro.websitesearchterm.searchterm.grid.customer_group.label
+                type: twig
+                template: '@OroWebsiteSearchTerm/SearchTerm/Datagrid/Property/customerGroups.html.twig'
+                frontend_type: html
+                renderable: false
+            restrictions:
+                label: oro.websitesearchterm.searchterm.grid.restrictions.label
+                type: twig
+                template: '@OroWebsiteSearchTerm/SearchTerm/Datagrid/Property/restrictions.html.twig'
+                frontend_type: html
+            createdAt:
+                label: oro.websitesearchterm.searchterm.created_at.label
+                frontend_type: datetime
+            updatedAt:
+                label: oro.websitesearchterm.searchterm.updated_at.label
+                frontend_type: datetime
+        sorters:
+            columns:
+                createdAt: { data_name: searchTerm.createdAt }
+                updatedAt: { data_name: searchTerm.updatedAt }
+                phrases: { data_name: searchTerm.phrases }
+                partialMatch: { data_name: searchTerm.partialMatch }
+            default:
+                updatedAt: DESC
+        filters:
+            columns:
+                phrases:
+                    type: string
+                    data_name: searchTerm.phrases
+                partialMatch:
+                    type: boolean
+                    data_name: searchTerm.partialMatch
+                    options:
+                        field_options:
+                            choices:
+                                oro.websitesearchterm.searchterm.grid.partial_match.disabled: 2
+                                oro.websitesearchterm.searchterm.grid.partial_match.enabled: 1
+                websites:
+                    type: entity
+                    data_name: website
+                    options:
+                        field_options:
+                            class: Oro\Bundle\WebsiteBundle\Entity\Website
+                            multiple: true
+                            choice_label: name
+                            translatable_options: false
+                localizations:
+                    type: entity
+                    data_name: localization
+                    options:
+                        field_options:
+                            class: Oro\Bundle\LocaleBundle\Entity\Localization
+                            multiple: true
+                            choice_label: name
+                            translatable_options: false
+                customers:
+                    type: entity
+                    data_name: customer
+                    options:
+                        field_options:
+                            class: Oro\Bundle\CustomerBundle\Entity\Customer
+                            multiple: true
+                            choice_label: name
+                            translatable_options: false
+                customerGroups:
+                    type: entity
+                    data_name: customerGroup
+                    options:
+                        field_options:
+                            class: Oro\Bundle\CustomerBundle\Entity\CustomerGroup
+                            multiple: true
+                            choice_label: name
+                            translatable_options: false
+                createdAt:
+                    type: datetime
+                    data_name: searchTerm.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: searchTerm.updatedAt
+        actions:
+            view:
+                type: navigate
+                label: oro.grid.action.view
+                link: view_link
+                icon: eye
+                acl_resource: oro_website_search_term_acl_view
+                rowAction: true
+            update:
+                type: navigate
+                acl_resource: oro_website_search_term_acl_update
+                label: oro.grid.action.update
+                icon: pencil-square-o
+                link: update_link
+            delete:
+                type: delete
+                acl_resource: oro_website_search_term_delete
+                label: oro.grid.action.delete
+                icon: trash-o
+                link: delete_link
+                defaultMessages:
+                    success: oro.websitesearchterm.searchterm.grid.delete_success

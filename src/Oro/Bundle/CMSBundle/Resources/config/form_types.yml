@@ -137,7 +137,8 @@ services:
         arguments:
             - '@oro_cms.tools.digital_asset_twig_tags_converter'
 
-    Oro\Bundle\CMSBundle\Form\Type\ContentBlockSelectType:
+    oro_cms.form.type.content_block_select:
+        class: Oro\Bundle\CMSBundle\Form\Type\ContentBlockSelectType
         tags:
             - { name: form.type }
 

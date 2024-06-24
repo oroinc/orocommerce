@@ -5,6 +5,12 @@ namespace Oro\Bundle\WebCatalogBundle\Migrations\Schema;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
@@ -22,18 +28,20 @@ class OroWebCatalogBundleInstaller implements
     Installation,
     ActivityExtensionAwareInterface,
     SlugExtensionAwareInterface,
-    ScopeExtensionAwareInterface
+    ScopeExtensionAwareInterface,
+    ExtendExtensionAwareInterface
 {
     use ActivityExtensionAwareTrait;
     use SlugExtensionAwareTrait;
     use ScopeExtensionAwareTrait;
+    use ExtendExtensionAwareTrait;
 
     /**
      * {@inheritDoc}
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
@@ -60,6 +68,9 @@ class OroWebCatalogBundleInstaller implements
         $this->addOroContentVariantForeignKeys($schema);
         $this->addOroWebCatalogNodeScopeForeignKeys($schema);
         $this->addOroWebCatalogVariantScopeForeignKeys($schema);
+
+        /** Associations generation */
+        $this->addContentNodeToSearchTermTable($schema);
 
         $this->scopeExtension->addScopeAssociation($schema, 'webCatalog', 'oro_web_catalog', 'name');
     }
@@ -325,6 +336,32 @@ class OroWebCatalogBundleInstaller implements
             ['variant_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    private function addContentNodeToSearchTermTable(Schema $schema): void
+    {
+        $owningSideTable = $schema->getTable('oro_website_search_search_term');
+        $inverseSideTable = $schema->getTable('oro_web_catalog_content_node');
+
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $owningSideTable,
+            'redirectContentNode',
+            $inverseSideTable,
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'SET NULL',
+                ],
+                'datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
+                'view' => ['is_displayable' => false],
+                'form' => ['is_enabled' => false],
+            ]
         );
     }
 }

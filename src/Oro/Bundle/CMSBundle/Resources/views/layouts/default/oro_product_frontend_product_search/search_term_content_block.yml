@@ -1,0 +1,11 @@
+layout:
+    actions:
+        - '@add':
+            id: search_term_content_block
+            parentId: page_main_header
+            blockType: content_block
+            options:
+                alias: '=data["oro_cms_search_term"].getSearchTermContentBlockAlias(data["oro_product_search"].getSearchString()) ?: ""'
+                vars:
+                    hideTitle: true
+                visible: '=data["feature"].isFeatureEnabled("oro_website_search_terms_management") && data["oro_cms_search_term"].getSearchTermContentBlockAlias(data["oro_product_search"].getSearchString())'

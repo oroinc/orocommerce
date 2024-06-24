@@ -1,0 +1,138 @@
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'Customer1'
+        organization: '@organization'
+        owner: '@admin'
+        taxCode: '@customer_tax_code_non_exempt'
+        payment_term_7c4f1e8e: '@paymentTerm'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: <userPassword(@amanda->username)>
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer1'
+        organization: '@organization'
+        userRoles: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+    amandaCustomerAddress1:
+        region: '@florida'
+        frontendOwner: '@customer1'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        firstName: 'Test'
+        lastName: 'Customer'
+        primary: true
+        label: 'Primary address'
+        street: '801 Scenic Hwy'
+        city: 'Haines City'
+        postalCode: '33844'
+        organization: 'ORO'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
+    amandaCustomerAddress1ShippingDefault:
+        address: '@amandaCustomerAddress1'
+        type: '@shippingType'
+        default: true
+    amandaCustomerAddress1BillingDefault:
+        address: '@amandaCustomerAddress1'
+        type: '@billingType'
+        default: true
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    simple_product{1..4}:
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        sku: 'simple-product-<sprintf("%02d", $current)>'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@simple_product_precision<current()>'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        taxCode: '@taxable_product'
+        __calls:
+            - setDefaultName: ['Simple Product <sprintf("%02d", $current)>']
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    simple_product_precision{1..4}:
+        unit: '@piece'
+        precision: '0'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price_simple_product1:
+        product: '@simple_product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 15.10
+    price_simple_product2:
+        product: '@simple_product2'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 46.80
+    price_simple_product3:
+        product: '@simple_product3'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 79.56
+    price_simple_product4:
+        product: '@simple_product4'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@piece'
+        value: 79.56
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    price_relation_simple_product{1..4}:
+        product: '@simple_product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    taxable_product:
+        code: 'TAXABLE_PRODUCT'
+        organization: '@organization'
+
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+    customer_tax_code_non_exempt:
+        owner: '@admin'
+        organization: '@organization'
+        code: 'NON_EXEMPT'
+
+Oro\Bundle\TaxBundle\Entity\Tax:
+    tax_florida_sales:
+        code: 'FLORIDA_SALES_TAX'
+        rate: 0.19
+
+Oro\Bundle\TaxBundle\Entity\TaxRule:
+    tax_rule:
+        productTaxCode: '@taxable_product'
+        customerTaxCode: '@customer_tax_code_non_exempt'
+        tax: '@tax_florida_sales'
+        taxJurisdiction: '@tax_jurisdiction_florida'
+        organization: '@organization'
+
+Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    tax_jurisdiction_florida:
+        code: 'TAX_JURISDICTION_FLORIDA'
+        country: '@united_states'
+        region: '@florida'
+
+Oro\Bundle\TaxBundle\Entity\ZipCode:
+    tax_zip_code:
+        taxJurisdiction: '@tax_jurisdiction_florida'
+        zipRangeStart: '00001'
+        zipRangeEnd: '99999'

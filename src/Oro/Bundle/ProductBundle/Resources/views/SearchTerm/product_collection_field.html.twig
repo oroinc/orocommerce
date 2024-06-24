@@ -1,0 +1,6 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{{ UI.renderHtmlProperty(
+    'oro.websitesearchterm.searchterm.product_collection_segment.label'|trans,
+    UI.entityViewLink(entity, entity.name, 'oro_segment_view', 'oro_segment_view')
+) }}

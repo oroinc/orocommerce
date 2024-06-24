@@ -1,0 +1,33 @@
+services:
+    oro_catalog.form.type.extension.add_category_to_website_search_term:
+        class: Oro\Bundle\CatalogBundle\Form\Extension\AddCategoryToWebsiteSearchTermFormExtension
+        tags:
+            - { name: form.type_extension }
+
+    oro_catalog.event_listener.website_search_term.add_category_to_search_term_edit_page:
+        class: Oro\Bundle\CatalogBundle\EventListener\WebsiteSearchTerm\AddCategoryToSearchTermEditPageListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-edit, method: onEntityEdit, priority: 10 }
+
+    oro_catalog.event_listener.website_search_term.add_category_to_search_term_view_page:
+        class: Oro\Bundle\CatalogBundle\EventListener\WebsiteSearchTerm\AddCategoryToSearchTermViewPageListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-search-term-view, method: onEntityView, priority: 10 }
+
+    oro_catalog.event_listener.website_search_term.add_category_to_search_terms_datagrid:
+        class: Oro\Bundle\CatalogBundle\EventListener\WebsiteSearchTerm\AddCategoryToSearchTermsDatagridListener
+        arguments:
+            - '@router'
+            - '@translator'
+            - '@oro_ui.html_tag_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.website-search-terms, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.website-search-terms, method: onResultAfter }
+
+    oro_catalog.event_listener.website_search_term.category_search_term_action:
+        class: Oro\Bundle\CatalogBundle\EventListener\WebsiteSearchTerm\CategorySearchTermRedirectActionEventListener
+        arguments:
+            - '@oro_website_search_term.redirect_action_type.basic_handler'
+            - '@router'
+        tags:
+            - { name: kernel.event_listener, event: Oro\Bundle\WebsiteSearchTermBundle\Event\SearchTermRedirectActionEvent, method: onRedirectAction }

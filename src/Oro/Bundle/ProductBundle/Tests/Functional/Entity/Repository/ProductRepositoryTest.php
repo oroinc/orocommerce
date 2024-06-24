@@ -522,6 +522,15 @@ class ProductRepositoryTest extends WebTestCase
         );
     }
 
+    public function testGetProductCountQueryBuilder(): void
+    {
+        $result = $this->getRepository()->getProductCountQueryBuilder()
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $this->assertEquals(9, $result);
+    }
+
     private function prepareConfigurableVariants()
     {
         $product1 = $this->getProduct(LoadProductData::PRODUCT_1);
