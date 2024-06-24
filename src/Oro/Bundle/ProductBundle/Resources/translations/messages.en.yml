@@ -760,6 +760,7 @@ oro:
                     options:
                         top: 'Top'
                         sidebar: 'Sidebar'
+                        overlay: 'Overlay'
                 product_data_export_enabled:
                     label: 'Enable Product Grid Export'
                     tooltip: 'Select the option to enable customers in the storefront to export selected product data. Please check individual field settings for the Product entity under Entity Management, product attribute settings, and price attribute settings to see what data can be included in the exported file.'
@@ -1106,6 +1107,7 @@ oro:
                             values:
                                 top: Top
                                 sidebar: Sidebar
+                                overlay: Overlay
 
     product_unit.each:
         label:

@@ -11,8 +11,8 @@ layout:
             optionValue: ['oroproduct/js/app/datagrid/grid-sidebar-filters-builder']
 
         - '@setOption':
-              id: product_datagrid
-              optionName: grid_render_parameters.themeOptions.sidebarExpanded
-              optionValue: '=data["oro_product_filters_sidebar_state_data_provider"].isProductFiltersSidebarExpanded()'
+            id: product_datagrid
+            optionName: grid_render_parameters.themeOptions.sidebarExpanded
+            optionValue: '=data["oro_product_filters_sidebar_state_data_provider"].isProductFiltersSidebarExpanded()'
 
     conditions: 'context["filters_position"] == "sidebar"'
