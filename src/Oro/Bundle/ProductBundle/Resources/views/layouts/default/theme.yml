@@ -36,6 +36,8 @@ configuration:
                     values:
                         top: 'oro.product.theme.default.configuration.product_listing.filters_position.values.top'
                         sidebar: 'oro.product.theme.default.configuration.product_listing.filters_position.values.sidebar'
+                        overlay: 'oro.product.theme.default.configuration.product_listing.filters_position.values.overlay'
                     previews:
                         top: 'bundles/oroproduct/images/previews/filter-panel-top.png'
                         sidebar: 'bundles/oroproduct/images/previews/filter-panel-sidebar.png'
+                        overlay: 'bundles/oroproduct/images/previews/filter-panel-overlay.png'

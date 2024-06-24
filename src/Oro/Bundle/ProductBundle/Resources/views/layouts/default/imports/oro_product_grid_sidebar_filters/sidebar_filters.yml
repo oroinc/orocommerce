@@ -15,10 +15,10 @@ layout:
                         __sidebar_filters_container: ~
 
         - '@setOption':
-              id: body
-              optionName: attr
-              optionValue:
-                  class: 'filters-in-sidebar'
+            id: body
+            optionName: attr
+            optionValue:
+                class: 'filters-in-sidebar'
 
         - '@setOption':
             id: page_sidebar
@@ -26,8 +26,8 @@ layout:
             optionValue: '=data["oro_product_filters_sidebar_state_data_provider"].isProductFiltersSidebarExpanded()'
 
         - '@setOption':
-              id: page_content
-              optionName: vars.sidebarExpanded
-              optionValue: '=data["oro_product_filters_sidebar_state_data_provider"].isProductFiltersSidebarExpanded()'
+            id: page_content
+            optionName: vars.sidebarExpanded
+            optionValue: '=data["oro_product_filters_sidebar_state_data_provider"].isProductFiltersSidebarExpanded()'
 
     conditions: 'context["filters_position"] == "sidebar"'
