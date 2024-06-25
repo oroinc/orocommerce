@@ -944,6 +944,53 @@ EOF;
         $em->flush();
     }
 
+    /**
+     * Example: I should not see component "Icon" in the panel
+     *
+     * @When /^(?:|I )should not see component "(?P<blockName>(?:[^"]|\\")*)" in the panel$/
+     */
+    public function iShouldNotSeeComponent(string $blockName): void
+    {
+        $this->checkIsComponentExists($blockName, false);
+    }
+
+    /**
+     * Example: I should see component "Icon" in the panel
+     *
+     * @When /^(?:|I )should see component "(?P<blockName>(?:[^"]|\\")*)" in the panel$/
+     */
+    public function iShouldSeeComponent(string $blockName): void
+    {
+        $this->checkIsComponentExists($blockName, true);
+    }
+
+    private function checkIsComponentExists(string $blockName, bool $isShouldSee): void
+    {
+        $blockPanel = $this->createElement('BlocksPanel');
+        $blockPanelBtn = $this->createElement('OpenBlocksTab');
+
+        if (!$blockPanelBtn->hasClass('gjs-pn-active')) {
+            $blockPanelBtn->click();
+        }
+
+        $block = $blockPanel->find(
+            'css',
+            sprintf('.gjs-block[title="%s"]', $blockName)
+        );
+
+        if ($isShouldSee) {
+            self::assertNotEmpty(
+                $block,
+                sprintf('The component "%s" was not found in the panel.', $blockName)
+            );
+        } else {
+            self::assertEmpty(
+                $block,
+                sprintf('The component "%s" appears in the panel, but it should not.', $blockName)
+            );
+        }
+    }
+
     private function getDoctrine(): ManagerRegistry
     {
         return $this->getAppContainer()->get('doctrine');

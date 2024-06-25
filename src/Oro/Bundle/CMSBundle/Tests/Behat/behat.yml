@@ -654,6 +654,11 @@ oro_behat_extension:
         Theme Selector Dropdown:
             selector: '[aria-labelledby^="dropdown-theme-selector"]'
 
+        Refreshing Teal Theme:
+            selector:
+                locator: '//li[contains(@class, "dropdown-item") and @data-key="default"]'
+                type: xpath
+
         Search Term Additional Content Block Select Field:
             selector:
                 locator: '//select[@name="search_term[contentBlock]"]'

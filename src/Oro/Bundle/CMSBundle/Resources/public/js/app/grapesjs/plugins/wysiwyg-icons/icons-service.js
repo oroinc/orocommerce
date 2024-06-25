@@ -48,4 +48,8 @@ export default class IconsService {
             return false;
         }
     }
+
+    isSvgIconsSupport(activeTheme) {
+        return activeTheme.svgIconsSupport;
+    }
 }
