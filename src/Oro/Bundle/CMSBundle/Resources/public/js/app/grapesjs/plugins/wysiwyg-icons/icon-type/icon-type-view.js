@@ -74,8 +74,15 @@ export default (BaseTypeView, {editor} = {}) => {
         },
 
         renderIcon(iconId) {
-            const {name} = editor.em.get('currentTheme');
+            const currentTheme = editor.em.get('currentTheme');
             const {IconsService} = editor;
+
+            if (IconsService.isSvgIconsSupport(currentTheme) === false) {
+                this.$el.html(this.noIconPlaceholder);
+                return;
+            }
+
+            const {name} = currentTheme;
             this.$el.html(`<use href="${IconsService.getSvgIconUrl(iconId, name)}"></use>`);
 
             IconsService.isIconAvailable({iconId, theme: {name}}).then(isAveabile => {
