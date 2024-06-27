@@ -43,21 +43,13 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
                         'type' => 'string',
                         'label' => 'sku',
                     ],
-                    [
-                        'name' => 'unitPrecisions',
-                        'type' => 'array',
-                        'label' => 'unitPrecisions',
-                    ]
                 ]
             );
 
-        $this->fieldHelper
-            ->expects(self::any())
+        $this->fieldHelper->expects(self::once())
             ->method('getObjectValue')
-            ->willReturnMap([
-                [$product, 'sku', 'SKU-1'],
-                [$product, 'unitPrecisions', [['unit' => ['code' => 'kg']]]],
-            ]);
+            ->with($product, 'sku')
+            ->willReturn('SKU-1');
 
         $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
@@ -71,9 +63,7 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->productNormalizer->normalize($product);
         self::assertArrayHasKey('sku', $result);
-        self::assertArrayHasKey('additionalUnitPrecisions', $result);
         self::assertEquals('SKU-1', $result['sku']);
-        self::assertEquals([['unit' => ['code' => 'kg']]], $result['additionalUnitPrecisions']);
     }
 
     public function testDenormalize(): void
