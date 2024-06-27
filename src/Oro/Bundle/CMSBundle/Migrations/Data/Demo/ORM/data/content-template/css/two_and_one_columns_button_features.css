@@ -1,3 +1,25 @@
-.two-and-one-columns-button-feature .extra-block-bg {
-    padding: 20px;
+.two-and-one-columns-button-feature {
+    --grid-gap: 24px;
+
+    .grid-two-columns {
+        --grid-template-columns: 1fr 1fr;
+
+        gap: 24px 64px;
+    }
+}
+
+@media screen and (max-width: 1366px) {
+    .two-and-one-columns-button-feature {
+        .grid-two-columns {
+            gap: 24px 48px;
+        }
+    }
+}
+
+@media screen and (max-width: 1279px) {
+    .two-and-one-columns-button-feature {
+        .grid-two-columns {
+            gap: 40px 0;
+        }
+    }
 }

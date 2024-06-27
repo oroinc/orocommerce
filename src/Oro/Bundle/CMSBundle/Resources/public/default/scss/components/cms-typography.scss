@@ -90,13 +90,31 @@
         &.full-cover {
             @extend %full-cover;
         }
+    }
 
-        //&.bordered {
-        //    border: $cms-typography-img-border;
-        //}
+    .rounded {
+        border-radius: $cms-typography-img-border-radius;
 
-        &.rounded {
+        img {
             border-radius: $cms-typography-img-border-radius;
+        }
+
+        &--circle {
+            border-radius: $cms-typography-img-rounded-circle-border-radius;
+
+            img {
+                border-radius: $cms-typography-img-rounded-circle-border-radius;
+            }
+        }
+    }
+
+    .bordered {
+        border: $cms-typography-block-border;
+        border-radius: $cms-typography-block-border-radius;
+
+        img {
+            border-radius: $cms-typography-block-img-border-radius;
+            border-bottom: $cms-typography-block-border;
         }
     }
 
@@ -202,6 +220,40 @@
         }
     }
 
+    .blockquote-base {
+        position: relative;
+        margin: $cms-typography-blockquote-base-offset;
+        background-color: $cms-typography-blockquote-background-color;
+        padding: $cms-typography-blockquote-base-inner-offset;
+        font-style: $cms-typography-blockquote-base-font-style;
+        font-weight: $cms-typography-blockquote-base-font-weight;
+
+        &:before,
+        &:after {
+            display: inline-block;
+            position: absolute;
+            content: '';
+            height: $cms-typography-blockquote-base-icon-height;
+            width: $cms-typography-blockquote-base-icon-width;
+            mask: $cms-typography-blockquote-icon-mask;
+            mask-size: $cms-typography-blockquote-icon-mask-size;
+            background-color: $cms-typography-blockquote-icon-color;
+        }
+
+        &:before {
+            top: 0;
+            margin-top: $cms-typography-blockquote-base-icon-offset;
+            left: $cms-typography-blockquote-base-icon-gap;
+        }
+
+        &:after {
+            bottom: 0;
+            margin-bottom: $cms-typography-blockquote-base-icon-offset;
+            right: $cms-typography-blockquote-base-icon-gap;
+            transform: rotate(180deg);
+        }
+    }
+
     .iframe-map {
         width: $cms-typography-iframe-map-width;
         min-height: $cms-typography-iframe-map-min-height;
@@ -286,10 +338,29 @@
 
     .extra-text {
         color: $cms-typography-extra-text-color;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1.5;
+    }
+
+    .extra-text-dark {
+        color: $cms-typography-extra-dark-text-color;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1.5;
     }
 
     .extra-block-bg {
+        padding: 24px;
         background-color: $cms-typography-extra-block-bg-color;
+    }
+
+    .picture__wrapper {
+        img {
+            background-color: $cms-typography-img-background-color;
+        }
     }
 
     .product-item {
@@ -337,7 +408,7 @@
     }
 }
 
-@include breakpoint('mobile-landscape') {
+@include breakpoint('mobile-big') {
     .cms-typography {
         blockquote {
             padding: $cms-typography-blockquote-inner-offset-mobile;

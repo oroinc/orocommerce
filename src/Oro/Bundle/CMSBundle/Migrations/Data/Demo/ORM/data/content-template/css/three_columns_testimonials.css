@@ -4,6 +4,7 @@
     .grid-item {
         --grid-gap: 0;
         --grid-auto-rows: 1fr auto;
+
         height: 100%;
         background: #f0f3f5;
     }
@@ -12,6 +13,7 @@
         --grid-column-count: 2;
         --grid-template-columns: 44px 1fr;
         --grid-gap: 12px;
+
         padding: 0 58px 24px;
     }
 }
