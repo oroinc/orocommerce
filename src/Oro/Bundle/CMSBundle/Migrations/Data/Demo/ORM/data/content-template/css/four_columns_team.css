@@ -1,2 +1,7 @@
-/* stylelint-disable no-empty-source */
-/* stylelint-enable no-empty-source */
+.four-columns-team {
+    --grid-gap: 24px;
+
+    .picture__wrapper {
+        height: 200px;
+    }
+}

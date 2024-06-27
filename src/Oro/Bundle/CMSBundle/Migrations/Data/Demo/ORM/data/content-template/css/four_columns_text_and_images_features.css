@@ -1,2 +1,14 @@
-/* stylelint-disable no-empty-source */
-/* stylelint-enable no-empty-source */
+.four-columns-text-and-images-features {
+    --grid-gap: 40px 48px;
+
+    .grid-four-columns-text-and-images {
+        --grid-gap: 12px;
+        --grid-template-columns: 50px 1fr;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .four-columns-text-and-images-features {
+        --grid-gap: 40px 0;
+    }
+}

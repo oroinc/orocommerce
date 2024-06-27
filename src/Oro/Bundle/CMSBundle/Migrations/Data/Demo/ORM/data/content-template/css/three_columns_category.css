@@ -1,3 +1,20 @@
-.three-columns-category .grid-article {
-    --grid-column-count: 1;
+.three-columns-category {
+    --grid-gap: 24px;
+
+    .picture__wrapper {
+        height: 200px;
+    }
+
+    .grid-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .grid-item__text {
+        flex-grow: 1;
+    }
+
+    .grid-item__bottom {
+        align-self: end;
+    }
 }

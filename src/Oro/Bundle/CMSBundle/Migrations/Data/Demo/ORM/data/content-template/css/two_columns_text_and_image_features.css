@@ -1,3 +1,22 @@
-.two-columns-text-and-image-features .content-col {
-    padding: 20px 40px;
+.two-columns-text-and-image-features {
+    .grid-two-columns {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px 160px;
+    }
+}
+
+@media screen and (max-width: 1600px) {
+    .two-columns-text-and-image-features {
+        .grid-two-columns {
+            gap: 48px;
+        }
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .two-columns-text-and-image-features {
+        .grid-two-columns {
+            gap: 32px 0;
+        }
+    }
 }

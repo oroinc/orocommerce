@@ -1,3 +1,28 @@
-.two-columns-category .grid-article {
-    --grid-template-columns: 1;
+.two-columns-text-category {
+    --grid-gap: 0 160px;
+    --grid-auto-rows: auto 1fr;
+
+    .grid-article {
+        --grid-gap: 24px;
+    }
+}
+
+@media screen and (max-width: 1279px) {
+    .two-columns-text-category {
+        --grid-gap: 0 56px;
+
+        .grid-article {
+            --grid-gap: 24px;
+        }
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .two-columns-text-category {
+        --grid-gap: 56px 0;
+
+        .grid-article {
+            --grid-gap: 24px;
+        }
+    }
 }

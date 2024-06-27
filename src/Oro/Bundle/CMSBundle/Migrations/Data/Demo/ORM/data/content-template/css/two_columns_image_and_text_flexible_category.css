@@ -1,0 +1,26 @@
+.two-columns-text-and-images-flexible-category {
+    .grid-two-columns {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px 160px;
+    }
+
+    h5 {
+        color: #45606e;
+    }
+}
+
+@media screen and (max-width: 1600px) {
+    .two-columns-text-and-images-flexible-category {
+        .grid-two-columns {
+            gap: 48px;
+        }
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .two-columns-text-and-images-flexible-category {
+        .grid-two-columns {
+            gap: 32px 0;
+        }
+    }
+}

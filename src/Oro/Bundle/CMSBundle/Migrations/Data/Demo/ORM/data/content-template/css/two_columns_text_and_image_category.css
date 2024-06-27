@@ -1,2 +1,44 @@
-/* stylelint-disable no-empty-source */
-/* stylelint-enable no-empty-source */
+.two-columns-text-and-image-category {
+    --grid-gap: 40px 24px;
+
+    .grid-two-columns {
+        grid-template-columns: 1fr 1fr;
+        gap: 32px 160px;
+    }
+
+    .list-nav a {
+        display: inline-block;
+        padding-top: 24px;
+        padding-right: 32px;
+        white-space: nowrap;
+    }
+
+    img {
+        min-height: 343px;
+    }
+}
+
+@media screen and (max-width: 1600px) {
+    .two-columns-text-and-image-category {
+        .grid-two-columns {
+            gap: 48px;
+        }
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .two-columns-text-and-image-category {
+        .grid-two-columns {
+            gap: 58px 0;
+        }
+    }
+}
+
+@media screen and (max-width: 430px) {
+    .two-columns-text-and-image-category {
+        .grid-two-columns {
+            gap: 42px 0;
+        }
+    }
+}
+

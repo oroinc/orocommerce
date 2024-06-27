@@ -1,12 +1,17 @@
-.three-columns-testimonials .grid-testimonial {
-    --grid-column-count: 1;
-    --grid-gap: 0;
-}
+.three-columns-testimonials {
+    --grid-gap: 24px;
 
-.three-columns-testimonials .grid-testimonial-bottom {
-    --grid-column-count: 2;
-    --grid-template-columns: 60px 1fr;
-    --grid-gap: 16px;
+    .grid-item {
+        --grid-gap: 0;
+        --grid-auto-rows: 1fr auto;
+        height: 100%;
+        background: #f0f3f5;
+    }
 
-    padding: 0 52px 28px;
+    .grid-item__bottom {
+        --grid-column-count: 2;
+        --grid-template-columns: 44px 1fr;
+        --grid-gap: 12px;
+        padding: 0 58px 24px;
+    }
 }

@@ -1,2 +1,36 @@
-/* stylelint-disable no-empty-source */
-/* stylelint-enable no-empty-source */
+.four-columns-text-features {
+    --grid-gap: 24px;
+
+    .grid-items {
+        --grid-gap: 0 56px;
+    }
+}
+
+@media screen and (max-width: 1279px) {
+    .four-columns-text-features {
+        .grid-items {
+            --grid-gap: 0 48px;
+        }
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .four-columns-text-features {
+        .grid-items {
+            --grid-gap: 48px 48px;
+        }
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .four-columns-text-features {
+        .grid-items {
+            --grid-gap: 24px 0;
+        }
+
+        .border-row-mobile {
+            padding-bottom: 24px;
+            border-bottom: 1px solid #d4dcdd;
+        }
+    }
+}

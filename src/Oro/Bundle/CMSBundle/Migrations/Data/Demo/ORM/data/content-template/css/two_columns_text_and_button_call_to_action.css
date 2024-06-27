@@ -1,7 +1,9 @@
-/* stylelint-disable scale-unlimited/declaration-strict-value */
-.two-columns-text-and-button-call-to-action .block-bordered {
-    border-left: 8px solid #cc5c28;
-    border-right: 8px solid #cc5c28;
-    padding: 20px;
+.two-columns-text-and-button-call-to-action {
+    --grid-gap: 0 64px;
 }
-/* stylelint-enable scale-unlimited/declaration-strict-value */
+
+@media screen and (max-width: 767px) {
+    .two-columns-text-and-button-call-to-action {
+        --grid-gap: 0;
+    }
+}
