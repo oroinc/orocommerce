@@ -7,6 +7,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * The import/export normalizer for Product entities.
+ */
 class ProductNormalizer extends ConfigurableEntityNormalizer
 {
     /**
@@ -43,7 +46,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
 
         if (array_key_exists('unitPrecisions', $data) && is_array($data['unitPrecisions'])) {
             foreach ($data['unitPrecisions'] as $v) {
-                if ($v['unit']['code'] !== $object->getPrimaryUnitPrecision()->getUnit()->getCode()) {
+                if ($v['unit']['code'] !== $object->getPrimaryUnitPrecision()?->getUnit()?->getCode()) {
                     $data['additionalUnitPrecisions'][] = $v;
                 }
             }
