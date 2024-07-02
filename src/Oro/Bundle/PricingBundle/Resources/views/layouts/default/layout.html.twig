@@ -50,7 +50,7 @@
         </div>
     {% elseif currencies|length > 2 %}
         <button
-            class="btn btn--colored-inverse btn--text btn--no-padding currency-switcher currency-switcher--{{ selected_currency|lower }}"
+            class="btn btn--flat btn--flat-inverse currency-switcher currency-switcher--{{ selected_currency|lower }}"
             type="button"
         >
             {{ renderIcon.icon({name: 'credit-card'}) }}
@@ -153,7 +153,7 @@
 
 {% block product_price_hint_trigger_js_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
-    {% set productTierClass = productTierClass|default('btn btn--outlined btn--text btn--size-small product-tier-prices') %}
+    {% set productTierClass = productTierClass|default('btn btn--simple btn--size-small product-tier-prices') %}
     {% set productTierIcon = productTierIcon|default('fa-caret-down fa--no-offset') %}
     {% set productAriaLabel = productAriaLabel|default('oro.pricing.view_all_prices'|trans) %}
     {% set icon = icon|default(false) %}

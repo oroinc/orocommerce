@@ -160,8 +160,8 @@
     }) %}
 
     {% set actionButtonClass = actionButtonClass|default('btn btn--outlined btn--full direct-link') %}
-    {% set dropdownActionClass = dropdownActionClass|default('btn btn--block btn--outlined direct-link') %}
-    {% set dropdownToggleClass = dropdownToggleClass|default('btn btn--icon btn--outlined dropdown-toggle') %}
+    {% set dropdownActionClass = dropdownActionClass|default('btn btn--outlined btn--block direct-link') %}
+    {% set dropdownToggleClass = dropdownToggleClass|default('btn btn--outlined dropdown-toggle') %}
 
     {{ block('combined_buttons_widget') }}
 {% endblock %}

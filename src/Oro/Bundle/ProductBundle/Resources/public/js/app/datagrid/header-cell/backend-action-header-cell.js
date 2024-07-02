@@ -237,7 +237,7 @@ define(function(require, exports, module) {
                 const $dropdownToggle = $('<button></button>', {
                     'id': togglerId,
                     'type': 'button',
-                    'class': 'btn btn--inverse btn--icon dropdown-toggle',
+                    'class': 'btn btn--inverse dropdown-toggle',
                     'aria-label': __('oro.product.frontend.choose_action'),
                     'data-toggle': 'dropdown',
                     'data-placement': 'top-end'
@@ -298,7 +298,7 @@ define(function(require, exports, module) {
             if (panel.actions.length > 1) {
                 const $dropdownToggle = $('<button></button>', {
                     'type': 'button',
-                    'class': 'btn btn--inverse btn--icon dropdown-toggle',
+                    'class': 'btn btn--inverse dropdown-toggle',
                     'data-fullscreen-trigger': '',
                     'aria-label': __('oro.product.frontend.choose_action')
                 });
