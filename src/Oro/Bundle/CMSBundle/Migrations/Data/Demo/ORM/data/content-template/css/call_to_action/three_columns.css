@@ -1,20 +1,20 @@
 .three-columns-call-to-action {
     --grid-gap: 24px;
+}
 
-    .picture__wrapper {
-        height: 200px;
-    }
+.three-columns-call-to-action .picture__wrapper {
+    height: 200px;
+}
 
-    .grid-item {
-        display: flex;
-        flex-direction: column;
-    }
+.three-columns-call-to-action .grid-item {
+    display: flex;
+    flex-direction: column;
+}
 
-    .grid-item__text {
-        flex-grow: 1;
-    }
+.three-columns-call-to-action .grid-item__text {
+    flex-grow: 1;
+}
 
-    .grid-item__bottom {
-        align-self: end;
-    }
+.three-columns-call-to-action .grid-item__bottom {
+    align-self: end;
 }

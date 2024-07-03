@@ -1,20 +1,20 @@
 .three-columns-text-testimonials {
     --grid-gap: 40px 24px;
+}
 
-    .grid-team-member {
-        --grid-gap: 12px;
-        --grid-column-count: 2;
-        --grid-template-columns: 44px 1fr;
-    }
+.three-columns-text-testimonials .grid-team-member {
+    --grid-gap: 12px;
+    --grid-column-count: 2;
+    --grid-template-columns: 44px 1fr;
+}
 
-    .grid-item {
-        height: 100%;
-        --grid-gap: 16px 0;
-        --grid-auto-rows: auto 1fr;
-    }
+.three-columns-text-testimonials .grid-item {
+    height: 100%;
+    --grid-gap: 16px 0;
+    --grid-auto-rows: auto 1fr;
+}
 
-    .grid-item__bottom {
-        /* stylelint-disable-next-line */
-        background: #f0f3f5;
-    }
+.three-columns-text-testimonials .grid-item__bottom {
+    /* stylelint-disable-next-line */
+    background: #f0f3f5;
 }

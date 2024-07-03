@@ -1,7 +1,7 @@
 .four-columns-testimonials {
     --grid-gap: 24px;
+}
 
-    .picture__wrapper {
-        height: 200px;
-    }
+.four-columns-testimonials .picture__wrapper {
+    height: 200px;
 }

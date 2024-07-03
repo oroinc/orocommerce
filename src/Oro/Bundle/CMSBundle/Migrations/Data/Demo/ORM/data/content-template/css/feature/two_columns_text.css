@@ -1,61 +1,57 @@
 .two-columns-text-features {
     --grid-gap: 0;
     --grid-auto-rows: auto 1fr;
+}
 
-    .grid-article {
-        --grid-gap: 24px;
-    }
+.two-columns-text-features .grid-article {
+    --grid-gap: 24px;
+}
 
-    .grid-col-inner-offset-right {
-        padding-right: 56px;
-    }
+.two-columns-text-features .grid-col-inner-offset-right {
+    padding-right: 56px;
+}
 
-    .grid-col-inner-offset-left {
-        padding-left: 56px;
-    }
+.two-columns-text-features .grid-col-inner-offset-left {
+    padding-left: 56px;
+}
 
-    .border-columns {
-        /* stylelint-disable-next-line */
-        border-right: 1px solid #d4dcdd;
-    }
+.two-columns-text-features .border-columns {
+    /* stylelint-disable-next-line */
+    border-right: 1px solid #d4dcdd;
 }
 
 @media screen and (max-width: 1279px) {
-    .two-columns-text-features {
-        .grid-col-inner-offset-right {
-            padding-right: 48px;
-        }
+    .two-columns-text-features .grid-col-inner-offset-right {
+        padding-right: 48px;
+    }
 
-        .grid-col-inner-offset-left {
-            padding-left: 48px;
-        }
+    .two-columns-text-features .grid-col-inner-offset-left {
+        padding-left: 48px;
     }
 }
 
 @media screen and (max-width: 767px) {
-    .two-columns-text-features {
-        .grid-col-inner-offset-right {
-            padding-right: 56px;
-        }
+    .two-columns-text-features .grid-col-inner-offset-right {
+        padding-right: 56px;
+    }
 
-        .grid-col-inner-offset-left,
-        .grid-col-inner-offset-right {
-            padding-right: 0;
-            padding-left: 0;
-        }
+    .two-columns-text-features .grid-col-inner-offset-left,
+    .two-columns-text-features .grid-col-inner-offset-right {
+        padding-right: 0;
+        padding-left: 0;
+    }
 
-        .border-columns {
-            border-right: none;
-            /* stylelint-disable-next-line */
-            border-bottom: 1px solid #d4dcdd;
-        }
+    .two-columns-text-features .border-columns {
+        border-right: none;
+        /* stylelint-disable-next-line */
+        border-bottom: 1px solid #d4dcdd;
+    }
 
-        .grid-col-inner-offset-bottom-mobile {
-            padding-bottom: 32px;
-        }
+    .two-columns-text-features .grid-col-inner-offset-bottom-mobile {
+        padding-bottom: 32px;
+    }
 
-        .grid-col-inner-offset-top-mobile {
-            padding-top: 32px;
-        }
+    .two-columns-text-features .grid-col-inner-offset-top-mobile {
+        padding-top: 32px;
     }
 }

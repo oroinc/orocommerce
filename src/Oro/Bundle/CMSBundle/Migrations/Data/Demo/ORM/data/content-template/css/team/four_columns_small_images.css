@@ -1,11 +1,11 @@
 .four-columns-small-images-team {
     --grid-gap: 24px 48px;
+}
 
-    .grid-team-member {
-        --grid-gap: 12px;
-        --grid-column-count: 2;
-        --grid-template-columns: 44px 1fr;
-    }
+.four-columns-small-images-team .grid-team-member {
+    --grid-gap: 12px;
+    --grid-column-count: 2;
+    --grid-template-columns: 44px 1fr;
 }
 
 @media screen and (max-width: 640px) {
