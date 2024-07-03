@@ -48,6 +48,8 @@ datagrids:
         acl_resource: oro_order_view
         extends: base-orders-grid
         source:
+            acl_condition_data_builder_context:
+                override_created_by_acl: true
             query:
                 select:
                     - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
@@ -361,6 +363,8 @@ datagrids:
         extends: base-orders-grid
         acl_resource: oro_order_view
         source:
+            acl_condition_data_builder_context:
+                override_created_by_acl: true
             query:
                 select:
                     - COUNT(lineItems.id) as lineItemsCount

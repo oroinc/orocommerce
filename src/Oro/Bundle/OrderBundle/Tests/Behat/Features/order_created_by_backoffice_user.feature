@@ -75,3 +75,11 @@ Feature: Created by is saved in order on checkout in impersonation mode
       | Order2CreatedBy | John Doe | Phil Collins |
       | Order1CreatedBy | John Doe | John Doe     |
     And there are 2 records in grid
+
+  Scenario: Created By is displayed in Orders grid when user doesn't have User View permissions
+    Given administrator permissions on View User is set to None
+    When I reload the page
+    Then I should see following grid:
+      | Order Number    | Owner    | Created By   |
+      | Order2CreatedBy | John Doe | Phil Collins |
+      | Order1CreatedBy | John Doe | John Doe     |

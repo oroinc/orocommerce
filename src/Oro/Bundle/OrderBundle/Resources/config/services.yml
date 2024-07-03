@@ -696,6 +696,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-orders-grid, method: onBuildBefore }
 
+    oro_order.access_rule.order_created_by:
+        class: Oro\Bundle\OrderBundle\Acl\AccessRule\OrderCreatedByAccessRule
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\UserBundle\Entity\User, frontend: false }
+
     oro_order.provider.orders_number_usage_stats_provider:
         class: Oro\Bundle\OrderBundle\Provider\OrdersNumberUsageStatsProvider
         arguments:
