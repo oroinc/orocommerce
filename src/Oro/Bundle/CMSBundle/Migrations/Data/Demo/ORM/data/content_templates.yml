@@ -1,162 +1,162 @@
 -
     name: 'One column. Title and link'
     tags: ['Call to Action']
-    content: one_column_title_and_button_call_to_action.html
-    contentStyle: css/one_column_title_and_button_call_to_action.css
-    previewImage: preview/one_column_title_and_button_call_to_action.png
+    content: template/call_to_action/one_column_title_and_button.html
+    contentStyle: css/call_to_action/one_column_title_and_button.css
+    previewImage: preview/call_to_action/one_column_title_and_button.png
 -
     name: 'One column. Banner'
     tags: ['Call to Action']
-    content: one_column_banner_call_to_action.html
-    contentStyle: css/one_column_banner_call_to_action.css
-    previewImage: preview/one_column_banner_call_to_action.png
+    content: template/call_to_action/one_column_banner.html
+    contentStyle: css/call_to_action/one_column_banner.css
+    previewImage: preview/call_to_action/one_column_banner.png
 -
     name: 'One column. Text and button'
     tags: ['Call to Action']
-    content: one_column_text_and_button_call_to_action.html
-    contentStyle: css/one_column_text_and_button_call_to_action.css
-    previewImage: preview/one_column_text_and_button_call_to_action.png
+    content: template/call_to_action/one_column_text_and_button.html
+    contentStyle: css/call_to_action/one_column_text_and_button.css
+    previewImage: preview/call_to_action/one_column_text_and_button.png
 -
     name: 'Two columns. Text and button'
     tags: ['Call to Action']
-    content: two_columns_text_and_button_call_to_action.html
-    contentStyle: css/two_columns_text_and_button_call_to_action.css
-    previewImage: preview/two_columns_text_and_button_call_to_action.png
+    content: template/call_to_action/two_columns_text_and_button.html
+    contentStyle: css/call_to_action/two_columns_text_and_button.css
+    previewImage: preview/call_to_action/two_columns_text_and_button.png
 -
     name: 'Three columns + title'
     tags: ['Call to Action']
-    content: three_columns_call_to_action.html
-    contentStyle: css/three_columns_call_to_action.css
-    previewImage: preview/three_columns_call_to_action.png
+    content: template/call_to_action/three_columns.html
+    contentStyle: css/call_to_action/three_columns.css
+    previewImage: preview/call_to_action/three_columns.png
 -
-    name: 'Two columns. Text and images'
+    name: 'Two columns. Image and Text'
     tags: [Team]
-    content: two_columns_text_and_images_team.html
-    contentStyle: css/two_columns_text_and_images_team.css
-    previewImage: preview/two_columns_text_and_images_team.png
+    content: template/team/two_columns_image_and_text.html
+    contentStyle: css/team/two_columns_image_and_text.css
+    previewImage: preview/team/two_columns_image_and_text.png
 -
     name: 'Four columns'
     tags: [Team]
-    content: four_columns_team.html
-    contentStyle: css/four_columns_team.css
-    previewImage: preview/four_columns_team.png
+    content: template/team/four_columns.html
+    contentStyle: css/team/four_columns.css
+    previewImage: preview/team/four_columns.png
 -
     name: 'Four columns. Small images'
     tags: [Team]
-    content: four_columns_small_images_team.html
-    contentStyle: css/four_columns_small_images_team.css
-    previewImage: preview/four_columns_small_images_team.png
+    content: template/team/four_columns_small_images.html
+    contentStyle: css/team/four_columns_small_images.css
+    previewImage: preview/team/four_columns_small_images.png
 -
     name: 'Seven columns. Large images'
     tags: [Team]
-    content: seven_columns_large_images_team.html
-    contentStyle: css/seven_columns_large_images_team.css
-    previewImage: preview/seven_columns_large_images_team.png
+    content: template/team/seven_columns_large_images.html
+    contentStyle: css/team/seven_columns_large_images.css
+    previewImage: preview/team/seven_columns_large_images.png
 -
     name: 'Two columns. Image and text(image ratio is preserved)'
     tags: [Category]
-    content: two_columns_image_and_text_category.html
-    contentStyle: css/two_columns_image_and_text_category.css
-    previewImage: preview/two_columns_image_and_text_category.png
+    content: template/category/two_columns_image_and_text.html
+    contentStyle: css/category/two_columns_image_and_text.css
+    previewImage: preview/category/two_columns_image_and_text.png
 -
     name: 'Two columns. Image and text(image is flexible)'
     tags: [Category]
-    content: two_columns_image_and_text_flexible_category.html
-    contentStyle: css/two_columns_image_and_text_flexible_category.css
-    previewImage: preview/two_columns_image_and_text_flexible_category.png
+    content: template/category/two_columns_image_and_text_flexible.html
+    contentStyle: css/category/two_columns_image_and_text_flexible.css
+    previewImage: preview/category/two_columns_image_and_text_flexible.png
 -
     name: 'Two columns. Text'
     tags: [Category]
-    content: two_columns_text_category.html
-    contentStyle: css/two_columns_text_category.css
-    previewImage: preview/two_columns_text_category.png
+    content: template/category/two_columns_text.html
+    contentStyle: css/category/two_columns_text.css
+    previewImage: preview/category/two_columns_text.png
 -
     name: 'Three columns'
     tags: [Category]
-    content: three_columns_category.html
-    contentStyle: css/three_columns_category.css
-    previewImage: preview/three_columns_category.png
+    content: template/category/three_columns.html
+    contentStyle: css/category/three_columns.css
+    previewImage: preview/category/three_columns.png
 -
     name: 'Two columns. Text and image'
     tags: [Category]
-    content: two_columns_text_and_image_category.html
-    contentStyle: css/two_columns_text_and_image_category.css
-    previewImage: preview/two_columns_text_and_image_category.png
+    content: template/category/two_columns_text_and_image.html
+    contentStyle: css/category/two_columns_text_and_image.css
+    previewImage: preview/category/two_columns_text_and_image.png
 -
     name: 'Two columns. Text and images'
     tags: [Category]
-    content: two_columns_text_and_images_category.html
-    contentStyle: css/two_columns_text_and_images_category.css
-    previewImage: preview/two_columns_text_and_images_category.png
+    content: template/category/two_columns_text_and_images.html
+    contentStyle: css/category/two_columns_text_and_images.css
+    previewImage: preview/category/two_columns_text_and_images.png
 -
     name: 'Featured Categories'
     tags: [ Category ]
-    content: featured_categories_grid.html
-    contentStyle: css/featured_categories_grid.css
-    previewImage: preview/featured_categories_grid.png
+    content: template/category/featured_categories_grid.html
+    contentStyle: css/category/featured_categories_grid.css
+    previewImage: preview/category/featured_categories_grid.png
 -
     name: 'Four columns. Text(cards without background)'
     tags: [Features]
-    content: four_columns_text_features.html
-    contentStyle: css/four_columns_text_features.css
-    previewImage: preview/four_columns_text_features.png
+    content: template/feature/four_columns_text.html
+    contentStyle: css/feature/four_columns_text.css
+    previewImage: preview/feature/four_columns_text.png
 -
     name: 'Four columns. Text(cards with background)'
     tags: [Features]
-    content: four_columns_text_bg_features.html
-    contentStyle: css/four_columns_text_bg_features.css
-    previewImage: preview/four_columns_text_bg_features.png
+    content: template/feature/four_columns_text_bg.html
+    contentStyle: css/feature/four_columns_text_bg.css
+    previewImage: preview/feature/four_columns_text_bg.png
 -
     name: 'Two and one columns. Button'
     tags: [Features]
-    content: two_and_one_columns_button_features.html
-    contentStyle: css/two_and_one_columns_button_features.css
-    previewImage: preview/two_and_one_columns_button_features.png
+    content: template/feature/two_and_one_columns_button.html
+    contentStyle: css/feature/two_and_one_columns_button.css
+    previewImage: preview/feature/two_and_one_columns_button.png
 -
     name: 'Two columns. Text'
     tags: [Features]
-    content: two_columns_text_features.html
-    contentStyle: css/two_columns_text_features.css
-    previewImage: preview/two_columns_text_features.png
+    content: template/feature/two_columns_text.html
+    contentStyle: css/feature/two_columns_text.css
+    previewImage: preview/feature/two_columns_text.png
 -
     name: 'Two columns. Text and image(image ratio is preserved)'
     tags: [Features]
-    content: two_columns_text_and_image_features.html
-    contentStyle: css/two_columns_text_and_image_features.css
-    previewImage: preview/two_columns_text_and_image_features.png
+    content: template/feature/two_columns_text_and_image.html
+    contentStyle: css/feature/two_columns_text_and_image.css
+    previewImage: preview/feature/two_columns_text_and_image.png
 -
     name: 'Four columns. Text and images'
     tags: [Features]
-    content: four_columns_text_and_images_features.html
-    contentStyle: css/four_columns_text_and_images_features.css
-    previewImage: preview/four_columns_text_and_images_features.png
+    content: template/feature/four_columns_text_and_images.html
+    contentStyle: css/feature/four_columns_text_and_images.css
+    previewImage: preview/feature/four_columns_text_and_images.png
 -
     name: 'Three columns. Text'
     tags: [Testimonials]
-    content: three_columns_text_testimonials.html
-    contentStyle: css/three_columns_text_testimonials.css
-    previewImage: preview/three_columns_text_testimonials.png
+    content: template/testimonial/three_columns_text.html
+    contentStyle: css/testimonial/three_columns_text.css
+    previewImage: preview/testimonial/three_columns_text.png
 -
     name: 'One column'
     tags: [Testimonials]
-    content: one_column_testimonials.html
-    contentStyle: css/one_column_testimonials.css
-    previewImage: preview/one_column_testimonials.png
+    content: template/testimonial/one_column.html
+    contentStyle: css/testimonial/one_column.css
+    previewImage: preview/testimonial/one_column.png
 -
     name: 'Three columns'
     tags: [Testimonials]
-    content: three_columns_testimonials.html
-    contentStyle: css/three_columns_testimonials.css
-    previewImage: preview/three_columns_testimonials.png
+    content: template/testimonial/three_columns.html
+    contentStyle: css/testimonial/three_columns.css
+    previewImage: preview/testimonial/three_columns.png
 -
     name: 'One column. Text and images'
     tags: [Testimonials]
-    content: one_column_text_and_images_testimonials.html
-    contentStyle: css/one_column_text_and_images_testimonials.css
-    previewImage: preview/one_column_text_and_images_testimonials.png
+    content: template/testimonial/one_column_text_and_images.html
+    contentStyle: css/testimonial/one_column_text_and_images.css
+    previewImage: preview/testimonial/one_column_text_and_images.png
 -
     name: 'Four columns'
     tags: [Testimonials]
-    content: four_columns_testimonials.html
-    contentStyle: css/four_columns_testimonials.css
-    previewImage: preview/four_columns_testimonials.png
+    content: template/testimonial/four_columns.html
+    contentStyle: css/testimonial/four_columns.css
+    previewImage: preview/testimonial/four_columns.png

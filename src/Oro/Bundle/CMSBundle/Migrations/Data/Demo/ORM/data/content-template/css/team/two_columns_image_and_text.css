@@ -1,4 +1,4 @@
-.two-columns-text-and-images-team {
+.two-columns-image-and-text-team {
     --grid-gap: 24px;
 
     .grid-double-column {
@@ -45,7 +45,7 @@
 }
 
 @media screen and (max-width: 992px) {
-    .two-columns-text-and-images-team {
+    .two-columns-image-and-text-team {
         .grid-images-team {
             --grid-gap: 48px 0;
         }
@@ -53,7 +53,7 @@
 }
 
 @media screen and (max-width: 430px) {
-    .two-columns-text-and-images-team {
+    .two-columns-image-and-text-team {
         .grid-double-column {
             --grid-template-columns: 80px 1fr;
         }
