@@ -58,7 +58,7 @@
                 _collection_unique_prefix: form.parent.vars.unique_block_prefix
             } %}
             {% if allow_delete %}
-                <button class="btn btn btn--plain btn--text quick-order-add__remove-row removeRow" data-role="row-remove" type="button"
+                <button class="btn btn--simple-colored quick-order-add__remove-row removeRow" data-role="row-remove" type="button"
                         aria-label="{{ 'oro.product.remove_row.aria_label'|trans }}">
                     {{ renderIcon.icon({name: 'minus-circle'}) }}
                 </button>
@@ -111,7 +111,7 @@
         {% if allow_add %}
             <div class="grid-col-12 quick-order-add__actions">
                 <button
-                    class="btn btn--no-padding btn--outlined btn--text add-list-item"
+                    class="btn btn--flat add-list-item"
                     data-container=".js-item-collection"
                     type="button"
                     data-validate-collection="false"

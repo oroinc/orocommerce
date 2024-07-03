@@ -3,6 +3,7 @@ import IconTypeView from './icon-type-view';
 import IconTypeModel from './icon-type-model';
 import iconIdTraitInit from '../traits/icon-id-trait';
 import IconsCollectionView from '../settings/icons-collection';
+import IconsService from '../icons-service';
 
 const ICON_WIDGET_REGEXP = /\{\{\s?widget_icon\(\"([\w\S]+)\"\s?\,?\s?(\{[\s\S]+?\})?\)\s?\}\}/gm;
 
@@ -31,7 +32,10 @@ const matchAndReplaceIconExp = content => {
 const IconType = BaseType.extend({
     button: {
         label: 'Icon',
-        category: CATEGORIES.uiComponents,
+        category: {
+            label: CATEGORIES.uiComponents,
+            order: 5
+        },
         activate: true,
         attributes: {
             'class': 'fa fa-star'
@@ -47,6 +51,11 @@ const IconType = BaseType.extend({
 
     constructor: function IconType(...args) {
         IconType.__super__.constructor.apply(this, args);
+    },
+
+    editorEvents: {
+        load: 'onChangeTheme',
+        changeTheme: 'onChangeTheme'
     },
 
     onInit() {
@@ -81,6 +90,19 @@ const IconType = BaseType.extend({
                 tagName: 'svg',
                 iconId: el.getAttribute('data-init-icon')
             };
+        }
+    },
+
+    onChangeTheme() {
+        const iconsService = new IconsService({});
+        const {parentView} = this.editor;
+
+        if (iconsService.isSvgIconsSupport(parentView.getCurrentTheme())) {
+            this.execute();
+        } else {
+            const {Blocks} = this.editor;
+            Blocks.remove(this.componentType);
+            Blocks.render();
         }
     }
 }, {

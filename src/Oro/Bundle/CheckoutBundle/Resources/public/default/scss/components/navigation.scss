@@ -37,7 +37,7 @@
         .transition-step-edit-button {
             height: 20px;
             width: 20px;
-            color: $checkout-navigation-edit-color;
+            min-height: auto;
             margin-left: auto;
         }
     }

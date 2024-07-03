@@ -15,6 +15,8 @@ define(function(require, exports, module) {
     const oroui = _.macros('oroui');
     const config = require('module-config').default(module.id);
 
+    const PRODUCT_ACTION_AREA_CSS_VAR = '--product-action-area-height';
+
     const shoppingListAddAction = config.shoppingListAddAction || {
         type: 'addproducts',
         data_identifier: 'product.id',
@@ -55,6 +57,10 @@ define(function(require, exports, module) {
         events: {
             'click [data-fullscreen-trigger]': 'showFullScreen',
             'click [data-undo-selection]': 'undoSelection'
+        },
+
+        listen: {
+            'layout:reposition mediator': 'handleAreaVisibility'
         },
 
         /**
@@ -231,7 +237,7 @@ define(function(require, exports, module) {
                 const $dropdownToggle = $('<button></button>', {
                     'id': togglerId,
                     'type': 'button',
-                    'class': 'btn btn--inverse btn--icon dropdown-toggle',
+                    'class': 'btn btn--inverse dropdown-toggle',
                     'aria-label': __('oro.product.frontend.choose_action'),
                     'data-toggle': 'dropdown',
                     'data-placement': 'top-end'
@@ -246,7 +252,7 @@ define(function(require, exports, module) {
                 $dropdownToggle.prependTo(panel.$el);
 
                 $mainLuncher
-                    .addClass('btn btn-main btn--inverse add-to-shopping-list-button')
+                    .addClass('btn btn--inverse btn-main add-to-shopping-list-button')
                     .removeClass('disabled')
                     .prependTo(panel.$el);
             } else {
@@ -254,7 +260,7 @@ define(function(require, exports, module) {
                     panel.renderMainLauncher().$el
                 );
                 panel.launchers.forEach(launcher => {
-                    launcher.$el.addClass('btn btn--full btn--inverse');
+                    launcher.$el.addClass('btn btn--inverse btn--full');
                 });
 
                 panel.$el.addClass(extraClasses);
@@ -273,6 +279,8 @@ define(function(require, exports, module) {
                 $('[data-action-panel]').removeClass('hidden');
                 this.subview('actionsPanel').enable();
             }
+
+            this.handleAreaVisibility();
         },
 
         _renderAsGroup() {
@@ -282,19 +290,24 @@ define(function(require, exports, module) {
             this.getActionContainer().append(
                 panel.renderMainLauncher().$el
             );
+
             panel.launchers.forEach(launcher => {
-                launcher.$el.addClass('btn btn--inverse btn--full add-to-shopping-list-button');
+                launcher.$el.addClass('btn btn--inverse btn--full');
             });
             panel.$el.addClass(extraClasses);
             if (panel.actions.length > 1) {
                 const $dropdownToggle = $('<button></button>', {
                     'type': 'button',
-                    'class': 'btn btn--inverse btn--icon dropdown-toggle',
+                    'class': 'btn btn--inverse dropdown-toggle',
                     'data-fullscreen-trigger': '',
                     'aria-label': __('oro.product.frontend.choose_action')
                 });
                 panel.$el.append($dropdownToggle);
                 $dropdownToggle.html(oroui.renderIcon({name: 'chevron-up'}));
+
+                panel.launchers.forEach(launcher => {
+                    launcher.$el.addClass('btn-main add-to-shopping-list-button');
+                });
             }
 
             this._replaceablePanelClasses = `${extraClasses} show`;
@@ -310,6 +323,8 @@ define(function(require, exports, module) {
                 $('[data-action-panel]').removeClass('hidden');
                 this.subview('actionsPanel').enable();
             }
+
+            this.handleAreaVisibility();
         },
 
         _renderAsFullscreen() {
@@ -348,6 +363,14 @@ define(function(require, exports, module) {
             });
             this.defineRenderingStrategy();
             fullscreen.show();
+        },
+
+        handleAreaVisibility() {
+            if (this.$el.is(':visible')) {
+                document.body.style.setProperty(PRODUCT_ACTION_AREA_CSS_VAR, `${this.$el.height()}px`);
+            } else {
+                document.body.style.removeProperty(PRODUCT_ACTION_AREA_CSS_VAR);
+            }
         },
 
         onShowFullScreen() {
