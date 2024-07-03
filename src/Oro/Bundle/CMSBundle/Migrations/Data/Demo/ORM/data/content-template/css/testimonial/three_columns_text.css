@@ -14,6 +14,7 @@
     }
 
     .grid-item__bottom {
+        /* stylelint-disable-next-line */
         background: #f0f3f5;
     }
 }

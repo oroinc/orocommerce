@@ -2,8 +2,6 @@
     --grid-gap: 24px;
 
     .grid-two-columns {
-        --grid-template-columns: 1fr 1fr;
-
         gap: 24px 64px;
     }
 }

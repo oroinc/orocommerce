@@ -1,14 +1,14 @@
 .one-column-text-and-images-testimonials {
     --grid-gap: 24px;
 
-    .images-grid {
+    .grid-images {
         --grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
     }
 }
 
 @media screen and (max-width: 992px) {
     .one-column-text-and-images-testimonials {
-        .images-grid {
+        .grid-images {
             --grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
         }
     }

@@ -92,32 +92,6 @@
         }
     }
 
-    .rounded {
-        border-radius: $cms-typography-img-border-radius;
-
-        img {
-            border-radius: $cms-typography-img-border-radius;
-        }
-
-        &--circle {
-            border-radius: $cms-typography-img-rounded-circle-border-radius;
-
-            img {
-                border-radius: $cms-typography-img-rounded-circle-border-radius;
-            }
-        }
-    }
-
-    .bordered {
-        border: $cms-typography-block-border;
-        border-radius: $cms-typography-block-border-radius;
-
-        img {
-            border-radius: $cms-typography-block-img-border-radius;
-            border-bottom: $cms-typography-block-border;
-        }
-    }
-
     figure {
         display: $cms-typography-figure-display;
         margin: $cms-typography-figure-offset;

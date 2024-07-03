@@ -6,6 +6,7 @@
         --grid-auto-rows: 1fr auto;
 
         height: 100%;
+        /* stylelint-disable-next-line */
         background: #f0f3f5;
     }
 

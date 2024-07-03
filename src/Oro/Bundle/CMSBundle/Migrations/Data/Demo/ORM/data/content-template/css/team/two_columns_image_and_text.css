@@ -7,7 +7,7 @@
         --grid-auto-rows: auto 1fr;
     }
 
-    img {
+    .grid-img {
         max-height: 180px;
     }
 

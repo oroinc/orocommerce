@@ -1,6 +1,5 @@
 .two-columns-text-and-image-features {
     .grid-two-columns {
-        grid-template-columns: 1fr 1fr;
         gap: 32px 160px;
     }
 }

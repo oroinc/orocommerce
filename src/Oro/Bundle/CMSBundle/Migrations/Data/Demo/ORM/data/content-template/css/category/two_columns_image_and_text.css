@@ -1,10 +1,10 @@
 .two-columns-image-and-text-category {
     .grid-two-columns {
-        grid-template-columns: 1fr 1fr;
         gap: 32px 160px;
     }
 
-    h5 {
+    .grid-sub-title {
+        /* stylelint-disable-next-line */
         color: #45606e;
     }
 }
