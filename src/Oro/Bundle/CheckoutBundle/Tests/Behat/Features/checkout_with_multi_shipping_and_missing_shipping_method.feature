@@ -51,12 +51,12 @@ Feature: Checkout With Multi Shipping And Missing Shipping Method
     And I click "Continue"
     Then Page title equals to "Shipping Method - Checkout"
     And I should not see an "Lighting Products Checkout Category Name" element
-    And I should see following "MultiShipping Checkout Line Items Grid" grid:
+    And I should see following "Multi Shipping Checkout Line Items Grid" grid:
       | SKU  | Item                     | Qty | Price  | Subtotal | Shipping                            |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |                                     |
       | SKU2 | iPhone 13                | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
       | SKU3 | iPhone X                 | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
-    And records in "MultiShipping Checkout Line Items Grid" should be 3
+    And records in "Multi Shipping Checkout Line Items Grid" should be 3
     And I should see notification "This product will be available later" for "SKU1" line item "Checkout Line Item"
     And I should see notification "This product will be available later" for "SKU3" line item "Checkout Line Item"
     And I should not see an "Phones Checkout Category Name" element
