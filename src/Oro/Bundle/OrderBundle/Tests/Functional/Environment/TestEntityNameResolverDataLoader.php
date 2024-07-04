@@ -81,8 +81,8 @@ class TestEntityNameResolverDataLoader implements TestEntityNameResolverDataLoad
             }
 
             return 'orderWithoutPoNumber' === $entityReference
-                ? 'ORD2 USD'
-                : 'ORD1 PO1 USD';
+                ? 'ORD2'
+                : 'ORD1';
         }
         if (OrderAddress::class === $entityClass) {
             return EntityNameProviderInterface::SHORT === $format
