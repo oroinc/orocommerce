@@ -408,7 +408,7 @@ oro_behat_extension:
         mapping:
           GridRowStrict: CheckoutMultiShippingGridRow
 
-    MultiShipping Checkout Line Items Grid:
+    Multi Shipping Checkout Line Items Grid:
       selector: 'div[data-page-component-name="frontend-checkout-line-items-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
       options:
@@ -460,14 +460,24 @@ oro_behat_extension:
         locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:1"]//table//tr[@aria-rowindex="2"]//ul//label[contains(., "Flat Rate:")]//input[@type="radio"]'
         type: 'xpath'
 
-    Second Line Item Flat Rate Shipping Method:
+    Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method:
       selector:
         locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:2"]//table//tr[@aria-rowindex="2"]//ul//label[contains(., "Flat Rate:")]//input[@type="radio"]'
         type: 'xpath'
 
-    Third Line Item Flat Rate Shipping Method:
+    Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method:
       selector:
         locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:2"]//table//tr[@aria-rowindex="3"]//ul//label[contains(., "Flat Rate:")]//input[@type="radio"]'
+        type: 'xpath'
+
+    First Checkout Shipping Grid Flat Rate Shipping Method:
+      selector:
+        locator: '//div[@class="checkout-form__radio"]//label[contains(., "Flat Rate:")]//input[@type="radio" and @data-item-id="product.category:2"]'
+        type: 'xpath'
+
+    Second Checkout Shipping Grid Flat Rate Shipping Method:
+      selector:
+        locator: '//div[@class="checkout-form__radio"]//label[contains(., "Flat Rate:")]//input[@type="radio" and @data-item-id="product.category:3"]'
         type: 'xpath'
 
     Lighting Products Checkout Category Name:
