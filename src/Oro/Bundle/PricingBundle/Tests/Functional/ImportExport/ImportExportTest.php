@@ -69,10 +69,38 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->assertCount(9, $content);
     }
 
+    public function testExportPriceListWithoutCalculationRulesProductPrices(): void
+    {
+        $priceListId = $this->getReference('price_list_4')->getId();
+        $this->assertPreExportActionExecuted($this->getExportImportConfiguration($priceListId));
+        $preExportMessageData = $this->getOneSentMessageWithTopic(PreExportTopic::getName());
+
+        $messageBodyResolver = self::getContainer()->get('oro_message_queue.client.message_body_resolver');
+        $this->assertMessageProcessorExecuted(
+            'oro_importexport.async.pre_export',
+            $messageBodyResolver->resolveBody(PreExportTopic::getName(), $preExportMessageData)
+        );
+        $this->assertMessageSent(ExportTopic::getName());
+
+        $exportMessageData = $this->getOneSentMessageWithTopic(ExportTopic::getName());
+        $this->assertMessageProcessorExecuted(
+            'oro_importexport.async.pre_export',
+            $messageBodyResolver->resolveBody(ExportTopic::getName(), $exportMessageData)
+        );
+        $job = $this->findJob($exportMessageData['jobId']);
+        $data = $job->getData();
+        $errorsCount = $data['errorsCount'] ?? 0;
+
+        self::assertEquals($priceListId, $exportMessageData['options']['price_list_id']);
+        self::assertEquals(0, $errorsCount);
+
+        $this->clearMessageCollector();
+    }
+
     public function testCountEntitiesThatWillBeExportedInOnePriceList(): void
     {
         $priceListId = $this->getReference('price_list_1')->getId();
-        $this->assertPreExportActionExecuted($this->getExportImportConfiguration());
+        $this->assertPreExportActionExecuted($this->getExportImportConfiguration($priceListId));
         $preExportMessageData = $this->getOneSentMessageWithTopic(PreExportTopic::getName());
 
         $messageBodyResolver = self::getContainer()->get('oro_message_queue.client.message_body_resolver');
@@ -138,7 +166,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->markTestSkipped(
             'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
         );
-        $this->file = $this->getExportFile();
+        $this->file = $this->getExportFile($this->priceList->getId());
 
         $this->validateImportFile($strategy);
         $crawler = $this->client->getCrawler();
@@ -336,7 +364,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         );
     }
 
-    private function getExportFile(): string
+    private function getExportFile(int $priceListId): string
     {
         $result = $this
             ->getContainer()
@@ -347,7 +375,7 @@ class ImportExportTest extends AbstractImportExportTestCase
                 ProcessorRegistry::TYPE_EXPORT,
                 'csv',
                 null,
-                ['price_list_id' => $this->priceList->getId()]
+                ['price_list_id' => $priceListId]
             );
 
         $result = json_decode($result->getContent(), true, 512, JSON_THROW_ON_ERROR);
@@ -403,10 +431,8 @@ class ImportExportTest extends AbstractImportExportTestCase
         return $result->getContent();
     }
 
-    private function getExportImportConfiguration(): ImportExportConfiguration
+    private function getExportImportConfiguration(int $priceListId): ImportExportConfiguration
     {
-        $priceListId = $this->getReference('price_list_1')->getId();
-
         return new ImportExportConfiguration([
             ImportExportConfiguration::FIELD_EXPORT_PROCESSOR_ALIAS => 'oro_pricing_product_price',
             ImportExportConfiguration::FIELD_EXPORT_JOB_NAME => 'price_list_product_prices_export_to_csv',
