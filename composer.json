@@ -58,7 +58,7 @@
     "extra": {
         "npm": {
             "@oroinc/grapesjs": "0.16.30-oro3",
-            "@oroinc/grapesjs-preset-webpage": "0.1.11-oro-1",
+            "@oroinc/grapesjs-preset-webpage": "0.1.11-oro-2",
             "@oroinc/grapesjs-parser-postcss": "0.1.1-oro1",
             "@oroinc/jquery-creditcardvalidator": "1.1",
             "@oroinc/elevatezoom": "3.0.81"
