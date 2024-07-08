@@ -234,9 +234,11 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
     protected function createPriceList($assignmentRule)
     {
         $priceList = new PriceList();
+        $organization = $this->getReference('organization');
         $priceList->setActive(true)
             ->setCurrencies(['USD', 'EUR'])
             ->setName('Test Assignment Rules Price List')
+            ->setOrganization($organization)
             ->setProductAssignmentRule($assignmentRule);
         $em = $this->registry->getManagerForClass(PriceList::class);
         $em->persist($priceList);
