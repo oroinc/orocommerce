@@ -18,6 +18,7 @@ use Oro\Bundle\OrderBundle\Provider\TotalProvider;
 use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\UserBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -191,6 +192,14 @@ class OrderController extends AbstractController
             $orderRequestHandler = $this->container->get(OrderRequestHandler::class);
             $order->setCustomer($orderRequestHandler->getCustomer());
             $order->setCustomerUser($orderRequestHandler->getCustomerUser());
+
+            if (null === $order->getId()) {
+                $user = $this->getUser();
+
+                if ($user instanceof User) {
+                    $order->setCreatedBy($user);
+                }
+            }
         }
 
         $form = $this->createForm(

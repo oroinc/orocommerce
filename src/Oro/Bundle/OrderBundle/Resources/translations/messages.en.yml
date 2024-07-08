@@ -31,6 +31,13 @@ oro:
             description:                  Unique identifier that is used as a reference for the order.
             short_label:                  'Order #'
         owner.label: Owner
+        created_by:
+            label: Created By
+            description: Represents a back-office user which created the Order.
+        created_by_seller:
+            label: Created By Seller
+            yes.label: Yes
+            no.label: No
         customer:
             label:                        Customer
             description:                  Customers are companies who buy products using OroCommerce store frontend. Customer record contains information about the company, their place in the corporate structure, assigned sales representative, and sales metrics.
@@ -719,3 +726,5 @@ oro:
                 start_from_order.aria_label: "Re-Order %identifier% order"
             orderlineitem:
                 kitConfiguration.label: Configuration
+            created_by_seller:
+                label: This order was created on your behalf by a member of our staff.
