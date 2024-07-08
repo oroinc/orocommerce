@@ -57,6 +57,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
             ['shippingMethod', 'shipping_method'],
             ['shippingMethodType', 'shipping_method_type'],
             ['parent', new Order()],
+            ['createdBy', new User()],
         ];
 
         $order = new Order();

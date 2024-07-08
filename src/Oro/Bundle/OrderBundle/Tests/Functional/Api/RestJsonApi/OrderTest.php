@@ -7,7 +7,9 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
@@ -244,6 +246,7 @@ class OrderTest extends RestJsonApiTestCase
         /** @var Order $item */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals('2345678', $order->getPoNumber());
+        self::assertSame($this->getReference(LoadOrderUsers::ORDER_USER_1), $order->getCreatedBy());
         self::assertSame('73.5400', $order->getSubtotal());
         self::assertSame('73.5400', $order->getTotal());
         self::assertNull($order->getTotalDiscounts());
@@ -481,6 +484,37 @@ class OrderTest extends RestJsonApiTestCase
         self::assertNull($updatedOrder->getTotalDiscounts());
         // the status should be read-only when "Enable External Status Management" configuration option is disabled
         self::assertNull($updatedOrder->getStatus());
+    }
+
+    public function testCreatedByCannotBeUpdated(): void
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $orderId = $order->getId();
+
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => $orderId],
+            [
+                'data' => [
+                    'type'          => 'orders',
+                    'id'            => (string)$orderId,
+                    'relationships' => [
+                        'createdBy' => [
+                            'data' => [
+                                'type' => 'users',
+                                'id'   => '<toString(@order.simple_user2->id)>'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+        );
+
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_OK);
+
+        /** @var Order $item */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertNull($order->getCreatedBy());
     }
 
     public function testAddProductKitLineItem(): void
