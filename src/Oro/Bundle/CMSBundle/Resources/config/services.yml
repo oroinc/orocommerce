@@ -568,3 +568,14 @@ services:
         arguments:
             - '@oro_config.manager'
             - '@doctrine'
+
+    oro_cms.routing.matched_url_decision_maker:
+        class: Oro\Bundle\CMSBundle\Routing\MatchedUrlDecisionMaker
+        decorates: oro_redirect.routing.matched_url_decision_maker
+        arguments:
+            - ['%oro_api.rest.prefix%', '/js/', '/media/', '/_fragment', '/_profiler', '/_wdt']
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_theme.provider.theme_configuration'
+            - '@oro_layout.theme_manager'
+            - '@oro_redirect.slug_entity_finder'
+            - '@oro_config.manager'
