@@ -46,7 +46,11 @@ class PriceListToProductRepository extends EntityRepository
             )
             ->where($qb->expr()->isNull('pp.id'))
             ->andWhere($qb->expr()->eq('plp.priceList', ':priceList'))
-            ->setParameter('priceList', $priceList);
+            ->andWhere($qb->expr()->eq('p.organization', ':organization'))
+            ->setParameters([
+                'priceList' => $priceList,
+                'organization' => $priceList->getOrganization()
+            ]);
 
         return $qb;
     }
