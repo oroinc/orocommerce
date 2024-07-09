@@ -3,10 +3,11 @@
 namespace Oro\Bundle\SEOBundle\EventListener;
 
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
+use Oro\Bundle\SEOBundle\Manager\RobotsTxtTemplateManager;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 
 /**
- * Dumps the robots.txt file based on a template file if a robots.txt file was not dumped yet.
+ * Dumps the robots.txt file if a robots.txt file was not dumped yet.
  */
 class CopyRobotsTxtTemplateListener
 {
@@ -18,12 +19,19 @@ class CopyRobotsTxtTemplateListener
     /** @var string */
     private $robotsTxtPathDirectory;
 
+    private ?RobotsTxtTemplateManager $robotsTxtTemplateManager = null;
+
     public function __construct(
         RobotsTxtFileManager $robotsTxtFileManager,
         string $robotsTxtPathDirectory
     ) {
         $this->robotsTxtFileManager = $robotsTxtFileManager;
         $this->robotsTxtPathDirectory = $robotsTxtPathDirectory;
+    }
+
+    public function setRobotsTxtTemplateManager(?RobotsTxtTemplateManager $robotsTxtTemplateManager): void
+    {
+        $this->robotsTxtTemplateManager = $robotsTxtTemplateManager;
     }
 
     public function onSitemapDumpStorage(OnSitemapDumpFinishEvent $event): void
@@ -36,7 +44,12 @@ class CopyRobotsTxtTemplateListener
             return;
         }
 
-        $content = $this->getTemplateContent($this->robotsTxtFileManager->getFileNameByWebsite($website));
+        if ($this->robotsTxtTemplateManager instanceof RobotsTxtTemplateManager) {
+            $content = $this->robotsTxtTemplateManager->getTemplateContent($website);
+        } else {
+            $content = $this->getTemplateContent($this->robotsTxtFileManager->getFileNameByWebsite($website));
+        }
+
         $this->robotsTxtFileManager->dumpContent($content, $website);
     }
 

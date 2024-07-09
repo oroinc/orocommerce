@@ -4,57 +4,77 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\SEOBundle\EventListener\CopyRobotsTxtTemplateListener;
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
+use Oro\Bundle\SEOBundle\Manager\RobotsTxtTemplateManager;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Website\WebsiteInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class CopyRobotsTxtTemplateListenerTest extends \PHPUnit\Framework\TestCase
+class CopyRobotsTxtTemplateListenerTest extends TestCase
 {
-    /** @var RobotsTxtFileManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $robotsTxtFileManager;
+    private RobotsTxtFileManager|MockObject $robotsTxtFileManager;
 
-    /** @var WebsiteInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $website;
+    private RobotsTxtTemplateManager|MockObject $robotsTxtTemplateManager;
 
-    /** @var OnSitemapDumpFinishEvent */
-    private $event;
+    private WebsiteInterface|MockObject $website;
+
+    private OnSitemapDumpFinishEvent $event;
+
+    private CopyRobotsTxtTemplateListener $listener;
 
     protected function setUp(): void
     {
         $this->website = new Website();
         $this->event = new OnSitemapDumpFinishEvent($this->website, 123);
         $this->robotsTxtFileManager = $this->createMock(RobotsTxtFileManager::class);
-    }
+        $this->robotsTxtTemplateManager = $this->createMock(RobotsTxtTemplateManager::class);
 
-    public function testOnSitemapDumpStorageWithAlreadyDumpedData()
-    {
-        $listener = new CopyRobotsTxtTemplateListener(
+        $this->listener = new CopyRobotsTxtTemplateListener(
             $this->robotsTxtFileManager,
             __DIR__ . '/fixtures/'
         );
+    }
 
+    public function testOnSitemapDumpStorageWithAlreadyDumpedData(): void
+    {
         $this->robotsTxtFileManager->expects(self::once())
             ->method('isContentFileExist')
             ->with($this->website)
             ->willReturn(true);
 
-        $this->robotsTxtFileManager->expects(self::never())
-            ->method('getFileNameByWebsite')
-            ->with($this->website);
+        $this->robotsTxtTemplateManager->expects(self::never())
+            ->method('getTemplateContent');
 
         $this->robotsTxtFileManager->expects(self::never())
             ->method('dumpContent');
 
-        $listener->onSitemapDumpStorage($this->event);
+        $this->listener->onSitemapDumpStorage($this->event);
     }
 
-    public function testOnSitemapDumpStorageWithExistingDomainDistFile()
+    public function testOnSitemapDumpStorage(): void
     {
-        $listener = new CopyRobotsTxtTemplateListener(
-            $this->robotsTxtFileManager,
-            __DIR__ . '/fixtures/'
-        );
+        $this->robotsTxtFileManager->expects(self::once())
+            ->method('isContentFileExist')
+            ->with($this->website)
+            ->willReturn(false);
 
+        $templateContent = "#test domain robots file\n";
+        $this->robotsTxtTemplateManager->expects(self::once())
+            ->method('getTemplateContent')
+            ->with($this->website)
+            ->willReturn($templateContent);
+
+        $this->robotsTxtFileManager->expects(self::once())
+            ->method('dumpContent')
+            ->with($templateContent, $this->website);
+
+        $this->listener->setRobotsTxtTemplateManager($this->robotsTxtTemplateManager);
+        $this->listener->onSitemapDumpStorage($this->event);
+    }
+
+    public function testOnSitemapDumpStorageWithExistingDomainDistFile(): void
+    {
         $this->robotsTxtFileManager->expects(self::once())
             ->method('isContentFileExist')
             ->with($this->website)
@@ -69,16 +89,11 @@ class CopyRobotsTxtTemplateListenerTest extends \PHPUnit\Framework\TestCase
             ->method('dumpContent')
             ->with("#test domain robots file\n", $this->website);
 
-        $listener->onSitemapDumpStorage($this->event);
+        $this->listener->onSitemapDumpStorage($this->event);
     }
 
-    public function testOnSitemapDumpStorageWithExistingDefaultDistFile()
+    public function testOnSitemapDumpStorageWithExistingDefaultDistFile(): void
     {
-        $listener = new CopyRobotsTxtTemplateListener(
-            $this->robotsTxtFileManager,
-            __DIR__ . '/fixtures/'
-        );
-
         $this->robotsTxtFileManager->expects(self::once())
             ->method('isContentFileExist')
             ->with($this->website)
@@ -93,10 +108,10 @@ class CopyRobotsTxtTemplateListenerTest extends \PHPUnit\Framework\TestCase
             ->method('dumpContent')
             ->with("#test robots file\n", $this->website);
 
-        $listener->onSitemapDumpStorage($this->event);
+        $this->listener->onSitemapDumpStorage($this->event);
     }
 
-    public function testOnSitemapDumpStorageWithNotExistingFile()
+    public function testOnSitemapDumpStorageWithNotExistingFile(): void
     {
         $expectedContent = <<<TEXT
 # www.robotstxt.org/

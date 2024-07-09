@@ -8,24 +8,27 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const CHANGEFREQ_ALWAYS = 'always';
-    const CHANGEFREQ_HOURLY = 'hourly';
-    const CHANGEFREQ_DAILY = 'daily';
-    const CHANGEFREQ_WEEKLY = 'weekly';
-    const CHANGEFREQ_MONTHLY = 'monthly';
-    const CHANGEFREQ_YEARLY = 'yearly';
-    const CHANGEFREQ_NEVER = 'never';
+    public const ROOT_NODE = 'oro_seo';
+    public const ROBOTS_TXT_TEMPLATE = 'sitemap_robots_txt_template';
 
-    const DEFAULT_PRIORITY = 0.5;
+    public const CHANGEFREQ_ALWAYS = 'always';
+    public const CHANGEFREQ_HOURLY = 'hourly';
+    public const CHANGEFREQ_DAILY = 'daily';
+    public const CHANGEFREQ_WEEKLY = 'weekly';
+    public const CHANGEFREQ_MONTHLY = 'monthly';
+    public const CHANGEFREQ_YEARLY = 'yearly';
+    public const CHANGEFREQ_NEVER = 'never';
 
-    const DEFAULT_CRON_DEFINITION = '0 0 * * *';
+    public const DEFAULT_PRIORITY = 0.5;
+
+    public const DEFAULT_CRON_DEFINITION = '0 0 * * *';
 
     /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder('oro_seo');
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
         $rootNode    = $treeBuilder->getRootNode();
 
         SettingsBuilder::append(
@@ -40,6 +43,7 @@ class Configuration implements ConfigurationInterface
                 'sitemap_cron_definition' => ['value' => self::DEFAULT_CRON_DEFINITION],
                 'sitemap_exclude_landing_pages' => ['value' => true],
                 'sitemap_include_landing_pages_not_in_web_catalog' => ['value' => false],
+                self::ROBOTS_TXT_TEMPLATE => ['type' => 'string', 'value' => ''],
             ]
         );
 

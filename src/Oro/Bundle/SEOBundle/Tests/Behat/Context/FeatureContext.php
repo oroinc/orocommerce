@@ -29,4 +29,18 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             sprintf('Meta %s doesn\`t equal to "%s"', $metaName, $content)
         );
     }
+
+    /**
+     * @When /^(?:|I )open the robots.txt url$/
+     */
+    public function openTheRobotsTxtUrl(): void
+    {
+        $baseUrl = rtrim($this->getMinkParameter('base_url') ?? '', '/') . '/';
+        $domain = parse_url($baseUrl, PHP_URL_HOST);
+        if (!$domain) {
+            self::fail('Failed to get current domain');
+        }
+
+        $this->visitPath('/media/sitemaps/robots.'.$domain.'.txt');
+    }
 }

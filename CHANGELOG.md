@@ -106,6 +106,9 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\ProductSuggestionRestrictIndexListener` filter suggestions by organization and localization for every website for storefront search engine.
 * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearchSuggestionFeatureToggleListener` listen to feature status changes and send messages to MQ for suggestions generation when feature has been enabled.
 
+#### SEOBundle
+* Added the ability to manage robots.txt template via system configuration.
+
 ### Changed
 
 #### UPSBundle

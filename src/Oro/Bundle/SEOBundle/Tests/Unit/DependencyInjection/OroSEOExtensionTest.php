@@ -3,9 +3,10 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\SEOBundle\DependencyInjection\OroSEOExtension;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroSEOExtensionTest extends \PHPUnit\Framework\TestCase
+class OroSEOExtensionTest extends TestCase
 {
     public function testLoad(): void
     {
@@ -30,6 +31,7 @@ class OroSEOExtensionTest extends \PHPUnit\Framework\TestCase
                         'sitemap_cron_definition' => ['value' => '0 0 * * *', 'scope' => 'app'],
                         'sitemap_exclude_landing_pages' => ['value' => true, 'scope' => 'app'],
                         'sitemap_include_landing_pages_not_in_web_catalog' => ['value' => false, 'scope' => 'app'],
+                        'sitemap_robots_txt_template' => ['value' => '', 'scope' => 'app'],
                     ]
                 ]
             ],
