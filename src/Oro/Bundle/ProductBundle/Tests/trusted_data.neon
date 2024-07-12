@@ -1,6 +1,9 @@
 # Configuration for https://github.com/oroinc/phpstan-rules/
 trusted_data:
     variables:
+        Oro\Bundle\ProductBundle\Driver\ProductWebsiteReindexRequestDbalDriver:
+            executeInserts:
+                rows: true
         Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier:
             addWhereInExpr:
                 rootAlias: true
