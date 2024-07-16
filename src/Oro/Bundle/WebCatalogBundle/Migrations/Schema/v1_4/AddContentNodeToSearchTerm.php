@@ -22,12 +22,19 @@ class AddContentNodeToSearchTerm implements Migration, ExtendExtensionAwareInter
     public function up(Schema $schema, QueryBag $queries): void
     {
         $owningSideTable = $schema->getTable('oro_website_search_search_term');
+
+        $associationName = 'redirectContentNode';
+        $relationName = $this->extendExtension->getNameGenerator()->generateRelationColumnName($associationName, '_id');
+        if ($owningSideTable->hasColumn($relationName)) {
+            return;
+        }
+
         $inverseSideTable = $schema->getTable('oro_web_catalog_content_node');
 
         $this->extendExtension->addManyToOneRelation(
             $schema,
             $owningSideTable,
-            'redirectContentNode',
+            $associationName,
             $inverseSideTable,
             'id',
             [
