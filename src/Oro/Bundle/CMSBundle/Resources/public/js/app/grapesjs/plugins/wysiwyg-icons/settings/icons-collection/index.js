@@ -80,6 +80,13 @@ const IconsCollectionView = BaseCollectionView.extend({
         this.toggleLoadingIndicator();
         const theme = this.editor.em.get('currentTheme');
 
+        if (theme.svgIconsSupport === false) {
+            this.collection.reset();
+            this.collection.finishSync();
+            this.$el.trigger('content:changed');
+            return;
+        }
+
         this.editor.IconsService.getAndParseIconCollection({theme}).then(data => {
             this.collection.set(data.map(item => {
                 return {

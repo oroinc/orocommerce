@@ -779,7 +779,7 @@ services:
             - '@oro_checkout.workflow_state.handler.checkout_error'
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_checkout.helper.checkout_line_item_grouping_invalidation_helper'
-            - '@oro_customer.handler.customer_registration_handler'
+            - '@oro_customer.handler.customer_checkout_registration_handler'
             - '@oro_customer.handler.forgot_password'
             - '@event_dispatcher'
             - '@translator'

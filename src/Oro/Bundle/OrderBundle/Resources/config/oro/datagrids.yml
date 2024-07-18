@@ -48,6 +48,8 @@ datagrids:
         acl_resource: oro_order_view
         extends: base-orders-grid
         source:
+            acl_condition_data_builder_context:
+                override_created_by_acl: true
             query:
                 select:
                     - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
@@ -61,9 +63,11 @@ datagrids:
                     - internalStatus.name as internalStatusName
                     - internalStatus.id as internalStatusId
                     - CASE WHEN IDENTITY(order1.parent) IS NULL THEN 1 ELSE 2 END as orderType
+                    - CONCAT(created_by.firstName, ' ', created_by.lastName) as createdBy
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
+                        - { join: order1.createdBy, alias: created_by }
                         - { join: order1.customerUser, alias: customerUser }
                         - { join: order1.customer, alias: customer }
                         - { join: order1.internal_status, alias: internalStatus }
@@ -116,6 +120,9 @@ datagrids:
                 label: oro.order.internal_status.label
             owner:
                 label:         oro.order.owner.label
+            createdBy:
+                label:         oro.order.created_by.label
+                renderable:    false
             paymentStatus:
                 label:         oro.order.payment_status.label
                 type:          twig
@@ -173,6 +180,8 @@ datagrids:
                     data_name: internalStatusName
                 owner:
                     data_name: owner
+                createdBy:
+                    data_name: createdBy
                 totalDiscountsAmount:
                     data_name: order1.totalDiscountsAmount
                 createdAt:
@@ -226,6 +235,9 @@ datagrids:
                 owner:
                     type:      string
                     data_name: owner
+                createdBy:
+                    type:      string
+                    data_name: createdBy
                 paymentStatus:
                     type:      choice
                     data_name: paymentStatus
@@ -351,16 +363,20 @@ datagrids:
         extends: base-orders-grid
         acl_resource: oro_order_view
         source:
+            acl_condition_data_builder_context:
+                override_created_by_acl: true
             query:
                 select:
                     - COUNT(lineItems.id) as lineItemsCount
                     - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
                     - internalStatus.name as internalStatusName
                     - internalStatus.id as internalStatusId
+                    - CONCAT(created_by.firstName, ' ', created_by.lastName) as createdBy
                 join:
                     left:
                         - { join: order1.lineItems, alias: lineItems}
                         - { join: order1.owner, alias: order_owner }
+                        - { join: order1.createdBy, alias: created_by }
                         - { join: order1.internal_status, alias: internalStatus }
                 groupBy: order1.id
         columns:
@@ -398,6 +414,9 @@ datagrids:
                 label:         oro.order.internal_status.label
             owner:
                 label:         oro.order.owner.label
+                renderable:    false
+            createdBy:
+                label:         oro.order.created_by.label
                 renderable:    false
             paymentStatus:
                 label:         oro.order.payment_status.label
@@ -445,6 +464,8 @@ datagrids:
                     data_name: internalStatusName
                 owner:
                     data_name: owner
+                createdBy:
+                    data_name: createdBy
                 totalDiscountsAmount:
                     data_name: order1.totalDiscountsAmount
                 createdAt:
@@ -489,6 +510,9 @@ datagrids:
                 owner:
                     type:      string
                     data_name: owner
+                createdBy:
+                    type:      string
+                    data_name: createdBy
                 paymentStatus:
                     type:      choice
                     data_name: paymentStatus

@@ -52,9 +52,15 @@ class PriceListAdditionalProductPriceReader extends IteratorBasedReader
         $this->priceListId = (int)$context->getOption('price_list_id');
         $this->setSourceIterator($this->createIterator());
 
-        $configuration = $this->stepExecution->getJobExecution()->getJobInstance()->getRawConfiguration();
-        $configuration['export']['firstLineIsHeader'] = false;
-        $this->stepExecution->getJobExecution()->getJobInstance()->setRawConfiguration($configuration);
+        $jobInstance = $this->stepExecution->getJobExecution()->getJobInstance();
+        $configuration = $jobInstance->getRawConfiguration();
+
+        if ($configuration['export']['hasHeader']) {
+            $configuration['export']['firstLineIsHeader'] = false;
+        }
+
+        unset($configuration['export']['hasHeader']);
+        $jobInstance->setRawConfiguration($configuration);
 
         parent::initializeFromContext($context);
     }

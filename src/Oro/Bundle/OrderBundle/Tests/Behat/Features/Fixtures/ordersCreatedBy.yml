@@ -1,0 +1,47 @@
+include:
+    - '@OroUserBundle:AdditionalUsersFixture.yml'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order1CreatedBy:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'Order1CreatedBy'
+        website: '@website1'
+        currency: USD
+        poNumber: 'ORD1CB'
+        createdBy: '@admin'
+        lineItems: ['@order1CreatedByLineItem']
+    order2CreatedBy:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'Order2CreatedBy'
+        website: '@website1'
+        currency: USD
+        poNumber: 'ORD2CB'
+        createdBy: '@testPhil'
+        lineItems: ['@order2CreatedByLineItem']
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    order1CreatedByLineItem:
+        product: '@product1'
+        order: '@order1CreatedBy'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
+    order2CreatedByLineItem:
+        product: '@product1'
+        order: '@order2CreatedBy'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item

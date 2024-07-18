@@ -82,6 +82,11 @@ trait MetaFieldSetterGetterTrait
         return $this->metaKeywords;
     }
 
+    public function getMetaKeyword()
+    {
+        return $this->metaKeywords->current();
+    }
+
     /**
      * @return LocalizedFallbackValue[]|Collection
      */

@@ -5,4 +5,4 @@ oro_api:
 oro_entity:
     entity_name_representation:
         Oro\Bundle\OrderBundle\Entity\Order:
-            full: [ identifier, poNumber, currency ]
+            full: [ identifier ]

@@ -25,7 +25,7 @@
         width: 100%;
         padding-inline: 0;
         justify-content: space-between;
-        background: none;
+        font-size: $base-font-size;
 
         &:has(.badge) {
             grid-template-columns: $coupon-container-trigger-grid-template-column;

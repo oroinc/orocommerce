@@ -13,9 +13,8 @@ define(function(require) {
         options: {
             template: '',
             selectors: {
-                checkoutContent: '[data-role="checkout-content"]',
-                shippingMethodTypeSelectorAbsolute: '[data-content="shipping_method_form"]' +
-                    ' [name^="shippingMethodType"]'
+                checkoutSummary: '[data-role="checkout-summary"]',
+                shippingMethodType: '[data-content="shipping_method_form"] [name^="shippingMethodType"]'
             }
         },
 
@@ -49,9 +48,9 @@ define(function(require) {
         },
 
         onShippingMethodRendered: function() {
-            $(this.options.selectors.checkoutContent).on(
+            $(this.options.selectors.checkoutSummary).on(
                 'change',
-                this.options.selectors.shippingMethodTypeSelectorAbsolute,
+                this.options.selectors.shippingMethodType,
                 this.onShippingMethodTypeChange.bind(this)
             );
         },
