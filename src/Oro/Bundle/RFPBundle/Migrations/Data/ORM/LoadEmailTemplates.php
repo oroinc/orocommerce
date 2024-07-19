@@ -12,7 +12,7 @@ class LoadEmailTemplates extends AbstractHashEmailMigration implements Versioned
 {
     public function getVersion(): string
     {
-        return '1.3';
+        return '1.4';
     }
 
     public function getEmailsDir(): string
@@ -29,6 +29,8 @@ class LoadEmailTemplates extends AbstractHashEmailMigration implements Versioned
                 '8728cf6b2cb34845f1f2bb65aad21769', // 1.0
                 '674127291ed7a18b4d3bb9e288a10db0', // 1.1
                 'ea205dc877d4587ec786d689a7c63364', // 1.2
+                '76f2c004315ea55f73844b05b8177f0a', // 1.3
+                '5bd5253d8f2f115f952dfb3e904acce7', // 1.4
             ],
             'request_create_notification' => [
                 '812419cdd5af1d4d753059e93c58f98e', // 1.0

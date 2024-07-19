@@ -14,6 +14,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemPriceAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitPrecisionAwareInterface;
 
@@ -36,6 +37,7 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitPrecisionAwareInterface;
 )]
 class OrderProductKitItemLineItem implements
     OrderHolderInterface,
+    ProductHolderInterface,
     ProductKitItemLineItemPriceAwareInterface,
     ProductUnitPrecisionAwareInterface,
     ExtendEntityInterface
