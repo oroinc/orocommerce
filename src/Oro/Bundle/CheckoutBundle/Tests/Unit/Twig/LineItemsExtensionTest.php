@@ -10,12 +10,14 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
@@ -40,6 +42,7 @@ class LineItemsExtensionTest extends TestCase
         $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
         $this->localizedHelper = $this->createMock(LocalizationHelper::class);
         $entityNameResolver = $this->createMock(EntityNameResolver::class);
+        $configurableProductProvider = $this->createMock(ConfigurableProductProvider::class);
         $entityNameResolver->expects(self::any())
             ->method('getName')
             ->willReturnCallback(function (?Product $entity) {
@@ -55,6 +58,7 @@ class LineItemsExtensionTest extends TestCase
             ->add(LineItemSubtotalProvider::class, $this->lineItemSubtotalProvider)
             ->add(LocalizationHelper::class, $this->localizedHelper)
             ->add(EntityNameResolver::class, $entityNameResolver)
+            ->add('oro_product.layout.data_provider.configurable_products', $configurableProductProvider)
             ->getContainer($this);
 
         $this->extension = new LineItemsExtension($container);
@@ -74,6 +78,7 @@ class LineItemsExtensionTest extends TestCase
         $comment = 'Comment';
         $shipBy = new \DateTime();
 
+        $organization = (new Organization())->setName('Oro');
         $subtotals = new ArrayCollection([
             (new Subtotal())
                 ->setLabel('label2')
@@ -91,7 +96,7 @@ class LineItemsExtensionTest extends TestCase
         $order = new Order();
         $order->setCurrency($currency);
 
-        $product = $freeForm ? null : (new Product())->setSku($sku);
+        $product = $freeForm ? null : (new Product())->setSku($sku)->setOrganization($organization);
         $order->addLineItem(
             $this->createLineItem(
                 $currency,
@@ -106,7 +111,10 @@ class LineItemsExtensionTest extends TestCase
         );
 
         $productKitName = 'Product Kit';
-        $productKit = (new Product())->setId(2)->setType(Product::TYPE_KIT)->setDefaultName($productKitName);
+        $productKit = (new Product())->setId(2)
+            ->setType(Product::TYPE_KIT)
+            ->setDefaultName($productKitName)
+            ->setOrganization($organization);
         $productKitUnit = (new ProductUnit())->setCode('item');
 
         $kitItemProductName = 'Product 3';

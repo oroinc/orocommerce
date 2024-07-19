@@ -7,9 +7,242 @@
 {% extends oro_get_email_template('base_storefront') %}
 
 {% block content %}
-    <p style="{{ styleP }}">Your quote #{{ entity.id }} is ready and can be viewed at <a class="link" style="{{ styleLink }}"
-    href="{{ website_path('oro_sale_quote_frontend_view', { 'id': entity.id }, entity.website) }}">
-        {{ website_path('oro_sale_quote_frontend_view', { 'id': entity.id }, entity.website) }}
-        </a>
-    </p>
+    <h1 style="{{ styleH1 }}">Hello {{ entity.customerUser ? entity.customerUser.fullName ?: '&mdash;' : '&mdash;' }},</h1>
+
+    <!--empty space-->
+    <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td height="12" style="{{ styleEmptyRowH12 }}">&nbsp;</td>
+        </tr>
+    </table>
+
+    <!--{% set frontendUrl = website_secure_path('oro_frontend_root', {}, entity.website) %}-->
+    <p style="{{ styleP }}">You’ve received a quote from <a href="{{ frontendUrl }}" target="_blank" class="link" style="{{ styleLink }}">{{ entity.website }}</a>. If you have any questions about your order, please contact us or call us at 800-555-0199 Monday—Friday, 7am—5pm PST.</p>
+
+    <!--empty space-->
+    <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td height="32" style="{{ styleEmptyRowH32 }}">&nbsp;</td>
+        </tr>d
+    </table>
+
+    <p style="{{ styleBoldText }}">Please see your quote <a style="{{ styleLink }}" href="{{ website_path('oro_sale_quote_frontend_view', { 'id': entity.id }, entity.website) }}">#{{ entity.id }}</a> details below.</p>
+
+    <!--empty space-->
+    <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td height="16" style="{{ styleEmptyRowH16 }}">&nbsp;</td>
+        </tr>
+    </table>
+
+    <!--info section-->
+    <table class="two-columns" role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+        <tr>
+            <!--left column-->
+            <td class="table-column" width="50%" valign="top" style="padding-right: 36px;">
+                <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td style="{{ styleInfoItem }}">
+                            <p style="{{ styleLabel }}">PO Number</p>
+                            <p style="{{ styleValue }}">{{ entity.poNumber ? entity.poNumber: '&mdash;' }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="{{ styleInfoItem }}">
+                            <p style="{{ styleLabel }}">Do Not Ship Later Than</p>
+                            <p style="{{ styleValue }}">{{ entity.shipUntil ? entity.shipUntil|date('F j, Y, g:i A') : '&mdash;' }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="{{ styleInfoItem }}">
+                            <p style="{{ styleLabel }}">Created at</p>
+                            <p style="{{ styleValue }}">{{ entity.createdAt|date('F j, Y, g:i A')}}</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+
+            <!--right column-->
+            <td class="table-column" width="50%" valign="top" style="padding-left: 36px;">
+                <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td style="{{ styleInfoItem }}">
+                            <p style="{{ styleLabel }}">Valid until</p>
+                            <p style="{{ styleValue }}">{{ entity.validUntil ? entity.validUntil|date('F j, Y, g:i A') : '&mdash;' }}</p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="{{ styleInfoItem }}">
+                            <p style="{{ styleLabel }}">Assigned to</p>
+                            <p style="{{ styleValueLink }}">
+                                <!--{% for assignedCustomer in entity.assignedCustomerUsers %}-->
+                                        {{ assignedCustomer.firstName }} {{ assignedCustomer.lastName }}{% if loop.index != loop.length %}, {% endif %}
+                                <!--{% endfor %}-->
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!--empty space-->
+    <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td height="32" style="{{ styleEmptyRowH32 }}">&nbsp;</td>
+        </tr>
+    </table>
+
+    <!--{% set products = quote_products(entity) %}-->
+    <!--table quote-->
+    <div class="product-table-wrapper">
+        <table class="product-table" role="presentation" width="100%">
+            <thead>
+                <tr>
+                    <th class="product-th" style="{{ styleTableTh }}">Product</th>
+                    <th class="hide-on-mobile" style="{{ styleTableTh }} text-align: center;">
+                        <div style="display: flex !important; justify-content: space-between;">
+                            <span>QUANTITY</span><span>&nbsp;&mdash;&nbsp;</span><span>UNIT PRICE</span>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <!--empty space-->
+                <tr>
+                    <td colspan="2" height="16" style="{{ styleEmptyRowH16 }}">&nbsp;</td>
+                </tr>
+
+                <!--{% for product in products %}-->
+                    <!--product N-->
+                    <tr>
+                        <td class="full-width-on-mobile" style="{{ styleTableTd }}">
+                            <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                <tr>
+                                    <td>
+                                        <p style="{{ styleProductName }}">{{ product.name }}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="{{ styleProductTd }}">
+                                        <div style="{{ styleLightTextColor }}">
+                                            {% apply spaceless %}
+                                                <span>{{ product.sku }}</span>
+                                                <span aria-hidden="true" style="{{ styleDividerHorizontal }}">&nbsp;|&nbsp;</span>
+                                                <span>{{ product.sellerName }}</span>
+                                            {% endapply  %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td class="right-left full-width-on-mobile additional-padding-top-12"  width="50%" style="{{ styleTableTd }}">
+                            <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                <!--{% for item in product.items %}-->
+                                    <tr>
+                                        <td>{{ item.quantity }} {{ item.unit|oro_format_product_unit_label }}</td>
+                                        <td style="text-align: right;">{{ item.price ? item.price|oro_format_price : '' }}</td>
+                                    </tr>
+                                    <!--{% if not loop.last %}-->
+                                        <!--empty space-->
+                                        <tr>
+                                            <td colspan="2">
+                                                <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                                    <tr>
+                                                        <td height="4" style="{{ styleEmptyRowH4 }}">&nbsp;</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td height="4" style="{{ styleDividerLine }} {{ styleEmptyRowH4 }}">&nbsp;</td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    <!--{% endif %}-->
+                                <!--{% endfor %}-->
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!--My notes for product N-->
+                    <!--{% if product.commentCustomer  %}-->
+                        <tr>
+                            <td colspan="2" style="padding: 12px 16px 0 16px;">
+                                <div class="product-notes" style="{{ styleProductNotes }}"><strong style="font-style: normal;">My notes: </strong>{{ product.commentCustomer }}</div>
+                            </td>
+                        </tr>
+                    <!--{% endif %}-->
+
+                    <!--Seller notes for product N-->
+                    <!--{% if product.comment  %}-->
+                    <tr>
+                        <td colspan="2" style="padding: 12px 16px 0 16px;">
+                            <div class="product-notes" style="{{ styleProductNotes }}">
+                                <strong style="font-style: normal;">Seller notes: </strong>
+                                {{ product.comment }}
+                            </div>
+                        </td>
+                    </tr>
+                    <!--{% endif %}-->
+
+                    <!--kits for product N-->
+                    <!--{% if product.kitItemLineItems|length %}-->
+                        <tr>
+                        <td class="full-width-on-mobile" style="{{ styleTableTd }}">
+                            <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                <tr>
+                                    <td style="padding-top: 16px; {{ styleKitProductTitle }}">Kit products:</td>
+                                </tr>
+
+                                <!--{% for kitItemLineItem in product.kitItemLineItems %}-->
+                                    <tr>
+                                    <td style="padding: 16px 0;">
+                                        <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                            <tr>
+                                                <td style="{{ styleKitProductTd }} {{ styleKitProductTitle }}">{{ kitItemLineItem.kitItemLabel }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="{{ styleKitProductTd }}">
+                                                    <div style="">{{ kitItemLineItem.productName }}</div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="{{ styleProductTd }}">
+                                                    <div style="{{ styleLightTextColor }}">
+                                                        <span>{{ kitItemLineItem.productSku }}</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="{{ styleKitProductTotal }}">
+                                                    {{ kitItemLineItem.quantity|oro_format_short_product_unit_value(kitItemLineItem.unit) }}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <!--{% endfor %}-->
+                            </table>
+                        </td>
+                    </tr>
+                    <!--{% endif %}-->
+
+                    <!--line between products-->
+                    <tr>
+                        <td colspan="2" class="paddings-on-mobile">
+                            <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                <tr>
+                                    <td height="16" style="{{ styleEmptyRowH16 }}">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td height="16" style="{{ styleDividerLine }} {{ styleEmptyRowH16 }}">&nbsp;</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                <!--{% endfor %}-->
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

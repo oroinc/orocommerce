@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 use Oro\Bundle\OrderBundle\Twig\OrderExtension;
@@ -127,5 +129,47 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
                 [$shippingMethodName, $trackingNumber]
             )
         );
+    }
+
+    public function testGetShippingTrackings()
+    {
+        $order = $this->prepareOrder();
+        $formattedLink = 'shipping link';
+
+        $this->shippingTrackingFormatter->expects($this->once())
+            ->method('formatShippingTrackingMethod')
+            ->with('shipping Method Name')
+            ->willReturn('shipping Method Name');
+
+        $this->shippingTrackingFormatter->expects($this->once())
+            ->method('formatShippingTrackingLink')
+            ->with('shipping Method Name', '7s45')
+            ->willReturn($formattedLink);
+
+        $this->assertEquals(
+            [
+                [
+                    'method' => 'shipping Method Name',
+                    'number' => '7s45',
+                    'link'   => 'shipping link'
+                ]
+            ],
+            self::callTwigFunction(
+                $this->extension,
+                'oro_order_get_shipping_trackings',
+                [$order]
+            )
+        );
+    }
+
+    private function prepareOrder(): Order
+    {
+        $order = new Order();
+        $shippingTracking = new OrderShippingTracking();
+        $shippingTracking->setMethod('shipping Method Name');
+        $shippingTracking->setNumber('7s45');
+        $order->addShippingTracking($shippingTracking);
+
+        return $order;
     }
 }
