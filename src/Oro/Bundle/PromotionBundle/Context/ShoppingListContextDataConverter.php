@@ -87,6 +87,12 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
             self::SUBTOTAL => $this->getSubtotalAmount($entity, $currency),
             self::CURRENCY => $currency,
             self::CRITERIA => $this->scopeManager->getCriteria('promotion', $scopeContext),
+            // Since the promotion expression may depend on data that is available only for orders,
+            // such as “payment_method” set these values to the default values so that the expression
+            // is ignored and does not cause exception.
+            self::SHIPPING_COST => null,
+            self::PAYMENT_METHOD => null,
+            self::PAYMENT_METHODS => [null],
         ];
     }
 
