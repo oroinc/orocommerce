@@ -27,12 +27,18 @@ class AddProductToSearchTerm implements Migration, ExtendExtensionAwareInterface
     public function up(Schema $schema, QueryBag $queries): void
     {
         $owningSideTable = $schema->getTable('oro_website_search_search_term');
+        $associationName = 'redirectProduct';
+        $relationName = $this->extendExtension->getNameGenerator()->generateRelationColumnName($associationName, '_id');
+        if ($owningSideTable->hasColumn($relationName)) {
+            return;
+        }
+
         $inverseSideTable = $schema->getTable('oro_product');
 
         $this->extendExtension->addManyToOneRelation(
             $schema,
             $owningSideTable,
-            'redirectProduct',
+            $associationName,
             $inverseSideTable,
             'id',
             [
