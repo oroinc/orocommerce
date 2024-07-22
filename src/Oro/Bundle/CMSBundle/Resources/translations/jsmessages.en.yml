@@ -140,6 +140,8 @@ oro.cms:
             icon:
                 label: 'Icon'
                 search_not_found: 'No results found'
+                search:
+                    placeholder: 'Find icon...'
         validation:
             import: 'Please remove not permitted HTML-tags in the content field: {{ tags }}'
         import:

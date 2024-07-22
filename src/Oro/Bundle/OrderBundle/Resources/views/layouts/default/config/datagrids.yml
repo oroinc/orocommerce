@@ -55,6 +55,7 @@ datagrids:
             query:
                 select:
                     - partial order1.{id, shippingAddress}
+                    - (CASE WHEN (order1.createdBy IS NOT NULL) THEN 1 ELSE 2 END) as createdBySeller
                 join:
                     left:
                         - { join: order1.shippingAddress, alias: shippingAddress }
@@ -86,6 +87,12 @@ datagrids:
                 type: twig
                 frontend_type: html
                 template: '@OroOrder/Order/Datagrid/frontendPaymentStatus.html.twig'
+            createdBySeller:
+                label: oro.order.created_by_seller.label
+                frontend_type: select
+                choices:
+                    oro.order.created_by_seller.yes.label: 1
+                    oro.order.created_by_seller.no.label: 2
             #Hidden fields goes next
             poNumber:
                 label: oro.order.po_number.label
@@ -133,6 +140,8 @@ datagrids:
                     data_name: subtotal
                 total:
                     data_name: total
+                createdBySeller:
+                    data_name: createdBySeller
             default:
                 createdAt: DESC
         filters:
@@ -173,6 +182,14 @@ datagrids:
                 total:
                     type: currency
                     data_name: total
+                createdBySeller:
+                    type: single_choice
+                    data_name: createdBySeller
+                    options:
+                        field_options:
+                            choices:
+                                oro.order.created_by_seller.yes.label: 1
+                                oro.order.created_by_seller.no.label: 2
         properties:
             id: ~
             view_link:

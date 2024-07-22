@@ -11,6 +11,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\ConfigurableProductProvider;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
@@ -50,6 +51,11 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
         return $this->container->get(EntityNameResolver::class);
     }
 
+    private function getConfigurableProductProvider(): ConfigurableProductProvider
+    {
+        return $this->container->get('oro_product.layout.data_provider.configurable_products');
+    }
+
     private function getProductName(?Product $product): ?string
     {
         return $this->getEntityNameResolver()->getName(
@@ -72,6 +78,7 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
         $lineItems = [];
         foreach ($order->getLineItems() as $lineItem) {
             $data['product_name'] = $this->getProductName($lineItem->getProduct()) ?? $lineItem->getFreeFormProduct();
+            $data['seller_name'] = $lineItem->getProduct()?->getOrganization()->getName();
             $data['product_sku'] = $lineItem->getProductSku();
             $data['quantity'] = $lineItem->getQuantity();
             $data['unit'] = $lineItem->getProductUnit();
@@ -83,6 +90,9 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
                 $this->getLineItemSubtotalProvider()->getRowTotal($lineItem, $order->getCurrency()),
                 $order->getCurrency()
             );
+            $variantFieldsValues = $this->getConfigurableProductProvider()
+                ->getVariantFieldsValuesForLineItem($lineItem, true);
+            $data['variant_fields_values'] = reset($variantFieldsValues) ?: [];
             $data['kitItemLineItems'] = $this->getKitItemLineItemsData($lineItem);
 
             $lineItems[] = $data;
@@ -106,6 +116,11 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
             $kitItemLineItemData['quantity'] = $kitItemLineItem->getQuantity();
             $kitItemLineItemData['price'] = $kitItemLineItem->getPrice();
             $kitItemLineItemData['productName'] = $this->getProductName($kitItemLineItem->getProduct());
+            $kitItemLineItemData['productSku'] = $kitItemLineItem->getProductSku();
+
+            $variantFieldsValues = $this->getConfigurableProductProvider()
+                ->getVariantFieldsValuesForLineItem($kitItemLineItem, true);
+            $kitItemLineItemData['variant_fields_values'] = reset($variantFieldsValues) ?: [];
 
             $kitItemLineItemsData[] = $kitItemLineItemData;
         }
@@ -150,6 +165,7 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
             LineItemSubtotalProvider::class,
             LocalizationHelper::class,
             EntityNameResolver::class,
+            'oro_product.layout.data_provider.configurable_products' => ConfigurableProductProvider::class
         ];
     }
 }

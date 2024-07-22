@@ -79,6 +79,7 @@ class OroOrderBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('created_by_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('billing_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
@@ -291,6 +292,12 @@ class OroOrderBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_user'),
             ['user_owner_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['created_by_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );

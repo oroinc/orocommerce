@@ -7,7 +7,7 @@
 {% extends oro_get_email_template('base_storefront') %}
 
 {% block content %}
-    <h1 style="{{ styleH1 }}">Hello, {{ entity.customerUser|oro_format_name }}!</h1>
+    <h1 style="{{ styleH1 }}">Hello {{ entity.customerUser|oro_format_name }},</h1>
 
     <!--empty space-->
     <table role="presentation" border="0" cellspacing="0" cellpadding="0">
@@ -16,136 +16,377 @@
         </tr>
     </table>
 
-    <p style="{{ styleP }}">Thank you for order from {{ entity.website }}.</p>
-    <p style="{{ styleP }}">If you have any questions about your order,
-        <a class="link" style="{{ styleLink }}" href="mailto:{{ entity.owner.email }}">please contact us</a>
-        or call us at 800-555-0199 Monday-Friday, 9am-6pm PST.</p>
+    <!--{% set frontendUrl = website_secure_path('oro_frontend_root', {}, entity.website) %}-->
+    <p style="{{ styleP }}">Thank you for order from <a href="{{ frontendUrl }}" target="_blank" class="link" style="{{ styleLink }}">{{ entity.website }}</a>. If you have any questions about your order, please contact us or call us at 800-555-0199 Monday—Friday, 7am—5pm PST.</p>
 
     <!--empty space-->
     <table role="presentation" border="0" cellspacing="0" cellpadding="0">
         <tr>
-            <td height="12" style="{{ styleEmptyRowH12 }}">&nbsp;</td>
+            <td height="32" style="{{ styleEmptyRowH32 }}">&nbsp;</td>
         </tr>
     </table>
 
-    <h2 class="{{ styleH2 }}">Please see your order #{{ entity.identifier }} details below.</h2>
+    <!--{% set entityUrl = website_path('oro_order_frontend_view', {'id': entity.id}, entity.website) %}-->
+    <p style="{{ styleBoldText }}">Please see your order <a style="{{ styleLink }}" href="{{ entityUrl }}">#{{ entity.id }}</a> details below.</p>
 
-    <p style="{{ styleP }}"><strong>Order Date: </strong>{{ entity.createdAt|oro_format_date({dateType: 'short'}) }}</p>
+    <!--empty space-->
+    <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td height="16" style="{{ styleEmptyRowH16 }}">&nbsp;</td>
+        </tr>
+    </table>
 
-    <p style="{{ styleP }}"><strong>Billing Information:</strong>
-    {{ entity.billingAddress|oro_format_address }}</p>
-
-    <p style="{{ styleP }}"><strong>Shipping Information:</strong>
-    {{ entity.shippingAddress|oro_format_address }}</p>
-
-    <!--{% set shipping_method = oro_order_shipping_method_label(entity.shippingMethod, entity.shippingMethodType) %}-->
-    <p style="{{ styleP }}"><strong>Shipping Method: </strong>{{ shipping_method }}</p>
-
-    <!--{% set payment_methods = get_payment_methods(entity) %}-->
-    <!--{% if payment_methods|length %}-->
-        <p style="{{ styleP }}">
-            <!--{% if payment_methods|length == 1 %}-->
-                <strong>Payment Method: </strong>
-            <!--{% elseif payment_methods|length > 1 %}-->
-                <strong>Payment Methods: </strong>
-            <!--{% endif %}-->
-            <!--{% for payment_method in payment_methods %}-->
-                    {{ payment_method.label }}
-                    <!--{% if payment_method.options|length > 0 %}-->
-                        {{- ' (' ~ payment_method.options|join(', ') ~ ')' -}}
+    <!--info section-->
+    <table class="two-columns" role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+        <tr>
+            <!--left column-->
+            <td class="table-column" width="50%" valign="top" style="padding-right: 36px;">
+                <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td style="{{ styleInfoItem }}">
+                            <p style="{{ styleLabel }}">Order Date</p>
+                            <p style="{{ styleValue }}">{{ entity.createdAt ? entity.createdAt|oro_format_date({dateType: 'short'}) : '&mdash;' }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="{{ styleInfoItem }}">
+                            <p style="{{ styleLabel }}">Shipping Address</p>
+                            <!--{% set shipping_method = oro_order_shipping_method_label(entity.shippingMethod, entity.shippingMethodType) %}-->
+                            <p style="{{ styleValue }}">{{ entity.shippingAddress ? entity.shippingAddress|oro_format_address|nl2br : '&mdash;' }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="{{ styleInfoItem }}">
+                            <p style="{{ styleLabel }}">Shipping Method</p>
+                            <p style="{{ styleValue }}">{{ shipping_method ? shipping_method : '&mdash;' }}</p>
+                        </td>
+                    </tr>
+                    <!--{% set shipping_trackings = oro_order_get_shipping_trackings(entity) %}-->
+                    <!--{% if shipping_trackings|length %}-->
+                        <tr>
+                            <td style="{{ styleInfoItem }}">
+                                <p style="{{ styleLabel }}">Shipping Tracking {{ shipping_trackings|length == 1 ? 'Number' : 'Numbers' }}</p>
+                                <table>
+                                    <!--{% for shipping_tracking in shipping_trackings %}-->
+                                    <tr>
+                                        <td style="{{ styleValueLight }}">{{ shipping_tracking.method }}: </td>
+                                        <td><a href="{{ shipping_tracking.link ?? "#" }}" style="{{ styleValueLink }}">{{ shipping_tracking.number }}</a></td>
+                                    </tr>
+                                    <!--{% endfor %}-->
+                                </table>
+                            </td>
+                        </tr>
                     <!--{% endif %}-->
-            <!--{% endfor %}-->
-        </p>
-    <!--{% endif %}-->
 
-    <!--{% set paymentTerm = get_payment_term(entity) %}-->
-    <!--{% if paymentTerm %}-->
-        <p style="{{ styleP }}"><strong>Payment Term: </strong>{{ paymentTerm }}</p>
-    <!--{% endif %}-->
+                    <!--{% if entity.shipUntil %}-->
+                        <tr>
+                            <td style="{{ styleInfoItem }}">
+                                <p style="{{ styleLabel }}">Ship by</p>
+                                <p style="{{ styleValue }}">{{ entity.shipUntil|oro_format_date({dateType: 'short'}) }}</p>
+                            </td>
+                        </tr>
+                    <!--{% endif %}-->
+                </table>
+            </td>
 
-    <p style="{{ styleP }}"><strong>Payment Status: </strong>{{ get_payment_status_label(get_payment_status(entity)) }}</p>
+            <!--right column-->
+            <td class="table-column" width="50%" valign="top" style="padding-left: 36px;">
+                <table role="presentation" border="0" cellspacing="0" cellpadding="0">
 
-    <!--{% if entity.shipUntil or entity.customerNotes or entity.poNumber %}-->
-        <h2 class="{{ styleH2 }}">Additional Information:</h2>
+                    <!--{% if entity.poNumber %}-->
+                        <tr>
+                            <td style="{{ styleInfoItem }}">
+                                <p style="{{ styleLabel }}">PO Number</p>
+                                <p style="{{ styleValue }}">{{ entity.poNumber }}</p>
+                            </td>
+                        </tr>
+                    <!--{% endif %}-->
 
-        <!--{% if entity.shipUntil %}-->
-            <p style="{{ styleP }}"><strong>Do Not Ship Later Than: </strong>{{ entity.shipUntil|oro_format_date({dateType: 'short'}) }}</p>
-        <!--{% endif %}-->
+                    <tr>
+                        <td style="{{ styleInfoItem }}">
+                            <p style="{{ styleLabel }}">Billing Address</p>
+                            <p style="{{ styleValue }}"> {{ entity.billingAddress ? entity.billingAddress|oro_format_address|nl2br : '&mdash;' }}</p></p>
+                        </td>
+                    </tr>
 
+                    <!--{% set payment_methods = get_payment_methods(entity) %}-->
+                    <!--{% if payment_methods|length %}-->
+                        <tr>
+                            <td style="{{ styleInfoItem }}">
+                                <p style="{{ styleLabel }}">
+                                    Payment {{ payment_methods|length == 1 ? 'Method' : 'Methods' }}
+                                </p>
+                                <p style="{{ styleValue }}">
+                                    <!--{% for payment_method in payment_methods %}-->
+                                        {{ payment_method.label }}
+                                        <!--{% if payment_method.options|length > 0 %}-->
+                                            {{- ' (' ~ payment_method.options|join(', ') ~ ')' -}}
+                                        <!--{% endif %}-->
+                                    <!--{% endfor %}-->
+                                </p>
+                            </td>
+                        </tr>
+                    <!--{% endif %}-->
+
+                    <!--{% set paymentTerm = get_payment_term(entity) %}-->
+                    <!--{% if paymentTerm %}-->
+                        <tr>
+                            <td style="{{ styleInfoItem }}">
+                                <p style="{{ styleLabel }}">Payment Term</p>
+                                <p style="{{ styleValue }}">{{ paymentTerm }}</p>
+                            </td>
+                        </tr>
+                    <!--{% endif %}-->
+
+                    <tr>
+                        <td style="{{ styleInfoItem }}">
+                            <p style="{{ styleLabel }}">Payment Status</p>
+                            <p style="{{ styleValue }}">{{ get_payment_status_label(get_payment_status(entity)) ? get_payment_status_label(get_payment_status(entity)) : '&mdash;'}}</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <!--notes-->
         <!--{% if entity.customerNotes %}-->
-            <p style="{{ styleP }}"><strong>Notes: </strong>{{ entity.customerNotes }}</p>
+            <tr>
+                <td colspan="2" style="{{ styleInfoItem }}">
+                    <p style="{{ styleLabel }}">Notes</p>
+                    <p style="{{ styleValueItalic400 }}">{{ entity.customerNotes }}</p>
+                </td>
+            </tr>
         <!--{% endif %}-->
-
-        <!--{% if entity.poNumber %}-->
-            <p style="{{ styleP }}"><strong>PO Number: </strong>{{ entity.poNumber }}</p>
-        <!--{% endif %}-->
-    <!--{% endif %}-->
+    </table>
 
     <!--empty space-->
     <table role="presentation" border="0" cellspacing="0" cellpadding="0">
         <tr>
-            <td height="12" style="{{ styleEmptyRowH12 }}">&nbsp;</td>
+            <td height="32" style="{{ styleEmptyRowH32 }}">&nbsp;</td>
         </tr>
     </table>
 
-    <table style="border: 1px solid #999999; margin-top: 10px">
-        <thead>
-        <tr style="font-size: 10px;">
-            <th><strong>Item</strong></th>
-            <th><strong>Quantity</strong></th>
-            <th><strong>Price</strong></th>
-            <th><strong>Subtotal</strong></th>
-            <th><strong>Ship By</strong></th>
-            <th><strong>Notes</strong></th>
-        </tr>
-        </thead>
-        <tbody>
-        <!--{% set data = order_line_items(entity) %}-->
-        <!--{% set lineItemDiscounts = line_items_discounts(entity) %}-->
-        <!--{% for item in data.lineItems %}-->
-            <tr style="font-size: 14px; border-top: 1px solid #999999; margin-top: 10px; font-size: 14px;">
-                <td style="padding: 5px 10px;">
-                    {{ item.product_name }}
-                    <br>
-                    SKU #: {{ item.product_sku }}
-                    <br>
+    <!--{% set data = order_line_items(entity) %}-->
+
+    <!--table order-->
+    <div class="product-table-wrapper">
+        <table class="product-table" role="presentation" width="100%">
+            <thead>
+                <tr>
+                    <th class="product-th" style="{{ styleTableTh }}">Product</th>
+                    <th class="hide-on-mobile" style="{{ styleTableTh }}">QTY</th>
+                    <th class="hide-on-mobile" style="{{ styleTableTh }} text-align: right" width="100">Subtotal</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <!--empty space-->
+                <tr>
+                    <td colspan="3" height="16" style="{{ styleEmptyRowH16 }}">&nbsp;</td>
+                </tr>
+
+                <!--{% set lineItemDiscounts = line_items_discounts(entity) %}-->
+                <!--{% for item in data.lineItems %}-->
+                    <!--product N-->
+                    <tr>
+                        <td class="full-width-on-mobile" style="{{ styleTableTd }}">
+                            <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                <tr>
+                                    <td>
+                                        <p style="{{ styleProductName }}">{{ item.product_name }}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="{{ styleProductTd }}">
+                                        <div style="{{ styleLightTextColor }}">
+                                            {% apply spaceless %}
+                                                <span>{{ item.product_sku }}</span>
+                                                <span aria-hidden="true" style="{{ styleDividerHorizontal }}">&nbsp;|&nbsp;</span>
+                                                <span>{{ item.seller_name }}</span>
+                                            {% endapply  %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!--{% if item.variant_fields_values|length %}-->
+                                    <tr>
+                                        <td style="{{ styleProductTd }}">
+                                            <div>
+                                                {% apply spaceless %}
+                                                    <!--{% for variantField in item.variant_fields_values %}-->
+                                                        <span>{{ variantField.value }}</span>
+                                                        <!--{% if not loop.last  %}-->
+                                                            <span aria-hidden="true" style="{{ styleDividerHorizontal }}">&nbsp;|&nbsp;</span>
+                                                        <!--{% endif %}-->
+                                                    <!--{% endfor %}-->
+                                                {% endapply  %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <!--{% endif %}-->
+                                <!--{% if item.ship_by  %}-->
+                                    <tr>
+                                        <td class="additional-padding-top-12" style="{{ styleProductTd }}">
+                                            <div class="right-left">
+                                                <span style="{{ styleLightTextColor }}">Ship by: </span>
+                                                <span>{{ item.ship_by|oro_format_date({dateType: 'short'}) }}</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <!--{% endif %}-->
+                                <tr>
+                                    <td class="product-details" style="{{ styleProductTd }}">
+                                        <div class="right-left">
+                                            <span style="{{ styleLightTextColor }}">Price: </span>
+                                            <span>{{ item.price|oro_format_price }}</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td class="right-left full-width-on-mobile product-details" style="{{ styleTableTd }}">
+                            <span class="show-on-mobile" style="{{ styleLightTextColor }}">QTY: </span>
+                            {{ item.quantity|oro_format_short_product_unit_value(item.unit) }}
+                        </td>
+                        <td class="right-left full-width-on-mobile product-details" style="{{ styleTableTd }} text-align: right;">
+                            <span class="show-on-mobile emphasis-label">Subtotal: </span>
+                            <span class="emphasis-value">
+                                     {{ item.subtotal|oro_format_price }}
+                                    <!--{% set matchedDiscount = lineItemDiscounts[item.id] %}-->
+                                <!--{% if matchedDiscount is not null and matchedDiscount.value > 0 %}-->
+                                        <br/>{{ (-matchedDiscount.value)|oro_format_currency({'currency': matchedDiscount.currency}) }}
+                                    <!--{% endif %}-->
+                                 </span>
+                        </td>
+                    </tr>
+
+                    <!--notes for product N-->
+                    <!--{% if item.comment  %}-->
+                            <tr>
+                                <td colspan="3" style="padding: 12px 16px 0 16px;">
+                                    <div class="product-notes" style="{{ styleProductNotes }}">{{ item.comment }}</div>
+                                </td>
+                            </tr>
+                    <!--{% endif %}-->
+
+                    <!--kits for product N-->
                     <!--{% if item.kitItemLineItems|length %}-->
-                        <!--{% for kitItemLineItem in item.kitItemLineItems %}-->
-                            <div>
-                                <span class="product-kit-line-items__item-name">{{ kitItemLineItem.kitItemLabel }}</span>
-                                <span class="product-kit-line-items__item-quantity">{{ kitItemLineItem.quantity|oro_format_short_product_unit_value(kitItemLineItem.unit) }}</span>
-                                <span class="product-kit-line-items__item-price">{{ kitItemLineItem.price|oro_format_price }}</span>
-                            </div>
-                        {{ kitItemLineItem.productName }}
-                        <!--{% endfor %}-->
+                    <tr>
+                        <td class="full-width-on-mobile" style="{{ styleTableTd }}">
+                            <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                <tr>
+                                    <td style="padding-top: 16px; {{ styleKitProductTitle }}">Kit products:</td>
+                                </tr>
+
+                                <!--{% for kitItemLineItem in item.kitItemLineItems %}-->
+                                <tr>
+                                    <td style="padding: 16px 0;">
+                                        <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                            <tr>
+                                                <td style="{{ styleKitProductTd }} {{ styleKitProductTitle }}">{{ kitItemLineItem.kitItemLabel }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="{{ styleKitProductTd }}">
+                                                    <div style="">{{ kitItemLineItem.productName }}</div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="{{ styleProductTd }}">
+                                                    <div style="{{ styleLightTextColor }}">
+                                                        <span>{{ kitItemLineItem.productSku }}</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <!--{% if kitItemLineItem.variant_fields_values|length %}-->
+                                                <tr>
+                                                    <td style="{{ styleKitProductTd }}">
+                                                        <div>
+                                                            {% apply spaceless %}
+                                                                <!--{% for variantField in kitItemLineItem.variant_fields_values %}-->
+                                                                    <span>{{ variantField.value }}</span>
+                                                                    <!--{% if not loop.last  %}-->
+                                                                        <span aria-hidden="true" style="{{ styleDividerHorizontal }}">&nbsp;|&nbsp;</span>
+                                                                    <!--{% endif %}-->
+                                                                <!--{% endfor %}-->
+                                                            {% endapply %}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            <!--{% endif %}-->
+                                            <tr>
+                                                <td style="{{ styleKitProductTotal }}">
+                                                    {{ kitItemLineItem.quantity|oro_format_short_product_unit_value(kitItemLineItem.unit) }},
+                                                    {{ kitItemLineItem.price|oro_format_price }} each
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <!--{% endfor %}-->
+                            </table>
+                        </td>
+                    </tr>
                     <!--{% endif %}-->
-                </td>
-                <td style="padding: 5px 10px;">{{ item.quantity|oro_format_short_product_unit_value(item.unit) }}</td>
-                <td style="padding: 5px 10px;">{{ item.price|oro_format_price }}</td>
-                <td style="padding: 5px 10px;">
-                    {{ item.subtotal|oro_format_price }}
-                    <!--{% set matchedDiscount = lineItemDiscounts[item.id] %}-->
-                    <!--{% if matchedDiscount is not null and matchedDiscount.value > 0 %}-->
-                        <br/>{{ (-matchedDiscount.value)|oro_format_currency({'currency': matchedDiscount.currency}) }}
-                    <!--{% endif %}-->
-                </td>
-                <td style="padding: 5px 10px;">{{ item.ship_by }}</td>
-                <td style="padding: 5px 10px;">{{ item.comment }}</td>
-            </tr>
-        <!--{% endfor %}-->
-        </tbody>
-    </table>
-    <br>
-    <table>
-        <!--{% for subtotal in data.subtotals %}-->
-            <tr>
-                <td>{{ subtotal.label }}</td>
-                <td align="right">{{ subtotal.totalPrice|oro_format_price }}</td>
-            </tr>
-        <!--{% endfor %}-->
+
+                    <!--line between products-->
+                    <tr>
+                        <td colspan="3" class="paddings-on-mobile">
+                            <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                <tr>
+                                    <td height="16" style="{{ styleEmptyRowH16 }}">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td height="16" style="{{ styleDividerLine }} {{ styleEmptyRowH16 }}">&nbsp;</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                <!--{% endfor %}-->
+            </tbody>
+        </table>
+    </div>
+
+    <!--Summary table-->
+    <table class="two-columns" role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
         <tr>
-            <td><strong>{{ data.total.label }}</strong></td>
-            <td align="right">{{ data.total.totalPrice|oro_format_price }}</td>
+            <!--left column-->
+            <td class="hide-on-mobile" width="50%"></td>
+
+            <!--right column-->
+            <td width="50%" valign="top" class="full-width-on-mobile">
+                <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+                    <tr>
+                        <td style="{{ styleTableTdSummary }} {{ styleTableTdBold }}">Summary</td>
+                        <td style="{{ styleTableTdSummaryValue }}">{{ data.lineItems|length }} {{ data.lineItems|length > 1 ? 'items' : 'item' }}</td>
+                    </tr>
+
+                    <!--{% for subtotal in data.subtotals %}-->
+                        <tr>
+                            <td style="{{ styleTableTdSummary }}">{{ subtotal.label }}</td>
+                            <td style="{{ styleTableTdSummaryValue }}">{{ subtotal.totalPrice|oro_format_price }}</td>
+                        </tr>
+                    <!--{% endfor %}-->
+
+                    <!--line-->
+                    <tr>
+                        <td colspan="2">
+                            <table role="presentation" border="0" cellspacing="0" cellpadding="0" width="100%">
+                                <tr>
+                                    <td height="8" style="{{ styleEmptyRowH8 }}">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td height="8" style="{{ styleDividerLine }} {{ styleEmptyRowH8 }}">&nbsp;</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="{{ styleTableTdSummary }} {{ styleTableTdBold }} padding-top: 0;">Total:</td>
+                        <td style="{{ styleTableTdSummaryValue }} {{ styleTableTdBold }} padding-top: 0;">{{ data.total.totalPrice|oro_format_price }}</td>
+                    </tr>
+                </table>
+            </td>
         </tr>
     </table>
-{% endblock %}
+{% endblock content %}
+

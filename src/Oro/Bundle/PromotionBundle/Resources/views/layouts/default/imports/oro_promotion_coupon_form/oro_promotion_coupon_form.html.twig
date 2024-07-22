@@ -35,7 +35,7 @@
 
     {% set attr = layout_attr_defaults(attr, {
         'type': 'button',
-        '~class': ' btn btn--outlined btn--text btn--neutral-dark coupon-trigger',
+        '~class': ' accordion-group__trigger coupon-trigger',
         'data-toggle': 'collapse',
         'data-role': 'coupon-trigger',
         'aria-expanded': 'false',
@@ -199,7 +199,7 @@
 {% block __oro_promotion_coupon_form__applied_coupons_list_row_delete_button_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': 'btn btn--icon btn--neutral-dark coupons-list__remove',
+        'class': 'btn btn--simple coupons-list__remove',
         'data-object-id': appliedCoupon.id,
         'data-role': 'remove-coupon'
     }) %}

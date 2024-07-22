@@ -851,7 +851,6 @@ services:
 
     oro_checkout.helper.checkout_workflow_helper:
         class: Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper
-        public: true
         arguments:
             - '@oro_workflow.manager'
 

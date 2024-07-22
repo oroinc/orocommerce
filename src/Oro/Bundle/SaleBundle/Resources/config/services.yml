@@ -17,6 +17,14 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_sale.twig.quote_products:
+        class: 'Oro\Bundle\SaleBundle\Twig\QuoteProductsExtension'
+        public: false
+        arguments:
+            - "@oro_platform.twig.service_locator"
+        tags:
+            - { name: twig.extension }
+
     oro_sale.formatter.quote_product:
         class: 'Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
         arguments:

@@ -54,7 +54,7 @@ operations:
         order: 10
         button_options:
             template: '@OroAction/Operation/ajax-button.html.twig'
-            class: 'btn--text btn--outlined btn--no-padding'
+            class: 'btn--flat'
             icon: fa-tag
             data:
                 component_name: oro_rfp_quick_add_processor

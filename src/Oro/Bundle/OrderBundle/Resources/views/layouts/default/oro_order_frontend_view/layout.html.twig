@@ -1,3 +1,9 @@
+{% block _order_created_by_widget %}
+    <div class="order-created-by">
+        {{ 'oro.frontend.order.created_by_seller.label'|trans }}
+    </div>
+{% endblock %}
+
 {% block _order_body_widget %}
     <div class="customer-info-grid">
         {{ block_widget(block) }}

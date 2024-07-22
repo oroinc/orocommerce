@@ -130,7 +130,7 @@
 
 {% block __matrix_grid_order__matrix_form_clear_button_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' btn--no-padding btn--outlined btn--text'
+        '~class': ' btn--flex'
     }) %}
 
     {% if totals.quantity|default(0) == 0 %}

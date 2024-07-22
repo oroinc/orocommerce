@@ -72,10 +72,11 @@ class RequestProductsExtension extends AbstractExtension implements ServiceSubsc
                 $items[] = [
                     'quantity' => $productItem->getQuantity(),
                     'price' => $productItem->getPrice(),
-                    'unit' => $productItem->getProductUnitCode(),
+                    'unit' => $productItem->getProductUnitCode()
                 ];
             }
 
+            $data['sellerName'] = $requestProduct->getProduct()->getOrganization()->getName();
             $data['items'] = $items;
             $data['kitItemLineItems'] = $this->getKitItemLineItemsData($requestProduct);
 
@@ -95,6 +96,7 @@ class RequestProductsExtension extends AbstractExtension implements ServiceSubsc
             $kitItemLineItemData['unit'] = $kitItemLineItem->getProductUnit();
             $kitItemLineItemData['quantity'] = $kitItemLineItem->getQuantity();
             $kitItemLineItemData['productName'] = $this->getProductName($kitItemLineItem->getProduct());
+            $kitItemLineItemData['productSku'] = $kitItemLineItem->getProductSku();
 
             $kitItemLineItemsData[] = $kitItemLineItemData;
         }

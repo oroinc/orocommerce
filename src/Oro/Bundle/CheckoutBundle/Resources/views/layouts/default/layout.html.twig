@@ -180,7 +180,7 @@
     {% else %}
         {% set transitionLabel = transitionData.transition.label|trans({},'workflows') %}
     {% endif %}
-    <a href="{{ transitionUrl }}" class="btn--text transition-step-edit-button"
+    <a href="{{ transitionUrl }}" class="btn btn--simple-colored transition-step-edit-button"
        data-toggle="tooltip"
        data-title="{{ transitionLabel }}"
        data-html="true"

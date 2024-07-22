@@ -6,7 +6,7 @@
         {% set togglerId = 'dropdown-'|uniqid %}
         <div class="btn-group">
             <button id="{{ togglerId }}"
-                    class="btn btn--outlined btn--text btn--size-small btn--no-padding dropdown-toggle dropdown-toggle--no-caret"
+                    class="btn btn--neutral dropdown-toggle dropdown-toggle--no-caret"
                     type="button"
                     data-toggle="dropdown"
                     aria-haspopup="true"
@@ -15,8 +15,7 @@
                     data-placement="bottom-end"
                     data-inherit-parent-width="loosely"
             >
-                {{ renderIcon.icon({name: 'more-horizontal', extraClass: 'theme-icon--small'}) }}
-                {{ renderIcon.icon({name: 'chevron-down', extraClass: 'theme-icon--small'}) }}
+                {{ renderIcon.icon({name: 'more-horizontal'}) }}
             </button>
             <div class="dropdown-menu" role="menu" aria-labelledby="{{ togglerId }}">
                 {{ block_widget(block) }}

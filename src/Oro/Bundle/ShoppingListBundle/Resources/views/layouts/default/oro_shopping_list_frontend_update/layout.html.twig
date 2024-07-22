@@ -26,7 +26,7 @@
 {% block _shopping_list_notes_add_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': 'btn btn--outlined btn--text btn--no-padding',
+        '~class': 'btn btn--flat',
         'type': 'button',
         'data-role': 'add-notes'
     }) %}
@@ -73,7 +73,7 @@
                 </button>
             </span>
             <span class="shopping-lists-modify__edit">
-                <button class="btn btn--destructive btn--size-small"
+                <button class="btn btn--neutral btn--size-small"
                         type="button"
                         title="{{ 'Decline'|trans }}"
                         aria-label="{{ 'oro.frontend.shoppinglist.note.decline'|trans }}"
@@ -109,7 +109,7 @@
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
 
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' btn btn--outlined btn--text btn--size-small',
+        '~class': ' btn btn--simple btn--size-small',
         'type': 'button',
         'title': 'Edit'|trans,
         'data-role': 'edit-notes',

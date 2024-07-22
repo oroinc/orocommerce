@@ -54,8 +54,14 @@ api:
                         currency:
                             form_options:
                                 mapped: false
+                        createdBy:
+                            form_options:
+                                mapped: false
                 update_list: true
             subresources:
+                createdBy:
+                    actions:
+                        update_relationship: false
                 internalStatus:
                     actions:
                         update_relationship: false

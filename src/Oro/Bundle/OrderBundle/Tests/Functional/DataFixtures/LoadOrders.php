@@ -46,6 +46,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         ],
         self::ORDER_2 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
+            'createdBy' => LoadOrderUsers::ORDER_USER_1,
             'customerUser' => self::ACCOUNT_USER,
             'poNumber' => 'PO2',
             'customerNotes' => 'Test customer user notes',
@@ -56,6 +57,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         ],
         self::ORDER_3 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
+            'createdBy' => LoadOrderUsers::ORDER_USER_2,
             'customerUser' => self::ACCOUNT_USER,
             'poNumber' => 'PO3',
             'customerNotes' => 'Test customer user notes',
@@ -88,6 +90,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         ],
         self::ORDER_6 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
+            'createdBy' => LoadOrderUsers::ORDER_USER_2,
             'customerUser' => self::ACCOUNT_USER,
             'poNumber' => 'PO6',
             'customerNotes' => 'Test customer user notes',
@@ -160,6 +163,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
      * @param string $name
      * @param array $orderData
      * @return Order
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function createOrder(ObjectManager $manager, $name, array $orderData)
     {
@@ -190,6 +196,16 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         $order->setCustomer($customerUser->getCustomer());
         $order->setWebsite($website);
         $order->setCustomerUser($customerUser);
+
+        if (isset($orderData['createdBy'])) {
+            /** @var User $createdByUser */
+            $createdByUser = $this->getReference($orderData['createdBy']);
+            if (!$createdByUser->getOrganization()) {
+                $createdByUser->setOrganization($this->getReference('organization'));
+            }
+
+            $order->setCreatedBy($createdByUser);
+        }
 
         if (isset($orderData['parentOrder'])) {
             $order->setParent($this->getReference($orderData['parentOrder']));

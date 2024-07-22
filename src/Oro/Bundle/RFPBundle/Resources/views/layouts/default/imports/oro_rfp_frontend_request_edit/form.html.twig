@@ -78,13 +78,13 @@
             <div class="request-form-product__item request-form-product__item--actions">
                 <ul class="actions-row">
                     <li class="actions-row__item actions-row__item--separate-light">
-                        <button class="actions-row__button btn btn--size-small btn--plain"
+                        <button class="actions-row__button btn btn--size-small btn--simple"
                                 title="{{ 'oro.frontend.rfp.requestproduct.action.edit'|trans }}" data-role="edit">
                             {{ renderIcon.icon({name: 'pencil', extraClass: 'theme-icon--small'}) }}
                         </button>
                     </li>
                     <li class="actions-row__item actions-row__item--separate-light">
-                        <button class="actions-row__button removeRow btn btn--size-small btn--plain"
+                        <button class="actions-row__button removeRow btn btn--size-small btn--simple"
                                 title="{{ 'oro.frontend.rfp.requestproduct.action.delete'|trans }}" data-role="remove">
                             {{ renderIcon.icon({name: 'trash', extraClass: 'theme-icon--small'}) }}
                         </button>
@@ -220,7 +220,7 @@
         <div>
             {{ form_widget(form) }}
             <div class="request-form-lineitem-unit--remove">
-                <button type="button" class="removeRow btn btn--size-small btn--plain" data-role="request-product-item-remove">
+                <button type="button" class="btn btn--simple btn--size-small removeRow" data-role="request-product-item-remove">
                     {{ renderIcon.icon({name: 'trash', extraClass: 'theme-icon--small'}) }}
                 </button>
             </div>

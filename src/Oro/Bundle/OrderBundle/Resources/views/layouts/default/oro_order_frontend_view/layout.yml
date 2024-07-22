@@ -26,6 +26,12 @@ layout:
                 label: 'oro.frontend.order.identifier.label'
                 parameters:
                     '%identifier%': '=data["order"].getIdentifier()'
+        - '@add':
+              id: order_created_by
+              blockType: block
+              parentId: page_title_container
+              options:
+                  visible: '=data["order"].getCreatedBy()!=null'
         - '@setOption':
             id: page_content
             optionName: class_prefix

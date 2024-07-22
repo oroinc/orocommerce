@@ -201,6 +201,7 @@ class OrderControllerTest extends WebTestCase
             ->getRepository(Order::class)
             ->findOneBy(['poNumber' => self::ORDER_PO_NUMBER]);
         $this->assertNotEmpty($order);
+        $this->assertSame($this->getCurrentUser(), $order->getCreatedBy());
 
         $lineItem = $order->getLineItems()[0];
         self::assertSame($product->getDenormalizedDefaultName(), $lineItem->getProductName());
@@ -305,6 +306,48 @@ class OrderControllerTest extends WebTestCase
     public function testUpdateShippingAddress(int $id)
     {
         $this->assertUpdateAddress($id, 'shippingAddress');
+    }
+
+    /**
+     * @depends testCreate
+     */
+    public function testCreatedByNotUpdatedOnEdit(int $id)
+    {
+        /** @var Order $order */
+        $order = $this->getContainer()->get('doctrine')
+            ->getRepository(Order::class)
+            ->find($id);
+
+        $order->setCreatedBy(null);
+        $this->getContainer()->get('doctrine')->getManagerForClass(Order::class)->flush();
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
+
+        $result  = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $form = $crawler->selectButton('Save and Close')->form();
+
+        $submittedData = [
+            'input_action' => '{"route":"oro_order_update","params":{"id":"$id"}}',
+            'oro_order_type' => [
+                'poNumber' => '12345',
+            ]
+        ];
+
+        $this->client->followRedirects(true);
+
+        // Submit form
+        $result = $this->client->getResponse();
+        $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        /** @var Order $order */
+        $order = $this->getContainer()->get('doctrine')
+            ->getRepository(Order::class)
+            ->find($id);
+
+        $this->assertNull($order->getCreatedBy());
     }
 
     private function assertUpdateAddress(int $id, string $addressType): void

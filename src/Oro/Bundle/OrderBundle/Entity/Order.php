@@ -33,6 +33,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodConfigurationInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
@@ -118,6 +119,11 @@ class Order implements
     #[ORM\Column(name: 'identifier', type: Types::STRING, length: 255, unique: true, nullable: true)]
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?string $identifier = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'created_by_user_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?User $createdBy = null;
 
     #[ORM\OneToOne(targetEntity: OrderAddress::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'billing_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
@@ -395,6 +401,18 @@ class Order implements
     public function getSourceDocumentIdentifier()
     {
         return $this->identifier;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): Order
+    {
+        $this->createdBy = $createdBy;
+
+        return $this;
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Twig;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
@@ -71,6 +72,8 @@ class RequestProductsExtensionTest extends TestCase
      */
     public function getRequestProductsDataProvider(): array
     {
+        $organization = (new Organization())->setName('Oro');
+
         $sampleCurrency = 'sampleCurrency';
         $sample1Sku = 'sample1Sku';
         $sample1Name = 'Sample 1 Name';
@@ -101,11 +104,13 @@ class RequestProductsExtensionTest extends TestCase
 
         $sample1Product = (new ProductStub())
             ->setNames([(new ProductName())->setString($sample1Name)])
-            ->setSku($sample1Sku);
+            ->setSku($sample1Sku)
+            ->setOrganization($organization);
 
         $productKit1Product = (new ProductStub())
             ->setNames([(new ProductName())->setString($productKit1Name)])
-            ->setSku($productKit1Sku);
+            ->setSku($productKit1Sku)
+            ->setOrganization($organization);
 
         $sample1RequestProductItem1 = (new RequestProductItem())
             ->setQuantity($sample1Quantity1)
@@ -155,7 +160,8 @@ class RequestProductsExtensionTest extends TestCase
 
         $sample3Product = (new ProductStub())
             ->setNames([(new ProductName())->setString($sample3Name)])
-            ->setSku($sample3Sku);
+            ->setSku($sample3Sku)
+            ->setOrganization($organization);
 
         $sample3RequestProductItem1 = (new RequestProductItem())
             ->setQuantity($sample3Quantity1)
@@ -199,6 +205,7 @@ class RequestProductsExtensionTest extends TestCase
                         'comment' => $sample3Comment1,
                         'items' => [],
                         'kitItemLineItems' => [],
+                        'sellerName' => 'Oro'
                     ],
                 ],
             ],
@@ -222,6 +229,7 @@ class RequestProductsExtensionTest extends TestCase
                             ],
                         ],
                         'kitItemLineItems' => [],
+                        'sellerName' => 'Oro'
                     ],
                     [
                         'name' => $sample1Name,
@@ -235,6 +243,7 @@ class RequestProductsExtensionTest extends TestCase
                             ],
                         ],
                         'kitItemLineItems' => [],
+                        'sellerName' => 'Oro'
                     ],
                     [
                         'name' => $sample3Name,
@@ -248,6 +257,7 @@ class RequestProductsExtensionTest extends TestCase
                             ],
                         ],
                         'kitItemLineItems' => [],
+                        'sellerName' => 'Oro'
                     ],
                 ],
             ],
@@ -271,6 +281,7 @@ class RequestProductsExtensionTest extends TestCase
                             ],
                         ],
                         'kitItemLineItems' => [],
+                        'sellerName' => 'Oro'
                     ],
                     [
                         'name' => $productKit1Name,
@@ -294,8 +305,10 @@ class RequestProductsExtensionTest extends TestCase
                                 'unit' => $productKit1Unit,
                                 'quantity' => 1.0,
                                 'productName' => $sample1Name,
+                                'productSku' => $sample1Sku
                             ],
                         ],
+                        'sellerName' => 'Oro'
                     ],
                 ],
             ],
