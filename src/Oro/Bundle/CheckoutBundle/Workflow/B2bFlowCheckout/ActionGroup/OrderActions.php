@@ -47,8 +47,8 @@ class OrderActions implements OrderActionsInterface
         );
 
         // set customer/customer user
-        if ($checkout->getRegisteredCustomerUser()) {
-            $customerUser = $checkout->getRegisteredCustomerUser();
+        $customerUser = $checkout->getRegisteredCustomerUser();
+        if ($customerUser) {
             $order->setCustomerUser($customerUser);
             $order->setCustomer($customerUser->getCustomer());
         }
@@ -97,7 +97,7 @@ class OrderActions implements OrderActionsInterface
 
     public function sendConfirmationEmail(Checkout $checkout, Order $order): void
     {
-        $lineItemsCount = count($order->getLineItems());
+        $lineItemsCount = \count($order->getLineItems());
 
         if ($lineItemsCount <= $this->immediateEmailLineItemsLimit) {
             $action = 'send_order_confirmation_email';
@@ -106,6 +106,10 @@ class OrderActions implements OrderActionsInterface
         }
 
         $orderOwner = $order->getOwner();
+        if (!$orderOwner || !$orderOwner->getEmail()) {
+            return;
+        }
+
         $this->actionExecutor->executeAction(
             $action,
             [

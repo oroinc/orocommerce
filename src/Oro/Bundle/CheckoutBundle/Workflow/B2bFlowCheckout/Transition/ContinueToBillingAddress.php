@@ -7,6 +7,9 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 
+/**
+ * B2bCheckout workflow transition continue_to_billing_address logic implementation.
+ */
 class ContinueToBillingAddress extends TransitionServiceAbstract
 {
     public function __construct(

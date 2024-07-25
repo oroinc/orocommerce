@@ -13,7 +13,7 @@ use Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendLineItemsGrid\LineIt
 
 /**
  * Adds available line item shipping methods to the datagrid records
- * and adds new column to display these values.
+ * and adds a new column to display these values.
  */
 class FrontendCheckoutLineItemsDatagridEventListener
 {

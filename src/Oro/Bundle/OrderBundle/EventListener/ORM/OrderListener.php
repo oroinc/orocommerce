@@ -7,7 +7,7 @@ use Oro\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
- * Listens to Order save event and set identifier for Order if identifier is empty
+ * Listens to Order save an event and set identifier for Order if identifier is empty
  */
 class OrderListener
 {

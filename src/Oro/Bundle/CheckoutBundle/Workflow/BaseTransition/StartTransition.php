@@ -5,6 +5,9 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\BaseTransition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 
+/**
+ * Base implementation of checkout start transition.
+ */
 class StartTransition extends TransitionServiceAbstract
 {
     public function execute(WorkflowItem $workflowItem): void

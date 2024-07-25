@@ -8,6 +8,9 @@ use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPriceInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 
+/**
+ * B2bCheckout workflow transition recalculate_state logic implementation.
+ */
 class RecalculateState extends TransitionServiceAbstract
 {
     public function __construct(

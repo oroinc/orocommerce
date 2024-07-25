@@ -9,6 +9,9 @@ use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 
+/**
+ * B2bCheckout workflow transition back_to_shipping_method logic implementation.
+ */
 class BackToShippingMethod extends ClearPaymentMethodAndRecalculateState
 {
     public function __construct(

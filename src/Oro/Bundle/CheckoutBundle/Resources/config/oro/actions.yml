@@ -171,6 +171,7 @@ action_groups:
 
     actualize_checkout:
         service: oro_checkout.action_group.actualize_checkout
+        return_value_name: 'checkout'
 
     update_workflow_item:
         service: oro_checkout.action_group.update_workflow_item
@@ -180,6 +181,7 @@ action_groups:
 
     update_checkout_state:
         service: oro_checkout.action_group.update_checkout_state
+        return_value_name: 'update_checkout_state'
 
     order_line_items_not_empty:
         service: oro_checkout.action_group.order_line_items_not_empty

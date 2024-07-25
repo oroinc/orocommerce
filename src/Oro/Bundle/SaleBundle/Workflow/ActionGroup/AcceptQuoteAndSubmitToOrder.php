@@ -28,7 +28,7 @@ class AcceptQuoteAndSubmitToOrder implements AcceptQuoteAndSubmitToOrderInterfac
     ) {
     }
 
-    public function execute(QuoteDemand $data)
+    public function execute(QuoteDemand $data): array
     {
         $quote = $data->getQuote();
         if (!$quote) {
@@ -36,7 +36,7 @@ class AcceptQuoteAndSubmitToOrder implements AcceptQuoteAndSubmitToOrderInterfac
         }
 
         $editLink = $this->urlGenerator->generate('oro_sale_quote_frontend_choice', ['id' => $data->getId()]);
-        $disallowShippingMethodEdit = $quote?->getShippingCost() !== null;
+        $disallowShippingMethodEdit = $quote->getShippingCost() !== null;
 
         $this->quoteDemandSubtotalsCalculator->calculateSubtotals($data);
         $checkoutData = $this->fillCheckoutDataByQuote($quote);
@@ -73,7 +73,7 @@ class AcceptQuoteAndSubmitToOrder implements AcceptQuoteAndSubmitToOrderInterfac
     {
         $checkoutData = [];
 
-        if ($quote?->getEstimatedShippingCost()) {
+        if ($quote->getEstimatedShippingCost()) {
             $checkoutData['shippingCost'] = $quote->getEstimatedShippingCost();
         }
         if ($quote?->getShippingMethod()) {

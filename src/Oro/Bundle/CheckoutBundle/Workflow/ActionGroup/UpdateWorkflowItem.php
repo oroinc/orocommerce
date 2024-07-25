@@ -6,6 +6,9 @@ use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
+/**
+ * Update the data of WorkflowItem that matches passed entity.
+ */
 class UpdateWorkflowItem implements UpdateWorkflowItemInterface
 {
     public function __construct(

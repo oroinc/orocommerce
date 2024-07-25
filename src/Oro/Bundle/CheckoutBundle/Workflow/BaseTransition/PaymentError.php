@@ -8,6 +8,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 
+/**
+ * Base implementation of checkout payment_error transition.
+ */
 class PaymentError extends TransitionServiceAbstract
 {
     public function __construct(

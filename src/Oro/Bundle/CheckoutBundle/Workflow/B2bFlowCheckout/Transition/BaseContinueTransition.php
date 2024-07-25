@@ -9,6 +9,9 @@ use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderLineItemsNotEmptyInterfa
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 
+/**
+ * Base implementation of B2bCheckout workflow continue transition (transition that leads to the next step).
+ */
 class BaseContinueTransition extends TransitionServiceAbstract
 {
     public function __construct(

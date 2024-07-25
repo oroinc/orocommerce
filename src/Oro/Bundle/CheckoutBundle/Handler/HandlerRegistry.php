@@ -5,6 +5,9 @@ namespace Oro\Bundle\CheckoutBundle\Handler;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Registry of  checkout controller HTTP request handlers.
+ */
 class HandlerRegistry implements CheckoutHandlerInterface
 {
     /**

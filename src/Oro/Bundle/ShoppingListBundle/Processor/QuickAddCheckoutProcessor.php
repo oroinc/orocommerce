@@ -2,12 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Processor;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\ActionBundle\Model\ActionGroupInterface;
-use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartQuickOrderCheckoutInterface;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -33,11 +30,9 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     private ShoppingListManager $shoppingListManager;
     private ShoppingListLimitManager $shoppingListLimitManager;
     private CurrentShoppingListManager $currentShoppingListManager;
-    private ActionGroupRegistry $actionGroupRegistry;
     private TranslatorInterface $translator;
     private DateTimeFormatterInterface $dateFormatter;
-    private string $actionGroupName;
-    private ActionGroupInterface|null|bool $actionGroup = false;
+    private StartQuickOrderCheckoutInterface $startQuickOrderCheckout;
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -50,10 +45,9 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         ShoppingListManager $shoppingListManager,
         ShoppingListLimitManager $shoppingListLimitManager,
         CurrentShoppingListManager $currentShoppingListManager,
-        ActionGroupRegistry $actionGroupRegistry,
         TranslatorInterface $translator,
         DateTimeFormatterInterface $dateFormatter,
-        string $actionGroupName
+        StartQuickOrderCheckoutInterface $startQuickOrderCheckout
     ) {
         parent::__construct($shoppingListLineItemHandler, $productMapper);
         $this->doctrine = $doctrine;
@@ -61,18 +55,9 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         $this->shoppingListManager = $shoppingListManager;
         $this->shoppingListLimitManager = $shoppingListLimitManager;
         $this->currentShoppingListManager = $currentShoppingListManager;
-        $this->actionGroupRegistry = $actionGroupRegistry;
         $this->translator = $translator;
         $this->dateFormatter = $dateFormatter;
-        $this->actionGroupName = $actionGroupName;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isAllowed(): bool
-    {
-        return parent::isAllowed() && null !== $this->getActionGroup();
+        $this->startQuickOrderCheckout = $startQuickOrderCheckout;
     }
 
     /**
@@ -105,24 +90,19 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         /** @var Session $session */
         $session = $request->getSession();
         if ($this->fillShoppingList($shoppingList, $data)) {
-            $actionData = new ActionData([
-                'shoppingList' => $shoppingList,
-                'transitionName' => $data[ProductDataStorage::TRANSITION_NAME_KEY] ?? null
-            ]);
-            $errors = new ArrayCollection([]);
-            $actionData = $this->getActionGroup()->execute($actionData, $errors);
+            $startResult = $this->startQuickOrderCheckout->execute(
+                $shoppingList,
+                $data[ProductDataStorage::TRANSITION_NAME_KEY] ?? null
+            );
 
-            $redirectUrl = $actionData->getRedirectUrl();
+            $redirectUrl = $startResult['redirectUrl'] ?? null;
             if ($redirectUrl) {
                 $em->commit();
 
                 return new RedirectResponse($redirectUrl);
             }
 
-            $errors = $errors->toArray();
-            if (\is_array($actionData->offsetGet('errors'))) {
-                $errors = array_merge($errors, $actionData->offsetGet('errors'));
-            }
+            $errors = $startResult['errors'] ?? [];
             if (!$errors) {
                 $errors[] = $this->messageGenerator->getFailedMessage();
             }
@@ -148,14 +128,5 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
             'oro.frontend.shoppinglist.quick_order.default_label',
             ['%date%' => $this->dateFormatter->format(new \DateTime('now', new \DateTimeZone('UTC')))]
         );
-    }
-
-    private function getActionGroup(): ?ActionGroupInterface
-    {
-        if (false === $this->actionGroup) {
-            $this->actionGroup = $this->actionGroupRegistry->findByName($this->actionGroupName);
-        }
-
-        return $this->actionGroup;
     }
 }

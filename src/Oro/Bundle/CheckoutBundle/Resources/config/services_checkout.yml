@@ -4,6 +4,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_action.factory.duplicator_factory'
+            - '@oro_action.action_executor'
         tags:
             - { name: 'oro_action_group_service' }
 
@@ -64,11 +65,11 @@ services:
     oro_checkout.action_group.b2b_flow_checkout.checkout_actions:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CheckoutActions
         arguments:
-            - '@doctrine'
             - '@oro_entity.entity_alias_resolver'
             - '@oro_entity.entity_name_resolver'
             - '@router'
             - '@oro_action.action_executor'
+            - '@oro_checkout.action_group.b2b_flow_checkout.address_actions'
         tags:
             - { name: 'oro_action_group_service' }
 
@@ -181,6 +182,7 @@ services:
             - '@oro_checkout.action_group.b2b_flow_checkout.customer_user_actions'
             - '@oro_checkout.action_group.b2b_flow_checkout.address_actions'
             - '@oro_checkout.workflow.b2b_flow_checkout.transition.base_continue_transition'
+            - '@oro_workflow.manager'
         tags:
             - { name: 'oro_workflow.transition_service' }
 

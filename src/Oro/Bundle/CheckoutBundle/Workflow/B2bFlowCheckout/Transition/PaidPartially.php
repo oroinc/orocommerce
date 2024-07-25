@@ -10,6 +10,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+/**
+ * B2bCheckout workflow transition paid_partially logic implementation.
+ */
 class PaidPartially extends TransitionServiceAbstract
 {
     public function __construct(

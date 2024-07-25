@@ -16,6 +16,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
+/**
+ * B2bFlowCheckoutSinglePage workflow transition create_order logic implementation.
+ */
 class CreateOrder extends BasePlaceOrder
 {
     public function __construct(

@@ -12,5 +12,14 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
  */
 interface OrderLineItemsNotEmptyInterface
 {
+    /**
+     * @param Checkout $checkout
+     * @return array{
+     *     orderLineItems: array,
+     *     orderLineItemsNotEmpty: array,
+     *     orderLineItemsForRfp: array,
+     *     orderLineItemsNotEmptyForRfp: array
+     * }
+     */
     public function execute(Checkout $checkout): array;
 }

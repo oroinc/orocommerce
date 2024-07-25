@@ -7,6 +7,9 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorageInterface;
 
+/**
+ * Updates stored checkout state.
+ */
 class UpdateCheckoutState implements UpdateCheckoutStateInterface
 {
     public function __construct(
@@ -21,7 +24,7 @@ class UpdateCheckoutState implements UpdateCheckoutStateInterface
         string $stateToken,
         ?bool $updateCheckoutState = false,
         ?bool $forceUpdate = false
-    ): array {
+    ): bool {
         $isSupportedRequest = $this->actionExecutor->evaluateExpression(
             'check_request',
             [
@@ -45,6 +48,6 @@ class UpdateCheckoutState implements UpdateCheckoutStateInterface
             $updateCheckoutState = false;
         }
 
-        return ['update_checkout_state' => $updateCheckoutState];
+        return $updateCheckoutState;
     }
 }

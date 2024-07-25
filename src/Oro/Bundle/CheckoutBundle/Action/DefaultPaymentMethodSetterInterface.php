@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Action;
 
-
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 /**
- * Sets the first applicable payment method for checkout.
+ * Sets the first applicable payment method for a checkout.
  */
 interface DefaultPaymentMethodSetterInterface
 {

@@ -2,16 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -21,11 +16,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class CheckoutActions implements CheckoutActionsInterface
 {
     public function __construct(
-        private ManagerRegistry $registry,
         private EntityAliasResolver $entityAliasResolver,
         private EntityNameResolver $entityNameResolver,
         private UrlGeneratorInterface $urlGenerator,
-        private ActionExecutor $actionExecutor
+        private ActionExecutor $actionExecutor,
+        private AddressActionsInterface $addressActions
     ) {
     }
 
@@ -82,7 +77,7 @@ class CheckoutActions implements CheckoutActionsInterface
         bool $removeSource = false,
         bool $clearSource = false
     ): void {
-        $this->actualizeAddresses($checkout, $order);
+        $this->addressActions->actualizeAddresses($checkout, $order);
         $this->sendConfirmationEmail($checkout, $order);
         $this->fillCheckoutCompletedData($checkout, $order);
         $this->finalizeSourceEntity(
@@ -92,54 +87,6 @@ class CheckoutActions implements CheckoutActionsInterface
             $removeSource,
             $clearSource
         );
-    }
-
-    public function actualizeAddresses(Checkout $checkout, Order $order): void
-    {
-        $em = $this->registry->getManagerForClass(CustomerUserAddress::class);
-
-        $customerUserBillingAddress = null;
-        if ($checkout->isSaveBillingAddress()) {
-            $customerUserBillingAddress = $this->actualizeAddress(
-                $order->getBillingAddress(),
-                $checkout,
-                AddressType::TYPE_BILLING,
-                'oro_order_address_billing_allow_manual'
-            );
-        }
-
-        $customerUserShippingAddress = null;
-        if ($checkout->isSaveShippingAddress()) {
-            if ($customerUserBillingAddress
-                && $checkout->isShipToBillingAddress()
-                && $checkout->isSaveBillingAddress()
-            ) {
-                /** @var AddressType $shippingType */
-                $shippingType = $em->getReference(AddressType::class, AddressType::TYPE_SHIPPING);
-                $customerUserBillingAddress->addType($shippingType);
-            } else {
-                $customerUserShippingAddress = $this->actualizeAddress(
-                    $order->getShippingAddress(),
-                    $checkout,
-                    AddressType::TYPE_SHIPPING,
-                    'oro_order_address_shipping_allow_manual'
-                );
-            }
-        }
-
-        $needFlush = false;
-        if ($customerUserBillingAddress) {
-            $checkout->getBillingAddress()->setCustomerUserAddress($customerUserBillingAddress);
-            $needFlush = true;
-        }
-        if ($customerUserShippingAddress) {
-            $checkout->getShippingAddress()->setCustomerUserAddress($customerUserShippingAddress);
-            $needFlush = true;
-        }
-
-        if ($needFlush) {
-            $em->flush();
-        }
     }
 
     public function sendConfirmationEmail(Checkout $checkout, Order $order): void
@@ -167,37 +114,6 @@ class CheckoutActions implements CheckoutActionsInterface
         if ($autoRemoveSource || ($allowManualSourceRemove && $removeSource)) {
             $this->actionExecutor->executeAction('remove_checkout_source_entity', [$checkout]);
         }
-    }
-
-    private function actualizeAddress(
-        OrderAddress $orderAddress,
-        Checkout $checkout,
-        string $addressTypeName,
-        string $aclResource
-    ): ?CustomerUserAddress {
-        if ($orderAddress->getCustomerAddress()
-            || $orderAddress->getCustomerUserAddress()
-            || !$this->isGranted($aclResource)
-        ) {
-            return null;
-        }
-
-        $em = $this->registry->getManagerForClass(CustomerUserAddress::class);
-        /** @var AddressType $addressType */
-        $addressType = $em->getReference(AddressType::class, $addressTypeName);
-        $customerUserAddress = new CustomerUserAddress();
-        $this->fillAddressFieldsByAddress(
-            $orderAddress,
-            $customerUserAddress,
-            $checkout
-        );
-        $customerUserAddress->addType($addressType);
-
-        $em->persist($customerUserAddress);
-
-        $orderAddress->setCustomerUserAddress($customerUserAddress);
-
-        return $customerUserAddress;
     }
 
     private function fillCheckoutCompletedData(Checkout $checkout, Order $order): void
@@ -235,36 +151,5 @@ class CheckoutActions implements CheckoutActionsInterface
                 $this->entityNameResolver->getName($checkout->getSourceEntity()->getSourceDocument())
             );
         }
-    }
-
-    private function fillAddressFieldsByAddress(
-        AbstractAddress $sourceAddress,
-        AbstractAddress $destinationAddress,
-        Checkout $checkout
-    ): void {
-        $destinationAddress
-            ->setFrontendOwner($checkout->getCustomerUser())
-            ->setOwner($checkout->getOwner())
-            ->setSystemOrganization($checkout->getOrganization())
-            ->setLabel($sourceAddress->getLabel())
-            ->setOrganization($sourceAddress->getOrganization())
-            ->setStreet($sourceAddress->getStreet())
-            ->setStreet2($sourceAddress->getStreet2())
-            ->setCity($sourceAddress->getCity())
-            ->setPostalCode($sourceAddress->getPostalCode())
-            ->setCountry($sourceAddress->getCountry())
-            ->setRegion($sourceAddress->getRegion())
-            ->setRegionText($sourceAddress->getRegionText())
-            ->setNamePrefix($sourceAddress->getNamePrefix())
-            ->setFirstName($sourceAddress->getFirstName())
-            ->setMiddleName($sourceAddress->getMiddleName())
-            ->setLastName($sourceAddress->getLastName())
-            ->setNameSuffix($sourceAddress->getNameSuffix())
-            ->setPhone($sourceAddress->getPhone());
-    }
-
-    private function isGranted(string $attribute): bool
-    {
-        return $this->actionExecutor->evaluateExpression('acl_granted', [$attribute]);
     }
 }

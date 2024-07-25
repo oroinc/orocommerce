@@ -88,7 +88,10 @@ class CustomerUserActions implements CustomerUserActionsInterface
     public function handleLateRegistration(Checkout $checkout, Order $order, ?array $lateRegistrationData = []): array
     {
         $result = [];
-        if (!empty($lateRegistrationData['is_late_registration_enabled']) && !$checkout->getRegisteredCustomerUser()) {
+        if (!empty($lateRegistrationData['is_late_registration_enabled'])
+            && !$checkout->getRegisteredCustomerUser()
+            && $checkout->getCustomerUser()
+        ) {
             $billingAddress = $order->getBillingAddress();
 
             $registeredCustomerUser = $checkout->getCustomerUser();

@@ -103,7 +103,7 @@ class FindOrCreateCheckout implements FindOrCreateCheckoutInterface
         return $token instanceof AnonymousCustomerUserToken;
     }
 
-    protected function createCheckout(
+    private function createCheckout(
         array $sourceCriteria,
         ?Website $currentWebsite,
         ?UserInterface $currentUser,
@@ -135,7 +135,7 @@ class FindOrCreateCheckout implements FindOrCreateCheckoutInterface
         return $checkout;
     }
 
-    protected function resetCheckoutOnChanges(
+    private function resetCheckoutOnChanges(
         array $sourceCriteria,
         ?string $currentCurrency,
         ?Checkout $checkout
@@ -156,7 +156,7 @@ class FindOrCreateCheckout implements FindOrCreateCheckoutInterface
         return $this->checkoutCompareHelper->resetCheckoutIfSourceLineItemsChanged($checkout, $rawCheckout);
     }
 
-    protected function findExistingCheckout(
+    private function findExistingCheckout(
         $currentUser,
         array $sourceCriteria,
         Workflow $currentWorkflow,
@@ -178,7 +178,7 @@ class FindOrCreateCheckout implements FindOrCreateCheckoutInterface
         );
     }
 
-    protected function getCurrentWorkflow(): Workflow
+    private function getCurrentWorkflow(): Workflow
     {
         $currentWorkflow = $this->workflowManager->getAvailableWorkflowByRecordGroup(
             Checkout::class,
@@ -192,7 +192,7 @@ class FindOrCreateCheckout implements FindOrCreateCheckoutInterface
         return $currentWorkflow;
     }
 
-    protected function getCurrentUser(): ?UserInterface
+    private function getCurrentUser(): ?UserInterface
     {
         $userResult = $this->actionExecutor->executeAction(
             'get_active_user_or_null',
@@ -202,7 +202,7 @@ class FindOrCreateCheckout implements FindOrCreateCheckoutInterface
         return $userResult['attribute'];
     }
 
-    protected function removeCheckoutState(WorkflowItem $workflowItem, ?Checkout $checkout): void
+    private function removeCheckoutState(WorkflowItem $workflowItem, ?Checkout $checkout): void
     {
         $stateToken = $workflowItem->getData()->offsetGet('state_token');
         if (!$stateToken) {

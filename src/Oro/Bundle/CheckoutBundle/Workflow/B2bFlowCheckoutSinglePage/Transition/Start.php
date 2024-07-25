@@ -10,6 +10,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 
+/**
+ * B2bFlowCheckoutSinglePage workflow start transition logic implementation.
+ */
 class Start extends TransitionServiceAbstract
 {
     public function __construct(

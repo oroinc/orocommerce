@@ -9,6 +9,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 
+/**
+ * B2bFlowCheckoutSinglePage workflow transition save_state logic implementation.
+ */
 class SaveState extends TransitionServiceAbstract
 {
     public function __construct(

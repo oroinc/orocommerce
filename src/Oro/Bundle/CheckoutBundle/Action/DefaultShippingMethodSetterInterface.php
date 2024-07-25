@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Action;
 
-
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 /**

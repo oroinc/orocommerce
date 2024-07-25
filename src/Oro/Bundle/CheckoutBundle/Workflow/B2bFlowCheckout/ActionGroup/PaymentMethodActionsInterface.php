@@ -4,6 +4,9 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
+/**
+ * Checkout workflow payment method-related actions.
+ */
 interface PaymentMethodActionsInterface
 {
     public function validate(

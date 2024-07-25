@@ -9,6 +9,9 @@ use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 
+/**
+ * Base implementation of state aware transition for B2bFlowCheckoutSinglePage workflow.
+ */
 class BaseStateAwareTransition extends TransitionServiceAbstract
 {
     public function __construct(

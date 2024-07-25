@@ -4,6 +4,9 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\ActionGroup;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
+/**
+ * Updates stored checkout state.
+ */
 interface UpdateCheckoutStateInterface
 {
     public function execute(
@@ -11,5 +14,5 @@ interface UpdateCheckoutStateInterface
         string $stateToken,
         ?bool $updateCheckoutState = false,
         ?bool $forceUpdate = false
-    ): array;
+    ): bool;
 }

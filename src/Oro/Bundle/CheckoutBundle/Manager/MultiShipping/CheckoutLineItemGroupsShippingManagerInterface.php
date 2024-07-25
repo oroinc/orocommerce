@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Manager\MultiShipping;
 
-
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 /**

@@ -6,6 +6,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Handles checkout controller HTTP GET request.
+ */
 class CheckoutGetRequestHandler implements CheckoutHandlerInterface
 {
     public function __construct(

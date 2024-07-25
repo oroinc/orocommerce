@@ -15,6 +15,9 @@ use Oro\Component\Action\Condition\ExtendableCondition;
 use Oro\Component\ConfigExpression\ContextAccessorInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
+/**
+ * Base implementation of checkout start_from_shopping_list transition.
+ */
 class StartFromShoppingListTransition extends TransitionServiceAbstract
 {
     public function __construct(
@@ -141,8 +144,7 @@ class StartFromShoppingListTransition extends TransitionServiceAbstract
         return $this->actionExecutor->evaluateExpression(
             expressionName: 'acl_granted',
             data: ['CHECKOUT_CREATE', $this->getShoppingList($workflowItem)],
-            errors: $errors,
-            context: $workflowItem
+            errors: $errors
         );
     }
 }

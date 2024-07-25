@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup;
 
-
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
@@ -11,5 +10,12 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  */
 interface SplitOrderActionsInterface
 {
+    /**
+     * @param Checkout $checkout
+     * @param Order $order
+     * @param array $groupedLineItemsIds ['product.owner:1' => ['sku-1:item', ...], ...]
+     *
+     * @return void
+     */
     public function createChildOrders(Checkout $checkout, Order $order, array $groupedLineItemsIds): void;
 }

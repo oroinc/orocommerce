@@ -13,6 +13,9 @@ use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingMan
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPriceInterface;
 
+/**
+ * Checkout workflow shipping method-related actions.
+ */
 class ShippingMethodActions implements ShippingMethodActionsInterface
 {
     public function __construct(

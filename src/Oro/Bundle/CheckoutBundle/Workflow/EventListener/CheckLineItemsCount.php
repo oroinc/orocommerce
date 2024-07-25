@@ -12,6 +12,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Check that all line items may be added to the checkout, show warning otherwise.
+ */
 class CheckLineItemsCount
 {
     public function __construct(

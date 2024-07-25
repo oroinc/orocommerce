@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Workflow\ActionGroup;
 
-
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 /**
- * Actualizes user currency by checkout.
+ * Actualizes user currency by a checkout.
  */
 interface ActualizeCurrencyInterface
 {

@@ -11,6 +11,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowResult;
 
+/**
+ * Base implementation of checkout start_from_quick_order_form transition.
+ */
 class StartFromQuickOrderFormTransition extends TransitionServiceAbstract
 {
     public function __construct(

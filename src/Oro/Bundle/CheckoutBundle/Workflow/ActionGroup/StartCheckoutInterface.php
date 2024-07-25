@@ -7,6 +7,22 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\ActionGroup;
  */
 interface StartCheckoutInterface
 {
+    /**
+     * @param array $sourceCriteria
+     * @param bool $force
+     * @param array $data
+     * @param array $settings
+     * @param bool $showErrors
+     * @param bool $forceStartCheckout
+     * @param string|null $startTransition
+     * @param bool $validateOnStartCheckout
+     * @return array{
+     *     checkout: \Oro\Bundle\CheckoutBundle\Entity\Checkout,
+     *     workflowItem: \Oro\Bundle\WorkflowBundle\Entity\WorkflowItem,
+     *     redirectUrl?: string,
+     *     errors?: \Doctrine\Common\Collections\Collection|array
+     * }
+     */
     public function execute(
         array $sourceCriteria,
         bool $force = false,

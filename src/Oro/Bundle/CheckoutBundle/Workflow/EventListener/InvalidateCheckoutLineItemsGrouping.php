@@ -6,6 +6,9 @@ use Oro\Bundle\CheckoutBundle\Event\CheckoutRequestEvent;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutLineItemGroupingInvalidationHelper;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper;
 
+/**
+ * Invalidate line items grouping on checkout request.
+ */
 class InvalidateCheckoutLineItemsGrouping
 {
     public function __construct(

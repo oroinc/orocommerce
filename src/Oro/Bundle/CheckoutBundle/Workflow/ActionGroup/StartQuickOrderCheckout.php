@@ -9,8 +9,12 @@ use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
+/**
+ * Start checkout from quick order form.
+ */
 class StartQuickOrderCheckout implements StartQuickOrderCheckoutInterface
 {
     public function __construct(
@@ -30,20 +34,10 @@ class StartQuickOrderCheckout implements StartQuickOrderCheckoutInterface
         $currentUser = $this->getCurrentUser();
 
         if ($currentUser && $currentUser->isGuest()) {
-            $currentCurrency = $this->userCurrencyManager->getUserCurrency();
-            $checkout = $this->checkoutRepository->findCheckoutByCustomerUserAndSourceCriteriaWithCurrency(
-                $currentUser,
-                ['shoppingList' => $shoppingList],
-                'b2b_flow_checkout',
-                $currentCurrency
-            );
-
-            if ($checkout) {
-                $em = $this->registry->getManagerForClass(Checkout::class);
-                $em->remove($checkout);
-                $em->flush($checkout);
-                $em->refresh($checkout);
-            }
+            // Guest customer user will be not null for guest checkout when there is another guest checkout in
+            // the DB started by the same visitor. At first run customer user is null,
+            // and it is created when first checkout step is passed
+            $this->removeExistingCheckout($currentUser, $shoppingList);
         }
 
         $startResult = $this->startShoppingListCheckout->execute(
@@ -51,20 +45,19 @@ class StartQuickOrderCheckout implements StartQuickOrderCheckoutInterface
             showErrors: true
         );
 
-        $checkout = $startResult['checkout'];
-        if (empty($startResult['errors']) && $checkout && $transitionName) {
-            // TODO: Check if we can use workflow name from workflow item
-            $currentWorkflow = $this->workflowManager->getAvailableWorkflowByRecordGroup(
-                Checkout::class,
-                'b2b_checkout_flow'
-            );
-
+        $checkout = $startResult['checkout'] ?? null;
+        $workflowItem = $startResult['workflowItem'] ?? null;
+        if (empty($startResult['errors'])
+            && $transitionName
+            && $checkout instanceof Checkout
+            && $workflowItem instanceof WorkflowItem
+        ) {
             // Transit workflow is called here because internally it will fetch real WorkflowItem instead of stub.
             $this->actionExecutor->executeAction(
                 'transit_workflow',
                 [
                     'entity' => $checkout,
-                    'workflow' => $currentWorkflow->getName(),
+                    'workflow' => $startResult['workflowItem']->getWorkflowName(),
                     'transition' => $transitionName
                 ]
             );
@@ -73,13 +66,43 @@ class StartQuickOrderCheckout implements StartQuickOrderCheckoutInterface
         return $startResult;
     }
 
-    protected function getCurrentUser(): ?CustomerUser
+    private function getCurrentUser(): ?CustomerUser
     {
         $userResult = $this->actionExecutor->executeAction(
             'get_active_user_or_null',
             ['attribute' => null]
         );
 
-        return $userResult['attribute'];
+        return $userResult['attribute'] ?? null;
+    }
+
+    private function removeExistingCheckout(
+        CustomerUser $currentUser,
+        ShoppingList $shoppingList
+    ): void {
+        $currentWorkflow = $this->workflowManager->getAvailableWorkflowByRecordGroup(
+            Checkout::class,
+            'b2b_checkout_flow'
+        );
+
+        if (!$currentWorkflow) {
+            return;
+        }
+
+        $currentCurrency = $this->userCurrencyManager->getUserCurrency();
+        $checkout = $this->checkoutRepository->findCheckoutByCustomerUserAndSourceCriteriaWithCurrency(
+            $currentUser,
+            ['shoppingList' => $shoppingList],
+            $currentWorkflow->getName(),
+            $currentCurrency
+        );
+
+        if (!$checkout) {
+            return;
+        }
+
+        $em = $this->registry->getManagerForClass(Checkout::class);
+        $em->remove($checkout);
+        $em->flush($checkout);
     }
 }

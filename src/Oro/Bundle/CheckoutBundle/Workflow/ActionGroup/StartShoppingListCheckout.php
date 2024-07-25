@@ -6,13 +6,23 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Provider\ShoppingListUrlProvider;
 
+/**
+ * Start checkout from shopping list
+ */
 class StartShoppingListCheckout implements StartShoppingListCheckoutInterface
 {
+    private string $sourceRemoveLabel = 'oro.frontend.shoppinglist.workflow.remove_source.label';
+
     public function __construct(
         private ShoppingListUrlProvider $shoppingListUrlProvider,
         private ShoppingListLimitManager $shoppingListLimitManager,
         private StartCheckoutInterface $startCheckout
     ) {
+    }
+
+    public function setSourceRemoveLabel(string $sourceRemoveLabel): void
+    {
+        $this->sourceRemoveLabel = $sourceRemoveLabel;
     }
 
     public function execute(
@@ -25,7 +35,6 @@ class StartShoppingListCheckout implements StartShoppingListCheckoutInterface
         bool $clearSource = false
     ): array {
         $editLink = $this->shoppingListUrlProvider->getFrontendUrl($shoppingList);
-        $sourceRemoveLabel = 'oro.frontend.shoppinglist.workflow.remove_source.label';
         $isOneShoppingList = $this->shoppingListLimitManager->isOnlyOneEnabled();
 
         if ($isOneShoppingList) {
@@ -41,7 +50,7 @@ class StartShoppingListCheckout implements StartShoppingListCheckoutInterface
                 'remove_source' => $removeSource,
                 'clear_source' => $clearSource,
                 'edit_order_link' => $editLink,
-                'source_remove_label' => $sourceRemoveLabel
+                'source_remove_label' => $this->sourceRemoveLabel
             ],
             showErrors: $showErrors,
             forceStartCheckout: $forceStartCheckout,

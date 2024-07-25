@@ -16,5 +16,5 @@ interface ActualizeCheckoutInterface
         ?Website $currentWebsite,
         bool $updateData = false,
         array $checkoutData = []
-    ): array;
+    ): Checkout;
 }

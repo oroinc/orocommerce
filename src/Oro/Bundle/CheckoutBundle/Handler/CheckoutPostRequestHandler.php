@@ -14,6 +14,9 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Handles checkout controller HTTP POST request.
+ */
 class CheckoutPostRequestHandler implements CheckoutHandlerInterface
 {
     public function __construct(

@@ -5,6 +5,9 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\ActionGroup;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 
+/**
+ * Set checkout shipping cost
+ */
 class UpdateShippingPrice implements UpdateShippingPriceInterface
 {
     public function __construct(

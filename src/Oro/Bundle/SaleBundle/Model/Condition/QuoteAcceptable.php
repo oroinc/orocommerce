@@ -12,6 +12,7 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 /**
  * Check that quote is acceptable
+ *
  * Usage:
  * @quote_acceptable:
  *      quote: $quote  # Quote or QuoteDemand

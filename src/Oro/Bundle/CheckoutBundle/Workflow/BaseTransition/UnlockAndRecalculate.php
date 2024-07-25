@@ -5,6 +5,9 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\BaseTransition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 
+/**
+ * Base implementation of checkout unlock_and_recalculate transition.
+ */
 class UnlockAndRecalculate extends TransitionServiceAbstract
 {
     public function execute(WorkflowItem $workflowItem): void

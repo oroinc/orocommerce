@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Action\MultiShipping;
 
-
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 /**
@@ -11,6 +10,16 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
  */
 interface DefaultMultiShippingMethodSetterInterface
 {
+    /**
+     * @template LineItemIdentifier of string Example 'productSku:unitCode'
+     * @template LineItemGroupsShippingMethod of array{'method': string, 'type': string}
+     *
+     * @param Checkout $checkout
+     * @param null|array<LineItemIdentifier, LineItemGroupsShippingMethod> $lineItemsShippingMethods
+     *      Example ['2BV:item' => ['method' => 'flat_rate_1', 'type' => 'primary'], ... ]
+     * @param bool $useDefaults
+     * @return void
+     */
     public function setDefaultShippingMethods(
         Checkout $checkout,
         ?array $lineItemsShippingMethods = null,

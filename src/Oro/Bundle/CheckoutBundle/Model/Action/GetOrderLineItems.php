@@ -10,6 +10,13 @@ use Oro\Component\ConfigExpression\ContextAccessor;
 
 /**
  * Gets OrderLineItem entities from Checkout and sets to the specified attribute.
+ *
+ * Usage:
+ *  - '@get_order_line_items':
+ *    attribute: $.orderLineItems
+ *    checkout: $.checkout
+ *    disable_price_filter: true
+ *    config_visibility_path: $.visibilityPath
  */
 class GetOrderLineItems extends AbstractAction
 {

@@ -13,6 +13,9 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 
+/**
+ * B2bCheckout workflow transition continue_to_order_review logic implementation.
+ */
 class ContinueToOrderReview implements TransitionServiceInterface
 {
     public function __construct(

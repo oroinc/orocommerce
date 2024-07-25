@@ -9,17 +9,21 @@ use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressAction
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CustomerUserActionsInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 /**
  * Implementation of continue_to_shipping_address transition logic of the checkout workflow.
  */
 class ContinueToShippingAddress implements TransitionServiceInterface
 {
+    protected const string CONTINUE_TO_SHIPPING_METHOD_TRANSITION = 'continue_to_shipping_method';
+
     public function __construct(
         private ActionExecutor $actionExecutor,
         private CustomerUserActionsInterface $customerUserActions,
         private AddressActionsInterface $addressActions,
-        private TransitionServiceInterface $baseContinueTransition
+        private TransitionServiceInterface $baseContinueTransition,
+        private WorkflowManager $workflowManager
     ) {
     }
 
@@ -46,34 +50,29 @@ class ContinueToShippingAddress implements TransitionServiceInterface
         $checkout = $this->getCheckout($workflowItem);
         $billingAddress = $checkout->getBillingAddress();
         $data = $workflowItem->getData();
-        $email = $data['email'];
+        $email = $data->offsetGet('email');
 
         $this->customerUserActions->updateGuestCustomerUser($checkout, $email, $billingAddress);
         $this->customerUserActions->createGuestCustomerUser($checkout, $email, $billingAddress);
-        $data['billing_address_has_shipping'] = $this->addressActions->updateBillingAddress(
-            $checkout,
-            $data['disallow_shipping_address_edit']
+        $data->offsetSet(
+            'billing_address_has_shipping',
+            $this->addressActions->updateBillingAddress(
+                $checkout,
+                (bool)$data->offsetGet('disallow_shipping_address_edit')
+            )
         );
 
         $this->actionExecutor->executeAction(
             'save_accepted_consents',
-            ['acceptedConsents' => $data['customerConsents']]
+            ['acceptedConsents' => $data->offsetGet('customerConsents')]
         );
 
         if (!$checkout->getCustomerUser()?->isGuest()) {
-            $data['customerConsents'] = null;
+            $data->offsetSet('customerConsents', null);
         }
 
-        if ($data['ship_to_billing_address']) {
-            // TODO: Check if we can use TransitionManager here
-            $this->actionExecutor->executeAction(
-                'transit_workflow',
-                [
-                    'entity' => $checkout,
-                    'transition' => 'continue_to_shipping_method',
-                    'workflow' => $workflowItem->getDefinition()?->getName()
-                ]
-            );
+        if ($data->offsetGet('ship_to_billing_address')) {
+            $this->workflowManager->transit($workflowItem, static::CONTINUE_TO_SHIPPING_METHOD_TRANSITION);
         }
     }
 

@@ -10,6 +10,9 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 
+/**
+ * Base implementation of checkout finish_checkout transition.
+ */
 class FinishCheckout extends TransitionServiceAbstract
 {
     public function __construct(

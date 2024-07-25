@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\ActionGroup;
 
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActionsInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodConfigurationInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
@@ -30,7 +31,7 @@ class PrepareCheckoutSettings implements PrepareCheckoutSettingsInterface
                 ->duplicateOrderAddress($source->getShippingAddress());
         }
 
-        if (method_exists($source, 'getShippingMethod')
+        if ($source instanceof PreConfiguredShippingMethodConfigurationInterface
             && $source->getShippingMethod()
             && $source->getShippingMethodType()
         ) {

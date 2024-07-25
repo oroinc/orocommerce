@@ -31,7 +31,7 @@ class ActualizeCheckout implements ActualizeCheckoutInterface
         ?Website $currentWebsite,
         bool $updateData = false,
         array $checkoutData = []
-    ): array {
+    ): Checkout {
         $customerUser = $checkout->getCustomerUser();
         if ($customerUser && $updateData) {
             $checkout->setCustomer($customerUser->getCustomer());
@@ -58,6 +58,6 @@ class ActualizeCheckout implements ActualizeCheckoutInterface
 
         $this->checkoutSubtotalUpdater->recalculateCheckoutSubtotals($checkout);
 
-        return ['checkout' => $checkout];
+        return $checkout;
     }
 }

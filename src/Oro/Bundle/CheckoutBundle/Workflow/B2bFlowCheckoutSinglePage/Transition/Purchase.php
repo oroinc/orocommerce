@@ -17,6 +17,9 @@ use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 use Oro\Component\Action\Action\ExtendableAction;
 use Oro\Component\Action\Condition\ExtendableCondition;
 
+/**
+ * B2bFlowCheckoutSinglePage workflow transition purchase logic implementation.
+ */
 class Purchase extends TransitionServiceAbstract
 {
     public function __construct(

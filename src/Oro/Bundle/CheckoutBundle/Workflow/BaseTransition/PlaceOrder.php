@@ -12,6 +12,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 use Oro\Component\Action\Condition\ExtendableCondition;
 
+/**
+ * Base implementation of checkout place_order transition.
+ */
 abstract class PlaceOrder implements TransitionServiceInterface
 {
     public function __construct(

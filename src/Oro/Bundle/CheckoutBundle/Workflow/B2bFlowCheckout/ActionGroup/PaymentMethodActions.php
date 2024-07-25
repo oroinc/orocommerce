@@ -6,6 +6,9 @@ use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
+/**
+ * Checkout workflow payment method-related actions.
+ */
 class PaymentMethodActions implements PaymentMethodActionsInterface
 {
     public function __construct(

@@ -7,6 +7,9 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
+/**
+ * Abstract implementation of listener that is used by payment/shipping methods listeners.
+ */
 abstract class AbstractMethodsListener
 {
     /**

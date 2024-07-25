@@ -9,5 +9,5 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
  */
 interface AcceptQuoteAndSubmitToOrderInterface
 {
-    public function execute(QuoteDemand $data);
+    public function execute(QuoteDemand $data): array;
 }

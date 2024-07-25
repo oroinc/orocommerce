@@ -17,6 +17,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 use Oro\Component\Action\Action\ExtendableAction;
 
+/**
+ * B2bCheckout workflow transition place_order logic implementation.
+ */
 class PlaceOrder extends BasePlaceOrder
 {
     public function __construct(

@@ -6,6 +6,9 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
+/**
+ * B2bCheckout workflow transition verify_payment logic implementation.
+ */
 class VerifyPayment extends BaseContinueTransition
 {
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
