@@ -6,6 +6,7 @@
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroTaxBundle:OrderTaxCurrencies.yml
 @fixture-OroTaxBundle:ProductAndTaxes.yml
+@elasticsearch
 
 Feature: Check website shipping tax for orders
   In order to manage usage of shipping tax by website configuration
