@@ -23,7 +23,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_15';
+        return 'v1_16';
     }
 
     /**

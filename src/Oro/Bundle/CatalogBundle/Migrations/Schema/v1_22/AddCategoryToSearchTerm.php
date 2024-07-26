@@ -25,12 +25,18 @@ class AddCategoryToSearchTerm implements Migration, ExtendExtensionAwareInterfac
     public function up(Schema $schema, QueryBag $queries): void
     {
         $owningSideTable = $schema->getTable('oro_website_search_search_term');
+        $associationName = 'redirectCategory';
+        $relationName = $this->extendExtension->getNameGenerator()->generateRelationColumnName($associationName, '_id');
+        if ($owningSideTable->hasColumn($relationName)) {
+            return;
+        }
+
         $inverseSideTable = $schema->getTable('oro_catalog_category');
 
         $this->extendExtension->addManyToOneRelation(
             $schema,
             $owningSideTable,
-            'redirectCategory',
+            $associationName,
             $inverseSideTable,
             'id',
             [

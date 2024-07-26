@@ -284,18 +284,24 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($context);
         $this->strategy->setEntityName(Product::class);
 
+        $shortDescription = $this->getProductShortDescription(null, 'new value', 'es');
+        $expectedShortDescriptions = array_merge(
+            $this->getShortDescriptionsByProduct(LoadProductData::PRODUCT_1),
+            [$shortDescription]
+        );
+
         $entity = new Product();
         $entity->setSku('product-1');
-        $entity->addShortDescription($this->getProductShortDescription(null, 'new value', 'es'));
+        $entity->addShortDescription($shortDescription);
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
 
         $this->assertEquals([], $context->getErrors());
         $this->assertNotEmpty($result);
-
-        $this->assertEquals('new value', $result->getShortDescriptions()->first()->getText());
-        $this->assertNull($result->getShortDescriptions()->first()->getFallback());
+        $this->assertEquals($expectedShortDescriptions, $result->getShortDescriptions()->toArray());
+        $this->assertEquals($result->getShortDescriptions()->last(), $shortDescription);
+        $this->assertNull($result->getShortDescriptions()->last()->getFallback());
     }
 
     public function testNewFallback(): void
@@ -310,18 +316,24 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($context);
         $this->strategy->setEntityName(Product::class);
 
+        $shortDescription = $this->getProductShortDescription(FallbackType::PARENT_LOCALIZATION, null, 'es');
+        $expectedShortDescriptions = array_merge(
+            $this->getShortDescriptionsByProduct(LoadProductData::PRODUCT_1),
+            [$shortDescription]
+        );
+
         $entity = new Product();
         $entity->setSku('product-1');
-        $entity->addShortDescription($this->getProductShortDescription(FallbackType::PARENT_LOCALIZATION, null, 'es'));
+        $entity->addShortDescription($shortDescription);
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
 
         $this->assertEquals([], $context->getErrors());
         $this->assertNotEmpty($result);
-
-        $this->assertEquals(FallbackType::PARENT_LOCALIZATION, $result->getShortDescriptions()->first()->getFallback());
-        $this->assertNull($result->getShortDescriptions()->first()->getText());
+        $this->assertEquals($expectedShortDescriptions, $result->getShortDescriptions()->toArray());
+        $this->assertEquals($result->getShortDescriptions()->last(), $shortDescription);
+        $this->assertEquals(FallbackType::PARENT_LOCALIZATION, $result->getShortDescriptions()->last()->getFallback());
     }
 
     public function testUpdateText(): void
@@ -336,23 +348,24 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($context);
         $this->strategy->setEntityName(Product::class);
 
+        $shortDescription = $this->getProductShortDescription(null, 'product-1.shortDescriptions.en_CA_new', 'en_CA');
+        $expectedShortDescriptions = $this->getShortDescriptionsByProduct(LoadProductData::PRODUCT_1);
+
         $entity = new Product();
         $entity->setSku('product-1');
-        $entity->addShortDescription(
-            $this->getProductShortDescription(null, 'product-1.shortDescriptions.en_CA_new', 'en_CA')
-        );
+        $entity->addShortDescription($shortDescription);
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
 
         $this->assertEquals([], $context->getErrors());
         $this->assertNotEmpty($result);
-
+        $this->assertEquals($expectedShortDescriptions, $result->getShortDescriptions()->toArray());
+        $this->assertNull($result->getShortDescriptions()->last()->getFallback());
         $this->assertEquals(
             'product-1.shortDescriptions.en_CA_new',
-            $result->getShortDescriptions()->first()->getText()
+            $result->getShortDescriptions()->last()->getText()
         );
-        $this->assertNull($result->getShortDescriptions()->first()->getFallback());
     }
 
     public function testUpdateFallback(): void
@@ -367,21 +380,21 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($context);
         $this->strategy->setEntityName(Product::class);
 
+        $shortDescription = $this->getProductShortDescription(FallbackType::SYSTEM, null, 'es');
+        $expectedShortDescriptions = $this->getShortDescriptionsByProduct(LoadProductData::PRODUCT_2);
+
         $entity = new Product();
         $entity->setSku('product-2');
-        $entity->addShortDescription($this->getProductShortDescription(FallbackType::SYSTEM, null, 'es'));
+        $entity->addShortDescription($shortDescription);
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
 
         $this->assertEquals([], $context->getErrors());
         $this->assertNotEmpty($result);
-
-        $this->assertEquals(
-            FallbackType::SYSTEM,
-            $result->getShortDescriptions()->first()->getFallback()
-        );
-        $this->assertNull($result->getShortDescriptions()->first()->getText());
+        $this->assertEquals($expectedShortDescriptions, $result->getShortDescriptions()->toArray());
+        $this->assertEquals(FallbackType::SYSTEM, $result->getShortDescriptions()->last()->getFallback());
+        $this->assertNull($result->getShortDescriptions()->last()->getText());
     }
 
     public function testSwitchTextToFallback(): void
@@ -396,21 +409,24 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($context);
         $this->strategy->setEntityName(Product::class);
 
+        $shortDescription = $this->getProductShortDescription(FallbackType::SYSTEM, null, 'es');
+        $expectedShortDescriptions = array_merge(
+            $this->getShortDescriptionsByProduct(LoadProductData::PRODUCT_1),
+            [$shortDescription]
+        );
+
         $entity = new Product();
         $entity->setSku('product-1');
-        $entity->addShortDescription($this->getProductShortDescription(FallbackType::SYSTEM, null, 'es'));
+        $entity->addShortDescription($shortDescription);
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
 
         $this->assertEquals([], $context->getErrors());
         $this->assertNotEmpty($result);
-
-        $this->assertEquals(
-            FallbackType::SYSTEM,
-            $result->getShortDescriptions()->first()->getFallback()
-        );
-        $this->assertNull($result->getShortDescriptions()->first()->getText());
+        $this->assertEquals($expectedShortDescriptions, $result->getShortDescriptions()->toArray());
+        $this->assertEquals(FallbackType::SYSTEM, $result->getShortDescriptions()->last()->getFallback());
+        $this->assertNull($result->getShortDescriptions()->last()->getText());
     }
 
     public function testSwitchFallbackToText(): void
@@ -425,21 +441,21 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($context);
         $this->strategy->setEntityName(Product::class);
 
+        $shortDescription = $this->getProductShortDescription(null, 'text', 'es');
+        $expectedShortDescriptions = $this->getShortDescriptionsByProduct(LoadProductData::PRODUCT_2);
+
         $entity = new Product();
         $entity->setSku('product-2');
-        $entity->addShortDescription($this->getProductShortDescription(null, 'text', 'es'));
+        $entity->addShortDescription($shortDescription);
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
 
         $this->assertEquals([], $context->getErrors());
         $this->assertNotEmpty($result);
-
-        $this->assertEquals(
-            'text',
-            $result->getShortDescriptions()->first()->getText()
-        );
-        $this->assertNull($result->getShortDescriptions()->first()->getFallback());
+        $this->assertEquals($expectedShortDescriptions, $result->getShortDescriptions()->toArray());
+        $this->assertEquals('text', $result->getShortDescriptions()->last()->getText());
+        $this->assertNull($result->getShortDescriptions()->last()->getFallback());
     }
 
     public function testBothFallbackAndValueWithValuesAreValid(): void
@@ -454,18 +470,21 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($context);
         $this->strategy->setEntityName(Product::class);
 
+        $shortDescription = $this->getProductShortDescription(FallbackType::SYSTEM, 'text', 'es');
+        $expectedShortDescriptions = $this->getShortDescriptionsByProduct(LoadProductData::PRODUCT_2);
+
         $entity = new Product();
         $entity->setSku('product-2');
-        $entity->addShortDescription($this->getProductShortDescription(FallbackType::SYSTEM, 'text', 'es'));
+        $entity->addShortDescription($shortDescription);
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
 
         $this->assertEquals([], $context->getErrors());
         $this->assertNotEmpty($result);
-
-        $this->assertNotNull($result->getShortDescriptions()->first()->getFallback());
-        $this->assertNotNull($result->getShortDescriptions()->first()->getText());
+        $this->assertEquals($expectedShortDescriptions, $result->getShortDescriptions()->toArray());
+        $this->assertNotNull($result->getShortDescriptions()->last()->getFallback());
+        $this->assertNotNull($result->getShortDescriptions()->last()->getText());
     }
 
     public function testBothFallbackAndValueWithoutValuesAreValid(): void
@@ -480,17 +499,28 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($context);
         $this->strategy->setEntityName(Product::class);
 
+        $shortDescription = $this->getProductShortDescription(null, null, 'es');
+        $expectedShortDescriptions = $this->getShortDescriptionsByProduct(LoadProductData::PRODUCT_2);
+
         $entity = new Product();
         $entity->setSku('product-2');
-        $entity->addShortDescription($this->getProductShortDescription(null, null, 'es'));
+        $entity->addShortDescription($shortDescription);
 
         /** @var Product $result */
         $result = $this->strategy->process($entity);
 
         $this->assertEquals([], $context->getErrors());
         $this->assertNotEmpty($result);
+        $this->assertEquals($expectedShortDescriptions, $result->getShortDescriptions()->toArray());
+        $this->assertNull($result->getShortDescriptions()->last()->getFallback());
+        $this->assertNull($result->getShortDescriptions()->last()->getText());
+    }
 
-        $this->assertNull($result->getShortDescriptions()->first()->getFallback());
-        $this->assertNull($result->getShortDescriptions()->first()->getText());
+    private function getShortDescriptionsByProduct(string $reference): array
+    {
+        /** @var Product $databaseProduct */
+        $databaseProduct = $this->getReference($reference);
+
+        return $databaseProduct->getShortDescriptions()->toArray();
     }
 }

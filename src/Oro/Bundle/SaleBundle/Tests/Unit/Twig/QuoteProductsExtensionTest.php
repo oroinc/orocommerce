@@ -12,22 +12,22 @@ use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
-use Oro\Bundle\RFPBundle\Entity\Request;
-use Oro\Bundle\RFPBundle\Entity\RequestProduct;
-use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
-use Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem;
-use Oro\Bundle\RFPBundle\Twig\RequestProductsExtension;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Twig\QuoteProductsExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class RequestProductsExtensionTest extends TestCase
+class QuoteProductsExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
     private LocalizationHelper|MockObject $localizedHelper;
 
-    private RequestProductsExtension $extension;
+    private QuoteProductsExtension $extension;
 
     protected function setUp(): void
     {
@@ -40,7 +40,7 @@ class RequestProductsExtensionTest extends TestCase
                 if ($entity) {
                     return $entity->getDefaultName() ?? 'Item Sku';
                 } else {
-                    return 'Item Name';
+                    return null;
                 }
             });
 
@@ -49,13 +49,13 @@ class RequestProductsExtensionTest extends TestCase
             ->add(EntityNameResolver::class, $entityNameResolver)
             ->getContainer($this);
 
-        $this->extension = new RequestProductsExtension($container);
+        $this->extension = new QuoteProductsExtension($container);
     }
 
     /**
-     * @dataProvider getRequestProductsDataProvider
+     * @dataProvider getQuoteProductsDataProvider
      */
-    public function testGetRequestProducts(Request $request, array $expectedResult): void
+    public function testGetQuoteProducts(Quote $quote, array $expectedResult): void
     {
         $this->localizedHelper->expects(self::any())
             ->method('getLocalizedValue')
@@ -63,21 +63,22 @@ class RequestProductsExtensionTest extends TestCase
 
         self::assertEquals(
             $expectedResult,
-            self::callTwigFunction($this->extension, 'rfp_products', [$request])
+            self::callTwigFunction($this->extension, 'quote_products', [$quote])
         );
     }
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function getRequestProductsDataProvider(): array
+    public function getQuoteProductsDataProvider(): array
     {
         $organization = (new Organization())->setName('Oro');
 
         $sampleCurrency = 'sampleCurrency';
         $sample1Sku = 'sample1Sku';
-        $sample1Name = 'Sample 1 Name';
+        $sample1Name = 'Sample 1 Name 1';
         $sample1Comment1 = 'sample 1 comment 1';
+        $sample1CustomerComment1 = 'sample 1 customer comment 1';
         $sample1Quantity1 = 1;
         $sample1Quantity2 = 5;
         $sample1Price1 = Price::create(10, $sampleCurrency);
@@ -86,6 +87,7 @@ class RequestProductsExtensionTest extends TestCase
         $sample1Unit2 = 'sample1Unit2';
 
         $sample2Comment1 = 'sample 2 comment 1';
+        $sample2CustomerComment1 = 'sample 2 customer comment 1';
         $sample2Quantity1 = 1;
         $sample2Price1 = Price::create(12, $sampleCurrency);
         $sample2Unit1 = 'sample2Unit1';
@@ -93,6 +95,7 @@ class RequestProductsExtensionTest extends TestCase
         $sample3Sku = 'sample3Sku';
         $sample3Name = 'Sample 3 Name';
         $sample3Comment1 = 'sample 3 comment 1';
+        $sample3CustomerComment1 = 'sample 3 Customer Comment 1';
         $sample3Quantity1 = 20;
         $sample3Price1 = Price::create(15, $sampleCurrency);
         $sample3Unit1 = 'sample3Unit1';
@@ -100,6 +103,7 @@ class RequestProductsExtensionTest extends TestCase
         $productKit1Name = 'Product Kit 1 Name';
         $productKit1Sku = 'productKit1Sku';
         $productKit1Comment1 = 'Product Kit 1 comment 1';
+        $productKit1CustomerComment1 = 'Product Kit 1 customer comment 1';
         $productKit1Unit = (new ProductUnit())->setCode('item');
 
         $sample1Product = (new ProductStub())
@@ -112,21 +116,23 @@ class RequestProductsExtensionTest extends TestCase
             ->setSku($productKit1Sku)
             ->setOrganization($organization);
 
-        $sample1RequestProductItem1 = (new RequestProductItem())
+        $sample1quoteProductOffer1 = (new QuoteProductOffer())
             ->setQuantity($sample1Quantity1)
             ->setPrice($sample1Price1)
             ->setProductUnitCode($sample1Unit1);
 
-        $sample1RequestProductItem2 = (new RequestProductItem())
+        $sample1quoteProductOffer2 = (new QuoteProductOffer())
             ->setQuantity($sample1Quantity2)
             ->setPrice($sample1Price2)
             ->setProductUnitCode($sample1Unit2);
 
-        $sample1RequestProduct = (new RequestProduct())
+        $sample1QuoteProduct = (new QuoteProduct())
             ->setProduct($sample1Product)
+            ->setProductSku($sample1Product->getSku())
             ->setComment($sample1Comment1)
-            ->addRequestProductItem($sample1RequestProductItem1)
-            ->addRequestProductItem($sample1RequestProductItem2);
+            ->setCommentCustomer($sample1CustomerComment1)
+            ->addQuoteProductOffer($sample1quoteProductOffer1)
+            ->addQuoteProductOffer($sample1quoteProductOffer2);
 
         $kitItemLabel = 'Kit Item Label';
         $kitItemLabels = [(new ProductKitItemLabel())->setString($kitItemLabel)];
@@ -139,83 +145,101 @@ class RequestProductsExtensionTest extends TestCase
             $kitItem
         );
 
-        $productKit1RequestProduct = (new RequestProduct())
+        $productKit1QuoteProduct = (new QuoteProduct())
             ->setProduct($productKit1Product)
+            ->setProductSku($productKit1Product->getSku())
             ->setComment($productKit1Comment1)
-            ->addRequestProductItem($sample1RequestProductItem1)
-            ->addRequestProductItem($sample1RequestProductItem2)
+            ->setCommentCustomer($productKit1CustomerComment1)
+            ->addQuoteProductOffer($sample1quoteProductOffer1)
+            ->addQuoteProductOffer($sample1quoteProductOffer2)
             ->addKitItemLineItem($kitItemLineItem);
 
         $sample2Product = clone $sample1Product;
 
-        $sample2RequestProductItem1 = (new RequestProductItem())
+        $sample2QuoteProductOffer1 =  (new QuoteProductOffer())
             ->setQuantity($sample2Quantity1)
             ->setPrice($sample2Price1)
             ->setProductUnitCode($sample2Unit1);
 
-        $sample2RequestProduct = (new RequestProduct())
+        $sample2QuoteProduct = (new QuoteProduct())
             ->setProduct($sample2Product)
+            ->setProductSku($sample2Product->getSku())
             ->setComment($sample2Comment1)
-            ->addRequestProductItem($sample2RequestProductItem1);
+            ->setCommentCustomer($sample2CustomerComment1)
+            ->addQuoteProductOffer($sample2QuoteProductOffer1);
 
         $sample3Product = (new ProductStub())
             ->setNames([(new ProductName())->setString($sample3Name)])
             ->setSku($sample3Sku)
             ->setOrganization($organization);
 
-        $sample3RequestProductItem1 = (new RequestProductItem())
+        $sample3QuoteProductOffer1 = (new QuoteProductOffer())
             ->setQuantity($sample3Quantity1)
             ->setPrice($sample3Price1)
             ->setProductUnitCode($sample3Unit1);
 
-        $sample3RequestProduct = (new RequestProduct())
+        $sample3QuoteProduct = (new QuoteProduct())
             ->setProduct($sample3Product)
+            ->setProductSku($sample3Product->getSku())
             ->setComment($sample3Comment1)
-            ->addRequestProductItem($sample3RequestProductItem1);
+            ->setCommentCustomer($sample3CustomerComment1)
+            ->addQuoteProductOffer($sample3QuoteProductOffer1);
 
-        $request1 = (new Request())
-            ->addRequestProduct($sample1RequestProduct)
-            ->addRequestProduct($sample2RequestProduct)
-            ->addRequestProduct($sample3RequestProduct);
-
-        $sample4RequestProduct = (new RequestProduct())
+        $sample3NameFreeForm = 'Sample 3 Name FreeForm';
+        $sample5QuoteProduct = (new QuoteProduct())
+            ->setProductSku($sample3Product->getSku())
+            ->setFreeFormProduct($sample3NameFreeForm)
             ->setComment($sample3Comment1)
-            ->setProduct($sample3Product);
+            ->setCommentCustomer($sample3CustomerComment1);
 
-        $request2 = (new Request())
-            ->addRequestProduct($sample4RequestProduct);
+        $quote1 = (new Quote())
+            ->addQuoteProduct($sample1QuoteProduct)
+            ->addQuoteProduct($sample2QuoteProduct)
+            ->addQuoteProduct($sample3QuoteProduct)
+            ->addQuoteProduct($sample5QuoteProduct);
 
-        $request3 = new Request();
+        $sample4QuoteProduct = (new QuoteProduct())
+            ->setProduct($sample3Product)
+            ->setProductSku($sample3Product->getSku())
+            ->setComment($sample3Comment1)
+            ->setCommentCustomer($sample3CustomerComment1);
 
-        $requestWithProductKit = (new Request())
-            ->addRequestProduct($sample1RequestProduct)
-            ->addRequestProduct($productKit1RequestProduct);
+        $quote2 = (new Quote())
+            ->addQuoteProduct($sample4QuoteProduct);
+
+        $quote3 = new Quote();
+
+        $quoteWithProductKit = (new Quote())
+            ->addQuoteProduct($sample1QuoteProduct)
+            ->addQuoteProduct($productKit1QuoteProduct);
 
         return [
-            'when no request products' => [
-                'request' => $request3,
+            'when no quote products' => [
+                'quote' => $quote3,
                 'expectedResult' => [],
             ],
-            'when no request product items' => [
-                'request' => $request2,
+            'when no quote product offers' => [
+                'quote' => $quote2,
                 'expectedResult' => [
                     [
                         'name' => $sample3Name,
                         'sku' => $sample3Sku,
                         'comment' => $sample3Comment1,
+                        'commentCustomer' => $sample3CustomerComment1,
                         'items' => [],
                         'kitItemLineItems' => [],
                         'sellerName' => 'Oro'
                     ],
                 ],
             ],
-            'when requested same products with different quantities' => [
-                'request' => $request1,
+            'when quote with different quote offers' => [
+                'quote' => $quote1,
                 'expectedResult' => [
                     [
                         'name' => $sample1Name,
                         'sku' => $sample1Sku,
                         'comment' => $sample1Comment1,
+                        'commentCustomer' => $sample1CustomerComment1,
                         'items' => [
                             [
                                 'quantity' => $sample1Quantity1,
@@ -235,6 +259,7 @@ class RequestProductsExtensionTest extends TestCase
                         'name' => $sample1Name,
                         'sku' => $sample1Sku,
                         'comment' => $sample2Comment1,
+                        'commentCustomer' => $sample2CustomerComment1,
                         'items' => [
                             [
                                 'quantity' => $sample2Quantity1,
@@ -249,6 +274,7 @@ class RequestProductsExtensionTest extends TestCase
                         'name' => $sample3Name,
                         'sku' => $sample3Sku,
                         'comment' => $sample3Comment1,
+                        'commentCustomer' => $sample3CustomerComment1,
                         'items' => [
                             [
                                 'quantity' => $sample3Quantity1,
@@ -259,15 +285,25 @@ class RequestProductsExtensionTest extends TestCase
                         'kitItemLineItems' => [],
                         'sellerName' => 'Oro'
                     ],
+                    [
+                        'name' => $sample3NameFreeForm,
+                        'sku' => $sample3Sku,
+                        'comment' => $sample3Comment1,
+                        'commentCustomer' => $sample3CustomerComment1,
+                        'items' => [],
+                        'kitItemLineItems' => [],
+                        'sellerName' => null,
+                    ],
                 ],
             ],
-            'request with product kit' => [
-                'request' => $requestWithProductKit,
+            'quote with product kit' => [
+                'quote' => $quoteWithProductKit,
                 'expectedResult' => [
                     [
                         'name' => $sample1Name,
                         'sku' => $sample1Sku,
                         'comment' => $sample1Comment1,
+                        'commentCustomer' => $sample1CustomerComment1,
                         'items' => [
                             [
                                 'quantity' => $sample1Quantity1,
@@ -287,6 +323,7 @@ class RequestProductsExtensionTest extends TestCase
                         'name' => $productKit1Name,
                         'sku' => $productKit1Sku,
                         'comment' => $productKit1Comment1,
+                        'commentCustomer' => $productKit1CustomerComment1,
                         'items' => [
                             [
                                 'quantity' => $sample1Quantity1,
@@ -320,8 +357,8 @@ class RequestProductsExtensionTest extends TestCase
         ?ProductUnit $productUnit,
         ?ProductStub $product,
         ?ProductKitItem $kitItem
-    ): RequestProductKitItemLineItem {
-        return (new RequestProductKitItemLineItem())
+    ): QuoteProductKitItemLineItem {
+        return (new QuoteProductKitItemLineItem())
             ->setProduct($product)
             ->setKitItem($kitItem)
             ->setProductUnit($productUnit)

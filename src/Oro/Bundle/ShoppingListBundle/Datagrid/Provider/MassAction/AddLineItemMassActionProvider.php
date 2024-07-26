@@ -132,9 +132,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
                     ],
                     'alias' => 'add_products_to_new_shopping_list_mass_action',
                 ],
-                'launcherOptions' => [
-                    'iconClassName' => 'fa-plus'
-                ],
+                'icon' => 'plus',
                 'attributes' => [
                     'data-order' => 'new'
                 ]

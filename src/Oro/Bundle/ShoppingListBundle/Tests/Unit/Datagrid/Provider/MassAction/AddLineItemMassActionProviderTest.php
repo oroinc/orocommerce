@@ -171,9 +171,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                             'alias' => 'add_products_to_new_shopping_list_mass_action',
                         ],
                         'frontend_handle' => 'shopping-list-create',
-                        'launcherOptions' => [
-                            'iconClassName' => 'fa-plus',
-                        ],
+                        'icon' => 'plus',
                         'attributes' => [
                             'data-order' => 'new',
                         ],
@@ -253,9 +251,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                             'alias' => 'add_products_to_new_shopping_list_mass_action',
                         ],
                         'frontend_handle' => 'shopping-list-create',
-                        'launcherOptions' => [
-                            'iconClassName' => 'fa-plus',
-                        ],
+                        'icon' => 'plus',
                         'attributes' => [
                             'data-order' => 'new',
                         ],
@@ -347,9 +343,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
                             'alias' => 'add_products_to_new_shopping_list_mass_action',
                         ],
                         'frontend_handle' => 'shopping-list-create',
-                        'launcherOptions' => [
-                            'iconClassName' => 'fa-plus',
-                        ],
+                        'icon' => 'plus',
                         'attributes' => [
                             'data-order' => 'new',
                         ],

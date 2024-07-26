@@ -1,23 +1,23 @@
 <?php
 
-namespace Oro\Bundle\RFPBundle\Twig;
+namespace Oro\Bundle\SaleBundle\Twig;
 
 use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\RFPBundle\Entity\Request;
-use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 /**
- * Provides a Twig function to retrieve products from a request for quote:
- *   - rfp_products
+ * Provides a Twig function to retrieve products from a quote:
+ *   - quote_products
  */
-class RequestProductsExtension extends AbstractExtension implements ServiceSubscriberInterface
+class QuoteProductsExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     protected ContainerInterface $container;
 
@@ -50,35 +50,36 @@ class RequestProductsExtension extends AbstractExtension implements ServiceSubsc
      */
     public function getFunctions()
     {
-        return [new TwigFunction('rfp_products', [$this, 'getRequestProducts'])];
+        return [new TwigFunction('quote_products', [$this, 'getQuoteProducts'])];
     }
 
     /**
-     * @param Request $request
+     * @param Quote $request
      *
      * @return array
      */
-    public function getRequestProducts(Request $request)
+    public function getQuoteProducts(Quote $request)
     {
         $result = [];
-        foreach ($request->getRequestProducts() as $requestProduct) {
-            $product = $requestProduct->getProduct();
-            $data['name'] = $this->getProductName($product) ;
-            $data['sku'] = $requestProduct->getProductSku();
-            $data['comment'] = $requestProduct->getComment();
+        foreach ($request->getQuoteProducts() as $quoteProduct) {
+            $product = $quoteProduct->getProduct();
+            $data['name'] = $this->getProductName($product) ?? $quoteProduct->getFreeFormProduct();
+            $data['sku'] = $quoteProduct->getProductSku();
+            $data['comment'] = $quoteProduct->getComment();
+            $data['commentCustomer'] = $quoteProduct->getCommentCustomer();
+            $data['sellerName'] = $quoteProduct->getProduct()?->getOrganization()->getName();
 
             $items = [];
-            foreach ($requestProduct->getRequestProductItems() as $productItem) {
+            foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
                 $items[] = [
-                    'quantity' => $productItem->getQuantity(),
-                    'price' => $productItem->getPrice(),
-                    'unit' => $productItem->getProductUnitCode()
+                    'quantity' => $quoteProductOffer->getQuantity(),
+                    'price' => $quoteProductOffer->getPrice(),
+                    'unit' => $quoteProductOffer->getProductUnitCode()
                 ];
             }
 
-            $data['sellerName'] = $requestProduct->getProduct()->getOrganization()->getName();
             $data['items'] = $items;
-            $data['kitItemLineItems'] = $this->getKitItemLineItemsData($requestProduct);
+            $data['kitItemLineItems'] = $this->getKitItemLineItemsData($quoteProduct);
 
             $result[] = $data;
         }
@@ -86,10 +87,10 @@ class RequestProductsExtension extends AbstractExtension implements ServiceSubsc
         return $result;
     }
 
-    protected function getKitItemLineItemsData(RequestProduct $requestProduct): array
+    protected function getKitItemLineItemsData(QuoteProduct $quoteProduct): array
     {
         $kitItemLineItemsData = [];
-        foreach ($requestProduct->getKitItemLineItems() as $kitItemLineItem) {
+        foreach ($quoteProduct->getKitItemLineItems() as $kitItemLineItem) {
             $kitItemLineItemData['kitItemLabel'] = $this->getLocalizationHelper()->getLocalizedValue(
                 $kitItemLineItem->getKitItem()->getLabels()
             );

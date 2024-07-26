@@ -19,13 +19,17 @@ class LoadGuestAccessEmailTemplate extends AbstractHashEmailMigration implements
 
     public function getVersion(): string
     {
-        return '1.1';
+        return '1.2';
     }
 
     protected function getEmailHashesToUpdate(): array
     {
         return [
-            'quote_email_link_guest' => ['6b14248b184799bf3849141ec800ff5a'], // 1.0
+            'quote_email_link_guest' => [
+                '6b14248b184799bf3849141ec800ff5a', // 1.0
+                '20e048050b348dae27b09e99b1e3005b', // 1.1
+                '20e048050b348dae27b09e99b1e3005b', // 1.2
+            ],
         ];
     }
 }

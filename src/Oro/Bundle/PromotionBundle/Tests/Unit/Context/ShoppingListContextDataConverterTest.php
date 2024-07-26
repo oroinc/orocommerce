@@ -154,6 +154,9 @@ class ShoppingListContextDataConverterTest extends \PHPUnit\Framework\TestCase
                 ContextDataConverterInterface::SUBTOTAL => $subtotalAmount,
                 ContextDataConverterInterface::CURRENCY => $this->getCurrency(),
                 ContextDataConverterInterface::CRITERIA => $this->getScopeCriteria($customer, $customerGroup, $website),
+                ContextDataConverterInterface::SHIPPING_COST => null,
+                ContextDataConverterInterface::PAYMENT_METHOD => null,
+                ContextDataConverterInterface::PAYMENT_METHODS => [null]
             ],
             $this->converter->getContextData($entity)
         );

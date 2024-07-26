@@ -14,7 +14,7 @@ Feature: Unable to add hidden product to shopping list
     And I signed in as AmandaRCole@example.org on the store frontend
     And type "PSKU1" in "search"
     And I click "Search Button"
-    And I should see "Product1"
+    And I should see "Product1" and continue checking the condition is met for maximum 15 seconds
     And I click "Product1"
 
   Scenario: Set product hidden
