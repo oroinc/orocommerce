@@ -14,7 +14,7 @@ layout:
             parentId: __form_summary
             prepend: true
             options:
-                icon: times
+                icon: close
                 attr:
                     title: oro.frontend.shoppinglist.matrix_grid_order.clear.tooltip
                     data-role: 'clear'
