@@ -53,23 +53,35 @@ class Purchase extends TransitionServiceAbstract
             return false;
         }
 
-        if ($this->isPurchaseViaDirectUrl()) {
-            if (!$this->baseContinueTransition->isPreConditionAllowed($workflowItem, $errors)) {
-                return false;
-            }
+        if ($this->isPurchaseViaDirectUrl()
+            && !$this->isPurchaseViaDirectUrlAllowed($checkout, $workflowItem, $errors)
+        ) {
+            return false;
+        }
 
-            if (!$this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors)) {
-                return false;
-            }
+        return true;
+    }
 
-            $paymentContext = $this->paymentContextProvider->getContext($checkout);
-            if (!$this->hasApplicablePaymentMethods($paymentContext, $errors)) {
-                return false;
-            }
+    private function isPurchaseViaDirectUrlAllowed(
+        Checkout $checkout,
+        WorkflowItem $workflowItem,
+        Collection $errors
+    ): bool {
+        if (!$this->baseContinueTransition->isPreConditionAllowed($workflowItem, $errors)) {
+            return false;
+        }
 
-            if (!$this->isOrderCreateAllowedByEventListeners($workflowItem, $errors)) {
-                return false;
-            }
+        if (!$this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors)) {
+            return false;
+        }
+
+        $paymentContext = $this->paymentContextProvider->getContext($checkout);
+        if (!$this->hasApplicablePaymentMethods($paymentContext, $errors)) {
+            return false;
+        }
+
+        if (!$this->isOrderCreateAllowedByEventListeners($workflowItem, $errors)) {
+            return false;
         }
 
         return true;

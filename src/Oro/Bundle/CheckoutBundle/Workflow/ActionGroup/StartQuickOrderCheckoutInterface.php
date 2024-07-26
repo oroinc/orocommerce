@@ -4,6 +4,9 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\ActionGroup;
 
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
+/**
+ * Start checkout from quick order form.
+ */
 interface StartQuickOrderCheckoutInterface
 {
     /**
