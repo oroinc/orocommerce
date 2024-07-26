@@ -55,7 +55,7 @@
     {% set prevArrow %}
         <div class="slick-btn-wrapper slick-arrow-prev">
             <button type="button" class="slick-arrow-btn" aria-label="{{ 'oro.product.frontend.gallery.prev'|trans }}">
-                {{ renderIcon.icon({name: oro_is_rtl_mode() ? 'chevron-right' : 'chevron-left', extraClass: 'theme-icon--medium'})}}
+                {{ renderIcon.icon({name: 'chevron-left', extraClass: 'theme-icon--medium'})}}
             </button>
         </div>
     {% endset %}
@@ -63,7 +63,7 @@
     {% set nextArrow %}
         <div class="slick-btn-wrapper slick-arrow-next">
             <button type="button" class="slick-arrow-btn"  aria-label="{{ 'oro.product.frontend.gallery.next'|trans }}">
-                {{ renderIcon.icon({name: oro_is_rtl_mode() ? 'chevron-left' : 'chevron-right', extraClass: 'theme-icon--medium'})}}
+                {{ renderIcon.icon({name: 'chevron-right', extraClass: 'theme-icon--medium'})}}
             </button>
         </div>
     {% endset %}
