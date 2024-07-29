@@ -12,9 +12,12 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
  */
 class TaxValueToResultTransformer implements TaxTransformerInterface
 {
-    public function __construct(
-        private TaxValueManager $taxValueManager
-    ) {
+    /** @var TaxValueManager */
+    protected $taxValueManager;
+
+    public function __construct(TaxValueManager $taxValueManager)
+    {
+        $this->taxValueManager = $taxValueManager;
     }
 
     /**

@@ -20,12 +20,28 @@ class PaymentTransactionProvider
 {
     use LoggerAwareTrait;
 
+    /** @var DoctrineHelper */
+    protected $doctrineHelper;
+
+    /** @var CustomerUserProvider */
+    protected $customerUserProvider;
+
+    /** @var string */
+    protected $paymentTransactionClass;
+
+    /** @var EventDispatcherInterface */
+    protected $dispatcher;
+
     public function __construct(
-        private DoctrineHelper $doctrineHelper,
-        private CustomerUserProvider $customerUserProvider,
-        private EventDispatcherInterface $dispatcher,
-        private string $paymentTransactionClass
+        DoctrineHelper $doctrineHelper,
+        CustomerUserProvider $customerUserProvider,
+        EventDispatcherInterface $dispatcher,
+        string $paymentTransactionClass
     ) {
+        $this->doctrineHelper = $doctrineHelper;
+        $this->customerUserProvider = $customerUserProvider;
+        $this->paymentTransactionClass = $paymentTransactionClass;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -34,11 +50,8 @@ class PaymentTransactionProvider
      * @param array $orderBy
      * @return PaymentTransaction|null
      */
-    public function getPaymentTransaction(
-        object $object,
-        array $criteria = [],
-        array $orderBy = []
-    ): ?PaymentTransaction {
+    public function getPaymentTransaction($object, array $criteria = [], array $orderBy = []): ?PaymentTransaction
+    {
         $paymentTransactions = $this->getPaymentTransactions($object, $criteria, $orderBy, 1);
 
         return reset($paymentTransactions) ?: null;
@@ -53,7 +66,7 @@ class PaymentTransactionProvider
      * @return PaymentTransaction[]
      */
     public function getPaymentTransactions(
-        object $object,
+        $object,
         array $criteria = [],
         array $orderBy = [],
         int $limit = null,
@@ -80,7 +93,7 @@ class PaymentTransactionProvider
      * @param object $object
      * @return array|string[]
      */
-    public function getPaymentMethods(object $object): array
+    public function getPaymentMethods($object): array
     {
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
         if (!$identifier) {
@@ -103,7 +116,7 @@ class PaymentTransactionProvider
      * @return null|PaymentTransaction
      */
     public function getActiveAuthorizePaymentTransaction(
-        object $object,
+        $object,
         float $amount,
         string $currency,
         ?string $paymentMethod = null

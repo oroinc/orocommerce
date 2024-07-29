@@ -19,15 +19,27 @@ use Symfony\Contracts\Cache\CacheInterface;
 class TaxManager
 {
     protected array $transformers = [];
+    protected TaxFactory $taxFactory;
+    protected TaxEventDispatcher $eventDispatcher;
+    protected TaxValueManager $taxValueManager;
+    protected TaxationSettingsProvider $settingsProvider;
+    protected CacheInterface $cacheProvider;
+    protected ObjectCacheKeyGenerator $objectCacheKeyGenerator;
 
     public function __construct(
-        private TaxFactory $taxFactory,
-        private TaxEventDispatcher $eventDispatcher,
-        private TaxValueManager $taxValueManager,
-        private TaxationSettingsProvider $settingsProvider,
-        private CacheInterface $cacheProvider,
-        private ObjectCacheKeyGenerator $objectCacheKeyGenerator
+        TaxFactory $taxFactory,
+        TaxEventDispatcher $eventDispatcher,
+        TaxValueManager $taxValueManager,
+        TaxationSettingsProvider $settingsProvider,
+        CacheInterface $cacheProvider,
+        ObjectCacheKeyGenerator $objectCacheKeyGenerator
     ) {
+        $this->taxFactory = $taxFactory;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->taxValueManager = $taxValueManager;
+        $this->settingsProvider = $settingsProvider;
+        $this->cacheProvider = $cacheProvider;
+        $this->objectCacheKeyGenerator = $objectCacheKeyGenerator;
     }
 
     public function addTransformer(string $className, TaxTransformerInterface $transformer): void
@@ -73,12 +85,6 @@ class TaxManager
         return $this->getTaxable($object)->getResult();
     }
 
-    /**
-     * @param object $object
-     * @param bool $includeItems
-     * @return Result|false|null
-     * @throws TaxationDisabledException
-     */
     public function saveTax(object $object, bool $includeItems = false): Result|null|false
     {
         $this->throwExceptionIfTaxationDisabled();

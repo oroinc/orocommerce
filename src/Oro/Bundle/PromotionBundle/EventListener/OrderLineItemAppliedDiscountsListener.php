@@ -19,12 +19,36 @@ class OrderLineItemAppliedDiscountsListener
 {
     use FeatureCheckerHolderTrait;
 
+    /**
+     * @var TaxProviderRegistry
+     */
+    protected $taxProviderRegistry;
+
+    /**
+     * @var TaxationSettingsProvider
+     */
+    protected $taxationSettingsProvider;
+
+    /**
+     * @var LineItemSubtotalProvider
+     */
+    protected $lineItemSubtotalProvider;
+
+    /**
+     * @var AppliedDiscountsProvider
+     */
+    protected $appliedDiscountsProvider;
+
     public function __construct(
-        private TaxProviderRegistry $taxProviderRegistry,
-        private TaxationSettingsProvider $taxationSettingsProvider,
-        private LineItemSubtotalProvider $lineItemSubtotalProvider,
-        private AppliedDiscountsProvider $appliedDiscountsProvider
+        TaxProviderRegistry $taxProviderRegistry,
+        TaxationSettingsProvider $taxationSettingsProvider,
+        LineItemSubtotalProvider $lineItemSubtotalProvider,
+        AppliedDiscountsProvider $appliedDiscountsProvider
     ) {
+        $this->taxProviderRegistry = $taxProviderRegistry;
+        $this->taxationSettingsProvider = $taxationSettingsProvider;
+        $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
+        $this->appliedDiscountsProvider = $appliedDiscountsProvider;
     }
 
     public function onOrderEvent(OrderEvent $event): void
@@ -48,7 +72,12 @@ class OrderLineItemAppliedDiscountsListener
         $event->getData()->offsetSet('appliedDiscounts', $discounts);
     }
 
-    private function getDiscountWithTaxes(float $discountAmount, OrderLineItem $lineItem): array
+    /**
+     * @param float $discountAmount
+     * @param OrderLineItem $lineItem
+     * @return array
+     */
+    protected function getDiscountWithTaxes(float $discountAmount, OrderLineItem $lineItem)
     {
         $taxesRow = $this->getProvider()->getTax($lineItem)->getRow();
 
@@ -71,7 +100,12 @@ class OrderLineItemAppliedDiscountsListener
         ];
     }
 
-    private function getDiscountsWithoutTaxes(float $discountAmount, OrderLineItem $lineItem): array
+    /**
+     * @param float $discountAmount
+     * @param OrderLineItem $lineItem
+     * @return array
+     */
+    protected function getDiscountsWithoutTaxes(float $discountAmount, OrderLineItem $lineItem)
     {
         $rowTotalWithoutDiscount = $this->lineItemSubtotalProvider->getRowTotal($lineItem, $lineItem->getCurrency());
         $currency = $this->getLineItemCurrency($lineItem);

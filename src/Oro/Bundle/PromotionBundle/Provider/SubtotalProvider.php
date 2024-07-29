@@ -64,7 +64,7 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
      *
      * {@inheritDoc}
      */
-    public function getCachedSubtotal($entity): array|Subtotal
+    public function getCachedSubtotal($entity)
     {
         if (!$this->supportsCachedSubtotal($entity)) {
             throw new \RuntimeException(sprintf(
@@ -82,7 +82,7 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     /**
      * {@inheritDoc}
      */
-    public function isSupported($entity): bool
+    public function isSupported($entity)
     {
         return $this->isFeaturesEnabled() && $this->promotionExecutor->supports($entity);
     }
@@ -90,7 +90,7 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     /**
      * {@inheritDoc}
      */
-    public function supportsCachedSubtotal($entity): bool
+    public function supportsCachedSubtotal($entity)
     {
         return $entity instanceof Order && $entity->getId();
     }
