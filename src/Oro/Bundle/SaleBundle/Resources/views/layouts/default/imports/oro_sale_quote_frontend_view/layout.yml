@@ -74,9 +74,9 @@ layout:
                     options:
                         route_name: oro_sale_quote_frontend_index
                         text: oro.frontend.sale.quote.sections.back.label
-                        icon: angle-left
+                        icon: arrow-left
                         attr:
-                            class: 'link pull-left hide-on-print'
+                            class: 'btn btn--no-padding btn--text btn--outlined btn--size-small hide-on-print'
                         visible: '=data["acl"].isGranted("oro_sale_quote_frontend_view")'
                 quote_view_accept_button:
                     blockType: combined_buttons

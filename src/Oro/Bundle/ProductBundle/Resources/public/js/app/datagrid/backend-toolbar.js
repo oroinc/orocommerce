@@ -2,17 +2,17 @@ define(function(require) {
     'use strict';
 
     const _ = require('underscore');
-    const Toolbar = require('orodatagrid/js/datagrid/toolbar');
-    const BackendPagination = require('oroproduct/js/app/datagrid/backend-pagination-input');
+    const FrontendToolbar = require('orofrontend/js/datagrid/frontend-toolbar').default;
+    const BackendPaginationView = require('./backend-pagination-view').default;
     const BackendPageSize = require('oroproduct/js/app/datagrid/backend-page-size');
     const BackendSortingDropdown = require('oroproduct/js/app/datagrid/sorting/backend-dropdown');
 
-    const BackendToolbar = Toolbar.extend({
+    const BackendToolbar = FrontendToolbar.extend({
         /** @property */
         template: null,
 
         /** @property */
-        pagination: BackendPagination,
+        pagination: BackendPaginationView,
 
         /** @property */
         pageSize: BackendPageSize,

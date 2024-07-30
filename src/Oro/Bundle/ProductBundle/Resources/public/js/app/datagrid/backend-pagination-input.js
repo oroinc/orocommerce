@@ -72,7 +72,7 @@ define(function(require) {
                 return this;
             }
 
-            this.makeHandles();
+            PaginationInput.__super__.render.call(this);
 
             this.$el.find('[data-grid-pagination-pages]').text(totalPages);
             this.$el.find('[data-grid-pagination-records]').text(state.totalRecords);

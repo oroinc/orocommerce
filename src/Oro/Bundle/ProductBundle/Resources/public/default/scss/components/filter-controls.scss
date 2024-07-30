@@ -69,7 +69,6 @@
 
 @include breakpoint('mobile-big') {
     .toolbar-top {
-        .page-size,
         .oro-pagination {
             display: none;
         }

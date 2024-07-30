@@ -312,9 +312,9 @@ Feature: My Shopping List
       | CC33 | Product 33 Note 33 text | In Stock | 13  | pieces | $31.00 | $403.00  |
       | CC34 | Product 34 Note 34 text | In Stock | 13  | pieces | $31.00 | $403.00  |
       | CC35 | Product 35 Note 35 text | In Stock | 13  | pieces | $31.00 | $403.00  |
+    And I scroll to top
 
   Scenario: Check SKU filter
-    Given I reset grid
     When I filter SKU as contains "CC3"
     Then I should see following grid:
       | SKU  | Item                    |          | Qty | Unit   | Price  | Subtotal |
@@ -324,6 +324,7 @@ Feature: My Shopping List
       | CC33 | Product 33 Note 33 text | In Stock | 13  | pieces | $31.00 | $403.00  |
       | CC34 | Product 34 Note 34 text | In Stock | 13  | pieces | $31.00 | $403.00  |
       | CC35 | Product 35 Note 35 text | In Stock | 13  | pieces | $31.00 | $403.00  |
+    And I scroll to top
     When I reset grid
     And I filter SKU as contains "BB04"
     Then I should see following grid:
@@ -562,7 +563,7 @@ Feature: My Shopping List
       | CC26 | Product 26 Note 26 text                                  | In Stock     | 13  | pieces | $31.00 | $403.00                  |
 
   Scenario: Check Availability filter
-    Given I reset grid
+    Given I scroll to top
     When I click "Group Product Variants"
     And I check "Out of Stock" in Availability filter
     Then I should see following grid:
@@ -608,6 +609,7 @@ Feature: My Shopping List
       | BB15 | Product 15 Note 15 text                                  | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | BB17 | Product 17 Note 17 text                                  | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | BB19 | Product 19 Note 19 text                                  | Out of Stock | 11  | sets   | $29.00 | $319.00                  |
+    And I scroll to top
 
   Scenario: Check Quantity filter
     Given I reset grid
@@ -628,6 +630,7 @@ Feature: My Shopping List
       | BB15 | Product 15 Note 15 text                                  | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | BB16 | Product 16 Note 16 text                                  | In Stock     | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
       | BB17 | Product 17 Note 17 text                                  | Out of Stock | 9   | items  | $23.00 | $207.00 -$103.50 $103.50 |
+    And I scroll to top
 
   Scenario: Check Unit filter
     Given I reset grid
@@ -639,6 +642,7 @@ Feature: My Shopping List
       | BB18 | Product 18 Note 18 text                                  | In Stock     | 11  | sets | $29.00 | $319.00  |
       | BB19 | Product 19 Note 19 text                                  | Out of Stock | 11  | sets | $29.00 | $319.00  |
       | BB20 | Product 20 Note 20 text                                  | In Stock     | 11  | sets | $29.00 | $319.00  |
+    And I scroll to top
 
   Scenario: Check Image preview for configurable row
     Given I reset grid

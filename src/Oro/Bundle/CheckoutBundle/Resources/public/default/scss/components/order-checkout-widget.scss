@@ -10,6 +10,8 @@
     }
 
     &__container-wrapper {
+        padding-bottom: spacing('base');
+
         .dropdown-item {
             align-items: center;
         }
@@ -24,6 +26,10 @@
 
         border-radius: $base-ui-element-border-radius;
         background: $order-checkout-widget-container-background;
+
+        &--fixed-width {
+            width: $order-checkout-widget-container-fixed-width;
+        }
     }
 
     &__container-collapse {
@@ -86,6 +92,11 @@
 
     [data-toggle='tooltip'] {
         display: inline-block;
+    }
+
+    &-content {
+        display: flex;
+        justify-content: space-between;
     }
 }
 

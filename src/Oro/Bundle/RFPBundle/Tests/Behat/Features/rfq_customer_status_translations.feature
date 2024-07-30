@@ -27,7 +27,7 @@ Feature: RFQ customer status translations
     And I click view Request For Quote in grid
     And I click edit customer_status in grid
     And I fill "Entity Config Form" with:
-      | Option First | Submitted_DE |
+      | Option First | SUBMITTED_DE |
     And I save form
     Then I should see "Field saved" flash message
 
@@ -49,11 +49,11 @@ Feature: RFQ customer status translations
     And I click "Requests For Quote"
     Then I should see following grid:
       | PO Number | Status       |
-      | Test RFQ  | Submitted_DE |
+      | Test RFQ  | SUBMITTED_DE |
     And I select "English (United States)" localization
     Then I should see following grid:
       | PO Number | Status    |
-      | Test RFQ  | Submitted |
+      | Test RFQ  | SUBMITTED |
 
   Scenario: Check RFQ customer status field on backend
     Given I proceed as the Admin
@@ -61,7 +61,7 @@ Feature: RFQ customer status translations
     And I show column Customer Status in grid
     Then I should see following grid:
       | PO Number | Customer Status |
-      | Test RFQ  | Submitted_DE    |
+      | Test RFQ  | SUBMITTED_DE    |
     When I go to System / Configuration
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
@@ -85,4 +85,4 @@ Feature: RFQ customer status translations
     And I show column Customer Status in grid
     Then I should see following grid:
       | PO Number | Customer Status |
-      | Test RFQ  | Submitted_DE    |
+      | Test RFQ  | SUBMITTED_DE    |

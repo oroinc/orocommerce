@@ -1,0 +1,30 @@
+<% let oroui = _.macros('oroui') %>
+<% if ((state.totalPages || 1) > 1) { %>
+<div class="oro-pagination__pager oro-pagination__pager--stepper">
+    <% _.each(handles, function (handle) { %>
+        <% if (handle.type === types.pageTo) { %>
+            <button type="button" class="oro-pagination__<%- handle.type %> <%- handle.active ? 'oro-pagination__page-to--active' : '' %> oro-pagination__<%- handle.position %>" aria-label="<%- _.__('oro_frontend.datagrid.pagination.page_to', {page: handle.label}) %>" data-grid-pagination-trigger data-grid-pagination-page-to="<%- handle.label %>">
+                <%- handle.label %>
+            </button>
+        <% } else if (handle.type === types.inputPageTo) { %>
+            <input type="text"
+                   class="input oro-pagination__input oro-pagination__input--page-to"
+                   aria-label="<%- _.__('oro.datagrid.pagination.input.aria_label') %>"
+                   data-grid-pagination-trigger-input>
+        <% } else if (handle.type === types.pagesGap) { %>
+            <a type="button" href="#" class="oro-pagination__<%- handle.type %> oro-pagination__<%- handle.position %>" data-position="<%- handle.position %>" data-toggle="tooltip" title="<%- _.__('oro_frontend.datagrid.pagination.click_to_go_page') %>" data-grid-pagination-trigger-page-ellipsis><%- gapSymbol %></a>
+        <% } else if (handle.type === void 0) { %>
+            <a type="button" href="#" class="oro-pagination-arrow oro-pagination__<%- handle.direction %><% if (handle.className) { %> <%- handle.className %><% } %>" aria-label="<%- _.__('oro.datagrid.pagination.' + handle.direction + '.aria_label') %>"
+                    data-grid-pagination-trigger data-grid-pagination-direction="<%- handle.direction %>"
+                <% if (disabled) { %> disabled<% } %>
+                <% if (handle.className) { %> <%- handle.className %><% } %>>
+                <% if (handle.direction == 'next') { %>
+                    <%= oroui.renderIcon({name: 'chevron-right'}) %>
+                <% } else { %>
+                    <%= oroui.renderIcon({name: 'chevron-left'}) %>
+                <% } %>
+            </a>
+        <% } %>
+    <% }); %>
+</div>
+<% } %>
