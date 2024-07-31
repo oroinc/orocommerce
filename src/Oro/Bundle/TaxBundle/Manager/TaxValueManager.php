@@ -11,14 +11,13 @@ use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use ProxyManager\Proxy\VirtualProxyInterface;
 
 /**
- * Class provides a methods to work with TaxValue entity
- *
- * Should not be used outside this bundle
+ * Provides methods to work with TaxValue entity.
+ * Should not be used outside this bundle.
  */
 class TaxValueManager
 {
-    /** @var TaxValue[]|array */
-    protected array $taxValues = [];
+    /** @var TaxValue[] */
+    private array $taxValues = [];
 
     public function __construct(
         private DoctrineHelper $doctrineHelper,
@@ -31,13 +30,15 @@ class TaxValueManager
     public function getTaxValue(?string $entityClass, ?string $entityId): ?TaxValue
     {
         $key = $this->getTaxValueCacheKey($entityClass, $entityId);
-        if (array_key_exists($key, $this->taxValues)) {
+        if (\array_key_exists($key, $this->taxValues)) {
             return $this->taxValues[$key];
         }
 
-        $taxValue = $entityId ? $this->findTaxValue($entityClass, $entityId) : null;
-
-        return $this->cacheTaxValue($entityClass, $entityId, $taxValue);
+        return $this->cacheTaxValue(
+            $entityClass,
+            $entityId,
+            $entityId ? $this->findTaxValue($entityClass, $entityId) : null
+        );
     }
 
     private function cacheTaxValue(?string $entityClass, ?string $entityId, ?TaxValue $taxValue): TaxValue
@@ -45,9 +46,8 @@ class TaxValueManager
         if (!$taxValue) {
             /** @var TaxValue $taxValue */
             $taxValue = new $this->taxValueClass();
-            $taxValue
-                ->setEntityClass($entityClass)
-                ->setEntityId($entityId);
+            $taxValue->setEntityClass($entityClass);
+            $taxValue->setEntityId($entityId);
         }
 
         // Save taxValues to cache only with entity IDs
@@ -64,7 +64,7 @@ class TaxValueManager
         $notCachedEntityIds = [];
         foreach ($entityIds as $entityId) {
             $key = $this->getTaxValueCacheKey($entityClass, $entityId);
-            if (!array_key_exists($key, $this->taxValues)) {
+            if (!\array_key_exists($key, $this->taxValues)) {
                 $notCachedEntityIds[] = $entityId;
             }
         }
@@ -94,10 +94,7 @@ class TaxValueManager
     }
 
     /**
-     * @param string|null $entityClass
-     * @param array $entityIds
-     *
-     * @return array|TaxValue[]
+     * @return TaxValue[]
      */
     private function findTaxValues(?string $entityClass, array $entityIds): array
     {
@@ -126,9 +123,8 @@ class TaxValueManager
     }
 
     /**
-     * Flush tax value changes to database if it is allowed to do
-     *
      * @param TaxValue|TaxValue[]|null $entity
+     *
      * @return bool
      */
     public function flushTaxValueIfAllowed(array|TaxValue $entity = null): bool
@@ -165,15 +161,12 @@ class TaxValueManager
             ->findOneBy(['code' => $taxCode]);
     }
 
-    /**
-     * Clear caches
-     */
     public function clear(): void
     {
         $this->taxValues = [];
     }
 
-    protected function getTaxValueEntityManager(): EntityManager
+    private function getTaxValueEntityManager(): EntityManager
     {
         $em = $this->doctrineHelper->getEntityManagerForClass($this->taxValueClass);
 

@@ -57,11 +57,6 @@
         }
     }
 
-    // Hiding `...` dots
-    .action-column:empty::before {
-        content: none;
-    }
-
     .action-cell {
         // Using a default padding as in every cell
         padding-right: $datagrid-body-cell-offset;

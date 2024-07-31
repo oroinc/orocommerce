@@ -137,52 +137,46 @@
                 }
             ]) %}
             {% set tooltipTemplate = '<div class="tooltip tooltip--high" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>' %}
-            <div class="toggle-container hide-on-mobile-big">
+            {% set togglerId = 'dropdown-'|uniqid %}
+            {% set currentItem = view_list|filter(item => item.row_view == current_row_view)|first %}
+            <div class="toggle-container simple-placeholder"
+                 data-placeholder-show-one-child-on-mobile-big=""
+                 data-responsive-dropdown=""
+                 data-input-widget-options="{{ {
+                     dropdownClass: 'catalog-switcher',
+                     dropdownMenuClass: 'toggle-container--dropdown',
+                     toggleClass: 'toggle-container--dropdown-btn',
+                     mainAriaLabel: 'oro.product.frontend.catalog_switch.aria_label'|trans,
+                     placement: 'top-end',
+                     icon: currentItem.icon,
+                     iconClass: 'theme-icon--medium',
+                     actionsContainerClass: 'toggle-container',
+                 }|json_encode }}"
+            >
                 {% for view_item in view_list %}
                     <a
                         href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): view_item.row_view}})|url_encode }}"
                         class="toggle-link {{view_item.row_view == current_row_view ? 'toggle-link--active' : ''}}"
                         data-catalog-view-trigger="{{ {'row-view': view_item.row_view}|json_encode }}"
                         title="{{ view_item.title|trans }}"
-                        data-toggle="tooltip"
-                        data-trigger="hover"
-                        data-template="{{ tooltipTemplate }}"
+                        data-responsive-styler
+                        data-input-widget-options="{{ {
+                            responsive: {
+                                tablet: {
+                                    disposeTooltip: true
+                                }
+                            }
+                        }|json_encode }}"
+                        {% if isDesktopVersion() %}
+                            data-toggle="tooltip"
+                            data-trigger="hover"
+                            data-template="{{ tooltipTemplate }}"
+                        {% endif %}
                     >
                         <span class="sr-only">{{ view_item.title|trans }}</span>
                         {{ renderIcon.icon({name: view_item.icon}) }}
                     </a>
                 {% endfor %}
-            </div>
-            {% set togglerId = 'dropdown-'|uniqid %}
-            {% set currentItem = view_list|filter(item => item.row_view == current_row_view)|first %}
-
-            <div class="dropdown catalog-switcher" data-toggle="tooltip" data-trigger="hover" data-template="{{ tooltipTemplate }}">
-                <button id="{{ togglerId }}"
-                    type="button"
-                    data-toggle="dropdown"
-                    data-placement="top-end"
-                    data-display="static"
-                    class="dropdown-toggle toggle-container--dropdown-btn"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                    aria-label="{{ 'oro.product.frontend.catalog_switch.aria_label'|trans }}"
-                >
-                    {{ renderIcon.icon({name: currentItem.icon, extraClass: 'theme-icon--medium'}) }}
-                </button>
-                <div class="dropdown-menu toggle-container--dropdown" aria-labelledby="{{ togglerId }}">
-                    <div class="toggle-container">
-                        {% for view_item in view_list %}
-                            <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({(gridName): {(row_view_key): view_item.row_view}})|url_encode }}"
-                                class="toggle-link no-decoration {{view_item.row_view == current_row_view ? 'toggle-link--active' : ''}}"
-                                data-catalog-view-trigger="{{ {'row-view': view_item.row_view}|json_encode }}"
-                                title="{{ view_item.title|trans }}"
-                            >
-                                <span class="sr-only">{{ view_item.title|trans }}</span>
-                                {{ renderIcon.icon({name: view_item.icon, extraClass: 'theme-icon--medium'}) }}
-                            </a>
-                        {% endfor %}
-                    </div>
-                </div>
             </div>
         </div>
     {% endif %}

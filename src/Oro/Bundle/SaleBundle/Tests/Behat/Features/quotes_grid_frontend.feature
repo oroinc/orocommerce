@@ -30,6 +30,7 @@ Feature: Quotes Grid Frontend
       | Quote11 |
       | Quote12 |
       | Quote13 |
+    And I scroll to top
     And I reset "AllQuotes" grid
 
   Scenario: Check Quote qid filter
@@ -126,6 +127,7 @@ Feature: Quotes Grid Frontend
     And I should not see "Quote7"
     When I go to next page in "AllQuotes"
     Then records in grid should be 2
+    And I scroll to top
     When I refresh "AllQuotes" grid
     Then records in grid should be 2
     When I reload the page
@@ -165,7 +167,6 @@ Feature: Quotes Grid Frontend
       | Quote # |
       | Quote9  |
       | Quote8  |
-    And I reset "AllQuotes" grid
 
   Scenario: Sort by Created At
     Given I should see following grid:
@@ -221,6 +222,7 @@ Feature: Quotes Grid Frontend
       | Quote # |
       | Quote11 |
       | Quote10 |
+    And I scroll to top
     When I reset "AllQuotes" grid
     Then number of records in "AllQuotes" should be 13
     And records in grid should be 13

@@ -8,6 +8,13 @@ layout:
             namespace: quotes
 
     actions:
+        - '@add':
+            id: frontend_quotes_grid_external_toolbar
+            parentId: page_title_container
+            blockType: frontend_datagrid_external_toolbar
+            options:
+                gridName: 'frontend-quotes-grid'
+
         - '@setOption':
             id: page_title
             optionName: defaultValue
@@ -18,3 +25,11 @@ layout:
             optionName: grid_render_parameters.toolbarOptions.itemsCounter
             optionValue:
                 transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.quotesPlural'
+
+        - '@appendOption':
+            id: quotes_datagrid
+            optionName: grid_render_parameters.toolbarOptions.paginationInfo
+            optionValue:
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.quotePageInfo'
+                show: true
+

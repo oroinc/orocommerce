@@ -78,9 +78,9 @@ layout:
                     options:
                         route_name: oro_rfp_frontend_request_index
                         text: 'oro.frontend.rfp.request.sections.back.label'
-                        icon: angle-left
+                        icon: arrow-left
                         attr:
-                            class: 'link pull-left hide-on-print'
+                            class: 'btn btn--no-padding btn--text btn--outlined btn--size-small hide-on-print'
             tree:
                 page_content:
                     rfp_request_view_page:

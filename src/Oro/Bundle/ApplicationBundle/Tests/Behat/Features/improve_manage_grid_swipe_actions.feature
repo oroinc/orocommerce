@@ -13,7 +13,8 @@ Feature: Improve manage grid swipe actions
     Then I should see following grid with exact columns order:
       | First Name | Last Name | Email Address           | Enabled | Confirmed |
       | Amanda     | Cole      | AmandaRCole@example.org | Yes     | Yes       |
-    When click "Grid Settings"
+    When click on "Responsive Dropdown Action"
+    And click "Manage Table"
     Then I should see an "Manage Grid Fullscreen Popup" element
     And click "Deselect All Button"
     And click "Close Fullscreen Popup"
@@ -21,14 +22,16 @@ Feature: Improve manage grid swipe actions
     Then I should see following grid with exact columns order:
       | Locked |
       | No     |
-    When click "Grid Settings"
+    When click on "Responsive Dropdown Action"
+    And click "Manage Table"
     Then I should see an "Manage Grid Fullscreen Popup" element
     And click "Reset Grid"
     And click "Close Fullscreen Popup"
     Then I should see following grid with exact columns order:
       | First Name | Last Name | Email Address           | Enabled | Confirmed | Password | Locked |
       | Amanda     | Cole      | AmandaRCole@example.org | Yes     | Yes       | Active   | No     |
-    When click "Grid Settings"
+    When click on "Responsive Dropdown Action"
+    And click "Manage Table"
     Then I should see an "Manage Grid Fullscreen Popup" element
     When I drag and drop "Email Address Handle" before "First Name Handle"
     # Unchecking custom checkbox
@@ -37,7 +40,8 @@ Feature: Improve manage grid swipe actions
     Then I should see following grid with exact columns order:
       | Email Address           | First Name | Enabled | Confirmed | Password | Locked |
       | AmandaRCole@example.org | Amanda     | Yes     | Yes       | Active   | No     |
-    When click "Grid Settings"
+    When click on "Responsive Dropdown Action"
+    And click "Manage Table"
     Then I should see an "Manage Grid Fullscreen Popup" element
     And click "Select All Button"
     And click "Close Fullscreen Popup"

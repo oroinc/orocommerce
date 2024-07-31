@@ -12,7 +12,6 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " checkout__content"
     }) %}
-
     <div {{ block('block_attributes') }}
             data-layout="separate"
             data-role="checkout-content"
@@ -142,10 +141,12 @@
         '~class': " btn btn--flat checkout-order-summary__edit-link"
     }) %}
     {% if editLink %}
-        <a {{ block('block_attributes') }}>
-            {{ renderIcon.icon({name: 'settings'}) }}
-            <span class="hide-on-tablet-small">{{ 'oro.checkout.order_summary.edit_order.title'|trans }}</span>
-        </a>
+        <% if (toolbarPosition === 'top') { %>
+            <a {{ block('block_attributes') }}>
+                {{ renderIcon.icon({name: 'settings'}) }}
+                <span class="hide-on-tablet-small">{{ 'oro.checkout.order_summary.edit_order.title'|trans }}</span>
+            </a>
+        <% } %>
     {% endif %}
 {% endblock %}
 
