@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import mediator from 'oroui/js/mediator';
 import FilterItemsHintView from 'oroproduct/js/app/views/sidebar-filters/filter-items-hint-view';
-import FilterExtraHintView from 'oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view';
 import FiltersManager from 'orofilter/js/filters-manager';
 import SidebarToggleFiltersAction from 'oroproduct/js/app/datagrid/actions/sidebar-toggle-filters-action';
 import filtersContainerTemplate from 'tpl-loader!oroproduct/templates/sidebar-filters/filters-container.html';
@@ -50,18 +49,6 @@ export default {
             const $stateContainer = $('<div></div>', {
                 'data-filters-state-container': grid.name
             });
-            const initExtraHits = filters => {
-                // Add an extra hint only for rendered and visible filters
-                for (const filter of filters) {
-                    if (filter.$el.length === 0) {
-                        continue;
-                    }
-                    filter.subview('sidebar-filters:extra-hint', new FilterExtraHintView({
-                        filter: filter,
-                        autoRender: true
-                    }));
-                }
-            };
             const disposeExtraHits = filters => {
                 for (const filter of filters) {
                     filter.removeSubview('sidebar-filters:extra-hint');
@@ -89,10 +76,6 @@ export default {
                 filterManager.on('filters-render-mode-changed', ({isAsInitial}) => {
                     disposeApplyFilter();
                     disposeExtraHits(Object.values(filterManager.filters));
-
-                    if (isAsInitial) {
-                        initExtraHits(Object.values(filterManager.filters));
-                    }
                 });
             });
             grid.once('filterManager:connected', () => {
@@ -101,8 +84,6 @@ export default {
                 if (!Object.keys(filterManager.filters).length) {
                     return;
                 }
-
-                initExtraHits(Object.values(filterManager.filters));
 
                 mediator.trigger(`${grid.name}-filters-in-sidebar:connected`, filterManager);
                 filterManager.on('rendered', () => {
