@@ -39,22 +39,28 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
     /**
      * Resets frontend product grid filter.
      * Example: I reset "ManyToOneField" filter in frontend product grid
+     * Example: I reset "ManyToOneField" with hint "Test" in frontend product grid
      * Example: I reset "ManyToOneField" filter in "product" sidebar
+     * Example: I reset "ManyToOneField" with hint "Test" filter in "product" sidebar
      *
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" filter in frontend product grid$/
+     * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" with hint "(?P<filterHint>[\w\s\:\(\)]+)" filter in frontend product grid$/
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" filter in "(?P<filterPosition>[\w\s]+)" sidebar$/
+     * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)"with hint "(?P<filterHint>[\w\s\:\(\)]+)" filter in "(?P<filterPosition>[\w\s]+)" sidebar$/
      *
      * @param string $filterName
+     * @param string $filterHint
      * @param string $filterPosition
      */
     public function resetFilterOfGrid(
         string $filterName,
+        string $filterHint,
         $filterPosition = 'FrontendProductGridFilters'
     ) {
         /** @var FrontendProductGridFilters $gridFilters */
         $gridFilters = $this->createElement($filterPosition);
 
-        $gridFilters->resetFilter($filterName);
+        $gridFilters->resetFilter($filterName, $filterHint);
     }
 
     /**
@@ -81,11 +87,13 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
         /** @var FrontendProductGridFilters $gridFilters */
         $gridFilters = $this->createElement($filterPosition);
 
-        self::assertEquals(
-            $filterHint,
-            $gridFilters->getAppliedFilterHint($filterName),
-            sprintf('Can not see "%s" hint for "%s" filter in frontend product grid', $filterHint, $filterName)
-        );
+        foreach (explode(',', $filterHint) as $hint) {
+            self::assertEquals(
+                trim($hint),
+                $gridFilters->getAppliedFilterHint($filterName, trim($hint)),
+                sprintf('Can not see "%s" hint for "%s" filter in frontend product grid', $filterHint, $filterName)
+            );
+        }
     }
 
     //@codingStandardsIgnoreStart
