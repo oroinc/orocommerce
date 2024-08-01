@@ -41,8 +41,10 @@ class FrontendProductGridFilters extends GridFilters
 
     private function getFilterHint(string $filterName, bool $assertFound = true): ?NodeElement
     {
-        $hintPrefix = sprintf('%s:', $filterName);
-        $filterHint = $this->find('css', sprintf('span.filter-criteria-hint-item:contains("%s")', $hintPrefix));
+        $filterHint = $this->find(
+            'css',
+            sprintf('span.filter-criteria-hint-item[aria-label="%s"]', $filterName)
+        );
 
         if ($assertFound) {
             self::assertNotNull(sprintf('Could not find hint for "%s" filter', $filterName));
