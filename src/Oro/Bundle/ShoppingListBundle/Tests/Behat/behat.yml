@@ -55,6 +55,14 @@ oro_behat_extension:
     ShoppingListEditPopupRows:
       selector: '.shopping-lists-popup'
 
+    UnitSelector:
+      selector: 'a.select2-choice'
+
+    UnitSelectorSet:
+      selector:
+        type: xpath
+        locator: '//div[contains(concat(" ",normalize-space(@class)," ")," select2-drop ")]//ul[contains(concat(" ",normalize-space(@class)," ")," select2-results ")]//li[not(following-sibling::*)]'
+
     FirstRowAcceptButton:
       selector: '.shopping-lists-popup [data-role="accept"]'
 

@@ -28,11 +28,14 @@ Feature: Check shopping list quick search
   Scenario: Clear quick search field
     Given I click "Shopping List Quick Search Clear"
     And I should not see "Highlight Container" element inside "ShoppingListButtonGroup" element
-
+    And I click on empty space
   Scenario: Check quick search after shopping list was update
-    Given I click "Add to Shopping List 1"
-    Then I click "Shopping List Dropdown"
-    And I should see an "Shopping List Quick Search" element
+    When I fill "Product Shopping List Form" with:
+      | Unit | set |
+    And I click "Shopping List Dropdown"
+    And I click "Add to Shopping List 1"
+    And I click "Shopping List Dropdown"
+    Then I should see an "Shopping List Quick Search" element
     And I type "Update shopping list 1" in "Shopping List Quick Search"
     And I should see "Highlight Container" element inside "ShoppingListButtonGroup" element
     And I should see "Highlighted Text" element with text "Update Shopping List 1" inside "ShoppingListButtonGroup" element

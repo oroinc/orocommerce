@@ -3,13 +3,17 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Datagrid\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -22,63 +26,48 @@ class FrontendProductPriceDatagridListener implements FeatureToggleableInterface
     use FeatureCheckerHolderTrait;
 
     const COLUMN_PRICES = 'prices';
+    const COLUMN_SHOPPING_LIST_PRICES = 'shoppingListPrices';
     const COLUMN_MINIMAL_PRICE = 'minimal_price';
     const COLUMN_MINIMAL_PRICE_SORT = 'minimal_price_sort';
 
-    /**
-     * @var ProductPriceScopeCriteriaRequestHandler
-     */
-    private $scopeCriteriaRequestHandler;
+    private ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler;
 
-    /**
-     * @var UserCurrencyManager
-     */
-    private $currencyManager;
+    private UserCurrencyManager $currencyManager;
 
-    /**
-     * @var ProductPriceProvider
-     */
-    private $productPriceProvider;
+    private ProductPriceProvider $productPriceProvider;
 
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
+    private TranslatorInterface $translator;
 
-    /**
-     * @var string
-     */
-    private $priceColumnNameFilter;
+    private ?string $priceColumnNameFilter = null;
 
-    /**
-     * @var string
-     */
-    private $priceColumnNameSorter;
+    private ?string $priceColumnNameSorter = null;
+
+    private DoctrineHelper $doctrineHelper;
+
+    private FrontendProductPricesProvider $frontendProductPricesProvider;
 
     public function __construct(
         ProductPriceScopeCriteriaRequestHandler $scopeCriteriaRequestHandler,
         UserCurrencyManager $currencyManager,
         ProductPriceProvider $productPriceProvider,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        DoctrineHelper $doctrineHelper,
+        FrontendProductPricesProvider $frontendProductPricesProvider
     ) {
         $this->scopeCriteriaRequestHandler = $scopeCriteriaRequestHandler;
         $this->currencyManager = $currencyManager;
         $this->productPriceProvider = $productPriceProvider;
         $this->translator = $translator;
+        $this->doctrineHelper = $doctrineHelper;
+        $this->frontendProductPricesProvider = $frontendProductPricesProvider;
     }
 
-    /**
-     * @param string $columnName
-     */
-    public function setPriceColumnNameForFilter($columnName)
+    public function setPriceColumnNameForFilter(string $columnName): void
     {
         $this->priceColumnNameFilter = $columnName;
     }
 
-    /**
-     * @param string $columnName
-     */
-    public function setPriceColumnNameForSorter($columnName)
+    public function setPriceColumnNameForSorter(string $columnName): void
     {
         $this->priceColumnNameSorter = $columnName;
     }
@@ -101,12 +90,21 @@ class FrontendProductPriceDatagridListener implements FeatureToggleableInterface
             $this->currencyManager->getUserCurrency()
         );
 
+        $products = $this->getProducts($records);
+        $shoppingListPrices = $this->frontendProductPricesProvider->getShoppingListPricesByProducts($products);
+
         foreach ($records as $record) {
             $productId = $record->getValue('id');
             if (array_key_exists($productId, $resultProductPrices)) {
                 $record->addData([static::COLUMN_PRICES => $resultProductPrices[$productId]]);
             } else {
                 $record->addData([static::COLUMN_PRICES => []]);
+            }
+
+            if (array_key_exists($productId, $shoppingListPrices)) {
+                $record->addData([self::COLUMN_SHOPPING_LIST_PRICES => $shoppingListPrices[$productId]]);
+            } else {
+                $record->addData([self::COLUMN_SHOPPING_LIST_PRICES => []]);
             }
         }
     }
@@ -137,6 +135,16 @@ class FrontendProductPriceDatagridListener implements FeatureToggleableInterface
         if (!$currency) {
             return;
         }
+
+        $config->offsetAddToArrayByPath(
+            '[properties]',
+            [
+                self::COLUMN_SHOPPING_LIST_PRICES => [
+                    'type' => 'field',
+                    'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY
+                ]
+            ]
+        );
 
         $config->offsetAddToArrayByPath(
             '[properties]',
@@ -179,6 +187,20 @@ class FrontendProductPriceDatagridListener implements FeatureToggleableInterface
         $config->addSorter(
             self::COLUMN_MINIMAL_PRICE_SORT,
             ['data_name' => 'decimal.' . $sortColumn, 'type' => 'decimal']
+        );
+    }
+
+    /**
+     * @param ResultRecordInterface[] $productRecords
+     * @return Product[]
+     */
+    private function getProducts(array $productRecords): array
+    {
+        return array_map(
+            function (ResultRecordInterface $record) {
+                return $this->doctrineHelper->getEntityReference(Product::class, $record->getValue('id'));
+            },
+            $productRecords
         );
     }
 }

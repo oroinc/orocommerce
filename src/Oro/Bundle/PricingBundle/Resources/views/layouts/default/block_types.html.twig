@@ -2,7 +2,8 @@
     {% do block|merge_context({
         productPrices: productPrices,
         product: product,
-        isPriceUnitsVisible: isPriceUnitsVisible
+        isPriceUnitsVisible: isPriceUnitsVisible,
+        productShoppingListPrices: productShoppingListPrices
     }) %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-price__container'
