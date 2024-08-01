@@ -6,35 +6,39 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\PricingBundle\Datagrid\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener;
+use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteria;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaRequestHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCase
+class FrontendProductPriceDatagridListenerTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ProductPriceScopeCriteriaRequestHandler */
-    private $scopeCriteriaRequestHandler;
+    private ProductPriceScopeCriteriaRequestHandler|MockObject $scopeCriteriaRequestHandler;
 
-    /** @var UserCurrencyManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $currencyManager;
+    private UserCurrencyManager|MockObject $currencyManager;
 
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
+    private FeatureChecker|MockObject $featureChecker;
 
-    /** @var ProductPriceProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $combinedProductPriceProvider;
+    private ProductPriceProvider|MockObject $combinedProductPriceProvider;
 
-    /** @var FrontendProductPriceDatagridListener */
-    private $listener;
+    private DoctrineHelper|MockObject $doctrineHelper;
+
+    private FrontendProductPricesProvider|MockObject $frontendProductPricesProvider;
+
+    private FrontendProductPriceDatagridListener $listener;
 
     protected function setUp(): void
     {
@@ -49,6 +53,15 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
             ->willReturnMap([
                 ['oro.pricing.productprice.price.label', [], null, null, 'Price'],
             ]);
+
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->doctrineHelper->expects(self::any())
+            ->method('getEntityReference')
+            ->willReturnCallback(function ($className, $id) {
+                return $this->getEntity($className, ['id' => $id]);
+            });
+
+        $this->frontendProductPricesProvider = $this->createMock(FrontendProductPricesProvider::class);
 
         $this->listener = new FrontendProductPriceDatagridListener(
             $this->scopeCriteriaRequestHandler,
@@ -78,7 +91,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
         array $priceCurrencies = [],
         array $expectedConfig = [],
         bool $isFlatPricing = false
-    ) {
+    ): void {
         $this->featureChecker->expects(self::any())
             ->method('isFeatureEnabled')
             ->willReturnMap([
@@ -94,7 +107,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
         $event = new BuildBefore($datagrid, $config);
         $this->listener->onBuildBefore($event);
 
-        $this->assertEquals($expectedConfig, $config->toArray());
+        self::assertEquals($expectedConfig, $config->toArray());
     }
 
     public function onBuildBeforeDataProvider(): array
@@ -108,6 +121,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
                 'expectedConfig' => [
                     'properties' => [
                         'prices' => ['type' => 'field', 'frontend_type' => 'row_array'],
+                        'shoppingListPrices' => ['type' => 'field', 'frontend_type' => 'row_array'],
                     ],
                     'columns' => [
                         'minimal_price' => ['label' => 'Price'],
@@ -139,6 +153,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
                 'expectedConfig' => [
                     'properties' => [
                         'prices' => ['type' => 'field', 'frontend_type' => 'row_array'],
+                        'shoppingListPrices' => ['type' => 'field', 'frontend_type' => 'row_array'],
                     ],
                     'columns' => [
                         'minimal_price' => ['label' => 'Price'],
@@ -168,7 +183,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
         ];
     }
 
-    public function testOnResultAfterNoRecords()
+    public function testOnResultAfterNoRecords(): void
     {
         $this->currencyManager->expects(self::never())
             ->method($this->anything());
@@ -179,7 +194,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
         $this->listener->onResultAfter($event);
     }
 
-    public function testOnResultAfterFeatureDisabled()
+    public function testOnResultAfterFeatureDisabled(): void
     {
         $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
@@ -193,7 +208,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
         $this->listener->onResultAfter($event);
     }
 
-    public function testOnBuildBeforeFeatureDisabled()
+    public function testOnBuildBeforeFeatureDisabled(): void
     {
         $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
@@ -210,7 +225,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
     /**
      * @dataProvider onResultWithCombinedPricesProvider
      */
-    public function testOnResultWithCombinedPrices(array $products, array $combinedProductPrices, array $expected)
+    public function testOnResultWithCombinedPrices(array $products, array $combinedProductPrices, array $expected): void
     {
         $this->featureChecker->expects(self::once())
             ->method('isFeatureEnabled')
@@ -238,11 +253,11 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
 
         $actualResults = $event->getRecords();
 
-        $this->assertSameSize($expected, $actualResults);
+        self::assertSameSize($expected, $actualResults);
         foreach ($expected as $key => $expectedResult) {
             $actualResult = $actualResults[$key];
             foreach ($expectedResult as $name => $value) {
-                $this->assertEquals($value, $actualResult->getValue($name));
+                self::assertEquals($value, $actualResult->getValue($name));
             }
         }
     }
@@ -299,9 +314,105 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit\Framework\TestCa
                                 'quantity_with_unit' => '2-item-formatted',
                             ],
                         ],
+                        'shoppingListPrices' => [],
                         'price_units' => null,
                         'price_quantities' => null,
                     ]
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider onResultWithShoppingListPricesDataProvider
+     */
+    public function testOnResultWithShoppingListPrices(
+        array $productData,
+        array $shoppingListPrices,
+        array $expectedResults
+    ): void {
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('oro_pricing')
+            ->willReturn(true);
+
+        $this->setUpPriceListRequestHandler(['USD']);
+
+        $records = [new ResultRecord($productData)];
+        $priceScopeCriteria = new ProductPriceScopeCriteria();
+
+        $this->scopeCriteriaRequestHandler->expects(self::once())
+            ->method('getPriceScopeCriteria')
+            ->willReturn($priceScopeCriteria);
+
+        $this->combinedProductPriceProvider->expects(self::once())
+            ->method('getPricesForProductsByPriceList')
+            ->with($records, $priceScopeCriteria, 'USD')
+            ->willReturn([]);
+
+        $product = $this->getEntity(Product::class, ['id' => $productData['id']]);
+        $this->frontendProductPricesProvider->expects(self::once())
+            ->method('getShoppingListPricesByProducts')
+            ->with([$product])
+            ->willReturn($shoppingListPrices);
+
+        $query = $this->createMock(SearchQueryInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
+        $event = new SearchResultAfter($datagrid, $query, $records);
+
+        $this->listener->setDoctrineHelper($this->doctrineHelper);
+        $this->listener->setFrontendProductPricesProvider($this->frontendProductPricesProvider);
+        $this->listener->onResultAfter($event);
+
+        $actualResults = $event->getRecords();
+
+        self::assertSameSize($expectedResults, $actualResults);
+        foreach ($expectedResults as $key => $expectedResult) {
+            $actualResult = $actualResults[$key];
+            foreach ($expectedResult as $name => $value) {
+                self::assertEquals($value, $actualResult->getValue($name));
+            }
+        }
+    }
+
+    public function onResultWithShoppingListPricesDataProvider(): array
+    {
+        return [
+            [
+                'product' => [
+                    'id' => 2
+                ],
+                'shoppingListPrices' => [
+                    2 => [
+                        'item' => [
+                            'price' => 19,
+                            'currency' => 'EUR',
+                            'formatted_price' => 'EUR19',
+                            'unit' => 'item',
+                            'formatted_unit' => 'item-formatted',
+                            'quantity' => 10.0,
+                            'quantity_with_unit' => '10-items-formatted',
+                        ],
+                    ],
+                ],
+                'expectedResults' => [
+                    [
+                        'id' => 2,
+                        'prices' => [],
+                        'shoppingListPrices' => [
+                            'item' => [
+                                'price' => 19,
+                                'currency' => 'EUR',
+                                'formatted_price' => 'EUR19',
+                                'unit' => 'item',
+                                'formatted_unit' => 'item-formatted',
+                                'quantity' => 10.0,
+                                'quantity_with_unit' => '10-items-formatted',
+                            ],
+                        ],
+                        'price_units' => null,
+                        'price_quantities' => null,
+                    ],
                 ],
             ],
         ];

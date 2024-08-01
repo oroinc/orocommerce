@@ -8,6 +8,7 @@ layout:
                     blockType: product_prices
                     options:
                         productPrices: '=product ? data["frontend_product_prices"].getByProduct(product) : []'
+                        productShoppingListPrices: '=product ? data["frontend_product_prices"].getShoppingListPricesByProduct(product) : []'
                         attributeFamily: '=context.offsetExists("attribute_family") ? context["attribute_family"] : null'
                         isPriceUnitsVisible: '=product ? data["oro_price_unit_visibility"].isPriceUnitsVisibleByProduct(product) : true'
                         vars:

@@ -6,5 +6,9 @@ layout:
             optionValue: '=data["frontend_product_prices"].getByProducts(items)'
         - '@setOption':
             id: __products
+            optionName: items_data.productShoppingListPrices
+            optionValue: '=data["frontend_product_prices"].getShoppingListPricesByProducts(items)'
+        - '@setOption':
+            id: __products
             optionName: items_data.isPriceUnitsVisible
             optionValue: '=data["oro_price_unit_visibility"].getPriceUnitsVisibilityByProducts(items)'

@@ -399,7 +399,7 @@ define(function(require) {
             return $button;
         },
 
-        _setEditLineItem: function(lineItemId, setFirstLineItem) {
+        _setEditLineItem: function(lineItemId, setLastLineItem) {
             this.editLineItem = null;
 
             if (!this.model || !this.shoppingListCollection.length) {
@@ -415,8 +415,9 @@ define(function(require) {
 
             if (lineItemId) {
                 this.editLineItem = _.findWhere(currentShoppingListInModel.line_items, {id: lineItemId});
-            } else if (setFirstLineItem) {
-                this.editLineItem = currentShoppingListInModel.line_items[0] || null;
+            } else if (setLastLineItem) {
+                const lastItemIndex = currentShoppingListInModel.line_items.length - 1;
+                this.editLineItem = currentShoppingListInModel.line_items[lastItemIndex] || null;
             } else if (!this.model.get('quantity_changed_manually')) {
                 this.editLineItem = _.findWhere(
                     currentShoppingListInModel.line_items, {unit: this.model.get('unit')}

@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductView;
 use Oro\Bundle\ProductBundle\Provider\FrontendProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
+use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityProvider;
 
 /**
  * Provides methods to get prices with currencies, units and quantities
@@ -24,6 +25,7 @@ class FrontendProductPricesProvider
     private ProductPriceFormatter $productPriceFormatter;
     private ProductPriceProviderInterface $productPriceProvider;
     private FrontendProductUnitsProvider $productUnitsProvider;
+    private ?FrontendShoppingListProductUnitsQuantityProvider $shoppingListProvider = null;
 
     /** @var array [product id => [formatted price (array), ...], ...] */
     private array $productPrices = [];
@@ -45,6 +47,12 @@ class FrontendProductPricesProvider
         $this->productPriceFormatter = $productPriceFormatter;
         $this->productPriceProvider = $productPriceProvider;
         $this->productUnitsProvider = $productUnitsProvider;
+    }
+
+    public function setShoppingListProvider(
+        ?FrontendShoppingListProductUnitsQuantityProvider $shoppingListProvider
+    ): void {
+        $this->shoppingListProvider = $shoppingListProvider;
     }
 
     /**
@@ -102,11 +110,95 @@ class FrontendProductPricesProvider
         return $productPrices;
     }
 
+    /**
+     * @param Product|ProductView $product
+     *
+     * @return array [unit_code => formatted price (array), ...]
+     */
+    public function getShoppingListPricesByProduct(Product|ProductView $product): array
+    {
+        $shoppingLists = $this->shoppingListProvider?->getByProduct($product) ?? [];
+        if (!$shoppingLists) {
+            return [];
+        }
+
+        $productPrices = $this->getByProduct($product);
+
+        $shoppingListPrices = [];
+        foreach ($shoppingLists as $shoppingList) {
+            $isCurrentShoppingList = $shoppingList['is_current'] ?? false;
+            if ($isCurrentShoppingList) {
+                foreach ($shoppingList['line_items'] as $lineItem) {
+                    $shoppingListPrices[$lineItem['unit']] =
+                        $this->findPriceForShoppingListsLineItem($productPrices, $lineItem);
+                }
+            }
+        }
+
+        return $shoppingListPrices;
+    }
+
+    /**
+     * @param ProductView[] $products
+     *
+     * @return array [product id => [unit code => formatted price (array)]]
+     */
+    public function getShoppingListPricesByProducts(array $products): array
+    {
+        $shoppingLists = $this->shoppingListProvider?->getByProducts($products) ?? [];
+        if (!$shoppingLists) {
+            return [];
+        }
+
+        $productsPrices = $this->getByProducts($products);
+
+        $shoppingListPrices = [];
+        foreach ($products as $product) {
+            $productId = $product->getId();
+            $productPrices = $productsPrices[$productId] ?? [];
+            $shoppingListsByProduct = $shoppingLists[$productId] ?? [];
+
+            foreach ($shoppingListsByProduct as $shoppingListByProduct) {
+                $isCurrentShoppingList = $shoppingListByProduct['is_current'] ?? false;
+                if ($isCurrentShoppingList) {
+                    foreach ($shoppingListByProduct['line_items'] as $lineItem) {
+                        $shoppingListPrices[$productId][$lineItem['unit']] =
+                            $this->findPriceForShoppingListsLineItem($productPrices, $lineItem);
+                    }
+                }
+            }
+        }
+
+        return $shoppingListPrices;
+    }
+
     public function isShowProductPriceContainer(Product $product): bool
     {
         return
             $product->getType() !== Product::TYPE_CONFIGURABLE
             || $this->isProductHasPrices($product->getId());
+    }
+
+    /**
+     * @param array $productPrices
+     * @param array $lineItem
+     *
+     * @return array|null formatted price (array)
+     */
+    private function findPriceForShoppingListsLineItem(array $productPrices, array $lineItem): ?array
+    {
+        array_walk($productPrices, function (&$productPrice, $key) {
+            $productPrice['hasDiscount'] = $key > 0;
+
+            return $productPrice;
+        });
+
+        $suitablePrices = array_filter($productPrices, function ($price) use ($lineItem) {
+            return $price['unit'] === $lineItem['unit'] && $price['quantity'] <= $lineItem['quantity'];
+        });
+        $qtyIndexed = array_column($suitablePrices, null, 'quantity');
+        krsort($qtyIndexed);
+        return reset($qtyIndexed) ?: null;
     }
 
     /**

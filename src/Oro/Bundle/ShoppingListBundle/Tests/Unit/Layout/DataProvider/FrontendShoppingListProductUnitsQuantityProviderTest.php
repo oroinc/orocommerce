@@ -37,16 +37,11 @@ class FrontendShoppingListProductUnitsQuantityProviderTest extends TestCase
     /**
      * @dataProvider getByProductDataProvider
      */
-    public function testGetByProduct(int $productId, ?array $expected): void
+    public function testGetByProduct(Product|ProductView $product, ?array $expected): void
     {
-        $product = $this->createMock(Product::class);
-        $product->expects(self::any())
-            ->method('getId')
-            ->willReturn($productId);
-
         $shoppingLists = [];
         if (null !== $expected) {
-            $shoppingLists = [$productId => $expected];
+            $shoppingLists = [$product->getId() => $expected];
         }
 
         $this->productShoppingListsDataProvider->expects(self::once())
@@ -59,88 +54,87 @@ class FrontendShoppingListProductUnitsQuantityProviderTest extends TestCase
     /**
      * @dataProvider getByProductDataProvider
      */
-    public function testGetByProductView(int $productId, ?array $expected): void
-    {
-        $product = new ProductView();
-        $product->set('id', $productId);
-
-        $shoppingLists = [];
-        if (null !== $expected) {
-            $shoppingLists = [$productId => $expected];
-        }
-
-        $this->productShoppingListsDataProvider->expects(self::once())
-            ->method('getProductsUnitsQuantity')
-            ->willReturn($shoppingLists);
-
-        self::assertSame($expected, $this->provider->getByProduct($product));
-    }
-
-    /**
-     * @dataProvider getByProductDataProvider
-     */
-    public function testGetByProducts(int $productId, ?array $expected): void
+    public function testGetByProducts(Product|ProductView $product, ?array $expected): void
     {
         $shoppingLists = [];
         if (null === $expected) {
             $expected = [];
         } else {
-            $shoppingLists = [$productId => $expected];
-            $expected = [$productId => $expected];
+            $shoppingLists = [$product->getId() => $expected];
+            $expected = [$product->getId() => $expected];
         }
 
         $this->productShoppingListsDataProvider->expects(self::any())
             ->method('getProductsUnitsQuantity')
             ->willReturn($shoppingLists);
 
-        $productView = new ProductView();
-        $productView->set('id', $productId);
-
-        self::assertSame($expected, $this->provider->getByProducts([$productView]));
+        self::assertSame($expected, $this->provider->getByProducts([$product]));
     }
 
     public function getByProductDataProvider(): array
     {
+        $productView = new ProductView();
+        $productView->set('id', 123);
+
+        $product = new ProductStub();
+        $product->setId(123);
+
+        $singleShoppingListExpectedResult = [
+            [
+                'id' => 1,
+                'label' => 'ShoppingList 1',
+                'is_current' => true,
+                'line_items' => [
+                    ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
+                    ['id' => 2, 'unit' => 'code2', 'quantity' => 100],
+                ],
+            ],
+        ];
+
+        $fewShoppingListExpectedResult = [
+            [
+                'id' => 1,
+                'label' => 'ShoppingList 1',
+                'is_current' => true,
+                'line_items' => [
+                    ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
+                    ['id' => 2,'unit' => 'code2', 'quantity' => 100],
+                ],
+            ],
+            [
+                'id' => 2,
+                'label' => 'ShoppingList 2',
+                'is_current' => false,
+                'line_items' => [
+                    ['id' => 3, 'unit' => 'code3', 'quantity' => 30],
+                ],
+            ],
+        ];
+
         return [
-            'no_prices' => [
-                'productId' => 123,
+            'no_prices (ProductView)' => [
+                'product' => $productView,
                 'expected' => null
             ],
-            'single_shopping_list' => [
-                'productId' => 123,
-                'expected' => [
-                    [
-                        'id' => 1,
-                        'label' => 'ShoppingList 1',
-                        'is_current' => true,
-                        'line_items' => [
-                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
-                            ['id' => 2, 'unit' => 'code2', 'quantity' => 100],
-                        ]
-                    ]
-                ]
+            'single_shopping_list (ProductView)' => [
+                'product' => $productView,
+                'expected' => $singleShoppingListExpectedResult,
             ],
-            'a_few_shopping_lists' => [
-                'productId' => 123,
-                'expected' => [
-                    [
-                        'id' => 1,
-                        'label' => 'ShoppingList 1',
-                        'is_current' => true,
-                        'line_items' => [
-                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
-                            ['id' => 2,'unit' => 'code2', 'quantity' => 100],
-                        ]
-                    ],
-                    [
-                        'id' => 2,
-                        'label' => 'ShoppingList 2',
-                        'is_current' => false,
-                        'line_items' => [
-                            ['id' => 3, 'unit' => 'code3', 'quantity' => 30],
-                        ]
-                    ]
-                ]
+            'a_few_shopping_lists (ProductView)' => [
+                'product' => $productView,
+                'expected' => $fewShoppingListExpectedResult,
+            ],
+            'no_prices (Product)' => [
+                'product' => $product,
+                'expected' => null
+            ],
+            'single_shopping_list (Product)' => [
+                'product' => $product,
+                'expected' => $singleShoppingListExpectedResult,
+            ],
+            'a_few_shopping_lists (Product)' => [
+                'product' => $product,
+                'expected' => $fewShoppingListExpectedResult,
             ],
         ];
     }

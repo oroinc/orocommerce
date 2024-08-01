@@ -71,7 +71,7 @@
 
     {# Clone js logic in package/commerce/src/Oro/Bundle/PricingBundle/Resources/public/templates/product/list-item-product-prices.html #}
     <div {{ block('block_attributes') }} data-name="price">
-        {% set firstPrice = productPrices|first %}
+        {% set firstPrice = productShoppingListPrices|first ?: productPrices|first %}
         <span class="product-price__value" data-name="price-value" itemscope="itemscope"
                 itemtype="http://schema.org/Offer" itemprop="offers">
             {% apply spaceless %}
@@ -92,7 +92,10 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-price__listed'
     }) %}
-    {% if productPrices|length > 1 %}
+    {% if productPrices|length > 1
+        and productShoppingListPrices|length >= 1
+        and productShoppingListPrices|first.hasDiscount|default(false)
+    %}
         <div {{ block('block_attributes') }}>
             {% set firstPrice = productPrices|first %}
             <div
