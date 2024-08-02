@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItemDataProvider;
 use Oro\Bundle\ProductBundle\Model\ProductView;
+use Oro\Bundle\ProductBundle\Provider\ProductListBlockConfigInterface;
 use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
@@ -17,6 +18,7 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UIBundle\Provider\UserAgentInterface;
 use Oro\Bundle\UIBundle\Provider\UserAgentProviderInterface;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -25,47 +27,38 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
 {
     private const PRODUCT_LIST_TYPE = 'test_list';
 
-    /** @var FinderStrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $finder;
+    private FinderStrategyInterface&MockObject $finder;
 
-    /** @var RelatedItemConfigProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $configProvider;
+    private ProductListBlockConfigInterface&MockObject $configProvider;
 
-    /** @var UserAgentProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $userAgentProvider;
+    private RelatedItemConfigProviderInterface&MockObject $relatedItemConfigProvider;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    private UserAgentProviderInterface&MockObject $userAgentProvider;
 
-    /** @var ProductManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $productManager;
+    private ManagerRegistry&MockObject $doctrine;
 
-    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $aclHelper;
+    private ProductManager&MockObject $productManager;
 
-    /** @var ProductListBuilder|\PHPUnit\Framework\MockObject\MockObject */
-    private $productListBuilder;
+    private AclHelper&MockObject $aclHelper;
 
-    /** @var RelatedItemDataProvider */
-    private $dataProvider;
+    private ProductListBuilder&MockObject $productListBuilder;
+
+    private RelatedItemDataProvider $dataProvider;
 
     protected function setUp(): void
     {
         $this->finder = $this->createMock(FinderStrategyInterface::class);
-        $this->configProvider = $this->createMock(RelatedItemConfigProviderInterface::class);
+        $this->configProvider = $this->createMock(ProductListBlockConfigInterface::class);
+        $this->relatedItemConfigProvider = $this->createMock(RelatedItemConfigProviderInterface::class);
         $this->userAgentProvider = $this->createMock(UserAgentProviderInterface::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->productManager = $this->createMock(ProductManager::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
         $this->productListBuilder = $this->createMock(ProductListBuilder::class);
 
-        $this->configProvider->expects(self::any())
-            ->method('isBidirectional')
-            ->willReturn(false);
-
         $this->dataProvider = new RelatedItemDataProvider(
             $this->finder,
-            $this->configProvider,
+            $this->relatedItemConfigProvider,
             $this->userAgentProvider,
             $this->doctrine,
             $this->productManager,
@@ -73,6 +66,8 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
             $this->productListBuilder,
             self::PRODUCT_LIST_TYPE
         );
+
+        $this->dataProvider->setProductListBlockConfig($this->configProvider);
     }
 
     public function testDoesNotReturnRelatedProductsIfFinderDoesNotFindAny(): void
@@ -108,6 +103,10 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getProductsByIds')
             ->with(self::PRODUCT_LIST_TYPE, $productIds)
             ->willReturn($productViews);
+
+        $this->configProvider->expects(self::any())
+            ->method('getProductListType')
+            ->willReturn(self::PRODUCT_LIST_TYPE);
 
         self::assertSame([$product2->getId(), $product3->getId()], $productIds);
         self::assertEquals($productViews, $this->dataProvider->getRelatedItems($this->getProduct(100)));
@@ -145,6 +144,10 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
             ->with(self::PRODUCT_LIST_TYPE, $productIds)
             ->willReturn($productViews);
 
+        $this->configProvider->expects(self::any())
+            ->method('getProductListType')
+            ->willReturn(self::PRODUCT_LIST_TYPE);
+
         self::assertSame([$product2->getId(), $product3->getId()], $productIds);
         self::assertEquals($productViews, $this->dataProvider->getRelatedItems($this->getProduct(100)));
         // test memory cache
@@ -167,6 +170,10 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getProductsByIds')
             ->with(self::PRODUCT_LIST_TYPE, $productIds)
             ->willReturn($productViews);
+
+        $this->configProvider->expects(self::any())
+            ->method('getProductListType')
+            ->willReturn(self::PRODUCT_LIST_TYPE);
 
         self::assertSame([$product2->getId()], $productIds);
         self::assertEquals($productViews, $this->dataProvider->getRelatedItems($this->getProduct(100)));

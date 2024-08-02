@@ -32,8 +32,10 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
             return [];
         }
 
-        return $this->getUpsellProductRepository()
-            ->findUpsellIds($product->getId(), $limit);
+        return $this->getUpsellProductRepository()->findUpsellIds(
+            $product->getId(),
+            $this->configProvider->getLimit()
+        );
     }
 
     private function getUpsellProductRepository(): UpsellProductRepository

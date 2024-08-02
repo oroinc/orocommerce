@@ -4,12 +4,15 @@ namespace Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
+use Oro\Bundle\ProductBundle\Provider\ProductListBlockConfigInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
 
 /**
  * The configuration provider for upsell products.
  */
-class UpsellProductConfigProvider implements RelatedItemConfigProviderInterface
+class UpsellProductConfigProvider implements
+    RelatedItemConfigProviderInterface,
+    ProductListBlockConfigInterface
 {
     private ConfigManager $configManager;
 
@@ -23,8 +26,9 @@ class UpsellProductConfigProvider implements RelatedItemConfigProviderInterface
      */
     public function isEnabled()
     {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::UPSELL_PRODUCTS_ENABLED));
+        return (bool)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::UPSELL_PRODUCTS_ENABLED)
+        );
     }
 
     /**
@@ -32,8 +36,9 @@ class UpsellProductConfigProvider implements RelatedItemConfigProviderInterface
      */
     public function getLimit()
     {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MAX_NUMBER_OF_UPSELL_PRODUCTS));
+        return (int)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::MAX_NUMBER_OF_UPSELL_PRODUCTS),
+        );
     }
 
     /**
@@ -50,8 +55,9 @@ class UpsellProductConfigProvider implements RelatedItemConfigProviderInterface
      */
     public function getMinimumItems()
     {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::UPSELL_PRODUCTS_MIN_ITEMS));
+        return (int)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::UPSELL_PRODUCTS_MIN_ITEMS)
+        );
     }
 
     /**
@@ -59,8 +65,9 @@ class UpsellProductConfigProvider implements RelatedItemConfigProviderInterface
      */
     public function getMaximumItems()
     {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::UPSELL_PRODUCTS_MAX_ITEMS));
+        return (int)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::UPSELL_PRODUCTS_MAX_ITEMS)
+        );
     }
 
     /**
@@ -68,8 +75,9 @@ class UpsellProductConfigProvider implements RelatedItemConfigProviderInterface
      */
     public function isSliderEnabledOnMobile()
     {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::UPSELL_PRODUCTS_USE_SLIDER_ON_MOBILE));
+        return (bool)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::UPSELL_PRODUCTS_USE_SLIDER_ON_MOBILE)
+        );
     }
 
     /**
@@ -77,7 +85,13 @@ class UpsellProductConfigProvider implements RelatedItemConfigProviderInterface
      */
     public function isAddButtonVisible()
     {
-        return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::UPSELL_PRODUCTS_SHOW_ADD_BUTTON));
+        return (bool)$this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::UPSELL_PRODUCTS_SHOW_ADD_BUTTON)
+        );
+    }
+
+    public function getProductListType(): string
+    {
+        return 'upsell_products';
     }
 }

@@ -50,6 +50,9 @@ class FinderDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
         $this->configProvider->expects(self::once())
             ->method('isEnabled')
             ->willReturn(false);
+        $this->configProvider->expects(self::once())
+            ->method('isBidirectional')
+            ->willReturn(false);
         $this->repository->expects(self::never())
             ->method('findRelatedIds');
 
@@ -64,6 +67,9 @@ class FinderDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
         $this->configProvider->expects(self::once())
             ->method('isEnabled')
             ->willReturn(true);
+        $this->configProvider->expects(self::once())
+            ->method('isBidirectional')
+            ->willReturn(false);
         $this->repository->expects(self::once())
             ->method('findRelatedIds')
             ->with($product->getId(), false, null)
@@ -82,6 +88,14 @@ class FinderDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
         $this->configProvider->expects(self::once())
             ->method('isEnabled')
             ->willReturn(true);
+
+        $this->configProvider->expects(self::once())
+            ->method('isBidirectional')
+            ->willReturn($bidirectional);
+        $this->configProvider->expects(self::once())
+            ->method('getLimit')
+            ->willReturn($limit);
+
         $this->repository->expects(self::once())
             ->method('findRelatedIds')
             ->with($product->getId(), $bidirectional, $limit)

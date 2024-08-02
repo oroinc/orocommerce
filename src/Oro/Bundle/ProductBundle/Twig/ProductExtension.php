@@ -6,6 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
@@ -98,7 +99,11 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
      */
     private function getRelatedItemsIds(Product $product, FinderStrategyInterface $finderStrategy)
     {
-        return $finderStrategy->findIds($product, false);
+        if ($finderStrategy instanceof FinderDatabaseStrategy) {
+            return $finderStrategy->findNotBidirectionalIds($product);
+        }
+
+        return $finderStrategy->findIds($product);
     }
 
     /**

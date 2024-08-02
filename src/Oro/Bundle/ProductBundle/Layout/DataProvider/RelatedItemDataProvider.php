@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\ProductView;
+use Oro\Bundle\ProductBundle\Provider\ProductListBlockConfigInterface;
 use Oro\Bundle\ProductBundle\Provider\ProductListBuilder;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemConfigProviderInterface;
@@ -30,6 +31,8 @@ class RelatedItemDataProvider
     /** @var array [product id => [related product view, ...], ...] */
     private array $relatedItems = [];
 
+    private ProductListBlockConfigInterface $productListBlockConfig;
+
     public function __construct(
         FinderStrategyInterface $finderStrategy,
         RelatedItemConfigProviderInterface $configProvider,
@@ -50,6 +53,11 @@ class RelatedItemDataProvider
         $this->productListType = $productListType;
     }
 
+    public function setProductListBlockConfig(ProductListBlockConfigInterface $productListBlockConfig): void
+    {
+        $this->productListBlockConfig = $productListBlockConfig;
+    }
+
     /**
      * @param Product $product
      *
@@ -58,6 +66,7 @@ class RelatedItemDataProvider
     public function getRelatedItems(Product $product): array
     {
         $productId = $product->getId();
+
         if (!isset($this->relatedItems[$productId])) {
             $this->relatedItems[$productId] = $this->loadRelatedItems($product);
         }
@@ -72,16 +81,13 @@ class RelatedItemDataProvider
 
     public function isAddButtonVisible(): bool
     {
-        return $this->configProvider->isAddButtonVisible();
+        return $this->productListBlockConfig->isAddButtonVisible();
     }
 
     private function loadRelatedItems(Product $product): array
     {
-        $relatedProductIds = $this->finderStrategy->findIds(
-            $product,
-            $this->configProvider->isBidirectional(),
-            $this->configProvider->getLimit()
-        );
+        $relatedProductIds = $this->finderStrategy->findIds($product);
+
         if (!$this->hasMoreThanRequiredMinimum($relatedProductIds)) {
             return [];
         }
@@ -90,7 +96,7 @@ class RelatedItemDataProvider
             ->getProductsQueryBuilder($relatedProductIds)
             ->select('p.id')
             ->orderBy('p.id');
-        $limit = $this->configProvider->getMaximumItems();
+        $limit = $this->productListBlockConfig->getMaximumItems();
         if ($limit) {
             $qb->setMaxResults($limit);
         }
@@ -100,12 +106,15 @@ class RelatedItemDataProvider
             return [];
         }
 
-        return $this->productListBuilder->getProductsByIds($this->productListType, array_column($rows, 'id'));
+        return $this->productListBuilder->getProductsByIds(
+            $this->getProductListType(),
+            array_column($rows, 'id')
+        );
     }
 
     private function hasMoreThanRequiredMinimum(array $rows): bool
     {
-        return count($rows) !== 0 && count($rows) >= (int)$this->configProvider->getMinimumItems();
+        return count($rows) !== 0 && count($rows) >= (int)$this->productListBlockConfig->getMinimumItems();
     }
 
     private function isMobile(): bool
@@ -115,11 +124,16 @@ class RelatedItemDataProvider
 
     private function isSliderEnabledOnMobile(): bool
     {
-        return $this->configProvider->isSliderEnabledOnMobile();
+        return $this->productListBlockConfig->isSliderEnabledOnMobile();
     }
 
     private function getProductRepository(): ProductRepository
     {
         return $this->doctrine->getRepository(Product::class);
+    }
+
+    private function getProductListType(): string
+    {
+        return $this->productListBlockConfig->getProductListType();
     }
 }

@@ -8,8 +8,10 @@ use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Model\ProductLineItemPrice\ProductLineItemPrice;
 use Oro\Bundle\PricingBundle\Provider\FrontendProductPricesDataProvider;
 use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -233,5 +235,16 @@ class FrontendShoppingListProductsProvider
             $productCount,
             $localization
         );
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @return Product[]
+     */
+    public function getShoppingListProducts(ShoppingList $shoppingList): array
+    {
+        $lineItems = $this->shoppingListLineItemsDataProvider->getShoppingListLineItems($shoppingList);
+
+        return array_map(fn (LineItem $lineItem) => $lineItem->getProduct(), $lineItems);
     }
 }
