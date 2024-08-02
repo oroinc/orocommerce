@@ -95,15 +95,15 @@ define(function(require) {
 
             this.$edit.prepend(this.$notes);
 
-            this.$notes.change(this.change.bind(this));
-            this.$notes.blur(this.change.bind(this));
-            this.$preview.click(this.addNotes.bind(this));
-            this.$addBtn.click(this.addNotes.bind(this))
-                .mousedown(this.addNotes.bind(this));
-            this.$editBtn.click(this.addNotes.bind(this))
-                .mousedown(this.addNotes.bind(this));
-            this.$removeBtn.click(this.removeNotes.bind(this))
-                .mousedown(this.removeNotes.bind(this));
+            this.$notes.on('change', this.change.bind(this));
+            this.$notes.on('blur', this.change.bind(this));
+            this.$preview.on('click', this.addNotes.bind(this));
+            this.$addBtn.on('click', this.addNotes.bind(this))
+                .on('mousedown', this.addNotes.bind(this));
+            this.$editBtn.on('click', this.addNotes.bind(this))
+                .on('mousedown', this.addNotes.bind(this));
+            this.$removeBtn.on('click', this.removeNotes.bind(this))
+                .on('mousedown', this.removeNotes.bind(this));
 
             this.changed();
             this.$el.show();
@@ -132,7 +132,7 @@ define(function(require) {
         },
 
         addNotes: function(e) {
-            this.$notes.show().focus();
+            this.$notes.show().trigger('focus');
             this.$preview.hide();
             this.$removeBtn.show();
             this.$addBtn.hide();

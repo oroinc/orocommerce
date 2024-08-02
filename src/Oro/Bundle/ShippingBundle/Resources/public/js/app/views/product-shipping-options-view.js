@@ -89,9 +89,9 @@ define(function(require) {
             });
 
             _.each(this.$el.find(this.options.selectors.subselects), function(select) {
-                const $first = $(select).find('option:not([value=""]):first');
+                const $first = $(select).find('option:not([value=""])').first();
                 if (!$(select).data('selected') && !$(select).val() && $first.length) {
-                    $(select).val($first.val()).change();
+                    $(select).val($first.val()).trigger('change');
                     $(select).data('selected', true);
                 }
             });
@@ -185,7 +185,7 @@ define(function(require) {
             });
 
             if (!currentValue) {
-                const $firstValue = $select.find('option:first');
+                const $firstValue = $select.find('option').first();
                 $select.val($firstValue.length ? $firstValue.val() : '');
 
                 if ($firstValue.length) {

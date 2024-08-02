@@ -96,7 +96,7 @@ define(function(require) {
 
             // Dynamically add a container for a search
             if (this.$('[data-role="search"]').length === 0) {
-                this.$el.children(':first').before(
+                this.$el.children().first().before(
                     $('<div class="dropdown-item" data-role="search" data-group-order="search"></div>')
                 );
             }

@@ -53,7 +53,7 @@ define(function(require) {
             if (value !== oldValue || value !== $el.val()) {
                 $el.val(value);
                 if (!silent) {
-                    $el.change();
+                    $el.trigger('change');
                 }
             }
 

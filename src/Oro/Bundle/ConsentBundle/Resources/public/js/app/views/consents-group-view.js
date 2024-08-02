@@ -141,7 +141,7 @@ define(function(require) {
          */
         _onModalConfirmed: function() {
             this.undelegateEvents();
-            this.$form.submit();
+            this.$form.trigger('submit');
 
             this.delegateEvents();
         },

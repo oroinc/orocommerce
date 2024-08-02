@@ -92,7 +92,7 @@ const AddNotesAction = ModelAction.extend({
         modal.open();
 
         modal.$('[name="notes"]')
-            .focus()
+            .trigger('focus')
             .val(notes)
             .on('keydown', e => {
                 if (e.keyCode === ENTER_KEY_CODE && e.ctrlKey) {

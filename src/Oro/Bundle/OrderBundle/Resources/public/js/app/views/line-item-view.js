@@ -167,15 +167,15 @@ define(function(require) {
                 $product.show();
             };
 
-            $freeForm.find('a' + this.options.selectors.productType).click(() => {
+            $freeForm.find('a' + this.options.selectors.productType).on('click', () => {
                 showProductType();
-                $freeForm.find(':input').val('').change();
+                $freeForm.find(':input').val('').trigger('change');
             });
 
-            $product.find('a' + this.options.selectors.freeFormType).click(() => {
+            $product.find('a' + this.options.selectors.freeFormType).on('click', () => {
                 showFreeFormType();
                 $(this.getElement('product')).inputWidget('val', '');
-                $(this.getElement('product')).change();
+                $(this.getElement('product')).trigger('change');
             });
 
             if (this.fieldsByName.freeFormProduct.val() !== '') {

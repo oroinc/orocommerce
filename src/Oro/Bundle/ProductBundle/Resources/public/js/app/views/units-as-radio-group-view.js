@@ -94,7 +94,7 @@ const UnitsAsRadioGroupView = BaseView.extend({
      */
     onRadioChange(e) {
         if (this.$select.val() !== e.currentTarget.value) {
-            this.$select.val(e.currentTarget.value).change();
+            this.$select.val(e.currentTarget.value).trigger('change');
         }
     },
 

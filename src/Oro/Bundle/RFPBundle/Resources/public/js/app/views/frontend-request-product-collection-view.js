@@ -17,7 +17,7 @@ const FrontendRequestProductCollectionView = BaseView.extend({
         FrontendRequestProductCollectionView.__super__.initialize.call(this, options);
 
         if (!this.$el.find(this.requestProductsContainerSelector).children().length) {
-            this.$el.find(this.addRequestProductButtonSelector).click();
+            this.$el.find(this.addRequestProductButtonSelector).trigger('click');
         }
     },
 

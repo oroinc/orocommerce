@@ -52,7 +52,7 @@ define(function(require) {
 
         _onPageAfterChange: function() {
             const surchargeType = this.$form.find(this.options.surchargeTypeSelector);
-            surchargeType.focus();
+            surchargeType.trigger('focus');
         },
 
         dispose: function() {

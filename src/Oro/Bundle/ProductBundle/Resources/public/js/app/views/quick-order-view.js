@@ -91,7 +91,7 @@ const QuickOrderFromView = BaseView.extend({
                 this.$el.removeAttr('data-ignore-tabbable');
                 this.$el.removeClass('quick-order__progress');
                 this.subview('loadingMask').hide();
-                this.$('[class$="--error"]:input:first').focus();
+                this.$('[class$="--error"]:input:first').trigger('focus');
             });
         });
 

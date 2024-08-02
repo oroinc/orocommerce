@@ -250,7 +250,7 @@ const FrontendRequestProductView = BaseView.extend(_.extend({}, ElementsHelper, 
             this.model.set('productType', data.event.added.type || 'simple');
 
             if (this.model.get('productId') && !this.$requestProductItemsContainer.children().length) {
-                this.$addRequestProductItemButton.click();
+                this.$addRequestProductItemButton.trigger('click');
             }
         }
 

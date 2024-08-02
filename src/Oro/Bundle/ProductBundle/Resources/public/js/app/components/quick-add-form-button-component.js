@@ -148,7 +148,7 @@ define(function(require) {
         },
 
         executeConfiguredAction: function() {
-            this.$form.submit();
+            this.$form.trigger('submit');
         }
     });
 

@@ -60,8 +60,8 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            this.$el.find('.add-list-item').mousedown(function(e) {
-                $(this).click();
+            this.$el.find('.add-list-item').on('mousedown', function(e) {
+                $(this).trigger('click');
             });
 
             this.subview('productsPricesComponent', new ProductsPricesComponent({

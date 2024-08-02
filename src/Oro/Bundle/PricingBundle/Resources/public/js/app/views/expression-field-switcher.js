@@ -48,13 +48,13 @@ define(function(require) {
 
         initSwitcher: function() {
             const $expressionIdentifier = this.options.selectors.expressionType;
-            this.expressionLink.click(() => {
+            this.expressionLink.on('click', () => {
                 this.changeFieldVisibility(this.field, this.expression);
                 this.expressionInput.val('');
                 $('div.error-block' + $expressionIdentifier).find('.validation-failed').remove();
             });
 
-            this.fieldLink.click(() => {
+            this.fieldLink.on('click', () => {
                 this.changeFieldVisibility(this.expression, this.field);
             });
 
@@ -68,7 +68,7 @@ define(function(require) {
         },
 
         bindTooltipEvents: function($expressionInput) {
-            $expressionInput.mouseenter(() => {
+            $expressionInput.on('mouseenter', () => {
                 if ($expressionInput.val().length > unitAndCurrencyVisibleLength) {
                     this.showTooltip($expressionInput);
                 }

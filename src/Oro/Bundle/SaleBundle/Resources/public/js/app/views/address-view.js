@@ -83,7 +83,7 @@ define(function(require) {
         handleLayoutInit: function() {
             const self = this;
 
-            this.ftid = this.$el.find('div[data-ftid]:first').data('ftid');
+            this.ftid = this.$el.find('div[data-ftid]').first().data('ftid');
 
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
@@ -153,7 +153,7 @@ define(function(require) {
             this.$address = $address;
 
             const self = this;
-            this.$address.change(function(e) {
+            this.$address.on('change', function(e) {
                 self.customerAddressChange(e);
             });
         },
@@ -182,7 +182,7 @@ define(function(require) {
                         if ($field && $field.val() !== (value || '')) {
                             $field.val(value);
                             if ($field.data('select2')) {
-                                $field.data('selected-data', value).change();
+                                $field.data('selected-data', value).trigger('change');
                             }
                         }
                     });
@@ -223,7 +223,7 @@ define(function(require) {
                 $field.val('');
                 $field.prop('readonly', true).inputWidget('refresh');
                 if ($field.data('select2')) {
-                    $field.data('selected-data', '').change();
+                    $field.data('selected-data', '').trigger('change');
                 }
             });
         },
@@ -235,7 +235,7 @@ define(function(require) {
             this.$address.empty();
             this.$address.data('addresses', {});
             if (this.$address.data('select2')) {
-                this.$address.data('selected-data', '').change();
+                this.$address.data('selected-data', '').trigger('change');
             }
         },
 

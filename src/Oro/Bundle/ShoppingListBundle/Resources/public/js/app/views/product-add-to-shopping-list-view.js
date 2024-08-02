@@ -297,7 +297,7 @@ define(function(require) {
                     mainButton = this.findAllButtons();
                 }
 
-                mainButton.click();
+                mainButton.trigger('click');
             }
         },
 

@@ -64,7 +64,7 @@ define(function(require) {
                 $target.prop('disabled', false);
             } else if ($source.prop('type') === 'checkbox') {
                 $target.prop('checked', $source.prop('checked'));
-                $target.change();
+                $target.trigger('change');
             }
         },
 
