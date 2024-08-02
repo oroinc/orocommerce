@@ -159,7 +159,7 @@ define(function(require) {
 
             $('body').append($form);
 
-            $form.submit();
+            $form.trigger('submit');
         },
 
         /**

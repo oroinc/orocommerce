@@ -76,7 +76,7 @@ const QuickAddImportFormView = BaseView.extend({
     },
 
     onFileChange() {
-        this.$el.submit();
+        this.$el.trigger('submit');
     },
 
     onSubmit(event) {
@@ -152,7 +152,7 @@ const QuickAddImportFormView = BaseView.extend({
             _dataTransfer.items.add(dataTransfer.files[0]);
             this.find('input:file')[0].files = _dataTransfer.files;
 
-            this.$el.submit();
+            this.$el.trigger('submit');
         }
     },
 

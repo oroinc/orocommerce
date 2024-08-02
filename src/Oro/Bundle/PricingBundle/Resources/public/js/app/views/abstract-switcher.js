@@ -106,7 +106,7 @@ define(function(require) {
         },
 
         setMouseLeaveEvent: function($expression) {
-            $expression.mouseleave(() => {
+            $expression.on('mouseleave', () => {
                 this.disposeTooltip($expression);
             });
         },

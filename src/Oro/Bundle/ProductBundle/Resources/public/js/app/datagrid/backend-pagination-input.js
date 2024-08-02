@@ -27,7 +27,7 @@ define(function(require) {
                     if (index.className || !this.enabled) {
                         $arrow.addClass('disabled').attr('tabindex', -1);
                     } else {
-                        $arrow.removeClass('disabled').removeAttr('tabindex');
+                        $arrow.removeClass('disabled').attr('tabindex', null);
                     }
                 }
             }, this);
@@ -78,8 +78,7 @@ define(function(require) {
             this.$el.find('[data-grid-pagination-records]').text(state.totalRecords);
             this.$('input')
                 .val(state.firstPage === 0 ? state.currentPage + 1 : state.currentPage)
-                .attr('disabled', !this.enabled || !state.totalRecords)
-                .numeric({decimal: false, negative: false});
+                .attr('disabled', !this.enabled || !state.totalRecords);
 
             if (this.hidden || totalPages === 1) {
                 this.$el.hide();

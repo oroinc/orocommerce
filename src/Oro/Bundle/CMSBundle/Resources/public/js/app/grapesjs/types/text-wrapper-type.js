@@ -32,7 +32,7 @@ const TextWrapperType = BaseType.extend({
         },
 
         onRender() {
-            this.$el.removeAttr('contenteditable');
+            this.$el.attr('contenteditable', null);
         }
     },
 

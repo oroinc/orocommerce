@@ -77,7 +77,7 @@ const QuickAddFormView = BaseView.extend({
     _submit(component, additional) {
         this.$(this.componentSelector).val(component);
         this.$(this.additionalSelector).val(additional);
-        this.$el.submit();
+        this.$el.trigger('submit');
     },
 
     onSubmit(e) {

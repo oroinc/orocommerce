@@ -86,7 +86,7 @@ const FrontendRequestProductKitConfigurationEditView = BaseView.extend(_.extend(
         }
 
         if (data?.event?.added?.type === 'kit') {
-            this.getElement('editButton').click();
+            this.getElement('editButton').trigger('click');
         }
 
         this.toggleView();

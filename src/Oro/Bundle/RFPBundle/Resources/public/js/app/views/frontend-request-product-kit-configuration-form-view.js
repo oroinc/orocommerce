@@ -69,14 +69,14 @@ const FrontendRequestProductKitConfigurationFormView = BaseView.extend({
         }
 
         if (hasValue) {
-            $quantityField.removeAttr('disabled');
+            $quantityField.prop('disabled', false);
 
             if (minimumQuantity === maximumQuantity) {
                 // Original value might be smaller than "minimumQuantity" in case of editing product kit.
                 // As a result, there is no way to submit valid form, so we have to have value as "minimumQuantity".
                 $quantityField.attr('readonly', true).val(minimumQuantity);
             } else {
-                $quantityField.removeAttr('readonly');
+                $quantityField.prop('readonly', false);
             }
 
             if (!$quantityField.val()) {

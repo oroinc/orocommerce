@@ -53,7 +53,7 @@ define(function(require) {
             if (value !== oldValue || value !== $el.val()) {
                 $el.val(value);
                 if (!silent) {
-                    $el.change();
+                    $el.trigger('change');
                 }
             }
 
@@ -63,7 +63,7 @@ define(function(require) {
         },
 
         generateSelectOption: function(value, label) {
-            return '<option value="' + _.escape(value) + '">' + _.escape(label) + '</option>';
+            return `<option value="${_.escape(value)}">${_.escape(label)}</option>`;
         }
     };
 

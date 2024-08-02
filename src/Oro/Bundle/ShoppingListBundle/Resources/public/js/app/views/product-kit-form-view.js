@@ -177,7 +177,7 @@ const ProductKitFormView = BaseView.extend({
                     // As a result, there is no way to submit valid form, so we have to have value as "minimumQuantity".
                     $relatedEl.attr('readonly', true).val(minimumQuantity);
                 } else {
-                    $relatedEl.removeAttr('readonly');
+                    $relatedEl.prop('readonly', false);
                 }
 
                 if (!$relatedEl.val()) {
