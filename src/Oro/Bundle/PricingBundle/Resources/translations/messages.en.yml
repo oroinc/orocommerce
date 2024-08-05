@@ -64,7 +64,7 @@ oro.pricing:
             description: 'Price list schedules'
         product_assignment_rule:
             label: 'Rule'
-            description: 'Defines on what products price list rules would apply'
+            description: 'Define which products in the price list would be subject to price calculation'
         set_default:
             label: Set default
             message: The "{{ priceListName }}" has been made default
