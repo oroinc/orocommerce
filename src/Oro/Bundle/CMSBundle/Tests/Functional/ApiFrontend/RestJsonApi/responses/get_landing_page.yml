@@ -13,3 +13,4 @@ data:
         metaTitle: 'Page 1 Meta Title'
         metaDescription: 'Page 1 Meta Description'
         metaKeywords: 'Page 1 Meta Keywords'
+        doNotRenderTitle: false

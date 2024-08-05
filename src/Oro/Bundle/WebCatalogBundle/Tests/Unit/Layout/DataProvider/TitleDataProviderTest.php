@@ -13,9 +13,9 @@ use PHPUnit\Framework\TestCase;
 
 class TitleDataProviderTest extends TestCase
 {
-    private RequestWebContentVariantProvider|MockObject $requestWebContentVariantProvider;
+    private RequestWebContentVariantProvider&MockObject $requestWebContentVariantProvider;
 
-    private LocalizationHelper|MockObject $localizationHelper;
+    private LocalizationHelper&MockObject $localizationHelper;
 
     private TitleDataProvider $titleDataProvider;
 

@@ -1,6 +1,7 @@
 about:
     slug: about
     title: 'About'
+    doNotRenderTitle: true
     content: >
         <h1>H1. We Are the Leading RV & Gear Seller in the US</h1>
     

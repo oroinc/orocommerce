@@ -117,6 +117,7 @@ oro_behat_extension:
                         class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
                     Meta Title: 'oro_cms_page[metaTitles][values][default]'
                     Meta Description: 'oro_cms_page[metaDescriptions][values][default]'
+                    Do Not Render Title: 'oro_cms_page[doNotRenderTitle]'
 
         Content Block Form:
             selector: 'form[name="oro_cms_content_block"]'

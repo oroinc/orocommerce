@@ -36,7 +36,7 @@ class OroCMSBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_14_2';
+        return 'v1_15';
     }
 
     /**
@@ -193,6 +193,7 @@ class OroCMSBundleInstaller implements
         $table->addColumn('draft_source_id', 'integer', ['notnull' => false]);
         $table->addColumn('draft_uuid', 'guid', ['notnull' => false]);
         $table->addColumn('draft_owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('do_not_render_title', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['draft_project_id'], 'IDX_BCE4CB4A2E26AC0B');
         $table->addIndex(['draft_source_id'], 'IDX_BCE4CB4A953C1C61');
