@@ -39,6 +39,9 @@ oro.cms:
         feature:
             label: Landing Pages
             description: Enables creating and managing landing pages.
+        do_not_render_title:
+            label: 'Do not render title'
+            tooltip: 'Hide the page title on the storefront.'
 
     contentblock:
         entity_label: Content Block

@@ -111,6 +111,10 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
                 $page->setOrganization($organization);
             }
 
+            if (isset($row['doNotRenderTitle'])) {
+                $page->setDoNotRenderTitle($row['doNotRenderTitle']);
+            }
+
             $page->setContent(
                 $this->getPageContent($manager, $fileManager, $reference, $row['content'] ?? '')
             );
