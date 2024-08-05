@@ -526,7 +526,16 @@ class ShoppingListControllerTest extends WebTestCase
         $response = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
-        self::assertStringNotContainsString('Create Order', $crawler->html());
+        self::assertStringContainsString('You do not have available Shopping Lists', $crawler->html());
+    }
+
+    public function testUpdateListForGuest()
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_update'));
+        $response = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($response, 200);
+        self::assertStringContainsString('You do not have available Shopping Lists', $crawler->html());
     }
 
     private function assertQuickAddFormSubmitted(
