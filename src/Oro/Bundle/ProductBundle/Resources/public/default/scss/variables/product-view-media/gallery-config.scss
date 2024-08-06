@@ -43,6 +43,11 @@ $product-view-media-gallery-image-border-radius: 100% !default;
 $product-view-media-gallery-image-width-tablet: 56px !default;
 $product-view-media-gallery-image-height-tablet: 56px !default;
 
+$product-view-sticker-wrapper-width: 100% !default;
+$product-view-sticker-wrapper-height: $product-view-media-gallery-max-height !default;
+$product-view-sticker-wrapper-position: absolute !default;
+$product-view-sticker-wrapper-pointer-events: none !default;
+
 // Vertical Mode
 $vertical-product-view-media-wrapper-display: grid !default;
 $vertical-product-view-media-wrapper-grid-template-columns: 64px calc(100% - 64px - #{spacing('base')}) !default;
@@ -53,7 +58,7 @@ $vertical-product-view-media-gallery-max-height: 480px !default;
 $vertical-product-view-media-gallery-container-grid-row: #{'1 / 2'} !default;
 $vertical-product-view-media-gallery-container-grid-column: #{'2 / 3'} !default;
 
-$vertical-product-view-media-gallery-image-item-height: 478px !default;
+$vertical-product-view-media-gallery-image-item-height: 480px !default;
 
 $vertical-product-view-media-gallery-nav-grid-row: #{'1 / 2'} !default;
 $vertical-product-view-media-gallery-nav-grid-column: #{'1 / 2'} !default;
@@ -95,3 +100,19 @@ $vertical-product-view-media-gallery-nav-slick-arrow-next-before-background:
 $vertical-product-view-media-gallery-nav-slick-arrow-next-before-bottom: 100% !default;
 
 $vertical-product-view-media-gallery-nav-slick-arrow-btn-transform: rotate(90deg) !default;
+
+$vertical-product-view-sticker-wrapper-width: auto !default;
+$vertical-product-view-sticker-wrapper-height: auto !default;
+$vertical-product-view-sticker-wrapper-position: relative !default;
+$vertical-product-view-sticker-wrapper-grid-row: #{'1 / 2'} !default;
+$vertical-product-view-sticker-wrapper-grid-column: #{'2 / 3'} !default;
+
+// Tablet
+$product-view-media-gallery-container-tablet-grid-row: #{'1 / 2'} !default;
+$product-view-media-gallery-container-tablet-grid-column: #{'1 / 2'} !default;
+
+$product-view-sticker-wrapper-tablet-width: 100% !default;
+$product-view-sticker-wrapper-tablet-position: relative !default;
+$product-view-sticker-wrapper-tablet-grid-row: #{'1 / 2'} !default;
+$product-view-sticker-wrapper-tablet-grid-column: #{'1 / 2'} !default;
+$product-view-sticker-wrapper-tablet-pointer-events: none !default;
