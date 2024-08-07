@@ -53,7 +53,7 @@
     contentStyle: css/team/seven_columns_large_images.css
     previewImage: preview/team/seven_columns_large_images.png
 -
-    name: 'Two columns. Image and text(image ratio is preserved)'
+    name: 'Two columns. Image and text (image ratio is preserved)'
     tags: [Category]
     content: template/category/two_columns_image_and_text.html
     contentStyle: css/category/two_columns_image_and_text.css
@@ -95,13 +95,13 @@
     contentStyle: css/category/featured_categories_grid.css
     previewImage: preview/category/featured_categories_grid.png
 -
-    name: 'Four columns. Text(cards without background)'
+    name: 'Four columns. Text (cards without background)'
     tags: [Features]
     content: template/feature/four_columns_text.html
     contentStyle: css/feature/four_columns_text.css
     previewImage: preview/feature/four_columns_text.png
 -
-    name: 'Four columns. Text(cards with background)'
+    name: 'Four columns. Text (cards with background)'
     tags: [Features]
     content: template/feature/four_columns_text_bg.html
     contentStyle: css/feature/four_columns_text_bg.css
@@ -119,7 +119,13 @@
     contentStyle: css/feature/two_columns_text.css
     previewImage: preview/feature/two_columns_text.png
 -
-    name: 'Two columns. Text and image(image ratio is preserved)'
+    name: 'Two columns. Text and image (image is flexible)'
+    tags: [ Features ]
+    content: template/feature/two_columns_text_and_image_flexible.html
+    contentStyle: css/feature/two_columns_text_and_image_flexible.css
+    previewImage: preview/feature/two_columns_text_and_image_flexible.png
+-
+    name: 'Two columns. Text and image (image ratio is preserved)'
     tags: [Features]
     content: template/feature/two_columns_text_and_image.html
     contentStyle: css/feature/two_columns_text_and_image.css

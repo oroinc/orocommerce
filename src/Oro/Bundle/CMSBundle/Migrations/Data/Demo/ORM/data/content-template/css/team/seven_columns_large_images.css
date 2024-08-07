@@ -6,5 +6,6 @@
 }
 
 .seven-columns-large-images-team .picture__wrapper {
-    height: 200px;
+    min-height: 200px;
+    display: flex;
 }

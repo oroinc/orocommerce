@@ -3,7 +3,8 @@
 }
 
 .three-columns-category .picture__wrapper {
-    height: 200px;
+    min-height: 200px;
+    display: flex;
 }
 
 .three-columns-category .grid-item {

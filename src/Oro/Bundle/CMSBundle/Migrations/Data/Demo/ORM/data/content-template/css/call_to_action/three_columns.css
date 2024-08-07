@@ -2,8 +2,14 @@
     --grid-gap: 24px;
 }
 
+.three-columns-call-to-action .grid-sub-title {
+    /* stylelint-disable-next-line */
+    color: #45606e;
+}
+
 .three-columns-call-to-action .picture__wrapper {
-    height: 200px;
+    min-height: 200px;
+    display: flex;
 }
 
 .three-columns-call-to-action .grid-item {

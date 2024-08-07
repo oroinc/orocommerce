@@ -3,5 +3,6 @@
 }
 
 .four-columns-testimonials .picture__wrapper {
-    height: 200px;
+    min-height: 200px;
+    display: flex;
 }

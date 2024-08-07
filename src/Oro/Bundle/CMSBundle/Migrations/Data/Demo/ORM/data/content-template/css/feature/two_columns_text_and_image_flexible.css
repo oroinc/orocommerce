@@ -1,0 +1,21 @@
+.two-columns-text-and-image-flexible-features .grid-two-columns {
+    gap: 32px 160px;
+}
+
+@media screen and (max-width: 1600px) {
+    .two-columns-text-and-image-flexible-features .grid-two-columns {
+        gap: 48px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .two-columns-text-and-image-flexible-features .grid-two-columns {
+        gap: 40px;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .two-columns-text-and-image-flexible-features .grid-two-columns {
+        gap: 32px 0;
+    }
+}

@@ -13,6 +13,12 @@
     }
 }
 
+@media screen and (max-width: 992px) {
+    .two-columns-image-and-text-category .grid-two-columns {
+        gap: 40px;
+    }
+}
+
 @media screen and (max-width: 767px) {
     .two-columns-image-and-text-category .grid-two-columns {
         gap: 32px 0;
