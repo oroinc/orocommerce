@@ -69,7 +69,7 @@ define(function(require) {
 
         enableTransitionButton: function() {
             if (this.options.enabled) {
-                this.$el.removeAttr('disabled', false).removeClass(DISABLED_CLASS);
+                this.$el.prop('disabled', false).removeClass(DISABLED_CLASS);
             }
         },
 
@@ -171,8 +171,7 @@ define(function(require) {
          */
         getFormData: function() {
             this.$form.find(this.options.selectors.stateToken)
-                .prop('disabled', false)
-                .removeAttr('disabled');
+                .prop('disabled', false);
             return new FormData(this.$form[0]);
         },
 

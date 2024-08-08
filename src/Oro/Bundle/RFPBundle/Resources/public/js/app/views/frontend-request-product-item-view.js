@@ -210,7 +210,7 @@ const FrontendRequestProductItemView = BaseView.extend(_.extend({}, ElementsHelp
         if (this.model.get('isPendingRemove')) {
             this.model.set('isPendingRemove', false);
             this.$el.removeClass('hidden');
-            this.$el.find(':input[data-name]').removeAttr('disabled');
+            this.$el.find(':input[data-name]').prop('disabled', false);
         }
 
         if (!_.isEmpty(this.savedAttributes)) {

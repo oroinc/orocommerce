@@ -21,12 +21,12 @@ class TaxManager
     protected array $transformers = [];
 
     public function __construct(
-        private TaxFactory $taxFactory,
-        private TaxEventDispatcher $eventDispatcher,
-        private TaxValueManager $taxValueManager,
-        private TaxationSettingsProvider $settingsProvider,
-        private CacheInterface $cacheProvider,
-        private ObjectCacheKeyGenerator $objectCacheKeyGenerator
+        protected TaxFactory $taxFactory,
+        protected TaxEventDispatcher $eventDispatcher,
+        protected TaxValueManager $taxValueManager,
+        protected TaxationSettingsProvider $settingsProvider,
+        protected CacheInterface $cacheProvider,
+        protected ObjectCacheKeyGenerator $objectCacheKeyGenerator
     ) {
     }
 
@@ -35,17 +35,8 @@ class TaxManager
         $this->transformers[$className] = $transformer;
     }
 
-    protected function getTaxTransformer(?string $className): ?TaxTransformerInterface
-    {
-        if (!array_key_exists($className, $this->transformers)) {
-            throw new \InvalidArgumentException(sprintf('TaxTransformerInterface is missing for %s', $className));
-        }
-
-        return $this->transformers[$className];
-    }
-
     /**
-     * Load tax and return Result by object
+     * Loads tax and returns Result by object.
      *
      * @throws TaxationDisabledException if taxation disabled in system configuration
      * @throws \InvalidArgumentException if taxes for object could not be loaded
@@ -55,16 +46,17 @@ class TaxManager
         $this->throwExceptionIfTaxationDisabled();
 
         $taxable = $this->getCachedTaxable($object);
-        $transformer = $this->getTaxTransformer($taxable->getClassName());
 
-        $taxValue = $this->taxValueManager->getTaxValue($taxable->getClassName(), $taxable->getIdentifier());
-
-        return $transformer->transform($taxValue);
+        return $this->getTaxTransformer($taxable->getClassName())->transform(
+            $this->taxValueManager->getTaxValue($taxable->getClassName(), $taxable->getIdentifier())
+        );
     }
 
     /**
-     * Calculate Result by object
+     * Calculates Result by object.
+     *
      * @throws TaxationDisabledException if taxation disabled in system configuration
+     * @throws \InvalidArgumentException if taxes for object could not be loaded
      */
     public function getTax(object $object): ?Result
     {
@@ -74,10 +66,8 @@ class TaxManager
     }
 
     /**
-     * @param object $object
-     * @param bool $includeItems
-     * @return Result|false|null
-     * @throws TaxationDisabledException
+     * @throws TaxationDisabledException if taxation disabled in system configuration
+     * @throws \InvalidArgumentException if taxes for object could not be loaded
      */
     public function saveTax(object $object, bool $includeItems = false): Result|null|false
     {
@@ -105,7 +95,8 @@ class TaxManager
     }
 
     /**
-     * Remove tax value assigned to object
+     * Removes tax value assigned to object.
+     *
      * @throws TaxationDisabledException if taxation disabled in system configuration
      */
     public function removeTax(object $object, bool $includeItems = false): ?bool
@@ -124,23 +115,24 @@ class TaxManager
     }
 
     /**
-     * Creates new or returns existing TaxValue instance based on object
+     * Creates new or returns existing TaxValue instance based on object.
+     *
      * @throws TaxationDisabledException if taxation disabled in system configuration
+     * @throws \InvalidArgumentException if taxes for object could not be loaded
      */
     public function createTaxValue(object $object): ?TaxValue
     {
         $this->throwExceptionIfTaxationDisabled();
 
         $taxable = $this->getTaxable($object);
-        $result = $taxable->getResult();
 
-        $transformer = $this->getTaxTransformer($taxable->getClassName());
-
-        return $transformer->reverseTransform($result, $taxable);
+        return $this->getTaxTransformer($taxable->getClassName())
+            ->reverseTransform($taxable->getResult(), $taxable);
     }
 
     /**
-     * Returns existing TaxValue instance based on object
+     * Returns existing TaxValue instance based on object.
+     *
      * @throws TaxationDisabledException if taxation disabled in system configuration
      */
     public function getTaxValue(object $object): ?TaxValue
@@ -155,8 +147,7 @@ class TaxManager
     protected function removeTaxValue(string $className, string|int $entityId): bool
     {
         $taxValue = $this->taxValueManager->findTaxValue($className, $entityId);
-
-        if (!$taxValue) {
+        if (null === $taxValue) {
             return false;
         }
 
@@ -209,5 +200,17 @@ class TaxManager
         return clone $this->cacheProvider->get($cacheKey, function () use ($object) {
             return $this->taxFactory->create($object);
         });
+    }
+
+    /**
+     * @throws \InvalidArgumentException if a TAX transformer does not exist for the given class
+     */
+    protected function getTaxTransformer(?string $className): TaxTransformerInterface
+    {
+        if (!\array_key_exists($className, $this->transformers)) {
+            throw new \InvalidArgumentException(sprintf('TaxTransformerInterface is missing for %s', $className));
+        }
+
+        return $this->transformers[$className];
     }
 }

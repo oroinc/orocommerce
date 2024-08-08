@@ -139,7 +139,7 @@ define(function(require) {
                     return this.value.length > 0;
                 }).length;
                 if (notEmptyFieldsCount === 0) {
-                    $fields.eq(0).attr('autofocus', true).focus();
+                    $fields.first().attr('autofocus', true).trigger('focus');
                     return false;
                 }
             });
@@ -217,7 +217,7 @@ define(function(require) {
 
                 let $label = this.$('label[for="' + field.id + '"]');
                 if (!$label.length) {
-                    $label = $field.closest(this.options.additionalOptionSelector).find('label:first');
+                    $label = $field.closest(this.options.additionalOptionSelector).find('label').first();
                     $label.attr('for', field.id);
                 }
 
@@ -271,7 +271,7 @@ define(function(require) {
                 }
 
                 const $label = this.$('label[for="' + field.id + '"]');
-                const label = $label.contents().eq(0).text() + ': ' + ($field.data('currency') || '');
+                const label = $label.contents().first().text() + ': ' + ($field.data('currency') || '');
 
                 preview.push(label + value);
             }, this);

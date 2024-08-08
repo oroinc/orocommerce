@@ -137,7 +137,7 @@ const QuickAddCopyPasteFormView = BaseView.extend({
      */
     enableForm() {
         this.disabled = false;
-        this.$field.removeAttr('disabled');
+        this.$field.prop('disabled', false);
         this._toggleSubmitButton(false);
     },
 

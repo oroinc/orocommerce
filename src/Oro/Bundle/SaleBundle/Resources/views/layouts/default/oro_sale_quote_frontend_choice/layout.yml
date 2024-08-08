@@ -44,6 +44,8 @@ layout:
                         quote: '=data["quote"]'
                 quote_choice_page:
                     blockType: container
+                quote_view_container_content:
+                    blockType: container
                 quote_choice_form:
                     blockType: quote_choice_form_container
                     options:
@@ -81,12 +83,13 @@ layout:
             tree:
                 page_content:
                     quote_choice_page:
-                        quote_view_information:
-                            quote_shipping_address: ~
+                        quote_view_container_content:
+                            quote_view_information:
+                                quote_shipping_address: ~
+                            quote_choice_subtotals: ~
                         quote_choice_form:
                             quote_choice_back_button: ~
                             quote_choice_guest_back_button: ~
-                            quote_choice_subtotals: ~
                             quote_choice_submit_button: ~
 
     conditions: '!context["widget_container"]'

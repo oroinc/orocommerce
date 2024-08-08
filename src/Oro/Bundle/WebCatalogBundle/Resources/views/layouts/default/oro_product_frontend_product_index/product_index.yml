@@ -3,4 +3,4 @@ layout:
         - '@setOption':
             id: category_title
             optionName: text
-            optionValue: '=data["web_catalog_title"].getNodeTitle(data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getTitles()))'
+            optionValue: '=data["web_catalog_title"].getTitle(data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getTitles()))'

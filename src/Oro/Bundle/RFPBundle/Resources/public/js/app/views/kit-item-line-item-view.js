@@ -69,7 +69,7 @@ const KitItemLineItemView = LineItemProductView.extend({
         } else {
             this.resetData();
 
-            this.getElement('quantity').removeAttr('disabled', false);
+            this.getElement('quantity').prop('disabled', false);
         }
     },
 

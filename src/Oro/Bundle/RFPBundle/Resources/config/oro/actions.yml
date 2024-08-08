@@ -119,7 +119,6 @@ operations:
             - oro_rfp_frontend_request_index
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
         button_options:
-            class: btn--outlined
             icon: fa-plus
         frontend_options:
             options:

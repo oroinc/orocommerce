@@ -74,7 +74,7 @@ define(function(require) {
                         setTimeout(() => {
                             $widget.removeClass('show-by-hover');
                             $widget.find('[data-toggle="dropdown"]').dropdown('toggle');
-                            $widget.removeAttr('data-skip-focus-decoration-inner-elements');
+                            $widget.attr('data-skip-focus-decoration-inner-elements', null);
                         }, 0);
                     }
                 },

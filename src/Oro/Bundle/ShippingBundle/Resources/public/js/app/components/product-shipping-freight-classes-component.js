@@ -178,7 +178,7 @@ define(function(require) {
                         self.$freightClassesSelect.append($('<option/>').val(code).text(label));
                     }
                 });
-                this.$freightClassesSelect.val(value).change();
+                this.$freightClassesSelect.val(value).trigger('change');
 
                 if (!this.$freightClassesSelect.val()) {
                     this.$freightClassesSelect.val(_.keys(units)[0]);

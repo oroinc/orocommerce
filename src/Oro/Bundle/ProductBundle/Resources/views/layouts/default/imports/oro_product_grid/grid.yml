@@ -177,3 +177,9 @@ layout:
               parentId: top_sticky_panel_content
               siblingId: sticky_header_row
               blockType: block
+
+        - '@appendOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.toolbarOptions.paginationInfo
+            optionValue:
+                show: true

@@ -34,6 +34,16 @@ layout:
             optionName: grid_render_parameters.useFiltersStateAnimationOnInit
             optionValue: true
 
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.themeOptions.showMassActionOnToolbar
+            optionValue: false
+
+        - '@setOption':
+            id: __datagrid_toolbar_pagination
+            optionName: vars.pagination_threshold
+            optionValue: '=data["theme_configuration"].getThemeConfigurationOption("datagrid__pagination_threshold")'
+
         - '@move':
             id: __datagrid_toolbar
             parentId: __datagrid

@@ -54,6 +54,11 @@ class PageType extends AbstractType
                 'required' => false,
                 'source_field' => 'titles',
             ])
+            ->add('doNotRenderTitle', CheckboxType::class, [
+                'label' => 'oro.cms.page.do_not_render_title.label',
+                'tooltip' => 'oro.cms.page.do_not_render_title.tooltip',
+                'required' => false
+            ])
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData'])
             ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }

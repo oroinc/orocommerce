@@ -173,14 +173,31 @@
     }
 }
 
-@include breakpoint('desktop') {
+@include breakpoint('desktop-small') {
     .product-view-media-wrapper {
+        &:has(.product-view-media-gallery__nav) {
+            .product-view-sticker-wrapper {
+                width: $product-view-sticker-wrapper-width;
+                height: $product-view-sticker-wrapper-height;
+                position: $product-view-sticker-wrapper-position;
+                pointer-events: $product-view-sticker-wrapper-pointer-events;
+            }
+        }
+
         &.vertical-mode {
             &:has(.product-view-media-gallery__nav) {
                 display: $vertical-product-view-media-wrapper-display;
                 // Don't use 1fr! This leads to a slick slider bug
                 grid-template-columns: $vertical-product-view-media-wrapper-grid-template-columns;
                 gap: $vertical-product-view-media-wrapper-gap;
+
+                .product-view-sticker-wrapper {
+                    width: $vertical-product-view-sticker-wrapper-width;
+                    height: $vertical-product-view-sticker-wrapper-height;
+                    position: $vertical-product-view-sticker-wrapper-position;
+                    grid-row: $vertical-product-view-sticker-wrapper-grid-row;
+                    grid-column: $vertical-product-view-sticker-wrapper-grid-column;
+                }
 
                 .product-view-media-gallery {
                     max-height: $vertical-product-view-media-gallery-max-height;
@@ -262,6 +279,23 @@
 }
 
 @include breakpoint('tablet') {
+    .product-view-media-gallery-container {
+        grid-row: $product-view-media-gallery-container-tablet-grid-row;
+        grid-column: $product-view-media-gallery-container-tablet-grid-column;
+    }
+
+    .product-view-media-wrapper {
+        &:has(.product-view-media-gallery__nav) {
+            .product-view-sticker-wrapper {
+                width: $product-view-sticker-wrapper-tablet-width;
+                grid-row: $product-view-sticker-wrapper-tablet-grid-row;
+                grid-column: $product-view-sticker-wrapper-tablet-grid-column;
+                position: $product-view-sticker-wrapper-tablet-position;
+                pointer-events: $product-view-sticker-wrapper-tablet-pointer-events;
+            }
+        }
+    }
+
     .product-view-media-gallery {
         &__image-item,
         &__image {

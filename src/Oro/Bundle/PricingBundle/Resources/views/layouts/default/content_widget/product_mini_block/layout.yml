@@ -5,6 +5,7 @@ layout:
             optionName: vars.blockContext
             optionValue:
                 productPrices: '=data["product"] ? data["frontend_product_prices"].getByProduct(data["product"]) : []'
+                productShoppingListPrices: '=data["product"] ? data["frontend_product_prices"].getShoppingListPricesByProduct(data["product"]) : []'
                 isPriceUnitsVisible: '=data["product"] ? data["oro_price_unit_visibility"].isPriceUnitsVisibleByProduct(data["product"]) : false'
 
         - '@appendOption':

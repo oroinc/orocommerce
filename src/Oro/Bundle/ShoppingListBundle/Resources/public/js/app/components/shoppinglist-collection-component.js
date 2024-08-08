@@ -73,9 +73,9 @@ define(function(require) {
                 model.set('shopping_lists', product.shopping_lists, {silent: true});
                 model.trigger('change:shopping_lists');
             };
-            if (response.product && !_.isArray(model)) {
+            if (response.product && !Array.isArray(model)) {
                 updateModel(model, response.product);
-            } else if (response.products && _.isArray(model)) {
+            } else if (response.products && Array.isArray(model)) {
                 model = _.indexBy(model, 'id');
                 _.each(response.products, function(product) {
                     if (model[product.id]) {

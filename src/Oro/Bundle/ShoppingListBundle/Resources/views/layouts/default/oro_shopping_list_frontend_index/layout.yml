@@ -12,3 +12,10 @@ layout:
             id: page_title
             optionName: defaultValue
             optionValue: 'oro.shoppinglist.entity_plural_label'
+
+        - '@add':
+            id: shopping_list_external_toolbar
+            parentId: page_title_container
+            blockType: frontend_datagrid_external_toolbar
+            options:
+                gridName: 'frontend-customer-user-shopping-lists-grid'

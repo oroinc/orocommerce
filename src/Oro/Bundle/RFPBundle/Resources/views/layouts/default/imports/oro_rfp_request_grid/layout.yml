@@ -24,8 +24,3 @@ layout:
             blockType: combined_buttons
             options:
                 buttons: '=data["buttons"].getAll()'
-
-        - '@setOption':
-            id: __datagrid
-            optionName: grid_render_parameters.gridViewsOptions.hideTitle
-            optionValue: '.page-title-wrapper'

@@ -10,13 +10,15 @@ layout:
             optionName: grid_name
             optionValue: frontend-customer-user-shopping-lists-grid
 
-        - '@setOption':
-            id: __datagrid
-            optionName: grid_render_parameters.gridViewsOptions.hideTitle
-            optionValue: '.page-title-wrapper'
-
         - '@appendOption':
             id: __datagrid
             optionName: grid_render_parameters.toolbarOptions.itemsCounter
             optionValue:
                 transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shoppingListsPlural'
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.paginationInfo
+            optionValue:
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shoppingListPageInfo'
+                show: true

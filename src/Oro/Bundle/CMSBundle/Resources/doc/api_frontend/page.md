@@ -20,6 +20,10 @@ Retrieve a collection of landing page records.
 
 The localized title of the landing page.
 
+### doNotRenderTitle
+
+Hide or show the page title on the storefront.
+
 ### content
 
 The content of the landing page.

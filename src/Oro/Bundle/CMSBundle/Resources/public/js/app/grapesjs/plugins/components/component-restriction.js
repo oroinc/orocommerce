@@ -171,7 +171,7 @@ define(function(require) {
                 return this.isAllowedTag(tags);
             }
 
-            if (_.isArray(tags)) {
+            if (Array.isArray(tags)) {
                 return _.every(tags, this.isAllowedTag, this);
             }
         },
@@ -189,7 +189,7 @@ define(function(require) {
                 }) || false;
             }
 
-            if (_.isArray(type)) {
+            if (Array.isArray(type)) {
                 const typeFlat = [type[0].toLowerCase(), type[1]].flat();
                 return this.allowTags.find(tag => {
                     if (tag[0] === typeFlat[0]) {
@@ -225,7 +225,7 @@ define(function(require) {
             try {
                 _.each(this.getTags(this.stringToNodes(stripRestrictedAttrs(template)), nativeOut), function(tag) {
                     if (!this.isAllowedTag(tag)) {
-                        restricted.push(_.isArray(tag)
+                        restricted.push(Array.isArray(tag)
                             ? this.normalize(!nativeOut ? tag : tag[2])
                             : tag.toUpperCase());
                     }
@@ -243,7 +243,7 @@ define(function(require) {
          * @returns {string|*|void}
          */
         normalize(tag) {
-            if (_.isArray(tag)) {
+            if (Array.isArray(tag)) {
                 const conf = this.getConfig(tag[0]) || [];
                 const attr = conf.length ? _.difference(tag.flat(), conf.flat()) : tag[1];
                 return `${tag[0].toUpperCase()} (${attr.join(', ')})`;

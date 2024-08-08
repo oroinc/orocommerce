@@ -59,11 +59,11 @@ const LinkType = BaseType.extend({
                     }
                     unlink = false;
 
-                    $link.removeAttr(TEMP_ATTR);
+                    $link.attr(TEMP_ATTR, null);
                 }).on('close hidden', () => {
                     const $link = $(editor.Canvas.getBody()).find(`[${TEMP_ATTR}="${uId}"]`);
 
-                    $link.removeAttr(TEMP_ATTR);
+                    $link.attr(TEMP_ATTR, null);
 
                     if (unlink) {
                         const textNode = document.createTextNode($link.text().trim());

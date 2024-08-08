@@ -184,8 +184,8 @@ define(function(require) {
         restoreSavedState: function() {
             const oldQuantity = this.oldModelState.quantity;
             const formattedQuantity = QuantityHelper.formatQuantity(oldQuantity);
-            this.elements.quantity.val(formattedQuantity).change();
-            this.elements.unit.val(this.oldModelState.unit).change();
+            this.elements.quantity.val(formattedQuantity).trigger('change');
+            this.elements.unit.val(this.oldModelState.unit).trigger('change');
         },
 
         onViewChange: function(e) {

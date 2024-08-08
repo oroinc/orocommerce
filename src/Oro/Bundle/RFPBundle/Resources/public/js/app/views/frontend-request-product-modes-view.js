@@ -134,7 +134,7 @@ const FrontendRequestProductModesView = BaseView.extend(_.extend({}, ElementsHel
     },
 
     remove: function() {
-        this.getElement('removeButton').click();
+        this.getElement('removeButton').trigger('click');
     },
 
     onClickEditButton: function(e) {

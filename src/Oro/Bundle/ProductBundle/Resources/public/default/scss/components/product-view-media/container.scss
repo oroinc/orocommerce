@@ -11,3 +11,10 @@
         z-index: z();
     }
 }
+
+@include breakpoint('tablet') {
+    .product-view-media-wrapper {
+        display: grid;
+        grid-template-columns: minmax(0, 100%);
+    }
+}

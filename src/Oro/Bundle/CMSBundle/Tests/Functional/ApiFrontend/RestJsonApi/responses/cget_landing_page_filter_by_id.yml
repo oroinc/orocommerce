@@ -12,3 +12,4 @@ data:
             metaTitle: null
             metaDescription: null
             metaKeywords: null
+            doNotRenderTitle: false

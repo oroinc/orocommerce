@@ -163,7 +163,7 @@ const SearchAutocompleteView = BaseView.extend({
             'aria-activedescendant': null
         });
         this.$popup.hide();
-        this.gerSelectedOption().removeAttr('aria-selected');
+        this.gerSelectedOption().attr('aria-selected', null);
         this.undoFocusStyle();
         this.subview('backdrop').hide();
     },

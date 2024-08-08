@@ -5,7 +5,7 @@
 
 {% block __oro_rfp_request_grid__button_container_create_new_quote_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " page-title-actions"}) %}
-    {% set actionButtonClass = 'btn btn--size-small' %}
+    {% set actionButtonClass = 'btn' %}
     <div{{ block('block_attributes') }}>
         {{ block('combined_buttons_widget') }}
     </div>

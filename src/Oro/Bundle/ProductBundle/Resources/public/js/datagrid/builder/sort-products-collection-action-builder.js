@@ -38,7 +38,7 @@ const sortProductsCollectionActionBuilder = {
                                 if (newIncluded !== included) {
                                     $included
                                         .val(newIncluded)
-                                        .change()
+                                        .trigger('change')
                                         .trigger('patchInitialState');
                                 }
                             }
@@ -51,7 +51,7 @@ const sortProductsCollectionActionBuilder = {
                             }
                             $excluded
                                 .val(unique(removeProducts).join(','))
-                                .change()
+                                .trigger('change')
                                 .trigger('patchInitialState');
                         }
                         datagrid.refreshAction.execute();

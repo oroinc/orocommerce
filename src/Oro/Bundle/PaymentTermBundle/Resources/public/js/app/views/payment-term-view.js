@@ -65,7 +65,7 @@ define(function(require) {
         handleLayoutInit: function() {
             const self = this;
 
-            this.$input.change(function() {
+            this.$input.on('change', function() {
                 self.inputChanged = true;
             });
         },

@@ -27,4 +27,6 @@ interface TitleDataProviderInterface
      * @return LocalizedFallbackValue|string
      */
     public function getTitle($default = '', $data = null);
+
+    public function isRenderTitle(): bool;
 }

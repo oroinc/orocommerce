@@ -76,7 +76,7 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
         } else {
             $input.setCursorToEnd();
         }
-        $input.focus();
+        $input.trigger('focus');
     },
 
     isChanged() {

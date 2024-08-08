@@ -101,7 +101,7 @@ const SortProductsAction = AbstractAction.extend({
         const actionInput = $form.find('input[name="input_action"]');
         actionInput.val(this.inputAction);
 
-        $form.submit();
+        $form.trigger('submit');
     },
 
     async _handleWidget() {

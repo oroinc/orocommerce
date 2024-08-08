@@ -46,7 +46,7 @@ define(function(require) {
             ProductDataGidComponent.__super__.build.apply(this, args);
 
             this.grid.on('shown', function() {
-                this.$el.removeAttr('data-skip-input-widgets').inputWidget('seekAndCreate');
+                this.$el.attr('data-skip-input-widgets', null).inputWidget('seekAndCreate');
             }, this);
         },
 

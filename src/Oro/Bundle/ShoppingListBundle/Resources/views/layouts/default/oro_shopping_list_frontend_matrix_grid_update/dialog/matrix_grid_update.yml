@@ -27,7 +27,7 @@ layout:
                 matrix_grid_update_form_clear_button:
                     blockType: button
                     options:
-                        icon: times
+                        icon: close
                         attr:
                             title: oro.frontend.shoppinglist.matrix_grid_order.clear.tooltip
                             data-role: 'clear'

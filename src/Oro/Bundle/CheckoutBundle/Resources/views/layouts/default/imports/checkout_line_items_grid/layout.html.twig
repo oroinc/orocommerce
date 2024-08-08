@@ -7,10 +7,8 @@
     </div>
 {% endblock %}
 
-{% block __datagrid_toolbar__datagrid_toolbar_rightside_container_widget %}
-    <div class="datagrid-toolbar__end" data-section="right-side">
-        <% if (toolbarPosition !== 'bottom') { %>
-        {{ block_widget(block) }}
-        <% } %>
-    </div>
+{% block __datagrid_toolbar__datagrid_toolbar_pagination_info_widget %}
+    <% if (toolbarPosition === 'bottom') { %>
+        <div data-grid-pagination-info class="datagrid-toolbar-pagination-info"></div>
+    <% } %>
 {% endblock %}

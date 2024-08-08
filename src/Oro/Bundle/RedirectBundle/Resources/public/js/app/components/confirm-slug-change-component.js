@@ -137,7 +137,7 @@ define(function(require) {
                     mediator.execute('hideLoading');
                     urls = response;
 
-                    if (!_.isArray(urls)) {
+                    if (!Array.isArray(urls)) {
                         this.confirmModal = new ConfirmSlugChangeModal({
                             changedSlugs: this._getUrlsList(urls),
                             confirmState: this.$createRedirectCheckbox.prop('checked')

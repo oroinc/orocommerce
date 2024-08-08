@@ -417,6 +417,8 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.datagrid.provider.product_price'
             - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_pricing.layout.data_provider.frontend_product_prices'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-product-search-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }

@@ -26,10 +26,15 @@ class TitleDataProvider implements TitleDataProviderInterface
         $this->localizationHelper = $localizationHelper;
     }
 
+    public function getNodeTitle($default = '')
+    {
+        return $this->getTitle($default);
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function getNodeTitle($default = '')
+    public function getTitle($default = '', $data = null)
     {
         $contentNode = $this->getContentNode();
         if ($contentNode && $contentNode->isRewriteVariantTitle()) {
@@ -40,14 +45,6 @@ class TitleDataProvider implements TitleDataProviderInterface
         }
 
         return $default;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTitle($default = '', $data = null)
-    {
-        return $this->getNodeTitle($default);
     }
 
     public function isRenderTitle(): bool

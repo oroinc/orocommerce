@@ -114,7 +114,7 @@ define(function(require) {
          * @private
          */
         _addTo: function($to, ids) {
-            if (!_.isArray(ids)) {
+            if (!Array.isArray(ids)) {
                 return;
             }
 
@@ -149,7 +149,7 @@ define(function(require) {
          * @private
          */
         _removeFrom: function($from, ids) {
-            if (!_.isArray(ids)) {
+            if (!Array.isArray(ids)) {
                 return;
             }
 

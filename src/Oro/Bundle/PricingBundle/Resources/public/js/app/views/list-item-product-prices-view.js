@@ -172,7 +172,7 @@ define(function(require) {
 
             if (false === _.isEmpty(this.model.get('prices'))) {
                 this.subview('prices', new ListItemProductPricesSubView({
-                    autoRender: true,
+                    autoRender: false,
                     el: this.getElement('prices'),
                     model: this.model,
                     showListedPrice: this.showListedPrice,

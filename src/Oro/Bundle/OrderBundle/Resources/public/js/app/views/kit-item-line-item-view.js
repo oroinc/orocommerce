@@ -109,8 +109,8 @@ const KitItemLineItemView = LineItemProductView.extend({
         } else {
             this.resetData();
 
-            this.getElement('quantity').removeAttr('disabled', false);
-            this.getElement('priceValue').removeAttr('disabled', false);
+            this.getElement('quantity').prop('disabled', false);
+            this.getElement('priceValue').prop('disabled', false);
         }
     },
 

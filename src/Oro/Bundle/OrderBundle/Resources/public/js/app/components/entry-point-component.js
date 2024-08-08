@@ -168,7 +168,7 @@ define(function(require) {
          */
         getData: function() {
             const disabled = this.options._sourceElement.find('input:disabled[data-entry-point-trigger]')
-                .removeAttr('disabled');
+                .prop('disabled', false);
 
             const data = this.options._sourceElement.serializeArray();
 

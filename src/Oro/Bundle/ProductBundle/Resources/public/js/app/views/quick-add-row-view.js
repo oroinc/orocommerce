@@ -151,7 +151,7 @@ const QuickAddRowView = BaseView.extend({
         if (value !== inputValue) {
             $input.val(value);
             if (!silent) {
-                $input.change();
+                $input.trigger('change');
             }
         }
     },
@@ -314,7 +314,7 @@ const QuickAddRowView = BaseView.extend({
     },
 
     onModelRemoved() {
-        this.$(this.elem.remove).click();
+        this.$(this.elem.remove).trigger('click');
     }
 });
 

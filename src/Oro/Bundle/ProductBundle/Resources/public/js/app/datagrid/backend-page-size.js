@@ -49,9 +49,9 @@ define(function(require) {
 
             $select
                 .find('option')
-                .removeAttr('selected', false)
+                .prop('selected', false)
                 .filter('[value=' + currentSizeLabel[0] + ']')
-                .attr('selected', true);
+                .prop('selected', true);
 
             $select.inputWidget('val', currentSizeLabel[0]);
 

@@ -8,6 +8,16 @@ layout:
                     blockType: container
                 product_view_media_wrapper:
                     blockType: container
+                product_view_sticker_wrapper:
+                    blockType: container
+                product_sticker_new:
+                    blockType: product_sticker
+                    options:
+                        mode: badge
+                        attr:
+                            class: 'product-sticker--icon-static-size'
+                        stickers: '=data["oro_product_stickers"].getStickers(data["product"])'
+                        visible: '=data["oro_product_stickers"].isStickersEnabledOnView()'
                 product_view_attribute_group_images:
                     blockType: attribute_group
                     options:
@@ -18,4 +28,6 @@ layout:
                 product_view_aside_container:
                     product_view_media_container:
                         product_view_media_wrapper:
+                            product_view_sticker_wrapper:
+                                product_sticker_new: ~
                             product_view_attribute_group_images: ~

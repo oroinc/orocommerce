@@ -82,7 +82,7 @@ define(function(require) {
         },
 
         validateContainer: function() {
-            const $validationField = this.$el.find('[data-name="collection-validation"]:first');
+            const $validationField = this.$el.find('[data-name="collection-validation"]').first();
             const $form = $validationField.closest('form');
             if ($form.data('validator')) {
                 $form.validate().element($validationField.get(0));

@@ -91,7 +91,7 @@ define(function(require) {
             this.$el.one(
                 'change' + this.eventNamespace(),
                 function() {
-                    this.$el.removeAttr('data-validation-ignore');
+                    this.$el.attr('data-validation-ignore', null);
                 }.bind(this)
             );
 
