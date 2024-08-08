@@ -160,7 +160,7 @@ const FrontendRequestProductView = BaseView.extend(_.extend({}, ElementsHelper, 
     },
 
     createInputWidgets: function() {
-        this.$el.removeAttr('data-skip-input-widgets').inputWidget('seekAndCreate');
+        this.$el.attr('data-skip-input-widgets', null).inputWidget('seekAndCreate');
     },
 
     onRequestTierPrices: function(e, payload, successCallback) {
@@ -250,7 +250,7 @@ const FrontendRequestProductView = BaseView.extend(_.extend({}, ElementsHelper, 
             this.model.set('productType', data.event.added.type || 'simple');
 
             if (this.model.get('productId') && !this.$requestProductItemsContainer.children().length) {
-                this.$addRequestProductItemButton.click();
+                this.$addRequestProductItemButton.trigger('click');
             }
         }
 

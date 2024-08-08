@@ -66,7 +66,7 @@ const ListItemProductPricesComponent = BaseComponent.extend({
             ...this.viewOptions,
             modelAttr: {prices}
         });
-        this.view.getElement('pricesHint').click();
+        this.view.getElement('pricesHint').trigger('click');
     }
 });
 

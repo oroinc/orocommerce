@@ -123,7 +123,7 @@ const SidebarToggleFiltersView = BaseView.extend({
             ($oldEl.data('has-focus') || hasFocus) &&
             $(document.activeElement).is('body')
         ) {
-            this.$el.focus();
+            this.$el.trigger('focus');
         }
 
         this.$el.toggleClass('is-expanded', this.sidebarExpanded);

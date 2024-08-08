@@ -1,5 +1,43 @@
 /* @theme: default; */
 
+$promo-slider-proportional: (
+    'extra-large': (
+        'breakpoint': 'min-width: 1281px',
+        'aspect-ratio': '466 / 111'
+    ),
+    'large': (
+        'breakpoint': 'max-width: 1280px',
+        'aspect-ratio': '102 / 37'
+    ),
+    'medium': (
+        'breakpoint': 'max-width: 768px',
+        'aspect-ratio': '368 / 225'
+    ),
+    'small': (
+        'breakpoint': 'max-width: 430px',
+        'aspect-ratio': '199 / 120'
+    )
+) !default;
+
+$promo-slider-crop-images: (
+    'extra-large': (
+        'breakpoint': 'min-width: 1281px',
+        'height': '444px'
+    ),
+    'large': (
+        'breakpoint': 'max-width: 1280px',
+        'height': '444px'
+    ),
+    'medium': (
+        'breakpoint': 'max-width: 768px',
+        'height': '450px'
+    ),
+    'small': (
+        'breakpoint': 'max-width: 430px',
+        'height': '240px'
+    )
+) !default;
+
 $promo-slider-min-height: 100px !default;
 $promo-slider-margin: 0 !default;
 $promo-slider-content-gap: spacing('lg') !default;

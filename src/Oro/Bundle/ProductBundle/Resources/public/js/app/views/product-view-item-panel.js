@@ -18,7 +18,7 @@ const ProductViewItemPanel = BaseView.extend({
         const relocated = this.$el.find($(this.target));
 
         if (relocated.get(0)) {
-            this.$el.removeAttr('aria-hidden');
+            this.$el.attr('aria-hidden', null);
             this.toggleValidationMessagePlacement(true);
             this.$el.show('fade');
         } else {
@@ -34,7 +34,7 @@ const ProductViewItemPanel = BaseView.extend({
         if (add) {
             $input.attr('placement', 'bottom');
         } else {
-            $input.removeAttr('placement');
+            $input.attr('placement', null);
         }
 
         const validator = $input.closest('form').data('validator');
@@ -55,7 +55,7 @@ const ProductViewItemPanel = BaseView.extend({
         }
 
         this.$el.removeClass('rendered');
-        this.$el.removeAttr('style');
+        this.$el.attr('style', null);
 
         ProductViewItemPanel.__super__.dispose.call(this);
     }

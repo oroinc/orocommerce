@@ -79,12 +79,12 @@ const SummaryWrapperView = BaseView.extend({
 
         this.$el.removeClass(this.options.maskClass);
         if (this.tabbableButtons) {
-            this.tabbableButtons.removeAttr('disabled');
+            this.tabbableButtons.prop('disabled', false);
         }
 
         if (this.tabbableElements) {
             this.tabbableElements.removeClass('disabled');
-            this.tabbableElements.removeAttr('aria-disabled');
+            this.tabbableElements.attr('aria-disabled', null);
         }
 
         this._maskAdded = false;

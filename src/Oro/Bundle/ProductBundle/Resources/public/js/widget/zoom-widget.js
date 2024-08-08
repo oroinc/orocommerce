@@ -220,7 +220,7 @@ define(function(require) {
          * @private
          */
         _unBindZoomEvents: function() {
-            this.element.unbind('mousemove touchmove touchend mousewheel DOMMouseScroll MozMousePixelScroll');
+            this.element.off('mousemove touchmove touchend mousewheel DOMMouseScroll MozMousePixelScroll');
         },
 
         /**

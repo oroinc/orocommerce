@@ -43,12 +43,6 @@ layout:
                     blockType: container
                 product_view_aside_container:
                     blockType: container
-                product_sticker_new:
-                    blockType: product_sticker
-                    options:
-                        mode: text
-                        stickers: '=data["oro_product_stickers"].getStickers(data["product"])'
-                        visible: '=data["oro_product_stickers"].isStickersEnabledOnView()'
                 product_view_main_container:
                     blockType: container
                 product_view_content_container:
@@ -102,8 +96,7 @@ layout:
                                         product_view_headline_inventory_status_slot:
                                             product_view_brand_inventory_status: ~
                                     product_view_headline_group_second:
-                                        product_view_headline_brand_slot:
-                                product_sticker_new: ~
+                                        product_view_headline_brand_slot: ~
                             product_view_main_container:
                                 product_view_aside_container: ~
                                 product_view_content_container:
@@ -168,17 +161,3 @@ layout:
             parentId: product_view_line_item_container
             siblingId: ~
             prepend: true
-
-        - '@move':
-            id: product_sticker_new
-            parentId: product_view_media_wrapper
-
-        - '@setOption':
-            id: product_sticker_new
-            optionName: mode
-            optionValue: badge
-
-        - '@setOption':
-            id: product_sticker_new
-            optionName: attr.class
-            optionValue: 'product-sticker--icon-static-size'

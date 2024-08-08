@@ -202,6 +202,16 @@
     }
 
     &.proportional {
+        .promo-slider__picture {
+            display: block;
+
+            @each $name, $data in $promo-slider-proportional {
+                @media (#{map.get($data, 'breakpoint')}) {
+                    aspect-ratio: #{map.get($data, 'aspect-ratio')};
+                }
+            }
+        }
+
         .promo-slider__img {
             margin: 0 auto;
         }
@@ -216,6 +226,12 @@
             overflow: hidden;
 
             border-radius: $promo-slider-border-radius;
+
+            @each $name, $data in $promo-slider-crop-images {
+                @media (#{map.get($data, 'breakpoint')}) {
+                    height: #{map.get($data, 'height')};
+                }
+            }
         }
 
         .promo-slider__img {

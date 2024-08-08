@@ -28,6 +28,7 @@ class PageTest extends TestCase
             ['draftSource', new Page()],
             ['createdAt', new \DateTime()],
             ['updatedAt', new \DateTime()],
+            ['doNotRenderTitle', true],
             ['slugPrototypesWithRedirect', new SlugPrototypesWithRedirect(new ArrayCollection(), false), false],
         ]);
 

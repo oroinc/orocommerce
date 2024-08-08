@@ -18,6 +18,16 @@
     </div>
 {% endblock %}
 
+{% block _product_view_sticker_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view-sticker-wrapper'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _product_view_media_widget %}
     {% set productImages = collect_product_images_by_types(product, ['main', 'additional']) %}
 

@@ -57,7 +57,7 @@ define(function(require) {
 
             this.listenTo(this, 'render-mode:changed', state => this.render());
             this.model.on('backgrid:select', (model, checked) => {
-                this.$(':checkbox').prop('checked', checked).change();
+                this.$(':checkbox').prop('checked', checked).trigger('change');
             });
         },
 

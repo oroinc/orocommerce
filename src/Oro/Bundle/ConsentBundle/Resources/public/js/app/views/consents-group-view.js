@@ -114,7 +114,7 @@ define(function(require) {
          * Remove base validation rules for required consent
          */
         _removeValidationRules: function() {
-            this.$consents.removeAttr('data-validation');
+            this.$consents.attr('data-validation', null);
         },
 
         /**
@@ -141,7 +141,7 @@ define(function(require) {
          */
         _onModalConfirmed: function() {
             this.undelegateEvents();
-            this.$form.submit();
+            this.$form.trigger('submit');
 
             this.delegateEvents();
         },

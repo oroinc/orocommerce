@@ -13,3 +13,4 @@ data:
         metaTitle: 'Page 1 Spanish Meta Title'
         metaDescription: 'Page 1 Spanish Meta Description'
         metaKeywords: 'Page 1 Spanish Meta Keywords'
+        doNotRenderTitle: false

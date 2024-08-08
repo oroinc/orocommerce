@@ -185,14 +185,14 @@ const RteCollectionView = BaseCollectionView.extend({
      * Focusing RTE editor element
      */
     focus() {
-        this.$el.focus();
+        this.$el.trigger('focus');
     },
 
     /**
      * Blur RTE editor element
      */
     blur() {
-        this.$el.blur();
+        this.$el.trigger('blur');
     },
 
     emitEvent(event) {

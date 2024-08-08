@@ -72,7 +72,7 @@ define(function(require) {
             this._handleNewAddressForm(showNewAddressForm);
 
             if (!showNewAddressForm) {
-                this.$addressSelector.focus();
+                this.$addressSelector.trigger('focus');
             }
 
             const isSelectorNotAvailable = isFormVisible && this._isOnlyOneOption();

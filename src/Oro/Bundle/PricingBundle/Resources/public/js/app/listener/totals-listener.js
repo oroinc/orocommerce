@@ -19,7 +19,7 @@ define(function(require) {
         listen: function($fields) {
             ValueChangingListener.listen('total-target:changing', $fields);
             _.each($fields, field => {
-                $(field).change(this.updateTotals.bind(this));
+                $(field).on('change', this.updateTotals.bind(this));
             });
         },
 

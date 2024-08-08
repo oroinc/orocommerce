@@ -762,7 +762,7 @@ const GrapesjsEditorView = BaseView.extend({
 
     componentSelected(model) {
         let toolbar = model.get('toolbar');
-        if (_.isArray(toolbar)) {
+        if (Array.isArray(toolbar)) {
             toolbar = toolbar.map(tool => {
                 const attributes = tool.attributes || {};
                 tool.label = '';

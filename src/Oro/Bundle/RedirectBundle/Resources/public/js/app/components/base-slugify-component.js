@@ -66,7 +66,7 @@ define(function(require) {
                 success: result => {
                     if (result.slug) {
                         $target.val(result.slug);
-                        $target.change();
+                        $target.trigger('change');
                     } else {
                         messenger.notificationFlashMessage(
                             'error',

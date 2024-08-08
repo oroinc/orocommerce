@@ -13,9 +13,9 @@ use PHPUnit\Framework\TestCase;
 
 class TitleDataProviderTest extends TestCase
 {
-    private RequestWebContentVariantProvider|MockObject $requestWebContentVariantProvider;
+    private RequestWebContentVariantProvider&MockObject $requestWebContentVariantProvider;
 
-    private LocalizationHelper|MockObject $localizationHelper;
+    private LocalizationHelper&MockObject $localizationHelper;
 
     private TitleDataProvider $titleDataProvider;
 
@@ -136,9 +136,11 @@ class TitleDataProviderTest extends TestCase
     /**
      * @dataProvider isRenderTitleDataProvider
      */
-    public function isRenderTitle(?ContentVariant $contentVariant, bool $expected): void
+    public function testIsRenderTitle(?ContentVariant $contentVariant, bool $expected): void
     {
-        $this->requestWebContentVariantProvider->expects(self::once())
+        $this->requestWebContentVariantProvider
+            ->expects(self::once())
+            ->method('getContentVariant')
             ->willReturn($contentVariant);
 
         self::assertEquals($expected, $this->titleDataProvider->isRenderTitle());
@@ -151,14 +153,14 @@ class TitleDataProviderTest extends TestCase
                 'contentVariant' => null,
                 'expected' => true,
             ],
-            'doNotRenderTitle is true' => [
+            'content variant not render title' => [
                 'contentVariant' => (new ContentVariant())->setDoNotRenderTitle(true),
+                'expected' => false,
+            ],
+            'content variant render title' => [
+                'contentVariant' => new ContentVariant(),
                 'expected' => true,
-            ],
-            'doNotRenderTitle is false' => [
-                'contentVariant' => null,
-                'expected' => new ContentVariant(),
-            ],
+            ]
         ];
     }
 }
