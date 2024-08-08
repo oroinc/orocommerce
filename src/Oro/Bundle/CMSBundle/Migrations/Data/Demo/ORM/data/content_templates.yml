@@ -59,7 +59,7 @@
     contentStyle: css/category/two_columns_image_and_text.css
     previewImage: preview/category/two_columns_image_and_text.png
 -
-    name: 'Two columns. Image and text(image is flexible)'
+    name: 'Two columns. Image and text (image is flexible)'
     tags: [Category]
     content: template/category/two_columns_image_and_text_flexible.html
     contentStyle: css/category/two_columns_image_and_text_flexible.css
