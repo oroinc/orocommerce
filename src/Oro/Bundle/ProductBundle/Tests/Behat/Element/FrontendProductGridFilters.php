@@ -12,7 +12,7 @@ class FrontendProductGridFilters extends GridFilters
      */
     public function resetFilter(string $filterName, string $hint = ''): void
     {
-        $resetButton = $this->getFilterHint($filterName, $hint)->find('css', 'button.reset-filter');
+        $resetButton = $this->getFilterHint($filterName, false, $hint)->find('css', 'button.reset-filter');
 
         self::assertNotNull(sprintf('Could not find reset button for "%s" filter', $filterName));
 

@@ -46,7 +46,7 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" filter in frontend product grid$/
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" with hint "(?P<filterHint>[\w\s\:\(\)]+)" filter in frontend product grid$/
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" filter in "(?P<filterPosition>[\w\s]+)" sidebar$/
-     * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)"with hint "(?P<filterHint>[\w\s\:\(\)]+)" filter in "(?P<filterPosition>[\w\s]+)" sidebar$/
+     * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" with hint "(?P<filterHint>[\w\s\:\(\)]+)" filter in "(?P<filterPosition>[\w\s]+)" sidebar$/
      *
      * @param string $filterName
      * @param string $filterHint
@@ -54,7 +54,7 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
      */
     public function resetFilterOfGrid(
         string $filterName,
-        string $filterHint,
+        string $filterHint = '',
         $filterPosition = 'FrontendProductGridFilters'
     ) {
         /** @var FrontendProductGridFilters $gridFilters */

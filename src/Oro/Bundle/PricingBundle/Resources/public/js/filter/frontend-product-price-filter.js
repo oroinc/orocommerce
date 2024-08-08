@@ -43,10 +43,6 @@ const FrontendProductPriceFilter = ProductPriceFilter.extend({
         equalsOrLessThan: 5
     },
 
-    events: {
-        'change [data-choice-value-select]': '_onChangeChoiceValue'
-    },
-
     /**
      * Enable/disable show filter criteria selector
      * @property {boolean}
@@ -77,6 +73,10 @@ const FrontendProductPriceFilter = ProductPriceFilter.extend({
         }
 
         FrontendProductPriceFilter.__super__.constructor.call(this, options);
+    },
+
+    getType() {
+        return this.$(`${this.criteriaValueSelectors.type}`).val();
     },
 
     /**

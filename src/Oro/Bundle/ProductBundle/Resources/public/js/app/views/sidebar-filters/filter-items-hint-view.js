@@ -87,6 +87,7 @@ const FilterItemsHintView = BaseView.extend({
         FilterItemsHintView.__super__.render.call(this);
         this.$el.addClass(this.renderMode);
         this.$el.attr('data-hint-container', this.gridName);
+
         this.doToggleBlock();
         return this;
     },
