@@ -84,8 +84,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
                         - add_product_kit_line_item
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
-                    minMessage: 'oro.shoppinglist.subtotal.min.error.label'
-                    maxMessage: 'oro.shoppinglist.subtotal.max.error.label'
+                    notInRangeMessage: 'oro.shoppinglist.subtotal.range.not_in_range_message'
                     groups:
                         - Default
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController
@@ -279,8 +278,6 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
             -   Range:
                     minPropertyPath: 'kitItem.minimumQuantity'
                     maxPropertyPath: 'kitItem.maximumQuantity'
-                    minMessage: 'oro.shoppinglist.product_kit_item_line_item.quantity.range.min_message'
-                    maxMessage: 'oro.shoppinglist.product_kit_item_line_item.quantity.range.max_message'
                     notInRangeMessage: 'oro.shoppinglist.product_kit_item_line_item.quantity.range.not_in_range_message'
                     groups:
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController

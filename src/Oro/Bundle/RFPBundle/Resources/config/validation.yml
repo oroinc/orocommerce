@@ -247,8 +247,6 @@ Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem:
                     min: -2147483648
                     # Maximum of 4-byte integer value.
                     max: 2147483647
-                    minMessage: 'oro.rfp.requestproductkititemlineitem.sort_order.range.min_message'
-                    maxMessage: 'oro.rfp.requestproductkititemlineitem.sort_order.range.max_message'
                     notInRangeMessage: 'oro.rfp.requestproductkititemlineitem.sort_order.range.not_in_range_message'
 
 Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
