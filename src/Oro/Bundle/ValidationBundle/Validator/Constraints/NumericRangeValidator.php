@@ -39,17 +39,12 @@ class NumericRangeValidator extends ConstraintValidator
         $max = BigDecimal::of($constraint->max);
         $min = BigDecimal::of($constraint->min);
 
-        if ($value->isGreaterThan($max)) {
+        if ($value->isGreaterThan($max) || $value->isLessThan($min)) {
             $this->context
-                ->buildViolation($constraint->maxMessage)
-                ->setParameter('{{ limit }}', (string)$max)
-                ->setCode(NumericRange::TOO_HIGH_ERROR)
-                ->addViolation();
-        } elseif ($value->isLessThan($min)) {
-            $this->context
-                ->buildViolation($constraint->minMessage)
-                ->setParameter('{{ limit }}', (string)$min)
-                ->setCode(NumericRange::TOO_LOW_ERROR)
+                ->buildViolation($constraint->notInRangeMessage)
+                ->setParameter('{{ min }}', (string)$min)
+                ->setParameter('{{ max }}', (string)$max)
+                ->setCode(NumericRange::NOT_IN_RANGE_ERROR)
                 ->addViolation();
         }
     }

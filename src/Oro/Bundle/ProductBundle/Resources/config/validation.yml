@@ -210,8 +210,7 @@ Oro\Bundle\ProductBundle\Model\QuickAddRow:
             - Range:
                 min: 0
                 max: 999999999
-                minMessage: oro.product.frontend.quick_add.validation.quantity_min
-                maxMessage: oro.product.frontend.quick_add.validation.quantity_max
+                notInRangeMessage: oro.product.frontend.quick_add.validation.not_in_range_message
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
                   message: oro.product.frontend.quick_add.validation.quantity_min
         unit:

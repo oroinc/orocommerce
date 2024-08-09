@@ -15,6 +15,7 @@ oro:
             quantity.greater_than_zero: "Quantity must be greater than 0"
 
         subtotal:
+            range.not_in_range_message: "Shopping list subtotal amount should be between {{ min }} and {{ max }}."
             max.error.label: "Shopping list subtotal amount cannot exceed the {{ limit }}."
             min.error.label: "Shopping list subtotal amount cannot be less than {{ limit }}."
 

@@ -22,4 +22,4 @@ Feature: Inline Editing Quantity
     And I click on "Shopping List Line Item 1 Quantity"
     And I type "999999999" in "Shopping List Line Item 1 Quantity Input"
     And I click "Shopping List Line Item 1 Save Changes Button"
-    When I should see "Shopping list subtotal amount cannot exceed the 999999999999999.9999" flash message
+    When I should see "Shopping list subtotal amount should be between 0 and 999999999999999.9999." flash message

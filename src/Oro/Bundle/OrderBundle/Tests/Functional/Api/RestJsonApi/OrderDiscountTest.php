@@ -585,7 +585,7 @@ class OrderDiscountTest extends RestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'range constraint',
-                'detail' => 'This value should be 0 or more.',
+                'detail' => 'The discount amount should be between 0 and 999999999999999.9999',
                 'source' => ['pointer' => '/data/attributes/amount']
             ],
             $response
