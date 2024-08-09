@@ -44,6 +44,10 @@
 
     transition: $sticky-panel-transition;
 
+    .ui-dialog & {
+        --sticky-position-top-offset: -#{spacing('md')};
+    }
+
     &.in-sticky {
         background: $catalog-filter-controls-toolbar-sticky-container-background;
         z-index: $sticky-panel-z-index;
@@ -51,6 +55,12 @@
 
         padding: 0 spacing('lg') + 4px;
         margin: 0 -#{spacing('lg') + 4px};
+
+        .ui-dialog & {
+            z-index: z();
+            padding: 0 spacing('lg') + spacing('md');
+            margin: 0 -#{spacing('lg') + spacing('md')};
+        }
 
         .page-content--has-sidebar & {
             padding-left: $page-sidebar-width + 84px;
