@@ -67,9 +67,10 @@ class NumericRangeValidatorTest extends ConstraintValidatorTestCase
     {
         $constraint = new NumericRange();
         $this->validator->validate('1000000000000000', $constraint);
-        $this->buildViolation($constraint->maxMessage)
-            ->setParameter('{{ limit }}', '999999999999999.9999')
-            ->setCode(NumericRange::TOO_HIGH_ERROR)
+        $this->buildViolation($constraint->notInRangeMessage)
+            ->setParameter('{{ max }}', '999999999999999.9999')
+            ->setParameter('{{ min }}', '0')
+            ->setCode(NumericRange::NOT_IN_RANGE_ERROR)
             ->assertRaised();
     }
 
@@ -77,9 +78,10 @@ class NumericRangeValidatorTest extends ConstraintValidatorTestCase
     {
         $constraint = new NumericRange();
         $this->validator->validate('999999999999999.9999000000000000001', $constraint);
-        $this->buildViolation($constraint->maxMessage)
-            ->setParameter('{{ limit }}', '999999999999999.9999')
-            ->setCode(NumericRange::TOO_HIGH_ERROR)
+        $this->buildViolation($constraint->notInRangeMessage)
+            ->setParameter('{{ max }}', '999999999999999.9999')
+            ->setParameter('{{ min }}', '0')
+            ->setCode(NumericRange::NOT_IN_RANGE_ERROR)
             ->assertRaised();
     }
 
@@ -87,9 +89,10 @@ class NumericRangeValidatorTest extends ConstraintValidatorTestCase
     {
         $constraint = new NumericRange();
         $this->validator->validate('159132647246919822550452576.9150983494511948540991657', $constraint);
-        $this->buildViolation($constraint->maxMessage)
-            ->setParameter('{{ limit }}', '999999999999999.9999')
-            ->setCode(NumericRange::TOO_HIGH_ERROR)
+        $this->buildViolation($constraint->notInRangeMessage)
+            ->setParameter('{{ max }}', '999999999999999.9999')
+            ->setParameter('{{ min }}', '0')
+            ->setCode(NumericRange::NOT_IN_RANGE_ERROR)
             ->assertRaised();
     }
 
@@ -97,9 +100,10 @@ class NumericRangeValidatorTest extends ConstraintValidatorTestCase
     {
         $constraint = new NumericRange();
         $this->validator->validate('-100.9150', $constraint);
-        $this->buildViolation($constraint->minMessage)
-            ->setParameter('{{ limit }}', '0')
-            ->setCode(NumericRange::TOO_LOW_ERROR)
+        $this->buildViolation($constraint->notInRangeMessage)
+            ->setParameter('{{ max }}', '999999999999999.9999')
+            ->setParameter('{{ min }}', '0')
+            ->setCode(NumericRange::NOT_IN_RANGE_ERROR)
             ->assertRaised();
     }
 
@@ -107,9 +111,10 @@ class NumericRangeValidatorTest extends ConstraintValidatorTestCase
     {
         $constraint = new NumericRange();
         $this->validator->validate('-0.000000000000000000000000000000000000001', $constraint);
-        $this->buildViolation($constraint->minMessage)
-            ->setParameter('{{ limit }}', '0')
-            ->setCode(NumericRange::TOO_LOW_ERROR)
+        $this->buildViolation($constraint->notInRangeMessage)
+            ->setParameter('{{ max }}', '999999999999999.9999')
+            ->setParameter('{{ min }}', '0')
+            ->setCode(NumericRange::NOT_IN_RANGE_ERROR)
             ->assertRaised();
     }
 
@@ -117,9 +122,10 @@ class NumericRangeValidatorTest extends ConstraintValidatorTestCase
     {
         $constraint = new NumericRange(['max' => 100]);
         $this->validator->validate(100.001, $constraint);
-        $this->buildViolation($constraint->maxMessage)
-            ->setParameter('{{ limit }}', '100')
-            ->setCode(NumericRange::TOO_HIGH_ERROR)
+        $this->buildViolation($constraint->notInRangeMessage)
+            ->setParameter('{{ max }}', '100')
+            ->setParameter('{{ min }}', '0')
+            ->setCode(NumericRange::NOT_IN_RANGE_ERROR)
             ->assertRaised();
     }
 
@@ -127,9 +133,10 @@ class NumericRangeValidatorTest extends ConstraintValidatorTestCase
     {
         $constraint = new NumericRange(['min' => '-100']);
         $this->validator->validate(-100.001, $constraint);
-        $this->buildViolation($constraint->minMessage)
-            ->setParameter('{{ limit }}', '-100')
-            ->setCode(NumericRange::TOO_LOW_ERROR)
+        $this->buildViolation($constraint->notInRangeMessage)
+            ->setParameter('{{ max }}', '999999999999999.9999')
+            ->setParameter('{{ min }}', '-100')
+            ->setCode(NumericRange::NOT_IN_RANGE_ERROR)
             ->assertRaised();
     }
 
@@ -146,9 +153,10 @@ class NumericRangeValidatorTest extends ConstraintValidatorTestCase
     {
         $constraint = new NumericRange(['precision' => 3, 'scale' => 0]);
         $this->validator->validate(1000, $constraint);
-        $this->buildViolation($constraint->maxMessage)
-            ->setParameter('{{ limit }}', '999')
-            ->setCode(NumericRange::TOO_HIGH_ERROR)
+        $this->buildViolation($constraint->notInRangeMessage)
+            ->setParameter('{{ max }}', '999')
+            ->setParameter('{{ min }}', '0')
+            ->setCode(NumericRange::NOT_IN_RANGE_ERROR)
             ->assertRaised();
     }
 
@@ -156,9 +164,10 @@ class NumericRangeValidatorTest extends ConstraintValidatorTestCase
     {
         $constraint = new NumericRange(['scale' => 2]);
         $this->validator->validate('99999999999999999.991', $constraint);
-        $this->buildViolation($constraint->maxMessage)
-            ->setParameter('{{ limit }}', '99999999999999999.99')
-            ->setCode(NumericRange::TOO_HIGH_ERROR)
+        $this->buildViolation($constraint->notInRangeMessage)
+            ->setParameter('{{ max }}', '99999999999999999.99')
+            ->setParameter('{{ min }}', '0')
+            ->setCode(NumericRange::NOT_IN_RANGE_ERROR)
             ->assertRaised();
     }
 
@@ -166,9 +175,10 @@ class NumericRangeValidatorTest extends ConstraintValidatorTestCase
     {
         $constraint = new NumericRange(['precision' => 3, 'scale' => 2]);
         $this->validator->validate('9.990001', $constraint);
-        $this->buildViolation($constraint->maxMessage)
-            ->setParameter('{{ limit }}', '9.99')
-            ->setCode(NumericRange::TOO_HIGH_ERROR)
+        $this->buildViolation($constraint->notInRangeMessage)
+            ->setParameter('{{ max }}', '9.99')
+            ->setParameter('{{ min }}', '0')
+            ->setCode(NumericRange::NOT_IN_RANGE_ERROR)
             ->assertRaised();
     }
 
@@ -176,9 +186,10 @@ class NumericRangeValidatorTest extends ConstraintValidatorTestCase
     {
         $constraint = new NumericRange(['precision' => 5]);
         $this->validator->validate('9.99991', $constraint);
-        $this->buildViolation($constraint->maxMessage)
-            ->setParameter('{{ limit }}', '9.9999')
-            ->setCode(NumericRange::TOO_HIGH_ERROR)
+        $this->buildViolation($constraint->notInRangeMessage)
+            ->setParameter('{{ max }}', '9.9999')
+            ->setParameter('{{ min }}', '0')
+            ->setCode(NumericRange::NOT_IN_RANGE_ERROR)
             ->assertRaised();
     }
 
