@@ -113,6 +113,7 @@ oro:
                     invalid_unit: 'Unit ''{{ unit }}'' doesn''t exist for product {{ sku }}.'
                     quantity_min: 'Quantity should be greater than 0.'
                     quantity_max: 'Quantity should be less than {{ max }}.'
+                    not_in_range_message: 'Quantity should be between {{ min }} and {{ max }}.'
                     component_not_accessible: "Can't process request, component not accessible"
 
         product_image:
