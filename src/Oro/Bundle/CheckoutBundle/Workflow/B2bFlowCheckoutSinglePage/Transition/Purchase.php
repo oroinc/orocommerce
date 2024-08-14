@@ -65,7 +65,7 @@ class Purchase extends TransitionServiceAbstract
     private function isPurchaseViaDirectUrlAllowed(
         Checkout $checkout,
         WorkflowItem $workflowItem,
-        Collection $errors
+        Collection $errors = null
     ): bool {
         if (!$this->baseContinueTransition->isPreConditionAllowed($workflowItem, $errors)) {
             return false;

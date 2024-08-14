@@ -48,7 +48,7 @@ class BaseContinueTransition extends TransitionServiceAbstract
     protected function checkOrderLineItems(Checkout $checkout, ?Collection $errors = null): bool
     {
         $orderLineItemsNotEmptyResult = $this->orderLineItemsNotEmpty->execute($checkout);
-        if (!$orderLineItemsNotEmptyResult['orderLineItemsNotEmptyForRfp']) {
+        if (empty($orderLineItemsNotEmptyResult['orderLineItemsNotEmptyForRfp'])) {
             $errors?->add(
                 ['message' => 'oro.checkout.workflow.condition.order_line_items_not_empty.not_allow_rfp.message']
             );
@@ -56,7 +56,7 @@ class BaseContinueTransition extends TransitionServiceAbstract
             return false;
         }
 
-        if (!$orderLineItemsNotEmptyResult['orderLineItemsNotEmpty']) {
+        if (empty($orderLineItemsNotEmptyResult['orderLineItemsNotEmpty'])) {
             $errors?->add(
                 ['message' => 'oro.checkout.workflow.condition.order_line_items_not_empty.allow_rfp.message']
             );

@@ -33,7 +33,7 @@ class ReturnGuestToEnterCredentialsStep
             return;
         }
 
-        $workflow = $this->workflowManager->getWorkflow($event->getWorkflowItem());
+        $workflow = $this->workflowManager->getWorkflow($workflowItem);
         $backTransition = $workflow->getTransitionManager()->getTransition($backToLoginTransition);
         if (!$backTransition) {
             return;
@@ -54,7 +54,7 @@ class ReturnGuestToEnterCredentialsStep
             return;
         }
 
-        $stepManager = $this->workflowManager->getWorkflow($workflowItem)->getStepManager();
+        $stepManager = $workflow->getStepManager();
         // back_to_enter_credentials is not allowed for the current step
         if (!$stepManager->getStep($currentStepName)->isAllowedTransition($backToLoginTransition)) {
             return;

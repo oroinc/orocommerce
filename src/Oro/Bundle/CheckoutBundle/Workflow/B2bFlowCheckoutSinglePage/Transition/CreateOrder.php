@@ -121,7 +121,7 @@ class CreateOrder extends BasePlaceOrder
 
         $this->actionExecutor->executeAction(
             'save_accepted_consents',
-            ['acceptedConsents' => $data['customerConsents']]
+            ['acceptedConsents' => $data->offsetGet('customerConsents')]
         );
 
         $this->updateShippingPrice->execute($checkout);
@@ -192,10 +192,10 @@ class CreateOrder extends BasePlaceOrder
             $data['is_ajax'] = true;
         }
         if ($key !== null) {
-            $data['key'] = $key;
+            $data['expected_key'] = $key;
         }
         if ($value !== null) {
-            $data['value'] = $value;
+            $data['expected_value'] = $value;
         }
 
         return $this->actionExecutor->evaluateExpression('check_request', $data);

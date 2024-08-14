@@ -88,13 +88,14 @@ class CustomerUserActions implements CustomerUserActionsInterface
     public function handleLateRegistration(Checkout $checkout, Order $order, ?array $lateRegistrationData = []): array
     {
         $result = [];
+        $customerUser = $checkout->getCustomerUser();
         if (!empty($lateRegistrationData['is_late_registration_enabled'])
+            && $customerUser
             && !$checkout->getRegisteredCustomerUser()
-            && $checkout->getCustomerUser()
         ) {
             $billingAddress = $order->getBillingAddress();
 
-            $registeredCustomerUser = $checkout->getCustomerUser();
+            $registeredCustomerUser = $customerUser;
             $registeredCustomerUser->setEmail($lateRegistrationData['email']);
             $registeredCustomerUser->setFirstName($billingAddress?->getFirstName());
             $registeredCustomerUser->setLastName($billingAddress?->getLastName());
@@ -129,8 +130,9 @@ class CustomerUserActions implements CustomerUserActionsInterface
             $result['result']['confirmationRequired'] = true;
         }
 
-        if ($checkout->getRegisteredCustomerUser()?->isConfirmed()) {
-            $this->loginManager->logInUser('frontend', $checkout->getRegisteredCustomerUser());
+        $registeredCustomerUser = $checkout->getRegisteredCustomerUser();
+        if ($registeredCustomerUser?->isConfirmed()) {
+            $this->loginManager->logInUser('frontend', $registeredCustomerUser);
             $this->actionExecutor->executeAction(
                 'flash_message',
                 [

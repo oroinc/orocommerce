@@ -190,7 +190,7 @@ class CheckoutStateListener
             (bool)$workflowItem->getResult()->offsetGet('updateCheckoutState'),
             $forceUpdate
         );
-        $workflowItem->getResult()->offsetSet('updateCheckoutState', !empty($updateData['update_checkout_state']));
+        $workflowItem->getResult()->offsetSet('updateCheckoutState', $updateData);
     }
 
     private function isProtectionEnabled(WorkflowItemAwareEvent $event): bool

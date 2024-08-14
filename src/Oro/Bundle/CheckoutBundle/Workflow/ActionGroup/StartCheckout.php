@@ -90,7 +90,7 @@ class StartCheckout implements StartCheckoutInterface
         array $data,
         array $settings,
         Checkout $checkout
-    ): array {
+    ): void {
         if (!empty($data['shippingAddress'])) {
             $settings['shipping_address'] = $data['shippingAddress'];
         }
@@ -101,7 +101,7 @@ class StartCheckout implements StartCheckoutInterface
         );
         $settings = ArrayUtil::arrayMergeRecursiveDistinct($settings, $preparedSettings);
 
-        return $this->updateWorkflowItem->execute($checkout, $settings);
+        $this->updateWorkflowItem->execute($checkout, $settings);
     }
 
     private function updateRegisteredCustomerUser(Checkout $checkout): void

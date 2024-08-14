@@ -23,10 +23,11 @@ class PaymentError extends TransitionServiceAbstract
     {
         $this->baseTrnasition->execute($workflowItem);
 
-        $order = $workflowItem->getData()->offsetGet('order');
+        $data = $workflowItem->getData();
+        $order = $data->offsetGet('order');
         if ($order) {
             $this->registry->getManagerForClass(Order::class)?->remove($order);
         }
-        $workflowItem->getData()->offsetUnset('order');
+        $data->offsetUnset('order');
     }
 }

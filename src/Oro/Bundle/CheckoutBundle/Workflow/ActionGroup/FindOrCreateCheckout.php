@@ -204,6 +204,10 @@ class FindOrCreateCheckout implements FindOrCreateCheckoutInterface
 
     private function removeCheckoutState(WorkflowItem $workflowItem, ?Checkout $checkout): void
     {
+        if (!$checkout) {
+            return;
+        }
+
         $stateToken = $workflowItem->getData()->offsetGet('state_token');
         if (!$stateToken) {
             return;
