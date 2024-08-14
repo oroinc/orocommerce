@@ -1472,5 +1472,6 @@ class Order implements
     public function __clone(): void
     {
         $this->uuid = UUIDGenerator::v4();
+        $this->cloneExtendEntityStorage();
     }
 }
