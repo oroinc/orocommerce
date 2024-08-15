@@ -9,6 +9,7 @@ use Oro\Bundle\PricingBundle\Async\Topic\MassRebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
+use Oro\Component\MessageQueue\Client\Message;
 
 /**
  * The filter for the REBUILD_COMBINED_PRICE_LISTS topic that does the following:
@@ -100,6 +101,7 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         $this->processedMessages = [];
         $messages = $buffer->getMessagesForTopic(RebuildCombinedPriceListsTopic::getName());
         foreach ($messages as $messageId => $message) {
+            $message = $this->getMessageData($message);
             if ($this->isFullRebuildMessage($message)) {
                 $fullRebuildMessageId = $messageId;
                 break;
@@ -305,6 +307,15 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         }
 
         return $preserveCustomers;
+    }
+
+    private function getMessageData(string|Message|array $message): array
+    {
+        if (is_string($message)) {
+            return [];
+        }
+
+        return $message instanceof Message ? $message->getBody() : $message;
     }
 
     private function getPreserveCustomerGroupKey(int $websiteId, int $customerGroupId): string

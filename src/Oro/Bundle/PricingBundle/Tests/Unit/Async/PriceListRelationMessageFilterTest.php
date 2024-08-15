@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Async\Topic\RebuildCombinedPriceListsTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
@@ -105,9 +106,11 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
         $buffer = new MessageBuffer();
 
         $buffer->addMessage(RebuildCombinedPriceListsTopic::getName(), ['website' => 1]);
-        $buffer->addMessage(RebuildCombinedPriceListsTopic::getName(), ['force' => true]);
-        $buffer->addMessage(RebuildCombinedPriceListsTopic::getName(), ['website' => 2]);
 
+        $forceMessage = new Message(['force' => true]);
+        $buffer->addMessage(RebuildCombinedPriceListsTopic::getName(), $forceMessage);
+
+        $buffer->addMessage(RebuildCombinedPriceListsTopic::getName(), ['website' => 2]);
         $buffer->addMessage(RebuildCombinedPriceListsTopic::getName(), ['website' => 3, 'customerGroup' => 11]);
         $buffer->addMessage(RebuildCombinedPriceListsTopic::getName(), ['force' => true]);
         $buffer->addMessage(RebuildCombinedPriceListsTopic::getName(), ['website' => 4, 'customerGroup' => 12]);
@@ -119,7 +122,7 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
 
         $this->assertSame(
             [
-                6 => [MassRebuildCombinedPriceListsTopic::getName(), ['assignments' => [['force' => true]]]]
+                6 => [MassRebuildCombinedPriceListsTopic::getName(), ['assignments' => [$forceMessage]]]
             ],
             $buffer->getMessages()
         );
