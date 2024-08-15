@@ -9,9 +9,10 @@ workflows:
                 step_to: enter_billing_address
                 conditional_steps_to:
                     enter_credentials_step:
-                        '@or':
-                            - '@empty': $checkout.customerUser
-                            - '@equal': [$checkout.customerUser.isGuest, true]
+                        conditions:
+                            '@or':
+                                - '@empty': $checkout.customerUser
+                                - '@equal': [$checkout.customerUser.isGuest, true]
 
             start_from_quote:
                 # Overrides base_transitions.start_from_quote
@@ -46,9 +47,10 @@ workflows:
                 step_to: enter_billing_address
                 conditional_steps_to:
                     customer_consents:
-                        '@not':
-                            - '@is_consents_accepted':
-                                acceptedConsents: $customerConsents
+                        conditions:
+                            '@not':
+                                - '@is_consents_accepted':
+                                    acceptedConsents: $customerConsents
                 frontend_options:
                     icon: fa-briefcase
                     is_checkout_continue: true
