@@ -369,6 +369,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.featured_products_segment.label
                 tooltip: oro.product.system_configuration.fields.featured_products_segment.tooltip
+                warning: oro.product.system_configuration.fields.featured_products_segment.legacy_note
                 entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
                 required: false
 
@@ -465,6 +466,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.new_arrivals_products_segment.label
                 tooltip: oro.product.system_configuration.fields.new_arrivals_products_segment.tooltip
+                warning: oro.product.system_configuration.fields.new_arrivals_products_segment.legacy_note
                 entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
                 required: false
 
@@ -599,6 +601,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.filters_position.label
                 tooltip: oro.product.system_configuration.fields.filters_position.tooltip
+                warning: oro.product.system_configuration.fields.filters_position.legacy_note
                 choices:
                     oro.product.system_configuration.fields.filters_position.options.top: top
                     oro.product.system_configuration.fields.filters_position.options.sidebar: sidebar

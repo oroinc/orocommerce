@@ -647,7 +647,7 @@ oro:
                 default_unit_precision.label: 'Default Primary Unit Precision'
                 product_collections_indexation_cron_schedule:
                     label: 'Indexation Cron Schedule'
-                    tooltip: Select the cron schedule for segments indexation. The schedule is used for product collections which have dependencies on other entities in a segment filter. Sheduling indexation improves system responsiveness.
+                    tooltip: Select the cron schedule for segments indexation. The schedule is used for product collections which have dependencies on other entities in a segment filter. Scheduling indexation improves system responsiveness.
                     choice:
                         every_hour.label: Every hour
                         every_two_hours.label: Every two hours
@@ -686,6 +686,7 @@ oro:
                         Select the segment to display products in the Featured Products block on the home page in the storefront.
                         Segments are located under Reports & Segments > Manage Segments.
                         Only segments with the Product type are listed here.
+                    legacy_note: 'This configuration applies to OroCommerce version 5.1 and below and is retained in the current version only for backward compatibility with legacy storefront themes. In the new themes starting with v6.0 and above, the homepage is a fully editable landing page, and the selection of widgets displayed on the page can be controlled directly in the landing page editor.'
                 page_template.label: Page Template
                 product_direct_url_prefix.label: 'Product URL prefix'
                 show_on_product_view:
@@ -700,6 +701,7 @@ oro:
                         Select the segment to display products in the New Arrivals block on the home page in the storefront.
                         Segments are located under Reports & Segments > Manage Segments.
                         Only segments with the Product type are listed here.
+                    legacy_note: 'This configuration applies to OroCommerce version 5.1 and below and is retained in the current version only for backward compatibility with legacy storefront themes. In the new themes starting with v6.0 and above, the homepage is a fully editable landing page, and the selection of widgets displayed on the page can be controlled directly in the landing page editor.'
                 new_arrivals_max_items:
                     label: Maximum Items
                     tooltip: Set the maximum number of items that the New Arrivals block should contain.
@@ -757,6 +759,7 @@ oro:
                 filters_position:
                     label: 'Filter Panel Position'
                     tooltip: 'Select the required position of the filter bar in the storefront.'
+                    legacy_note: 'This configuration applies to OroCommerce version 5.1 and below and is retained in the current version only for backward compatibility with legacy storefront themes. For newer themes starting with v6.0 and above, please configure this option under System > Theme Configuration.'
                     options:
                         top: 'Top'
                         sidebar: 'Sidebar'
