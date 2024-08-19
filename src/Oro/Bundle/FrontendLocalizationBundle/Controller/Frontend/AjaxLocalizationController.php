@@ -40,12 +40,15 @@ class AjaxLocalizationController extends AbstractController
 
             $redirectHelper = $this->get('oro_locale.helper.localized_slug_redirect');
             $fromUrl = $this->generateUrlWithContext($request);
-
-            if ($request->server->has('WEBSITE_PATH')) {
-                $toUrl = $this->getUrlForWebsitePath($request, $fromUrl, $localization);
+            if ($fromUrl) {
+                if ($request->server->has('WEBSITE_PATH')) {
+                    $toUrl = $this->getUrlForWebsitePath($request, $fromUrl, $localization);
+                } else {
+                    $toUrl = $redirectHelper->getLocalizedUrl($fromUrl, $localization);
+                    $toUrl = $this->rebuildQueryString($toUrl, $request);
+                }
             } else {
-                $toUrl = $redirectHelper->getLocalizedUrl($fromUrl, $localization);
-                $toUrl = $this->rebuildQueryString($toUrl, $request);
+                return new JsonResponse(['success' => true, 'redirectTo' => $this->generateUrlByReferer($request)]);
             }
 
             return new JsonResponse(['success' => true, 'redirectTo' => $toUrl]);
@@ -69,7 +72,14 @@ class AjaxLocalizationController extends AbstractController
         );
     }
 
-    private function generateUrlWithContext(Request $request)
+    private function generateUrlWithContext(Request $request): ?string
+    {
+        $route = $request->get('redirectRoute');
+
+        return $route ? $this->generateUrlWithContextAndRoute($request) : null;
+    }
+
+    private function generateUrlWithContextAndRoute(Request $request): string
     {
         $route = $request->get('redirectRoute', 'oro_frontend_root');
         $routeParams = json_decode($request->get('redirectRouteParameters'), true) ?? [];
@@ -108,6 +118,23 @@ class AjaxLocalizationController extends AbstractController
         }
 
         return $url;
+    }
+
+    /**
+     * In case there is no suitable router, redirect the user to the same page on which he was located or to the
+     * main page if there is no referrer page.
+     */
+    private function generateUrlByReferer(Request $request): string
+    {
+        $path = $request->headers->get('referer') ?? $this->generateUrl('oro_frontend_root');
+
+        $request = Request::create($path);
+        $path = $request->getPathInfo();
+        if ($request->getQueryString()) {
+            $path .= '?' . $request->getQueryString();
+        }
+
+        return $path;
     }
 
     private function rebuildQueryString(string $toUrl, Request $request): string
