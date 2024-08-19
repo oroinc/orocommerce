@@ -36,7 +36,7 @@ class AjaxLocalizationControllerTest extends WebTestCase
      */
     public function testSetCurrentLocalizationAction(
         string $code,
-        string $redirectRoute,
+        ?string $redirectRoute,
         ?string $routeParameters,
         ?array $queryParameters,
         array $serverParameters,
@@ -86,6 +86,15 @@ class AjaxLocalizationControllerTest extends WebTestCase
     public function setCurrentLocalizationProvider(): array
     {
         return [
+            'set to en and redirect to root(without route)' => [
+                'code' => 'en',
+                'redirectRoute' => null,
+                'routeParameters' => null,
+                'queryParameters' => null,
+                'serverParameters' => [],
+                'expectedResult' => ['success' => true, 'redirectTo' => '/'],
+                'current' => 'en_US'
+            ],
             'set to en and redirect to root' => [
                 'code' => 'en',
                 'redirectRoute' => 'oro_frontend_root',
