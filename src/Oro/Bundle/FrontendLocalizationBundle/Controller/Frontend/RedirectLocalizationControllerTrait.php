@@ -12,7 +12,14 @@ use Symfony\Component\HttpFoundation\Request;
  */
 trait RedirectLocalizationControllerTrait
 {
-    private function generateUrlWithContext(Request $request): string
+    private function generateUrlWithContext(Request $request): ?string
+    {
+        $route = $request->get('redirectRoute');
+
+        return $route ? $this->generateUrlWithContextAndRoute($request) : null;
+    }
+
+    private function generateUrlWithContextAndRoute(Request $request): string
     {
         $route = $request->get('redirectRoute', 'oro_frontend_root');
         $routeParams = json_decode($request->get('redirectRouteParameters'), true) ?? [];
@@ -51,6 +58,23 @@ trait RedirectLocalizationControllerTrait
         }
 
         return $url;
+    }
+
+    /**
+     * In case there is no suitable router, redirect the user to the same page on which he was located or to the
+     * main page if there is no referrer page.
+     */
+    private function generateUrlByReferer(Request $request): string
+    {
+        $path = $request->headers->get('referer') ?? $this->generateUrl('oro_frontend_root');
+
+        $request = Request::create($path);
+        $path = $request->getPathInfo();
+        if ($request->getQueryString()) {
+            $path .= '?' . $request->getQueryString();
+        }
+
+        return $path;
     }
 
     private function rebuildQueryString(string $toUrl, Request $request): string
