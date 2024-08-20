@@ -2,10 +2,11 @@
     --grid-gap: 24px;
 }
 
+/* stylelint-disable scale-unlimited/declaration-strict-value */
 .three-columns-call-to-action .grid-sub-title {
-    /* stylelint-disable-next-line */
     color: #45606e;
 }
+/* stylelint-enable scale-unlimited/declaration-strict-value */
 
 .three-columns-call-to-action .picture__wrapper {
     min-height: 200px;

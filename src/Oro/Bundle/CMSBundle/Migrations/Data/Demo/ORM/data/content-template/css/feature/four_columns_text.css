@@ -23,9 +23,10 @@
         --grid-gap: 24px 0;
     }
 
+    /* stylelint-disable scale-unlimited/declaration-strict-value */
     .four-columns-text-features .border-row-mobile {
         padding-bottom: 24px;
-        /* stylelint-disable-next-line */
         border-bottom: 1px solid #d4dcdd;
     }
+    /* stylelint-enable scale-unlimited/declaration-strict-value */
 }

@@ -6,6 +6,10 @@
     gap: 32px 160px;
 }
 
+.two-columns-text-and-image-category .img-min-h-400 {
+    min-height: 400px;
+}
+
 .two-columns-text-and-image-category .list-nav {
     display: flex;
     gap: 24px 32px;
@@ -15,10 +19,6 @@
 
 .two-columns-text-and-image-category .list-nav a {
     white-space: nowrap;
-}
-
-.two-columns-text-and-image-category .grid-img {
-    min-height: 343px;
 }
 
 @media screen and (max-width: 1600px) {

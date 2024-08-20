@@ -14,7 +14,8 @@
     --grid-auto-rows: auto 1fr;
 }
 
+/* stylelint-disable scale-unlimited/declaration-strict-value */
 .three-columns-text-testimonials .grid-item__bottom {
-    /* stylelint-disable-next-line */
     background: #f0f3f5;
 }
+/* stylelint-enable scale-unlimited/declaration-strict-value */

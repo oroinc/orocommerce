@@ -2,6 +2,10 @@
     gap: 32px 160px;
 }
 
+.two-columns-text-and-image-flexible-features .img-min-h-400 {
+    min-height: 400px;
+}
+
 @media screen and (max-width: 1600px) {
     .two-columns-text-and-image-flexible-features .grid-two-columns {
         gap: 48px;
