@@ -28,7 +28,7 @@
     grid-row-end: 3;
 }
 
-.two-columns-image-and-text-team  .grid-col-author {
+.two-columns-image-and-text-team .grid-col-author {
     grid-auto-rows: max-content;
     grid-column-start: 2;
     grid-column-end: 12;
@@ -59,7 +59,7 @@
         grid-row-end: 2;
     }
 
-   .two-columns-image-and-text-team .grid-col-text {
-       grid-column-start: 1;
-   }
+    .two-columns-image-and-text-team .grid-col-text {
+        grid-column-start: 1;
+    }
 }
