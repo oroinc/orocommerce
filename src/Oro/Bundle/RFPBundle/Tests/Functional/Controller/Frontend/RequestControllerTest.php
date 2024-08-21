@@ -239,6 +239,7 @@ class RequestControllerTest extends WebTestCase
                         'workflowStepLabel',
                         'action_configuration',
                         'customerStatusName',
+                        'customerStatusId',
                     ],
                     'action_configuration' => [
                         'update' => false,
@@ -269,6 +270,7 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
+                        'customerStatusId',
                     ],
                     'action_configuration' => [
                         'delete' => false,
@@ -300,6 +302,7 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
+                        'customerStatusId',
                     ],
                     'action_configuration' => [
                         'update' => false,
@@ -327,6 +330,7 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
+                        'customerStatusId',
                     ],
                     'action_configuration' => [
                         'update' => false,
@@ -355,6 +359,7 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
+                        'customerStatusId',
                     ],
                     'action_configuration' => [
                         'delete' => false,
@@ -384,6 +389,7 @@ class RequestControllerTest extends WebTestCase
                         'action_configuration',
                         'customerUserName',
                         'customerStatusName',
+                        'customerStatusId',
                     ],
                     'action_configuration' => [
                         'delete' => false,

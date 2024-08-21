@@ -52,7 +52,7 @@ define(function(require) {
         initSwitcher: function() {
             this.fieldInput = this.field.find('input');
             this.changeQuantityField();
-            this.expressionInput.mouseenter(() => {
+            this.expressionInput.on('mouseenter', () => {
                 if (isNaN(this.expressionInput.val()) && (this.expressionInput.val().length > quantityVisibleLength)) {
                     this.showTooltip(this.expressionInput);
                 } else {
@@ -62,11 +62,11 @@ define(function(require) {
 
             this.setMouseLeaveEvent(this.expressionInput);
 
-            this.expressionInput.change(() => {
+            this.expressionInput.on('change', () => {
                 this.changeQuantityField();
             });
 
-            this.fieldInput.change(() => {
+            this.fieldInput.on('change', () => {
                 this.changeQuantityField();
             });
         },
@@ -92,7 +92,7 @@ define(function(require) {
             $field2.addClass(this.visibleClass).show();
             $input1.val('');
             $field1.removeClass(this.visibleClass).hide();
-            $input2.focus();
+            $input2.trigger('focus');
         },
 
         isValid: function() {

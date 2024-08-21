@@ -88,10 +88,10 @@ const QuickOrderFromView = BaseView.extend({
 
         this.once('rows-initialization-done', () => {
             this.subview('loadingBar').hideLoader(() => {
-                this.$el.removeAttr('data-ignore-tabbable');
+                this.$el.attr('data-ignore-tabbable', null);
                 this.$el.removeClass('quick-order__progress');
                 this.subview('loadingMask').hide();
-                this.$('[class$="--error"]:input:first').focus();
+                this.$('[class$="--error"]:input:first').trigger('focus');
             });
         });
 
@@ -235,7 +235,7 @@ const QuickOrderFromView = BaseView.extend({
                 .attr('title', this.collectionHasProductKitMessage);
         } else {
             $createOrderButton.removeClass('disabled');
-            $createOrderButton.parent().removeAttr('title');
+            $createOrderButton.parent().attr('title', null);
         }
     },
 

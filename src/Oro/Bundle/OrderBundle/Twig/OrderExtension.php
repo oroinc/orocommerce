@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Twig;
 
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 use Psr\Container\ContainerInterface;
@@ -16,6 +17,7 @@ use Twig\TwigFunction;
  *   - oro_order_format_shipping_tracking_method
  *   - oro_order_format_shipping_tracking_link
  *   - oro_order_get_template_content
+ *   - oro_order_get_shipping_trackings
  *
  * Provides a Twig filter to display source document name:
  *   - oro_order_format_source_document
@@ -78,6 +80,10 @@ class OrderExtension extends AbstractExtension implements ServiceSubscriberInter
                 [$this, 'getTemplateContent'],
                 ['needs_environment' => true, 'is_safe' => ['html']]
             ),
+            new TwigFunction(
+                'oro_order_get_shipping_trackings',
+                [$this, 'getShippingTrackings']
+            ),
         ];
     }
 
@@ -128,6 +134,23 @@ class OrderExtension extends AbstractExtension implements ServiceSubscriberInter
     {
         return $this->getShippingTrackingFormatter()
             ->formatShippingTrackingLink($shippingMethodName, $trackingNumber);
+    }
+
+    public function getShippingTrackings(Order $entity): iterable
+    {
+        $orderShippingTrackings = $entity->getShippingTrackings() ?? [];
+        $shippingTrackings = [];
+        foreach ($orderShippingTrackings as $shippingTracking) {
+            $shippingTrackings[] = [
+                'number' => $shippingTracking->getNumber(),
+                'method' => $this->getShippingTrackingFormatter()
+                    ->formatShippingTrackingMethod($shippingTracking->getMethod()),
+                'link' => $this->getShippingTrackingFormatter()
+                    ->formatShippingTrackingLink($shippingTracking->getMethod(), $shippingTracking->getNumber())
+            ];
+        }
+
+        return $shippingTrackings;
     }
 
     /**

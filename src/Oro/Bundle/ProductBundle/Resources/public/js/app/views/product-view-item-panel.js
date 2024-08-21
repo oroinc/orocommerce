@@ -18,12 +18,14 @@ const ProductViewItemPanel = BaseView.extend({
         const relocated = this.$el.find($(this.target));
 
         if (relocated.get(0)) {
-            this.$el.removeAttr('aria-hidden');
+            this.$el.attr('aria-hidden', null);
             this.toggleValidationMessagePlacement(true);
+            this.toggleDropdownPlacement(false);
             this.$el.show('fade');
         } else {
             this.$el.attr('aria-hidden', true);
             this.toggleValidationMessagePlacement(false);
+            this.toggleDropdownPlacement(true);
             this.$el.hide('fade');
         }
     },
@@ -34,12 +36,23 @@ const ProductViewItemPanel = BaseView.extend({
         if (add) {
             $input.attr('placement', 'bottom');
         } else {
-            $input.removeAttr('placement');
+            $input.attr('placement', null);
         }
 
         const validator = $input.closest('form').data('validator');
         if (validator) {
             validator.element($input);
+        }
+    },
+
+    toggleDropdownPlacement(flip) {
+        const $dropdownButton = $(this.target).find('.dropdown-toggle[data-toggle="dropdown"]');
+
+        $dropdownButton.attr('data-flip', 'false');
+        $dropdownButton.dropdown('update');
+
+        if (flip) {
+            $dropdownButton.removeAttr('data-flip');
         }
     },
 
@@ -55,7 +68,7 @@ const ProductViewItemPanel = BaseView.extend({
         }
 
         this.$el.removeClass('rendered');
-        this.$el.removeAttr('style');
+        this.$el.attr('style', null);
 
         ProductViewItemPanel.__super__.dispose.call(this);
     }

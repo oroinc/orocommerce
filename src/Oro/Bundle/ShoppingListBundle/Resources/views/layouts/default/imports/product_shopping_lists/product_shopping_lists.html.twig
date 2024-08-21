@@ -168,14 +168,14 @@
                                 <div class="shopping-lists-units__actions">
                                     <div class="actions-row">
                                         <div class="actions-row__item">
-                                            <button class="actions-row__button btn btn--plain btn--icon" type="button" title="{{ 'Edit'|trans }}"
+                                            <button class="btn btn--simple actions-row__button" type="button" title="{{ 'Edit'|trans }}"
                                                     aria-label="{{ 'oro.frontend.shoppinglist.btn.edit_aria_label'|trans }}" data-role="edit">
                                                 {{ renderIcon.icon({name: 'pencil', extraClass: 'theme-icon--medium'}) }}
                                             </button>
                                         </div>
                                         {% if is_granted('oro_shopping_list_line_item_frontend_delete') %}
                                             <div class="actions-row__item">
-                                                <button class="actions-row__button btn btn--plain btn--icon" type="button"
+                                                <button class="btn btn--simple actions-row__button" type="button"
                                                         title="{{ 'Delete'|trans }}"
                                                         aria-label="{{ 'oro.frontend.shoppinglist.btn.delete_item_aria_label'|trans }}"
                                                         {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
@@ -243,7 +243,7 @@
                                 </div>
                                 <div class="shopping-lists-modify__badges">
                                     <span class="shopping-lists-modify__edit">
-                                        <button class="btn btn--icon"
+                                        <button class="btn"
                                                 type="button"
                                                 title="{{ 'Apply'|trans }}"
                                                 aria-label="{{ 'oro.frontend.shoppinglist.btn.apply_aria_label'|trans }}"
@@ -253,7 +253,7 @@
                                         </button>
                                     </span>
                                     <span class="shopping-lists-modify__edit">
-                                            <button class="btn btn--neutral btn--icon"
+                                            <button class="btn btn--neutral"
                                                     type="button"
                                                     title="{{ 'Decline'|trans }}"
                                                     aria-label="{{ 'oro.frontend.shoppinglist.btn.decline_aria_label'|trans }}"
@@ -321,7 +321,7 @@
                             </div>
                             <div class="shopping-lists-modify__badges">
                                 <span class="shopping-lists-modify__edit">
-                                    <button class="btn btn--icon"
+                                    <button class="btn"
                                             type="button"
                                             title="{{ 'Apply'|trans }}"
                                             aria-label="{{ 'oro.frontend.shoppinglist.btn.apply_aria_label'|trans }}"
@@ -330,7 +330,7 @@
                                     </button>
                                 </span>
                                 <span class="shopping-lists-modify__edit">
-                                    <button class="btn btn--neutral btn--icon"
+                                    <button class="btn btn--neutral"
                                             type="reset"
                                             title="{{ 'Decline'|trans }}"
                                             aria-label="{{ 'oro.frontend.shoppinglist.btn.decline_aria_label'|trans }}"

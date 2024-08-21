@@ -13,6 +13,10 @@ class ChangeWebsiteSearchIntegerType implements Migration
     public function up(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->getTable('oro_website_search_integer');
+        if (!$table->hasColumn('value')) {
+            return;
+        }
+
         $table->getColumn('value')->setType(Type::getType(Types::BIGINT));
     }
 }

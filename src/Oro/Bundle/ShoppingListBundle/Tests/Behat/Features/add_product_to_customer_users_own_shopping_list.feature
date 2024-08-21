@@ -166,6 +166,7 @@ Feature: Add Product to Customer User's Own Shopping List
     Then I should see 'Shopping list "Shopping List 3" was updated successfully' flash message
     When I follow "Shopping List 3" link within flash message "Shopping list \"Shopping List 3\" was updated successfully"
     And I click "Next"
+    And I scroll to top
     When I filter SKU as contains "PROD_B"
     Then I should see following grid:
       | SKU       | Item                                                             | Qty Update All |

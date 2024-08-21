@@ -12,7 +12,6 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " checkout__content"
     }) %}
-
     <div {{ block('block_attributes') }}
             data-layout="separate"
             data-role="checkout-content"
@@ -139,13 +138,15 @@
     {% set editLink = workflowItem.data.get('edit_order_link') %}
     {% set attr = layout_attr_defaults(attr, {
         'href': editLink,
-        '~class': " btn btn--no-padding btn--outlined btn--text checkout-order-summary__edit-link"
+        '~class': " btn btn--flat checkout-order-summary__edit-link"
     }) %}
     {% if editLink %}
-        <a {{ block('block_attributes') }}>
-            {{ renderIcon.icon({name: 'settings'}) }}
-            <span class="hide-on-tablet-small">{{ 'oro.checkout.order_summary.edit_order.title'|trans }}</span>
-        </a>
+        <% if (toolbarPosition === 'top') { %>
+            <a {{ block('block_attributes') }}>
+                {{ renderIcon.icon({name: 'settings'}) }}
+                <span class="hide-on-tablet-small">{{ 'oro.checkout.order_summary.edit_order.title'|trans }}</span>
+            </a>
+        <% } %>
     {% endif %}
 {% endblock %}
 
@@ -231,7 +232,7 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <button class="btn btn--icon btn--circle btn--size-small order-checkout-widget__toggle collapsed" type="button" data-toggle="collapse" data-target="#{{ collapseId }}" aria-expanded="false" aria-controls="{{ collapseId }}">
+        <button class="btn btn--circle btn--size-small order-checkout-widget__toggle collapsed" type="button" data-toggle="collapse" data-target="#{{ collapseId }}" aria-expanded="false" aria-controls="{{ collapseId }}">
             {{ renderIcon.icon({name: 'chevron-up'}) }}
         </button>
         <div id="{{ collapseId }}" class="order-checkout-widget__container-collapse">

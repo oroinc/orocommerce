@@ -117,6 +117,7 @@ oro_behat_extension:
                         class: Oro\Bundle\CMSBundle\Tests\Behat\Element\WysiwygField
                     Meta Title: 'oro_cms_page[metaTitles][values][default]'
                     Meta Description: 'oro_cms_page[metaDescriptions][values][default]'
+                    Do Not Render Title: 'oro_cms_page[doNotRenderTitle]'
 
         Content Block Form:
             selector: 'form[name="oro_cms_content_block"]'
@@ -653,6 +654,11 @@ oro_behat_extension:
 
         Theme Selector Dropdown:
             selector: '[aria-labelledby^="dropdown-theme-selector"]'
+
+        Refreshing Teal Theme:
+            selector:
+                locator: '//li[contains(@class, "dropdown-item") and @data-key="default"]'
+                type: xpath
 
         Search Term Additional Content Block Select Field:
             selector:

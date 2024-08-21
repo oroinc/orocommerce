@@ -17,3 +17,10 @@ layout:
             id: __datagrid_toolbar_button_container
             optionName: visible
             optionValue: true
+
+        - '@appendOption':
+            id: __datagrid
+            optionName: grid_render_parameters.toolbarOptions.paginationInfo
+            optionValue:
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.rfqPageInfo'
+                show: true

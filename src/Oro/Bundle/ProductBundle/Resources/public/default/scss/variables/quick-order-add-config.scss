@@ -24,7 +24,7 @@ $quick-order-add-quantity-input-text-align: center !default;
 
 $quick-order-add-fields-validation-failed-grid-column-end: span 12 !default;
 
-$quick-order-add-error-margins: 0 -7px #{-#{spacing('base')}} !default;
+$quick-order-add-error-margins: 0 0 #{-#{spacing('md')}} !default;
 
 $quick-order-add-mobile-bottom-margin: 0 0 5px !default;
 $quick-order-add-mobile-widget-content-margin: 5px 0 !default;

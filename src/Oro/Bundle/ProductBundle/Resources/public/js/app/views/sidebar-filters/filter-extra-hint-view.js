@@ -100,7 +100,10 @@ const FilterExtraHintView = BaseView.extend({
         }
 
         this.$el
-            .removeAttr('title class')
+            .attr({
+                'title': null,
+                'class': null
+            })
             .addClass(
                 this.hintContainerSelector.substring(1)
             );
@@ -110,4 +113,3 @@ const FilterExtraHintView = BaseView.extend({
 });
 
 export default FilterExtraHintView;
-

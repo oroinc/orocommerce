@@ -6,7 +6,7 @@ define(function(require) {
 
     const PricesHelper = {
         sortByLowQuantity: function(prices = []) {
-            if (!_.isArray(prices) || prices.length < 2) {
+            if (!Array.isArray(prices) || prices.length < 2) {
                 return prices;
             }
 

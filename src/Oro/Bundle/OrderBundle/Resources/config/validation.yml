@@ -16,6 +16,8 @@ Oro\Bundle\OrderBundle\Entity\Order:
                     # Used in UPDATE action by orderlineitems storefront API resource
                     - api_frontend_order_update
     properties:
+        createdBy:
+            -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField: ~
         poNumber:
             -   Length:
                     max: 255
@@ -32,14 +34,12 @@ Oro\Bundle\OrderBundle\Entity\Order:
             -   Type:
                     type: numeric
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
-                    minMessage: 'oro.order.total.min.error.label'
-                    maxMessage: 'oro.order.total.max.error.label'
+                    notInRangeMessage: 'oro.order.total.range.not_in_range_message'
         subtotalValue:
             -   Type:
                     type: numeric
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
-                    minMessage: 'oro.order.subtotal.min.error.label'
-                    maxMessage: 'oro.order.subtotal.max.error.label'
+                    notInRangeMessage: 'oro.order.subtotal.range.not_in_range_message'
         customer:
             -   NotBlank: ~
         shippingMethod:
@@ -291,8 +291,6 @@ Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
             -   Range:
                     minPropertyPath: 'minimumQuantity'
                     maxPropertyPath: 'maximumQuantity'
-                    minMessage: 'oro.order.orderproductkititemlineitem.quantity.range.min_message'
-                    maxMessage: 'oro.order.orderproductkititemlineitem.quantity.range.max_message'
                     notInRangeMessage: 'oro.order.orderproductkititemlineitem.quantity.range.not_in_range_message'
                     groups:
                         # Used in CREATE action by orderproductkititemlineitems API resource
@@ -384,7 +382,7 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
                     type: numeric
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
                     groups: [ Default, OrderDiscountItemType ]
-                    maxMessage: 'oro.order.discounts.item.error.label'
+                    notInRangeMessage: 'oro.order.discounts.range.not_in_range_message'
         type:
             -   Type:
                     groups: [ Default, OrderDiscountItemType ]

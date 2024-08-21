@@ -216,7 +216,7 @@
                         <h3>{{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}</h3>
                     </div>
                     {% for button in buttons %}
-                        {% include button.template with button.templateData|merge({onlyLink: true, aClass: 'btn btn--block btn--outlined', noIconText: true}) %}
+                        {% include button.template with button.templateData|merge({onlyLink: true, aClass: 'btn btn--outlined btn--block', noIconText: true}) %}
                     {% endfor %}
                 {% endif %}
                 <a href="{{ oro_shopping_list_frontend_url() }}" class="btn">

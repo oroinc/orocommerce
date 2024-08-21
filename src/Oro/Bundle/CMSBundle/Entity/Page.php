@@ -138,6 +138,9 @@ class Page implements
     )]
     protected $content;
 
+    #[ORM\Column(name: 'do_not_render_title', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    protected bool $doNotRenderTitle = false;
+
     /**
      * {@inheritdoc}
      */
@@ -222,6 +225,18 @@ class Page implements
                 $this->getSlugPrototypesWithRedirect()?->getCreateRedirect()
             )
         );
+    }
+
+    public function setDoNotRenderTitle(bool $doNotRenderTitle): self
+    {
+        $this->doNotRenderTitle = $doNotRenderTitle;
+
+        return $this;
+    }
+
+    public function isDoNotRenderTitle(): bool
+    {
+        return $this->doNotRenderTitle;
     }
 
     /**

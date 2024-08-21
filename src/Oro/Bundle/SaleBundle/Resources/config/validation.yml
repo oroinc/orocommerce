@@ -239,8 +239,6 @@ Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem:
                     min: -2147483648
                     # Maximum of 4-byte integer value.
                     max: 2147483647
-                    minMessage: 'oro.sale.quoteproductkititemlineitem.sort_order.range.min_message'
-                    maxMessage: 'oro.sale.quoteproductkititemlineitem.sort_order.range.max_message'
                     notInRangeMessage: 'oro.sale.quoteproductkititemlineitem.sort_order.range.not_in_range_message'
         price:
             -   Valid: ~

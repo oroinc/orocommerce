@@ -568,3 +568,30 @@ services:
         arguments:
             - '@oro_config.manager'
             - '@doctrine'
+
+    oro_cms.provider.request_page_provider:
+        class: Oro\Bundle\CMSBundle\Provider\RequestPageProvider
+        arguments:
+            - '@request_stack'
+
+    oro_cms.routing.matched_url_decision_maker:
+        class: Oro\Bundle\CMSBundle\Routing\MatchedUrlDecisionMaker
+        decorates: oro_redirect.routing.matched_url_decision_maker
+        arguments:
+            - ['%oro_api.rest.prefix%', '/js/', '/media/', '/_fragment', '/_profiler', '/_wdt']
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_theme.provider.theme_configuration'
+            - '@oro_layout.theme_manager'
+            - '@oro_redirect.slug_entity_finder'
+            - '@oro_config.manager'
+
+    oro_cms.layout.data_provider.title_data:
+        class: Oro\Bundle\CMSBundle\Layout\DataProvider\TitleDataProvider
+        decorates: oro_web_catalog.layout.data_provider.title_data
+        decoration_priority: 10
+        arguments:
+            - '@.inner'
+            - '@oro_cms.provider.request_page_provider'
+            - '@oro_web_catalog.request_web_content_variant_provider'
+        tags:
+            - { name: layout.data_provider, alias: cms_page_title }

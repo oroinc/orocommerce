@@ -17,7 +17,7 @@
         {{ renderIcon.icon({name: 'minus', extraClass: 'theme-icon--lg'}) }}
         {# to prevent popover from instant initialization toggleAttrValue is set to empty string #}
         {% set toggleAttrValue = '' %}
-        {% set productTierClass = productTierClass|default('btn btn--outlined btn--text btn--size-small product-tier-prices product-tier-prices--hidden') %}
+        {% set productTierClass = productTierClass|default('btn btn--simple btn--size-small product-tier-prices product-tier-prices--hidden') %}
         {{ block('product_price_hint_trigger_info_js_widget') }}
     </div>
 {% endblock %}

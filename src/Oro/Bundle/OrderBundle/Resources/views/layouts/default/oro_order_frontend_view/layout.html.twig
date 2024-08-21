@@ -1,3 +1,9 @@
+{% block _order_created_by_widget %}
+    <div class="order-created-by">
+        {{ 'oro.frontend.order.created_by_seller.label'|trans }}
+    </div>
+{% endblock %}
+
 {% block _order_body_widget %}
     <div class="customer-info-grid">
         {{ block_widget(block) }}
@@ -6,7 +12,7 @@
 
 {% block order_body_column_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " grid-col-6 grid-col-mobile-landscape-12"
+        '~class': " grid-col-4 grid-col-mobile-landscape-12"
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -63,7 +69,7 @@
 {% endblock %}
 
 {% block _order_after_line_items_grid_widget %}
-    <div class="order-checkout-widget">
+    <div class="order-checkout-widget grid-col-4 grid-col-mobile-landscape-12">
         {{ block_widget(block) }}
     </div>
 {% endblock %}

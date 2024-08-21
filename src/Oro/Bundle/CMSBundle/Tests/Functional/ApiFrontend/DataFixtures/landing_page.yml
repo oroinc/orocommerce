@@ -66,6 +66,7 @@ Oro\Bundle\CMSBundle\Entity\Page:
         content: 'Page 2 content'
         slugs: ['@page2_slug_default']
         organization: '@organization'
+        doNotRenderTitle: true
         __calls:
             - addTitle: ['@page2_title']
     page3:

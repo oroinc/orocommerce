@@ -20,9 +20,27 @@ layout:
             id: requests_datagrid
             optionName: grid_render_parameters.toolbarOptions.itemsCounter
             optionValue:
-                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.rfqPlural'
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.rfq'
+
+        - '@appendOption':
+            id: requests_datagrid
+            optionName: grid_render_parameters.toolbarOptions.paginationInfo
+            optionValue:
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.rfqPageInfo'
+                show: true
 
         - '@setOption':
             id: datagrid_toolbar_button_container
             optionName: visible
             optionValue: true
+
+        - '@add':
+            id: reset_customer_user_grid_button
+            parentId: page_title_container
+            blockType: frontend_datagrid_external_toolbar
+            options:
+                gridName: 'frontend-requests-grid'
+
+        - '@move':
+            id: requests_button_container_create_new_quote
+            parentId: page_title_container

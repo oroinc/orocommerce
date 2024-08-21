@@ -503,28 +503,16 @@ datagrids:
                     confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content
                     success: oro.shoppinglist.actions.delete_line_item.success
         mass_actions:
-            delete:
-                type: delete
-                icon: trash
-                label: oro.shoppinglist.mass_actions.delete_line_items.label
-                route: oro_datagrid_front_mass_action
-                entity_name: Oro\Bundle\ShoppingListBundle\Entity\LineItem
-                acl_resource:  oro_shopping_list_line_item_frontend_delete
-                data_identifier: lineItem.id
-                handler: oro_shopping_list.datagrid.mass_action.handler.delete
-                defaultMessages:
-                    confirm_content: oro.shoppinglist.mass_actions.delete_line_items.confirm_content
-                    confirm_ok: oro.shoppinglist.mass_actions.delete_line_items.confirm_ok
-                    confirm_title: oro.shoppinglist.mass_actions.delete_line_items.confirm_title
-                confirmMessages:
-                    selected_message: oro.shoppinglist.mass_actions.delete_line_items.selected_message
-                messages:
-                    success: oro.shoppinglist.mass_actions.delete_line_items.success_message
-                successMessageOptions:
-                    namespace: shopping_list
             move:
                 type: moveproducts
                 icon: move
+                className: 'btn btn--flat'
+                attributes:
+                    data-responsive-styler: ''
+                    data-input-widget-options:
+                        responsive:
+                            mobile-big:
+                                classes: 'dropdown-item text-nowrap'
                 label: oro.shoppinglist.mass_actions.move_line_items.label
                 entity_name: Oro\Bundle\ShoppingListBundle\Entity\LineItem
                 acl_resource:  oro_shopping_list_frontend_update
@@ -538,6 +526,32 @@ datagrids:
                         resizable: true
                         autoResize: true
                         width: 950
+            delete:
+                type: delete
+                icon: trash
+                className: 'btn btn--flat btn--destructive-flat'
+                attributes:
+                    data-responsive-styler: ''
+                    data-input-widget-options:
+                        responsive:
+                            mobile-big:
+                                classes: 'dropdown-item dropdown-item--destructive'
+                label: oro.shoppinglist.mass_actions.delete_line_items.label
+                route: oro_datagrid_front_mass_action
+                entity_name: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+                acl_resource: oro_shopping_list_line_item_frontend_delete
+                data_identifier: lineItem.id
+                handler: oro_shopping_list.datagrid.mass_action.handler.delete
+                defaultMessages:
+                    confirm_content: oro.shoppinglist.mass_actions.delete_line_items.confirm_content
+                    confirm_ok: oro.shoppinglist.mass_actions.delete_line_items.confirm_ok
+                    confirm_title: oro.shoppinglist.mass_actions.delete_line_items.confirm_title
+                confirmMessages:
+                    selected_message: oro.shoppinglist.mass_actions.delete_line_items.selected_message
+                messages:
+                    success: oro.shoppinglist.mass_actions.delete_line_items.success_message
+                successMessageOptions:
+                    namespace: shopping_list
 
     frontend-product-kit-in-shopping-lists-grid:
         acl_resource: oro_shopping_list_frontend_update

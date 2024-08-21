@@ -6,6 +6,8 @@ datagrids:
             frontend: true
             entityHint: oro.rfp.request.entity_plural_label
             entity_pagination: true
+            jsmodules:
+                - orodatagrid/js/datagrid/builder/html-templates-preloader
         source:
             type: orm
             query:
@@ -37,6 +39,8 @@ datagrids:
                 label: oro.frontend.rfp.request.id.label
             customerStatusName:
                 label: oro.frontend.rfp.request.customer_status.label
+                frontend_template: tpl-loader!orofrontend/templates/datagrid/quote-status.html
+                frontend_type: html-template
             poNumber:
                 label: oro.frontend.rfp.request.po_number.label
             shipUntil:
@@ -65,6 +69,8 @@ datagrids:
                 type: translatable
                 key: oro.rfp.action.request.edit.aria_label
                 params: [ id ]
+            customerStatusId:
+                label: customerStatusId
         sorters:
             columns:
                 customerStatusName:

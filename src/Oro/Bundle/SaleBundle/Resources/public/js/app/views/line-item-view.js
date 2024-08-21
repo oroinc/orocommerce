@@ -315,7 +315,7 @@ define(function(require) {
 
             this.updateProductUnits().then(() => {
                 if (this.getProductId() && !this.$itemsContainer.children().length) {
-                    this.$addItemButton.click();
+                    this.$addItemButton.trigger('click');
                 }
 
                 this.updateSkuLabelAndValue();
@@ -417,7 +417,7 @@ define(function(require) {
         checkAddNotes: function() {
             if (this.$sellerNotesContainer.find('textarea').val()) {
                 this.$notesContainer.addClass(this.options.classNotesSellerActive);
-                this.$sellerNotesContainer.find('textarea').focus();
+                this.$sellerNotesContainer.find('textarea').trigger('focus');
             }
         },
 
@@ -430,7 +430,7 @@ define(function(require) {
             e.preventDefault();
 
             this.$notesContainer.addClass(this.options.classNotesSellerActive);
-            this.$sellerNotesContainer.find('textarea').focus();
+            this.$sellerNotesContainer.find('textarea').trigger('focus');
         },
 
         /**
@@ -483,7 +483,7 @@ define(function(require) {
 
         clearInputs: function() {
             this.$el.find(this.options.productFormContainer)
-                .find('input').val('').change()
+                .find('input').val('').trigger('change')
             ;
             this.$el.find(this.options.freeFormContainer)
                 .find('input').val('')

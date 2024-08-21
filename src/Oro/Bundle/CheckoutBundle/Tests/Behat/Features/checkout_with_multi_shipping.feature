@@ -36,12 +36,12 @@ Feature: Checkout With Multi Shipping
     When I click "Create Order"
     Then Page title equals to "Billing Information - Checkout"
     And I should not see an "Lighting Products Checkout Category Name" element
-    And I should see following "MultiShipping Checkout Line Items Grid" grid:
+    And I should see following "Multi Shipping Checkout Line Items Grid" grid:
       | SKU  | Item                     | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
       | SKU2 | iPhone 13                | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X                 | 10  | $2.00  | $20.00   |
-    And records in "MultiShipping Checkout Line Items Grid" should be 3
+    And records in "Multi Shipping Checkout Line Items Grid" should be 3
     And I should see notification "This product will be available later" for "SKU1" line item "Checkout Line Item"
     And I should see notification "This product will be available later" for "SKU3" line item "Checkout Line Item"
     And I should not see an "Phones Checkout Category Name" element
@@ -133,8 +133,8 @@ Feature: Checkout With Multi Shipping
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
     And records in "Second Checkout Shipping Grid" should be 2
-    When I click on "Second Line Item Flat Rate Shipping Method"
-    And I click on "Third Line Item Flat Rate Shipping Method"
+    When I click on "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method"
+    And I click on "Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method"
     Then I should see Checkout Totals with data:
       | Subtotal | $50.00 |
       | Shipping | $9.00  |

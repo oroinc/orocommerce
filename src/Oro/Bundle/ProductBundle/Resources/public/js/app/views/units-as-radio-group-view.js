@@ -7,7 +7,7 @@ const UnitsAsRadioGroupView = BaseView.extend({
      * @inheritdoc
      */
     optionNames: BaseView.prototype.optionNames.concat([
-        'units', '$select', 'hideSelect'
+        'units', '$select', 'hideSelect', 'title', 'icon'
     ]),
 
     /**
@@ -32,6 +32,16 @@ const UnitsAsRadioGroupView = BaseView.extend({
      * @property {boolean}
      */
     hideSelect: true,
+
+    /**
+     * @property {string|null}
+     */
+    title: null,
+
+    /**
+     * @property {string|null}
+     */
+    icon: null,
 
     constructor: function UnitsAsRadioGroupView(options) {
         UnitsAsRadioGroupView.__super__.constructor.call(this, options);
@@ -58,6 +68,19 @@ const UnitsAsRadioGroupView = BaseView.extend({
     getTemplateData() {
         const data = UnitsAsRadioGroupView.__super__.getTemplateData.call(this);
         data.units = this.units;
+        data.title = this.title;
+        data.icon = this.icon;
+
+        if (Array.isArray(data.units)) {
+            data.units = data.units.reduce((obj, unit) => {
+                if (typeof unit === 'object') {
+                    obj[unit.size] = unit.label;
+                } else {
+                    obj[unit] = unit;
+                }
+                return obj;
+            }, {});
+        }
         data.selectValue = this.$select.val();
 
         return data;
@@ -94,7 +117,7 @@ const UnitsAsRadioGroupView = BaseView.extend({
      */
     onRadioChange(e) {
         if (this.$select.val() !== e.currentTarget.value) {
-            this.$select.val(e.currentTarget.value).change();
+            this.$select.val(e.currentTarget.value).trigger('change');
         }
     },
 

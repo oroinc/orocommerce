@@ -36,7 +36,7 @@ define([
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(','));
             }
-            this.form = $(this.el).parents('form:first').get(0);
+            this.form = $(this.el).parents('form').get(0);
             if (this.form === undefined) {
                 throw new TypeError('Form not found');
             }

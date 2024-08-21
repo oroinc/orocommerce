@@ -91,7 +91,7 @@ define(function(require) {
         handleLayoutInit: function() {
             const self = this;
 
-            this.ftid = this.$el.find('div[data-ftid]:first').data('ftid');
+            this.ftid = this.$el.find('div[data-ftid]').first().data('ftid');
 
             this.useDefaultAddress = true;
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
@@ -154,7 +154,7 @@ define(function(require) {
             this.$address = $address;
 
             const self = this;
-            this.$address.change(function(e) {
+            this.$address.on('change', function(e) {
                 // Do not block default address usage if there is no default address or selected address is default
                 if (self.useDefaultAddress &&
                     self.$address.data('default') &&
@@ -203,7 +203,7 @@ define(function(require) {
                     if ($field.data('select2')) {
                         $field.data('selected-data', value);
                         if (triggerChange) {
-                            $field.change();
+                            $field.trigger('change');
                         }
                     }
                 }
@@ -251,7 +251,7 @@ define(function(require) {
                 .append(this.$address);
 
             if (this.useDefaultAddress && this.$address.data('default')) {
-                this.$address.val(this.$address.data('default')).change();
+                this.$address.val(this.$address.data('default')).trigger('change');
             }
 
             this.initLayout().done(this.loadingEnd.bind(this));

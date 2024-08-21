@@ -3,10 +3,9 @@
     {% set scope = {} %}
 {% endif %}
 
+{% import '@OroUI/macros.html.twig' as UI %}
 {% if feature_enabled('oro_price_lists_combined') %}
-    {% import '@OroUI/macros.html.twig' as UI %}
     {% import '@OroCron/macros.html.twig' as cronSchedulIntervals %}
-
     <div class="list-head-container-wrapper">
         {% if (headLink is defined and headLink) or (fallback is defined and fallback) %}
             <div class="list-head-container">

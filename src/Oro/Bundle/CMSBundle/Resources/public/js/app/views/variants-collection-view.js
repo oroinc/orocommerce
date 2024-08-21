@@ -35,7 +35,7 @@ define(function(require) {
             const validationErrors = form.find('.validation-failed');
             validationErrors.each(function(key, value) {
                 const currentVariantItemContent = $(value.closest('.content-variant-item-content'));
-                currentVariantItemContent.removeAttr('data-parent');
+                currentVariantItemContent.attr('data-parent', null);
                 currentVariantItemContent.collapse('show');
             });
         },

@@ -18,6 +18,16 @@
     </div>
 {% endblock %}
 
+{% block _product_view_sticker_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view-sticker-wrapper'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _product_view_media_widget %}
     {% set productImages = collect_product_images_by_types(product, ['main', 'additional']) %}
 
@@ -55,7 +65,7 @@
     {% set prevArrow %}
         <div class="slick-btn-wrapper slick-arrow-prev">
             <button type="button" class="slick-arrow-btn" aria-label="{{ 'oro.product.frontend.gallery.prev'|trans }}">
-                {{ renderIcon.icon({name: oro_is_rtl_mode() ? 'chevron-right' : 'chevron-left', extraClass: 'theme-icon--medium'})}}
+                {{ renderIcon.icon({name: 'chevron-left', extraClass: 'theme-icon--medium'})}}
             </button>
         </div>
     {% endset %}
@@ -63,7 +73,7 @@
     {% set nextArrow %}
         <div class="slick-btn-wrapper slick-arrow-next">
             <button type="button" class="slick-arrow-btn"  aria-label="{{ 'oro.product.frontend.gallery.next'|trans }}">
-                {{ renderIcon.icon({name: oro_is_rtl_mode() ? 'chevron-left' : 'chevron-right', extraClass: 'theme-icon--medium'})}}
+                {{ renderIcon.icon({name: 'chevron-right', extraClass: 'theme-icon--medium'})}}
             </button>
         </div>
     {% endset %}

@@ -48,7 +48,7 @@
         </div>
     {% elseif localizations|length > 2 %}
         <button
-            class="btn btn--colored-inverse btn--text btn--no-padding localization-switcher localization-switcher--{{ selected_localization.formattingCode|lower }}"
+            class="btn btn--flat btn--flat-inverse localization-switcher localization-switcher--{{ selected_localization.formattingCode|lower }}"
             type="button"
         >
             {{ renderIcon.icon({name: 'globe'}) }}

@@ -139,7 +139,7 @@ define(function(require) {
             });
 
             it('input widget should be refreshed', function() {
-                $el.val('kg').change();
+                $el.val('kg').trigger('change');
                 $el.inputWidget('create');
                 UnitsUtil.updateSelect(model, $el);
 

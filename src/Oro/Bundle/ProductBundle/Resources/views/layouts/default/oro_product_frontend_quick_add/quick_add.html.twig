@@ -82,7 +82,7 @@
 
 {% block _quick_add_form_clear_button_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' btn btn--text btn--outlined btn--no-padding quick-order-add__clear-button hidden',
+        '~class': ' btn btn--flat quick-order-add__clear-button hidden',
         'data-role': 'quick-order-add-clear'
     }) %}
     {{ block_widget(block, {attr: attr}) }}

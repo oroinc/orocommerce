@@ -107,6 +107,8 @@ trusted_data:
             getEnabledShardName: true
             getEntityBaseTable: true
             getBaseTableName: true
+            getColumnsPlaceholder: true
+            getShardName: true
         Oro\Bundle\PricingBundle\Datagrid\PriceAttributeProductPriceDatagridExtension:
             getJoinAlias: true
         Oro\Bundle\PricingBundle\Datagrid\ProductPriceDatagridExtension:

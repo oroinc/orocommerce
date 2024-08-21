@@ -11,7 +11,7 @@ const EXPANDED = 'expanded';
 
 const config = {
     animationDuration: 150,
-    className: 'toggle-sidebar-btn toggle-filters-action btn btn--flat',
+    className: 'btn btn--flat toggle-sidebar-btn toggle-filters-action',
     text: 'oro.product.sidebar_filters.button.text',
     [`${EXPANDED}Title`]: 'oro.product.sidebar_filters.button.title.collapse',
     [`${EXPANDED}Icon`]: 'sliders',
@@ -103,7 +103,7 @@ const SidebarToggleFiltersView = BaseView.extend({
             ($oldEl.data('has-focus') || hasFocus) &&
             $(document.activeElement).is('body')
         ) {
-            this.$el.focus();
+            this.$el.trigger('focus');
         }
 
         this.$el.toggleClass('is-expanded', this.sidebarExpanded);

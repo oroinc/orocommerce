@@ -248,15 +248,6 @@ layout:
               optionValue:
                   expandKitLineItem: false
 
-        - '@move':
-            id: checkout_order_summary_line_items_datagrid_toolbar_pagination
-            parentId: checkout_order_summary_line_items_datagrid_toolbar_rightside_container
-            siblingId: checkout_order_summary_line_items_datagrid_toolbar_page_size
-            prepend: true
-
-        - '@remove':
-            id: checkout_order_summary_line_items_datagrid_toolbar_base_container
-
         - '@add':
               id: checkout_order_summary_line_item_wrapper
               blockType: layout_subtree_update

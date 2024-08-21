@@ -58,13 +58,13 @@ class FrontendShoppingListProductUnitsQuantityProvider
     }
 
     /**
-     * @param ProductView[] $products
+     * @param ProductView[]|Product[] $products
      *
      * @return array [product id => [shopping list data (array), ...] or null, ...]
      */
     public function getByProducts(array $products): array
     {
-        $productIds = array_map(function (ProductView $product) {
+        $productIds = array_map(function (Product|ProductView $product) {
             return $product->getId();
         }, $products);
         $this->setByProducts($productIds);

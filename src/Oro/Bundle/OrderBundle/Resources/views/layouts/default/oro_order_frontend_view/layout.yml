@@ -26,6 +26,12 @@ layout:
                 label: 'oro.frontend.order.identifier.label'
                 parameters:
                     '%identifier%': '=data["order"].getIdentifier()'
+        - '@add':
+              id: order_created_by
+              blockType: block
+              parentId: page_title_container
+              options:
+                  visible: '=data["order"].getCreatedBy()!=null'
         - '@setOption':
             id: page_content
             optionName: class_prefix
@@ -73,9 +79,9 @@ layout:
                     options:
                         route_name: oro_order_frontend_index
                         text: 'oro.order.frontend.order_list_link.text'
-                        icon: angle-left
+                        icon: arrow-left
                         attr:
-                            class: 'link pull-left hide-on-print'
+                            class: 'btn btn--no-padding btn--text btn--outlined btn--size-small hide-on-print'
                 order_identifier:
                     blockType: text
                     options:
@@ -205,6 +211,6 @@ layout:
                                         order_payment_status: ~
                                         order_ship_until: ~
                                         order_customer_notes: ~
-                            order_after_line_items_grid:
-                                order_total: ~
-                                order_list_link: ~
+                                    order_after_line_items_grid:
+                                        order_total: ~
+                            order_list_link: ~

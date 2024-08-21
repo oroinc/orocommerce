@@ -49,9 +49,20 @@ class PriceListProductPricesReader extends EntityReader
 
     public function setSourceQuery(Query $query)
     {
+        $iterator = $this->createSourceIterator($query);
         $query->useQueryCache(false);
         $query->setHint(PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
-        $this->setSourceIterator($this->createSourceIterator($query));
+        $this->setSourceIterator($iterator);
+
+        $jobInstance = $this->stepExecution->getJobExecution()->getJobInstance();
+        $configuration = $jobInstance->getRawConfiguration();
+        $configuration['export']['hasHeader'] = true;
+
+        if (iterator_count($iterator) === 0) {
+            $configuration['export']['hasHeader'] = false;
+        }
+
+        $jobInstance->setRawConfiguration($configuration);
     }
 
     /**

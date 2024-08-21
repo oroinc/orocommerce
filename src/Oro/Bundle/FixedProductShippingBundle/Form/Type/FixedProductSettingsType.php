@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class FixedProductSettingsType extends AbstractType
 {
-    public const BLOCK_PREFIX = 'oro_flat_rate_settings';
+    public const BLOCK_PREFIX = 'oro_fixed_product_type';
 
     /**
      * {@inheritdoc}

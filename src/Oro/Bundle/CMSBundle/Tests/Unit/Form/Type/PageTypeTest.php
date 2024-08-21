@@ -119,6 +119,7 @@ class PageTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('createUrlSlug'));
         $this->assertTrue($form->has('content'));
         $this->assertTrue($form->has('slugPrototypesWithRedirect'));
+        $this->assertTrue($form->has('doNotRenderTitle'));
     }
 
     public function testConfigureOptions(): void
@@ -161,10 +162,12 @@ class PageTypeTest extends FormIntegrationTestCase
         $page->addTitle((new LocalizedFallbackValue())->setString('First test page'));
         $page->setContent('Page content');
         $page->addSlugPrototype((new LocalizedFallbackValue())->setString('slug'));
+        $page->setDoNotRenderTitle(true);
 
         $pageWithoutRedirect = clone $page;
         $pageWithoutRedirect->setSlugPrototypesWithRedirect(clone $page->getSlugPrototypesWithRedirect());
         $pageWithoutRedirect->getSlugPrototypesWithRedirect()->setCreateRedirect(false);
+        $pageWithoutRedirect->setDoNotRenderTitle(false);
 
         $pageWithoutUrlSlug = new Page();
         $pageWithoutUrlSlug->addTitle((new LocalizedFallbackValue())->setString('Page without url slug'));
@@ -183,6 +186,7 @@ class PageTypeTest extends FormIntegrationTestCase
                         'slugPrototypes' => [['string' => 'slug']],
                         'createRedirect' => true,
                     ],
+                    'doNotRenderTitle' => true
                 ],
                 'expectedData' => $page,
             ],
@@ -195,6 +199,7 @@ class PageTypeTest extends FormIntegrationTestCase
                         'slugPrototypes' => [['string' => 'slug']],
                         'createRedirect' => false,
                     ],
+                    'doNotRenderTitle' => false
                 ],
                 'expectedData' => $pageWithoutRedirect,
             ],
@@ -203,6 +208,7 @@ class PageTypeTest extends FormIntegrationTestCase
                     'titles' => [['string' => 'Page without url slug']],
                     'createUrlSlug' => false,
                     'content' => 'Page without url slug content',
+                    'doNotRenderTitle' => false
                 ],
                 'expectedData' => $pageWithoutUrlSlug,
             ],

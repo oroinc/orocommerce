@@ -10,6 +10,23 @@ layout:
             themes: '@OroCheckout/layouts/default/oro_order_frontend_index/layout.html.twig'
 
         - '@add':
+            id: frontend_checkouts_grid_external_toolbar
+            parentId: page_title_container
+            blockType: frontend_datagrid_external_toolbar
+            options:
+                gridName: 'frontend-checkouts-grid'
+
+        - '@add':
+            id: frontend_orders_grid_external_toolbar
+            parentId: page_content
+            siblingId: checkouts_container
+            blockType: frontend_datagrid_external_toolbar
+            options:
+                attr:
+                    class: ' grid-views__aditional'
+                gridName: 'frontend-orders-grid'
+
+        - '@add':
             id: checkouts_container
             parentId: page_content
             blockType: container

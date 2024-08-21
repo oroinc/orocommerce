@@ -1,6 +1,7 @@
 about:
     slug: about
     title: 'About'
+    doNotRenderTitle: true
     contentStyle: >
         .about-us-page-grid {
             --grid-gap: 64px 56px;

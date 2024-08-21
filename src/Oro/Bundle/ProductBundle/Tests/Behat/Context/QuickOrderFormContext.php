@@ -84,7 +84,7 @@ class QuickOrderFormContext extends OroFeatureContext implements OroPageObjectAw
      */
     public function iWaitForProductsToLoad()
     {
-        $this->waitForAjax(200);
+        $this->waitForAjax();
     }
 
     /**

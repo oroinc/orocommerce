@@ -100,6 +100,12 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             $customerUser = $row['isGuest'] ? $guestCustomerUser : $regularCustomerUser;
             $order = new Order();
 
+            $createdByUser = null;
+            if (!empty($row['createdBy'])) {
+                /** @var User $user */
+                $createdByUser = $userRepository->findOneBy(['username' => $row['createdBy']]);
+            }
+
             $billingAddress = $this->getBillingAddressData($row, $customerUser);
             $shippingAddress = $this->getShippingAddressData($row, $customerUser);
 
@@ -115,6 +121,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
 
             $order
                 ->setOwner($user)
+                ->setCreatedBy($createdByUser)
                 ->setCustomer($customerUser->getCustomer())
                 ->setIdentifier($row['identifier'])
                 ->setCustomerUser($customerUser)

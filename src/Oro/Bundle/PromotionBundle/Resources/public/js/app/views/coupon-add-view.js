@@ -172,7 +172,7 @@ define(function(require) {
                 widgetManager.getWidgetInstance(wid, function(widget) {
                     widget.getAction('form_submit', 'adopted', function(submitAction) {
                         if ($addedIdsField.val()) {
-                            $(submitAction).removeAttr('disabled');
+                            $(submitAction).prop('disabled', false);
                         } else {
                             $(submitAction).attr('disabled', 'disabled');
                         }

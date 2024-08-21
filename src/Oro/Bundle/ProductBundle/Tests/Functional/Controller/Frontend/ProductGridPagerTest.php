@@ -37,9 +37,9 @@ class ProductGridPagerTest extends WebTestCase
 
         $nextPageLink = $this->client->getCrawler()->filter('.oro-pagination__next');
         $prevPageLink = $this->client->getCrawler()->filter('.oro-pagination__prev');
-        $currentPage = $this->client->getCrawler()->filter('.oro-pagination__input');
+        $currentPage = $this->client->getCrawler()->filter('.oro-pagination__page-to--active');
 
-        $this->assertEquals(1, $currentPage->attr('value'));
+        $this->assertEquals('1', $currentPage->text());
         static::assertStringContainsString('disable', $prevPageLink->attr('class'));
         $this->assertEquals('#', $prevPageLink->attr('href'));
         static::assertStringNotContainsString('disable', $nextPageLink->attr('class'));
@@ -49,9 +49,9 @@ class ProductGridPagerTest extends WebTestCase
 
         $nextPageLink = $this->client->getCrawler()->filter('.oro-pagination__next');
         $prevPageLink = $this->client->getCrawler()->filter('.oro-pagination__prev');
-        $currentPage = $this->client->getCrawler()->filter('.oro-pagination__input');
+        $currentPage = $this->client->getCrawler()->filter('.oro-pagination__page-to--active');
 
-        $this->assertEquals(2, $currentPage->attr('value'));
+        $this->assertEquals('2', $currentPage->text());
         static::assertStringNotContainsString('disable', $prevPageLink->attr('class'));
         $this->assertNotEquals('#', $prevPageLink->attr('href'));
         static::assertStringContainsString('disable', $nextPageLink->attr('class'));
