@@ -25,6 +25,7 @@ dynamic-imports:
         - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
         - oroproduct/js/app/datagrid/frontend-product-process-options-builder
         - oroproduct/js/app/datagrid/grid-sidebar-filters-builder
+        - oroproduct/js/app/views/sidebar-filters/filter-items-hint-view
     oroproduct:
         - jquery-elevatezoom
         - oroproduct/js/app/components/breadcrumbs-navigation-block

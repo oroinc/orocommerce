@@ -755,7 +755,7 @@ oro:
                     tooltip: 'Set the maximum number of products displayed in the storefront autocomplete dropdown.'
 
                 filters_position:
-                    label: 'Filter Panel Position'
+                    label: 'Filter Panel Position on Product Listing Page'
                     tooltip: 'Select the required position of the filter bar in the storefront.'
                     options:
                         top: 'Top'
@@ -1103,7 +1103,7 @@ oro:
                     product_listing:
                         label: Product Listing Page
                         filters_position:
-                            label: Filter Panel Position
+                            label: Filter Panel Position on Product Listing Page
                             values:
                                 top: Top
                                 sidebar: Sidebar

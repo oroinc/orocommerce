@@ -49,10 +49,10 @@ Feature: Single Page Checkout From Shopping List
       | Checkout | List 1       | 1     | $20.00   |
 
   Scenario: Check filter localization
-    Given I should see following header in "Filter By Do Not Ship Later Than" filter in "OpenOrdersGrid":
+    Given I should see following header in "Do Not Ship Later Than" filter in "OpenOrdersGrid":
       | S | M | T | W | T | F | S |
     When I select "German Localization" localization
-    Then I should see following header in "Filter By Do Not Ship Later Than" filter in "OpenOrdersGrid":
+    Then I should see following header in "Do Not Ship Later Than" filter in "OpenOrdersGrid":
       | M | D | M | D | F | S | S |
     And I select "English" localization
     And I click "Check Out" on row "List 1" in grid "OpenOrdersGrid"

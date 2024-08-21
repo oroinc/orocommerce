@@ -66,10 +66,9 @@ Feature: Product catalog Filter Panel state
     When I filter SKU as is equal to "SKU2"
     And I click "GridFiltersButton"
     Then I should not see an "GridFilters" element
-    But I should see "SKU is equal to \"SKU2\"" in the "GridFiltersState" element
     When I reload the page
     Then I should not see an "GridFilters" element
-    When I click "GridFiltersState"
+    When I click "GridFiltersButtonSelected"
     Then I should see an "GridFilters" element
     When I reload the page
     Then I should see an "GridFilters" element
@@ -86,10 +85,9 @@ Feature: Product catalog Filter Panel state
     When I filter First Name as contains "Amanda"
     And I click "GridFiltersButton"
     Then I should not see an "GridFilters" element
-    But I should see "First Name contains \"Amanda\"" in the "GridFiltersState" element
     When I reload the page
     Then I should not see an "GridFilters" element
-    When I click "GridFiltersState"
+    When I click "GridFiltersButtonSelected"
     Then I should see an "GridFilters" element
     When I reload the page
     Then I should see an "GridFilters" element
@@ -98,7 +96,6 @@ Feature: Product catalog Filter Panel state
     Given I proceed as the Admin
     When go to System/ User Management/ Users
     Then I should not see an "GridFilters" element
-    But I should see "Enabled Enabled" in the "GridFiltersState" element
     When I click "GridFiltersState"
     Then I should see an "GridFilters" element
     When I reload the page

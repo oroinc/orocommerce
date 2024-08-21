@@ -18,6 +18,7 @@
     transition: transform 250ms ease-out;
 
     max-height: calc(100vh - var(--sticky-product-filters-sidebar-offset-top));
+    height: 100%;
 
     &.in-sticky {
         z-index: 101;
@@ -32,9 +33,14 @@
 
     .filter-items-container {
         height: 100%;
+        padding-inline: spacing('lg') + 4px spacing('lg');
+        margin-inline: -#{spacing('lg') + 4px} 0;
+        max-width: inherit;
+    }
+
+    // Set filter items content scrollable when it filter manager is not opened
+    &:not(:has(.dropdown-menu[tabindex='-1'])) .filter-items-container {
         overflow-y: auto;
-        padding-inline: spacing('xs') spacing('lg');
-        margin-inline: -#{spacing('xs')} 0;
     }
 }
 

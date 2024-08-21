@@ -1350,7 +1350,7 @@ oro_behat_extension:
     Brand Filter:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/*[contains(@class,"filter-select")]/span[contains(text(),"Filter By Brand")]/..'
+        locator: '//div[contains(@class,"filter-item")]/*[contains(@class,"filter-select")]/span[contains(text(),"Brand")]/..'
 
     Product Collection Grid Form:
       selector: 'form[name="oro_web_catalog_content_node"]'

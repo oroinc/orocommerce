@@ -43,10 +43,14 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
      * Example: I reset "ManyToOneField" filter in "product" sidebar
      * Example: I reset "ManyToOneField" with hint "Test" filter in "product" sidebar
      *
+     * @codingStandardsIgnoreStart
+     *
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" filter in frontend product grid$/
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" with hint "(?P<filterHint>[\w\s\:\(\)]+)" filter in frontend product grid$/
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" filter in "(?P<filterPosition>[\w\s]+)" sidebar$/
      * @When /^(?:|I )reset "(?P<filterName>[\w\s\:\(\)]+)" with hint "(?P<filterHint>[\w\s\:\(\)]+)" filter in "(?P<filterPosition>[\w\s]+)" sidebar$/
+     *
+     * @codingStandardsIgnoreEnd
      *
      * @param string $filterName
      * @param string $filterHint

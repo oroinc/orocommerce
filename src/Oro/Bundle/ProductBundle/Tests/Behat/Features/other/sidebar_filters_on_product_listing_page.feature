@@ -18,7 +18,7 @@ Feature: Sidebar filters on product listing page
     And I go to System / Theme Configurations
     When I click Edit "Refreshing Teal" in grid
     And fill "Theme Configuration Form" with:
-      | Filter Panel Position | sidebar |
+      | Filter Panel Position on Product Listing Page | sidebar |
     And I save and close form
     Then I should see "Theme Configuration has been saved" flash message
 

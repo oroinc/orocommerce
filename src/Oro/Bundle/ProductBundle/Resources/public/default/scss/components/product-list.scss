@@ -7,7 +7,6 @@
         display: $product-list-gallery-view-display;
         gap: $product-list-gallery-view-gap;
         grid-template-columns: $product-list-gallery-view-grid-template-columns;
-        margin: $product-list-gallery-view-offset;
 
         // Each special grid breakpoint
         @each $point in $product-list-gallery-view-grid-count-map {
@@ -31,12 +30,10 @@
     &--list-view {
         display: $product-list-list-view-display;
         gap: $product-list-list-view-gap;
-        padding-top: $product-list-list-view-padding-top;
     }
 
     &--no-image-view {
         display: $product-list-no-image-view-display;
         gap: $product-list-no-image-view-gap;
-        padding-top: $product-list-no-image-view-padding-top;
     }
 }

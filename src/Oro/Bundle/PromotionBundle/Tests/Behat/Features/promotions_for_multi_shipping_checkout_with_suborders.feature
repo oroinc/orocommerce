@@ -72,7 +72,7 @@ Feature: Promotions for multi shipping checkout with suborders
     And records in "Past Orders Grid" should be 3
     # Click on order number 1
     And I show filter "Order Number" in "Past Orders Grid" frontend grid
-    And I filter Filter By Order Number as is equal to "1" in "Past Orders Grid"
+    And I filter Order Number as is equal to "1" in "Past Orders Grid"
     And I click view "1" in grid
     Then I should see "Subtotal $50.00" in the "Subtotals" element
     And I should see "Discount -$5.00" in the "Subtotals" element
@@ -82,7 +82,7 @@ Feature: Promotions for multi shipping checkout with suborders
     And I should see "Total $54.00" in the "Subtotals" element
     When I open Order History page on the store frontend
     # Click on order number 1-1
-    And I filter Filter By Order Number as is equal to "1-1" in "Past Orders Grid"
+    And I filter Order Number as is equal to "1-1" in "Past Orders Grid"
     And I click view "1-1" in grid
     Then I should see "Subtotal $10.00" in the "Subtotals" element
     And I should see "Discount -$1.00" in the "Subtotals" element
@@ -92,7 +92,7 @@ Feature: Promotions for multi shipping checkout with suborders
     And I should see "Total $12.00" in the "Subtotals" element
     When I open Order History page on the store frontend
     # Click on order number 1-2
-    And I filter Filter By Order Number as is equal to "1-2" in "Past Orders Grid"
+    And I filter Order Number as is equal to "1-2" in "Past Orders Grid"
     And I click view "1-2" in grid
     Then I should see "Subtotal $40.00" in the "Subtotals" element
     And I should see "Discount -$4.00" in the "Subtotals" element
