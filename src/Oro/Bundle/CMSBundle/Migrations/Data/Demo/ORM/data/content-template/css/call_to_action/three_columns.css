@@ -8,7 +8,7 @@
 }
 /* stylelint-enable scale-unlimited/declaration-strict-value */
 
-.three-columns-call-to-action .picture__wrapper {
+.three-columns-call-to-action .picture-wrapper {
     min-height: 200px;
     display: flex;
 }

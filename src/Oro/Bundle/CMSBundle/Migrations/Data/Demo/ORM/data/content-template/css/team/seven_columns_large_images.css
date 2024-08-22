@@ -5,7 +5,7 @@
     --grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
-.seven-columns-large-images-team .picture__wrapper {
+.seven-columns-large-images-team .picture-wrapper {
     min-height: 200px;
     display: flex;
 }

@@ -2,7 +2,7 @@
     --grid-gap: 24px;
 }
 
-.four-columns-testimonials .picture__wrapper {
+.four-columns-testimonials .picture-wrapper {
     min-height: 200px;
     display: flex;
 }
