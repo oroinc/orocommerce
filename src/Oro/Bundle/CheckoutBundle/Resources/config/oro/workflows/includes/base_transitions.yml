@@ -4,6 +4,7 @@ workflows:
             __start__:
                 is_start: true
                 is_hidden: true
+                transition_service: 'oro_checkout.workflow.base_transition.start'
 
             start_from_quote:
                 is_start: true

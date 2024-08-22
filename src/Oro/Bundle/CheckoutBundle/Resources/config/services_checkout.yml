@@ -102,7 +102,7 @@ services:
     Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\PaymentMethodActions:
         alias: oro_checkout.action_group.b2b_flow_checkout.payment_method_actions
 
-    oro_checkout.workflow.transition.start:
+    oro_checkout.workflow.base_transition.start:
         class: Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\StartTransition
         tags:
             - { name: 'oro_workflow.transition_service' }
