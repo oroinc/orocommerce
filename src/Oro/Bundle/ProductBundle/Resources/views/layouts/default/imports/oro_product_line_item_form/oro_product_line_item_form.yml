@@ -27,7 +27,7 @@ layout:
                     options:
                         vars:
                             js_validation_options:
-                                initOn: 'click,focusin'
+                                initOn: 'click,focusin,mouseover'
                 __line_item_form_buttons:
                     blockType: container
                 __line_item_view_details:
