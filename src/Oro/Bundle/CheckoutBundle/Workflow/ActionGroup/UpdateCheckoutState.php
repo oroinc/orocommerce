@@ -48,6 +48,6 @@ class UpdateCheckoutState implements UpdateCheckoutStateInterface
             $updateCheckoutState = false;
         }
 
-        return $updateCheckoutState;
+        return (bool)$updateCheckoutState;
     }
 }
