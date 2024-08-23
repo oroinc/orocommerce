@@ -22,6 +22,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class ProductRepository extends WebsiteSearchRepository
 {
+    public const ATTRIBUTE_FAMILY_COUNT_AGGREGATE = 'attribute_family_count_aggregate';
+
     protected EventDispatcherInterface $eventDispatcher;
     protected ConfigManager $configManager;
 
@@ -52,13 +54,15 @@ class ProductRepository extends WebsiteSearchRepository
             $query = clone $query;
         }
 
+        $query->setHint(Query::HINT_SEARCH_TYPE, static::ATTRIBUTE_FAMILY_COUNT_AGGREGATE);
+
         // reset query parts to make it work as fast as possible
         $query->getQuery()->select([]);
         $query->getQuery()->getCriteria()->orderBy([]);
         $query->setFirstResult(0);
         $query->setMaxResults(1);
 
-        // calculate category counts
+        // calculate attribute counts in attribute families
         $query->addAggregate(
             $aggregateAlias,
             'integer.attribute_family_id',
