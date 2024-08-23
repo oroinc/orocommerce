@@ -126,6 +126,17 @@ class QuoteAcceptableTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    public function testEvaluateWithDefaultPropertyPath()
+    {
+        $errors = new ArrayCollection();
+        $options = [new PropertyPath('quote'), true];
+
+        $this->assertSame($this->condition, $this->condition->initialize($options));
+        $this->assertTrue($this->condition->evaluate(['quote' => null], $errors));
+
+        $this->assertCount(0, $errors->toArray());
+    }
+
     private function getQuote(bool $isAcceptable = false): Quote
     {
         $quote = $this->createMock(Quote::class);

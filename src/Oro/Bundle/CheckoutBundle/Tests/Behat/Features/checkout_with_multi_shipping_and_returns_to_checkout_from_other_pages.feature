@@ -123,7 +123,8 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
     And records in "Second Checkout Shipping Grid" should be 2
-    When I click on "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method"
+    When I click on "First Checkout Shipping Grid First Line Item Flat Rate 2 Shipping Method"
+    And I click on "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method"
     And I click on "Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method"
     Then I should see Checkout Totals with data:
       | Subtotal | $52.00 |

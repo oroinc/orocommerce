@@ -12,8 +12,11 @@
             view: 'oroproduct/js/app/views/product-view-item-panel',
             target: '[data-line-item-form]'
         },
-        'class': 'product-view-line-form-wrapper',
-        'aria-hidden': 'true'
+        'class': 'product-view-line-form-wrapper sticky sticky--top',
+        'aria-hidden': 'true',
+        'data-sticky': {
+            'name': 'toolbar'
+        }
     }) %}
 
     <div {{ block('block_attributes') }}>

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Form\Type;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManager;
+use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManagerInterface;
 use Oro\Bundle\FormBundle\Form\DataTransformer\ArrayToJsonTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -17,9 +17,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class LineItemShippingMethodsType extends AbstractType
 {
-    private CheckoutLineItemsShippingManager $shippingManager;
+    private CheckoutLineItemsShippingManagerInterface $shippingManager;
 
-    public function __construct(CheckoutLineItemsShippingManager $shippingManager)
+    public function __construct(CheckoutLineItemsShippingManagerInterface $shippingManager)
     {
         $this->shippingManager = $shippingManager;
     }

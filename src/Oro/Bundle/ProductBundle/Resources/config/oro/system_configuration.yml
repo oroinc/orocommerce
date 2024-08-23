@@ -101,6 +101,8 @@ system_configuration:
             title: oro.product.system_configuration.groups.schema_org.title
             description: oro.product.system_configuration.groups.schema_org.description
             description_style: warning
+        product_inventory_filter:
+            title: oro.product.system_configuration.groups.product_inventory_filter.title
     fields:
         oro_product.related_products_enabled:
             data_type: boolean
@@ -369,6 +371,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.featured_products_segment.label
                 tooltip: oro.product.system_configuration.fields.featured_products_segment.tooltip
+                warning: oro.product.system_configuration.fields.featured_products_segment.legacy_note
                 entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
                 required: false
 
@@ -465,6 +468,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.new_arrivals_products_segment.label
                 tooltip: oro.product.system_configuration.fields.new_arrivals_products_segment.tooltip
+                warning: oro.product.system_configuration.fields.new_arrivals_products_segment.legacy_note
                 entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
                 required: false
 
@@ -599,6 +603,7 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.filters_position.label
                 tooltip: oro.product.system_configuration.fields.filters_position.tooltip
+                warning: oro.product.system_configuration.fields.filters_position.legacy_note
                 choices:
                     oro.product.system_configuration.fields.filters_position.options.top: top
                     oro.product.system_configuration.fields.filters_position.options.sidebar: sidebar
@@ -674,6 +679,39 @@ system_configuration:
                     oro.product.system_configuration.fields.schema_org_description_field.choice.meta.label: 'oro_product_seo_description'
                     oro.product.system_configuration.fields.schema_org_description_field.choice.long.label: 'oro_product_full_description'
                     oro.product.system_configuration.fields.schema_org_description_field.choice.short.label: 'oro_product_short_description'
+
+        oro_product.inventory_filter_enable_for_guests:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.product.system_configuration.fields.product_inventory_filter.enable_for_guests.label
+                tooltip: oro.product.system_configuration.fields.product_inventory_filter.enable_for_guests.tooltip
+
+        oro_product.inventory_filter_type:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+            options:
+                label: oro.product.system_configuration.fields.product_inventory_filter.type.label
+                tooltip: oro.product.system_configuration.fields.product_inventory_filter.type.tooltip
+                choices:
+                    oro.product.system_configuration.fields.product_inventory_filter.type.choice.multiselect.label: 'multi-enum'
+                    oro.product.system_configuration.fields.product_inventory_filter.type.choice.simple.label: 'inventory-switcher'
+                attr:
+                    'data-dependee-id': 'product_inventory_filter_type'
+
+        oro_product.inventory_filter_in_stock_statuses_for_simple_filter:
+            data_type: array
+            type: Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType
+            options:
+                label: oro.product.system_configuration.fields.product_inventory_filter.in_stock_statuses_for_simple_filter.label
+                tooltip: oro.product.system_configuration.fields.product_inventory_filter.in_stock_statuses_for_simple_filter.tooltip
+                required: true
+                constraints:
+                    - NotBlank: ~
+                attr:
+                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-depend-on': 'product_inventory_filter_type'
+                    'data-show-if': 'inventory-switcher'
 
     tree:
         system_configuration:
@@ -815,6 +853,11 @@ system_configuration:
                                     frontend_inventory_statuses_visibility:
                                         children:
                                             - oro_product.general_frontend_product_visibility
+                                    product_inventory_filter:
+                                        children:
+                                            - oro_product.inventory_filter_enable_for_guests
+                                            - oro_product.inventory_filter_type
+                                            - oro_product.inventory_filter_in_stock_statuses_for_simple_filter
                     sales:
                         children:
                             quick_order:

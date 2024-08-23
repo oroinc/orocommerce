@@ -12,7 +12,7 @@ use Oro\Bundle\ShippingBundle\Provider\MultiShippingCostCalculator;
 /**
  * Implements logic to handle line item groups shipping data actions.
  */
-class CheckoutLineItemGroupsShippingManager
+class CheckoutLineItemGroupsShippingManager implements CheckoutLineItemGroupsShippingManagerInterface
 {
     private const METHOD = 'method';
     private const TYPE = 'type';

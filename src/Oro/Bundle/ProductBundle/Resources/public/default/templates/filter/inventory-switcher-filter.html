@@ -1,0 +1,30 @@
+<%
+    var criteriaClasses = 'filter-criteria-selector filter-criteria-simple';
+    if (obj.criteriaClass) {
+        criteriaClasses += obj.criteriaClass;
+    }
+%>
+<% if (Object.values(obj.options || {}).length) { %>
+<div class="filter-item" data-inventory-filter-template>
+    <% var inputId = _.uniqueId('input-') %>
+    <label class="<%- criteriaClasses %> <% if (isEmpty) { %>filter-default-value<% } %>">
+        <span class="filter-item-label <% if (!showLabel) { %>sr-only<% } %>"><%- label %></span>
+        <% const checkboxVal = Object.values(options)[0]?.value || ''; %>
+        <input type="checkbox"
+               value="<%- checkboxVal %>"
+               data-role="inventory-checkbox"
+            <% if (checkboxVal === selected?.value[0]) { %>checked<% } %>
+            <% if (renderMode === 'dropdown-mode') { %> tabindex="-1"<% }%>
+            <% if (renderMode === 'toggle-mode') { %>role='switch'<% }%>
+        >
+    </label>
+    <select multiple data-skip-input-widgets class="hidden">
+        <% _.each(options, function (option) { %>
+        <option value="<%- option.value %>" title="<%- option.label %>"
+        <% if (option.value == selected.value) { %> selected="selected"<% } %>>
+        <%- option.label %>
+        </option>
+        <% }); %>
+    </select>
+</div>
+<% } %>

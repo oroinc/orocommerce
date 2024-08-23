@@ -133,7 +133,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $page = $this->getSession()->getPage();
         $element = $page->findField(self::$valueMapping[$value] ?? $value);
 
-        self::assertTrue($element->isValid(), sprintf('Could not found option "%s" on page', $value));
+        self::assertTrue($element?->isValid(), sprintf('Could not found option "%s" on page', $value));
 
         if (!$element->isChecked()) {
             $element->getParent()->click();

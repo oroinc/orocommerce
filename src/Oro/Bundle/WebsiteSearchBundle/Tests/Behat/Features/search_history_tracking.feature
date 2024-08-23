@@ -1,4 +1,5 @@
 @regression
+@elasticsearch
 @ticket-BB-21440
 @fixture-OroProductBundle:product_search/products_with_different_names.yml
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml

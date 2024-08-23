@@ -4,22 +4,20 @@ workflows:
             __start__:
                 is_start: true
                 is_hidden: true
-                transition_definition: __start___definition
+                transition_service: 'oro_checkout.workflow.base_transition.start'
 
             start_from_quote:
                 is_start: true
                 is_hidden: true
-                transition_definition: __start___definition
 
             start_from_quote_as_guest:
                 is_start: true
                 is_hidden: true
-                transition_definition: __start___definition
 
             start_from_shoppinglist:
                 is_start: true
                 is_unavailable_hidden: true
-                transition_definition: start_from_shoppinglist_definition
+                transition_service: 'oro_checkout.workflow.base_transition.start_from_shopping_list'
                 frontend_options:
                     icon: fa-briefcase
                     data:
@@ -33,12 +31,11 @@ workflows:
                     - oro_shopping_list_frontend_update
                 init_entities:
                     - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
-                acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]
 
             start_from_quickorderform:
                 is_start: true
                 is_unavailable_hidden: true
-                transition_definition: start_from_quickorderform_definition
+                transition_service: 'oro_checkout.workflow.base_transition.start_from_quick_order_form'
                 frontend_options:
                     icon: fa-clipboard
                     data:
@@ -55,9 +52,9 @@ workflows:
                 acl_resource: [CREATE, entity:commerce@Oro\Bundle\CheckoutBundle\Entity\Checkout]
 
             finish_checkout:
-                transition_definition: finish_checkout_definition
                 is_hidden: true
+                transition_service: 'oro_checkout.workflow.base_transition.finish_checkout'
 
             payment_error:
-                transition_definition: payment_error_definition
+                transition_service: 'oro_checkout.workflow.base_transition.payment_error'
                 is_hidden: true

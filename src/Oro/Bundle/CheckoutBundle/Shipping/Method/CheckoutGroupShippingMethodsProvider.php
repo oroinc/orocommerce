@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Shipping\Method;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\MultiShipping\CheckoutFactoryInterface;
 use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemGroupsShippingManager;
+use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemGroupsShippingManagerInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodOrganizationProvider;
 use Oro\Bundle\ShippingBundle\Provider\GroupLineItemHelper;
@@ -17,7 +18,7 @@ use Oro\Bundle\ShippingBundle\Provider\GroupLineItemHelperInterface;
 class CheckoutGroupShippingMethodsProvider implements CheckoutGroupShippingMethodsProviderInterface
 {
     private CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider;
-    private CheckoutLineItemGroupsShippingManager $checkoutLineItemGroupsShippingManager;
+    private CheckoutLineItemGroupsShippingManagerInterface $checkoutLineItemGroupsShippingManager;
     private CheckoutFactoryInterface $checkoutFactory;
     private GroupLineItemHelperInterface $groupLineItemHelper;
     private ShippingMethodOrganizationProvider $organizationProvider;

@@ -4,6 +4,11 @@ The current file describes significant changes in the code that may affect the u
 
 ## UNRELEASED
 
+### Added
+
+### ProductBundle
+* Added a new frontend `inventory-switcher` filter.
+
 ### Removed
 
 ### ProductBundle
@@ -15,6 +20,7 @@ The current file describes significant changes in the code that may affect the u
 
 ### ProductBundle
 * Changed entity config fallback logic - substituted system config fallback on theme configuration fallback as default.
+* Filtering for the `inventory status` product attribute was enabled.
 
 ## Changes in the Commerce package versions
 

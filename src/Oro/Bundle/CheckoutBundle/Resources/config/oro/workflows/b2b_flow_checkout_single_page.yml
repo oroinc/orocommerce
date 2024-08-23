@@ -1,11 +1,7 @@
 imports:
     - { resource: 'includes/attributes.yml', workflow: b2b_flow_checkout, as: b2b_flow_checkout_single_page, replace: [] }
-    - { resource: 'includes/base_transitions.yml', workflow: b2b_flow_checkout, as: b2b_flow_checkout_single_page, replace: []}
-    - { resource: 'includes/base_transition_definitions.yml', workflow: b2b_flow_checkout, as: b2b_flow_checkout_single_page, replace: []}
-
     - { resource: 'b2b_flow_checkout_single_page/steps.yml' }
     - { resource: 'b2b_flow_checkout_single_page/transitions.yml' }
-    - { resource: 'b2b_flow_checkout_single_page/transition_definitions.yml' }
 
 workflows:
     b2b_flow_checkout_single_page:
@@ -15,6 +11,14 @@ workflows:
 
         defaults:
             active: false
+
+        metadata:
+            is_checkout_workflow: true
+            is_single_page_checkout: true
+            checkout_state_config:
+                enable_state_protection: true
+                additionally_update_state_after: ['save_state']
+                protect_transitions: ['create_order']
 
         applications: ['commerce']
 

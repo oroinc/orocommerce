@@ -2,18 +2,29 @@
 
 .product-view-line-form {
     &-wrapper {
-        position: fixed;
-        top: var(--sticky-page-header-element-offset-top, 0);
+        --group-offset-y: var(--sticky-page-header-group-offset-y);
+        --sticky-position-top-offset: var(--sticky-page-header-element-offset-top);
+
         left: 0;
         right: 0;
         z-index: $sticky-panel-z-index;
         background-color: $product-view-line-form-background-color;
         box-shadow: $product-view-line-form-box-shadow;
         border-radius: $product-view-line-form-border-radius;
+        transition: $sticky-panel-transition;
 
         &:not(.rendered) {
             display: none;
         }
+
+        &.in-sticky {
+            position: fixed;
+
+            &.scroll-down {
+                transform: translateY(calc(var(--group-offset-y, 0) * -1));
+            }
+        }
+
         .product-view-line-item {
             margin: 0;
         }

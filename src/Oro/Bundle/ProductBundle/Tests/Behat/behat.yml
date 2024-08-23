@@ -2033,6 +2033,20 @@ oro_behat_extension:
             locator: 'div[id^="s2id_search_term_scopes_1_website-uid-"]'
             element: Select2Entity
 
+    Inventory Filter Type Select:
+      selector: 'select[name="allowed_statuses[oro_product___inventory_filter_type][value]"]'
+
+    In Stock Statuses For Simple Filter Select:
+      selector: 'select[name="allowed_statuses[oro_product___inventory_filter_in_stock_statuses_for_simple_filter][value][]"]'
+
+    Multi-Select Inventory Status Filter:
+      selector:
+        locator: '//button[contains(@class, "filter-criteria-selector")]/span[contains(text(),"Inventory Status")]/..'
+        type: 'xpath'
+
+    Inventory Status Switcher:
+      selector: 'div[data-inventory-filter-template]'
+
   pages:
     Product View:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
@@ -2088,6 +2102,7 @@ oro_behat_extension:
         - '@OroProductBundle/Tests/Behat/Features/frontend-product-export'
         - '@OroProductBundle/Tests/Behat/Features/product-kit'
         - '@OroProductBundle/Tests/Behat/Features/search-terms'
+        - '@OroProductBundle/Tests/Behat/Features/inventory-filter'
     OroProductBundleRelatedItems:
       contexts:
         - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
@@ -2141,6 +2156,7 @@ oro_behat_extension:
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext
         - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'
 

@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\OrderBundle\Controller\Frontend;
 
-use Exception;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Helper\CheckoutCompareHelper;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartShoppingListCheckout;
 use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -85,18 +85,22 @@ class OrderController extends AbstractController
     {
         return array_merge(parent::getSubscribedServices(), [
             TotalProcessorProvider::class,
-            'oro_checkout.helper.check_compare' => CheckoutCompareHelper::class
+            StartShoppingListCheckout::class
         ]);
     }
 
     /**
-     * @throws Exception
+     * @internal layout BC route. May be used by the old theme only.
      */
     #[Route(path: '/checkout/{id}', name: 'oro_order_frontend_to_checkout', requirements: ['id' => '\d+'])]
     #[AclAncestor('oro_order_frontend_view')]
     public function checkoutAction(Checkout $checkout): RedirectResponse
     {
-        $this->container->get('oro_checkout.helper.check_compare')->compare($checkout);
+        $shoppingList = $checkout->getSourceEntity();
+        if ($shoppingList instanceof ShoppingList) {
+            $startResult = $this->container->get(StartShoppingListCheckout::class)->execute($shoppingList);
+            $checkout = $startResult['checkout'];
+        }
 
         return $this->redirectToRoute('oro_checkout_frontend_checkout', ['id' => $checkout->getId()]);
     }

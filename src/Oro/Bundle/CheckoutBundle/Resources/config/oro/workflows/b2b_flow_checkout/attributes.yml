@@ -1,3 +1,6 @@
+imports:
+    - { resource: '../includes/attributes.yml' }
+
 workflows:
     b2b_flow_checkout:
         attributes:

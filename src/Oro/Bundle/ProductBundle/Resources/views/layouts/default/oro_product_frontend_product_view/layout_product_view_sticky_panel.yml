@@ -6,8 +6,7 @@ layout:
         - '@add':
             id: product_view_sticky_panel
             blockType: container
-            parentId: product_view_container
-            siblingId: product_view_microdata_container
+            parentId:  page_content
             prepend: true
             options:
                 vars:

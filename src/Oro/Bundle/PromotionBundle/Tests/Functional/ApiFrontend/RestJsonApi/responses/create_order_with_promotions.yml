@@ -2,7 +2,7 @@ data:
     type: orders
     id: new
     attributes:
-        identifier: null
+        identifier: new
         poNumber: null
         customerNotes: null
         shipUntil: null

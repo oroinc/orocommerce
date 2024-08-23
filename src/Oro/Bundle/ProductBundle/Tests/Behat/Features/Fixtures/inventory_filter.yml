@@ -1,0 +1,61 @@
+include:
+    - '@OroCustomerBundle:CustomerUserAmandaRCole.yml'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: 'Common Business Unit'
+        organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+    precision2:
+        unit: '@item'
+        precision: '1'
+    precision3:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        type: 'simple'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+        __calls:
+            - addName: ['@locValue1']
+            - setPrimaryUnitPrecision: ['@precision1']
+    product2:
+        sku: 'SKU2'
+        type: 'simple'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+        __calls:
+            - addName: ['@locValue2']
+            - setPrimaryUnitPrecision: ['@precision2']
+    product3:
+        sku: 'SKU3'
+        type: 'simple'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@businessUnit'
+        status: 'enabled'
+        __calls:
+            - addName: ['@locValue3']
+            - setPrimaryUnitPrecision: ['@precision3']
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locValue1:
+        string: 'Product1'
+    locValue2:
+        string: 'Product2'
+    locValue3:
+        string: 'Product3'

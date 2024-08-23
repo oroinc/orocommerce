@@ -31,7 +31,7 @@ class OrderListenerTest extends \PHPUnit\Framework\TestCase
             ->method('generate')
             ->willReturn($newId);
 
-        $orderMock = $this->createMock(Order::class);
+        $order = new Order();
         $lifecycleEventArgs = $this->createMock(LifecycleEventArgs::class);
         $em = $this->createMock(EntityManager::class);
         $lifecycleEventArgs->expects($this->once())
@@ -43,11 +43,11 @@ class OrderListenerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($unitOfWork);
         $unitOfWork->expects($this->once())
             ->method('scheduleExtraUpdate')
-            ->with($orderMock, [
-                'identifier' => [null, $newId],
-            ]);
+            ->with($order, ['identifier' => [null, $newId]]);
 
-        $this->listener->postPersist($orderMock, $lifecycleEventArgs);
+        $this->listener->postPersist($order, $lifecycleEventArgs);
+
+        $this->assertEquals($newId, $order->getIdentifier());
     }
 
     public function testPostPersistOrderWithIdentifier()
@@ -55,15 +55,16 @@ class OrderListenerTest extends \PHPUnit\Framework\TestCase
         $this->generator->expects($this->never())
             ->method('generate');
 
-        $orderMock = $this->createMock(Order::class);
-        $orderMock->expects($this->once())
-            ->method('getIdentifier')
-            ->willReturn(125);
+        $existingId = 125;
+        $order = new Order();
+        $order->setIdentifier($existingId);
 
         $lifecycleEventArgs = $this->createMock(LifecycleEventArgs::class);
         $lifecycleEventArgs->expects($this->never())
             ->method('getObjectManager');
 
-        $this->listener->postPersist($orderMock, $lifecycleEventArgs);
+        $this->listener->postPersist($order, $lifecycleEventArgs);
+
+        $this->assertEquals($existingId, $order->getIdentifier());
     }
 }

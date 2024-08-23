@@ -383,6 +383,20 @@ services:
         tags:
             - { name: oro_action.condition, alias: is_quote_valid }
 
+    oro_sale.workflow.action_group.accept_quote_and_submit_order:
+        class: Oro\Bundle\SaleBundle\Workflow\ActionGroup\AcceptQuoteAndSubmitToOrder
+        arguments:
+            - '@router'
+            - '@oro_sale.quote_demand.subtotals_calculator_main'
+            - '@oro_checkout.action_group.start_checkout'
+            - '@oro_checkout.provider.checkout_line_items'
+            - '@oro_action.action_executor'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\SaleBundle\Workflow\ActionGroup\AcceptQuoteAndSubmitToOrder:
+        alias: oro_sale.workflow.action_group.accept_quote_and_submit_order
+
     oro_sale.provider.quote_product_prices:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider'
         public: true

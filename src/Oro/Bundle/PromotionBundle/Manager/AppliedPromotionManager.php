@@ -69,15 +69,12 @@ class AppliedPromotionManager
         $appliedPromotions = $this->updateAppliedPromotions($discountContext, $order);
         $this->removeUnusedAppliedCoupons($order, $appliedPromotions);
 
-        if ($removeOrphans) {
+        if ($removeOrphans && $order->getAppliedPromotions() instanceof PersistentCollection) {
             $this->removeAppliedPromotionOrphans($order->getAppliedPromotions());
         }
     }
 
-    /**
-     * @param Collection|PersistentCollection $appliedPromotionsCollection
-     */
-    private function removeAppliedPromotionOrphans(Collection $appliedPromotionsCollection)
+    private function removeAppliedPromotionOrphans(PersistentCollection $appliedPromotionsCollection): void
     {
         $manager = $this->getAppliedPromotionsManager();
 
