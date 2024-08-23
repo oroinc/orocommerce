@@ -18,17 +18,14 @@ class LoadDefaultAttributesData extends AbstractFixture implements
 {
     use MakeProductAttributesTrait;
 
-    /**
-     * @var array
-     */
-    private $fields = [
-        'inventory_status' => []
+    private array $fields = [
+        'inventory_status' => ['filterable' => true,]
     ];
 
     /**
      * {@inheritdoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadLocalizationData::class
@@ -38,7 +35,7 @@ class LoadDefaultAttributesData extends AbstractFixture implements
     /**
      * {@inheritdoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->makeProductAttributes(
             $this->fields,

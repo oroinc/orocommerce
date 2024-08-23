@@ -5,10 +5,14 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroProductExtensionTest extends \PHPUnit\Framework\TestCase
+final class OroProductExtensionTest extends TestCase
 {
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testLoad(): void
     {
         $container = new ContainerBuilder();
@@ -89,6 +93,12 @@ class OroProductExtensionTest extends \PHPUnit\Framework\TestCase
                         // BB-23597
                         Configuration::DISPLAY_PRICE_TIERS_AS => [
                             'value' => Configuration::DISPLAY_PRICE_TIERS_AS_DEFAULT_VALUE,
+                            'scope' => 'app'
+                        ],
+                        'inventory_filter_enable_for_guests' => ['value' => true, 'scope' => 'app'],
+                        'inventory_filter_type' => ['value' => 'inventory-switcher', 'scope' => 'app'],
+                        'inventory_filter_in_stock_statuses_for_simple_filter' => [
+                            'value' => ['in_stock'],
                             'scope' => 'app'
                         ],
                     ]

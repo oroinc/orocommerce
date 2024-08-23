@@ -589,6 +589,8 @@ oro:
                     description: |
                         The change of the Product Description Field will not be applied immediately and will require manual start of the website search re-index.
                         Please check product detail page for unexpected layout shifts after changing Schema.org settings in test environment before making these changes on live website.
+                product_inventory_filter:
+                    title: Inventory Filter
             fields:
                 original_file_names_enabled:
                     label: 'Enable Original File Names'
@@ -782,6 +784,19 @@ oro:
                         meta.label: 'SEO Meta Description'
                         short.label: 'Simplified Short Description'
                         long.label: 'Simplified [Long] Description'
+                product_inventory_filter:
+                    enable_for_guests:
+                        label: Enable for Guests
+                        tooltip: Show inventory filter to guest visitors.
+                    type:
+                        label: Inventory Filter Type
+                        tooltip: The “Multi-Select” filter type will allow users to filter by any combination of individual inventory statuses. The “Simple” type will allow to filter only by predefined inventory statuses when the filter is applied.
+                        choice:
+                            multiselect.label: Multi-Select
+                            simple.label: Simple
+                    in_stock_statuses_for_simple_filter:
+                        label: In Stock Statuses For Simple Filter
+                        tooltip: The selected statuses will be considered “In Stock” for the purpose of the simple “In Stock” inventory filter on the storefront.
 
             notice:
                 product_image_watermark: >
@@ -885,6 +900,11 @@ oro:
             gallery:
                 prev: 'Previous image'
                 next: 'Next image'
+            product_inventory_filter:
+                form:
+                    enabled.label: On
+                type:
+                    inventory-switcher.label: In Stock Only
 
         export:
             inventory_status_only: "Inventory statuses only"

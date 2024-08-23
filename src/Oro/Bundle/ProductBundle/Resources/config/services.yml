@@ -1451,7 +1451,6 @@ services:
             - '@oro_product.provider.family_attribute_counts'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.website-search-term-run-original-search-grid, method: onPreBuild }
 
     oro_product.datagrid.event_listener.product_grid:
         class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\ProductGridEventListener'
@@ -2408,3 +2407,30 @@ services:
             - '@oro_organization.organization_restriction_provider'
         tags:
             - { name: oro_platform.usage_stats_provider, priority: 100 }
+
+    oro_product.datagrid.event_listener.frontend_inventory_filter_datagrid:
+        class: Oro\Bundle\ProductBundle\DataGrid\EventListener\FrontendInventoryFilterDatagridListener
+        arguments:
+            - '@oro_config.manager'
+            - '@security.token_storage'
+            - '@oro_layout.current_theme_provider'
+            - '@oro_layout.theme_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-product-search-grid, method: onBuildBefore }
+
+    oro_product.datagrid.filter.frontend_inventory_switcher_filter:
+        class: Oro\Bundle\ProductBundle\DataGrid\Filter\FrontendInventorySwitcherFilter
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+            - '@oro_entity.dictionary_entity_data_provider'
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_search.extension.search_filter.filter, type: inventory-switcher }
+
+    oro_product.datagrid.form.type.frontend_inventory_switcher_filter_type:
+        class: Oro\Bundle\ProductBundle\DataGrid\Form\Type\FrontendInventorySwitcherFilterType
+        arguments:
+            - '@translator'
+        tags:
+            - { name: form.type, alias: oro_product_type_inventory_switcher_filter }
