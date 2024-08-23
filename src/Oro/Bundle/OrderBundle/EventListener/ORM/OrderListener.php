@@ -7,7 +7,7 @@ use Oro\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
- * Listens to Order save event and set identifier for Order if identifier is empty
+ * Listens to Order save an event and set identifier for Order if identifier is empty
  */
 class OrderListener
 {
@@ -24,8 +24,10 @@ class OrderListener
     public function postPersist(Order $entity, LifecycleEventArgs $args)
     {
         if (!$entity->getIdentifier()) {
+            $identifier = $this->idGenerator->generate($entity);
+            $entity->setIdentifier($identifier);
             $changeSet = [
-                'identifier' => [null, $this->idGenerator->generate($entity)],
+                'identifier' => [null, $identifier],
             ];
 
             $args->getObjectManager()->getUnitOfWork()->scheduleExtraUpdate($entity, $changeSet);

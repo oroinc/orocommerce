@@ -19,6 +19,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
+use Oro\Component\Action\Event\ExtendableEventData;
 use Oro\Component\Testing\ReflectionUtil;
 
 class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCase
@@ -123,13 +124,7 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
         $checkout = new Checkout();
         $checkout->setLineItems($lineItems);
 
-        $context = $this->createMock(ActionData::class);
-
-        $context->expects(self::any())
-            ->method('get')
-            ->with('checkout')
-            ->willReturn($checkout);
-
+        $context = new ExtendableEventData(['checkout' => $checkout]);
         $criteria =  $this->createMock(ProductPriceScopeCriteria::class);
 
         $this->scopeCriteriaRequestHandler->expects($this->once())
@@ -210,20 +205,6 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
             ->method('getMatchedPrices');
 
         return new ExtendableConditionEvent($context);
-    }
-
-    public function testOnStartCheckoutConditionCheckWhenContextIsNotActionData()
-    {
-        $event = new ExtendableConditionEvent(new \stdClass());
-
-        $this->listener->onStartCheckoutConditionCheck($event);
-    }
-
-    public function testOnStartCheckoutConditionCheckWhenCheckoutIsNotOfCheckoutType()
-    {
-        $event = new ExtendableConditionEvent(new ActionData(['checkout' => new \stdClass()]));
-
-        $this->listener->onStartCheckoutConditionCheck($event);
     }
 
     public function testOnStartCheckoutConditionCheckWhenCheckoutHasNoPrices()

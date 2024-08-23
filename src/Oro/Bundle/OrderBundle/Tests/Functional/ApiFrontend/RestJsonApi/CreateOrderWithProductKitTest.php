@@ -12,6 +12,8 @@ use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPayment
  */
 class CreateOrderWithProductKitTest extends FrontendRestJsonApiTestCase
 {
+    use OrderResponseTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -66,7 +68,7 @@ class CreateOrderWithProductKitTest extends FrontendRestJsonApiTestCase
             $data
         );
 
-        $responseContent = $this->updateResponseContent('create_order_min.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_min.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 

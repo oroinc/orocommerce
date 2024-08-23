@@ -10,6 +10,13 @@ use Oro\Component\ConfigExpression\ContextAccessor;
 
 /**
  * Gets OrderLineItem entities from Checkout and sets to the specified attribute.
+ *
+ * Usage:
+ *  - '@get_order_line_items':
+ *    attribute: $.orderLineItems
+ *    checkout: $.checkout
+ *    disable_price_filter: true
+ *    config_visibility_path: $.visibilityPath
  */
 class GetOrderLineItems extends AbstractAction
 {
@@ -62,15 +69,15 @@ class GetOrderLineItems extends AbstractAction
 
         $disablePriceFilter = $this->getOption($this->options, 'disable_price_filter', null);
         if ($disablePriceFilter !== null) {
-            $arguments[] = $disablePriceFilter;
+            $arguments[] =  $this->contextAccessor->getValue($context, $disablePriceFilter);
         }
 
         $configVisibilityPath = $this->getOption($this->options, 'config_visibility_path', null);
         if ($configVisibilityPath !== null) {
-            $arguments[] = $configVisibilityPath;
+            $arguments[] =  $this->contextAccessor->getValue($context, $configVisibilityPath);
         }
 
-        $lineItems = call_user_func_array([$this->checkoutLineItemsManager, 'getData'], $arguments);
+        $lineItems = $this->checkoutLineItemsManager->getData(...$arguments);
 
         $this->contextAccessor->setValue($context, $this->options['attribute'], $lineItems);
     }

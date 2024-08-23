@@ -12,8 +12,8 @@ use Oro\Bundle\CheckoutBundle\Provider\CheckoutValidationGroupsBySourceEntityPro
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
+use Oro\Component\Action\Event\ExtendableEventData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\GroupSequence;
@@ -44,21 +44,9 @@ class ValidateCheckoutPreOrderCreateEventListenerTest extends TestCase
         );
     }
 
-    public function testOnPreOrderCreateWhenContextNotWorkflowItem(): void
-    {
-        $event = new ExtendableConditionEvent(new \stdClass());
-
-        $this->validator
-            ->expects(self::never())
-            ->method(self::anything());
-
-        $this->listener->onPreOrderCreate($event);
-    }
-
     public function testOnPreOrderCreateWhenEntityNotCheckout(): void
     {
-        $context = (new WorkflowItem())
-            ->setEntity(new \stdClass());
+        $context = new ExtendableEventData(['checkout' => null, 'shoppingList' => new ShoppingList()]);
         $event = new ExtendableConditionEvent($context);
 
         $this->validator
@@ -71,8 +59,7 @@ class ValidateCheckoutPreOrderCreateEventListenerTest extends TestCase
     public function testOnPreOrderCreateWhenNoLineItems(): void
     {
         $checkout = new Checkout();
-        $context = (new WorkflowItem())
-            ->setEntity($checkout);
+        $context = new ExtendableEventData(['checkout' => $checkout, 'shoppingList' => new ShoppingList()]);
         $event = new ExtendableConditionEvent($context);
 
         $this->checkoutLineItemsProvider
@@ -92,8 +79,7 @@ class ValidateCheckoutPreOrderCreateEventListenerTest extends TestCase
         $shoppingList = new ShoppingList();
         $checkout = (new Checkout())
             ->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
-        $context = (new WorkflowItem())
-            ->setEntity($checkout);
+        $context = new ExtendableEventData(['checkout' => $checkout, 'shoppingList' => $shoppingList]);
         $event = new ExtendableConditionEvent($context);
 
         $validationGroups = new GroupSequence(['Default', 'checkout_pre_order_create%from_alias%']);
@@ -127,8 +113,7 @@ class ValidateCheckoutPreOrderCreateEventListenerTest extends TestCase
         $shoppingList = new ShoppingList();
         $checkout = (new Checkout())
             ->setSource((new CheckoutSourceStub())->setShoppingList($shoppingList));
-        $context = (new WorkflowItem())
-            ->setEntity($checkout);
+        $context = new ExtendableEventData(['checkout' => $checkout, 'shoppingList' => $shoppingList]);
         $event = new ExtendableConditionEvent($context);
 
         $validationGroups = new GroupSequence(['Default', 'checkout_pre_order_create%from_alias%']);

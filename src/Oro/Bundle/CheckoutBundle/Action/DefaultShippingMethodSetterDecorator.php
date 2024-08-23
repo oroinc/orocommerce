@@ -8,11 +8,11 @@ use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodCo
 /**
  * Sets a shipping method for a checkout from a source entity.
  */
-class DefaultShippingMethodSetterDecorator
+class DefaultShippingMethodSetterDecorator implements DefaultShippingMethodSetterInterface
 {
-    private DefaultShippingMethodSetter $defaultShippingMethodSetter;
+    private DefaultShippingMethodSetterInterface $defaultShippingMethodSetter;
 
-    public function __construct(DefaultShippingMethodSetter $defaultShippingMethodSetter)
+    public function __construct(DefaultShippingMethodSetterInterface $defaultShippingMethodSetter)
     {
         $this->defaultShippingMethodSetter = $defaultShippingMethodSetter;
     }

@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
+/**
+ * Abstract implementation of listener that is used by payment/shipping methods listeners.
+ */
 abstract class AbstractMethodsListener
 {
     /**
@@ -49,9 +51,8 @@ abstract class AbstractMethodsListener
             return;
         }
 
-        $context = $event->getContext();
         /** @var Checkout $checkout */
-        $checkout = clone $context->get('checkout');
+        $checkout = clone $event->getContext()?->offsetGet('checkout');
 
         $isManualEditGranted = $this->isManualEditGranted();
 
@@ -75,15 +76,12 @@ abstract class AbstractMethodsListener
         }
     }
 
-    /**
-     * @param ExtendableConditionEvent $event
-     * @return bool
-     */
-    protected function isApplicable(ExtendableConditionEvent $event)
+    protected function isApplicable(ExtendableConditionEvent $event): bool
     {
         $context = $event->getContext();
 
-        return $context instanceof ActionData && $context->get('checkout') instanceof Checkout
-            && $context->get('validateOnStartCheckout');
+        return $context
+            && $context->offsetGet('checkout') instanceof Checkout
+            && $context->offsetGet('validateOnStartCheckout');
     }
 }

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Action\MultiShipping;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemGroupsShippingManager;
+use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemGroupsShippingManagerInterface;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\DefaultMultipleShippingMethodProvider;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -12,18 +12,18 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
  * Sets a default shipping method and a shipping cost for a checkout and its line item groups
  * when Multi Shipping Per Line Item Groups functionality is enabled.
  */
-class DefaultMultiShippingGroupMethodSetter
+class DefaultMultiShippingGroupMethodSetter implements DefaultMultiShippingGroupMethodSetterInterface
 {
     private DefaultMultipleShippingMethodProvider $multiShippingMethodProvider;
     private CheckoutShippingMethodsProviderInterface $shippingPriceProvider;
     private ManagerRegistry $doctrine;
-    private CheckoutLineItemGroupsShippingManager $lineItemGroupsShippingManager;
+    private CheckoutLineItemGroupsShippingManagerInterface $lineItemGroupsShippingManager;
 
     public function __construct(
         DefaultMultipleShippingMethodProvider $multiShippingMethodProvider,
         CheckoutShippingMethodsProviderInterface $shippingPriceProvider,
         ManagerRegistry $doctrine,
-        CheckoutLineItemGroupsShippingManager $lineItemGroupsShippingManager
+        CheckoutLineItemGroupsShippingManagerInterface $lineItemGroupsShippingManager
     ) {
         $this->multiShippingMethodProvider = $multiShippingMethodProvider;
         $this->shippingPriceProvider = $shippingPriceProvider;

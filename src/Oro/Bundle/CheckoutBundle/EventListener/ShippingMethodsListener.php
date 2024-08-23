@@ -11,7 +11,7 @@ use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 /**
- * Checks if there available shipping methods when checkout starts.
+ * Checks if there are available shipping methods when checkout starts.
  */
 class ShippingMethodsListener extends AbstractMethodsListener
 {

@@ -10,6 +10,7 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteCompletedCheckoutsData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -26,8 +27,7 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
         );
 
         $this->loadFixtures([
-            LoadOrders::class,
-            LoadQuoteData::class,
+            LoadShippingMethodsConfigsRulesWithConfigs::class,
             LoadQuoteCompletedCheckoutsData::class,
         ]);
     }
