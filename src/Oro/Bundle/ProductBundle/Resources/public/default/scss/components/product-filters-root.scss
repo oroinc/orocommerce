@@ -38,11 +38,23 @@
         max-width: inherit;
     }
 
+    .filter-container-header,
+    .filter-items-container {
+        opacity: 0;
+    }
+
     // Set filter items content scrollable when it filter manager is not opened
-    &:not(:has(.dropdown-menu[tabindex='-1'])) .filter-items-container {
-        overflow-y: auto;
-        padding-inline: spacing('xs') spacing('lg');
-        margin-inline: -#{spacing('xs')} 0;
+    &:not(:has(.dropdown-menu[tabindex='-1'])) {
+        .filter-container-header,
+        .filter-items-container {
+            opacity: 1;
+        }
+
+        .filter-items-container {
+            overflow-y: auto;
+            padding-inline: spacing('xs') spacing('lg');
+            margin-inline: -#{spacing('xs')} 0;
+        }
     }
 }
 

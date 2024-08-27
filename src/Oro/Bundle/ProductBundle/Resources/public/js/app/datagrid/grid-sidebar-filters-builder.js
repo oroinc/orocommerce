@@ -31,6 +31,7 @@ export default {
             filter.initiallyOpened = false;
             filter.autoClose = false;
             filter.animationDuration = 300;
+            filter.notAlignCriteria = true;
         });
 
         return deferred.resolve();

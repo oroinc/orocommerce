@@ -181,7 +181,7 @@ Feature: Sidebar filters on product listing page
     And I click "FrontendGridFilterManagerButton"
     When I click "FrontendGridFilterManagerButtonAll"
     Then I click "FrontendGridFilterManagerButtonNone"
-    And I should see an "FrontendGridFilterManagerButton" element
+    And I should not see an "FrontendGridFilterManagerButton" element
 
   Scenario: Ensure the filter manager is visible after change selected filters
     Given I proceed as the admin

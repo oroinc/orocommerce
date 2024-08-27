@@ -72,6 +72,7 @@ Feature: Quotes Grid Frontend
       | Quote # |
       | Quote13 |
     And number of records in "AllQuotes" should be 1
+    And I scroll to top
     And I reset "AllQuotes" grid
 
   Scenario: Check Valid Until filter
@@ -83,6 +84,7 @@ Feature: Quotes Grid Frontend
       | Quote # |
       | Quote12 |
     And number of records in "AllQuotes" should be 1
+    And I scroll to top
     And I reset "AllQuotes" grid
 
   Scenario: Check Created At filter
@@ -103,6 +105,7 @@ Feature: Quotes Grid Frontend
       | Quote # |
       | Quote10 |
     And number of records in "AllQuotes" should be 1
+    And I scroll to top
     And I reset "AllQuotes" grid
 
   Scenario: Check Owner filter

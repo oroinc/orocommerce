@@ -30,6 +30,7 @@ Feature: Storefront acl for shopping list line items
     And I click "Shopping List Actions"
     When I click "Reassign"
     And I filter First Name as is equal to "Amanda" in "Shopping List Action Reassign Grid"
+    And I click "Show (1)"
     And I click "Shopping List Action Reassign Radio"
     And I click "Shopping List Action Submit"
     Then I should see "Amanda Cole"
