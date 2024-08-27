@@ -17,8 +17,7 @@
         "oro/calendar-bundle": "6.0.*",
         "oro/marketing": "6.0.*",
         "oro/customer-portal": "6.0.*",
-        "besimple/soap-client": "^0.2.6",
-        "oro/conversation": "6.0.x-dev"
+        "besimple/soap-client": "^0.2.6"
     },
     "require-dev": {
         "behat/behat": "~3.12.0",
