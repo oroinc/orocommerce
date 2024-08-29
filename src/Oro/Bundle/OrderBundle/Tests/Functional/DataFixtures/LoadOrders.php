@@ -87,6 +87,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'subtotal' => self::SUBTOTAL,
             'total' => self::TOTAL,
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+            'external' => false
         ],
         self::ORDER_6 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
@@ -98,6 +99,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'subtotal' => self::SUBTOTAL,
             'total' => self::TOTAL,
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+            'external' => true
         ],
         self::MY_ORDER => [
             'user' => LoadOrderUsers::ORDER_USER_1,
@@ -196,6 +198,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         $order->setCustomer($customerUser->getCustomer());
         $order->setWebsite($website);
         $order->setCustomerUser($customerUser);
+        if (isset($orderData['external'])) {
+            $order->setExternal($orderData['external']);
+        }
 
         if (isset($orderData['createdBy'])) {
             /** @var User $createdByUser */

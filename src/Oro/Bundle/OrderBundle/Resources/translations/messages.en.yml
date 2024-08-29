@@ -173,6 +173,9 @@ oro:
         warehouse:
             label:                        Warehouse
             description:                  The products are stored in warehouse(s), and the product inventory levels are defined per warehouse to indicate the quantity of the proucts that may be shipped from a particular warehouse. Based on the warehouse shipping origin, different taxes may apply or the calculated shipping cost may vary.
+        external:
+            label:                        Is External
+            description:                  Indicates whether the order is loaded externally.
 
         payment_term_7c4f1e8e:
             label:                        'Payment term'
