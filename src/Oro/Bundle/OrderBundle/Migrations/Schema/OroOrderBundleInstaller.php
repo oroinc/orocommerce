@@ -40,7 +40,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_20';
+        return 'v1_20_1';
     }
 
     /**
@@ -149,6 +149,7 @@ class OroOrderBundleInstaller implements
         $table->addColumn('source_entity_class', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('source_entity_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_entity_identifier', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('is_external', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'oro_order_created_at_index');
         $table->addIndex(['uuid'], 'oro_order_uuid');
