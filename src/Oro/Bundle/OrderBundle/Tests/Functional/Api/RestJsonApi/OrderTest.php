@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\RestJsonApi;
 
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -14,6 +15,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class OrderTest extends RestJsonApiTestCase
 {
@@ -26,11 +28,177 @@ class OrderTest extends RestJsonApiTestCase
         ]);
     }
 
+    private function isPostgreSql(): bool
+    {
+        return $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof PostgreSqlPlatform;
+    }
+
     public function testGetList()
     {
         $response = $this->cget(['entity' => 'orders']);
 
         $this->assertResponseContains('cget_order.yml', $response);
+    }
+
+    public function testGetListFilteredByExternalTrue()
+    {
+        $response = $this->cget(['entity' => 'orders'], ['filter[external]' => '1']);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order6->id)>',
+                        'attributes' => ['identifier' => 'simple_order6', 'external' => true]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListFilteredByExternalFalse()
+    {
+        if (!$this->isPostgreSql()) {
+            self::markTestSkipped('For MySQL this test does not work because NULL value is stored in DB');
+        }
+
+        $response = $this->cget(['entity' => 'orders'], ['filter[external]' => '0']);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order->id)>',
+                        'attributes' => ['identifier' => 'simple_order', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order2->id)>',
+                        'attributes' => ['identifier' => 'simple_order2', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order3->id)>',
+                        'attributes' => ['identifier' => 'simple_order3', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order4->id)>',
+                        'attributes' => ['identifier' => 'simple_order4', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order5->id)>',
+                        'attributes' => ['identifier' => 'simple_order5', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@my_order->id)>',
+                        'attributes' => ['identifier' => 'my_order', 'external' => false]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListSortedByExternalAsc()
+    {
+        $response = $this->cget(['entity' => 'orders'], ['sort' => 'external,id']);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order->id)>',
+                        'attributes' => ['identifier' => 'simple_order', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order2->id)>',
+                        'attributes' => ['identifier' => 'simple_order2', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order3->id)>',
+                        'attributes' => ['identifier' => 'simple_order3', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order4->id)>',
+                        'attributes' => ['identifier' => 'simple_order4', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order5->id)>',
+                        'attributes' => ['identifier' => 'simple_order5', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@my_order->id)>',
+                        'attributes' => ['identifier' => 'my_order', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order6->id)>',
+                        'attributes' => ['identifier' => 'simple_order6', 'external' => true]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListSortedByExternalDesc()
+    {
+        $response = $this->cget(['entity' => 'orders'], ['sort' => '-external,id']);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order6->id)>',
+                        'attributes' => ['identifier' => 'simple_order6', 'external' => true]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order->id)>',
+                        'attributes' => ['identifier' => 'simple_order', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order2->id)>',
+                        'attributes' => ['identifier' => 'simple_order2', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order3->id)>',
+                        'attributes' => ['identifier' => 'simple_order3', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order4->id)>',
+                        'attributes' => ['identifier' => 'simple_order4', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@simple_order5->id)>',
+                        'attributes' => ['identifier' => 'simple_order5', 'external' => false]
+                    ],
+                    [
+                        'type'       => 'orders',
+                        'id'         => '<toString(@my_order->id)>',
+                        'attributes' => ['identifier' => 'my_order', 'external' => false]
+                    ]
+                ]
+            ],
+            $response
+        );
     }
 
     public function testGet()
@@ -237,6 +405,34 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame($productId, $lineItem->getProduct()->getId());
     }
 
+    public function testCreateExternal(): void
+    {
+        $data = $this->getRequestData('create_order.yml');
+        $data['data']['attributes']['external'] = true;
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data
+        );
+
+        $orderId = (int)$this->getResourceId($response);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'       => 'orders',
+                    'id'         => (string)$orderId,
+                    'attributes' => [
+                        'external' => true
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        /** @var Order $updatedOrder */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertTrue($order->isExternal());
+    }
+
     public function testUpdate()
     {
         /** @var Order $order */
@@ -277,6 +473,40 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame('444.5000', $updatedOrder->getSubtotal());
         self::assertSame('444.5000', $updatedOrder->getTotal());
         self::assertNull($updatedOrder->getTotalDiscounts());
+    }
+
+    public function testTryToUpdateExternal(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => $orderId],
+            [
+                'data' => [
+                    'type'       => 'orders',
+                    'id'         => (string)$orderId,
+                    'attributes' => [
+                        'external' => true
+                    ]
+                ]
+            ]
+        );
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'       => 'orders',
+                    'id'         => (string)$orderId,
+                    'attributes' => [
+                        'external' => false
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        /** @var Order $updatedOrder */
+        $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertFalse($updatedOrder->isExternal());
     }
 
     public function testGetSubresourceForOwner()

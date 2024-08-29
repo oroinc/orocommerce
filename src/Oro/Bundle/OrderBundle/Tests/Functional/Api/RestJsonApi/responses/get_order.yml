@@ -15,6 +15,7 @@ data:
           overriddenShippingCostAmount: null
           sourceEntityIdentifier: null
           totalDiscountsAmount: null
+          external: false
           createdAt: '@simple_order->createdAt->format("Y-m-d\TH:i:s\Z")'
           updatedAt: '@simple_order->updatedAt->format("Y-m-d\TH:i:s\Z")'
       relationships:

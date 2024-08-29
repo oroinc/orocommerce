@@ -497,8 +497,10 @@ class Order extends ExtendOrder implements
     protected $uuid;
 
     /**
-     * Constructor
+     * @ORM\Column(name="is_external", type="boolean", options={"default"=false})
      */
+    private bool $external = false;
+
     public function __construct()
     {
         parent::__construct();
@@ -1446,5 +1448,21 @@ class Order extends ExtendOrder implements
     public function __clone()
     {
         $this->uuid = UUIDGenerator::v4();
+    }
+
+    /**
+     * Indicates whether the order is loaded externally.
+     */
+    public function isExternal(): bool
+    {
+        return $this->external;
+    }
+
+    /**
+     * Sets a flag indicates whether the order is loaded externally.
+     */
+    public function setExternal(bool $external): void
+    {
+        $this->external = $external;
     }
 }

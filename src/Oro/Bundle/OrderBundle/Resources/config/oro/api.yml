@@ -21,10 +21,19 @@ api:
                 totalDiscountsAmount:
                     form_options:
                         mapped: false
+            filters:
+                fields:
+                    external: ~
+            sorters:
+                fields:
+                    external: ~
             actions:
                 update:
                     fields:
                         currency:
+                            form_options:
+                                mapped: false
+                        external:
                             form_options:
                                 mapped: false
                 update_list: true
