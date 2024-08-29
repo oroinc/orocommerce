@@ -125,8 +125,8 @@ operations:
             - '@call_service_method':
                 conditions:
                     '@and':
-                        '@not_empty': $.currentUser
-                        '@instanceof': [$.data, 'Oro\Bundle\SaleBundle\Entity\Quote']
+                        - '@not_empty': $.currentUser
+                        - '@instanceof': [$.data, 'Oro\Bundle\SaleBundle\Entity\Quote']
                 parameters:
                     attribute: $.checkout
                     service: 'oro_sale.provider.quote_checkout'
