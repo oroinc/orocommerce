@@ -1,2 +1,10 @@
-/* stylelint-disable no-empty-source */
-/* stylelint-enable no-empty-source */
+.one-column-title-and-button-call-to-action {
+    --grid-template-columns: auto  minmax(90px, 1fr);
+    --grid-gap: 20px;
+}
+
+@media screen and (max-width: 1280px) {
+    .one-column-title-and-button-call-to-action {
+        --grid-template-columns: 1fr;
+    }
+}
