@@ -40,7 +40,7 @@
     <div class="fields-row-error">
         {{ form_errors(form) }}
         {%- if not valid -%}
-            <span class="validation-failed" role="alert">
+            <span class="validation-failed">
                 <span class="validation-failed__icon" aria-hidden="true"></span>
                 <span>{{ 'oro.rfp.requestproduct.kit_item_line_items.general_error.message'|trans({}, 'validators') }}</span>
             </span>
