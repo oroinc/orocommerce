@@ -31,6 +31,10 @@ api:
                         allow_array: true
                         options:
                             case_insensitive: true
+                    external: ~
+            sorters:
+                fields:
+                    external: ~
             actions:
                 create:
                     form_options:
@@ -40,6 +44,9 @@ api:
                         validation_groups: [ [ Default, api_order_update ], api ]
                     fields:
                         currency:
+                            form_options:
+                                mapped: false
+                        external:
                             form_options:
                                 mapped: false
                 update_list: true

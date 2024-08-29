@@ -529,6 +529,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         organization: '@organization'
         billingAddress: '@order4_billing_address'
         shippingAddress: '@order4_shipping_address'
+        external: false
     order5:
         identifier: order5
         currency: 'USD'
@@ -543,6 +544,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         organization: '@organization'
         billingAddress: '@order5_billing_address'
         shippingAddress: '@order5_shipping_address'
+        external: true
     another_order:
         identifier: another_order
         currency: 'USD'

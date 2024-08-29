@@ -17,7 +17,6 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -25,9 +24,8 @@ use Oro\Component\Testing\Unit\EntityTrait;
 class OrderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
-    use EntityTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $now = new \DateTime('now');
         $properties = [
@@ -57,111 +55,107 @@ class OrderTest extends \PHPUnit\Framework\TestCase
             ['shippingMethod', 'shipping_method'],
             ['shippingMethodType', 'shipping_method_type'],
             ['parent', new Order()],
+            ['external', true, false],
         ];
 
         $order = new Order();
-        $this->assertPropertyAccessors($order, $properties);
-        $this->assertPropertyCollection($order, 'lineItems', new OrderLineItem());
-        $this->assertPropertyCollection($order, 'discounts', new OrderDiscount());
-        $this->assertPropertyCollection($order, 'shippingTrackings', new OrderShippingTracking());
-        $this->assertPropertyCollection($order, 'subOrders', new Order());
+        self::assertPropertyAccessors($order, $properties);
+        self::assertPropertyCollection($order, 'lineItems', new OrderLineItem());
+        self::assertPropertyCollection($order, 'discounts', new OrderDiscount());
+        self::assertPropertyCollection($order, 'shippingTrackings', new OrderShippingTracking());
+        self::assertPropertyCollection($order, 'subOrders', new Order());
     }
 
-    public function testSourceDocument()
+    public function testSourceDocument(): void
     {
-        $order = $this->getEntity(
-            Order::class,
-            [
-                'identifier' => 'ident',
-            ]
-        );
+        $order = new Order();
+        $order->setIdentifier('ident');
 
-        $this->assertSame($order, $order->getSourceDocument());
-        $this->assertEquals('ident', $order->getSourceDocumentIdentifier());
+        self::assertSame($order, $order->getSourceDocument());
+        self::assertEquals('ident', $order->getSourceDocumentIdentifier());
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $order = new Order();
         $order->setIdentifier('test');
         self::assertEquals('test', (string)$order);
     }
 
-    public function testLineItemsSetter()
+    public function testLineItemsSetter(): void
     {
+        $order = new Order();
         $lineItems = new ArrayCollection([new OrderLineItem()]);
-
-        $order = $this->getEntity(Order::class, ['id' => 42]);
         $order->setLineItems($lineItems);
 
         $result = $order->getLineItems();
 
-        $this->assertEquals($lineItems, $result);
+        self::assertSame($lineItems, $result);
         foreach ($result as $lineItem) {
-            $this->assertEquals($lineItem->getOrder()->getId(), $order->getId());
+            self::assertSame($order, $lineItem->getOrder());
         }
     }
 
-    public function testGetEmail()
+    public function testGetEmail(): void
     {
         $email = 'test@test.com';
         $order = new Order();
-        $this->assertEmpty($order->getEmail());
+        self::assertEmpty($order->getEmail());
         $customerUser = new CustomerUser();
         $customerUser->setEmail($email);
         $order->setCustomerUser($customerUser);
-        $this->assertEquals($email, $order->getEmail());
+        self::assertEquals($email, $order->getEmail());
     }
 
-    public function testGetEmailHolderName()
+    public function testGetEmailHolderName(): void
     {
         $order = new Order();
-        $this->assertEmpty($order->getEmailHolderName());
+        self::assertEmpty($order->getEmailHolderName());
 
         $customerUser = new CustomerUser();
         $customerUser->setFirstName('First');
         $customerUser->setLastName('Last');
         $order->setCustomerUser($customerUser);
 
-        $this->assertEquals('First Last', $order->getEmailHolderName());
+        self::assertEquals('First Last', $order->getEmailHolderName());
     }
 
-    public function testCustomerUserToCustomerRelation()
+    public function testCustomerUserToCustomerRelation(): void
     {
         $order = new Order();
 
         $customer = $this->createMock(Customer::class);
-        $customer->expects($this->any())
+        $customer->expects(self::any())
             ->method('getId')
             ->willReturn(1);
         $customerUser = new CustomerUser();
         $customerUser->setCustomer($customer);
 
-        $this->assertEmpty($order->getCustomer());
+        self::assertEmpty($order->getCustomer());
         $order->setCustomerUser($customerUser);
-        $this->assertSame($customer, $order->getCustomer());
+        self::assertSame($customer, $order->getCustomer());
     }
 
-    public function testPrePersist()
+    public function testPrePersist(): void
     {
         $order = new Order();
         $order->prePersist();
-        $this->assertInstanceOf(\DateTime::class, $order->getCreatedAt());
-        $this->assertInstanceOf(\DateTime::class, $order->getUpdatedAt());
+        self::assertInstanceOf(\DateTime::class, $order->getCreatedAt());
+        self::assertInstanceOf(\DateTime::class, $order->getUpdatedAt());
     }
 
-    public function testPreUpdate()
+    public function testPreUpdate(): void
     {
         $order = new Order();
         $order->preUpdate();
-        $this->assertInstanceOf(\DateTime::class, $order->getUpdatedAt());
+        self::assertInstanceOf(\DateTime::class, $order->getUpdatedAt());
     }
 
-    public function testPostLoad()
+    public function testPostLoad(): void
     {
         $item = new Order();
 
-        $this->assertNull($item->getTotalDiscounts());
+        self::assertNull($item->getTotalDiscounts());
 
         $value = 100;
         $currency = 'EUR';
@@ -170,10 +164,10 @@ class OrderTest extends \PHPUnit\Framework\TestCase
 
         $item->postLoad();
 
-        $this->assertEquals(Price::create($value, $currency), $item->getTotalDiscounts());
+        self::assertEquals(Price::create($value, $currency), $item->getTotalDiscounts());
     }
 
-    public function testGetEstimatedShippingCost()
+    public function testGetEstimatedShippingCost(): void
     {
         $value = 10;
         $currency = 'USD';
@@ -187,7 +181,7 @@ class OrderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider shippingCostDataProvider
      */
-    public function testGetShippingCost(?int $estimated, ?int $overridden, ?int $expected)
+    public function testGetShippingCost(?int $estimated, ?int $overridden, ?int $expected): void
     {
         $currency = 'USD';
         $item = new Order();
@@ -233,12 +227,12 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetShippingCostNull()
+    public function testGetShippingCostNull(): void
     {
         self::assertNull((new Order())->getShippingCost());
     }
 
-    public function testUpdateTotalDiscounts()
+    public function testUpdateTotalDiscounts(): void
     {
         $item = new Order();
         $value = 1000;
@@ -247,10 +241,10 @@ class OrderTest extends \PHPUnit\Framework\TestCase
 
         $item->updateTotalDiscounts();
 
-        $this->assertEquals($value, ReflectionUtil::getPropertyValue($item, 'totalDiscountsAmount'));
+        self::assertEquals($value, ReflectionUtil::getPropertyValue($item, 'totalDiscountsAmount'));
     }
 
-    public function testSetTotalDiscounts()
+    public function testSetTotalDiscounts(): void
     {
         $value = 99;
         $currency = 'EUR';
@@ -259,23 +253,27 @@ class OrderTest extends \PHPUnit\Framework\TestCase
         $item = new Order();
         $item->setTotalDiscounts($price);
 
-        $this->assertEquals($price, $item->getTotalDiscounts());
+        self::assertEquals($price, $item->getTotalDiscounts());
 
-        $this->assertEquals($value, ReflectionUtil::getPropertyValue($item, 'totalDiscountsAmount'));
+        self::assertEquals($value, ReflectionUtil::getPropertyValue($item, 'totalDiscountsAmount'));
     }
 
-    public function testGetProductsFromLineItems()
+    public function testGetProductsFromLineItems(): void
     {
-        $firstProduct = $this->getEntity(Product::class, ['id' => 1]);
-        $secondProduct = $this->getEntity(Product::class, ['id' => 5]);
+        $firstProduct = new Product();
+        ReflectionUtil::setId($firstProduct, 1);
+        $secondProduct = new Product();
+        ReflectionUtil::setId($secondProduct, 5);
 
-        $order = $this->getEntity(Order::class, [
-            'lineItems' => [
-                $this->getEntity(OrderLineItem::class, ['id' => 1, 'product' => $firstProduct]),
-                $this->getEntity(OrderLineItem::class, ['id' => 2, 'product' => $secondProduct])
-            ]
-        ]);
+        $orderLineItem1 = new OrderLineItem();
+        $orderLineItem1->setProduct($firstProduct);
+        $orderLineItem2 = new OrderLineItem();
+        $orderLineItem2->setProduct($secondProduct);
 
-        $this->assertEquals([$firstProduct, $secondProduct], $order->getProductsFromLineItems());
+        $order = new Order();
+        $order->addLineItem($orderLineItem1);
+        $order->addLineItem($orderLineItem2);
+
+        self::assertEquals([$firstProduct, $secondProduct], $order->getProductsFromLineItems());
     }
 }

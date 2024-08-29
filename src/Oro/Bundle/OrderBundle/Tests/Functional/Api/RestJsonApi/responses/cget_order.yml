@@ -16,6 +16,7 @@ data:
             overriddenShippingCostAmount: null
             sourceEntityIdentifier: null
             totalDiscountsAmount: null
+            external: false
             createdAt: '@simple_order->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@simple_order->updatedAt->format("Y-m-d\TH:i:s\Z")'
         relationships:
@@ -74,6 +75,7 @@ data:
             overriddenShippingCostAmount: null
             sourceEntityIdentifier: null
             totalDiscountsAmount: null
+            external: false
             createdAt: '@simple_order2->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@simple_order2->updatedAt->format("Y-m-d\TH:i:s\Z")'
         relationships:
@@ -125,6 +127,7 @@ data:
             overriddenShippingCostAmount: null
             sourceEntityIdentifier: null
             totalDiscountsAmount: null
+            external: false
             createdAt: '@simple_order3->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@simple_order3->updatedAt->format("Y-m-d\TH:i:s\Z")'
         relationships:
@@ -176,6 +179,7 @@ data:
             overriddenShippingCostAmount: null
             sourceEntityIdentifier: null
             totalDiscountsAmount: null
+            external: false
             createdAt: '@simple_order4->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@simple_order4->updatedAt->format("Y-m-d\TH:i:s\Z")'
         relationships:
@@ -224,6 +228,7 @@ data:
             overriddenShippingCostAmount: null
             sourceEntityIdentifier: null
             totalDiscountsAmount: null
+            external: false
             createdAt: '@simple_order5->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@simple_order5->updatedAt->format("Y-m-d\TH:i:s\Z")'
         relationships:
@@ -272,6 +277,7 @@ data:
             overriddenShippingCostAmount: null
             sourceEntityIdentifier: null
             totalDiscountsAmount: null
+            external: true
             createdAt: '@simple_order6->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@simple_order6->updatedAt->format("Y-m-d\TH:i:s\Z")'
         relationships:
@@ -320,6 +326,7 @@ data:
             overriddenShippingCostAmount: null
             sourceEntityIdentifier: null
             totalDiscountsAmount: null
+            external: false
             createdAt: '@my_order->createdAt->format("Y-m-d\TH:i:s\Z")'
             updatedAt: '@my_order->updatedAt->format("Y-m-d\TH:i:s\Z")'
         relationships:
