@@ -35,7 +35,9 @@ about:
                             <h1>H1. We Are the Leading RV & Gear Seller in the US</h1>
                             <p> Are you considering buying a recreational vehicle (RV) to spend weekends outdoors with your family? We offer you a wide choice of options, from small campers to motorhomes. You can also find all the necessary RV accessories, inside and outside, to make your holiday trips the most enjoyable experience. If you’re happy, we’re happy!</p>
                             <div class="grid grid-max-content">
-                                <a href="#" class="btn btn--size-large grid-col-mobile-12" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
+                                <div class="grid-col-mobile-12">
+                                    <a href="#" class="btn btn--size-large btn--full" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -299,7 +301,9 @@ about:
                     </div>
                     <div class="cms-panel-end">
                         <div class="grid grid-max-content">
-                            <a href="#" class="btn btn--size-large grid-col-mobile-12" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
+                            <div class="grid-col-mobile-12">
+                                <a href="#" class="btn btn--size-large btn--full" title="We offer a variety of services for all types of RVs">Select Your RV Now</a>
+                            </div>
                         </div>
                     </div>
                 </div>
