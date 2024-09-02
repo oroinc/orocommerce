@@ -14,20 +14,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * View all products on front store
+ * The controller for view all products on the storefront.
  */
 class ProductController extends AbstractController
 {
-    /**
-     * View List of ALL products
-     *
-     *
-     * @return array
-     */
     #[Route(path: '/allproducts', name: 'oro_catalog_frontend_product_allproducts')]
     #[Layout(vars: ['entity_class', 'grid_config', 'theme_name', 'filters_position'])]
     #[AclAncestor('oro_product_frontend_view')]
-    public function allProductsAction()
+    public function allProductsAction(): array
     {
         return [
             'entity_class' => Product::class,
@@ -41,7 +35,7 @@ class ProductController extends AbstractController
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices(): array
     {
