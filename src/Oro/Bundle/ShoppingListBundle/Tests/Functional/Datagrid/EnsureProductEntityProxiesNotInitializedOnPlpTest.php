@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Datagrid;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\DataGridBundle\Datagrid\Manager as DatagridManager;
+use Oro\Bundle\DataGridBundle\Datagrid\ManagerInterface as DatagridManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;

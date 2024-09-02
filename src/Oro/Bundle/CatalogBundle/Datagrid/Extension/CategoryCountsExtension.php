@@ -12,7 +12,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
-use Oro\Bundle\DataGridBundle\Datagrid\Manager;
+use Oro\Bundle\DataGridBundle\Datagrid\ManagerInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
@@ -226,7 +226,7 @@ class CategoryCountsExtension extends AbstractExtension
 
     protected function getGrid(DatagridConfiguration $config, ParameterBag $datagridParameters): DatagridInterface
     {
-        /** @var Manager $datagridManager */
+        /** @var ManagerInterface $datagridManager */
         $datagridManager = $this->datagridManagerLink->getService();
 
         return $datagridManager->getDatagrid($config->getName(), $datagridParameters);
