@@ -169,6 +169,12 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//input[@name="pricing[oro_pricing___default_price_list][value]"]'
             element: Select2Entity
+          Allow Fractional Quantity Price Calculation On Quantity Less Then One: 'pricing[oro_pricing___fractional_quantity_less_then_unit_price_calculation][value]'
+          Allow Fractional Quantity Price Calculation On Quantity Less Then One System: 'pricing[oro_pricing___fractional_quantity_less_then_unit_price_calculation][use_parent_scope_value]'
+          Allow Fractional Quantity Price Calculation On Quantity Less Then Minimum Priced: 'pricing[oro_pricing___fractional_quantity_less_then_minimum_priced_price_calculation][value]'
+          Allow Fractional Quantity Price Calculation On Quantity Less Then Minimum Priced System: 'pricing[oro_pricing___fractional_quantity_less_then_minimum_priced_price_calculation][use_parent_scope_value]'
+          Allow Quantity Price Calculation On Quantity Less Then Minimum Priced: 'pricing[oro_pricing___quantity_less_then_minimum_priced_price_calculation][value]'
+          Allow Quantity Price Calculation On Quantity Less Then Minimum Priced System: 'pricing[oro_pricing___quantity_less_then_minimum_priced_price_calculation][use_parent_scope_value]'
 
     Add Product Price Form:
       selector: '[id^="oro_action_operation-uid"]'

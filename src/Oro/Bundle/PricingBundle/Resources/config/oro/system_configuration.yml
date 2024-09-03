@@ -13,6 +13,8 @@ system_configuration:
             icon: 'fa-credit-card'
         price_strategies:
             title: oro.pricing.system_configuration.groups.price_strategies.title
+        minimum_sellable_quantity:
+            title: oro.pricing.system_configuration.groups.minimum_sellable_quantity.title
     fields:
         oro_pricing.default_price_list:
             data_type: integer
@@ -94,6 +96,30 @@ system_configuration:
                 multiple: false
                 constraints:
                     - NotBlank: ~
+        oro_pricing.fractional_quantity_less_then_unit_price_calculation:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 15
+            options:
+                required: false
+                label: oro.pricing.system_configuration.fields.fractional_quantity_less_then_unit_price_calculation.label
+                tooltip: oro.pricing.system_configuration.fields.fractional_quantity_less_then_unit_price_calculation.tooltip
+        oro_pricing.fractional_quantity_less_then_minimum_priced_price_calculation:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 15
+            options:
+                required: false
+                label: oro.pricing.system_configuration.fields.fractional_quantity_less_then_minimum_priced_price_calculation.label
+                tooltip: oro.pricing.system_configuration.fields.fractional_quantity_less_then_minimum_priced_price_calculation.tooltip
+        oro_pricing.quantity_less_then_minimum_priced_price_calculation:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            priority: 15
+            options:
+                required: false
+                label: oro.pricing.system_configuration.fields.quantity_less_then_minimum_priced_price_calculation.label
+                tooltip: oro.pricing.system_configuration.fields.quantity_less_then_minimum_priced_price_calculation.tooltip
         oro_pricing.feature_enabled:
             data_type: boolean
             type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
@@ -135,3 +161,9 @@ system_configuration:
                                         priority: 25
                                         children:
                                             - oro_pricing.price_strategy
+                                    minimum_sellable_quantity:
+                                        priority: 15
+                                        children:
+                                            - oro_pricing.fractional_quantity_less_then_unit_price_calculation
+                                            - oro_pricing.fractional_quantity_less_then_minimum_priced_price_calculation
+                                            - oro_pricing.quantity_less_then_minimum_priced_price_calculation

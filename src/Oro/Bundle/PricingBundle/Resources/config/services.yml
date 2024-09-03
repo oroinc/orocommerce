@@ -1790,6 +1790,8 @@ services:
 
     oro_pricing.provider.product_price_by_matching_criteria.simple:
         class: Oro\Bundle\PricingBundle\Provider\PriceByMatchingCriteria\SimpleProductPriceByMatchingCriteriaProvider
+        calls:
+            - ['setConfigManager', ["@oro_config.manager"]]
         tags:
             -
                 name: oro_pricing.provider.product_price_by_matching_criteria

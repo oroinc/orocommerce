@@ -374,6 +374,7 @@ oro.pricing:
             pricing.title: Pricing
             price_lists_update.title: 'Price List Calculations'
             price_strategies.title: Price Selection Strategy
+            minimum_sellable_quantity.title: Minimum Sellable Quantity
         fields:
             feature_enabled:
                 label: Enable Oro Pricing
@@ -414,6 +415,15 @@ oro.pricing:
                 label: "Offset of processing CPL prices"
                 tooltip: 'An offset (in hours) from the scheduled price change that determines how early the price list recalculation and reindex should happen to prepare the actual prices in the OroCommerce storefront for the scheduled launch.'
             enabled_currencies.label: 'Enabled Currencies'
+            fractional_quantity_less_then_unit_price_calculation:
+                label: "Allow fractional quantity price calculation on quantity less than 1 whole unit"
+                tooltip: 'Applicable only to the product units that allow fractional quantity input (unit precision > 0). The "Minimum quantity to order" for specific products can be set to 1 to prevent purchases of fractional quantities smaller than 1 whole unit.'
+            fractional_quantity_less_then_minimum_priced_price_calculation:
+                label: "Allow fractional quantity price calculation on quantities smaller than the minimum quantity priced in a price list(s)"
+                tooltip: 'Applicable only to the product units that allow fractional quantity input (unit precision > 0). The implied minimum sellable quantity is 1 (one whole unit). The "Allow fractional quantity price calculation on quantity less than 1 whole unit" configuration option can be enabled to go lower than 1  unit. The "Minimum quantity to order" for specific products can be used to prevent purchases of fractional quantities smaller than the desired sellable quantity either way.'
+            quantity_less_then_minimum_priced_price_calculation:
+                label: "Allow price calculation on quantities smaller than the minimal quantity priced in a price list(s)"
+                tooltip: 'Applicable to the product units that allow only whole numbers for quantity. The "Minimum quantity to order" for specific products can be used to prevent purchases of quantities smaller than the desired sellable quantity.'
 
     lineitem:
         subtotal.label: 'Line items subtotal'
