@@ -1,0 +1,21 @@
+.three-columns-category {
+    --grid-gap: 24px;
+}
+
+.three-columns-category .picture-wrapper {
+    min-height: 200px;
+    display: flex;
+}
+
+.three-columns-category .grid-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.three-columns-category .grid-item__text {
+    flex-grow: 1;
+}
+
+.three-columns-category .grid-item__bottom {
+    align-self: end;
+}
