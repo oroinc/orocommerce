@@ -153,8 +153,16 @@ operations:
         routes:
             - oro_order_view
         acl_resource: oro_order_update
+        groups:
+            - view_navButtons.activity
         button_options:
             icon: fa-close
+        order: 20
+        frontend_options:
+            confirmation:
+                title: oro.order.action.order.cancel_confirm_title
+                message: oro.order.action.order.cancel_confirm_message
+                component: oroui/js/delete-confirmation
         preconditions:
             '@equal': [$internalStatus.id, 'open']
         actions:
@@ -176,8 +184,15 @@ operations:
         routes:
             - oro_order_view
         acl_resource: oro_order_update
+        groups:
+            - view_navButtons.activity
         button_options:
             icon: fa-window-close-o
+        order: 10
+        frontend_options:
+            confirmation:
+                title: oro.order.action.order.close_confirm_title
+                message: oro.order.action.order.close_confirm_message
         preconditions:
             '@or':
                 - '@equal': [$internalStatus.id, 'open']
@@ -299,8 +314,11 @@ operations:
         routes:
             - oro_order_view
         acl_resource: oro_order_update
+        groups:
+            - view_navButtons.activity
         button_options:
             icon: fa-dollar
+        order: 30
         frontend_options:
             title: oro.order.orderdiscount.add_discount.label
             options:

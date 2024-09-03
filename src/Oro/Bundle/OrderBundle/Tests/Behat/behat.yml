@@ -396,6 +396,9 @@ oro_behat_extension:
             locator: '[data-role=type]'
             type: 'css'
 
+    Order Internal Status:
+      selector: 'span.page-title__internalStatus span.badge'
+
     DiscountValue:
       selector: 'input[name="oro_action_operation[orderDiscount][value]"]'
 

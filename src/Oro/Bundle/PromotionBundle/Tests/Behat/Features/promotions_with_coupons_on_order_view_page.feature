@@ -24,7 +24,8 @@ Feature: Promotions with coupons on Order view page
     Given I should see next rows in "Promotions" table
       | Promotion       | Type        | Status | Discount |
       | Order Promotion | Order Total | Active | -$7.00   |
-    When I click "Add Coupon Code"
+    When I click "More actions"
+    And I click "Add Coupon Code"
     And type "test-1" in "Coupon Code"
     Then I should see a "Highlighted Suggestion" element
     When click on "Highlighted Suggestion"

@@ -215,6 +215,7 @@ Feature: Calculate taxes after promotions
   Scenario: Taxes recalculated after using coupons
     Given I go to Sales/Orders
     When click view "PONumber1" in grid
+    And I click "More actions"
     And click "Add Coupon Code"
     And type "coupon50p" in "Coupon Code"
     Then should see a "Highlighted Suggestion" element

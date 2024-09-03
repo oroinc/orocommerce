@@ -12,7 +12,7 @@ Feature: Order promotions
     When I save form
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
-    When click "Order Totals"
+    When click "Totals"
     Then I see next subtotals for "Backend Order":
       | Subtotal | $10.00 |
       | Total    | $10.00 |
@@ -25,7 +25,7 @@ Feature: Order promotions
       | Promotion                 | Type            | Status | Discount |
       | Order Line Item Promotion | Order Line Item | Active | -$2.00   |
       | Order Total Promotion     | Order Total     | Active | -$1.00   |
-    When I click "Order Totals"
+    When I click "Totals"
     Then I see next subtotals for "Backend Order":
       | Subtotal | $20.00 |
       | Discount | -$3.00 |
@@ -46,7 +46,7 @@ Feature: Order promotions
       | Order Line Item Promotion    | Order Line Item | Active | -$2.00   |
       | Order Total Promotion        | Order Total     | Active | -$1.00   |
       | Order Total Coupon Promotion | Order Total     | Active | -$3.00   |
-    When I click "Order Totals"
+    When I click "Totals"
     Then I see next subtotals for "Backend Order":
       | Subtotal | $20.00 |
       | Discount | -$6.00 |
@@ -68,7 +68,7 @@ Feature: Order promotions
       | Order Total Promotion            | Order Total     | Active | -$1.00   |
       | Order Total Coupon Promotion     | Order Total     | Active | -$3.00   |
       | Order Line Item Coupon Promotion | Order Line Item | Active | -$4.00   |
-    When I click "Order Totals"
+    When I click "Totals"
     Then see next subtotals for "Backend Order":
       | Subtotal | $30.00  |
       | Discount | -$10.00 |
@@ -84,7 +84,7 @@ Feature: Order promotions
       | Order Line Item Promotion        | Order Line Item | Active | -$2.00   |
       | Order Total Promotion            | Order Total     | Active | -$1.00   |
       | Order Line Item Coupon Promotion | Order Line Item | Active | -$4.00   |
-    When I click "Order Totals"
+    When I click "Totals"
     Then see next subtotals for "Backend Order":
       | Subtotal | $30.00 |
       | Discount | -$7.00 |
@@ -99,7 +99,7 @@ Feature: Order promotions
       | Promotion                 | Type            | Status | Discount |
       | Order Line Item Promotion | Order Line Item | Active | -$2.00   |
       | Order Total Promotion     | Order Total     | Active | -$1.00   |
-    When I click "Order Totals"
+    When I click "Totals"
     Then see next subtotals for "Backend Order":
       | Subtotal | $40.00 |
       | Discount | -$3.00 |
@@ -111,7 +111,7 @@ Feature: Order promotions
   Scenario: Remove applied promotions if line items not changed
     Given I click "Remove" on row "Order Line Item Promotion" in "Promotions"
     And click "Remove" on row "Order Total Promotion" in "Promotions"
-    When I click "Order Totals"
+    When I click "Totals"
     Then see next subtotals for "Backend Order":
       | Subtotal | $40.00 |
       | Total    | $40.00 |

@@ -30,3 +30,10 @@ oro:
                 title: Refund Payment
                 message: The {{ amount }} payment will be refunded. Are you sure you want to continue?
                 button.okText: Yes, Refund Payment
+
+        action:
+            order:
+                cancel_confirm_title: Cancel order
+                cancel_confirm_message: Are you sure you want to cancel this order? Please note that once your order is canceled, it cannot be changed.
+                close_confirm_title: Close order
+                close_confirm_message: Are you sure you want to close this order? Please note that once your order is closed, it cannot be changed.

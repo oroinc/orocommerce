@@ -124,7 +124,7 @@ Feature: RFQ from Shipping List
       |            | Incl. Tax | Excl. Tax | Tax Amount |
       | Unit Price | $1.00     | $1.00     | $0.00      |
       | Row Total  | $10.00    | $10.00    | $0.00      |
-    When I click "Order Totals"
+    When I click "Totals"
     Then I should see "Subtotal $10.00"
     And I should see "Total $10.00"
     When I click "Line Items"
@@ -134,7 +134,7 @@ Feature: RFQ from Shipping List
     When I click "$2.00"
     Then "Order Form" must contains values:
       | Price | 2.00 |
-    When I click "Order Totals"
+    When I click "Totals"
     Then I should see "Subtotal $20.00"
     And I should see "Total $20.00"
     When I save and close form
@@ -197,7 +197,7 @@ Feature: RFQ from Shipping List
       |            | Incl. Tax | Excl. Tax | Tax Amount |
       | Unit Price | $30.00    | $30.00    | $0.00      |
       | Row Total  | $120.00   | $120.00   | $0.00      |
-    When I click "Order Totals"
+    When I click "Totals"
     Then I should see "Subtotal $129.00"
     And I should see "Total $129.00"
     When I save and close form
