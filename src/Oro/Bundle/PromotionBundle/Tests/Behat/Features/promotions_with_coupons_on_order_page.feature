@@ -59,6 +59,7 @@ Feature: Promotions with coupons on Order page
   Scenario: Coupon applying on order view page
     When go to Sales / Orders
     And click view SimpleOrder in grid
+    And I click "More actions"
     And I click "Add Coupon Code"
     And type "test-1" in "Coupon Code"
     Then I should see a "Highlighted Suggestion" element
@@ -86,6 +87,7 @@ Feature: Promotions with coupons on Order page
 
   Scenario: "Cancel" button do not save selected coupons
     When click view SecondOrder in grid
+    And I click "More actions"
     And I click "Add Coupon Code"
     And type "test-1" in "Coupon Code"
     Then I should see a "Highlighted Suggestion" element

@@ -521,7 +521,6 @@ oro:
         sections:
             general: General
             additional: Additional
-            subtotals: Order Totals
             payment_history: Payment History
             sub_orders_payment_history: Sub-Orders Payment History
             order_line_items: 'Line Items'
@@ -569,6 +568,8 @@ oro:
         subtotals:
             shipping_cost: Shipping
             discount: Discount
+
+        order_total.label: Order Total
 
         sales_orders.label: 'Sales Orders'
 

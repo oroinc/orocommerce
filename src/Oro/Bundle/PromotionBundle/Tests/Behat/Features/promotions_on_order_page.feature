@@ -32,7 +32,7 @@ Feature: Promotions on Order page
       | SKU  | Row Total Incl Tax | Row Total Excl Tax | Discount |
       | SKU1 | $10.00             | $10.00             | $0.00    |
       | SKU2 | $5.00              | $5.00              | $5.00    |
-    And I click "Order Totals"
+    And I click "Totals"
     And I see next subtotals for "Backend Order":
       | Subtotal          | Amount  |
       | Subtotal          | $20.00  |
@@ -76,7 +76,7 @@ Feature: Promotions on Order page
       | line Item Discount Promotion | -$3.00   |
       | shipping Discount Promotion  | -$1.00   |
       | order Discount Promotion     | -$6.50   |
-    And I click "Order Totals"
+    And I click "Totals"
     And I see next subtotals for "Backend Order":
       | Subtotal          | Amount |
       | Subtotal          | $16.00 |
@@ -96,7 +96,7 @@ Feature: Promotions on Order page
       | SKU  | Row Total Incl Tax | Row Total Excl Tax | Discount |
       | SKU1 | $10.00             | $10.00             | $0.00    |
       | SKU2 | $3.00              | $3.00              | $3.00    |
-    And I click "Order Totals"
+    And I click "Totals"
     And I see next subtotals for "Backend Order":
       | Subtotal          | Amount |
       | Subtotal          | $16.00 |

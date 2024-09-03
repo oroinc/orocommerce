@@ -118,7 +118,9 @@ Feature: Previously purchased configurable products
     And I go to Sales/Orders
     When I click "View" on first row in grid
     Then I should see that order internal status is "Open"
-    When I click on page action "Cancel"
+    When I click "More actions"
+    And I click "Cancel"
+    And I click "Yes" in confirmation dialogue
     Then I should see "Order #1 has been cancelled." flash message
 
   Scenario: Check configurable product is not shown in Previously Purchased grid

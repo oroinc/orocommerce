@@ -131,6 +131,8 @@ operations:
     oro_promotion_add_coupon:
         label: oro.promotion.ui.add_coupon_code.label
         extends: oro_promotion_add_coupon_form
+        groups:
+            - view_navButtons.activity
         button_options:
             icon: fa-ticket
         frontend_options:
@@ -148,7 +150,7 @@ operations:
         routes:
             - oro_order_view
         acl_resource: oro_order_update
-        order: 20
+        order: 40
         actions:
             - '@count':
                 attribute: $.addedCouponsCount
