@@ -1,10 +1,25 @@
 /* @theme: default; */
 
 .responsive-shopping-list-grid-edit {
+    .btn-expand-kit-items {
+        align-self: flex-start;
+
+        &.collapsed {
+            .theme-icon {
+                transform: rotate(-90deg);
+            }
+        }
+    }
+
     .select-row-cell {
         position: relative;
 
         width: $responsive-shopping-list-edit-select-row-cell-width;
+
+        .btn-expand-kit-items {
+            margin-top: $responsive-shopping-expand-btn-in-select-row-margin-top;
+            margin-left: $responsive-shopping-expand-btn-in-select-row-margin-left;
+        }
     }
 
     .cell-checkbox {
@@ -45,6 +60,16 @@
 
             width: 1px;
             background-color: $responsive-shopping-sub-row-border-mobile-color;
+        }
+    }
+
+    .product-kit-row-collapsed {
+        .grid-cell {
+            border-bottom-color: $base-table-border-color;
+        }
+
+        .select-row-cell::after {
+            display: none;
         }
     }
 

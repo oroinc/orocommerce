@@ -1,7 +1,7 @@
 import ShoppingListRow from './shopping-list-row';
 import ShoppingListStringProductKitCell from '../cell/product-kit/shoppinglist-string-product-kit-cell';
 import ShoppingListHtmlTemplateProductKitCell from '../cell/product-kit/shoppinglist-html-template-product-kit-cell';
-import ShoppingListProductKitSelectRowCell from '../cell/product-kit/shoppinglist-product-kit-select-row-cell';
+import ShoppinglistProductKitItemSelectRowCell from '../cell/product-kit/shoppinglist-product-kit-item-select-row-cell';
 import ShoppingListItemProductKitCell from '../cell/product-kit/shoppinglist-item-product-kit-cell';
 import ShoppingListLineItemProductKitCell from '../cell/product-kit/shoppinglist-line-item-product-kit-cell';
 
@@ -11,7 +11,7 @@ const ShoppingListProductKitSubItemRow = ShoppingListRow.extend({
         'shoppinglist-string': ShoppingListStringProductKitCell,
         'shoppinglist-html-template': ShoppingListHtmlTemplateProductKitCell,
         'item': ShoppingListItemProductKitCell,
-        'massAction': ShoppingListProductKitSelectRowCell,
+        'massAction': ShoppinglistProductKitItemSelectRowCell,
         'quantity': ShoppingListLineItemProductKitCell
     },
 

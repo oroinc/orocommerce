@@ -69,6 +69,10 @@ oro:
             btn_more:
                 label: 'And {{ count }} more'
                 aria_label: 'And {{ count }} more variants of {{ name }} product'
+            btn_expand_kits:
+                label_expanded: 'Hide Kit Products'
+                label_collapsed: 'Show Kit Products'
+                aria_label: 'Show or hide more kit products of {{ name }} product'
             dialog:
                 cancel.label: Cancel
                 assign.label: Assign

@@ -2,7 +2,8 @@ import ShoppingListProductKitRow from 'oroshoppinglist/js/datagrid/row/shopping-
 import ShoppingListProductKitSubItemRow from '../row/shopping-list-product-kit-sub-item-row';
 import ProductKitInShoppingListRefreshPlugin
     from 'oroshoppinglist/js/datagrid/plugins/product-kit-in-shopping-list-refresh-plugin';
-
+import ProductKitExpandCollapseItems
+    from 'oroshoppinglist/js/datagrid/plugins/product-kit-expand-collapse-items';
 import {addClass, removeClass, isError, isHighlight} from './utils';
 
 const useKitSubItemRow = item => {
@@ -34,6 +35,9 @@ const productKitData = data => data.map(item => {
                 if (kitLineItemById[kitLineItem.id]) {
                     kitLineItem.kitHasGeneralError = true;
                     addClass(kitLineItem, 'product-kit-general-error');
+                    kitLineItem.row_attributes = {
+                        'data-product-group': kitLineItem._groupId
+                    };
                 }
             });
         }
@@ -73,7 +77,7 @@ const shoppinglistProductKitBuilder = {
         if (!options.metadata.plugins) {
             options.metadata.plugins = [];
         }
-        options.metadata.plugins.push(ProductKitInShoppingListRefreshPlugin);
+        options.metadata.plugins.push(ProductKitInShoppingListRefreshPlugin, ProductKitExpandCollapseItems);
 
         return deferred.resolve();
     },

@@ -1,0 +1,19 @@
+<% const oroui = _.macros('oroui'); %>
+<% let btnClass = obj.btnClass ?? ''; %>
+<button type="button"
+        class="btn-expand-kit-items <%- btnClass %>"
+        data-role="expand-kids"
+        data-group-id="<%- productId %>"
+        aria-label="<%- _.__('oro.frontend.shoppinglist.btn_expand_kits.aria_label', {name: productName}) %>"
+>
+    <%= oroui.renderIcon({
+        name: 'caret-down',
+        extraClass: 'btn-expand-kit-items-icon'
+    }) %>
+    <% if (obj.showLabel) { %>
+        <span data-label=""
+              data-label-collapsed="<%- _.__('oro.frontend.shoppinglist.btn_expand_kits.label_collapsed') %>"
+              data-label-expanded="<%- _.__('oro.frontend.shoppinglist.btn_expand_kits.label_expanded') %>"
+            ><%- _.__('oro.frontend.shoppinglist.btn_expand_kits.label_expanded') %></span>
+    <% } %>
+</button>

@@ -43,6 +43,7 @@ export const messageModel = (item, columnName, opts = {}) => {
         isMessage: true,
         isAuxiliary: true,
         row_attributes: {
+            ...item.row_attributes,
             'aria-hidden': true
         },
         ...opts
