@@ -33,6 +33,10 @@ class Configuration implements ConfigurationInterface
     const OFFSET_OF_PROCESSING_CPL_PRICES = 'offset_of_processing_cpl_prices';
     const PRICE_LIST_STRATEGIES = 'price_strategy';
     const PRICE_CALCULATION_PRECISION = 'price_calculation_precision';
+    const FRACTIONAL_QUANTITY_LESS_THEN_UNIT_PRICE_CALCULATION = 'fractional_quantity_less_then_unit_price_calculation';
+    const FRACTIONAL_QUANTITY_LESS_THEN_MINIMUM_PRICED_PRICE_CALCULATION =
+        'fractional_quantity_less_then_minimum_priced_price_calculation';
+    const QUANTITY_LESS_THEN_MINIMUM_PRICED_PRICE_CALCULATION = 'quantity_less_then_minimum_priced_price_calculation';
     const DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES = 12.0;
 
     /**
@@ -69,6 +73,12 @@ class Configuration implements ConfigurationInterface
                 self::PRICE_LIST_STRATEGIES => ['type' => 'string', 'value' => MinimalPricesCombiningStrategy::NAME],
                 'feature_enabled' => ['value' => true],
                 self::PRICE_CALCULATION_PRECISION => ['type' => 'integer', 'value' => null],
+                self::FRACTIONAL_QUANTITY_LESS_THEN_UNIT_PRICE_CALCULATION => ['type' => 'bool', 'value' => false],
+                self::FRACTIONAL_QUANTITY_LESS_THEN_MINIMUM_PRICED_PRICE_CALCULATION => [
+                    'type' => 'bool',
+                    'value' => false
+                ],
+                self::QUANTITY_LESS_THEN_MINIMUM_PRICED_PRICE_CALCULATION => ['type' => 'bool', 'value' => false],
             ]
         );
 

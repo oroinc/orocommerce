@@ -35,6 +35,12 @@ class OroPricingExtensionTest extends \PHPUnit\Framework\TestCase
                         'price_strategy' => ['value' => MinimalPricesCombiningStrategy::NAME, 'scope' => 'app'],
                         'feature_enabled' => ['value' => true, 'scope' => 'app'],
                         'price_calculation_precision' => ['value' => null, 'scope' => 'app'],
+                        'fractional_quantity_less_then_unit_price_calculation' => ['value' => false, 'scope' => 'app'],
+                        'fractional_quantity_less_then_minimum_priced_price_calculation' => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
+                        'quantity_less_then_minimum_priced_price_calculation' => ['value' => false, 'scope' => 'app'],
                     ]
                 ]
             ],
