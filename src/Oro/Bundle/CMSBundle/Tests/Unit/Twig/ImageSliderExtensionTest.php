@@ -2,16 +2,20 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Twig;
 
+use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
+use Oro\Bundle\AttachmentBundle\Tests\Unit\Stub\FileProxyStub;
 use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\ImageSlide;
 use Oro\Bundle\CMSBundle\Twig\ImageSliderExtension;
-use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface as ImagePlaceholderProvider;
+use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 class ImageSliderExtensionTest extends TestCase
 {
@@ -20,39 +24,61 @@ class ImageSliderExtensionTest extends TestCase
     private const PLACEHOLDER = 'placeholder/image.png';
 
     private AttachmentManager|MockObject $attachmentManager;
-    private ImagePlaceholderProvider|MockObject $imagePlaceholderProvider;
-    private PropertyAccessor $propertyAccessor;
+    private ManagerRegistry|MockObject $doctrine;
     private ImageSliderExtension $extension;
 
     protected function setUp(): void
     {
         $this->attachmentManager = $this->createMock(AttachmentManager::class);
-        $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProvider::class);
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
-        $container = self::getContainerBuilder()
-            ->add(AttachmentManager::class, $this->attachmentManager)
-            ->add(
-                'oro_cms.provider.image_slider_image_placeholder.default',
-                $this->imagePlaceholderProvider
-            )
-            ->add('property_accessor', $this->propertyAccessor)
-            ->getContainer($this);
-
-        $this->extension = new ImageSliderExtension($container);
-
-        $this->attachmentManager
-            ->expects(self::any())
+        $this->attachmentManager->expects(self::any())
             ->method('getFilteredImageUrl')
             ->willReturnCallback(static function (File $file, string $filter, string $format) {
                 return '/' . $filter . '/' . $file->getFilename() . ($format ? '.' . $format : '');
             });
 
-        $this->imagePlaceholderProvider
-            ->expects(self::any())
+        $imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);
+        $imagePlaceholderProvider->expects(self::any())
             ->method('getPath')
             ->with('original', self::anything())
             ->willReturn(self::PLACEHOLDER);
+
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+
+        $container = self::getContainerBuilder()
+            ->add(AttachmentManager::class, $this->attachmentManager)
+            ->add('oro_cms.provider.image_slider_image_placeholder.default', $imagePlaceholderProvider)
+            ->add(PropertyAccessorInterface::class, $propertyAccessor)
+            ->add(ManagerRegistry::class, $this->doctrine)
+            ->getContainer($this);
+
+        $this->extension = new ImageSliderExtension($container);
+    }
+
+    private function getImageFile(int $id, string $fileName, string $mimeType): File
+    {
+        $image = new File();
+        ReflectionUtil::setId($image, $id);
+        $image->setFilename($fileName);
+        $image->setMimeType($mimeType);
+        $image->setExtension(substr($fileName, strpos($fileName, '.') + 1));
+
+        return $image;
+    }
+
+    private function getImageFileProxy(int $id, string $fileName, string $mimeType, bool $initialized): File
+    {
+        $image = new FileProxyStub();
+        ReflectionUtil::setId($image, $id);
+        $image->setFilename($fileName);
+        $image->setMimeType($mimeType);
+        $image->setExtension(substr($fileName, strpos($fileName, '.') + 1));
+        if ($initialized) {
+            $image->setInitialized(true);
+        }
+
+        return $image;
     }
 
     public function testGetImageSlideSourcesReturnsEmptyArrayIfImageSlideHasNoImages(): void
@@ -74,10 +100,12 @@ class ImageSliderExtensionTest extends TestCase
         bool $isWebpEnabledIfSupported,
         array $expected
     ): void {
-        $this->attachmentManager
-            ->expects(self::any())
+        $this->attachmentManager->expects(self::any())
             ->method('isWebpEnabledIfSupported')
             ->willReturn($isWebpEnabledIfSupported);
+
+        $this->doctrine->expects(self::never())
+            ->method('getRepository');
 
         $result = self::callTwigFunction(
             $this->extension,
@@ -92,34 +120,13 @@ class ImageSliderExtensionTest extends TestCase
      */
     public function getImageSlideSourcesDataProvider(): array
     {
-        $extraLargeImage = (new File())
-            ->setFilename('el-image.png')
-            ->setMimeType('image/png')
-            ->setExtension('png');
-        $largeImage = (new File())
-            ->setFilename('large-image.png')
-            ->setMimeType('image/png')
-            ->setExtension('png');
-        $largeImageWebp = (new File())
-            ->setFilename('large-image.webp')
-            ->setMimeType('image/webp')
-            ->setExtension('webp');
-        $mediumImage = (new File())
-            ->setFilename('medium-image.png')
-            ->setMimeType('image/png')
-            ->setExtension('png');
-        $mediumImageWebp = (new File())
-            ->setFilename('medium-image.webp')
-            ->setMimeType('image/webp')
-            ->setExtension('webp');
-        $smallImage = (new File())
-            ->setFilename('small-image.png')
-            ->setMimeType('image/png')
-            ->setExtension('png');
-        $smallImageWebp = (new File())
-            ->setFilename('small-image.webp')
-            ->setMimeType('image/webp')
-            ->setExtension('webp');
+        $extraLargeImage = $this->getImageFile(1, 'el-image.png', 'image/png');
+        $largeImage = $this->getImageFile(2, 'large-image.png', 'image/png');
+        $largeImageWebp = $this->getImageFile(3, 'large-image.webp', 'image/webp');
+        $mediumImage = $this->getImageFile(4, 'medium-image.png', 'image/png');
+        $mediumImageWebp = $this->getImageFile(5, 'medium-image.webp', 'image/webp');
+        $smallImage = $this->getImageFile(6, 'small-image.png', 'image/png');
+        $smallImageWebp = $this->getImageFile(7, 'small-image.webp', 'image/webp');
 
         return [
             'fallbacks to 3x image' => [
@@ -347,6 +354,41 @@ class ImageSliderExtensionTest extends TestCase
         ];
     }
 
+    public function testGetImageSlideSourcesWhenSomeImagesAreNotLoadedYet(): void
+    {
+        $extraLargeImage = $this->getImageFileProxy(1, 'el-image.png', 'image/png', false);
+        $extraLargeImage2x = $this->getImageFileProxy(2, 'el-image-2x.png', 'image/png', true);
+        $extraLargeImage3x = $this->getImageFileProxy(3, 'el-image-3x.png', 'image/png', false);
+        $imageSlide = (new ImageSlide())
+            ->setExtraLargeImage($extraLargeImage)
+            ->setExtraLargeImage2x($extraLargeImage2x)
+            ->setExtraLargeImage3x($extraLargeImage3x);
+
+        $this->attachmentManager->expects(self::any())
+            ->method('isWebpEnabledIfSupported')
+            ->willReturn(false);
+
+        $repository = $this->createMock(EntityRepository::class);
+        $this->doctrine->expects(self::once())
+            ->method('getRepository')
+            ->with(File::class)
+            ->willReturn($repository);
+        $repository->expects(self::once())
+            ->method('findBy')
+            ->with(['id' => [1, 3]])
+            ->willReturn([$extraLargeImage, $extraLargeImage3x]);
+
+        self::assertEquals(
+            [
+                [
+                    'srcset' => '/original/el-image.png, /original/el-image-2x.png 2x, /original/el-image-3x.png 3x',
+                    'type' => 'image/png'
+                ]
+            ],
+            self::callTwigFunction($this->extension, 'oro_cms_image_slide_sources', [$imageSlide, []])
+        );
+    }
+
     /**
      * @dataProvider imageSlideDataProvider
      */
@@ -358,61 +400,49 @@ class ImageSliderExtensionTest extends TestCase
         );
     }
 
-    public function imageSlideDataProvider(): \Generator
+    public function imageSlideDataProvider(): array
     {
-        $extraLargeImage = (new File())
-            ->setFilename('el-image.png')
-            ->setMimeType('image/png')
-            ->setExtension('png');
-        $extraLargeImage2x = (new File())
-            ->setFilename('el-image-2x.png')
-            ->setMimeType('image/png')
-            ->setExtension('png');
-        $extraLargeImage3x = (new File())
-            ->setFilename('el-image-3x.png')
-            ->setMimeType('image/png')
-            ->setExtension('png');
+        $extraLargeImage = $this->getImageFile(1, 'el-image.png', 'image/png');
+        $extraLargeImage2x = $this->getImageFile(2, 'el-image-2x.png', 'image/png');
+        $extraLargeImage3x = $this->getImageFile(3, 'el-image-3x.png', 'image/png');
 
-        yield 'default placeholder' => [
-            'expected' => 'placeholder/image.png',
-            'imageSlide' => new ImageSlide(),
-        ];
-
-        yield 'default behavior' => [
-            'expected' => '/original/el-image.png',
-            'imageSlide' => (new ImageSlide())
-                ->setExtraLargeImage($extraLargeImage)
-                ->setExtraLargeImage2x($extraLargeImage2x)
-                ->setExtraLargeImage3x($extraLargeImage3x),
-        ];
-
-        yield 'default behavior with custom format' => [
-            'expected' => '/original/el-image.png.webp',
-            'imageSlide' => (new ImageSlide())
-                ->setExtraLargeImage($extraLargeImage)
-                ->setExtraLargeImage2x($extraLargeImage2x)
-                ->setExtraLargeImage3x($extraLargeImage3x),
-            'format' => 'webp',
-        ];
-
-        yield 'fallback to 3x' => [
-            'expected' => '/slider_extra_large/el-image-3x.png',
-            'imageSlide' => (new ImageSlide())
-                ->setExtraLargeImage2x($extraLargeImage2x)
-                ->setExtraLargeImage3x($extraLargeImage3x),
-        ];
-
-        yield 'fallback to 2x' => [
-            'expected' => '/slider_extra_large/el-image-2x.png',
-            'imageSlide' => (new ImageSlide())
-                ->setExtraLargeImage2x($extraLargeImage2x),
-        ];
-
-        yield 'fallback to 2x with custom format' => [
-            'expected' => '/slider_extra_large/el-image-2x.png.webp',
-            'imageSlide' => (new ImageSlide())
-                ->setExtraLargeImage2x($extraLargeImage2x),
-            'format' => 'webp',
+        return [
+            'default placeholder' => [
+                'expected' => 'placeholder/image.png',
+                'imageSlide' => new ImageSlide(),
+            ],
+            'default behavior' => [
+                'expected' => '/original/el-image.png',
+                'imageSlide' => (new ImageSlide())
+                    ->setExtraLargeImage($extraLargeImage)
+                    ->setExtraLargeImage2x($extraLargeImage2x)
+                    ->setExtraLargeImage3x($extraLargeImage3x),
+            ],
+            'default behavior with custom format' => [
+                'expected' => '/original/el-image.png.webp',
+                'imageSlide' => (new ImageSlide())
+                    ->setExtraLargeImage($extraLargeImage)
+                    ->setExtraLargeImage2x($extraLargeImage2x)
+                    ->setExtraLargeImage3x($extraLargeImage3x),
+                'format' => 'webp',
+            ],
+            'fallback to 3x' => [
+                'expected' => '/slider_extra_large/el-image-3x.png',
+                'imageSlide' => (new ImageSlide())
+                    ->setExtraLargeImage2x($extraLargeImage2x)
+                    ->setExtraLargeImage3x($extraLargeImage3x),
+            ],
+            'fallback to 2x' => [
+                'expected' => '/slider_extra_large/el-image-2x.png',
+                'imageSlide' => (new ImageSlide())
+                    ->setExtraLargeImage2x($extraLargeImage2x),
+            ],
+            'fallback to 2x with custom format' => [
+                'expected' => '/slider_extra_large/el-image-2x.png.webp',
+                'imageSlide' => (new ImageSlide())
+                    ->setExtraLargeImage2x($extraLargeImage2x),
+                'format' => 'webp',
+            ]
         ];
     }
 }
