@@ -81,16 +81,34 @@ datagrids:
                 label:         oro.order.identifier.label
             poNumber:
                 label:         oro.order.po_number.label
+                renderable:    false
             orderType:
                 label: oro.order.order_type.label
                 frontend_type: select
                 choices: "@oro_order.provider.order_types->getOrderTypeChoices"
                 renderable: false
-            shipUntil:
-                label:         oro.order.ship_until.label
-                frontend_type: date
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+                renderable:    false
+            owner:
+                label:         oro.order.owner.label
+            createdBy:
+                label:         oro.order.created_by.label
+                renderable:    false
+            customerName:
+                label:         oro.order.customer.label
+            customerUserName:
+                label:         oro.order.customer_user.label
+                renderable:    false
+            internalStatusName:
+                label: oro.order.internal_status.label
             currency:
                 label:         oro.order.currency.label
+                renderable:    false
             subtotal:
                 label:  oro.order.subtotal.label
                 frontend_type: multi-currency
@@ -98,7 +116,7 @@ datagrids:
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
                     currency_field: currency
-                renderable: false
+                renderable:    false
             total:
                 label:  oro.order.total.label
                 frontend_type: multi-currency
@@ -112,16 +130,11 @@ datagrids:
                 frontend_type: html
                 template:      '@OroOrder/Order/Datagrid/promotionalDiscount.html.twig'
                 renderable:    false
-            customerName:
-                label:         oro.order.customer.label
-            customerUserName:
-                label:         oro.order.customer_user.label
-            internalStatusName:
-                label: oro.order.internal_status.label
-            owner:
-                label:         oro.order.owner.label
-            createdBy:
-                label:         oro.order.created_by.label
+            totalDiscountsAmount:
+                label:         oro.order.order_discount.columns.special_discount.label
+                type:          twig
+                frontend_type: html
+                template:      '@OroOrder/Order/Datagrid/specialDiscount.html.twig'
                 renderable:    false
             paymentStatus:
                 label:         oro.order.payment_status.label
@@ -130,7 +143,7 @@ datagrids:
                 template:      '@OroOrder/Order/Datagrid/paymentStatus.html.twig'
             paymentMethods:
                 label: oro.order.payment_method.label
-                renderable: true
+                renderable: false
                 type: twig
                 template: '@OroOrder/Order/Datagrid/paymentMethodAdmin.html.twig'
                 frontend_type: html
@@ -139,23 +152,17 @@ datagrids:
                 type:          twig
                 frontend_type: html
                 template:      '@OroOrder/Order/Datagrid/shippingMethodFull.html.twig'
+                renderable:    false
+            shipUntil:
+                label:         oro.order.ship_until.label
+                frontend_type: date
+                renderable:    false
             sourceEntityClass:
                 label:         oro.order.source_document.label
                 type:          twig
                 frontend_type: html
                 template:      '@OroOrder/Order/Datagrid/sourceDocument.html.twig'
                 renderable:    false
-            totalDiscountsAmount:
-                label:         oro.order.order_discount.columns.special_discount.label
-                type:          twig
-                frontend_type: html
-                template:      '@OroOrder/Order/Datagrid/specialDiscount.html.twig'
-            createdAt:
-                label:         oro.ui.created_at
-                frontend_type: datetime
-            updatedAt:
-                label:         oro.ui.updated_at
-                frontend_type: datetime
         sorters:
             columns:
                 identifier:
@@ -164,30 +171,30 @@ datagrids:
                     data_name: order1.poNumber
                 orderType:
                     data_name: orderType
-                shipUntil:
-                    data_name: order1.shipUntil
-                currency:
-                    data_name: order1.currency
-                subtotal:
-                    data_name: subtotal
-                total:
-                    data_name: total
+                createdAt:
+                    data_name: order1.createdAt
+                updatedAt:
+                    data_name: order1.updatedAt
+                owner:
+                    data_name: owner
+                createdBy:
+                    data_name: createdBy
                 customerName:
                     data_name: customerName
                 customerUserName:
                     data_name: customerUserName
                 internalStatusName:
                     data_name: internalStatusName
-                owner:
-                    data_name: owner
-                createdBy:
-                    data_name: createdBy
+                currency:
+                    data_name: order1.currency
+                subtotal:
+                    data_name: subtotal
+                total:
+                    data_name: total
                 totalDiscountsAmount:
                     data_name: order1.totalDiscountsAmount
-                createdAt:
-                    data_name: order1.createdAt
-                updatedAt:
-                    data_name: order1.updatedAt
+                shipUntil:
+                    data_name: order1.shipUntil
             default:
                 createdAt: DESC
         filters:
@@ -198,6 +205,7 @@ datagrids:
                 poNumber:
                     type:      string
                     data_name: order1.poNumber
+                    renderable: false
                 orderType:
                     type:      single_choice
                     data_name: orderType
@@ -205,9 +213,32 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_order.provider.order_types->getOrderTypeChoices"
-                shipUntil:
-                    type:      date
-                    data_name: order1.shipUntil
+                    renderable: false
+                createdAt:
+                    type:      datetime
+                    data_name: order1.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: order1.updatedAt
+                    renderable: false
+                owner:
+                    type:      string
+                    data_name: owner
+                createdBy:
+                    type:      string
+                    data_name: createdBy
+                    renderable: false
+                customerName:
+                    type:      string
+                    data_name: customerName
+                customerUserName:
+                    type:      string
+                    data_name: customerUserName
+                    renderable: false
+                internalStatusName:
+                    type:      enum
+                    data_name: internalStatusId
+                    enum_code: order_internal_status
                 currency:
                     type:      choice
                     data_name: order1.currency
@@ -215,29 +246,20 @@ datagrids:
                         field_options:
                             choices: "@oro_currency.config.currency->getCurrencies"
                             translatable_options: false
+                    renderable: false
                 subtotal:
                     type:      currency
                     data_name: subtotal
-                    renderable:   false
+                    renderable: false
                 total:
                     type:      currency
                     data_name: total
-                customerName:
-                    type:      string
-                    data_name: customerName
-                customerUserName:
-                    type:      string
-                    data_name: customerUserName
-                internalStatusName:
-                    type:      enum
-                    data_name: internalStatusId
-                    enum_code: order_internal_status
-                owner:
-                    type:      string
-                    data_name: owner
-                createdBy:
-                    type:      string
-                    data_name: createdBy
+                totalDiscountsAmount:
+                    type:      number
+                    data_name: order1.totalDiscountsAmount
+                    options:
+                        data_type: Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType::DATA_DECIMAL
+                    renderable: false
                 paymentStatus:
                     type:      choice
                     data_name: paymentStatus
@@ -245,17 +267,10 @@ datagrids:
                         field_options:
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
                             translatable_options: false
-                totalDiscountsAmount:
-                    type:      number
-                    data_name: order1.totalDiscountsAmount
-                    options:
-                        data_type: Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType::DATA_DECIMAL
-                createdAt:
-                    type:      datetime
-                    data_name: order1.createdAt
-                updatedAt:
-                    type:      datetime
-                    data_name: order1.updatedAt
+                shipUntil:
+                    type:      date
+                    data_name: order1.shipUntil
+                    renderable: false
         properties:
             id: ~
             view_link:
@@ -385,12 +400,24 @@ datagrids:
             poNumber:
                 label:         oro.order.po_number.label
                 renderable:    false
-            shipUntil:
-                label:         oro.order.ship_until.label
-                frontend_type: date
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
                 renderable:    false
+            owner:
+                label:         oro.order.owner.label
+                renderable:    false
+            createdBy:
+                label:         oro.order.created_by.label
+                renderable:    false
+            internalStatusName:
+                label:         oro.order.internal_status.label
             currency:
                 label:         oro.order.currency.label
+                renderable:    false
             subtotal:
                 label:  oro.order.subtotal.label
                 frontend_type: multi-currency
@@ -406,18 +433,15 @@ datagrids:
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
                     currency_field: currency
+            totalDiscountsAmount:
+                label:         oro.order.order_discount.columns.special_discount.label
+                type:          twig
+                frontend_type: html
+                template:      '@OroOrder/Order/Datagrid/specialDiscount.html.twig'
             lineItemsCount:
                 label:         oro.order.line_items_count.label
                 type: field
                 frontend_type: integer
-            internalStatusName:
-                label:         oro.order.internal_status.label
-            owner:
-                label:         oro.order.owner.label
-                renderable:    false
-            createdBy:
-                label:         oro.order.created_by.label
-                renderable:    false
             paymentStatus:
                 label:         oro.order.payment_status.label
                 type:          twig
@@ -433,45 +457,38 @@ datagrids:
                 type:          twig
                 frontend_type: html
                 template:      '@OroOrder/Order/Datagrid/shippingMethodFull.html.twig'
-            totalDiscountsAmount:
-                label:         oro.order.order_discount.columns.special_discount.label
-                type:          twig
-                frontend_type: html
-                template:      '@OroOrder/Order/Datagrid/specialDiscount.html.twig'
-            createdAt:
-                label:         oro.ui.created_at
-                frontend_type: datetime
-            updatedAt:
-                label:         oro.ui.updated_at
-                frontend_type: datetime
+            shipUntil:
+                label:         oro.order.ship_until.label
+                frontend_type: date
+                renderable:    false
         sorters:
             columns:
                 identifier:
                     data_name: order1.identifier
-                subtotal:
-                    data_name: subtotal
-                total:
-                    data_name: total
-                lineItemsCount:
-                    data_name: lineItemsCount
                 poNumber:
                     data_name: order1.poNumber
-                shipUntil:
-                    data_name: order1.shipUntil
-                currency:
-                    data_name: order1.currency
-                internalStatusName:
-                    data_name: internalStatusName
-                owner:
-                    data_name: owner
-                createdBy:
-                    data_name: createdBy
-                totalDiscountsAmount:
-                    data_name: order1.totalDiscountsAmount
                 createdAt:
                     data_name: order1.createdAt
                 updatedAt:
                     data_name: order1.updatedAt
+                owner:
+                    data_name: owner
+                createdBy:
+                    data_name: createdBy
+                internalStatusName:
+                    data_name: internalStatusName
+                currency:
+                    data_name: order1.currency
+                subtotal:
+                    data_name: subtotal
+                total:
+                    data_name: total
+                totalDiscountsAmount:
+                    data_name: order1.totalDiscountsAmount
+                lineItemsCount:
+                    data_name: lineItemsCount
+                shipUntil:
+                    data_name: order1.shipUntil
             default:
                 createdAt: DESC
         filters:
@@ -482,13 +499,26 @@ datagrids:
                 poNumber:
                     type:      string
                     data_name: order1.poNumber
-                shipUntil:
-                    type:      date
-                    data_name: order1.shipUntil
-                subtotal:
-                    type:      currency
-                    data_name: subtotal
                     renderable: false
+                createdAt:
+                    type: datetime
+                    data_name: order1.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: order1.updatedAt
+                    renderable: false
+                owner:
+                    type:      string
+                    data_name: owner
+                    renderable: false
+                createdBy:
+                    type:      string
+                    data_name: createdBy
+                    renderable: false
+                internalStatusName:
+                    type:      enum
+                    data_name: internalStatusId
+                    enum_code: order_internal_status
                 currency:
                     type:      choice
                     data_name: order1.currency
@@ -496,23 +526,21 @@ datagrids:
                         field_options:
                             choices: "@oro_currency.config.currency->getCurrencies"
                             translatable_options: false
+                    renderable: false
+                subtotal:
+                    type:      currency
+                    data_name: subtotal
+                    renderable: false
                 total:
                     type:      currency
                     data_name: total
+                totalDiscountsAmount:
+                    type:      number
+                    data_name: order1.totalDiscountsAmount
                 lineItemsCount:
                     type:      number
                     data_name: lineItemsCount
                     filter_by_having: true
-                internalStatusName:
-                    type:      enum
-                    data_name: internalStatusId
-                    enum_code: order_internal_status
-                owner:
-                    type:      string
-                    data_name: owner
-                createdBy:
-                    type:      string
-                    data_name: createdBy
                 paymentStatus:
                     type:      choice
                     data_name: paymentStatus
@@ -520,15 +548,10 @@ datagrids:
                         field_options:
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
                             translatable_options: false
-                totalDiscountsAmount:
-                    type:      number
-                    data_name: order1.totalDiscountsAmount
-                createdAt:
-                    type: datetime
-                    data_name: order1.createdAt
-                updatedAt:
-                    type: datetime
-                    data_name: order1.updatedAt
+                shipUntil:
+                    type:      date
+                    data_name: order1.shipUntil
+                    renderable: false
         properties:
             view_link:
                 route: oro_order_view

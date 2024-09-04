@@ -8,6 +8,7 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterfac
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
@@ -67,7 +68,11 @@ class OroOrderBundleInstaller implements
         $this->addOrderInternalStatusField($schema);
         $this->addOrderStatusField($schema);
 
-        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_order');
+        $this->paymentTermExtension->addPaymentTermAssociation(
+            $schema,
+            'oro_order',
+            ['datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN, 'show_filter' => false]]
+        );
     }
 
     /**

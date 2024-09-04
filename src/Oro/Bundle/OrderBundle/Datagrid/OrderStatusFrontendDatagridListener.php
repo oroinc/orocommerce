@@ -52,7 +52,7 @@ class OrderStatusFrontendDatagridListener
             ]
         ]);
         $config->addSorter('statusName', ['data_name' => 'statusName']);
-        $config->moveColumnAfter('statusName', 'total');
-        $config->moveFilterAfter('statusName', 'total');
+        $config->moveColumnBefore('statusName', 'total');
+        $config->moveFilterBefore('statusName', 'total');
     }
 }

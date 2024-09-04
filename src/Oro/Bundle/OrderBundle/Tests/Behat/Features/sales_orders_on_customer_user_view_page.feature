@@ -25,7 +25,7 @@ Feature: Sales Orders on Customer User view page
       | SecondOrder     |                |
 
   Scenario: Check "Created By" column
-    When I show column Created By in "Customer User Sales Orders Grid" grid
+    When I show column Created By in "Customer User Sales Orders Grid"
     Then I should see following "Customer User Sales Orders Grid" grid:
       | Order Number    | Created By   |
       | FirstOrder      |              |
@@ -51,7 +51,8 @@ Feature: Sales Orders on Customer User view page
       | Order1CreatedBy | John Doe     |
 
   Scenario: Filter by Created By
-    When filter Created By as is equal to "Phil Collins" in "Customer User Sales Orders Grid" grid
+    When I show filter "Created By" in "Customer User Sales Orders Grid" grid
+    And filter Created By as is equal to "Phil Collins" in "Customer User Sales Orders Grid" grid
     Then I should see following "Customer User Sales Orders Grid" grid:
       | Order Number    | Created By   |
       | Order2CreatedBy | Phil Collins |

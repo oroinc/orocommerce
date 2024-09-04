@@ -42,7 +42,6 @@ Feature: Discounts for Order
   Scenario: Check whether the discounts have affected the total amount
     Given go to Sales/Orders
     Then I should see SimpleOrder in grid with following data:
-      | Currency  | USD    |
       | Total     | $45.00 |
       | Total ($) | $45.00 |
 

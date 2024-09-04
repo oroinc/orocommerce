@@ -52,16 +52,15 @@ class SubOrdersFrontendDatagridListener
                 'choices' => $orderTypeChoices,
                 'renderable' => false
             ]);
+            $config->moveColumnAfter(self::ORDER_TYPE, 'poNumber');
             $config->addFilter(self::ORDER_TYPE, [
                 'type' => 'single_choice',
                 'data_name' => 'orderType',
                 'enabled' => false,
-                'options' => [
-                    'field_options' => [
-                        'choices' => $orderTypeChoices
-                    ]
-                ]
+                'options' => ['field_options' => ['choices' => $orderTypeChoices]],
+                'renderable' => false
             ]);
+            $config->moveFilterAfter(self::ORDER_TYPE, 'poNumber');
             $config->addSorter(self::ORDER_TYPE, [
                 'data_name' => 'orderType'
             ]);

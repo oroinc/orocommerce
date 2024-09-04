@@ -182,6 +182,7 @@ Feature: Pricing rounding
 
     And I proceed as the admin
     When go to Sales/ Orders
+    And I show column PO Number in grid
     And I sort grid by "Order Number"
     Then should see following grid:
       | Order Number | Total  |
@@ -190,8 +191,9 @@ Feature: Pricing rounding
     When click view "Order1" in grid
     Then should see "Subtotal $7"
     And should see "Total $10"
-    And go to Sales/ Orders
-    When click view "Order2" in grid
+    When go to Sales/ Orders
+    And I show column PO Number in grid
+    And click view "Order2" in grid
     Then should see "Subtotal $5"
     And should see "Total $8"
 
@@ -215,6 +217,7 @@ Feature: Pricing rounding
     Then Value field should has 7.4500 value
     And click "Cancel"
     When go to Sales/ Orders
+    And I show column PO Number in grid
     And I sort grid by "Order Number"
     Then should see following grid:
       | Order Number | Total  |
@@ -223,8 +226,9 @@ Feature: Pricing rounding
     When click view "Order1" in grid
     Then should see "Subtotal $7"
     And should see "Total $10"
-    And go to Sales/ Orders
-    When click view "Order2" in grid
+    When go to Sales/ Orders
+    And I show column PO Number in grid
+    And click view "Order2" in grid
     Then should see "Subtotal $5"
     And should see "Total $8"
 
@@ -314,6 +318,7 @@ Feature: Pricing rounding
 
     And I proceed as the admin
     When go to Sales/ Orders
+    And I show column PO Number in grid
     And I sort grid by "Order Number"
     Then should see following grid:
       | Order Number | Total  |
@@ -324,8 +329,9 @@ Feature: Pricing rounding
     When click view "Order3" in grid
     Then should see "Subtotal $7.50"
     And should see "Total $10.50"
-    And go to Sales/ Orders
-    When click view "Order4" in grid
+    When go to Sales/ Orders
+    And I show column PO Number in grid
+    And click view "Order4" in grid
     Then should see "Subtotal $4.50"
     And should see "Total $7.50"
 

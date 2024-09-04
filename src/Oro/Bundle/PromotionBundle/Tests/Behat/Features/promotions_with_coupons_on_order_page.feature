@@ -81,7 +81,6 @@ Feature: Promotions with coupons on Order page
   Scenario: Check whether the promotion coupon have affected the total amount
     Given go to Sales/Orders
     Then I should see SimpleOrder in grid with following data:
-      | Currency  | USD    |
       | Total     | $40.00 |
       | Total ($) | $40.00 |
 
