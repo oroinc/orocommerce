@@ -19,13 +19,12 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
 {
     use ResetCustomerUserTrait;
 
-    private ?AclHelper $aclHelper = null;
-
-    private ?DateHelper $dateHelper = null;
-
     private const AMOUNT_TYPE_SUBTOTAL_WITH_DISCOUNT = 'subtotal_with_discounts';
     private const AMOUNT_TYPE_SUBTOTAL = 'subtotal';
     private const AMOUNT_TYPE_TOTAL = 'total';
+
+    private ?AclHelper $aclHelper = null;
+    private ?DateHelper $dateHelper = null;
 
     public function setAclHelper(AclHelper $aclHelper): void
     {
@@ -37,23 +36,17 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         $this->dateHelper = $dateHelper;
     }
 
-    /**
-     * @param array $removingCurrencies
-     * @param Organization|null $organization
-     *
-     * @return bool
-     */
     public function hasRecordsWithRemovingCurrencies(
         array $removingCurrencies,
         Organization $organization = null
-    ) {
+    ): bool {
         $qb = $this->createQueryBuilder('orders');
         $qb
             ->select('COUNT(orders.id)')
             ->where($qb->expr()->in('orders.currency', ':removingCurrencies'))
             ->setParameter('removingCurrencies', $removingCurrencies);
 
-        if ($organization instanceof Organization) {
+        if (null !== $organization) {
             $qb
                 ->andWhere(($qb->expr()->in('orders.organization', ':organization')))
                 ->setParameter('organization', $organization);
@@ -62,11 +55,7 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         return (bool)$qb->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * @param int $id
-     * @return Order|null
-     */
-    public function getOrderWithRelations($id)
+    public function getOrderWithRelations(int $id): ?Order
     {
         $qb = $this->createQueryBuilder('orders');
         $qb->select('orders, lineItems, shippingAddress, billingAddress, discounts')
@@ -82,15 +71,11 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    /**
-     * @param array $productIds
-     * @param int $websiteId
-     * @param array $orderStatuses
-     *
-     * @return QueryBuilder
-     */
-    public function getLatestOrderedProductsInfo(array $productIds, $websiteId, $orderStatuses)
-    {
+    public function getLatestOrderedProductsInfo(
+        array $productIds,
+        int $websiteId,
+        array $orderStatuses
+    ): QueryBuilder {
         $queryBuilder = $this->getBaseLatestOrderedProductsQueryBuilder($websiteId, $orderStatuses);
         $queryBuilder
             ->addSelect('IDENTITY(lineItems.product) as product_id')
@@ -104,15 +89,11 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         return $queryBuilder;
     }
 
-    /**
-     * @param array $productIds
-     * @param int $websiteId
-     * @param array $orderStatuses
-     *
-     * @return QueryBuilder
-     */
-    public function getLatestOrderedParentProductsInfo(array $productIds, $websiteId, $orderStatuses)
-    {
+    public function getLatestOrderedParentProductsInfo(
+        array $productIds,
+        int $websiteId,
+        array $orderStatuses
+    ): QueryBuilder {
         $queryBuilder = $this->getBaseLatestOrderedProductsQueryBuilder($websiteId, $orderStatuses);
         $queryBuilder
             ->addSelect('IDENTITY(lineItems.parentProduct) as product_id')
@@ -146,12 +127,6 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
     }
 
     /**
-     * @param \DateTime $dateTimeFrom
-     * @param \DateTime $dateTimeTo
-     * @param array $includedOrderStatuses
-     * @param bool $isIncludeSubOrders
-     * @param string $scaleType
-     *
      * @return array<array{
      *     number: int,
      *     yearCreated?: string,
@@ -164,8 +139,8 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
      */
     public function getSalesOrdersNumber(
         \DateTime $dateTimeFrom,
-        \DateTime $dateTimeTo,
-        array $includedOrderStatuses,
+        ?\DateTime $dateTimeTo,
+        ?array $includedOrderStatuses,
         bool $isIncludeSubOrders,
         string $scaleType
     ): array {
@@ -182,8 +157,8 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
 
     public function getSalesOrdersNumberQueryBuilder(
         \DateTime $dateTimeFrom,
-        \DateTime $dateTimeTo,
-        array $includedOrderStatuses,
+        ?\DateTime $dateTimeTo,
+        ?array $includedOrderStatuses,
         bool $isIncludeSubOrders,
         string $scaleType
     ): QueryBuilder {
@@ -203,41 +178,46 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
     public function getSalesOrdersDataQueryBuilder(
         QueryBuilder $queryBuilder,
         \DateTime $dateTimeFrom,
-        \DateTime $dateTimeTo,
-        array $includedOrderStatuses,
+        ?\DateTime $dateTimeTo,
+        ?array $includedOrderStatuses,
         bool $isIncludeSubOrders,
         string $scaleType
     ): QueryBuilder {
         $dateTimeFrom = clone $dateTimeFrom;
-        $dateTimeTo = clone $dateTimeTo;
 
-        $queryBuilder
-            ->andWhere($queryBuilder->expr()->in('o.internal_status', ':includedOrderStatuses'))
-            ->setParameter('includedOrderStatuses', $includedOrderStatuses);
+        if (null !== $includedOrderStatuses) {
+            $queryBuilder
+                ->andWhere($queryBuilder->expr()->in('o.internal_status', ':includedOrderStatuses'))
+                ->setParameter('includedOrderStatuses', $includedOrderStatuses);
+        }
 
-        if ($isIncludeSubOrders === false) {
+        if (!$isIncludeSubOrders) {
             $queryBuilder->andWhere($queryBuilder->expr()->isNull('o.parent'));
         }
 
-        $this->dateHelper->addDatePartsSelect($dateTimeFrom, $dateTimeTo, $queryBuilder, 'o.createdAt', $scaleType);
+        $this->dateHelper->addDatePartsSelect(
+            clone $dateTimeFrom,
+            null === $dateTimeTo ? new \DateTime('now', new \DateTimeZone('UTC')) : clone $dateTimeTo,
+            $queryBuilder,
+            'o.createdAt',
+            $scaleType
+        );
 
-        $queryBuilder
-            ->andWhere($queryBuilder->expr()->between('o.createdAt', ':from', ':to'))
-            ->setParameter('to', $dateTimeTo, Types::DATETIME_MUTABLE)
-            ->setParameter('from', $dateTimeFrom, Types::DATETIME_MUTABLE);
+        if (null === $dateTimeTo) {
+            $queryBuilder
+                ->andWhere($queryBuilder->expr()->gte('o.createdAt', ':from'))
+                ->setParameter('from', $dateTimeFrom, Types::DATETIME_MUTABLE);
+        } else {
+            $queryBuilder
+                ->andWhere($queryBuilder->expr()->between('o.createdAt', ':from', ':to'))
+                ->setParameter('from', $dateTimeFrom, Types::DATETIME_MUTABLE)
+                ->setParameter('to', $dateTimeTo, Types::DATETIME_MUTABLE);
+        }
 
         return $queryBuilder;
     }
 
     /**
-     * @param \DateTime $dateTimeFrom
-     * @param \DateTime $dateTimeTo
-     * @param array $includedOrderStatuses
-     * @param bool $isIncludeSubOrders
-     * @param string $amountType
-     * @param string $currency
-     * @param string $scaleType
-     *
      * @return array<array{
      *     amount: string,
      *     yearCreated?: string,
@@ -250,8 +230,8 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
      */
     public function getSalesOrdersVolume(
         \DateTime $dateTimeFrom,
-        \DateTime $dateTimeTo,
-        array $includedOrderStatuses,
+        ?\DateTime $dateTimeTo,
+        ?array $includedOrderStatuses,
         bool $isIncludeSubOrders,
         string $amountType,
         string $currency,
@@ -272,8 +252,8 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
 
     public function getSalesOrdersVolumeQueryBuilder(
         \DateTime $dateTimeFrom,
-        \DateTime $dateTimeTo,
-        array $includedOrderStatuses,
+        ?\DateTime $dateTimeTo,
+        ?array $includedOrderStatuses,
         bool $isIncludeSubOrders,
         string $amountType,
         string $currency,

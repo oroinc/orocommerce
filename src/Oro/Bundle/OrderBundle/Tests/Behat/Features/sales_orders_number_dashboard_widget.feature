@@ -11,8 +11,8 @@ Feature: Sales Orders Number dashboard widget
     And I should see "Sales Orders Number" dashboard widget config data:
       | Date Range 1 | <Date:this month> | <Date:today> |
     And I should see "Sales Orders Number" dashboard widget config data:
-      | Included Order Statuses | Open; Shipped; Closed; Archived |
-      | Include Sub-Orders      | No                              |
+      | Included Order Statuses | Open; Closed |
+      | Include Sub-Orders      | No           |
     And I should not see "Sales Orders Number" dashboard widget config data:
       | Date Range 2 | None |
       | Date Range 3 | None |
@@ -21,11 +21,11 @@ Feature: Sales Orders Number dashboard widget
     When I click "Sales Orders Number Actions"
     And I click "Configure" in "Sales Orders Number" widget
     Then "Sales Orders Number Widget Configuration Form" must contains values:
-      | Date Range 1 Type       | Month-To-Date                     |
-      | Date Range 2 Type       | None                              |
-      | Date Range 3 Type       | None                              |
-      | Included Order Statuses | [Open, Shipped, Closed, Archived] |
-      | Include Sub-Orders      | No                                |
+      | Date Range 1 Type       | Month-To-Date  |
+      | Date Range 2 Type       | None           |
+      | Date Range 3 Type       | None           |
+      | Included Order Statuses | [Open, Closed] |
+      | Include Sub-Orders      | No             |
     And should see the following options for "Date Range 1 Type" select in form "Sales Orders Number Widget Configuration Form":
       | Today           |
       | Month-To-Date   |

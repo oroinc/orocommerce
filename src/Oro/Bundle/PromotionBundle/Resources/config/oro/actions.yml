@@ -194,7 +194,9 @@ operations:
                 message: oro.promotion.ui.order_add_coupon.not_added.message
                 type: 'success'
         preconditions:
-            '@neq': [$.data.disablePromotions, true]
+            '@and':
+                - '@neq': [$.data.disablePromotions, true]
+                - '@equal': [$internalStatus.id, 'open']
 
     oro_promotion_coupon_unassign:
         label: oro.promotion.ui.unassign_coupon.label

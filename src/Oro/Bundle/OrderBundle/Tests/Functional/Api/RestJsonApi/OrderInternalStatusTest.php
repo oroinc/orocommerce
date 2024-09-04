@@ -8,25 +8,15 @@ class OrderInternalStatusTest extends RestJsonApiTestCase
 {
     public function testGetList(): void
     {
-        $response = $this->cget(['entity' => 'orderinternalstatuses']);
+        $response = $this->cget(['entity' => 'orderinternalstatuses'], ['filter[id]' => 'open,closed,cancelled']);
         $this->assertResponseContains(
             [
                 'data' => [
                     [
                         'type'       => 'orderinternalstatuses',
-                        'id'         => 'archived',
-                        'attributes' => [
-                            'name'     => 'Archived',
-                            'priority' => 5,
-                            'default'  => false
-                        ]
-                    ],
-                    [
-                        'type'       => 'orderinternalstatuses',
                         'id'         => 'cancelled',
                         'attributes' => [
                             'name'     => 'Cancelled',
-                            'priority' => 2,
                             'default'  => false
                         ]
                     ],
@@ -35,7 +25,6 @@ class OrderInternalStatusTest extends RestJsonApiTestCase
                         'id'         => 'closed',
                         'attributes' => [
                             'name'     => 'Closed',
-                            'priority' => 4,
                             'default'  => false
                         ]
                     ],
@@ -45,15 +34,6 @@ class OrderInternalStatusTest extends RestJsonApiTestCase
                         'attributes' => [
                             'name'     => 'Open',
                             'priority' => 1,
-                            'default'  => false
-                        ]
-                    ],
-                    [
-                        'type'       => 'orderinternalstatuses',
-                        'id'         => 'shipped',
-                        'attributes' => [
-                            'name'     => 'Shipped',
-                            'priority' => 3,
                             'default'  => false
                         ]
                     ]
@@ -65,7 +45,10 @@ class OrderInternalStatusTest extends RestJsonApiTestCase
 
     public function testGetListSortedByPriority(): void
     {
-        $response = $this->cget(['entity' => 'orderinternalstatuses'], ['sort' => 'priority']);
+        $response = $this->cget(
+            ['entity' => 'orderinternalstatuses'],
+            ['filter[id]' => 'open,closed,cancelled', 'sort' => 'priority']
+        );
         $this->assertResponseContains(
             [
                 'data' => [
@@ -83,16 +66,6 @@ class OrderInternalStatusTest extends RestJsonApiTestCase
                         'id'         => 'cancelled',
                         'attributes' => [
                             'name'     => 'Cancelled',
-                            'priority' => 2,
-                            'default'  => false
-                        ]
-                    ],
-                    [
-                        'type'       => 'orderinternalstatuses',
-                        'id'         => 'shipped',
-                        'attributes' => [
-                            'name'     => 'Shipped',
-                            'priority' => 3,
                             'default'  => false
                         ]
                     ],
@@ -101,16 +74,6 @@ class OrderInternalStatusTest extends RestJsonApiTestCase
                         'id'         => 'closed',
                         'attributes' => [
                             'name'     => 'Closed',
-                            'priority' => 4,
-                            'default'  => false
-                        ]
-                    ],
-                    [
-                        'type'       => 'orderinternalstatuses',
-                        'id'         => 'archived',
-                        'attributes' => [
-                            'name'     => 'Archived',
-                            'priority' => 5,
                             'default'  => false
                         ]
                     ]

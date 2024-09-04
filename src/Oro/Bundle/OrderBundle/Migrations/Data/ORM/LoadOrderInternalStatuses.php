@@ -6,39 +6,34 @@ use Oro\Bundle\EntityExtendBundle\Migration\Fixture\AbstractEnumFixture;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 
+/**
+ * Loads supported internal order statuses.
+ */
 class LoadOrderInternalStatuses extends AbstractEnumFixture
 {
-    /** @var array */
-    protected static $data = [
+    private static $data = [
         OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN => 'Open',
         OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED => 'Cancelled',
-        OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED => 'Shipped',
-        OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED => 'Closed',
-        OrderStatusesProviderInterface::INTERNAL_STATUS_ARCHIVED => 'Archived',
+        OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED => 'Closed'
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getData()
-    {
-        return self::$data;
-    }
-
-    /**
-     * Returns array of data keys
-     *
-     * @return array
-     */
-    public static function getDataKeys()
+    public static function getDataKeys(): array
     {
         return array_keys(self::$data);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function getEnumCode()
+    protected function getData(): array
+    {
+        return self::$data;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getEnumCode(): string
     {
         return Order::INTERNAL_STATUS_CODE;
     }

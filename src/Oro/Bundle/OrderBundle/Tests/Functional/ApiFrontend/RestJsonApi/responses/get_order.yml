@@ -64,4 +64,4 @@ data:
         status:
             data:
                 type: orderstatuses
-                id: archived
+                id: cancelled

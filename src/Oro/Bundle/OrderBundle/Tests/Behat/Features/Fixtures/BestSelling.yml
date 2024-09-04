@@ -207,7 +207,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         poNumber: 'OID12'
         currency: 'USD'
         total: 120.0
-        internal_status: '@order_internal_status_archived'
+        internal_status: '@order_internal_status_closed'
         website: '@website1'
     order13:
         organization: '@organization'
@@ -251,7 +251,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         poNumber: 'OID16'
         currency: 'USD'
         total: 160.0
-        internal_status: '@order_internal_status_shipped'
+        internal_status: '@order_internal_status_open'
         website: '@website1'
 
 Oro\Bundle\CurrencyBundle\Entity\Price:

@@ -883,7 +883,7 @@ class OrderTest extends FrontendRestJsonApiTestCase
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'status']
         );
         $this->assertResponseContains(
-            ['data' => ['type' => 'orderstatuses', 'id' => 'archived']],
+            ['data' => ['type' => 'orderstatuses', 'id' => 'cancelled']],
             $response
         );
     }
@@ -894,7 +894,7 @@ class OrderTest extends FrontendRestJsonApiTestCase
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'status']
         );
         $this->assertResponseContains(
-            ['data' => ['type' => 'orderstatuses', 'id' => 'archived']],
+            ['data' => ['type' => 'orderstatuses', 'id' => 'cancelled']],
             $response
         );
     }

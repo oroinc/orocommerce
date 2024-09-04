@@ -3,11 +3,11 @@ FR1012401,open,Billing Address 01,US,Rochester,US-NY,1215 Caldwell Road,14608,Sh
 FR1012402,open,Billing Address 02,CA,Toronto,CA-ON,1900 Eglinton Ave E,M3H,Shipping Address 02,US,Culver City,US-CA,6001 W Centinela Ave,90233,20100,20100,USD,AB10100USD,net 60,"Please, contact sales",Default,Oro\Bundle\ShoppingListBundle\Entity\ShoppingList,1,0,admin
 FR1012403,cancelled,Billing Address 03,IT,Pisa,IT-52,"Viale Benedetto Croce, 36",56125,Shipping Address 03,US,Oak Park,US-CA,5813 Hickory Dr,91377,99.99,99.99,USD,CV032341USDD,net 30,,Default,,,0,marketing
 FR1012404,cancelled,Billing Address 04,US,Rochester,US-NY,1215 Caldwell Road,14608,Shipping Address 04,US,Seal Beach,US-CA,800 Seal Beach Blvd,90740,5500.5,5500.5,USD,AB10101USD,net 60,,Default,,,0,
-FR1012405,shipped,Billing Address 05,CA,Toronto,CA-ON,1900 Eglinton Ave E,M3H,Shipping Address 05,US,Reseda,US-CA,18644 Sherman Way,91337,7800.99,7800.99,EUR,AB10103USD,net 90,,Default,,,0,
-FR1012406,shipped,Billing Address 06,US,Rochester,US-NY,1215 Caldwell Road,14608,Shipping Address 06,IT,Livorno,IT-52,Piazza Grande,57123,5600.5,5600.5,USD,RT104568EUR,net 60,,Default,,,0,marketing
+FR1012405,closed,Billing Address 05,CA,Toronto,CA-ON,1900 Eglinton Ave E,M3H,Shipping Address 05,US,Reseda,US-CA,18644 Sherman Way,91337,7800.99,7800.99,EUR,AB10103USD,net 90,,Default,,,0,
+FR1012406,closed,Billing Address 06,US,Rochester,US-NY,1215 Caldwell Road,14608,Shipping Address 06,IT,Livorno,IT-52,Piazza Grande,57123,5600.5,5600.5,USD,RT104568EUR,net 60,,Default,,,0,marketing
 FR1012407,closed,Billing Address 07,CA,Toronto,CA-ON,1900 Eglinton Ave E,M3H,Shipping Address 07,CA,Toronto,CA-ON,1120 Birchmount Rd,M3C,7400.99,7400.99,EUR,RT104568000,net 90,,Default,,,0,
 FR1012408,open,Billing Address 08,US,Rochester,US-NY,1215 Caldwell Road,14608,Shipping Address 08,IT,Livorno,IT-52,Piazza Grande,57123,5600.5,5600.5,USD,RT104568EUR,net 60,,Default,,,1,sale
 FR1012409,open,Billing Address 09,CA,Toronto,CA-ON,1900 Eglinton Ave E,M3H,Shipping Address 09,CA,Toronto,CA-ON,1120 Birchmount Rd,M3C,7200.99,7400.99,EUR,RT104568000,net 90,,Default,,,1,sale
 FR1012410,closed,Billing Address 10,CA,Toronto,CA-ON,1900 Eglinton Ave E,M3H,Shipping Address 05,US,Reseda,US-CA,18644 Sherman Way,91337,7800.99,7800.99,EUR,AB10103USD,net 90,,Default,,,0,
-FR1012411,archived,Billing Address 11,US,Rochester,US-NY,1215 Caldwell Road,14608,Shipping Address 06,IT,Livorno,IT-52,Piazza Grande,57123,5600.5,5600.5,USD,RT104568EUR,net 60,,Default,,,0,sale
-FR1012412,archived,Billing Address 12,CA,Toronto,CA-ON,1900 Eglinton Ave E,M3H,Shipping Address 07,CA,Toronto,CA-ON,1120 Birchmount Rd,M3C,7400.99,7400.99,EUR,RT104568000,net 90,,Default,,,0,
+FR1012411,closed,Billing Address 11,US,Rochester,US-NY,1215 Caldwell Road,14608,Shipping Address 06,IT,Livorno,IT-52,Piazza Grande,57123,5600.5,5600.5,USD,RT104568EUR,net 60,,Default,,,0,sale
+FR1012412,closed,Billing Address 12,CA,Toronto,CA-ON,1900 Eglinton Ave E,M3H,Shipping Address 07,CA,Toronto,CA-ON,1120 Birchmount Rd,M3C,7400.99,7400.99,EUR,RT104568000,net 90,,Default,,,0,

@@ -11,7 +11,7 @@ Feature: Sales Orders Volume dashboard widget
     And I should see "Sales Orders Volume" dashboard widget config data:
       | Date Range 1 | <Date:this month> | <Date:today> |
     And I should see "Sales Orders Volume" dashboard widget config data:
-      | Included Order Statuses | Open; Shipped; Closed; Archived |
+      | Included Order Statuses | Open; Closed                    |
       | Include Sub-Orders      | No                              |
       | Order Total             | Subtotal with applied discounts |
     And I should not see "Sales Orders Volume" dashboard widget config data:
@@ -22,12 +22,12 @@ Feature: Sales Orders Volume dashboard widget
     When I click "Sales Orders Volume Actions"
     And I click "Configure" in "Sales Orders Volume" widget
     Then "Sales Orders Volume Widget Configuration Form" must contains values:
-      | Date Range 1 Type       | Month-To-Date                     |
-      | Date Range 2 Type       | None                              |
-      | Date Range 3 Type       | None                              |
-      | Included Order Statuses | [Open, Shipped, Closed, Archived] |
-      | Include Sub-Orders      | No                                |
-      | Order Total             | Subtotal with applied discounts   |
+      | Date Range 1 Type       | Month-To-Date                   |
+      | Date Range 2 Type       | None                            |
+      | Date Range 3 Type       | None                            |
+      | Included Order Statuses | [Open, Closed]                  |
+      | Include Sub-Orders      | No                              |
+      | Order Total             | Subtotal with applied discounts |
     And should see the following options for "Date Range 1 Type" select in form "Sales Orders Volume Widget Configuration Form":
       | Today           |
       | Month-To-Date   |

@@ -491,7 +491,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         billingAddress: '@order1_billing_address'
         shippingAddress: '@order1_shipping_address'
         status: '@order_status.wait_for_approval'
-        internal_status: '@order_internal_status.archived'
+        internal_status: '@order_internal_status.cancelled'
     order2:
         identifier: order2
         currency: 'EUR'

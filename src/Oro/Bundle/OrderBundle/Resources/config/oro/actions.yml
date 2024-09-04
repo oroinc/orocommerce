@@ -136,6 +136,8 @@ operations:
                     $.shippingTrackings
         form_init:
             - '@assign_value': [$.shippingTrackings, $.data.shippingTrackings]
+        preconditions:
+            '@equal': [$internalStatus.id, 'open']
         actions:
             - '@call_service_method':
                 service: oro_order.handler.order_shipping_tracking
@@ -152,7 +154,6 @@ operations:
         applications: [default]
         routes:
             - oro_order_view
-        acl_resource: oro_order_update
         groups:
             - view_navButtons.activity
         button_options:
@@ -164,7 +165,9 @@ operations:
                 message: oro.order.action.order.cancel_confirm_message
                 component: oroui/js/delete-confirmation
         preconditions:
-            '@equal': [$internalStatus.id, 'open']
+            '@and':
+                - '@equal': [$internalStatus.id, 'open']
+                - '@acl_granted': ['CANCEL_ORDERS', $.data]
         actions:
             - '@request_enum_entity':
                 enum_code: 'order_internal_status'
@@ -183,7 +186,6 @@ operations:
         applications: [default]
         routes:
             - oro_order_view
-        acl_resource: oro_order_update
         groups:
             - view_navButtons.activity
         button_options:
@@ -194,10 +196,13 @@ operations:
                 title: oro.order.action.order.close_confirm_title
                 message: oro.order.action.order.close_confirm_message
         preconditions:
-            '@or':
-                - '@equal': [$internalStatus.id, 'open']
-                - '@equal': [$internalStatus.id, 'cancelled']
-                - '@equal': [$internalStatus.id, 'shipped']
+            '@and':
+                - '@or':
+                    - '@equal': [$internalStatus.id, 'open']
+                    - '@equal': [$internalStatus.id, 'cancelled']
+                    # kept to be able to close shipped orders created in previous application versions
+                    - '@equal': [$internalStatus.id, 'shipped']
+                - '@acl_granted': ['CLOSE_ORDERS', $.data]
         actions:
             - '@request_enum_entity':
                 enum_code: 'order_internal_status'
@@ -206,52 +211,6 @@ operations:
             - '@flush_entity': $.data
             - '@flash_message':
                 message: oro.order.action.message.order.close.success
-                type: 'info'
-                message_parameters:
-                    id: $identifier
-
-    oro_order_archive:
-        label: oro.order.action.order.archive
-        enabled: true
-        applications: [default]
-        routes:
-            - oro_order_view
-        acl_resource: oro_order_update
-        button_options:
-            icon: fa-archive
-        preconditions:
-            '@equal': [$internalStatus.id, 'closed']
-        actions:
-            - '@request_enum_entity':
-                enum_code: 'order_internal_status'
-                attribute: $internalStatus
-                identifier: 'archived'
-            - '@flush_entity': $.data
-            - '@flash_message':
-                message: oro.order.action.message.order.archive.success
-                type: 'info'
-                message_parameters:
-                    id: $identifier
-
-    oro_order_mark_as_shipped:
-        label: oro.order.action.order.mark_as_shipped
-        enabled: true
-        applications: [default]
-        routes:
-            - oro_order_view
-        acl_resource: oro_order_update
-        button_options:
-            icon: fa-check
-        preconditions:
-            '@equal': [$internalStatus.id, 'open']
-        actions:
-            - '@request_enum_entity':
-                enum_code: 'order_internal_status'
-                attribute: $internalStatus
-                identifier: 'shipped'
-            - '@flush_entity': $.data
-            - '@flash_message':
-                message: oro.order.action.message.order.mark_as_shipped.success
                 type: 'info'
                 message_parameters:
                     id: $identifier
@@ -329,6 +288,8 @@ operations:
                 allowMinimize: false
                 dblclick: false
                 maximizedHeightDecreaseBy: minimize-bar
+        preconditions:
+            '@equal': [$internalStatus.id, 'open']
 
     oro_order_payment_transaction_cancel:
         label: oro.payment.cancel_authorization

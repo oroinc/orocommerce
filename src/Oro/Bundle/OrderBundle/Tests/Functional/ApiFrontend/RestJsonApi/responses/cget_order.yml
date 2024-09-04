@@ -65,7 +65,7 @@ data:
             status:
                 data:
                     type: orderstatuses
-                    id: archived
+                    id: cancelled
     -
         type: orders
         id: '<toString(@order2->id)>'

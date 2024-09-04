@@ -4,12 +4,11 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
-use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\OrderBundle\Provider\OrdersVolumeUsageStatsProvider;
 use Oro\Bundle\OrganizationBundle\Provider\OrganizationRestrictionProviderInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -17,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 class OrdersVolumeUsageStatsProviderTest extends TestCase
 {
-    private ObjectManager|MockObject $objectManager;
+    private ManagerRegistry|MockObject $doctrine;
     private OrderRepository|MockObject $orderRepository;
     private OrganizationRestrictionProviderInterface|MockObject $organizationRestrictionProvider;
     private CurrencyProviderInterface|MockObject $currencyProvider;
@@ -26,14 +25,14 @@ class OrdersVolumeUsageStatsProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->objectManager = $this->createMock(ObjectManager::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->orderRepository = $this->createMock(OrderRepository::class);
         $this->organizationRestrictionProvider = $this->createMock(OrganizationRestrictionProviderInterface::class);
         $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
 
         $this->provider = new OrdersVolumeUsageStatsProvider(
-            $this->objectManager,
+            $this->doctrine,
             $this->organizationRestrictionProvider,
             $this->currencyProvider,
             $this->numberFormatter
@@ -106,7 +105,7 @@ class OrdersVolumeUsageStatsProviderTest extends TestCase
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $query = $this->createMock(AbstractQuery::class);
 
-        $this->objectManager->expects(self::once())
+        $this->doctrine->expects(self::once())
             ->method('getRepository')
             ->with(Order::class)
             ->willReturn($this->orderRepository);
@@ -115,14 +114,8 @@ class OrdersVolumeUsageStatsProviderTest extends TestCase
             ->method('getSalesOrdersVolumeQueryBuilder')
             ->with(
                 $this->isInstanceOf(\DateTime::class),
-                $this->isInstanceOf(\DateTime::class),
-                [
-                    OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
-                    OrderStatusesProviderInterface::INTERNAL_STATUS_ARCHIVED,
-                    OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
-                    OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
-                    OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
-                ],
+                null,
+                null,
                 false,
                 'total',
                 'USD',

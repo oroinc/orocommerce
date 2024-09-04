@@ -32,9 +32,7 @@ class OrderRepositoryTest extends WebTestCase
 
     private const INCLUDED_ORDER_STATUSES = [
         OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
-        OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
         OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
-        OrderStatusesProviderInterface::INTERNAL_STATUS_ARCHIVED,
         OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
     ];
 
@@ -245,8 +243,8 @@ class OrderRepositoryTest extends WebTestCase
      */
     public function testGetSalesOrdersVolume(
         \DateTime $startDate,
-        \DateTime $endDate,
-        array $includedOrderStatuses,
+        ?\DateTime $endDate,
+        ?array $includedOrderStatuses,
         bool $isIncludeSubOrders,
         string $amountType,
         string $currency,
@@ -271,8 +269,8 @@ class OrderRepositoryTest extends WebTestCase
      */
     public function testGetSalesOrdersVolumeQueryBuilder(
         \DateTime $startDate,
-        \DateTime $endDate,
-        array $includedOrderStatuses,
+        ?\DateTime $endDate,
+        ?array $includedOrderStatuses,
         bool $isIncludeSubOrders,
         string $amountType,
         string $currency,
@@ -311,8 +309,8 @@ class OrderRepositoryTest extends WebTestCase
         return [
             'all orders with total amount type' => [
                 'startDate' => $minDate,
-                'endDate' => $endDate,
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'endDate' => null,
+                'includedOrderStatuses' => null,
                 'isIncludeSubOrders' => true,
                 'amountType' => 'total',
                 'currency' => $currency,
@@ -405,8 +403,8 @@ class OrderRepositoryTest extends WebTestCase
             ],
             'all orders with subtotal amount type' => [
                 'startDate' => $minDate,
-                'endDate' => $endDate,
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'endDate' => null,
+                'includedOrderStatuses' => null,
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal',
                 'currency' => $currency,
@@ -499,8 +497,8 @@ class OrderRepositoryTest extends WebTestCase
             ],
             'all orders with subtotal_with_discounts amount type' => [
                 'startDate' => $minDate,
-                'endDate' => $endDate,
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'endDate' => null,
+                'includedOrderStatuses' => null,
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal_with_discounts',
                 'currency' => $currency,
@@ -599,8 +597,8 @@ class OrderRepositoryTest extends WebTestCase
      */
     public function testGetSalesOrdersNumber(
         \DateTime $startDate,
-        \DateTime $endDate,
-        array $includedOrderStatuses,
+        ?\DateTime $endDate,
+        ?array $includedOrderStatuses,
         bool $isIncludeSubOrders,
         string $scaleType,
         array $expectedResults
@@ -621,8 +619,8 @@ class OrderRepositoryTest extends WebTestCase
      */
     public function testGetSalesOrdersNumberQueryBuilder(
         \DateTime $startDate,
-        \DateTime $endDate,
-        array $includedOrderStatuses,
+        ?\DateTime $endDate,
+        ?array $includedOrderStatuses,
         bool $isIncludeSubOrders,
         string $scaleType,
         array $expectedResults
@@ -652,8 +650,8 @@ class OrderRepositoryTest extends WebTestCase
         return [
             'all orders' => [
                 'startDate' => $minDate,
-                'endDate' => $endDate,
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'endDate' => null,
+                'includedOrderStatuses' => null,
                 'isIncludeSubOrders' => true,
                 'scaleType' => 'day',
                 'expectedResults' => [

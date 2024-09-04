@@ -620,6 +620,8 @@ oro:
                 label: '%translatedMethodType%'
 
         permission:
+            cancel_orders.label: 'Cancel Orders'
+            close_orders.label: 'Close Orders'
             view_payment_history.label: 'View Payment History'
             charge_authorized_payments.label: 'Charge Authorized Payments'
             cancel_payments.label: 'Cancel Payments'
@@ -653,14 +655,10 @@ oro:
             order:
                 cancel: 'Cancel'
                 close: 'Close'
-                archive: 'Archive'
-                mark_as_shipped: 'Mark as Shipped'
             message:
                 order:
                     cancel.success: 'Order #%id% has been cancelled.'
                     close.success: 'Order #%id% has been closed.'
-                    archive.success: 'Order #%id% has been archived.'
-                    mark_as_shipped.success: 'Order #%id% has been marked as shipped.'
             note_message:
                 label: Notes
 
